@@ -59,6 +59,7 @@ import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
@@ -202,23 +203,45 @@ public class ProcessForm extends TemplateBaseForm {
      * Delete process.
      */
     public void delete() {
-        deleteMetadataDirectory();
-        try {
-            this.process.getProject().getProcesses().remove(this.process);
-            this.process.setProject(null);
-            this.process.getTemplate().getProcesses().remove(this.process);
-            this.process.setTemplate(null);
-            List<Batch> batches = new CopyOnWriteArrayList<>(process.getBatches());
-            for (Batch batch : batches) {
-                batch.getProcesses().remove(this.process);
-                this.process.getBatches().remove(batch);
-                ServiceManager.getBatchService().save(batch);
-            }
-            ServiceManager.getProcessService().remove(this.process);
-        } catch (DataException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
+        if (this.process.getChildren().isEmpty()) {
+            deleteProcess(this.process);
+        } else {
+            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
+    }
+
+    /**
+     * Delete with children processes.
+     */
+    public void deleteWithChildren() {
+        List<Process> children = new CopyOnWriteArrayList<>(this.process.getChildren());
+        this.process.getChildren().clear();
+
+        for (Process child : children) {
+            child.setParent(null);
+            deleteProcess(child);
+        }
+
+        deleteProcess(this.process);
+    }
+
+    /**
+     * Delete without children processes.
+     */
+    public void deleteWithoutChildren() {
+        List<Process> children = new CopyOnWriteArrayList<>(this.process.getChildren());
+        this.process.getChildren().clear();
+
+        for (Process child : children) {
+            child.setParent(null);
+            try {
+                ServiceManager.getProcessService().save(child);
+            } catch (DataException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                        e);
+            }
+        }
+        deleteProcess(this.process);
     }
 
     /**
@@ -267,6 +290,27 @@ public class ProcessForm extends TemplateBaseForm {
 
         Helper.setMessage("Content deleted");
         return this.stayOnCurrentPage;
+    }
+
+    private void deleteProcess(Process processToDelete) {
+        deleteMetadataDirectory();
+
+        try {
+            processToDelete.getProject().getProcesses().remove(processToDelete);
+            processToDelete.setProject(null);
+            processToDelete.getTemplate().getProcesses().remove(processToDelete);
+            processToDelete.setTemplate(null);
+            List<Batch> batches = new CopyOnWriteArrayList<>(processToDelete.getBatches());
+            for (Batch batch : batches) {
+                batch.getProcesses().remove(processToDelete);
+                processToDelete.getBatches().remove(batch);
+                ServiceManager.getBatchService().save(batch);
+            }
+            ServiceManager.getProcessService().remove(processToDelete);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
     }
 
     private boolean renameAfterProcessTitleChanged() {
