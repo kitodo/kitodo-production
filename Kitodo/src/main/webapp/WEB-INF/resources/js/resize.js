@@ -44,6 +44,7 @@ $(document).ready(function() {
     $('#secondResizer').mousedown(function(e) {handleMouseDown(e)});
     $('#verticalResizer').mousedown(function(e) {handleMouseDown(e)});
     setSizes();
+    $("#loadingScreen").hide();
 });
 
 $(window).resize(setSizes);

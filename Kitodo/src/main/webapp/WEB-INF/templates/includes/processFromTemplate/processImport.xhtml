@@ -67,8 +67,8 @@
                              action="#{ImportForm.search}"
                              value="#{msgs.searchOPAC}"
                              title="#{msgs.searchOPAC}"
-                             onstart="PF('loadingDialog').show()"
-                             oncomplete="PF('loadingDialog').hide()"
+                             onstart="$('#loadingScreen').show()"
+                             oncomplete="$('#loadingScreen').hide()"
                              icon="fa fa-search" iconPos="right"
                              update="editForm hitlist"/>
         </h:panelGroup>

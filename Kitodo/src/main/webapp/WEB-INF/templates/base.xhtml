@@ -35,7 +35,11 @@
             <h:panelGroup id="indexErrorPanel" layout="block" rendered="#{empty indexingForm.serverInformation}">
                <p:ajax event="click" onclick="PF('sticky-notifications').renderMessage({'summary':'The elastic search server is not running.','detail':'Elastic Search','severity':'info'});"/>
             </h:panelGroup>
-            <div class="flex-container">
+            <div id="loadingScreen">
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"/>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="flex-container" style="z-index: 1; position: relative;">
                 <header class="flex-item" role="banner" id="portal-header">
                     <div class="wrapper">
                         <h:outputScript library="js" name="collapse.js" target="body"/>
@@ -65,15 +69,6 @@
                     </ui:insert>
                 </footer>
             </div>
-            <p:dialog widgetVar="loadingDialog"
-                      id="loadingDialog"
-                      modal="true"
-                      draggable="false"
-                      closable="false"
-                      resizable="false"
-                      showHeader="false">
-                <p:graphicImage id="loading" alt="loading" value="/pages/images/ajax-loader.gif"/>
-            </p:dialog>
             <p:confirmDialog global="true"
                              showEffect="fade"
                              hideEffect="fade"
@@ -96,6 +91,10 @@
             </p:confirmDialog>
             <ui:include src="/WEB-INF/templates/includes/legal.xhtml"/>
             <ui:insert name="dialog"/>
+            <ui:insert name="page-scripts">
+                <h:outputScript name="js/defaultScript.js"
+                                target="body" />
+            </ui:insert>
             <o:highlight styleClass="ui-state-error" />
         </h:body>
     </f:view>

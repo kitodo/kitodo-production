@@ -907,12 +907,20 @@ Popup dialogs
     right: var(--default-double-size);
 }
 
-#loadingDialog {
-    padding: var(--default-half-size);
+#loadingScreen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,.5);
+    top: 0;
+    left: 0;
+    z-index: 3;
+    line-height: 100vh;
+    text-align: center;
 }
 
-#loadingDialog .ui-dialog-content {
-    padding: 0;
+#loadingScreen i.fa-spinner {
+    color: var(--blue);
 }
 
 .ui-accordion .ui-state-default,

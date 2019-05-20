@@ -83,7 +83,7 @@
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
             </p:tab>
         </p:tabView>
-        <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+        <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

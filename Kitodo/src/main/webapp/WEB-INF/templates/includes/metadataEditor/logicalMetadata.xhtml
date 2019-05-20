@@ -62,8 +62,8 @@
                                      title="#{msgs.metadataDelete}"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
-                                     onclick="PF('loadingDialog').show();"
-                                     oncomplete="PF('loadingDialog').hide();"
+                                     onclick="$('#loadingScreen').show()"
+                                     oncomplete="$('#loadingScreen').hide()"
                                      action="#{item.deleteClick}">
                     </p:commandButton>
                     <p:commandButton update="metadataAccordion:metadata:metadataTable"
@@ -74,8 +74,8 @@
                                      title="#{msgs.metadataCopy}"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
-                                     onclick="PF('loadingDialog').show();"
-                                     oncomplete="PF('loadingDialog').hide();"
+                                     onclick="$('#loadingScreen').show()"
+                                     oncomplete="$('#loadingScreen').hide()"
                                      action="#{item.copyClick}">
                     </p:commandButton>
                 </p:column>
