@@ -1065,6 +1065,7 @@ main i.fa {
 
 .configure-columns-button {
     display: inline-block !important;
+    height: var(--input-height);
 }
 
 .configure-columns-button .ui-selectcheckboxmenu-label::after {

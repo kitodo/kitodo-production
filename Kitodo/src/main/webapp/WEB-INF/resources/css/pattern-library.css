@@ -392,6 +392,11 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     box-sizing: border-box;
 }
 
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-label {
+    height: 100%;
+    box-sizing: border-box;
+}
+
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label,
 .ui-selectonemenu .ui-selectonemenu-label,
 .ui-selectonemenu .ui-selectonemenu-trigger {
