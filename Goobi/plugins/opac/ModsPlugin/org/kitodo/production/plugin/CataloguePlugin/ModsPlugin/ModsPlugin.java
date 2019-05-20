@@ -806,6 +806,7 @@ public class ModsPlugin implements Plugin {
 
         try {
             XPath relatedItemXPath = XPath.newInstance("//mods:mods/mods:relatedItem[@type='host']");
+            relatedItemXPath.addNamespace("mods", "http://www.loc.gov/mods/v3");
 
             Document document = sb.build(new StringReader(xmlString));
 
@@ -822,8 +823,18 @@ public class ModsPlugin implements Plugin {
                 for (Object child : relatedItemElement.getChildren()) {
                     relatedChildren.add((Element)child);
                 }
-                for (Element child : relatedChildren) {
-                    relatedDocument.getRootElement().addContent(child.detach());
+                Element rootElement = relatedDocument.getRootElement();
+                if ("mods".equals(rootElement.getName())) {
+                    for (Element child : relatedChildren) {
+                        relatedDocument.getRootElement().addContent(child.detach());
+                    }
+                } else {
+                    Namespace modsNamespace = Namespace.getNamespace("mods", "http://www.loc.gov/mods/v3");
+                    Element newModsElement = new Element("mods", modsNamespace);
+                    Element modsElement = relatedDocument.getRootElement().addContent(newModsElement);
+                    for (Element child : relatedChildren) {
+                        newModsElement.addContent(child.detach());
+                    }
                 }
                 documentHierarchy.add(relatedDocument);
             }
@@ -920,7 +931,17 @@ public class ModsPlugin implements Plugin {
                 logger.error(message);
                 throw new IllegalStateException(message);
             }
-            documentHierarchy = createDocumentHistoryFromFindResult((FindResult) searchResult, index, timeout);
+
+            String parentFromCurrent = getConfigurationAttributeValue(configuration.getTitle(), "getParentFromFirstRequest", "value");
+
+            if (parentFromCurrent.equals("true")) {
+                FindResult findResult = (FindResult) searchResult;
+                Query myQuery = findResult.getQuery();
+                String xmlString = client.retrieveModsRecord(myQuery.getQueryUrl(), timeout);
+                documentHierarchy = createDocumentHistoryFromXMLString(xmlString);
+            } else {
+                documentHierarchy = createDocumentHistoryFromFindResult((FindResult) searchResult, index, timeout);
+            }
         } else {
             logger.error("Unknown type '" + Object.class.getName() + "' of given searchResult => abort!");
         }
