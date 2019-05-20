@@ -497,8 +497,8 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .switch.ui-chkbox .ui-chkbox-box,
 .switch.ui-chkbox .ui-chkbox-box.ui-state-hover {
-    width: 40px;
-    height: 40px;
+    width: var(--input-height);
+    height: var(--input-height);
     border-radius: var(--default-border-radius);
     background: var(--orange);
     cursor: pointer;
@@ -526,13 +526,13 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     box-sizing: border-box;
     content: "";
     display: block;
-    height: 16px;
+    height: 14px;
     left: -2px;
     position: absolute;
     top: -2px;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
-    width: 16px;
+    width: 14px;
 }
 
 .switch.ui-chkbox .ui-chkbox-box.ui-state-active,
@@ -546,7 +546,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
     background: var(--green);
-    left: calc(100% - 16px + 2px);
+    left: calc(100% - 14px + 2px);
 }
 
 .switch.ui-chkbox .ui-chkbox-box.disabled,
