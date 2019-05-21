@@ -472,6 +472,8 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .ui-chkbox:not(.switch) .ui-chkbox-box .ui-chkbox-icon {
     background: none;
+    line-height: var(--default-full-size);
+    text-align: center;
     text-indent: 0;
 }
 
