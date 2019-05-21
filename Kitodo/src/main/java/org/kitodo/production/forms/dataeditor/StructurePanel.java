@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -379,7 +380,7 @@ public class StructurePanel implements Serializable {
                 List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
                     ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement(), child.getId());
                 DefaultTreeNode parentNode = tree;
-                if (Objects.isNull(includedStructuralElementList)) {
+                if (includedStructuralElementList.isEmpty()) {
                     new DefaultTreeNode(new StructureTreeNode(this, parent.getTitle(), true, true, parent), tree);
                 } else {
                     for (IncludedStructuralElement includedStructuralElement : includedStructuralElementList) {
@@ -413,7 +414,7 @@ public class StructurePanel implements Serializable {
      *            number of the record of the process of the child
      *
      */
-    private LinkedList<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
+    private List<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
             IncludedStructuralElement includedStructuralElement, int number) {
 
         if (!Objects.isNull(includedStructuralElement.getLink())) {
@@ -429,14 +430,14 @@ public class StructurePanel implements Serializable {
             }
         }
         for (IncludedStructuralElement includedStructuralElementChild : includedStructuralElement.getChildren()) {
-            LinkedList<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
+            List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
                 includedStructuralElementChild, number);
-            if (Objects.nonNull(includedStructuralElementList)) {
-                includedStructuralElementList.addFirst(includedStructuralElementChild);
+            if (!includedStructuralElementList.isEmpty()) {
+                includedStructuralElementList.add(0, includedStructuralElementChild);
                 return includedStructuralElementList;
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /**
