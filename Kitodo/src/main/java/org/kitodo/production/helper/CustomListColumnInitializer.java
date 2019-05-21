@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,9 +50,11 @@ public class CustomListColumnInitializer {
         try {
             processProperties = loadCustomColumnsFromConfigurationFile(ParameterCore.PROCESS_PROPERTIES, PROCESS_PREFIX);
             taskProcessProperties = loadCustomColumnsFromConfigurationFile(ParameterCore.TASK_CUSTOM_COLUMNS, TASK_PREFIX);
+            List<String> customColumns = new ArrayList<>();
+            customColumns.addAll(Arrays.asList(processProperties));
+            customColumns.addAll(Arrays.asList(taskProcessProperties));
 
-            updateCustomColumnsInDatabase(Arrays.asList(processProperties));
-            updateCustomColumnsInDatabase(Arrays.asList(taskProcessProperties));
+            updateCustomColumnsInDatabase(customColumns);
 
         } catch (DAOException e) {
             logger.error("Unable to update custom list columns in database!");
