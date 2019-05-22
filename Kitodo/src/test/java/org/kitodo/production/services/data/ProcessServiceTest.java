@@ -91,4 +91,11 @@ public class ProcessServiceTest {
         URI uri = ServiceManager.getProcessService().getProcessURI(process);
         Assert.assertEquals(URI.create("database://?process.id=42"), uri);
     }
+
+    @Test
+    public void testProcessIdFromUri() {
+        URI uri = URI.create("database://?process.id=42");
+        int processId = ServiceManager.getProcessService().processIdFromUri(uri);
+        Assert.assertEquals(42, processId);
+    }
 }
