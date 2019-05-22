@@ -20,7 +20,7 @@ import org.springframework.security.core.Authentication;
 
 public class SecurityAccessService extends SecurityAccess {
 
-    private static SecurityAccessService instance = null;
+    private static volatile SecurityAccessService instance = null;
 
     /**
      * Return singleton variable of type SecurityAccessService.

@@ -32,7 +32,7 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
  */
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
-    private static DynamicAuthenticationProvider instance = null;
+    private static volatile DynamicAuthenticationProvider instance = null;
     private AuthenticationProvider authenticationProvider = null;
 
     private boolean ldapAuthentication;

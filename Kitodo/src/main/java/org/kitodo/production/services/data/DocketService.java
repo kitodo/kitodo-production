@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 
 public class DocketService extends ClientSearchService<Docket, DocketDTO, DocketDAO> {
 
-    private static DocketService instance = null;
+    private static volatile DocketService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.

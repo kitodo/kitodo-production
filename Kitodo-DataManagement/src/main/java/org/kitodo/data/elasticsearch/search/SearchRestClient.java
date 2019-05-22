@@ -47,7 +47,7 @@ public class SearchRestClient extends KitodoRestClient {
     /**
      * SearchRestClient singleton.
      */
-    private static SearchRestClient instance = null;
+    private static volatile SearchRestClient instance = null;
 
     private SearchRestClient() {
     }

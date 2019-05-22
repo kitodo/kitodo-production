@@ -41,7 +41,7 @@ import org.primefaces.model.SortOrder;
 
 public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
 
-    private static BatchService instance = null;
+    private static volatile BatchService instance = null;
     private static final String BATCH = "batch";
 
     /**

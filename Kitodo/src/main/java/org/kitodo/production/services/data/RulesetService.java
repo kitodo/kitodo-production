@@ -43,7 +43,7 @@ import org.primefaces.model.SortOrder;
 public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
-    private static RulesetService instance = null;
+    private static volatile RulesetService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.

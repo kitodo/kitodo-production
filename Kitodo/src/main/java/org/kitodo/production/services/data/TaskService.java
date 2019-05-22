@@ -71,7 +71,7 @@ import org.primefaces.model.SortOrder;
 public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
-    private static TaskService instance = null;
+    private static volatile TaskService instance = null;
     private boolean onlyOpenTasks = false;
     private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;

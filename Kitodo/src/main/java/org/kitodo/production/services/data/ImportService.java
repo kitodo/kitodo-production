@@ -55,7 +55,7 @@ public class ImportService {
 
     private static final Logger logger = LogManager.getLogger(ImportService.class);
 
-    private static ImportService instance = null;
+    private static volatile ImportService instance = null;
     private static ExternalDataImportInterface importModule;
 
     /**

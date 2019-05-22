@@ -47,7 +47,7 @@ import org.primefaces.model.SortOrder;
 
 public class ProjectService extends ClientSearchService<Project, ProjectDTO, ProjectDAO> {
 
-    private static ProjectService instance = null;
+    private static volatile ProjectService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.

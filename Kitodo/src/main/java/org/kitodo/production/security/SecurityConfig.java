@@ -31,7 +31,7 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static SecurityConfig instance = null;
+    private static volatile SecurityConfig instance = null;
     private SessionRegistry sessionRegistry;
     private static final String CLIENT_ANY = "CLIENT_ANY";
     private static final String GLOBAL = "GLOBAL";

@@ -136,7 +136,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     private final MetadataLock msp = new MetadataLock();
     private final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
-    private static ProcessService instance = null;
+    private static volatile ProcessService instance = null;
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_PREFIX, "orig");

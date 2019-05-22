@@ -57,7 +57,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public class UserService extends SearchDatabaseService<User, UserDAO> implements UserDetailsService {
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
-    private static UserService instance = null;
+    private static volatile UserService instance = null;
     private static final String CLIENT_ID = "clientId";
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private static final int DEFAULT_CLIENT_ID =
