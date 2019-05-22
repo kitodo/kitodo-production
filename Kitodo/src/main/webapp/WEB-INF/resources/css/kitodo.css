@@ -618,25 +618,6 @@ section#content-section {
     height: 500px;
 }
 
-#desktopGrid {
-    background: none;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    height: inherit;
-    justify-content: center;
-    margin-top: calc(var(--default-half-size) * -1);
-}
-
-#desktopGrid > .ui-panel {
-    background: transparent;
-    display: flex;
-    flex-basis: calc(50% - 10px);
-    height: 50%;
-    overflow: hidden;
-    padding: 0;
-}
-
 #desktopGrid th.actionsColumn span,
 #desktopGrid td.actionsColumn form {
     float: right;
@@ -644,16 +625,6 @@ section#content-section {
 
 #desktopGrid td.actionsColumn form a:last-of-type {
     margin-right: 0;
-}
-
-#desktopGrid > .ui-panel > .ui-panel-content {
-    background-color: var(--pure-white) !important;
-    padding: 0;
-    margin: 8px;
-    border-radius: var(--default-border-radius);
-    -webkit-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
-    -moz-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
-    box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
 }
 
 .task-table-column,

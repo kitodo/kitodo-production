@@ -25,8 +25,8 @@
     <ui:define name="content">
         <h:outputScript name="desktop.js" target="body" library="js"/>
         <ui:fragment rendered="#{SessionClientController.currentSessionClient ne null or not SessionClientController.shouldUserChangeSessionClient()}">
-            <div id="desktopGrid">
-                <p:panel styleClass="desktop-widget"
+            <div id="desktopGrid" class="grid">
+                <p:panel styleClass="grid-item"
                          rendered="#{SecurityAccessController.hasAuthorityToViewTaskList()}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
@@ -45,7 +45,7 @@
                         <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
                     </div>
                 </p:panel>
-                <p:panel styleClass="desktop-widget"
+                <p:panel styleClass="grid-item"
                          rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
@@ -64,7 +64,7 @@
                         <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
                     </div>
                 </p:panel>
-                <p:panel styleClass="desktop-widget"
+                <p:panel styleClass="grid-item"
                          rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
@@ -83,7 +83,7 @@
                         <ui:include src="/WEB-INF/templates/includes/desktop/projectsWidget.xhtml"/>
                     </div>
                 </p:panel>
-                <p:panel styleClass="desktop-widget">
+                <p:panel styleClass="grid-item">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.databaseStatistic}</h3>

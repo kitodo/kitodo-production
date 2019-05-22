@@ -100,6 +100,44 @@ input.ui-state-error {
     color: var(--pure-white);
 }
 
+.grid {
+    height: 100%;
+    background: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: calc(var(--default-half-size) * -1) var(--default-half-size) 0 var(--default-half-size);
+}
+
+.grid > .grid-item {
+    background: transparent;
+    display: flex;
+    flex: 1 0 calc(50% - 10px);
+    height: 50%;
+    overflow: visible;
+    padding: 0;
+}
+
+.grid > .full-row {
+    flex-basis: calc(100% - 10px);
+}
+
+.grid > .full-height {
+    height: 100%;
+}
+
+.grid > .grid-item > .ui-panel-content {
+    background-color: var(--pure-white) !important;
+    border-radius: var(--default-border-radius);
+    box-shadow: 0 3px 3px 0 rgba(153, 153, 153, .75);
+);
+    margin: var(--default-half-size);
+    width: calc(100% - var(--default-half-size));
+    overflow: hidden;
+    padding: 0;
+}
+
 /* Buttons */
 .ui-button,
 .ui-widget-content .ui-button {
