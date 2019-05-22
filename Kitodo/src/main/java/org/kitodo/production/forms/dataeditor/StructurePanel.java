@@ -348,13 +348,62 @@ public class StructurePanel implements Serializable {
                 if (!viewsShowingOnAChild.contains(view)
                         && Objects.nonNull(view.getMediaUnit())
                         && Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
-                    new DefaultTreeNode(new StructureTreeNode(this, page.concat(view.getMediaUnit().getOrderlabel()),
-                            false, false, view), parent).setExpanded(true);
+                    addTreeNode(page.concat(view.getMediaUnit().getOrderlabel()), false, false, view, parent);
                     viewsShowingOnAChild.add(view);
                 }
             }
         }
         return viewsShowingOnAChild;
+    }
+
+    /**
+     * Adds a tree node to the given parent node. The tree node is set to
+     * ‘expanded’.
+     *
+     * @param type
+     *            the internal name of the type of node, to be resolved through
+     *            the rule set
+     * @param linked
+     *            whether the node is a link. If so, it will be marked with a
+     *            link symbol.
+     * @param dataObject
+     *            the internal object represented by the node
+     * @param parent
+     *            parent node to which the new node is to be added
+     * @return the generated node so that you can add children to it
+     */
+    private DefaultTreeNode addTreeNode(String type, boolean linked, Object dataObject, DefaultTreeNode parent) {
+        StructuralElementViewInterface structuralElementView = dataEditor.getRuleset().getStructuralElementView(type,
+            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        return addTreeNode(structuralElementView.getLabel(), structuralElementView.isUndefined(), linked, dataObject,
+            parent);
+    }
+
+    /**
+     * Adds a tree node to the given parent node. The tree node is set to
+     * ‘expanded’.
+     *
+     * @param label
+     *            Label of the tree node displayed to the user
+     * @param undefined
+     *            whether the given type in the rule set is undefined. If so,
+     *            the node is highlighted in color and marked with a warning
+     *            symbol.
+     * @param linked
+     *            whether the node is a link. If so, it will be marked with a
+     *            link symbol.
+     * @param dataObject
+     *            the internal object represented by the node
+     * @param parent
+     *            parent node to which the new node is to be added
+     * @return the generated node so that you can add children to it
+     */
+    private DefaultTreeNode addTreeNode(String label, boolean undefined, boolean linked, Object dataObject,
+            DefaultTreeNode parent) {
+        DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(this, label, undefined, linked, dataObject),
+                parent);
+        node.setExpanded(true);
+        return node;
     }
 
     /**
@@ -372,34 +421,50 @@ public class StructurePanel implements Serializable {
      */
     private void addParentLinksRecursive(Process child, LinkedList<DefaultTreeNode> result) {
         Process parent = child.getParent();
-        if (Objects.nonNull(parent)) {
-            URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
-            DefaultTreeNode tree = new DefaultTreeNode();
-            tree.setExpanded(true);
-            try {
-                List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
-                    ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement(), child.getId());
-                DefaultTreeNode parentNode = tree;
-                if (includedStructuralElementList.isEmpty()) {
-                    new DefaultTreeNode(new StructureTreeNode(this, parent.getTitle(), true, true, parent), tree);
-                } else {
-                    for (IncludedStructuralElement includedStructuralElement : includedStructuralElementList) {
-                        StructuralElementViewInterface structuralElementView = dataEditor.getRuleset()
-                                .getStructuralElementView(includedStructuralElement.getType(),
-                                    dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                        parentNode = new DefaultTreeNode(
-                                new StructureTreeNode(this, structuralElementView.getLabel(), false, true, null),
-                                parentNode);
-                        parentNode.setExpanded(true);
-                    }
-                }
-            } catch (IOException e) {
-                Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-                new DefaultTreeNode(new StructureTreeNode(this, parent.getTitle(), true, true, parent), tree);
-            }
-            result.addFirst(tree);
-            addParentLinksRecursive(parent, result);
+        /*
+         * Termination condition of recursion, if the process has no parent
+         * process.
+         */
+        if (Objects.isNull(parent)) {
+            return;
         }
+        URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
+        DefaultTreeNode tree = new DefaultTreeNode();
+        tree.setExpanded(true);
+        try {
+            IncludedStructuralElement rootElement = ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement();
+            List<IncludedStructuralElement> includedStructuralElementList
+                    = determineIncludedStructuralElementPathToChildRecursive(rootElement, child.getId());
+            DefaultTreeNode parentNode = tree;
+            if (includedStructuralElementList.isEmpty()) {
+                /*
+                 * Error case: The child is not linked in the parent process.
+                 * Show the process title of the parent process and a warning
+                 * sign.
+                 */
+                addTreeNode(parent.getTitle(), true, true, parent, tree);
+            } else {
+                /*
+                 * Default case: Show the path through the parent process to the
+                 * linked child
+                 */
+                for (IncludedStructuralElement includedStructuralElement : includedStructuralElementList) {
+                    parentNode = addTreeNode(includedStructuralElement.getType(), true, null, parentNode);
+                }
+            }
+        } catch (IOException e) {
+            /*
+             * Error case: The meta-data file of the parent process cannot be
+             * loaded. Show the process title of the parent process and the
+             * warning sign.
+             */
+            Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
+            addTreeNode(parent.getTitle(), true, true, parent, tree);
+        }
+        // Insert the link representation above the existing tree.
+        result.addFirst(tree);
+        // Process parent link of the parent recursively.
+        addParentLinksRecursive(parent, result);
     }
 
     /**
@@ -417,7 +482,7 @@ public class StructurePanel implements Serializable {
     private List<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
             IncludedStructuralElement includedStructuralElement, int number) {
 
-        if (!Objects.isNull(includedStructuralElement.getLink())) {
+        if (Objects.nonNull(includedStructuralElement.getLink())) {
             try {
                 if (ServiceManager.getProcessService()
                         .processIdFromUri(includedStructuralElement.getLink().getUri()) == number) {
@@ -455,9 +520,9 @@ public class StructurePanel implements Serializable {
     }
 
     private void buildMediaTreeRecursively(MediaUnit mediaUnit, DefaultTreeNode parentTreeNode) {
+
         String displayLabel = mediaUnit.getType(); // TODO translate type with ruleset
-        DefaultTreeNode treeNode = new DefaultTreeNode(new StructureTreeNode(this,
-                displayLabel, false, false, mediaUnit), parentTreeNode);
+        DefaultTreeNode treeNode = addTreeNode(displayLabel, false, false, mediaUnit, parentTreeNode);
         treeNode.setExpanded(true);
         if (Objects.nonNull(mediaUnit.getChildren())) {
             for (MediaUnit child : mediaUnit.getChildren()) {
