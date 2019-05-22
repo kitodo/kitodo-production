@@ -109,13 +109,16 @@ public class ImageService {
      * @return unique instance of ImageService
      */
     public static ImageService getInstance() {
-        if (Objects.equals(instance, null)) {
+        ImageService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (ImageService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new ImageService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new ImageService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 }

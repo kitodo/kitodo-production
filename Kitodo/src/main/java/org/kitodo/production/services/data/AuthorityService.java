@@ -42,14 +42,17 @@ public class AuthorityService extends SearchDatabaseService<Authority, Authority
      * @return unique instance of AuthorityService
      */
     public static AuthorityService getInstance() {
-        if (Objects.equals(instance, null)) {
+        AuthorityService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (AuthorityService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new AuthorityService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new AuthorityService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

@@ -51,14 +51,17 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
      * @return unique instance of DocketService
      */
     public static DocketService getInstance() {
-        if (Objects.equals(instance, null)) {
+        DocketService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (DocketService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new DocketService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new DocketService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

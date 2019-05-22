@@ -67,10 +67,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * singleton usage.
      */
     public SecurityConfig() {
-        if (Objects.equals(instance, null)) {
+        SecurityConfig localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (SecurityConfig.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = this;
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = this;
+                    instance = localReference;
                 }
             }
         }

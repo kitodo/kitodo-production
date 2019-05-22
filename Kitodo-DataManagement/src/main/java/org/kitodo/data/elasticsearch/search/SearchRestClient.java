@@ -58,15 +58,18 @@ public class SearchRestClient extends KitodoRestClient {
      * @return unique instance of SearchRestClient
      */
     public static SearchRestClient getInstance() {
-        if (Objects.equals(instance, null)) {
+        SearchRestClient localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (SearchRestClient.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new SearchRestClient();
-                    instance.initiateClient();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new SearchRestClient();
+                    localReference.initiateClient();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

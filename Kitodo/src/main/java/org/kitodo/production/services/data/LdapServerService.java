@@ -81,14 +81,17 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      * @return unique instance of LdapServerService
      */
     public static LdapServerService getInstance() {
-        if (Objects.equals(instance, null)) {
+        LdapServerService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (LdapServerService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new LdapServerService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new LdapServerService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     private LdapServerService() {

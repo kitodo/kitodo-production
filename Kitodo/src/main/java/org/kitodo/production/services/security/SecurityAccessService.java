@@ -28,14 +28,17 @@ public class SecurityAccessService extends SecurityAccess {
      * @return unique instance of SecurityAccessService
      */
     public static SecurityAccessService getInstance() {
-        if (Objects.equals(instance, null)) {
+        SecurityAccessService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (SecurityAccessService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new SecurityAccessService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new SecurityAccessService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

@@ -53,15 +53,18 @@ public class IndexRestClient extends KitodoRestClient {
      * @return unique instance of IndexRestClient
      */
     public static IndexRestClient getInstance() {
-        if (Objects.equals(instance, null)) {
+        IndexRestClient localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (IndexRestClient.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new IndexRestClient();
-                    instance.initiateClient();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new IndexRestClient();
+                    localReference.initiateClient();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

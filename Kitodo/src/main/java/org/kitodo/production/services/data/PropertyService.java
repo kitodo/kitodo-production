@@ -53,14 +53,17 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      * @return unique instance of PropertyService
      */
     public static PropertyService getInstance() {
-        if (Objects.equals(instance, null)) {
+        PropertyService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (PropertyService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new PropertyService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new PropertyService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

@@ -63,14 +63,17 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * @return unique instance of ProcessService
      */
     public static ProjectService getInstance() {
-        if (Objects.equals(instance, null)) {
+        ProjectService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (ProjectService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new ProjectService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new ProjectService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

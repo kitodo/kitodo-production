@@ -168,14 +168,17 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      * @return unique instance of ProcessService
      */
     public static ProcessService getInstance() {
-        if (Objects.equals(instance, null)) {
+        ProcessService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (ProcessService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new ProcessService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new ProcessService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

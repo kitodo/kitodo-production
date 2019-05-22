@@ -26,14 +26,17 @@ public class RulesetManagementService {
      * @return unique instance of MetsService
      */
     public static RulesetManagementService getInstance() {
-        if (Objects.equals(instance, null)) {
+        RulesetManagementService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (RulesetManagementService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new RulesetManagementService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new RulesetManagementService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
     
     private RulesetManagementService() {
