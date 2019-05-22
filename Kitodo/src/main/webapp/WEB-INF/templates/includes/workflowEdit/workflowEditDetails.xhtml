@@ -24,7 +24,7 @@
     <h:outputScript library="js" name="modeler_custom.js" target="body"/>
     <h:outputScript library="js" name="modeler_min.js" target="body"/>
 
-    <p:panelGrid columns="2" layout="grid">
+    <p:panelGrid columns="2" layout="grid" id="workflowEditorHeader">
         <p:row>
             <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
             <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
@@ -50,7 +50,7 @@
         </p:row>
     </p:panelGrid>
 
-    <div id="workflow-editor-wrapper">
+    <p:panel id="workflowEditorWrapper">
         <div class="content" id="js-drop-zone">
 
             <div class="message intro">
@@ -74,5 +74,5 @@
             <div class="canvas" id="js-canvas"></div>
             <div class="properties-panel-parent" id="js-properties-panel"></div>
         </div>
-    </div>
+    </p:panel>
 </ui:composition>

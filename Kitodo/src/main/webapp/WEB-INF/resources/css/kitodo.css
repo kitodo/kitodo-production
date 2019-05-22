@@ -13,7 +13,12 @@
 global structure & normalize
 ----------------------------------------------------------------------*/
 
+html {
+    height: 100%;
+}
+
 body {
+    height: 100%;
     margin: 0;
     border: 0 none;
     padding: 0;
@@ -32,6 +37,15 @@ body .ui-widget {
 body.first-visit {
     animation-duration: 1s;
     animation-name: slidein;
+}
+
+.flex-container {
+    height: 100%;
+    overflow: auto;
+    z-index: 1;
+    position: relative;
+    display: flex;
+    flex-flow: column;
 }
 
 p, form, img, legend, ul, ol, li, h1, h2, h3, h4, h5, h6, dl, dt, dd {
@@ -108,6 +122,7 @@ Header
 ----------------------------------------------------------------------*/
 
 header {
+    flex: 0 1 auto;
     height: var(--input-height);
     margin-bottom: var(--default-full-size);
     z-index: 3;
@@ -600,10 +615,10 @@ Main
 ----------------------------------------------------------------------*/
 
 main {
+    flex: 1 1 auto;
     display: block;
     position: relative;
     z-index: 2;
-    margin-bottom: 100px;
     padding: 0;
     overflow-y: hidden;
 }
@@ -645,6 +660,12 @@ section#content-section {
     background: var(--cloudy-gray);
 }
 
+#listWrapper {
+    height: 100%;
+    position: absolute;
+    width: calc(100% - 32px);
+}
+
 #listWrapper,
 section#content-section {
     margin: auto 16px;
@@ -656,11 +677,28 @@ section#content-section {
 }
 
 #listWrapper > div {
+    height: 100%;
     padding: 0;
 }
 
+#editForm,
+#listWrapper_content {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+#editForm > .ui-tabs,
+#listWrapper_content > .ui-tabs {
+    flex: 1 1 auto;
+}
+
+#editForm > .ui-tabs > .ui-tabs-nav {
+    height: var(--input-height);
+}
+
 .content-header {
-    height: 36px;
+    flex: 0 1 36px;
     padding: 1.0em 16px;
     position: relative;
 }
@@ -679,6 +717,10 @@ section#content-section {
 .ui-selectbooleanbutton {
     float: right;
     margin-left: var(--default-full-size);
+}
+
+.error-messages {
+    flex: 0 1 auto;
 }
 
 #desktopGrid .content-body {
@@ -700,13 +742,6 @@ section#content-section {
 .input,
 .input.ui-inputnumber > input {
     width:100%;
-}
-
-.input.workflow-editor-checkbox {
-	width: auto;
-	padding-top: 16px;
-	padding-right: 10px;
-	margin-left: 10px;
 }
 
 .password {
@@ -812,8 +847,11 @@ section#content-section {
 }
 
 .ui-tabs-panels {
+    height: calc(100% - 39px);
     overflow-y: scroll;
     background: var(--pure-white);
+    position: absolute;
+    width: 100%;
 }
 
 .ui-tabs-panels.autoscroll {
@@ -1280,6 +1318,7 @@ form#metadata div label,
 
 #metadataEditorContainer {
     margin: auto 16px;
+    overflow: hidden;
     padding: 0;
 }
 
@@ -1655,22 +1694,53 @@ Column content
 }
 
 /*----------------------------------------------------------------------
+Workflow Editor
+----------------------------------------------------------------------*/
+
+#editForm\:workflowTabView > .ui-tabs-panels > .ui-tabs-panel {
+    display: flex;
+    flex-flow: column;
+}
+
+#editForm\:workflowTabView\:workflowEditorHeader {
+    flex: 0 1 auto;
+}
+
+#editForm\:workflowTabView\:workflowEditorWrapper {
+    flex: 1 1 auto;
+    padding: 0;
+    position: relative;
+}
+
+#editForm\:workflowTabView\:workflowEditorWrapper > .ui-panel-content {
+    height: 100%;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+}
+
+.input.workflow-editor-checkbox {
+    margin-left: 10px;
+    padding-right: 10px;
+    padding-top: 16px;
+    width: auto;
+}
+
+/*----------------------------------------------------------------------
 Footer
 ----------------------------------------------------------------------*/
 
 footer {
-    position: fixed;
+    flex: 0 1 auto;
     bottom: 0;
     width: 100%;
-    z-index: 1;
     background: url("#{resource['/images/background-bottom.svg']}") no-repeat transparent center bottom;
     background-size: 100% auto;
 }
 
 #footer-content {
     width: 100%;
-    /*background: var(--orange);*/
-    padding: 64px 0 16px 0;
+    padding: var(--default-full-size) 0;
     display: block;
     text-align: center;
     font-size: 0.8rem;
@@ -1792,6 +1862,7 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .ui-tabs .ui-tabs-panel {
+    min-height: calc(100% - 3px);
     padding: 3px 0 0 0;
     background: var(--pure-white);
 }
