@@ -829,9 +829,12 @@ public class ModsPlugin implements Plugin {
                         relatedDocument.getRootElement().addContent(child.detach());
                     }
                 } else {
+                    Namespace srwNamespace = Namespace.getNamespace("srw", "http://www.loc.gov/zing/srw/");
+                    Element recordElement = new Element("record", srwNamespace);
                     Namespace modsNamespace = Namespace.getNamespace("mods", "http://www.loc.gov/mods/v3");
                     Element newModsElement = new Element("mods", modsNamespace);
-                    Element modsElement = relatedDocument.getRootElement().addContent(newModsElement);
+                    recordElement.addContent(newModsElement);
+                    Element modsElement = relatedDocument.getRootElement().addContent(recordElement);
                     for (Element child : relatedChildren) {
                         newModsElement.addContent(child.detach());
                     }
