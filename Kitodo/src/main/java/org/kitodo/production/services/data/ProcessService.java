@@ -879,7 +879,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     boolean isProcessAssignedToOnlyOneLogisticBatch(List<BatchDTO> batchDTOList) {
         List<BatchDTO> result = new ArrayList<>(batchDTOList);
-        result.removeIf(batch -> !(batch.getType().equals("LOGISTIC")));
+        result.removeIf(batch -> !batch.getType().equals("LOGISTIC"));
         return result.size() == 1;
     }
 
@@ -894,7 +894,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         List<Batch> batches = process.getBatches();
         if (Objects.nonNull(type)) {
             List<Batch> result = new ArrayList<>(batches);
-            result.removeIf(batch -> !(batch.getType().equals(type)));
+            result.removeIf(batch -> !batch.getType().equals(type));
             return result;
         }
         return batches;
@@ -1105,7 +1105,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public URI getProcessURI(Process process) {
         try {
-            return new URI("mysql", null, "//", "process.id=" + process.getId(), null);
+            return new URI("database", null, "//", "process.id=" + process.getId(), null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
@@ -1246,12 +1246,12 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     private int calculateProgressClosed(Map<String, Integer> tasks) {
-        return (tasks.get(CLOSED) * 100)
+        return tasks.get(CLOSED) * 100
                 / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private int calculateProgressInProcessing(Map<String, Integer> tasks) {
-        return (tasks.get(IN_PROCESSING) * 100)
+        return tasks.get(IN_PROCESSING) * 100
                 / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
@@ -1261,7 +1261,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     private int calculateProgressLocked(Map<String, Integer> tasks) {
-        return (tasks.get(LOCKED) * 100)
+        return tasks.get(LOCKED) * 100
                 / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
@@ -1732,7 +1732,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *             if the URI references a wrong class / table
      */
     public int processIdFromUri(URI uri) {
-        if (!"mysql".equals(uri.getScheme())) {
+        if (!"database".equals(uri.getScheme())) {
             throw new SecurityException("Protocol not allowed: " + uri.getScheme());
         }
         if (Objects.nonNull(uri.getAuthority()) || Objects.nonNull(uri.getPath()) && !uri.getPath().isEmpty()) {

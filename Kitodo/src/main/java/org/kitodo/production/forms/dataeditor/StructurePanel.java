@@ -479,7 +479,7 @@ public class StructurePanel implements Serializable {
      *            number of the record of the process of the child
      *
      */
-    private List<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
+    private static List<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
             IncludedStructuralElement includedStructuralElement, int number) {
 
         if (Objects.nonNull(includedStructuralElement.getLink())) {
@@ -498,7 +498,7 @@ public class StructurePanel implements Serializable {
             List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
                 includedStructuralElementChild, number);
             if (!includedStructuralElementList.isEmpty()) {
-                includedStructuralElementList.add(0, includedStructuralElementChild);
+                includedStructuralElementList.add(0, includedStructuralElement);
                 return includedStructuralElementList;
             }
         }
