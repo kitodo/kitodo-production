@@ -78,9 +78,17 @@ public class ProcessServiceTest {
         process.setProcessBaseUri(URI.create("relative/path/no/ending/slash"));
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(process);
         Assert.assertEquals(URI.create("relative/path/no/ending/slash/meta.xml"), uri);
-    
+
         process.setProcessBaseUri(URI.create("relative/path/with/ending/slash/"));
         uri = ServiceManager.getProcessService().getMetadataFileUri(process);
         Assert.assertEquals(URI.create("relative/path/with/ending/slash/meta.xml"), uri);
+    }
+
+    @Test
+    public void testGetProcessURI() {
+        Process process = new Process();
+        process.setId(42);
+        URI uri = ServiceManager.getProcessService().getProcessURI(process);
+        Assert.assertEquals(URI.create("database://?process.id=42"), uri);
     }
 }
