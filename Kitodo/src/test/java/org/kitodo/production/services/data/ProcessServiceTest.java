@@ -11,21 +11,21 @@
 
 package org.kitodo.production.services.data;
 
+import java.net.URI;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.services.ServiceManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class ProcessServiceTest {
 
     @Test
     public void shouldGetSortedCorrectionSolutionMessages() {
-        ProcessDTO processDTO = new ProcessDTO();
+        final ProcessDTO processDTO = new ProcessDTO();
 
         PropertyDTO firstPropertyDTO = new PropertyDTO();
         firstPropertyDTO.setId(1);
@@ -65,8 +65,22 @@ public class ProcessServiceTest {
 
         List<PropertyDTO> propertiesDTO = ServiceManager.getProcessService().getSortedCorrectionSolutionMessages(processDTO);
 
-        assertEquals("Size of sorted correction messages is not equal to given size!", 4, propertiesDTO.size());
-        assertNull("Sorted correction messages are not sorted correctly!", propertiesDTO.get(0).getCreationDate());
-        assertEquals("Sorted correction messages are not sorted correctly!", "2017-12-05", propertiesDTO.get(3).getCreationDate());
+        Assert.assertEquals("Size of sorted correction messages is not equal to given size!", 4, propertiesDTO.size());
+        Assert.assertNull("Sorted correction messages are not sorted correctly!",
+            propertiesDTO.get(0).getCreationDate());
+        Assert.assertEquals("Sorted correction messages are not sorted correctly!", "2017-12-05",
+            propertiesDTO.get(3).getCreationDate());
+    }
+
+    @Test
+    public void testGetMetadataFileUri() {
+        Process process = new Process();
+        process.setProcessBaseUri(URI.create("relative/path/no/ending/slash"));
+        URI uri = ServiceManager.getProcessService().getMetadataFileUri(process);
+        Assert.assertEquals(URI.create("relative/path/no/ending/slash/meta.xml"), uri);
+    
+        process.setProcessBaseUri(URI.create("relative/path/with/ending/slash/"));
+        uri = ServiceManager.getProcessService().getMetadataFileUri(process);
+        Assert.assertEquals(URI.create("relative/path/with/ending/slash/meta.xml"), uri);
     }
 }
