@@ -32,7 +32,7 @@ public class WorkflowConditionService extends SearchDatabaseService<WorkflowCond
      */
     public static WorkflowConditionService getInstance() {
         if (Objects.equals(instance, null)) {
-            synchronized (ClientService.class) {
+            synchronized (WorkflowConditionService.class) {
                 if (Objects.equals(instance, null)) {
                     instance = new WorkflowConditionService();
                 }
