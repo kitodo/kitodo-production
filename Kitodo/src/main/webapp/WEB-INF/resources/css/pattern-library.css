@@ -90,7 +90,7 @@ input.ui-state-error {
 .ui-widget-content .ui-state-focus,
 .ui-widget-header .ui-state-focus {
     background: var(--trans-blue);
-    border: 0px;
+    border: 0;
     box-shadow: 0 0 0;
 }
 
@@ -279,7 +279,7 @@ a.plain.ui-state-disabled,
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
-    border: 0px none;
+    border: 0 none;
     text-shadow: 0 0 0 transparent;
     box-shadow: 0 0 0 transparent;
 }
@@ -491,7 +491,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-slider {
     background: var(--cloudy-gray);
     box-shadow: 0 0 0 transparent;
-    border: 0px none;
+    border: 0 none;
 }
 
 .ui-slider .ui-slider-handle {
@@ -643,18 +643,18 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-treetable tfoot th,
 .ui-treetable tbody td,
 .ui-treetable tfoot td {
-    border: 0px;
+    border: 0;
     padding: 8px 16px;
 }
 
 .ui-panelgrid .ui-panelgrid-cell {
-    border: 0px;
+    border: 0;
     padding: 8px;
 }
 
 
 tr.ui-widget-content {
-    border: 0px;
+    border: 0;
 }
 
 tr.ui-widget-content:not(:first-child) {
@@ -667,7 +667,7 @@ div.row-expansion-wrapper tr.ui-widget-content {
 }
 
 tbody.ui-widget-content {
-    border: 0px;
+    border: 0;
 }
 
 .ui-widget-content {
@@ -680,7 +680,7 @@ tbody.ui-widget-content {
     color: var(--carbon-blue);
     background: var(--cloudy-gray);
     text-align: left !important;
-    border: 0px;
+    border: 0;
 }
 
 .ui-treenode .ui-state-hover {
@@ -696,7 +696,7 @@ tbody.ui-widget-content {
 .ui-widget-header {
     background: var(--medium-gray);
     color: var(--pure-white);
-    border: 0px;
+    border: 0;
 }
 
 .ui-datatable .ui-corner-top,
@@ -854,7 +854,7 @@ tr.ui-expanded-row-content > td {
 
 tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-dialog-content .ui-panelgrid .ui-panelgrid-cell {
-    border: 0px;
+    border: 0;
     padding: 8px 10px;
 }
 
@@ -1048,16 +1048,16 @@ Popup dialogs
 
 .ui-tabs .ui-tabs-nav li,
 .ui-tabmenu .ui-widget-header .ui-state-default {
-    border: 0px;
     border-top: 3px solid var(--medium-gray);
+    border: 0;
     background: transparent;
     margin-bottom: -1px;
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected,
 .ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
-    border: 0px;
     border-top: 3px solid var(--orange);
+    border: 0;
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
