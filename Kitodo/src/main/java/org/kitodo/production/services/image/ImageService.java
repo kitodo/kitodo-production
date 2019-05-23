@@ -27,7 +27,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class ImageService {
 
     private ImageManagementInterface imageManagement;
-    private static ImageService instance = null;
+    private static volatile ImageService instance = null;
 
     private ImageService() {
         imageManagement = new KitodoServiceLoader<ImageManagementInterface>(ImageManagementInterface.class)

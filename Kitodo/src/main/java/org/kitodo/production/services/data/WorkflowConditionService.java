@@ -23,7 +23,7 @@ import org.primefaces.model.SortOrder;
 
 public class WorkflowConditionService extends SearchDatabaseService<WorkflowCondition, WorkflowConditionDAO> {
 
-    private static WorkflowConditionService instance = null;
+    private static volatile WorkflowConditionService instance = null;
 
     /**
      * Return singleton variable of type WorkflowConditionService.

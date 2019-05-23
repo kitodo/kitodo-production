@@ -25,7 +25,7 @@ import org.primefaces.model.SortOrder;
 
 public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
 
-    private static ClientService instance = null;
+    private static volatile ClientService instance = null;
 
     /**
      * Return singleton variable of type ClientService.

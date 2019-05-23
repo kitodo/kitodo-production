@@ -38,7 +38,7 @@ import org.primefaces.model.SortOrder;
 
 public class PropertyService extends TitleSearchService<Property, PropertyDTO, PropertyDAO> {
 
-    private static PropertyService instance = null;
+    private static volatile PropertyService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.

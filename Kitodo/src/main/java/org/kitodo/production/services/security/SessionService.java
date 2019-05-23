@@ -25,7 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class SessionService {
 
-    private static SessionService instance = null;
+    private static volatile SessionService instance = null;
     private SessionRegistry sessionRegistry;
 
     /**

@@ -28,7 +28,7 @@ import org.primefaces.model.SortOrder;
 
 public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
 
-    private static RoleService instance = null;
+    private static volatile RoleService instance = null;
 
     private static final String CLIENT_ID = "clientId";
 

@@ -58,7 +58,7 @@ import org.primefaces.model.SortOrder;
 public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
-    private static FilterService instance = null;
+    private static volatile FilterService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.

@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 
 public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, WorkflowDAO> {
 
-    private static WorkflowService instance = null;
+    private static volatile WorkflowService instance = null;
 
     /**
      * Private constructor with Searcher and Indexer assigning.

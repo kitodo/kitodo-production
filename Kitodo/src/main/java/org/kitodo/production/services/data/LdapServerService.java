@@ -72,7 +72,7 @@ import org.primefaces.model.SortOrder;
 public class LdapServerService extends SearchDatabaseService<LdapServer, LdapServerDAO> {
 
     private static final Logger logger = LogManager.getLogger(LdapServerService.class);
-    private static LdapServerService instance = null;
+    private static volatile LdapServerService instance = null;
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     /**

@@ -41,7 +41,7 @@ public class IndexRestClient extends KitodoRestClient {
     /**
      * IndexRestClient singleton.
      */
-    private static IndexRestClient instance = null;
+    private static volatile IndexRestClient instance = null;
     private final Object lock = new Object();
 
     private IndexRestClient() {

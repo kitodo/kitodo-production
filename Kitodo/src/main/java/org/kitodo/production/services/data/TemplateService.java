@@ -53,7 +53,7 @@ import org.primefaces.model.SortOrder;
 public class TemplateService extends ClientSearchService<Template, TemplateDTO, TemplateDAO> {
 
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
-    private static TemplateService instance = null;
+    private static volatile TemplateService instance = null;
     private boolean showInactiveTemplates = false;
 
     /**

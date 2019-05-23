@@ -68,7 +68,7 @@ public class WorkflowControllerService {
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
-    private static WorkflowControllerService instance = null;
+    private static volatile WorkflowControllerService instance = null;
     private TaskService taskService = ServiceManager.getTaskService();
 
     /**

@@ -24,7 +24,7 @@ import org.primefaces.model.SortOrder;
 
 public class AuthorityService extends SearchDatabaseService<Authority, AuthorityDAO> {
 
-    private static AuthorityService instance = null;
+    private static volatile AuthorityService instance = null;
 
     private static final String GLOBAL_AUTHORITY_SUFFIX = "_globalAssignable";
     private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";

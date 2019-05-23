@@ -33,7 +33,7 @@ import org.primefaces.model.SortOrder;
 
 public class ListColumnService extends SearchDatabaseService<ListColumn, ListColumnDAO> {
 
-    private static ListColumnService instance = null;
+    private static volatile ListColumnService instance = null;
 
     /**
      * Constructor necessary to use searcher in child classes.

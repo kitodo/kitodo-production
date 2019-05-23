@@ -24,7 +24,7 @@ import org.primefaces.model.SortOrder;
 
 public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
 
-    private static CommentService instance = null;
+    private static volatile CommentService instance = null;
 
     /**
      * Constructor.
