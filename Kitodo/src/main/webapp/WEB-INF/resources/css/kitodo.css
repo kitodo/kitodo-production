@@ -292,9 +292,7 @@ body.first-visit #portal-header {
     -webkit-transition: max-height 0.5s linear;
     -moz-transition: max-height 0.5s linear;
     transition: max-height 0.5s linear;
-    -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5);
-    -moz-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5);
-    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5);
+    box-shadow: var(--second-level-shadow);
 }
 
 #header-nav li ul li {
@@ -397,7 +395,7 @@ body.first-visit #portal-header {
 }
 
 #nav-user li.logout a {
-    border: solid 1px var(--pure-white);
+    border: solid var(--default-border-width) var(--pure-white);
     border-radius: var(--default-border-radius);
     color: var(--pure-white);
     display: inline-block;
@@ -656,7 +654,7 @@ section#content-section {
 }
 
 #desktopGrid .ui-datatable-scrollable-header-box {
-    border-top: 3px solid var(--medium-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
     background: var(--cloudy-gray);
 }
 
@@ -671,9 +669,7 @@ section#content-section {
     margin: auto 16px;
     border-radius: var(--default-border-radius);
     padding: 0;
-    -webkit-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
-    -moz-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
-    box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
+    box-shadow: var(--default-shadow);
 }
 
 #listWrapper > div {
@@ -784,11 +780,11 @@ section#content-section {
 
 #filterMenu > div > .ui-inputfield {
     width: 250px;
-    border-radius: 3px 0 0 3px !important;
+    border-radius: var(--default-border-radius) 0 0 var(--default-border-radius);
 }
 
 #filterMenu > div > .ui-button:nth-child(2) {
-    border-radius: 0 3px 3px 0;
+    border-radius: 0 var(--default-border-radius) var(--default-border-radius) 0;
     margin-left: 3px;
 }
 
@@ -833,8 +829,8 @@ section#content-section {
 #filterMenu .ui-overlaypanel li:first-child a {
     width: 100%;
     box-sizing: border-box;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
+    border-top-left-radius: var(--default-border-radius);
+    border-top-right-radius: var(--default-border-radius);
 }
 
 #filterMenu .ui-overlaypanel li .filter-delete {
@@ -847,9 +843,9 @@ section#content-section {
 }
 
 .ui-tabs-panels {
-    height: calc(100% - 39px);
-    overflow-y: scroll;
     background: var(--pure-white);
+    height: calc(100% - var(--input-height) - var(--contrast-border-width));
+    overflow-y: scroll;
     position: absolute;
     width: 100%;
 }
@@ -864,7 +860,7 @@ section#content-section {
 }
 
 .ui-tabs-panel thead {
-    border-top: 3px solid var(--medium-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
 }
 
 .mets-file-groups .ui-datatable table {
@@ -933,9 +929,7 @@ main i.fa {
     background: var(--pure-white);
     border-radius: var(--default-border-radius);
     padding: 32px 32px 0 32px;
-    -webkit-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
-    -moz-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
-    box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
+    box-shadow: var(--default-shadow);
     max-width: 560px;
     margin: 0 auto;
 }
@@ -946,7 +940,7 @@ main i.fa {
 }
 
 #login-section input[id=username], #login-section input[type=password] {
-    border: 1px solid var(--blue);
+    border: solid var(--default-border-width) var(--blue);
     border-radius: var(--default-border-radius);
     padding: 9px 10px;
     line-height: 0;
@@ -957,7 +951,7 @@ main i.fa {
 }
 
 #login-section input[type=text]:hover {
-    border: 1px solid var(--focused-blue);
+    border: solid var(--default-border-width) var(--focused-blue);
     color: var(--focused-blue);
 }
 
@@ -968,7 +962,7 @@ main i.fa {
 #login-section button {
     background: var(--blue);
     border-radius: var(--default-border-radius);
-    border: 1px solid var(--blue);
+    border: solid var(--default-border-width) var(--blue);
     color: var(--pure-white);
     padding: 8px 10px;
 }
@@ -986,7 +980,7 @@ main i.fa {
 
 #login-section button:hover {
     background: var(--focused-blue);
-    border: 1px solid var(--focused-blue);
+    border: solid var(--default-border-width) var(--focused-blue);
     cursor: pointer;
 }
 
@@ -1003,7 +997,7 @@ main i.fa {
     color: var(--cloudy-gray);
     hyphens: auto;
     line-height: 22px;
-    border-radius: 0 0 3px 3px;
+    border-radius: 0 0 var(--default-border-radius) var(--default-border-radius);
 }
 
 .legal-dialog {
@@ -1138,7 +1132,7 @@ Metadata Editor
 #metadataEditorWrapper {
     height: 700px;
     white-space: nowrap;
-    border-top: solid 3px var(--medium-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
 }
 
 form#metadata,
@@ -1611,7 +1605,7 @@ Column content
 
 .thumbnail {
     height: 60px;
-    border: 1px solid var(--carbon-blue);
+    border: solid var(--default-border-width) var(--carbon-blue);
 }
 
 .thumbnail.active {
@@ -1664,7 +1658,7 @@ Column content
     background-color: var(--focused-blue);
     color: var(--pure-white);
     padding: 5px;
-    border-top: 3px solid var(--blue);
+    border-top: solid var(--contrast-border-width) var(--blue);
 }
 
 #imagePreviewForm\:structuredPages ul {
@@ -1793,7 +1787,7 @@ footer {
 }
 
 .ui-selectmanymenu.ui-widget-content, .ui-selectonelistbox.ui-widget-content {
-    border: 1px solid var(--focused-blue) !important;
+    border: solid var(--default-border-width) var(--focused-blue);
 }
 
 .ui-selectmanymenu, .ui-selectonelistbox {
@@ -1858,12 +1852,13 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     color: var(--medium-gray);
-    border-top: 3px solid var(--medium-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
 }
 
 .ui-tabs .ui-tabs-panel {
-    min-height: calc(100% - 3px);
-    padding: 3px 0 0 0;
+    background: var(--pure-white);
+    min-height: calc(100% - var(--contrast-border-width));
+    padding: var(--contrast-border-width) 0 0 0;
     background: var(--pure-white);
 }
 
@@ -1936,7 +1931,7 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .ot-folder-use {
-    border-top: 3px solid var(--medium-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
     font-weight: bold;
     padding: .75em 1.5em;
 }
@@ -2118,6 +2113,6 @@ Print Styles
     }
 
     figure img {
-        border: 1px solid #000;
+        border: solid var(--default-border-width) #000;
     }
 }

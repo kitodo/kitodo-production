@@ -36,6 +36,12 @@
     --input-padding: 10px;
     --input-padding-none: 0;
     --default-border-radius: 3px;
+    --default-border-width: 1px;
+    --contrast-border-width: 3px;
+
+    /* Shadows */
+    --default-shadow: 0 3px 3px 0 rgba(153, 153, 153, .75);
+    --second-level-shadow: 0 10px 10px 0 rgba(153, 153, 153, .75);
 }
 
 body {
@@ -130,7 +136,7 @@ input.ui-state-error {
 .grid > .grid-item > .ui-panel-content {
     background-color: var(--pure-white) !important;
     border-radius: var(--default-border-radius);
-    box-shadow: 0 3px 3px 0 rgba(153, 153, 153, .75);
+    box-shadow: var(--default-shadow);
 );
     margin: var(--default-half-size);
     width: calc(100% - var(--default-half-size));
@@ -166,7 +172,7 @@ input.ui-state-error {
 .ui-widget-content .ui-button.secondary,
 .ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label {
     background: var(--pure-white);
-    border: solid 1px var(--light-blue);
+    border: solid var(--default-border-width) var(--light-blue);
     color: var(--light-blue);
 }
 
@@ -178,7 +184,7 @@ input.ui-state-error {
 .ui-button.secondary.ui-state-hover,
 .ui-widget-content .ui-button.secondary.ui-state-hover {
     background: var(--pure-white);
-    border: solid 1px var(--focused-blue);
+    border: solid var(--default-border-width) var(--focused-blue);
     color: var(--focused-blue);
 }
 
@@ -390,7 +396,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-selectcheckboxmenu-multiple-container.ui-inputfield,
 .ui-picklist-list-wrapper,
 .ui-widget-content .ui-inputfield {
-    border: 1px solid var(--blue);
+    border: solid var(--default-border-width) var(--blue);
     box-shadow: 0 0 0 transparent;
     box-sizing: border-box;
     color: var(--blue);
@@ -439,7 +445,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-selectonemenu .ui-selectonemenu-label,
 .ui-selectonemenu .ui-selectonemenu-trigger {
     background: var(--pure-white);
-    border: 1px solid var(--blue);
+    border: solid var(--default-border-width) var(--blue);
     padding: .5em var(--input-padding);
 }
 
@@ -504,7 +510,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .ui-chkbox:not(.switch) .ui-chkbox-box {
     background: var(--pure-white);
-    border: solid 1px var(--blue);
+    border: solid var(--default-border-width) var(--blue);
     border-radius: var(--default-border-radius);
 }
 
@@ -706,7 +712,7 @@ tbody.ui-widget-content {
 .ui-tabs-nav .ui-corner-top,
 .ui-tabmenu .ui-corner-all,
 .ui-datatable-tablewrapper {
-    border-radius: 0 0 3px 3px;
+    border-radius: 0 0 var(--default-border-radius) var(--default-border-radius);
 }
 
 .ui-datatable-odd,
@@ -839,7 +845,7 @@ tr.ui-expanded-row-content.row-hover {
 
 .ui-picklist-buttons-cell .ui-button {
     background-color: var(--cloudy-gray) !important;
-    border: 1px solid var(--medium-gray);
+    border: solid var(--default-border-width) var(--medium-gray);
 }
 
 
@@ -919,7 +925,7 @@ Popup dialogs
 }
 
 .ui-dialog .ui-datatable-tablewrapper thead tr {
-    border-top: 3px solid var(--medium-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
 }
 
 .ui-dialog .ui-datatable-tablewrapper tbody tr[role='row'] {
@@ -1020,13 +1026,13 @@ Popup dialogs
 
 .ui-tabs .ui-tabs-nav,
 .ui-tabmenu .ui-widget-header {
-    border-top: 3px solid var(--medium-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
     background: var(--cloudy-gray);
 }
 
 .ui-tabs .ui-tabs-nav li,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
-    margin: -3px .2em 1px 0;
+    margin: calc(var(--contrast-border-width) * -1) .2em 1px 0;
 }
 
 .ui-tabs .ui-tabs-nav li a,
@@ -1048,16 +1054,16 @@ Popup dialogs
 
 .ui-tabs .ui-tabs-nav li,
 .ui-tabmenu .ui-widget-header .ui-state-default {
-    border-top: 3px solid var(--medium-gray);
     border: 0;
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
     background: transparent;
     margin-bottom: -1px;
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected,
 .ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
-    border-top: 3px solid var(--orange);
     border: 0;
+    border-top: solid var(--contrast-border-width) var(--orange);
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
@@ -1087,7 +1093,7 @@ Popup dialogs
     opacity: 1;
     color: var(--pure-white);
     border: none;
-    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: var(--second-level-shadow);
 }
 
 .ui-growl-item .ui-growl-icon-close[style] {
