@@ -57,7 +57,7 @@
                          style="display:none;"/>
         <p:button id="cancel" value="#{msgs.cancel}"
                   outcome="users" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -143,7 +143,7 @@
                                              disabled="#{isViewMode}"
                                              required="#{empty param['editForm:saveButtonToggler']}">
                                 <f:selectItems value="#{LdapServerForm.passwordEncryption}" var="encryption"
-                                               itemValue="#{encryption.value}" itemLabel="#{encryption.title}"/>
+                                               itemValue="#{encryption}" />
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>

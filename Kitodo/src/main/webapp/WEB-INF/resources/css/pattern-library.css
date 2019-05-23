@@ -35,6 +35,7 @@
     --input-height: 36px;
     --input-padding: 10px;
     --input-padding-none: 0;
+    --default-border-radius: 3px;
 }
 
 body {
@@ -391,6 +392,11 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     box-sizing: border-box;
 }
 
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-label {
+    height: 100%;
+    box-sizing: border-box;
+}
+
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label,
 .ui-selectonemenu .ui-selectonemenu-label,
 .ui-selectonemenu .ui-selectonemenu-trigger {
@@ -458,18 +464,46 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     display: none;
 }
 
-.switch.ui-chkbox .ui-chkbox-box,
-.switch.ui-chkbox .ui-chkbox-box.ui-state-hover {
-    width: 40px;
-    height: 40px;
-    border-radius: 3px;
-    background: var(--orange);
-    cursor: pointer;
+.ui-chkbox:not(.switch) .ui-chkbox-box {
+    background: var(--pure-white);
+    border: solid 1px var(--blue);
+    border-radius: var(--default-border-radius);
 }
 
-.ui-chkbox-icon {
-    border: 1px solid var(--blue);
-    border-radius: 3px;
+.ui-chkbox:not(.switch) .ui-chkbox-box .ui-chkbox-icon {
+    background: none;
+    line-height: var(--default-full-size);
+    text-align: center;
+    text-indent: 0;
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-hover {
+    border-color: var(--focused-blue);
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-active .ui-chkbox-icon::before {
+    content: '\f00c';
+    color: var(--green);
+    font-family: "FontAwesome";
+    font-size: 14px;
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled {
+    background: var(--cloudy-gray);
+    border-color: var(--cloudy-gray);
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon::before {
+    display: none;
+}
+
+.switch.ui-chkbox .ui-chkbox-box,
+.switch.ui-chkbox .ui-chkbox-box.ui-state-hover {
+    width: var(--input-height);
+    height: var(--input-height);
+    border-radius: var(--default-border-radius);
+    background: var(--orange);
+    cursor: pointer;
 }
 
 .switch.ui-chkbox .ui-chkbox-icon {
@@ -494,13 +528,13 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     box-sizing: border-box;
     content: "";
     display: block;
-    height: 16px;
+    height: 14px;
     left: -2px;
     position: absolute;
     top: -2px;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
-    width: 16px;
+    width: 14px;
 }
 
 .switch.ui-chkbox .ui-chkbox-box.ui-state-active,
@@ -514,7 +548,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
     background: var(--green);
-    left: calc(100% - 16px + 2px);
+    left: calc(100% - 14px + 2px);
 }
 
 .switch.ui-chkbox .ui-chkbox-box.disabled,
@@ -1007,7 +1041,7 @@ Popup dialogs
 .ui-growl-item {
     background: var(--green);
     text-shadow: 0 0 0 transparent;
-    border-radius: 3px;
+    border-radius: var(--default-border-radius);
     padding: 16px;
 }
 
