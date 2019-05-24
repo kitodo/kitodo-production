@@ -479,7 +479,7 @@ public class AddDocStrucTypeDialog {
             } else {
                 Collections.sort(processSelectItems, (one, another) -> one.getLabel().compareTo(another.getLabel()));
             }
-        } catch (RuntimeException | DataException e) {
+        } catch (DataException e) {
             logger.catching(e);
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.error", e.getMessage()));
         }
@@ -566,7 +566,7 @@ public class AddDocStrucTypeDialog {
                 MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
                     orderSpinnerValue, processSelectSelectedItem);
                 dataEditor.getStructurePanel().show(true);
-            } catch (RuntimeException | DAOException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
             if (processNumber.trim().equals(processSelectSelectedItem.toString()) && hint) {

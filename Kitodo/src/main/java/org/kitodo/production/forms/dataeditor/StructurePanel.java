@@ -449,10 +449,7 @@ public class StructurePanel implements Serializable {
      */
     private void addParentLinksRecursive(Process child, LinkedList<DefaultTreeNode> result) {
         Process parent = child.getParent();
-        /*
-         * Termination condition of recursion, if the process has no parent
-         * process.
-         */
+        // Termination condition of recursion, if the process has no parent
         if (Objects.isNull(parent)) {
             return;
         }

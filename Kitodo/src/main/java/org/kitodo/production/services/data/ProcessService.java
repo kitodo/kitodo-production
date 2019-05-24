@@ -1155,15 +1155,15 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     /**
      * Returns a URI that identifies the process. The URI has the form
-     * {@code mysql://?process.id=42}, where {@code 42} is the process ID.
+     * {@code database://?process.id=42}, where {@code 42} is the process ID.
      *
-     * @param id
+     * @param processId
      *            process ID for which a URI is to be formed that identifies it
      * @return a URI that identifies the process
      */
-    public URI getProcessURI(Integer id) {
+    public URI getProcessURI(Integer processId) {
         try {
-            return new URI("database", null, "//", "process.id=" + id, null);
+            return new URI("database", null, "//", "process.id=" + processId, null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
@@ -1707,15 +1707,15 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      * Returns the type of the top element of the root element, and thus the
      * type of the workpiece of the process.
      *
-     * @param process
+     * @param processId
      *            process whose root type is to be determined
      * @return the type of root element of the root element of the workpiece
      * @throws RuntimeException
      *             because it is used in a parallel stream
      */
-    public String getBaseType(Integer id) {
+    public String getBaseType(Integer processId) {
         try {
-            return getBaseType(getById(id));
+            return getBaseType(getById(processId));
         } catch (IOException | DAOException e) {
             throw new RuntimeException(e);
         }
