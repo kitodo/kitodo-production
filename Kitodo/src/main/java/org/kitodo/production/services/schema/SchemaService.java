@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.schema;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map.Entry;
@@ -19,12 +20,15 @@ import java.util.Optional;
 
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.LinkingMode;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyInnerPhysicalDocStructHelper;
@@ -78,6 +82,14 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "purlUrl", vp.replace(process.getProject().getMetsPurl()));
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
+        try {
+            convertChildrenLinksForExportRecursive(workpiece, workpiece.getRootElement(), prefs);
+            if (Objects.nonNull(process.getParent())) {
+                addParentLinkForExport(prefs, workpiece, process.getParent());
+            }
+        } catch (DAOException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void set(Workpiece workpiece, MdSec domain, String key, String value) {
@@ -139,7 +151,7 @@ public class SchemaService {
 
     /**
      * Returns the USE="LOCAL" subfolder.
-     * 
+     *
      * @param process
      *            process whose USE="LOCAL" subfolder shall be returned
      * @return the subfolder with USE="LOCAL"
@@ -158,7 +170,7 @@ public class SchemaService {
 
     /**
      * Adds a use to a media unit.
-     * 
+     *
      * @param useFolder
      *            use folder for the use
      * @param canonical
@@ -172,5 +184,42 @@ public class SchemaService {
         mediaVariant.setMimeType(useFolder.getFolder().getMimeType());
         URI mediaFile = useFolder.getUri(canonical);
         mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
+    }
+
+    private void convertChildrenLinksForExportRecursive(Workpiece workpiece, IncludedStructuralElement structure,
+            LegacyPrefsHelper prefs) throws DAOException, IOException {
+
+        LinkedMetsResource link = structure.getLink();
+        if (Objects.nonNull(link)) {
+            int linkedProcessId = ServiceManager.getProcessService().processIdFromUri(link.getUri());
+            Process process = ServiceManager.getProcessService().getById(linkedProcessId);
+            setLinkForExport(structure, process, prefs, workpiece);
+        }
+        for (IncludedStructuralElement child : structure.getChildren()) {
+            convertChildrenLinksForExportRecursive(workpiece, child, prefs);
+        }
+    }
+
+    private void addParentLinkForExport(LegacyPrefsHelper prefs, Workpiece workpiece, Process parent)
+            throws IOException {
+
+        IncludedStructuralElement linkHolder = new IncludedStructuralElement();
+        linkHolder.setLink(new LinkedMetsResource());
+        setLinkForExport(linkHolder, parent, prefs, workpiece);
+        linkHolder.getChildren().add(workpiece.getRootElement());
+        workpiece.setRootElement(linkHolder);
+    }
+
+    private void setLinkForExport(IncludedStructuralElement structure, Process process, LegacyPrefsHelper prefs,
+            Workpiece workpiece) throws IOException {
+
+        LinkedMetsResource link = structure.getLink();
+        link.setLoctype("URL");
+        String uriWithVariables = process.getProject().getMetsPointerPath();
+        VariableReplacer variableReplacer = new VariableReplacer(
+                new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset(), workpiece), prefs, process, null);
+        String linkUri = variableReplacer.replace(uriWithVariables);
+        link.setUri(URI.create(linkUri));
+        structure.setType(ServiceManager.getProcessService().getBaseType(process));
     }
 }

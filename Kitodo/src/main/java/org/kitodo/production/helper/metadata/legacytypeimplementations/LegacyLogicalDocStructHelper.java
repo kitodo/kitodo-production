@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,7 +79,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         this.ruleset = ruleset;
         this.priorityList = priorityList;
         this.parent = parent;
-        this.divisionView = ruleset.getStructuralElementView(includedStructuralElement.getType(), "edit", priorityList);
+        String type = includedStructuralElement.getType();
+        this.divisionView = ruleset.getStructuralElementView(Objects.nonNull(type) ? type : "", "edit", priorityList);
     }
 
     @Override
