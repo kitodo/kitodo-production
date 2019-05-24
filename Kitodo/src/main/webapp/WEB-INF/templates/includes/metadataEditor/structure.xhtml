@@ -23,6 +23,22 @@
         <!-- Logical Tree -->
         <h:panelGroup layout="block" style="background-color: var(--cloudy-gray);"
                       styleClass="ui-widget-content columnHeadingWrapper">#{msgs.logical} #{msgs.pageStructure}</h:panelGroup>
+        <p:repeat var="tree" value="#{DataEditorForm.structurePanel.parentTrees}">
+            <p:tree value="#{tree}"
+                    var="logicalNode"
+                    disabled="#{readonly}"
+                    selection="#{DataEditorForm.structurePanel.selectedLogicalNode}">
+                <p:treeNode expandedIcon="ui-icon-document"
+                            collapsedIcon="ui-icon-document">
+                    <h:outputText value="#{logicalNode.label}"
+                                  style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>
+                    <h:outputText value=" 🔗" rendered="#{logicalNode.linked}"/>
+                    <h:outputText value=" ⚠️" rendered="#{logicalNode.undefined}"
+                                  style="background-color: gold;"
+                                  title="#{msgs['dataEditor.undefinedStructure']}"/>
+                </p:treeNode>
+            </p:tree>
+        </p:repeat>
         <p:tree id="logicalTree"
                 value="#{DataEditorForm.structurePanel.logicalTree}"
                 disabled="#{readOnly}"
