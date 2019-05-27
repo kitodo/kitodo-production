@@ -51,14 +51,17 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
      * @return unique instance of WorkflowService
      */
     public static WorkflowService getInstance() {
-        if (Objects.equals(instance, null)) {
+        WorkflowService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (WorkflowService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new WorkflowService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new WorkflowService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

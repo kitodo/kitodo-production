@@ -48,14 +48,17 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
      * @return unique instance of ListColumnService
      */
     public static ListColumnService getInstance() {
-        if (Objects.isNull(instance)) {
+        ListColumnService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (ListColumnService.class) {
-                if (Objects.isNull(instance)) {
-                    instance = new ListColumnService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new ListColumnService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

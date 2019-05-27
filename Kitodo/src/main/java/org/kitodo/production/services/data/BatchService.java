@@ -57,14 +57,17 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return unique instance of BatchService
      */
     public static BatchService getInstance() {
-        if (Objects.equals(instance, null)) {
+        BatchService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (BatchService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new BatchService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new BatchService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

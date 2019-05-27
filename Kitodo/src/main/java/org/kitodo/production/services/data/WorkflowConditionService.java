@@ -31,14 +31,17 @@ public class WorkflowConditionService extends SearchDatabaseService<WorkflowCond
      * @return unique instance of WorkflowConditionService
      */
     public static WorkflowConditionService getInstance() {
-        if (Objects.equals(instance, null)) {
+        WorkflowConditionService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (WorkflowConditionService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new WorkflowConditionService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new WorkflowConditionService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

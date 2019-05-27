@@ -39,14 +39,17 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
      * @return unique instance of TaskService
      */
     public static CommentService getInstance() {
-        if (Objects.equals(instance, null)) {
+        CommentService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (CommentService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new CommentService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new CommentService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

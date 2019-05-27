@@ -59,14 +59,17 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
      * @return unique instance of RulesetService
      */
     public static RulesetService getInstance() {
-        if (Objects.equals(instance, null)) {
+        RulesetService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (RulesetService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new RulesetService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new RulesetService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

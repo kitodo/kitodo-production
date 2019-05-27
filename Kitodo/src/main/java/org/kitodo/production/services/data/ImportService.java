@@ -64,14 +64,17 @@ public class ImportService {
      * @return unique instance of ImportService
      */
     public static ImportService getInstance() {
-        if (Objects.equals(instance, null)) {
+        ImportService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (ImportService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new ImportService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new ImportService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

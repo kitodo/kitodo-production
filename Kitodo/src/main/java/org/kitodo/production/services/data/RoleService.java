@@ -45,14 +45,17 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
      * @return unique instance of RoleService
      */
     public static RoleService getInstance() {
-        if (Objects.equals(instance, null)) {
+        RoleService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (RoleService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new RoleService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new RoleService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

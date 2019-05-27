@@ -53,14 +53,17 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      * @return unique instance of DynamicAuthenticationProvider
      */
     public static DynamicAuthenticationProvider getInstance() {
-        if (Objects.equals(instance, null)) {
+        DynamicAuthenticationProvider localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (DynamicAuthenticationProvider.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new DynamicAuthenticationProvider();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new DynamicAuthenticationProvider();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

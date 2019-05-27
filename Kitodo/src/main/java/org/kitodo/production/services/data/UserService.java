@@ -76,14 +76,17 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      * @return unique instance of UserService
      */
     public static UserService getInstance() {
-        if (Objects.equals(instance, null)) {
+        UserService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (UserService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new UserService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new UserService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

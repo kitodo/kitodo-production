@@ -70,14 +70,17 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
      * @return unique instance of TemplateService
      */
     public static TemplateService getInstance() {
-        if (Objects.equals(instance, null)) {
+        TemplateService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (TemplateService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new TemplateService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new TemplateService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

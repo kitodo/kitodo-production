@@ -85,13 +85,16 @@ public class SessionService {
      * @return unique instance of SessionService
      */
     public static SessionService getInstance() {
-        if (Objects.equals(instance, null)) {
+        SessionService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (SessionService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new SessionService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new SessionService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 }

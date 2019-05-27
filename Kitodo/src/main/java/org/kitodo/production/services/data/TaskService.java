@@ -90,14 +90,17 @@ public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
      * @return unique instance of TaskService
      */
     public static TaskService getInstance() {
-        if (Objects.equals(instance, null)) {
+        TaskService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (TaskService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new TaskService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new TaskService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

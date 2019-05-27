@@ -73,14 +73,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return unique instance of FilterService
      */
     public static FilterService getInstance() {
-        if (Objects.equals(instance, null)) {
+        FilterService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (FilterService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new FilterService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new FilterService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     @Override

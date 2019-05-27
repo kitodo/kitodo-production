@@ -84,14 +84,17 @@ public class WorkflowControllerService {
      * @return unique instance of WorkflowControllerService
      */
     public static WorkflowControllerService getInstance() {
-        if (Objects.equals(instance, null)) {
+        WorkflowControllerService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (WorkflowControllerService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new WorkflowControllerService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new WorkflowControllerService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**

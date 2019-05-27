@@ -36,14 +36,17 @@ public class MetsService {
      * @return unique instance of MetsService
      */
     public static MetsService getInstance() {
-        if (Objects.equals(instance, null)) {
+        MetsService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (MetsService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new MetsService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new MetsService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     private MetsService() {

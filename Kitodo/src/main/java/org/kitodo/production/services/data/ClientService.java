@@ -33,14 +33,17 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
      * @return unique instance of ClientService
      */
     public static ClientService getInstance() {
-        if (Objects.equals(instance, null)) {
+        ClientService localReference = instance;
+        if (Objects.isNull(localReference)) {
             synchronized (ClientService.class) {
-                if (Objects.equals(instance, null)) {
-                    instance = new ClientService();
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new ClientService();
+                    instance = localReference;
                 }
             }
         }
-        return instance;
+        return localReference;
     }
 
     /**
