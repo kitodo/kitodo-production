@@ -19,15 +19,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class MetadataHelper {
 
-    private LegacyPrefsHelper prefs;
-
-    public MetadataHelper(LegacyPrefsHelper inPrefs) {
-        this.prefs = inPrefs;
+    private MetadataHelper() {
     }
 
     /**
@@ -56,9 +52,5 @@ public class MetadataHelper {
             }
         }
         return "-";
-    }
-
-    public LegacyPrefsHelper getPrefs() {
-        return this.prefs;
     }
 }

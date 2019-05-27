@@ -30,5 +30,5 @@ public enum GalleryViewMode {
     /**
      * Large media view with scrollbar with all images.
      */
-    PREVIEW;
+    PREVIEW
 }
