@@ -361,7 +361,6 @@
                 },
                 "meta": {
                     "dynamic": "false",
-                    "type": "object",
                     "properties": {
                         "ID": {
                             "type": "text",
@@ -373,7 +372,6 @@
                             }
                         },
                         "mdWrap": {
-                            "type": "object",
                             "properties": {
                                 "MDTYPE": {
                                     "type": "text",
@@ -385,10 +383,8 @@
                                     }
                                 },
                                 "xmlData": {
-                                    "type": "object",
                                     "properties": {
                                         "kitodo": {
-                                            "type": "object",
                                             "properties": {
                                                 "kitodo": {
                                                     "type": "text",
