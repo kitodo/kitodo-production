@@ -701,7 +701,7 @@ public class StructurePanel implements Serializable {
                 && dragNode.getDataObject() instanceof IncludedStructuralElement) {
             checkLogicalDragDrop((IncludedStructuralElement) dragNode.getDataObject(),
                     (IncludedStructuralElement) dropNode.getDataObject());
-        } else if (dropNode.getDataObject() instanceof MediaUnit && dropNode.getDataObject() instanceof MediaUnit) {
+        } else if (dropNode.getDataObject() instanceof MediaUnit) {
             checkPhysicalDragDrop((MediaUnit) dragNode.getDataObject(), (MediaUnit) dropNode.getDataObject());
         } else {
             Helper.setErrorMessage("Unable to move structure element!");
