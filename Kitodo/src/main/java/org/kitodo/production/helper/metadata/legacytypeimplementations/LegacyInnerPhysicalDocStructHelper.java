@@ -11,8 +11,6 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
-import java.io.File;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -53,19 +51,8 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     private MediaUnit mediaUnit;
 
     @Deprecated
-    public LegacyInnerPhysicalDocStructHelper() {
-        this.mediaUnit = new MediaUnit();
-    }
-
-    @Deprecated
     public LegacyInnerPhysicalDocStructHelper(MediaUnit mediaUnit) {
         this.mediaUnit = mediaUnit;
-    }
-
-    @Override
-    @Deprecated
-    public void addContentFile(LegacyContentFileHelper contentFile) {
-        mediaUnit.getMediaFiles().put(LOCAL, contentFile.getMediaFile());
     }
 
     @Override
@@ -117,29 +104,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         }
     }
 
-    @Override
-    @Deprecated
-    public List<LegacyReferenceHelper> getAllReferences(String direction) {
-        /*
-         * Although the method is called because the same loop is used for
-         * logical and physical structure elements, it must come back empty.
-         */
-        return Collections.emptyList();
-    }
-
-    @Override
-    @Deprecated
-    public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    @Deprecated
-    public String getImageName() {
-        URI uri = mediaUnit.getMediaFiles().get(LOCAL);
-        return new File(uri.getPath()).getName();
-    }
-
     MediaUnit getMediaUnit() {
         return mediaUnit;
     }
@@ -148,22 +112,5 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Deprecated
     public LegacyLogicalDocStructTypeHelper getDocStructType() {
         return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
-    }
-
-    /**
-     * This method is not part of the interface, but the JSF code digs in the
-     * depths of the UGH and uses it on the guts.
-     *
-     * @return Method delegated to {@link #getDocStructType()}
-     */
-    @Deprecated
-    public LegacyLogicalDocStructTypeHelper getType() {
-        if (!logger.isTraceEnabled()) {
-            StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-            logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
-                stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
-                stackTrace[0].getMethodName());
-        }
-        return getDocStructType();
     }
 }

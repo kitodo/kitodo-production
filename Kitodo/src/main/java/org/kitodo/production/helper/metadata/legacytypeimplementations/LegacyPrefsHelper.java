@@ -147,8 +147,6 @@ public class LegacyPrefsHelper {
      *
      * @param fileName
      *            file to load
-     * @throws PreferencesException
-     *             if the preferences file has none, or the wrong root tag
      */
     @Deprecated
     public void loadPrefs(String fileName) throws IOException {

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -43,11 +42,6 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     public Iterable<LegacyContentFileHelper> getAllFiles() {
         // TODO remove
         throw LegacyDocStructHelperInterface.andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public void addChild(LegacyDocStructHelperInterface child) {
-        mediaUnits.add(((LegacyInnerPhysicalDocStructHelper) child).getMediaUnit());
     }
 
     @Override
@@ -89,29 +83,5 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         return Collections.emptyList();
-    }
-
-    @Override
-    @Deprecated
-    public List<LegacyReferenceHelper> getAllReferences(String direction) {
-        /*
-         * Although the method is called because the same loop is used for
-         * logical and physical structure elements, it must come back empty.
-         */
-        return Collections.emptyList();
-    }
-
-    /**
-     * This method is not part of the interface, but the JSF code digs in the
-     * depths of the UGH and uses it on the guts.
-     * 
-     * @return Method delegated to {@link #getDocStructType()}
-     */
-    @Deprecated
-    public LegacyLogicalDocStructTypeHelper getType() {
-        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
-            stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
-        return getDocStructType();
     }
 }

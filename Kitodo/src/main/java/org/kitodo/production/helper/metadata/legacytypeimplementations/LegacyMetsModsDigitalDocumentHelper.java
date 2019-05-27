@@ -150,23 +150,6 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
-    /**
-     * Creates a document structure with the given document structure type for
-     * the Digital Document.
-     *
-     * @param docStructType
-     *            document structure type for the new document structure
-     * @return the new document structure
-     */
-    @Deprecated
-    public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
-        if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
-            return new LegacyLogicalDocStructHelper(new IncludedStructuralElement(), null, ruleset, priorityList);
-        } else {
-            return new LegacyInnerPhysicalDocStructHelper();
-        }
-    }
-
     @Deprecated
     public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
         return this;
@@ -219,18 +202,6 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void setDigitalDocument(LegacyMetsModsDigitalDocumentHelper metsKitodoDocument) {
         this.workpiece = metsKitodoDocument.workpiece;
-    }
-
-    @Deprecated
-    public void setLogicalDocStruct(LegacyDocStructHelperInterface docStruct) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public void setPhysicalDocStruct(LegacyDocStructHelperInterface docStruct) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     /**
