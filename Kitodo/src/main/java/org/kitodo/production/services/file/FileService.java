@@ -930,9 +930,7 @@ public class FileService {
                 String fileCanonical = subfolder.getCanonical(mediaFile);
                 if ("".equals(unitCanonical)) {
                     unitCanonical = fileCanonical;
-                } else if (unitCanonical.equals(fileCanonical)) {
-                    continue;
-                } else {
+                } else if (!unitCanonical.equals(fileCanonical)) {
                     throw new IllegalArgumentException("Ambiguous canonical file name part in the same media unit: \""
                             + unitCanonical + "\" and \"" + fileCanonical + "\"!");
                 }
