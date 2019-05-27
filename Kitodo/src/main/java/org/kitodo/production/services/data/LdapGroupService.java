@@ -38,11 +38,6 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
     }
 
     @Override
-    public List<LdapGroup> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<LdapGroup> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return new ArrayList<>();
     }

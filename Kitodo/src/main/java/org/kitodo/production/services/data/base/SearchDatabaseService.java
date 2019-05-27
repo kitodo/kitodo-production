@@ -36,13 +36,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
-     * Get list of all objects for selected client from database.
-     *
-     * @return list of all objects for selected client from database
-     */
-    public abstract List<T> getAllForSelectedClient();
-
-    /**
      * Load data for frontend lists. Data can be loaded from database or index.
      * 
      * @param first

@@ -62,11 +62,6 @@ public class WorkflowConditionService extends SearchDatabaseService<WorkflowCond
     }
 
     @Override
-    public List<WorkflowCondition> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<WorkflowCondition> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         throw new UnsupportedOperationException();
     }

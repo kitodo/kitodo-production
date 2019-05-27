@@ -55,6 +55,13 @@ public abstract class ClientSearchService<T extends BaseIndexedBean, S extends B
         this.clientKey = clientKey;
     }
 
+    /**
+     * Get list of all objects for selected client from database.
+     *
+     * @return list of all objects for selected client from database
+     */
+    public abstract List<T> getAllForSelectedClient();
+
     private QueryBuilder createClientQuery() {
         int sessionClientId = ServiceManager.getUserService().getSessionClientId();
         return matchQuery(clientKey, sessionClientId);

@@ -107,11 +107,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     @Override
-    public List<Filter> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<Filter> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return new ArrayList<>();
     }

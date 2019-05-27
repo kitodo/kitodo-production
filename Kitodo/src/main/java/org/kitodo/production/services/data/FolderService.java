@@ -41,11 +41,6 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     @Override
-    public List<Folder> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<Folder> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return new ArrayList<>();
     }

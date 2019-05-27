@@ -53,11 +53,6 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
     }
 
     @Override
-    public List<Comment> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         throw new UnsupportedOperationException();
     }
