@@ -36,13 +36,6 @@ public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDoc
 
     @Override
     @Deprecated
-    public List<String> getAllAllowedDocStructTypes() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
     public List<LegacyMetadataTypeHelper> getAllMetadataTypes() {
         // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -70,13 +63,6 @@ public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDoc
             default:
                 return "Page";
         }
-    }
-
-    @Override
-    @Deprecated
-    public String getNumberOfMetadataType(LegacyMetadataTypeHelper metadataType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     /**

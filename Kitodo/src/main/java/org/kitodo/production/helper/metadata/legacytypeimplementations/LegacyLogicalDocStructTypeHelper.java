@@ -11,7 +11,6 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,11 +36,6 @@ public class LegacyLogicalDocStructTypeHelper {
     }
 
     @Deprecated
-    public List<String> getAllAllowedDocStructTypes() {
-        return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
-    }
-
-    @Deprecated
     public List<LegacyMetadataTypeHelper> getAllMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -60,12 +54,6 @@ public class LegacyLogicalDocStructTypeHelper {
     @Deprecated
     public String getNameByLanguage(String language) {
         return divisionView.getLabel();
-    }
-
-    @Deprecated
-    public String getNumberOfMetadataType(LegacyMetadataTypeHelper metadataType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     /**

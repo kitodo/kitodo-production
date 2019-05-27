@@ -11,8 +11,6 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 
@@ -21,7 +19,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
  * operational which is about to be removed. Do not use this class.
  */
 public class LegacyMetadataHelper {
-    private static final Logger logger = LogManager.getLogger(LegacyMetadataHelper.class);
 
     /**
      * The legacy type of the legacy metadata.
@@ -60,11 +57,6 @@ public class LegacyMetadataHelper {
     @Deprecated
     public MetadataEntry getBinding() {
         return binding;
-    }
-
-    @Deprecated
-    public LegacyInnerPhysicalDocStructHelper getDocStruct() {
-        return legacyInnerPhysicalDocStructHelper;
     }
 
     @Deprecated
@@ -124,12 +116,6 @@ public class LegacyMetadataHelper {
         }
     }
 
-    @Deprecated
-    public void setType(LegacyMetadataTypeHelper metadataType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     /**
      * Set string value.
      *
@@ -141,38 +127,5 @@ public class LegacyMetadataHelper {
         if (bindingSaveInterface != null) {
             saveToBinding();
         }
-    }
-
-    /**
-     * This method generates a comprehensible log message in case something was
-     * overlooked and one of the unimplemented methods should ever be called in
-     * operation. The name was chosen deliberately short in order to keep the
-     * calling code clear. This method must be implemented in every class
-     * because it uses the logger tailored to the class.
-     *
-     * @param exception
-     *            created {@code UnsupportedOperationException}
-     * @return the exception
-     */
-    private static RuntimeException andLog(UnsupportedOperationException exception) {
-        StackTraceElement[] stackTrace = exception.getStackTrace();
-        StringBuilder buffer = new StringBuilder(255);
-        buffer.append(stackTrace[1].getClassName());
-        buffer.append('.');
-        buffer.append(stackTrace[1].getMethodName());
-        buffer.append("()");
-        if (stackTrace[1].getLineNumber() > -1) {
-            buffer.append(" line ");
-            buffer.append(stackTrace[1].getLineNumber());
-        }
-        buffer.append(" unexpectedly called unimplemented ");
-        buffer.append(stackTrace[0].getMethodName());
-        buffer.append("()");
-        if (exception.getMessage() != null) {
-            buffer.append(": ");
-            buffer.append(exception.getMessage());
-        }
-        logger.error(buffer.toString());
-        return exception;
     }
 }

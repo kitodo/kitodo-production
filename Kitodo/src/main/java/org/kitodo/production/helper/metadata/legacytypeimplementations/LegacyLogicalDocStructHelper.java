@@ -261,7 +261,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public Collection<LegacyReferenceHelper> getAllToReferences() {
-        return getAllReferences("to");
+        return Collections.emptyList();
     }
 
     @Override
