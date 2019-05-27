@@ -273,13 +273,18 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         return createUserProcessesQuery(null);
     }
 
+    @SuppressWarnings("unchecked")
     private BoolQueryBuilder createUserProcessesQuery(Map filters) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
             query.must(readFilters(filters));
         }
-        query.must(createUserProjectQuery());
+
+        QueryBuilder userProjectQuery = createUserProjectQuery();
+        if (Objects.nonNull(userProjectQuery)) {
+            query.must(userProjectQuery);
+        }
 
         if (!this.showClosedProcesses) {
             query.mustNot(getQuerySortHelperStatus(true));

@@ -24,6 +24,7 @@ public class HalfInteger extends Number {
             mainIncrement *= 10;
             switch (codePoint) {
                 case '°':
+                case '⁰':
                     break;
                 case '¹':
                     mainIncrement += 1;
@@ -39,8 +40,6 @@ public class HalfInteger extends Number {
                         halfIncrement++;
                     }
                     doHalfIncrement = !doHalfIncrement;
-                    break;
-                case '⁰':
                     break;
                 default:
                     throw new IllegalArgumentException("For string: " + string);
