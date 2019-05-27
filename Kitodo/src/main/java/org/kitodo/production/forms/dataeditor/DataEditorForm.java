@@ -48,7 +48,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.HelperComparator;
+import org.kitodo.production.helper.ProcessListComparator;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("DataEditorForm")
@@ -306,7 +306,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         addAllChildrenRecursive(workpiece.getRootElement(), referencedChildren);
         TreeSet<Integer> savedChildren = new TreeSet<>();
         process.getChildren().parallelStream().map(Process::getId).forEachOrdered(savedChildren::add);
-        Map<Integer, Boolean> differences = HelperComparator.compareLists(referencedChildren, savedChildren);
+        Map<Integer, Boolean> differences = ProcessListComparator.compareLists(referencedChildren, savedChildren);
         for (Entry<Integer, Boolean> difference : differences.entrySet()) {
             Process child = ServiceManager.getProcessService().getById(difference.getKey());
             if (difference.getValue()) {
