@@ -59,11 +59,6 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     }
 
     @Override
-    public List<ListColumn> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         throw new UnsupportedOperationException();
     }

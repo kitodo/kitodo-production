@@ -108,11 +108,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
-    public List<Batch> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<Batch> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return new ArrayList<>();
     }

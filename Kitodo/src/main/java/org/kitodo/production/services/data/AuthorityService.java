@@ -92,11 +92,6 @@ public class AuthorityService extends SearchDatabaseService<Authority, Authority
     }
 
     @Override
-    public List<Authority> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public List<Authority> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return dao.getByQuery("FROM Authority"  + getSort(sortField, sortOrder), filters, first, pageSize);

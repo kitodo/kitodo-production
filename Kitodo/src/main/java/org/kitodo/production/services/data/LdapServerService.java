@@ -106,11 +106,6 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     }
 
     @Override
-    public List<LdapServer> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<LdapServer> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return new ArrayList<>();
     }
