@@ -20,12 +20,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +48,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.HelperComparator;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("DataEditorForm")
@@ -301,46 +302,23 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      *             if an IOException is thrown
      */
     private void updateChildLinks() throws DAOException, DataException {
-        Set<Integer> referencedChildren = new TreeSet<>();
+        TreeSet<Integer> referencedChildren = new TreeSet<>();
         addAllChildrenRecursive(workpiece.getRootElement(), referencedChildren);
         TreeSet<Integer> savedChildren = new TreeSet<>();
         process.getChildren().parallelStream().map(Process::getId).forEachOrdered(savedChildren::add);
-        Iterator<Integer> referencedChildrenIterator = referencedChildren.iterator();
-        Iterator<Integer> savedChildrenIterator = savedChildren.iterator();
-        boolean nextReferencedChild = true;
-        boolean nextSavedChild = true;
-        Integer referencedChildId = null;
-        Integer savedChildId = null;
-        boolean save = false;
-        do {
-            if (nextReferencedChild) {
-                referencedChildId = referencedChildrenIterator.hasNext() ? referencedChildrenIterator.next() : null;
-                nextReferencedChild = false;
+        Map<Integer, Boolean> differences = HelperComparator.compareLists(referencedChildren, savedChildren);
+        for (Entry<Integer, Boolean> difference : differences.entrySet()) {
+            Process child = ServiceManager.getProcessService().getById(difference.getKey());
+            if (difference.getValue()) {
+                child.setParent(process);
+                process.getChildren().add(child);
+            } else {
+                child.setParent(null);
+                process.getChildren().remove(child);
             }
-            if (nextSavedChild) {
-                savedChildId = savedChildrenIterator.hasNext() ? savedChildrenIterator.next() : null;
-                nextSavedChild = false;
-            }
-            if (Objects.nonNull(referencedChildId) && Objects.isNull(savedChildId)
-                    || referencedChildId < savedChildId) {
-                Process childToAdd = ServiceManager.getProcessService().getById(referencedChildId);
-                childToAdd.setParent(process);
-                process.getChildren().add(childToAdd);
-                save = true;
-                nextReferencedChild = true;
-            } else if (Objects.isNull(referencedChildId) && Objects.nonNull(savedChildId)
-                    || referencedChildId > savedChildId) {
-                Process childToRemove = ServiceManager.getProcessService().getById(savedChildId);
-                childToRemove.setParent(null);
-                process.getChildren().remove(childToRemove);
-                save = true;
-                nextSavedChild = true;
-            } else if (Objects.nonNull(referencedChildId) && Objects.nonNull(savedChildId)) {
-                nextReferencedChild = true;
-                nextSavedChild = true;
-            }
-        } while (nextReferencedChild || nextSavedChild);
-        if (save) {
+            ServiceManager.getProcessService().save(child);
+        }
+        if (!differences.isEmpty()) {
             ServiceManager.getProcessService().save(process);
         }
     }

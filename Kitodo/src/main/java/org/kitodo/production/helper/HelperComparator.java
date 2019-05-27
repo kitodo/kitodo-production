@@ -13,7 +13,11 @@ package org.kitodo.production.helper;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeSet;
 
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
@@ -46,6 +50,52 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 
     public void setSortType(SortType sortType) {
         this.sortType = sortType;
+    }
+
+    /**
+     * Compares two ordered lists and returns the differences.
+     *
+     * @param left
+     *            the one list
+     * @param right
+     *            the other list
+     * @return a map with the differences, mapped as T on boolean, where
+     *         {@code true} if it appears in the first list and not in the
+     *         second, {@code false} if it appears in the second list and not in
+     *         the first.
+     */
+    public static Map<Integer, Boolean> compareLists(TreeSet<Integer> left, TreeSet<Integer> right) {
+        final Map<Integer, Boolean> result = new HashMap<>();
+        Iterator<Integer> leftIterator = left.iterator();
+        Iterator<Integer> rightIterator = right.iterator();
+        boolean nextLeft = true;
+        boolean nextRight = true;
+        Integer currentLeft = null;
+        Integer currentRight = null;
+        while (nextLeft || nextRight) {
+            if (nextLeft) {
+                currentLeft = leftIterator.hasNext() ? leftIterator.next() : null;
+                nextLeft = false;
+            }
+            if (nextRight) {
+                currentRight = rightIterator.hasNext() ? rightIterator.next() : null;
+                nextRight = false;
+            }
+            boolean comparable = Objects.nonNull(currentLeft) && Objects.nonNull(currentRight);
+            if (Objects.nonNull(currentLeft) && Objects.isNull(currentRight)
+                    || comparable && currentLeft < currentRight) {
+                result.put(currentLeft, Boolean.TRUE);
+                nextLeft = true;
+            } else if (Objects.isNull(currentLeft) && Objects.nonNull(currentRight)
+                    || comparable && currentLeft > currentRight) {
+                result.put(currentRight, Boolean.FALSE);
+                nextRight = true;
+            } else if (comparable) {
+                nextLeft = true;
+                nextRight = true;
+            }
+        }
+        return result;
     }
 
     private int compareMetadataTypes(Object firstObject, Object secondObject) {
