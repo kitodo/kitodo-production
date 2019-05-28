@@ -1993,7 +1993,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
             boolean writeLocalFilegroup) throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset());
-        mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
         File imageFolder = new File(imageFolderPath);
         /*
@@ -2060,7 +2059,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         Project project = process.getProject();
-        VariableReplacer variables = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
         List<Folder> folders = project.getFolders();
         for (Folder folder : folders) {
             // check if source files exists
@@ -2074,39 +2072,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
                 throw new UnsupportedOperationException("Dead code pending removal");
             }
         }
-
-        // Replace rights and digiprov entries.
-        mm.setRightsOwner(variables.replace(project.getMetsRightsOwner()));
-        mm.setRightsOwnerLogo(variables.replace(project.getMetsRightsOwnerLogo()));
-        mm.setRightsOwnerSiteURL(variables.replace(project.getMetsRightsOwnerSite()));
-        mm.setRightsOwnerContact(variables.replace(project.getMetsRightsOwnerMail()));
-        mm.setDigiprovPresentation(variables.replace(project.getMetsDigiprovPresentation()));
-        mm.setDigiprovReference(variables.replace(project.getMetsDigiprovReference()));
-        mm.setDigiprovPresentationAnchor(variables.replace(project.getMetsDigiprovPresentationAnchor()));
-        mm.setDigiprovReferenceAnchor(variables.replace(project.getMetsDigiprovReferenceAnchor()));
-
-        mm.setPurlUrl(variables.replace(project.getMetsPurl()));
-        mm.setContentIDs(variables.replace(project.getMetsContentIDs()));
-
-        // Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
-        // pointer used to point to the superordinate (anchor) file, that is
-        // representing a “virtual” group such as a series. Several anchors
-        // pointer paths can be defined/ since it is possible to define several
-        // levels of superordinate structures (such as the complete edition of
-        // a daily newspaper, one year ouf of that edition, …)
-        String anchorPointersToReplace = project.getMetsPointerPath();
-        mm.setMptrUrl(null);
-        for (String anchorPointerToReplace : anchorPointersToReplace.split(Project.ANCHOR_SEPARATOR)) {
-            String anchorPointer = variables.replace(anchorPointerToReplace);
-            mm.setMptrUrl(anchorPointer);
-        }
-
-        // metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
-        // from the (lowest) superordinate (anchor) file to the lowest level
-        // file (the non-anchor file).
-        String anchor = project.getMetsPointerPathAnchor();
-        String pointer = variables.replace(anchor);
-        mm.setMptrAnchorUrl(pointer);
 
         try {
             // TODO andere Dateigruppen nicht mit image Namen ersetzen
