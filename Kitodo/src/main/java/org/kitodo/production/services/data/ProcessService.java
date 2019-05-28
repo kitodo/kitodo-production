@@ -114,7 +114,6 @@ import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
@@ -526,17 +525,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
-     * Find processes by id of project.
-     *
-     * @param id
-     *            of project
-     * @return list of ProcessDTO objects with processes for specific process id
-     */
-    public List<ProcessDTO> findByProjectId(Integer id, boolean related) throws DataException {
-        return findByQuery(getQueryProjectId(id), related);
-    }
-
-    /**
      * Find processes by title.
      *
      * @param title
@@ -581,10 +569,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         return findByQuery(boolQuery, false);
     }
 
-    private QueryBuilder getQueryProjectId(Integer id) {
-        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), id, true);
-    }
-
     /**
      * Get query for find process by project title.
      *
@@ -594,17 +578,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public QueryBuilder getQueryProjectTitle(String title) {
         return createSimpleQuery(ProcessTypeField.PROJECT_TITLE.getKey(), title, true, Operator.AND);
-    }
-
-    /**
-     * Get wildcard query for find process by project title.
-     *
-     * @param title
-     *            as String
-     * @return QueryBuilder object
-     */
-    private QueryBuilder getWildcardQueryProjectTitle(String title) {
-        return createSimpleWildcardQuery(ProcessTypeField.PROJECT_TITLE.getKey(), title);
     }
 
     /**
@@ -628,52 +601,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), rulesetId, true);
-        return findDocuments(query);
-    }
-
-    /**
-     * Find processes by title of project.
-     *
-     * @param title
-     *            of process
-     * @return list of JSON objects with processes with given title
-     */
-    public List<ProcessDTO> findByProjectTitle(String title) throws DataException {
-        return convertJSONObjectsToDTOs(findDocuments(getQueryProjectTitle(title)), true);
-    }
-
-    /**
-     * Find processes by title of project with wildcard.
-     *
-     * @param title
-     *            of process
-     * @return list of JSON objects with processes with given title
-     */
-    public List<ProcessDTO> findByProjectTitleWithWildcard(String title) throws DataException {
-        return convertJSONObjectsToDTOs(findDocuments(getWildcardQueryProjectTitle(title)), false);
-    }
-
-    /**
-     * Find processes by id of batch.
-     *
-     * @param id
-     *            of process
-     * @return list of JSON objects with processes for specific batch id
-     */
-    List<Map<String, Object>> findByBatchId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("batches.id", id, true);
-        return findDocuments(query);
-    }
-
-    /**
-     * Find processes by title of batch.
-     *
-     * @param title
-     *            of batch
-     * @return list of JSON objects with processes for specific batch title
-     */
-    List<Map<String, Object>> findByBatchTitle(String title) throws DataException {
-        QueryBuilder query = createSimpleQuery("batches.title", title, true, Operator.AND);
         return findDocuments(query);
     }
 
