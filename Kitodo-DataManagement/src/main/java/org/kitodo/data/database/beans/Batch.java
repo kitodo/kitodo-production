@@ -21,7 +21,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -60,7 +59,7 @@ public class Batch extends BaseIndexedBean {
     /**
      * The field processes holds the processes that belong to the batch.
      */
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "batch_x_process", joinColumns = {
             @JoinColumn(name = "batch_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")) })
