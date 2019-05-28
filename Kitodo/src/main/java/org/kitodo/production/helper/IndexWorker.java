@@ -25,7 +25,6 @@ public class IndexWorker implements Runnable {
 
     private int indexedObjects = 0;
     private int startIndexing;
-    private int indexLimit = 5000;
     private boolean indexAllObjects = true;
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(IndexWorker.class);
@@ -59,6 +58,7 @@ public class IndexWorker implements Runnable {
     public void run() {
         this.indexedObjects = 0;
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
+        int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         try {
             int amountToIndex = getAmountToIndex();
 
@@ -69,8 +69,8 @@ public class IndexWorker implements Runnable {
                     indexObjects(searchService.getAllNotIndexed());
                 }
             } else {
-                if (amountToIndex > this.indexLimit) {
-                    amountToIndex = this.indexLimit;
+                if (amountToIndex > indexLimit) {
+                    amountToIndex = indexLimit;
                 }
                 while (this.indexedObjects < amountToIndex) {
                     indexChunks(batchSize);
@@ -92,7 +92,8 @@ public class IndexWorker implements Runnable {
     @SuppressWarnings("unchecked")
     private void indexChunks(int batchSize) throws CustomResponseException, DAOException {
         List<Object> objectsToIndex;
-        while (this.indexedObjects < this.indexLimit) {
+        int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
+        while (this.indexedObjects < indexLimit) {
             int offset = this.indexedObjects + this.startIndexing;
 
             if (indexAllObjects) {

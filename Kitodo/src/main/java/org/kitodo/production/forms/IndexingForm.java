@@ -36,7 +36,9 @@ import javax.json.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigMain;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
@@ -71,7 +73,6 @@ public class IndexingForm {
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
 
     private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
-    private int indexLimit = 20000;
     private int pause = 1000;
 
     @Inject
@@ -258,6 +259,7 @@ public class IndexingForm {
     public void startAllIndexing() {
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
         IndexAllThread indexAllThread = new IndexAllThread();
+        indexAllThread.setName("IndexAllThread");
         indexAllThread.start();
     }
 
@@ -630,6 +632,8 @@ public class IndexingForm {
     }
 
     private void prepareIndexWorker() {
+
+        int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         for (ObjectType objectType : ObjectType.values()) {
             List<IndexWorker> indexWorkerList = new ArrayList<>();
 
@@ -715,6 +719,7 @@ public class IndexingForm {
                         pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
                     }
                     indexerThread = new Thread(worker);
+                    indexerThread.setName("Indexing " + worker.getIndexedObjects() + " of type " + type);
                     indexerThread.setDaemon(true);
                     indexerThread.start();
                     indexerThread.join();
