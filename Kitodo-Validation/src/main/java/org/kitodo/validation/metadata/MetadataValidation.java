@@ -95,8 +95,8 @@ public class MetadataValidation implements MetadataValidationInterface {
     private static final String MESSAGE_VALUE_TOO_RARE = "metadataNotEnoughElements";
 
     @Override
-    public ValidationResult validate(URI metsFileUri, String lockingUser, URI rulesetFileUri,
-            List<LanguageRange> metadataLanguage, Map<String, String> translations) {
+    public ValidationResult validate(URI metsFileUri, URI rulesetFileUri, List<LanguageRange> metadataLanguage,
+            Map<String, String> translations) {
         try {
             FileManagementInterface fileManagement = getFileManagement();
             Workpiece workpiece;

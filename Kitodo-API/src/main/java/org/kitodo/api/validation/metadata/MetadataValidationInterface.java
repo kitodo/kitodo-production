@@ -29,8 +29,6 @@ public interface MetadataValidationInterface extends ValidationInterface {
      *
      * @param metsFileUri
      *            The uri to the mets file which should be validated.
-     * @param lockingUser
-     *            User requesting a lock on the URI to the METS file
      * @param rulesetFileUri
      *            The uri to the ruleset file to validate against.
      * @param metadataLanguage
@@ -47,8 +45,8 @@ public interface MetadataValidationInterface extends ValidationInterface {
      *            {@code metadataStructureWithoutMedia}.
      * @return A validation result.
      */
-    ValidationResult validate(URI metsFileUri, String lockingUser, URI rulesetFileUri,
-            List<LanguageRange> metadataLanguage, Map<String, String> translations);
+    ValidationResult validate(URI metsFileUri, URI rulesetFileUri, List<LanguageRange> metadataLanguage,
+            Map<String, String> translations);
 
     /**
      * Validates if a workpiece is confirm to a ruleset.
