@@ -26,17 +26,13 @@ import org.kitodo.production.services.file.FileService;
 
 public class ImageHelper {
 
-    private int myLastImage = 0;
     private static final FileService fileService = ServiceManager.getFileService();
-
-    // Add a method to validate the image files
 
     /**
      * Die Images eines Prozesses auf Vollständigkeit prüfen.
      */
     public boolean checkIfImagesValid(String title, URI folder) {
         boolean isValid = true;
-        this.myLastImage = 0;
 
         /*
          * alle Bilder durchlaufen und dafür die Seiten anlegen
@@ -48,7 +44,6 @@ public class ImageHelper {
                 return false;
             }
 
-            this.myLastImage = files.size();
             if (ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX).equals("\\d{8}")) {
                 Collections.sort(files);
                 int counter = 1;

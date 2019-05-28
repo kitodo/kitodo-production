@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.MediaUnit;
 
 /**
@@ -26,7 +24,6 @@ import org.kitodo.api.dataformat.MediaUnit;
  */
 
 public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterface {
-    private static final Logger logger = LogManager.getLogger(LegacyFileSetDocStructHelper.class);
 
     /**
      * The media units list accessed via this soldering class.
