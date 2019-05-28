@@ -50,7 +50,6 @@ public class Helper implements Observer, Serializable {
     private static final Logger logger = LogManager.getLogger(Helper.class);
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> errorMessages = null;
-    private static String compoundMessage;
 
     /**
      * Determine a specific parameter of the request.
@@ -271,7 +270,7 @@ public class Helper implements Observer, Serializable {
         String msg = getTranslation(message);
         String descript = getTranslation(description);
 
-        compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + descript;
+        String compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + descript;
         if (Objects.nonNull(activeMQReporting)) {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
                     onlyInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
@@ -440,17 +439,6 @@ public class Helper implements Observer, Serializable {
         } else {
             Helper.setErrorMessage((String) arg);
         }
-    }
-
-    /**
-     * The function getLastMessage() returns the last message processed to be shown
-     * to the user. This is a last resort only to show the user why perhaps
-     * something didn’t work if no error message is available otherwise.
-     *
-     * @return the most recent message created to be shown to the user
-     */
-    public static String getLastMessage() {
-        return compoundMessage;
     }
 
     /**
