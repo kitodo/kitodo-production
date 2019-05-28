@@ -67,7 +67,6 @@ public class CurrentTaskForm extends BaseForm {
     private Task currentTask = new Task();
     private List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
-    private int gesamtAnzahlImages = 0;
     private boolean onlyOpenTasks = false;
     private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
@@ -432,34 +431,6 @@ public class CurrentTaskForm extends BaseForm {
         ServiceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
 
-    public int getAllImages() {
-        return this.gesamtAnzahlImages;
-    }
-
-    /**
-     * Calc home images.
-     */
-    @SuppressWarnings("unchecked")
-    public void calcHomeImages() {
-        this.gesamtAnzahlImages = 0;
-        User user = getUser();
-        if (Objects.nonNull(user) && user.isWithMassDownload()) {
-            for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
-                try {
-                    Task task = ServiceManager.getTaskService().getById(taskDTO.getId());
-                    if (task.getProcessingStatus() == TaskStatus.OPEN) {
-                        this.gesamtAnzahlImages += ServiceManager.getFileService()
-                                .getSubUris(
-                                    ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess()))
-                                .size();
-                    }
-                } catch (DAOException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                }
-            }
-        }
-    }
-
     /**
      * Get current task.
      *
@@ -667,15 +638,6 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setProperties(List<Property> properties) {
         this.properties = properties;
-    }
-
-    /**
-     * Get size of properties' list.
-     *
-     * @return size of properties' list
-     */
-    public int getPropertiesSize() {
-        return this.properties.size();
     }
 
     private void loadProcessProperties() {
