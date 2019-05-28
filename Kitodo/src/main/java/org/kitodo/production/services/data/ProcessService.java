@@ -2257,7 +2257,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     @SuppressWarnings("unchecked")
-    protected List<Map<String, Object>> getMetadataForIndex(Process process) {
+    private List<Map<String, Object>> getMetadataForIndex(Process process) {
         try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process)) {
             JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
             Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
@@ -2309,15 +2309,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
             return key.substring(key.indexOf(':') + 1);
         }
         return key;
-    }
-
-    /**
-     * Get all active processes.
-     *
-     * @return A list of all processes as Process objects.
-     */
-    public List<Process> getActiveProcesses() {
-        return dao.getActiveProcesses();
     }
 
     /**
