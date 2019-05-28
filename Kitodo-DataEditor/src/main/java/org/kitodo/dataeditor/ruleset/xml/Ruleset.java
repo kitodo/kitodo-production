@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -256,6 +257,10 @@ public class Ruleset {
      * @return universal restriction rule for division
      */
     public UniversalRule getUniversalRestrictionRuleForDivision(String division) {
-        return new UniversalRule(this, this.getDivisionRestriction(division));
+        if (Objects.isNull(division)) {
+            return new UniversalRule(this, this.getDivisionRestriction(""));
+        } else {
+            return new UniversalRule(this, this.getDivisionRestriction(division));
+        }
     }
 }
