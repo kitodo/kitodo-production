@@ -198,22 +198,14 @@ public class IndexingForm {
      *
      * @return number of indexed objects
      */
-    public int getNumberOfIndexedObjects(ObjectType objectType) {
-        if (currentIndexState == objectType) {
-            List<IndexWorker> indexWorkerList = indexWorkers.get(objectType);
-            if (indexWorkerList.size() > 1) {
-                if (indexWorkerList.contains(currentIndexWorker)) {
-                    indexedObjects.put(objectType, currentIndexWorker.getIndexedObjects());
-                } else {
-                    indexedObjects.put(objectType, indexWorkers.get(objectType).get(0).getIndexedObjects());
-                }
-            } else {
-                indexedObjects.put(objectType, indexWorkers.get(objectType).get(0).getIndexedObjects());
-            }
-        } else if (!indexedObjects.containsKey(objectType)) {
-            updateCount(objectType);
+    public long getNumberOfIndexedObjects(ObjectType objectType) {
+        long result = 0;
+        try {
+            result = searchServices.get(objectType).count();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return indexedObjects.get(objectType);
+        return result;
     }
 
     /**
