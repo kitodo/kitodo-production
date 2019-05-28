@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -195,8 +196,13 @@ public class CommentForm extends BaseForm {
      */
     public List<Task> getPreviousStepsForProblemReporting() {
         refreshProcess(this.process);
-        return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-                ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(), this.process.getId());
+        if (Objects.isNull(ServiceManager.getProcessService().getCurrentTask(this.process))) {
+            Helper.setErrorMessage("Invalid process state: no 'active' or 'open' task found!");
+            return Collections.emptyList();
+        } else {
+            return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
+                    ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(), this.process.getId());
+        }
     }
 
     public int getSizeOfPreviousStepsForProblemReporting() {
