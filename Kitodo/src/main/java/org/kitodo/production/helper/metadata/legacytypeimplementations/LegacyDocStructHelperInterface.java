@@ -47,47 +47,6 @@ public interface LegacyDocStructHelperInterface {
     Logger logger = LogManager.getLogger(LegacyDocStructHelperInterface.class);
 
     /**
-     * Adds another {@code DocStruct} as a child to this instance. The new child
-     * will automatically become the last child in the list.
-     *
-     * @param child
-     *            DocStruct to be added
-     */
-    @Deprecated
-    default void addChild(LegacyDocStructHelperInterface child) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Adds a DocStruct object as a child to this instance. The new child will
-     * become the element at the specified position in the child list while the
-     * element currently at that position (if any) and any subsequent elements
-     * are shifted to the right (so that one gets added to their indices), or
-     * the last child in the list if index is null.
-     *
-     * @param index
-     *            index at which the child is to be inserted
-     * @param child
-     *            DocStruct to be added
-     */
-    @Deprecated
-    default void addChild(Integer index, LegacyDocStructHelperInterface child) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Adds a new reference to a content file, and adds the content file to the
-     * file set.
-     *
-     * @param contentFile
-     *            content file to add
-     */
-    @Deprecated
-    default void addContentFile(LegacyContentFileHelper contentFile) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
      * Adds a meta-data object to this instance. The method checks, if it is
      * allowed to add it, based on the configuration. If so, the object is added
      * and the method returns {@code true}, otherwise it returns {@code false}.
@@ -131,27 +90,6 @@ public interface LegacyDocStructHelperInterface {
      */
     @Deprecated
     default LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * This method cleans the meta-data and person list of instances which do
-     * not have a value. This method is usually used in conjunction with the
-     * method {@code showMetadataForm(String, boolean)}. After
-     * {@code showMetadataForm()} has been called and the form has been
-     * displayed, this method should be called to delete the created empty
-     * meta-data instances.
-     *
-     * <p>
-     * An empty meta-data instance is:
-     * <ul>
-     * <li>A meta-data object with a value of null.</li>
-     * <li>A person object with neither a lastname, nor a firstname, an
-     * identifier, nor an institution.</li>
-     * </ul>
-     */
-    @Deprecated
-    default void deleteUnusedPersonsAndMetadata() {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -234,30 +172,6 @@ public interface LegacyDocStructHelperInterface {
     }
 
     /**
-     * Returns incoming or outgoing {@code Reference}s.
-     *
-     * @param direction
-     *            can be "{@code to}" or "{@code from}". String seems to be
-     *            always "{@code to}".
-     * @return incoming or outgoing {@code Reference}s
-     */
-    @Deprecated
-    default List<LegacyReferenceHelper> getAllReferences(String direction) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Returns all references that are directed from this instance to another.
-     * This are all {@code Reference}s in which this instance is the source.
-     *
-     * @return all outgoing {@code Reference}s
-     */
-    @Deprecated
-    default Collection<LegacyReferenceHelper> getAllToReferences() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
      * Returns all references that are directed from this instance to another
      * and have a given type. For example, the type "{@code logical_physical}"
      * refers to references from logical structures to physical structures.
@@ -289,92 +203,12 @@ public interface LegacyDocStructHelperInterface {
     }
 
     /**
-     * Returns all meta-data types that shall be displayed even if they have no
-     * value.
-     *
-     * <p>
-     * Comprises all meta-data types whose attribute
-     * {@code defaultDisplay="true"} is set in the {@code Preferences}. Hidden
-     * meta-data, whose {@code MetadataType} starts with the
-     * {@code HIDDEN_METADATA_CHAR}, will not be included.
-     *
-     * @return all meta-data group types that shall always be displayed
-     */
-    @Deprecated
-    default List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Returns the image name.
-     *
-     * @return the image name
-     */
-    @Deprecated
-    default String getImageName() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Returns the parent of this instance. Returns {@code null} if this
-     * instance is the root of the tree.
-     *
-     * @return the parent, if any
-     */
-    @Deprecated
-    default LegacyDocStructHelperInterface getParent() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Returns all meta-data types that can be added to this instance. Includes
-     * meta-data groups, whose {@code MetadataGroupType} starts with the
-     * {@code HIDDEN_METADATA_CHAR}.
-     *
-     * <p>
-     * This method considers already added {@code Metadata}, so meta-data types
-     * which can only be available once cannot be added a second time. Therefore
-     * these {@code MetadataType}s will not be included in this list.
-     *
-     * @return all meta-data types that can be added to this instance. A return
-     *         type of {@code Collection<>} would be sufficient.
-     */
-    @Deprecated
-    default List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
      * Get the type of this DocStruct.
      *
      * @return the type of this DocStruct
      */
     @Deprecated
     default LegacyLogicalDocStructTypeHelper getDocStructType() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Returns whether a {@code DocStruct} of the given {@code DocStructType} is
-     * allowed to be added to this instance.
-     *
-     * @param type
-     *            the {@code DocStructType} in question
-     * @return true, if {@code DocStruct} of this type can be added; otherwise
-     *         false
-     */
-    default boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Removes a child from this instance.
-     *
-     * @param docStruct
-     *            to be removed
-     */
-    @Deprecated
-    default void removeChild(LegacyDocStructHelperInterface docStruct) {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -388,19 +222,6 @@ public interface LegacyDocStructHelperInterface {
      */
     @Deprecated
     default void removeMetadata(LegacyMetadataHelper metaDatum) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * Removes an outgoing reference. An outgoing reference is a reference to
-     * another {@code DocStruct} instance. The corresponding incoming
-     * {@code Reference} in the target {@code DocStruct} is also deleted.
-     *
-     * @param target
-     *            {@code DocStruct}
-     */
-    @Deprecated
-    default void removeReferenceTo(LegacyDocStructHelperInterface target) {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
