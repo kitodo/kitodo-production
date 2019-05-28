@@ -233,23 +233,21 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      */
     private FieldedMetadataTableRow createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
                                                              Collection<Metadata> values) {
-
         Collection<Metadata> value;
         switch (values.size()) {
             case 0:
                 value = new ArrayList<>();
                 break;
-            case 1: {
-                Metadata metadata = values.iterator().next();
-                if (metadata instanceof MetadataGroup) {
-                    MetadataGroup metadataGroup = (MetadataGroup) metadata;
+            case 1:
+                Metadata nextMetadata = values.iterator().next();
+                if (nextMetadata instanceof MetadataGroup) {
+                    MetadataGroup metadataGroup = (MetadataGroup) nextMetadata;
                     value = metadataGroup.getGroup();
                 } else {
                     throw new IllegalStateException("Got simple meta-data entry with key \"" + metadataView.getId()
                             + "\" which is declared as substructured key in the rule set.");
                 }
                 break;
-            }
             default:
                 throw new IllegalStateException("Too many (" + values.size() + ") complex meta-data of type \""
                         + metadataView.getId() + "\" in a single row. Must be 0 or 1 per row.");
@@ -316,15 +314,14 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
         switch (values.size()) {
             case 0:
                 return null;
-            case 1: {
-                Metadata metadata = values.iterator().next();
-                if (metadata instanceof MetadataEntry) {
-                    return (MetadataEntry) metadata;
+            case 1:
+                Metadata nextMetadata = values.iterator().next();
+                if (nextMetadata instanceof MetadataEntry) {
+                    return (MetadataEntry) nextMetadata;
                 } else {
-                    throw new IllegalStateException("Got complex meta-data entry with key \"" + metadata.getKey()
+                    throw new IllegalStateException("Got complex meta-data entry with key \"" + nextMetadata.getKey()
                             + "\" which isn't declared as substructured key in the rule set.");
                 }
-            }
             default:
                 throw new IllegalStateException("Too many (" + values.size() + ") meta-data of type \""
                         + values.iterator().next().getKey() + "\" in a single row. Must be 0 or 1 per row.");
