@@ -76,14 +76,4 @@ public class ProcessDAO extends BaseDAO<Process> {
     public void remove(Integer id) throws DAOException {
         removeObject(Process.class, id);
     }
-
-    /**
-     * Get all active processes.
-     *
-     * @return list of all active processes as Process objects
-     */
-    public List<Process> getActiveProcesses() {
-        return getByQuery(
-            "SELECT process FROM Process AS process INNER JOIN process.project AS project WHERE project.active = 1");
-    }
 }
