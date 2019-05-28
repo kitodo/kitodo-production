@@ -140,75 +140,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Get all DTO objects from index an convert them for frontend.
-     *
-     * @param related
-     *            true or false
-     * @return List of DTO objects
-     */
-    public List<S> findAll(boolean related) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(), related);
-    }
-
-    /**
-     * Find list of all objects from ES.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return list of all objects from ES
-     */
-    public List<S> findAll(SortBuilder sort) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
-    }
-
-    /**
-     * Find list of all objects from ES.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @return list of all objects from ES
-     */
-    public List<S> findAll(SortBuilder sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    /**
-     * Find list of all objects from ES.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @return list of all objects from ES
-     */
-    public List<S> findAll(SortBuilder sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    /**
-     * Find list of all objects from ES.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @param related
-     *            true or false
-     * @return list of all objects from ES
-     */
-    public List<S> findAll(SortBuilder sort, Integer offset, Integer size, boolean related) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), related);
-    }
-
-    /**
      * Method saves document to the index of Elastic Search.
      *
      * @param baseIndexedBean
@@ -431,61 +362,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         QueryBuilder queryBuilder = matchAllQuery();
         try {
             return searcher.findDocuments(queryBuilder);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Display all documents for exact type with exact sorting.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return sorted list of all documents
-     */
-    public List<Map<String, Object>> findAllDocuments(SortBuilder sort) throws DataException {
-        QueryBuilder queryBuilder = matchAllQuery();
-        try {
-            return searcher.findDocuments(queryBuilder, sort);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Display all documents for exact type with exact sorting.
-     *
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @return sorted list of all documents
-     */
-    public List<Map<String, Object>> findAllDocuments(Integer offset, Integer size) throws DataException {
-        QueryBuilder queryBuilder = matchAllQuery();
-        try {
-            return searcher.findDocuments(queryBuilder, offset, size);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Display all documents for exact type with exact sorting.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @return sorted list of all documents
-     */
-    public List<Map<String, Object>> findAllDocuments(SortBuilder sort, Integer offset, Integer size)
-            throws DataException {
-        QueryBuilder queryBuilder = matchAllQuery();
-        try {
-            return searcher.findDocuments(queryBuilder, sort, offset, size);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
