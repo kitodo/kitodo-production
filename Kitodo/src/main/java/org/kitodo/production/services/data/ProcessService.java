@@ -1072,8 +1072,8 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         if (Objects.isNull(process.getProcessBaseUri())) {
             process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
             try {
-                save(process);
-            } catch (DataException e) {
+                saveToDatabase(process);
+            } catch (DAOException e) {
                 logger.error(e.getMessage(), e);
                 return URI.create("");
             }
