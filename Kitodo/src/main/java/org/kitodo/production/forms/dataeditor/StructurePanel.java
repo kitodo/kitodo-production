@@ -553,7 +553,7 @@ public class StructurePanel implements Serializable {
         try {
             dataEditor.switchMediaUnit();
             previouslySelectedPhysicalNode = selectedPhysicalNode;
-        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
+        } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
             selectedPhysicalNode = previouslySelectedPhysicalNode;
         }
@@ -564,7 +564,7 @@ public class StructurePanel implements Serializable {
         this.updatePhysicalNodeSelection(galleryMediaContent);
     }
 
-    void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
+    void updatePhysicalNodeSelection(TreeNode treeNode) {
         if (this.separateMedia) {
             if (Objects.nonNull(previouslySelectedPhysicalNode)) {
                 previouslySelectedPhysicalNode.setSelected(false);
@@ -573,13 +573,20 @@ public class StructurePanel implements Serializable {
                 selectedPhysicalNode.setSelected(false);
             }
             if (Objects.nonNull(physicalTree)) {
-                TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, physicalTree);
-                if (Objects.nonNull(selectedTreeNode)) {
-                    setSelectedPhysicalNode(selectedTreeNode);
+                if (Objects.nonNull(treeNode)) {
+                    setSelectedPhysicalNode(treeNode);
+                    this.dataEditor.getMetadataPanel().showPhysical(this.dataEditor.getSelectedMediaUnit());
                 } else {
                     Helper.setErrorMessage("Unable to update Node selection in physical structure!");
                 }
             }
+        }
+    }
+
+    void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
+        if (Objects.nonNull(physicalTree)) {
+            TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, physicalTree);
+            updatePhysicalNodeSelection(selectedTreeNode);
         }
     }
 

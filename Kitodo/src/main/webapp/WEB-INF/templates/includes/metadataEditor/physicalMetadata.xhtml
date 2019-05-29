@@ -37,28 +37,29 @@
                                  styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
                                  style="width:100%;"
                                  validator="#{item.validatorQuery}"
-                                 rendered="#{item.input eq 'inputText'}">
-                        <p:ajax event="blur"/>
+                                 rendered="#{item.input eq 'inputText' || item.input eq 'spinner'}">
+                        <p:ajax event="change"/>
                     </p:inputText>
                     <p:outputLabel value="Not yet implemented: inputTextarea" rendered="#{item.input eq 'inputTextarea'}"/>
-                    <p:outputLabel value="Not yet implemented: spinner" rendered="#{item.input eq 'spinner'}"/>
                     <p:outputLabel value="Not yet implemented: calendar" rendered="#{item.input eq 'calendar'}"/>
                     <p:outputLabel value="Not yet implemented: dataTable" rendered="#{item.input eq 'dataTable'}"/>
                     <p:selectManyMenu value="#{item.selectedItems}" readonly="#{not item.editable}"
                                       validator="#{item.validatorQuery}"
                                       rendered="#{item.input eq 'manyMenu'}">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur"/>
+                        <p:ajax event="change"/>
                     </p:selectManyMenu>
                     <p:selectOneMenu value="#{item.selectedItem}"
                                      readonly="#{not item.editable}"
                                      rendered="#{item.input eq 'oneMenu'}">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur"/>
+                        <p:ajax event="change"/>
                     </p:selectOneMenu>
                     <p:outputLabel value="Not yet implemented: selectOneRadio" rendered="#{item.input eq 'oneRadio'}"/>
-                    <p:outputLabel value="Not yet implemented: toggleSwitch" rendered="#{item.input eq 'toggleSwitch'}"/>
-
+                    <p:selectBooleanCheckbox value="#{item.active}"
+                                             rendered="#{item.input eq 'toggleSwitch'}">
+                        <p:ajax event="change"/>
+                    </p:selectBooleanCheckbox>
                     <p:commandButton update="metadataAccordion:metadata:metadataTable"
                                      id="deleteMetadata"
                                      icon="fa fa-trash"

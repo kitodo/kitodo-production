@@ -45,6 +45,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 
 @Named("DataEditorForm")
 @SessionScoped
@@ -282,6 +283,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             return close();
         } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            logger.error(e.getLocalizedMessage());
+            PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
+            PrimeFaces.current().ajax().update("notifications");
             return null;
         }
     }
@@ -457,8 +461,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
     }
 
-    void switchMediaUnit() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        metadataPanel.preservePhysical();
+    void switchMediaUnit() throws NoSuchMetadataFieldException {
+        try {
+            metadataPanel.preservePhysical();
+        } catch (InvalidMetadataValueException e) {
+            logger.error(e.getLocalizedMessage());
+        }
         metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
         addMediaUnitDialog.prepare();
         if (structurePanel.getSelectedMediaUnit().isPresent()) {
