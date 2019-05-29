@@ -63,13 +63,5 @@
     </cache>
 
     <cache alias="org.hibernate.cache.internal.StandardQueryCache" uses-template="defaultCacheTemplate"/>
-    <cache alias="checkRulesCompliance" uses-template="defaultCacheTemplate"/>
-    <cache alias="TranslationsToEnglish" uses-template="defaultCacheTemplate"/>
-    <cache alias="TranslationsFromSwedish" uses-template="defaultCacheTemplate"/>
-    <cache alias="Translations" uses-template="defaultCacheTemplate"/>
-    <cache alias="SimplePageCachingFilter" uses-template="defaultCacheTemplate"/>
-    <cache alias="SimpleCachingHeadersPageCachingFilter" uses-template="defaultCacheTemplate"/>
-    <cache alias="AggregatedCountryData" uses-template="defaultCacheTemplate"/>
-    <cache alias="AggregatedBugData" uses-template="defaultCacheTemplate"/>
 
 </config>
