@@ -709,7 +709,7 @@ public class IndexingForm {
     private void runIndexing(IndexWorker worker, ObjectType type) {
         currentState = IndexStates.NO_STATE;
         int attempts = 0;
-        while (attempts < 10) {
+        while (attempts < 100) {
             try {
                 if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
                     if (Objects.equals(currentIndexState, ObjectType.NONE)) {
