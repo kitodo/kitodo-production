@@ -156,17 +156,14 @@ public class ProjectForm extends BaseForm {
 
     /**
      * This needs to be executed in order to rollback adding of folders.
-     *
-     * @return page address
      */
-    public String cancel() {
+    public void cancel() {
         // flushing new folders
         deleteFolders(this.newFolders);
         // resetting the list of new folders
         this.newFolders = new ArrayList<>();
         // resetting the List of folders marked for deletion
         this.deletedFolders = new ArrayList<>();
-        return projectListPath;
     }
 
     /**
@@ -405,7 +402,7 @@ public class ProjectForm extends BaseForm {
      */
     public void setProject(Project project) {
         // has to be called if a page back move was done
-        this.cancel();
+        cancel();
         this.project = project;
     }
 

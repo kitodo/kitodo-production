@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -205,7 +206,7 @@ public class MetadataValidationService {
         } else {
             if (!Pattern.matches(ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX),
                 workpieceId)) {
-                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Arrays.asList(workpieceId)));
+                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Collections.singletonList(workpieceId)));
                 error = true;
             }
             List<ProcessDTO> processDTOs = ServiceManager.getProcessService().findAll().parallelStream()

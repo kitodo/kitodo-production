@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,7 +168,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             ruleset = openRulesetFile(process.getRuleset().getFile());
             openMetsFile();
             init();
-        } catch (IOException | URISyntaxException | DAOException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
         }
@@ -179,14 +178,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     /**
      * Opens the METS file.
      *
-     * @return whether successful. False, if the file cannot be locked.
-     * @throws URISyntaxException
-     *             if the file URI cannot be built (due to invalid characters in
-     *             the directory path)
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private void openMetsFile() throws URISyntaxException, IOException {
+    private void openMetsFile() throws IOException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         ServiceManager.getFileService().searchForMedia(process, workpiece);
