@@ -134,21 +134,6 @@ public class LegacyMetsModsDigitalDocumentHelper {
         this.workpiece = workpiece;
     }
 
-    /**
-     * Add all content files to the digital document according to the
-     * pathimagefiles meta-data. The pages in the physical DocStruct must
-     * already exist!
-     */
-    @Deprecated
-    public void addAllContentFiles() {
-        /*
-         * In the legacy implementation, this method must be called to fully
-         * build the object-internal data structure after reading a file. Since
-         * in the new implementation each method does everything it should from
-         * the start, and not just half of it, this function is empty.
-         */
-    }
-
     @Deprecated
     public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
         return this;

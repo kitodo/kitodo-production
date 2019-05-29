@@ -151,7 +151,6 @@ public class KitodoScriptService {
         for (Process process : processes) {
             try {
                 LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
-                rdf.getDigitalDocument().addAllContentFiles();
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
             } catch (IOException | RuntimeException e) {
