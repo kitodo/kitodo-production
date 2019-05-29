@@ -42,7 +42,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.file.FileService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class MetadataValidationService {
@@ -161,8 +160,7 @@ public class MetadataValidationService {
     }
 
     public ValidationResult validate(URI metsFileUri, URI rulesetFileUri) {
-        return metadataValidation.validate(metsFileUri, FileService.getCurrentLockingUser(),
-            rulesetFileUri, getMetadataLanguage(), getTranslations());
+        return metadataValidation.validate(metsFileUri, rulesetFileUri, getMetadataLanguage(), getTranslations());
     }
 
     /**

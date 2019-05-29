@@ -59,12 +59,10 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
-import org.kitodo.production.services.data.UserService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class FileService {
 
-    private static final String SYSTEM_LOCKING_USER = "System";
     private static final Logger logger = LogManager.getLogger(FileService.class);
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
@@ -217,20 +215,6 @@ public class FileService {
      */
     public OutputStream write(URI uri) throws IOException {
         return fileManagementModule.write(uri);
-    }
-
-    /**
-     * Gets and returns the name of the user whose context the code is currently
-     * running in, to request or assume meta-data locks for that user. The name
-     * of the user is returned, or “System”, if the code is running in the
-     * system context (i.e. not running under a registered user).
-     *
-     * @return the user name for locks
-     */
-    public static String getCurrentLockingUser() {
-        UserService userService = ServiceManager.getUserService();
-        User currentUser = userService.getAuthenticatedUser();
-        return Objects.nonNull(currentUser) ? userService.getFullName(currentUser) : SYSTEM_LOCKING_USER;
     }
 
     /**
