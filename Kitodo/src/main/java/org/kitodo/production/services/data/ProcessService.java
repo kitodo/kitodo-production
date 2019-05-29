@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -132,7 +133,6 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class ProcessService extends ClientSearchService<Process, ProcessDTO, ProcessDAO> {
-
     private final MetadataLock msp = new MetadataLock();
     private final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
@@ -150,6 +150,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
+    private static final String METADATA_FILE_NAME = "meta.xml";
     private String filter = "";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
@@ -551,7 +552,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     /**
      * Finds processes by searchQuery for a number of fields.
-     * 
+     *
      * @param searchQuery
      *            the query word or phrase
      * @return a List of found ProcessDTOs
@@ -886,7 +887,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     boolean isProcessAssignedToOnlyOneLogisticBatch(List<BatchDTO> batchDTOList) {
         List<BatchDTO> result = new ArrayList<>(batchDTOList);
-        result.removeIf(batch -> !(batch.getType().equals("LOGISTIC")));
+        result.removeIf(batch -> !batch.getType().equals("LOGISTIC"));
         return result.size() == 1;
     }
 
@@ -901,7 +902,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         List<Batch> batches = process.getBatches();
         if (Objects.nonNull(type)) {
             List<Batch> result = new ArrayList<>(batches);
-            result.removeIf(batch -> !(batch.getType().equals(type)));
+            result.removeIf(batch -> !batch.getType().equals(type));
             return result;
         }
         return batches;
@@ -1062,6 +1063,27 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
+     * Returns the URI of the meta-data file of a process.
+     *
+     * @param process
+     *            object
+     * @return URI
+     */
+    public URI getMetadataFileUri(Process process) {
+        URI workPathUri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(process);
+        String workDirectoryPath = workPathUri.getPath();
+        try {
+            return new URI(workPathUri.getScheme(), workPathUri.getUserInfo(), workPathUri.getHost(),
+                    workPathUri.getPort(),
+                workDirectoryPath.endsWith("/") ? workDirectoryPath.concat(METADATA_FILE_NAME)
+                        : workDirectoryPath + '/' + METADATA_FILE_NAME,
+                    workPathUri.getQuery(), null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Get process data directory.
      *
      * @param process
@@ -1082,8 +1104,24 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as
-     * readable text as read-only property "batchID".
+     * Returns a URI that identifies the process. The URI has the form
+     * {@code mysql://?process.id=42}, where {@code 42} is the process ID.
+     *
+     * @param process
+     *            process for which a URI is to be formed that identifies it
+     * @return a URI that identifies the process
+     */
+    public URI getProcessURI(Process process) {
+        try {
+            return new URI("database", null, "//", "process.id=" + process.getId(), null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -1216,22 +1254,22 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     private int calculateProgressClosed(Map<String, Integer> tasks) {
-        return (tasks.get(CLOSED) * 100)
+        return tasks.get(CLOSED) * 100
                 / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private int calculateProgressInProcessing(Map<String, Integer> tasks) {
-        return (tasks.get(IN_PROCESSING) * 100)
+        return tasks.get(IN_PROCESSING) * 100
                 / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private int calculateProgressOpen(Map<String, Integer> tasks) {
-        return (tasks.get(OPEN) * 100)
+        return tasks.get(OPEN) * 100
                 / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private int calculateProgressLocked(Map<String, Integer> tasks) {
-        return (tasks.get(LOCKED) * 100)
+        return tasks.get(LOCKED) * 100
                 / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
@@ -1683,6 +1721,47 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
         return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND));
+    }
+
+    /**
+     * Sanitizes a possibly dirty reference URI and extracts from it the
+     * operation ID of the referenced process. In case of error, a speaking
+     * exception is thrown.
+     *
+     * @param uri
+     *            URI of the reference to the process number
+     * @return process number
+     * @throws SecurityException
+     *             if the URI names a forbidden protocol or column
+     * @throws IllegalArgumentException
+     *             if the URI tries to reference a foreign database or if the
+     *             query has a wrong format
+     * @throws ClassCastException
+     *             if the URI references a wrong class / table
+     */
+    public int processIdFromUri(URI uri) {
+        if (!"database".equals(uri.getScheme())) {
+            throw new SecurityException("Protocol not allowed: " + uri.getScheme());
+        }
+        if (Objects.nonNull(uri.getAuthority()) || Objects.nonNull(uri.getPath()) && !uri.getPath().isEmpty()) {
+            throw new IllegalArgumentException("Linking across databases is not supported");
+        }
+        if (Objects.isNull(uri.getQuery())) {
+            throw new IllegalArgumentException("No query in database request");
+        }
+        String[] queryArguments = uri.getQuery().split("&");
+        String[] key = queryArguments[0].split("=", 2);
+        String[] keySegments = key[0].split("\\.");
+        if (queryArguments.length > 1 || keySegments.length > 2) {
+            throw new IllegalArgumentException("Complex queries is not supported");
+        }
+        if (keySegments.length > 1 && !"id".equals(keySegments[1])) {
+            throw new SecurityException("Filtering on '" + keySegments[1] + "' is not allowed");
+        }
+        if (!"process".equals(keySegments[0])) {
+            throw new ClassCastException("'" + keySegments[0] + "' cannot be cast to 'process'");
+        }
+        return Integer.parseInt(key[1]);
     }
 
     /**

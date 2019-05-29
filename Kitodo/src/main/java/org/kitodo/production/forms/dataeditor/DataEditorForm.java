@@ -167,9 +167,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.user = ServiceManager.getUserService().getCurrentUser();
 
             ruleset = openRulesetFile(process.getRuleset().getFile());
-            if (!openMetsFile()) {
-                return referringView;
-            }
+            openMetsFile();
             init();
         } catch (IOException | URISyntaxException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -188,17 +186,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private boolean openMetsFile() throws URISyntaxException, IOException {
-        URI workPathUri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(process);
-        String workDirectoryPath = workPathUri.getPath();
-        mainFileUri = new URI(workPathUri.getScheme(), workPathUri.getUserInfo(), workPathUri.getHost(),
-                workPathUri.getPort(), workDirectoryPath.endsWith("/") ? workDirectoryPath.concat("meta.xml")
-                        : workDirectoryPath + '/' + "meta.xml",
-                workPathUri.getQuery(), null);
-
+    private void openMetsFile() throws URISyntaxException, IOException {
+        mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         ServiceManager.getFileService().searchForMedia(process, workpiece);
-        return true;
     }
 
     private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
