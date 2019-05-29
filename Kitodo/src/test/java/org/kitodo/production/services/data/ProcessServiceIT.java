@@ -15,6 +15,7 @@ import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -203,46 +204,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByBatchId() throws DataException {
-        assertEquals(processNotFound, 1, processService.findByBatchId(1).size());
-    }
-
-    @Test
-    public void shouldNotFindByBatchId() throws DataException {
-        assertEquals("Some processes were found in index!", 0, processService.findByBatchId(2).size());
-    }
-
-    @Test
-    public void shouldFindByBatchTitle() throws DataException {
-        assertEquals(processNotFound, 1, processService.findByBatchTitle("First batch").size());
-    }
-
-    @Test
-    public void shouldNotFindByBatchTitle() throws DataException {
-        assertEquals("Process was found in index!", 0, processService.findByBatchTitle("Some batch").size());
-    }
-
-    @Test
-    public void shouldFindByProjectId() throws DataException {
-        assertEquals(processNotFound, 2, processService.findByProjectId(1, true).size());
-    }
-
-    @Test
-    public void shouldNotFindByProjectId() throws DataException {
-        assertEquals("Some processes were found in index!", 0, processService.findByProjectId(3, true).size());
-    }
-
-    @Test
-    public void shouldFindByProjectTitle() throws DataException {
-        assertEquals(processNotFound, 2, processService.findByProjectTitle("First project").size());
-    }
-
-    @Test
-    public void shouldNotFindByProjectTitle() throws DataException {
-        assertEquals("Process was found in index!", 0, processService.findByProjectTitle("Some project").size());
-    }
-
-    @Test
     public void shouldFindManyByProperty() throws DataException {
         assertEquals("Processes were not found in index!", 2,
             processService.findByProcessProperty("Korrektur notwendig", null, true).size());
@@ -306,7 +267,7 @@ public class ProcessServiceIT {
         assertTrue("Images TIF directory doesn't exist!", condition);
 
         condition = processService.checkIfTifDirectoryExists(2, "Second process", null);
-        assertTrue("Images TIF directory exists, but it shouldn't!", !condition);
+        assertFalse("Images TIF directory exists, but it shouldn't!", condition);
     }
 
     @Test
@@ -490,8 +451,7 @@ public class ProcessServiceIT {
 
         Process process = processService.getById(1);
         LegacyMetsModsDigitalDocumentHelper fileFormat = processService.readMetadataAsTemplateFile(process);
-        assertTrue("Read template file has incorrect file format!",
-            fileFormat instanceof LegacyMetsModsDigitalDocumentHelper);
+        assertNotNull("Read template file has incorrect file format!", fileFormat);
         int metadataSize = fileFormat.getDigitalDocument().getLogicalDocStruct().getAllMetadata().size();
         assertEquals("It was not possible to read metadata as template file!", 1, metadataSize);
 
@@ -504,7 +464,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         fileService.writeMetadataAsTemplateFile(
-            new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset()), process);
+            new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset()), process);
         boolean condition = fileService.fileExist(URI.create("1/template.xml"));
         assertTrue("It was not possible to write metadata as template file!", condition);
 
