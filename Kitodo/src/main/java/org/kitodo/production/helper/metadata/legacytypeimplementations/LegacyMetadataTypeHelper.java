@@ -11,8 +11,6 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 
 /**
@@ -21,7 +19,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
  * class.
  */
 public class LegacyMetadataTypeHelper {
-    private static final Logger logger = LogManager.getLogger(LegacyMetadataTypeHelper.class);
 
     /**
      * A representative for a special legacy meta-data type to read and write
