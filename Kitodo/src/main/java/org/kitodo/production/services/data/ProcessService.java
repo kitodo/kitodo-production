@@ -2347,28 +2347,29 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     private void removeLinksFromNoLongerLinkedProcesses(Process process, IncludedStructuralElement rootElement)
             throws DAOException, DataException {
-        ArrayList<Process> newRight = new ArrayList<>(process.getChildren());
-        newRight.removeAll(getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
-        for (Process right : newRight) {
-            right.setParent(null);
-            process.getChildren().remove(right);
-            save(right);
+        ArrayList<Process> childrenToRemove = new ArrayList<>(process.getChildren());
+        childrenToRemove.removeAll(getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
+        for (Process childToRemove : childrenToRemove) {
+            childToRemove.setParent(null);
+            process.getChildren().remove(childToRemove);
+            save(childToRemove);
         }
-        if (!newRight.isEmpty()) {
+        if (!childrenToRemove.isEmpty()) {
             save(process);
         }
     }
 
     private void addNewLinks(Process process, IncludedStructuralElement rootElement)
             throws DAOException, DataException {
-        ArrayList<Process> newLeft = new ArrayList(getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
-        newLeft.removeAll(process.getChildren());
-        for (Process left : newLeft) {
-            left.setParent(process);
-            process.getChildren().add(left);
-            save(left);
+        ArrayList<Process> childrenToAdd = new ArrayList(
+                getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
+        childrenToAdd.removeAll(process.getChildren());
+        for (Process childToAdd : childrenToAdd) {
+            childToAdd.setParent(process);
+            process.getChildren().add(childToAdd);
+            save(childToAdd);
         }
-        if (!newLeft.isEmpty()) {
+        if (!childrenToAdd.isEmpty()) {
             save(process);
         }
     }

@@ -543,6 +543,28 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(thirdProcess);
     }
 
+    public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
+        Process fourthProcess = new Process();
+        fourthProcess.setTitle("HierarchyParent");
+        ServiceManager.getProcessService().save(fourthProcess);
+
+        Process fifthProcess = new Process();
+        fifthProcess.setTitle("HierarchChildToKeep");
+        fourthProcess.getChildren().add(fifthProcess);
+        fifthProcess.setParent(fourthProcess);
+        ServiceManager.getProcessService().save(fifthProcess);
+
+        Process sixthProcess = new Process();
+        sixthProcess.setTitle("HierarchChildToRemove");
+        fourthProcess.getChildren().add(sixthProcess);
+        sixthProcess.setParent(fourthProcess);
+        ServiceManager.getProcessService().save(sixthProcess);
+
+        Process seventhProcess = new Process();
+        seventhProcess.setTitle("HierarchChildToAdd");
+        ServiceManager.getProcessService().save(seventhProcess);
+    }
+
     private static void insertTemplates() throws DAOException, DataException {
         Project project = ServiceManager.getProjectService().getById(1);
 
