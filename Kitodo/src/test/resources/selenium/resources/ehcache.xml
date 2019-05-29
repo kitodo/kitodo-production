@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.5.xsd
+        http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.5.xsd">
+
+    <service>
+        <jsr107:defaults enable-management="true" enable-statistics="true" default-template="defaultCacheTemplate"/>
+    </service>
+
+    <cache-template name="defaultCacheTemplate">
+        <expiry>
+            <tti unit="seconds">1800</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">100000</heap>
+        </resources>
+    </cache-template>
+
+    <cache-template name="shortLivedDefaultCacheTemplate">
+        <expiry>
+            <tti unit="seconds">60</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">1000000</heap>
+        </resources>
+    </cache-template>
+
+    <cache alias="default-query-results-region">
+        <expiry>
+            <tti unit="seconds">1200</tti>
+        </expiry>
+        <heap>1024</heap>
+    </cache>
+
+    <cache alias="default-update-timestamps-region">
+        <expiry>
+            <none />
+        </expiry>
+        <heap>4096</heap>
+    </cache>
+
+    <cache alias="org.hibernate.cache.internal.StandardQueryCache" uses-template="defaultCacheTemplate"/>
+
+</config>
