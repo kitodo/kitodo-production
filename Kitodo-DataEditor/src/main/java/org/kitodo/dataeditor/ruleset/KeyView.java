@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
@@ -216,7 +217,11 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
                     DateTimeFormatter.ISO_LOCAL_DATE.parse(value);
                     break;
                 case INTEGER:
-                    new BigInteger(value);
+                    if (Objects.nonNull(value)) {
+                        new BigInteger(value);
+                    } else {
+                        return false;
+                    }
                     break;
                 default:
                     if (!isLocatedInTheNamespace(value)) {

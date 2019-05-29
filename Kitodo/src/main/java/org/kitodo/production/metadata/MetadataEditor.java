@@ -141,7 +141,7 @@ public class MetadataEditor {
      * @param parent parent of the new MediaUnit
      * @param position position relative to the parent element
      */
-    public static void addMediaUnit(String type, MediaUnit parent, InsertionPosition position) {
+    public static MediaUnit addMediaUnit(String type, MediaUnit parent, InsertionPosition position) {
         MediaUnit newMediaUnit = new MediaUnit();
         newMediaUnit.setType(type);
         switch (position) {
@@ -154,6 +154,7 @@ public class MetadataEditor {
             default:
                 throw new IllegalStateException("Used InsertionPosition not allowed.");
         }
+        return newMediaUnit;
     }
 
     /**
