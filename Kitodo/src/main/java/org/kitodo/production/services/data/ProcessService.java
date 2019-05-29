@@ -1085,22 +1085,38 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     /**
      * Get process data directory.
+     * Don't save it to the database, if it is for indexingAll.
+     *
+     * @param process
+     *            object
+     * @param forIndexingAll
+     *              if the dataDirectory is created for indexingAll
+     * @return path
+     */
+    public URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
+        if (Objects.isNull(process.getProcessBaseUri())) {
+            process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
+            if (!forIndexingAll) {
+                try {
+                    saveToDatabase(process);
+                } catch (DAOException e) {
+                    logger.error(e.getMessage(), e);
+                    return URI.create("");
+                }
+            }
+        }
+        return process.getProcessBaseUri();
+    }
+
+    /**
+     * Get process data directory.
      *
      * @param process
      *            object
      * @return path
      */
     public URI getProcessDataDirectory(Process process) {
-        if (Objects.isNull(process.getProcessBaseUri())) {
-            process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
-            try {
-                saveToDatabase(process);
-            } catch (DAOException e) {
-                logger.error(e.getMessage(), e);
-                return URI.create("");
-            }
-        }
-        return process.getProcessBaseUri();
+        return getProcessDataDirectory(process, false);
     }
 
     /**
@@ -2302,7 +2318,12 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> getMetadataForIndex(Process process) {
-        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process)) {
+        return getMetadataForIndex(process,false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> getMetadataForIndex(Process process, boolean forIndexingAll) {
+        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process, forIndexingAll)) {
             JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
             Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
             if (json.keySet().contains("mets")) {
