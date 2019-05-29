@@ -276,11 +276,13 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         try {
             metadataPanel.preserve();
             structurePanel.preserve();
+            ServiceManager.getProcessService().updateChildrenFromRootElement(process, workpiece.getRootElement());
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
             }
             return close();
-        } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException e) {
+        } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException | DAOException
+                | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
