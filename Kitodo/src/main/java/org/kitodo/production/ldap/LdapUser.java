@@ -46,7 +46,7 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
+import org.bouncycastle.crypto.digests.MD4Digest;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
 
@@ -78,7 +78,7 @@ public class LdapUser implements DirContext {
      */
     public void configure(User user, String inPassword, String inUidNumber)
             throws NamingException, NoSuchAlgorithmException {
-        MD4 digester = new MD4();
+        MD4Digest digester = new MD4Digest();
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
 
             if (Objects.nonNull(user.getLdapLogin())) {
@@ -106,7 +106,10 @@ public class LdapUser implements DirContext {
                 logger.error(e.getMessage(), e);
             }
             /* NTLM */
-            byte[] hmm = digester.digest(inPassword.getBytes(StandardCharsets.UTF_16LE));
+            byte[] unicodePassword = inPassword.getBytes(StandardCharsets.UTF_16LE);
+            byte[] hmm = new byte[digester.getDigestSize()];
+            digester.update(unicodePassword, 0, unicodePassword.length);
+            digester.doFinal(hmm, 0);
             this.attributes.put("sambaNTPassword", toHexString(hmm));
 
             /*

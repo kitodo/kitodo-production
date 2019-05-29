@@ -11,16 +11,16 @@
 
 package de.sub.goobi.helper.encryption;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
+import org.bouncycastle.crypto.digests.MD4Digest;
 import org.junit.Test;
 
 public class MD4Test {
-    static HashMap<String, byte[]> testData;
+    private static HashMap<String, byte[]> testData;
 
     static {
         testData = new HashMap<>();
@@ -36,12 +36,15 @@ public class MD4Test {
     }
 
     @Test
-    public void encryptTest() throws Exception {
+    public void encryptTest() {
         for (String clearText : testData.keySet()) {
-            MD4 digester = new MD4();
-            byte encrypted[] = digester.digest(clearText.getBytes("UnicodeLittleUnmarked"));
-            assertTrue("Encrypted password doesn't match the precomputed one! ",
-                    Arrays.equals(encrypted, testData.get(clearText)));
+            MD4Digest digester = new MD4Digest();
+            byte[] unicodePassword = clearText.getBytes(StandardCharsets.UTF_16LE);
+            byte[] encrypted = new byte[digester.getDigestSize()];
+            digester.update(unicodePassword, 0, unicodePassword.length);
+            digester.doFinal(encrypted, 0);
+            assertArrayEquals("Encrypted password doesn't match the precomputed one! ",
+                    encrypted, testData.get(clearText));
         }
     }
 }

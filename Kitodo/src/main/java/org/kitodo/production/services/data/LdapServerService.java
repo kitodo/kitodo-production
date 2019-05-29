@@ -54,7 +54,7 @@ import javax.naming.ldap.StartTlsResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.JDKMessageDigest;
+import org.bouncycastle.crypto.digests.MD4Digest;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapServer;
@@ -367,7 +367,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      * @return boolean about result of change
      */
     public boolean changeUserPassword(User user, String inNewPassword) throws NoSuchAlgorithmException {
-        JDKMessageDigest.MD4 digester = new JDKMessageDigest.MD4();
+        MD4Digest digester = new MD4Digest();
         PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
@@ -529,13 +529,16 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         }
     }
 
-    private BasicAttribute proceedPassword(String identifier, String newPassword, JDKMessageDigest.MD4 digester) {
+    private BasicAttribute proceedPassword(String identifier, String newPassword, MD4Digest digester) {
         try {
             byte[] hash;
             if (Objects.isNull(digester)) {
                 hash = LdapUser.lmHash(newPassword);
             } else {
-                hash = digester.digest(newPassword.getBytes(StandardCharsets.UTF_16LE));
+                byte[] unicodePassword = newPassword.getBytes(StandardCharsets.UTF_16LE);
+                hash = new byte[digester.getDigestSize()];
+                digester.update(unicodePassword, 0, unicodePassword.length);
+                digester.doFinal(hash, 0);
             }
             return new BasicAttribute(identifier, LdapUser.toHexString(hash));
             // TODO: Don't catch super class exception, make sure that

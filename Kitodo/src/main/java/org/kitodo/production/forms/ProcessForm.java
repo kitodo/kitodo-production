@@ -11,7 +11,7 @@
 
 package org.kitodo.production.forms;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
 import java.io.File;
 import java.io.IOException;
