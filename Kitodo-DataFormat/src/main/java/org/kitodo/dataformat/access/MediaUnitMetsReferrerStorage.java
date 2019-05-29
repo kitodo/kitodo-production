@@ -14,7 +14,6 @@ package org.kitodo.dataformat.access;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.kitodo.api.dataformat.MediaUnit;
 
@@ -23,10 +22,6 @@ import org.kitodo.api.dataformat.MediaUnit;
  * files.
  */
 class MediaUnitMetsReferrerStorage extends MediaUnit {
-    /**
-     * Saves the METS identifier for the division.
-     */
-    private String metsDivReferrerId;
 
     /**
      * Save the METS identifiers for the files.
@@ -43,25 +38,6 @@ class MediaUnitMetsReferrerStorage extends MediaUnit {
     FLocatXmlElementAccess storeFileId(FLocatXmlElementAccess fLocatXmlElementAccess) {
         metsFileReferrerIds.put(fLocatXmlElementAccess.getUri(), fLocatXmlElementAccess.getFileId());
         return fLocatXmlElementAccess;
-    }
-
-    /**
-     * Returns the ID of div, or if unknown, creates a new one.
-     * 
-     * @return the ID of div
-     */
-    String getDivId() {
-        return metsDivReferrerId != null ? metsDivReferrerId : UUID.randomUUID().toString();
-    }
-
-    /**
-     * Set the ID of div.
-     * 
-     * @param id
-     *            ID of div to set
-     */
-    void setDivId(String id) {
-        this.metsDivReferrerId = id;
     }
 
     /**

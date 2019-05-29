@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -64,6 +65,11 @@ public class MediaUnit implements Parent<MediaUnit> {
      * The type of the media unit.
      */
     private String type;
+
+    /**
+     * Saves the METS identifier for the division.
+     */
+    private String metsDivReferrerId;
 
     /**
      * Returns the subordinate media units associated with this media unit.
@@ -149,6 +155,28 @@ public class MediaUnit implements Parent<MediaUnit> {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * Returns the ID of div, or if unknown, creates a new one.
+     *
+     * @return the ID of div
+     */
+    public String getDivId() {
+        if (Objects.isNull(metsDivReferrerId)) {
+            metsDivReferrerId = UUID.randomUUID().toString();
+        }
+        return metsDivReferrerId;
+    }
+
+    /**
+     * Set the ID of div.
+     *
+     * @param divId
+     *            ID of div to set
+     */
+    public void setDivId(String divId) {
+        this.metsDivReferrerId = divId;
     }
 
     @Override
