@@ -26,8 +26,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
-import org.kitodo.production.services.dataformat.MetsService;
-import org.kitodo.production.services.file.FileService;
 
 /**
  * Connects a legacy METS MODS and digital document to a workpiece. This is a
@@ -36,14 +34,6 @@ import org.kitodo.production.services.file.FileService;
  */
 public class LegacyMetsModsDigitalDocumentHelper {
     private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
-
-    /**
-     * For each meta data element of this type that is associated with a
-     * DocStruct element of the logical structure tree of a digital document, a
-     * METS pointer element will be created during export.
-     */
-    @Deprecated
-    public static final String CREATE_MPTR_ELEMENT_TYPE = "MetsPointerURL";
 
     /**
      * If there is a meta data element of this type associated with a DocStruct
@@ -65,15 +55,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public static final String CREATE_ORDERLABEL_ATTRIBUTE_TYPE = "TitleDocMainShort";
 
-    private static final MetsService metsService = ServiceManager.getMetsService();
-    private static final FileService fileService = ServiceManager.getFileService();
     private static final RulesetManagementService rulesetManagementService = ServiceManager
             .getRulesetManagementService();
 
     /**
      * The workpiece accessed via this soldering class.
      */
-    private Workpiece workpiece = new Workpiece();
+    private Workpiece workpiece;
 
     /**
      * The current ruleset.
@@ -178,12 +166,6 @@ public class LegacyMetsModsDigitalDocumentHelper {
         return workpiece;
     }
 
-    @Deprecated
-    public void overrideContentFiles(List<String> images) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     /**
      * Reads a file and creates a digital document instance.
      *
@@ -216,38 +198,5 @@ public class LegacyMetsModsDigitalDocumentHelper {
     public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
         ServiceManager.getMetsService().saveWorkpiece(workpiece, uri);
-    }
-
-    /**
-     * This method generates a comprehensible log message in case something was
-     * overlooked and one of the unimplemented methods should ever be called in
-     * operation. The name was chosen deliberately short in order to keep the
-     * calling code clear. This method must be implemented in every class
-     * because it uses the logger tailored to the class.
-     *
-     * @param exception
-     *            created {@code UnsupportedOperationException}
-     * @return the exception
-     */
-    private static RuntimeException andLog(UnsupportedOperationException exception) {
-        StackTraceElement[] stackTrace = exception.getStackTrace();
-        StringBuilder buffer = new StringBuilder(255);
-        buffer.append(stackTrace[1].getClassName());
-        buffer.append('.');
-        buffer.append(stackTrace[1].getMethodName());
-        buffer.append("()");
-        if (stackTrace[1].getLineNumber() > -1) {
-            buffer.append(" line ");
-            buffer.append(stackTrace[1].getLineNumber());
-        }
-        buffer.append(" unexpectedly called unimplemented ");
-        buffer.append(stackTrace[0].getMethodName());
-        buffer.append("()");
-        if (exception.getMessage() != null) {
-            buffer.append(": ");
-            buffer.append(exception.getMessage());
-        }
-        logger.error(buffer.toString());
-        return exception;
     }
 }
