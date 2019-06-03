@@ -14,6 +14,7 @@ package org.kitodo.dataformat.access;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.kitodo.api.dataformat.MediaUnit;
@@ -51,7 +52,10 @@ class MediaUnitMetsReferrerStorage extends MediaUnit {
      * @return the ID of div
      */
     String getDivId() {
-        return metsDivReferrerId != null ? metsDivReferrerId : UUID.randomUUID().toString();
+        if (Objects.isNull(metsDivReferrerId)) {
+            metsDivReferrerId = UUID.randomUUID().toString();
+        }
+        return metsDivReferrerId;
     }
 
     /**
