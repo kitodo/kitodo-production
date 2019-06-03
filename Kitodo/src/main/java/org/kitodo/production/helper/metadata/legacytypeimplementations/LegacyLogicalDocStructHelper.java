@@ -232,13 +232,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         }
     }
 
-    @Override
-    @Deprecated
-    public String getAnchorClass() {
-        // The replacement of the UGH library has no concept of anchor classes.
-        return null;
-    }
-
     /**
      * Metadata eines Docstructs ermitteln.
      *

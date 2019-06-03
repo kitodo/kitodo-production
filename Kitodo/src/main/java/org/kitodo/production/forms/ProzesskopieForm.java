@@ -64,7 +64,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -573,7 +572,6 @@ public class ProzesskopieForm extends BaseForm {
 
         try {
             if (Objects.nonNull(this.rdf)) {
-                insertLogicalDocStruct();
 
                 for (AdditionalField field : this.additionalFields) {
                     if (field.isUghBinding() && field.showDependingOnDoctype()) {
@@ -647,29 +645,6 @@ public class ProzesskopieForm extends BaseForm {
                     metadata.setStringValue(field.getValue());
                 }
             }
-        }
-    }
-
-    /**
-     * There must be at least one non-anchor level doc struct, if missing,
-     * insert logical doc structures until you reach it.
-     */
-    private void insertLogicalDocStruct() {
-        LegacyDocStructHelperInterface populizer = null;
-        try {
-            populizer = rdf.getDigitalDocument().getLogicalDocStruct();
-            if (Objects.nonNull(populizer.getAnchorClass()) && Objects.isNull(populizer.getAllChildren())) {
-                LegacyLogicalDocStructTypeHelper docStructType = populizer.getDocStructType();
-                while (Objects.nonNull(docStructType.getAnchorClass())) {
-                    throw new UnsupportedOperationException("Dead code pending removal");
-                }
-            }
-        } catch (NullPointerException | IndexOutOfBoundsException e) {
-            String name = Objects.nonNull(populizer) && Objects.nonNull(populizer.getDocStructType())
-                    ? populizer.getDocStructType().getName()
-                    : null;
-            Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.",
-                logger, e);
         }
     }
 

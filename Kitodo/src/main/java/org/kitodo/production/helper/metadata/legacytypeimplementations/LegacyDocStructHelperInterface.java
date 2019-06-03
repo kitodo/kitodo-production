@@ -188,21 +188,6 @@ public interface LegacyDocStructHelperInterface {
     }
 
     /**
-     * Retrieves the name of the anchor structure, if any, or null otherwise.
-     * Anchors are a special type of document structure, which group other
-     * structure entities together, but have no own content. Imagine a
-     * periodical as such an anchor. The periodical itself is a virtual
-     * structure entity without any own content, but groups all years of
-     * appearance together. Years may be anchors again for volumes, etc.
-     *
-     * @return String, which is null, if it cannot be used as an anchor
-     */
-    @Deprecated
-    default String getAnchorClass() {
-        return null;
-    }
-
-    /**
      * Get the type of this DocStruct.
      *
      * @return the type of this DocStruct
