@@ -24,9 +24,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -182,15 +180,9 @@ public class ExportSerialBatchTask extends EmptyTask {
             throws IOException {
         LegacyMetsModsDigitalDocumentHelper result = ServiceManager.getProcessService().readMetadataFile(process)
                 .getDigitalDocument();
-        LegacyDocStructHelperInterface root = result.getLogicalDocStruct();
-        String type = "Volume";
-        try {
-            type = root.getAllChildren().get(0).getDocStructType().getName();
-        } catch (NullPointerException e) {
-            logger.error(e.getMessage(), e);
-        }
+
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
-        LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
                 throw new UnsupportedOperationException("Dead code pending removal");
