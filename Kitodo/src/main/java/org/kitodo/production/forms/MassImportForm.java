@@ -26,6 +26,7 @@ import java.util.Objects;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +81,7 @@ public class MassImportForm extends BaseForm {
     private String currentPlugin = "";
     private transient IImportPlugin plugin;
     private File importFile = null;
-    private UploadedFile uploadedFile = null;
+    private UploadedFile uploadedFile;
     private List<Process> processList;
     private List<String> allFilenames = new ArrayList<>();
     private List<String> selectedFilenames = new ArrayList<>();
@@ -237,26 +238,22 @@ public class MassImportForm extends BaseForm {
     /**
      * File upload with binary copying.
      */
-    public void uploadFile() throws IOException {
+    public void uploadFile() {
         if (Objects.isNull(this.uploadedFile)) {
             Helper.setErrorMessage("noFileSelected");
             return;
         }
 
-        String basename = this.uploadedFile.getFileName();
-        if (basename.startsWith(".")) {
-            basename = basename.substring(1);
-        }
-        if (basename.contains("/")) {
-            basename = basename.substring(basename.lastIndexOf('/') + 1);
-        }
-        if (basename.contains("\\")) {
-            basename = basename.substring(basename.lastIndexOf('\\') + 1);
-        }
-        URI temporalFile = ServiceManager.getFileService().createResource(
-            FilenameUtils.concat(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_TEMP), basename));
+        String fileName = this.uploadedFile.getFileName();
 
-        ServiceManager.getFileService().copyFile(URI.create(this.uploadedFile.getFileName()), temporalFile);
+        File temporalFile = new File(
+                FilenameUtils.concat(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_TEMP), fileName));
+
+        try {
+            FileUtils.copyToFile(this.uploadedFile.getInputstream(), temporalFile);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getMessage(), logger, e);
+        }
     }
 
     public UploadedFile getUploadedFile() {
