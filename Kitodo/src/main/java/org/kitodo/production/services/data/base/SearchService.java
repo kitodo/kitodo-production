@@ -169,9 +169,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         indexer.setMethod(HttpMethod.PUT);
         if (!baseIndexedBeans.isEmpty()) {
             indexer.performMultipleRequests(baseIndexedBeans, type, true);
-            for (T baseIndexedBean : baseIndexedBeans) {
-                updateIndexFlag(baseIndexedBean);
-            }
         }
     }
 
@@ -850,19 +847,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.DESC);
         } else {
             return null;
-        }
-    }
-
-    /**
-     * Update index flag for indexed object.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
-    private void updateIndexFlag(T baseIndexedBean) throws DAOException {
-        if (Objects.nonNull(baseIndexedBean)) {
-            baseIndexedBean.setIndexAction(IndexAction.DONE);
-            saveToDatabase(baseIndexedBean);
         }
     }
 }

@@ -240,6 +240,17 @@ public class FileService {
     }
 
     /**
+     * Read metadata file (meta.xml).
+     *
+     * @param process
+     *            for which file should be read
+     * @return InputStream with metadata file
+     */
+    public InputStream readMetadataFile(Process process, boolean forIndexingAll) throws IOException {
+        return read(getMetadataFilePath(process, true, forIndexingAll));
+    }
+
+    /**
      * This function implements file renaming. Renaming of files is full of
      * mischief under Windows which unaccountably holds locks on files.
      * Sometimes running the JVM’s garbage collector puts things right.
@@ -504,7 +515,7 @@ public class FileService {
                 throw new UnsupportedOperationException("Dead code pending removal");
         }
         // createBackupFile();
-        URI metadataFileUri = getMetadataFilePath(process, false);
+        URI metadataFileUri = getMetadataFilePath(process, false, false);
         String temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileUri);
 
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
@@ -560,7 +571,7 @@ public class FileService {
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) throws IOException {
-        return getMetadataFilePath(process, true);
+        return getMetadataFilePath(process, true, false);
     }
 
     /**
@@ -572,8 +583,8 @@ public class FileService {
      *            whether the file must exist
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(Process process, boolean mustExist) throws IOException {
-        URI metadataFilePath = getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
+    public URI getMetadataFilePath(Process process, boolean mustExist, boolean forIndexingAll) throws IOException {
+        URI metadataFilePath = getProcessSubTypeURI(process, ProcessSubType.META_XML, null, forIndexingAll);
         if (mustExist && !fileExist(metadataFilePath)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound", Collections.singletonList(metadataFilePath.getPath())));
         }
@@ -743,14 +754,32 @@ public class FileService {
      * @return The URI of the requested location
      */
     public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
+        return getProcessSubTypeURI(process, processSubType, resourceName, false);
+    }
 
-        URI processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
+    /**
+     * Get's the URI for a Process Sub-location. Possible Locations are listed
+     * in ProcessSubType
+     *
+     * @param process
+     *            the process to get the sublocation for.
+     * @param processSubType
+     *            The subType.
+     * @param resourceName
+     *            the name of the single object (e.g. image) if null, the root
+     *            folder of the sublocation is returned
+     * @return The URI of the requested location
+     */
+    private URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName,
+            boolean forIndexingAll) {
+
+        URI processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process, forIndexingAll);
 
         if (Objects.isNull(resourceName)) {
             resourceName = "";
         }
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory,
-                Helper.getNormalizedTitle(process.getTitle()), processSubType, resourceName);
+            Helper.getNormalizedTitle(process.getTitle()), processSubType, resourceName);
     }
 
     /**
