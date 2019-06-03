@@ -98,23 +98,6 @@ public class ExportSerialBatchTask extends EmptyTask {
     }
 
     /**
-     * Clone constructor. Creates a new ExportSerialBatchTask from another one.
-     * This is used for restarting the thread as a Java thread cannot be run
-     * twice.
-     *
-     * @param master
-     *            copy master
-     */
-    public ExportSerialBatchTask(ExportSerialBatchTask master) {
-        super(master);
-        batch = master.batch;
-        pointers = master.pointers;
-        stepcounter = master.stepcounter;
-        processesIterator = master.processesIterator;
-        maxsize = master.maxsize;
-    }
-
-    /**
      * The function run() is the main function of this task (which is a thread).
      * It will aggregate the data from all processes and then export all
      * processes with the recombined data. The statusProgress variable is being
