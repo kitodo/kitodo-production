@@ -1247,17 +1247,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
-     * Get full text file path.
-     *
-     * @param process
-     *            object
-     * @return path as a String to the full text file
-     */
-    public String getFulltextFilePath(Process process) {
-        return getProcessDataDirectory(process) + "/fulltext.xml";
-    }
-
-    /**
      * Read metadata file.
      *
      * @param process
@@ -1296,9 +1285,9 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     public LegacyMetsModsDigitalDocumentHelper readMetadataFile(URI metadataFile, LegacyPrefsHelper prefs)
             throws IOException {
         String type = MetadataHelper.getMetaFileType(metadataFile);
-        LegacyMetsModsDigitalDocumentHelper ff = determineFileFormat(type, prefs);
-        ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
-        return ff;
+        LegacyMetsModsDigitalDocumentHelper fileFormat = determineFileFormat(type, prefs);
+        fileFormat.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
+        return fileFormat;
     }
 
     private LegacyMetsModsDigitalDocumentHelper determineFileFormat(String type, Process process) {
