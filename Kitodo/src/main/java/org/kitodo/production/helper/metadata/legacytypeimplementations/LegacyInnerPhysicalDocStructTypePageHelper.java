@@ -11,8 +11,6 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,13 +30,6 @@ public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDoc
 
     private LegacyInnerPhysicalDocStructTypePageHelper() {
         super(null);
-    }
-
-    @Override
-    @Deprecated
-    public List<LegacyMetadataTypeHelper> getAllMetadataTypes() {
-        // TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
