@@ -14,9 +14,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 import java.io.File;
 import java.net.URI;
 
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.dataformat.MetsService;
-
 /**
  * Connects a legacy content file to a media file. This is a soldering class to
  * keep legacy code operational which is about to be removed. Do not use this
@@ -24,16 +21,10 @@ import org.kitodo.production.services.dataformat.MetsService;
  */
 public class LegacyContentFileHelper {
 
-    private static final MetsService metsService = ServiceManager.getMetsService();
-
     /**
      * The media file accessed via this soldering class.
      */
     private URI mediaFile;
-
-    @Deprecated
-    public LegacyContentFileHelper() {
-    }
 
     @Deprecated
     public String getLocation() {
@@ -43,9 +34,5 @@ public class LegacyContentFileHelper {
     @Deprecated
     public void setLocation(String fileName) {
         mediaFile = new File(fileName).toURI();
-    }
-
-    public URI getMediaFile() {
-        return mediaFile;
     }
 }
