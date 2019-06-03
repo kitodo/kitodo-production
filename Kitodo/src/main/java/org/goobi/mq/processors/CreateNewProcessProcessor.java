@@ -129,7 +129,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
             if (Objects.nonNull(opac)) {
                 getBibliorgaphicData(newProcess, opac, field, value);
             }
-            if (Objects.nonNull(docType) && docTypeIsPossible(newProcess, docType)) {
+            if (Objects.nonNull(docType)) {
+                docTypeIsPossible(newProcess, docType);
                 newProcess.setDocType(docType);
             }
             if (Objects.nonNull(userFields)) {
@@ -216,23 +217,22 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
     /**
      * The function docTypeIsPossible() tests whether a given docType String can
-     * be applied to a given process template. If so, it will return “true”,
+     * be applied to a given process template. If so, it will execute without exception,
      * otherwise, it will throw an informative IllegalArgumentException.
      *
      * @param dialog
      *            the ProzesskopieForm object to test against
      * @param docType
      *            the desired docType ID string
-     * @return true on success
      * @throws IllegalArgumentException
      *             if a docType is not applicable to the template or the docType
      *             isn’t valid
      */
-    private static boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) {
+    private static void docTypeIsPossible(ProzesskopieForm dialog, String docType) {
         Boolean fieldIsUsed = dialog.getStandardFields().get("doctype");
         if (Objects.isNull(fieldIsUsed) || fieldIsUsed.equals(Boolean.FALSE)) {
             throw new IllegalArgumentException(
-                    "Bad argument “docType”: Selected template doesn’t provide " + "the standard field “doctype”.");
+                    "Bad argument “docType”: Selected template doesn’t provide the standard field “doctype”.");
         }
 
         boolean valueIsValid;
@@ -241,11 +241,11 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
             ConfigOpacDoctype option = configOpacDoctypeIterator.next();
             valueIsValid = docType.equals(option.getTitle());
         } while (!valueIsValid && configOpacDoctypeIterator.hasNext());
-        if (valueIsValid) {
-            return true;
+
+        if (!valueIsValid) {
+            throw new IllegalArgumentException("Bad argument “docType”: Selected template doesn’t provide "
+                    + "a docType “{0}”.".replace("{0}", docType));
         }
-        throw new IllegalArgumentException("Bad argument “docType”: Selected template doesn’t provide "
-                + "a docType “{0}”.".replace("{0}", docType));
     }
 
     /**
