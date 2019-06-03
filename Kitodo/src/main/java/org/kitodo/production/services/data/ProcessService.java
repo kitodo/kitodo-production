@@ -1296,32 +1296,23 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     public LegacyMetsModsDigitalDocumentHelper readMetadataFile(URI metadataFile, LegacyPrefsHelper prefs)
             throws IOException {
         String type = MetadataHelper.getMetaFileType(metadataFile);
-        LegacyMetsModsDigitalDocumentHelper ff;
-        switch (type) {
-            case "metsmods":
-            case "mets":
-                ff = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
-                break;
-            default:
-                throw new UnsupportedOperationException("Dead code pending removal");
-        }
+        LegacyMetsModsDigitalDocumentHelper ff = determineFileFormat(type, prefs);
         ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
-
         return ff;
     }
 
     private LegacyMetsModsDigitalDocumentHelper determineFileFormat(String type, Process process) {
-        LegacyMetsModsDigitalDocumentHelper fileFormat;
         RulesetService rulesetService = ServiceManager.getRulesetService();
+        return determineFileFormat(type, rulesetService.getPreferences(process.getRuleset()));
+    }
 
-        switch (type) {
-            case "metsmods":
-            case "mets":
-                fileFormat = new LegacyMetsModsDigitalDocumentHelper(
-                        rulesetService.getPreferences(process.getRuleset()).getRuleset());
-                break;
-            default:
-                throw new UnsupportedOperationException("Dead code pending removal");
+    private LegacyMetsModsDigitalDocumentHelper determineFileFormat(String type, LegacyPrefsHelper prefs) {
+        LegacyMetsModsDigitalDocumentHelper fileFormat;
+
+        if ("metsmods".equals(type) || "mets".equals(type)) {
+            fileFormat = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
+        } else {
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
         return fileFormat;
     }
