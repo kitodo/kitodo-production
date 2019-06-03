@@ -2089,7 +2089,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
             int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
             int sizeOfImages = images.size();
             if (sizeOfPagination == sizeOfImages) {
-                dd.overrideContentFiles(imageStrings);
+                throw new UnsupportedOperationException("Not yet implemented");
             } else {
                 Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages });
                 return false;
