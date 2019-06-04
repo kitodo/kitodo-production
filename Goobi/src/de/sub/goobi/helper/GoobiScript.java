@@ -96,17 +96,6 @@ public class GoobiScript {
         }
 
         /*
-         * -------------------------------- die passende Methode mit den richtigen Parametern übergeben --------------------------------
-         */
-        if (this.myParameters.get("action") == null) {
-            Helper.setFehlerMeldung(
-                    "goobiScriptfield",
-                    "missing action",
-                    " - possible: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
-            return;
-        }
-
-        /*
          * -------------------------------- Aufruf der richtigen Methode über den Parameter --------------------------------
          */
         switch (this.myParameters.get("action")) {
