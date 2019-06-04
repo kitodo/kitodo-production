@@ -74,11 +74,6 @@ public class GoobiScript {
      */
     public void execute(List<Prozess> inProzesse, String inScript) {
 
-        if (inScript.contains("action:copyData")) {
-            copyData(inProzesse, inScript);
-            return;
-        }
-
         this.myParameters = new HashMap<String, String>();
         /*
          * -------------------------------- alle Suchparameter zerlegen und erfassen --------------------------------
@@ -179,6 +174,9 @@ public class GoobiScript {
                     contentOnly = false;
                 }
                 deleteProcess(inProzesse, contentOnly);
+                break;
+            case "copyData":
+                copyData(inProzesse, inScript);
                 break;
             case "rewriteProcessMetadata":
                 rewriteProcessMetadata(inProzesse);
