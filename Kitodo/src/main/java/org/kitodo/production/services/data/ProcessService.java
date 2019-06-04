@@ -1263,17 +1263,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
-     * Get full text file path.
-     *
-     * @param process
-     *            object
-     * @return path as a String to the full text file
-     */
-    public String getFulltextFilePath(Process process) {
-        return getProcessDataDirectory(process) + "/fulltext.xml";
-    }
-
-    /**
      * Read metadata file.
      *
      * @param process
@@ -1312,32 +1301,23 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     public LegacyMetsModsDigitalDocumentHelper readMetadataFile(URI metadataFile, LegacyPrefsHelper prefs)
             throws IOException {
         String type = MetadataHelper.getMetaFileType(metadataFile);
-        LegacyMetsModsDigitalDocumentHelper ff;
-        switch (type) {
-            case "metsmods":
-            case "mets":
-                ff = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
-                break;
-            default:
-                throw new UnsupportedOperationException("Dead code pending removal");
-        }
-        ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
-
-        return ff;
+        LegacyMetsModsDigitalDocumentHelper fileFormat = determineFileFormat(type, prefs);
+        fileFormat.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
+        return fileFormat;
     }
 
     private LegacyMetsModsDigitalDocumentHelper determineFileFormat(String type, Process process) {
-        LegacyMetsModsDigitalDocumentHelper fileFormat;
         RulesetService rulesetService = ServiceManager.getRulesetService();
+        return determineFileFormat(type, rulesetService.getPreferences(process.getRuleset()));
+    }
 
-        switch (type) {
-            case "metsmods":
-            case "mets":
-                fileFormat = new LegacyMetsModsDigitalDocumentHelper(
-                        rulesetService.getPreferences(process.getRuleset()).getRuleset());
-                break;
-            default:
-                throw new UnsupportedOperationException("Dead code pending removal");
+    private LegacyMetsModsDigitalDocumentHelper determineFileFormat(String type, LegacyPrefsHelper prefs) {
+        LegacyMetsModsDigitalDocumentHelper fileFormat;
+
+        if ("metsmods".equals(type) || "mets".equals(type)) {
+            fileFormat = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
+        } else {
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
         return fileFormat;
     }

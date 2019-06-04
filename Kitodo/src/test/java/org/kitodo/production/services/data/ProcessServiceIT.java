@@ -423,14 +423,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetFulltextFilePath() throws Exception {
-        Process process = processService.getById(1);
-        String directory = processService.getFulltextFilePath(process);
-        boolean condition = directory.contains("1/fulltext.xml");
-        assertTrue("Fulltext file path doesn't match to given file path!", condition);
-    }
-
-    @Test
     public void shouldReadMetadataFile() throws Exception {
         FileLoader.createMetadataFile();
 
