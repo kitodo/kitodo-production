@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +34,6 @@ import org.kitodo.production.helper.ArrayListMap;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
@@ -291,15 +289,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if the value cannot be parsed to int
      */
     private static int getMetadataIntValueByName(LegacyDocStructHelperInterface structureTypeName, String metaDataTypeName) {
-        List<LegacyMetadataTypeHelper> metadataTypeInterfaces = structureTypeName.getDocStructType().getAllMetadataTypes();
-        for (LegacyMetadataTypeHelper metadataType : metadataTypeInterfaces) {
-            if (metaDataTypeName.equals(metadataType.getName())) {
-                return Integer
-                        .parseInt(new HashSet<>(structureTypeName.getAllMetadataByType(metadataType))
-                                .iterator().next().getValue());
-            }
-        }
-        throw new NoSuchElementException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /**
