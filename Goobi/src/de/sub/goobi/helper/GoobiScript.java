@@ -163,6 +163,7 @@ public class GoobiScript {
                 String scriptname = this.myParameters.get("script");
                 if (stepname == null) {
                     Helper.setFehlerMeldung("goobiScriptfield", "", "Missing parameter");
+                    return;
                 } else {
                     runScript(inProzesse, stepname, scriptname);
                 }
