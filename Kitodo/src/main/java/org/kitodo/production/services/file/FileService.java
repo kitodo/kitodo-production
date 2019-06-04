@@ -1056,13 +1056,12 @@ public class FileService {
         for (int i = mediaUnits.size() - 1; i >= 0; i--) {
             MediaUnit mediaUnit = mediaUnits.get(i);
             String orderlabel = mediaUnit.getOrderlabel();
-            if (orderlabel == null || mediaUnit.getMediaFiles().isEmpty()) {
-                continue;
+            if (Objects.nonNull(orderlabel) && !mediaUnit.getMediaFiles().isEmpty()) {
+                first = i + 1;
+                value = orderlabel;
+                mediaUnits.get(i).setType("page");
+                break;
             }
-            first = i + 1;
-            value = orderlabel;
-            mediaUnits.get(i).setType("page");
-            break;
         }
         Paginator paginator = new Paginator(value);
         if (first > 0) {
