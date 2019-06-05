@@ -695,7 +695,7 @@ section#content-section {
 
 .content-header {
     flex: 0 1 36px;
-    padding: 1.0em 16px;
+    padding: var(--input-padding) var(--default-full-size);
     position: relative;
 }
 
@@ -1859,7 +1859,6 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
     background: var(--pure-white);
     min-height: calc(100% - var(--contrast-border-width));
     padding: var(--contrast-border-width) 0 0 0;
-    background: var(--pure-white);
 }
 
 .ui-panelgrid-cell > div {
