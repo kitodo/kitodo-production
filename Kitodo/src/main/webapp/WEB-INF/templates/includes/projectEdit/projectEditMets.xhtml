@@ -61,16 +61,6 @@
                 <p:commandButton id="copyMetsDigiprovReferenceButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsDigiprovReference', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovReference || ProjectForm.locked}"/>
             </div>
             <div>
-                <p:outputLabel for="metsDigiprovReferenceAnchor" value="#{msgs.metsDigiprovReferenceAnchor}" />
-                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input-with-button" value="#{ProjectForm.project.metsDigiprovReferenceAnchor}"
-                             disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                    <p:ajax event="keyup" update="editForm:projectTabView:copyMetsDigiprovReferenceAnchorButton"/>
-                </p:inputText>
-                <p:commandButton id="copyMetsDigiprovReferenceAnchorButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsDigiprovReferenceAnchor', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovReferenceAnchor || ProjectForm.locked}"/>
-            </div>
-            <div>
                 <p:outputLabel for="metsPointerPath" value="#{msgs.metsPointerPath}" />
                 <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input-with-button" value="#{ProjectForm.project.metsPointerPath}"
                              disabled="#{ProjectForm.locked}">
@@ -120,26 +110,6 @@
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsDigiprovPresentationButton"/>
                 </p:inputText>
                 <p:commandButton id="copyMetsDigiprovPresentationButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsDigiprovPresentation', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovPresentation || ProjectForm.locked}"/>
-            </div>
-            <div>
-                <p:outputLabel for="metsPresentationAnchor" value="#{msgs.metsDigiprovPresentationAnchor}" />
-                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input-with-button" value="#{ProjectForm.project.metsDigiprovPresentationAnchor}"
-                             disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                    <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPresentationAnchorButton"/>
-                </p:inputText>
-                <p:commandButton id="copyMetsPresentationAnchorButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPresentationAnchor', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovPresentationAnchor || ProjectForm.locked}"/>
-            </div>
-            <div>
-                <p:outputLabel for="metsPointerPathAnchor" value="#{msgs.metsPointerPathAnchor}" />
-                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input-with-button" value="#{ProjectForm.project.metsPointerPathAnchor}"
-                             disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                    <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPointerPathAnchorButton"/>
-                </p:inputText>
-                <p:commandButton id="copyMetsPointerPathAnchorButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPointerPathAnchor', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsPointerPathAnchor || ProjectForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsContentId" value="#{msgs.metsContentIDs}" />

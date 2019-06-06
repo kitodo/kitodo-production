@@ -166,7 +166,7 @@ public class ExportDms extends ExportMets {
         URI userHome;
         if (process.getProject().isUseDmsImport()) {
             // TODO: I have got here value usr/local/kitodo/hotfolder
-            destination = new File(process.getProject().getDmsImportImagesPath()).toURI();
+            destination = new File(process.getProject().getDmsImportRootPath()).toURI();
             userHome = destination;
 
             // if necessary, create process folder
@@ -266,17 +266,10 @@ public class ExportDms extends ExportMets {
             return false;
         }
         // delete old success folder
-        URI successFolder = URI.create(project.getDmsImportSuccessPath() + "/" + normalizedTitle);
+        URI successFolder = URI.create(project.getDmsImportRootPath() + "/" + normalizedTitle);
         if (!fileService.delete(successFolder)) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
-            return false;
-        }
-        // delete old error folder
-        URI errorFolder = URI.create(project.getDmsImportErrorPath() + "/" + normalizedTitle);
-        if (!fileService.delete(errorFolder)) {
-            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
-                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
             return false;
         }
 
@@ -375,12 +368,6 @@ public class ExportDms extends ExportMets {
                 exportDmsTask.setProgress(100);
             } else {
                 Helper.setMessage(process.getTitle() + ": ", "exportFinished");
-            }
-            // delete success folder again
-            if (process.getProject().isDmsImportCreateProcessFolder()) {
-                URI successFolder = URI.create(process.getProject().getDmsImportSuccessPath() + "/"
-                        + Helper.getNormalizedTitle(processTitle));
-                fileService.delete(successFolder);
             }
         }
     }

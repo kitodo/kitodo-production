@@ -281,10 +281,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
 
         duplicatedProject.setFileFormatInternal(baseProject.getFileFormatInternal());
         duplicatedProject.setFileFormatDmsExport(baseProject.getFileFormatDmsExport());
-        duplicatedProject.setDmsImportErrorPath(baseProject.getDmsImportErrorPath());
-        duplicatedProject.setDmsImportSuccessPath(baseProject.getDmsImportSuccessPath());
 
-        duplicatedProject.setDmsImportImagesPath(baseProject.getDmsImportImagesPath());
         duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
         duplicatedProject.setDmsImportTimeOut(baseProject.getDmsImportTimeOut());
         duplicatedProject.setUseDmsImport(baseProject.isUseDmsImport());
@@ -296,12 +293,9 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         duplicatedProject.setMetsRightsOwnerMail(baseProject.getMetsRightsOwnerMail());
 
         duplicatedProject.setMetsDigiprovPresentation(baseProject.getMetsDigiprovPresentation());
-        duplicatedProject.setMetsDigiprovPresentationAnchor(baseProject.getMetsDigiprovPresentationAnchor());
         duplicatedProject.setMetsDigiprovReference(baseProject.getMetsDigiprovReference());
-        duplicatedProject.setMetsDigiprovReferenceAnchor(baseProject.getMetsDigiprovReferenceAnchor());
 
         duplicatedProject.setMetsPointerPath(baseProject.getMetsPointerPath());
-        duplicatedProject.setMetsPointerPathAnchor(baseProject.getMetsPointerPathAnchor());
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
