@@ -58,7 +58,7 @@
                 <p:panel>
                     <p:fileUpload id="fileUpload3" value="#{MassImportForm.uploadedFile}"
                                   mode="simple" skinSimple="true" required="false"/>
-                    <p:commandButton value="#{msgs.uploadFile}" id="uploadButton" action="#{MassImportForm.uploadFile}"/>
+                    <p:commandButton value="#{msgs.uploadFile}" id="uploadButton" action="#{MassImportForm.uploadFile}" ajax="false"/>
                 </p:panel>
             </div>
         </p:row>
