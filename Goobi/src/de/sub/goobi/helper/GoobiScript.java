@@ -167,7 +167,7 @@ public class GoobiScript {
                 contentOnly = false;
             }
             deleteProcess(inProzesse, contentOnly);
-        } if (this.myParameters.get("action").equals("rewriteProcessMetadata")) {
+        } else if (this.myParameters.get("action").equals("rewriteProcessMetadata")) {
             rewriteProcessMetadata(inProzesse);
         } else {
             Helper.setFehlerMeldung(
