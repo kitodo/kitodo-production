@@ -114,11 +114,11 @@
                     </p:dataList>
 
                     <!-- Unstructured media-->
-                    <h:outputText value="#{msgs['dataEditor.unstructuredMedia']}"
-                                  styleClass="gallery-stripe-header"
-                                  style="font-weight: bold;"/>
                     <h:panelGroup id="unstructuredMedia"
                                   layout="block">
+                        <h:outputText value="#{msgs['dataEditor.unstructuredMedia']}"
+                                      styleClass="gallery-stripe-header"
+                                      style="font-weight: bold;"/>
                         <!-- Index 0 of stripes is used to retrieve the logical root element. -->
                         <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                         <p:dataList id="unstructuredMediaList"

@@ -1692,12 +1692,32 @@ Column content
 
 #imagePreviewForm\:structuredPagesField {
     height: 100%;
-    overflow-y: scroll;
     padding: 0;
 }
 
-#imagePreviewForm\:structuredPages .ui-widget-content {
+#imagePreviewForm\:structuredPages .ui-widget-content,
+#imagePreviewForm\:unstructuredMediaList .ui-datalist-item,
+#imagePreviewForm\:unstructuredMediaList .ui-datalist-empty-message {
     color: var(--pure-white);
+}
+
+#imagePreviewForm\:structuredPagesField .ui-fieldset-content {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+#imagePreviewForm\:structuredPages {
+    flex: 1 1 auto;
+    overflow-y: scroll;
+}
+
+#imagePreviewForm\:unstructuredMedia {
+    bottom: 0;
+    flex: 0 1 auto;
+    max-height: 400px;
+    min-height: 200px;
+    overflow-y: scroll;
 }
 
 #imagePreviewForm\:unstructuredMedia .ui-datalist-item {
