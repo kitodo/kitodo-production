@@ -42,6 +42,10 @@
             <p:commandButton id="saveButton"
                              widgetVar="saveButton"
                              value="#{msgs.save}"
+                             onclick="$('#loadingScreen').show()"
+                             oncomplete="$('#loadingScreen').hide()"
+                             onsuccess="PF('notifications').renderMessage({'summary':'#{msgs.textSaved}','severity':'info'});"
+                             onerror="PF('notifications').renderMessage({'summary':'#{msgs.textSavingFaild}','severity':'error'});"
                              action="#{LegalTextEditor.saveText()}"/>
             <pe:codeMirror id="legalTextEditor"
                            theme="blackboard"
