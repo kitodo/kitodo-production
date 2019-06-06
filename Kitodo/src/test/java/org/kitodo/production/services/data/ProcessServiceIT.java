@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,8 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
@@ -67,6 +70,7 @@ public class ProcessServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
         fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
@@ -85,7 +89,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCountAllProcesses() throws DataException {
-        assertEquals("Processes were not counted correctly!", Long.valueOf(3), processService.count());
+        assertEquals("Processes were not counted correctly!", Long.valueOf(7), processService.count());
     }
 
     @Test
@@ -98,7 +102,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
         Long amount = processService.countDatabaseRows();
-        assertEquals("Processes were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Processes were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
@@ -138,13 +142,13 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetAllProcesses() throws Exception {
         List<Process> processes = processService.getAll();
-        assertEquals("Not all processes were found in database!", 3, processes.size());
+        assertEquals("Not all processes were found in database!", 7, processes.size());
     }
 
     @Test
     public void shouldGetAllProcessesInGivenRange() throws Exception {
         List<Process> processes = processService.getAll(1, 10);
-        assertEquals("Not all processes were found in database!", 2, processes.size());
+        assertEquals("Not all processes were found in database!", 6, processes.size());
     }
 
     @Test
@@ -152,22 +156,22 @@ public class ProcessServiceIT {
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
-        Process foundProcess = processService.getById(4);
+        Process foundProcess = processService.getById(8);
         assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
 
         processService.remove(foundProcess);
         exception.expect(DAOException.class);
-        processService.getById(6);
+        processService.getById(10);
 
         process = new Process();
         process.setTitle("To remove");
         processService.save(process);
-        foundProcess = processService.getById(5);
+        foundProcess = processService.getById(9);
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
-        processService.remove(5);
+        processService.remove(9);
         exception.expect(DAOException.class);
-        processService.getById(5);
+        processService.getById(9);
     }
 
     @Test
@@ -527,4 +531,31 @@ public class ProcessServiceIT {
         ProcessDTO processDTO = processService.findById(2);
         assertFalse(processService.isProcessAssignedToOnlyOneLogisticBatch(processDTO.getBatches()));
     }
+
+    @Test
+    public void shouldUpdateChildrenFromRootElement() throws Exception {
+        LinkedMetsResource childToKeepLink = new LinkedMetsResource();
+        childToKeepLink.setUri(processService.getProcessURI(processService.getById(5)));
+        IncludedStructuralElement childToKeepIncludedStructuralElement = new IncludedStructuralElement();
+        childToKeepIncludedStructuralElement.setLink(childToKeepLink);
+        IncludedStructuralElement rootElement = new IncludedStructuralElement();
+        rootElement.getChildren().add(childToKeepIncludedStructuralElement);
+        LinkedMetsResource childToAddLink = new LinkedMetsResource();
+        childToAddLink.setUri(processService.getProcessURI(processService.getById(7)));
+        IncludedStructuralElement childToAddIncludedStructuralElement = new IncludedStructuralElement();
+        childToAddIncludedStructuralElement.setLink(childToAddLink);
+        rootElement.getChildren().add(childToAddIncludedStructuralElement);
+
+        Process process = processService.getById(4);
+
+        processService.updateChildrenFromRootElement(process, rootElement);
+
+        for (Process child : process.getChildren()) {
+            assertTrue("Process should have child to keep and child to add as only children",
+                Arrays.asList("HierarchChildToKeep", "HierarchChildToAdd").contains(child.getTitle()));
+            assertEquals("Child should have parent as parent", process, child.getParent());
+        }
+        assertEquals("Process to remove should have no parent", null, processService.getById(6).getParent());
+    }
+
 }

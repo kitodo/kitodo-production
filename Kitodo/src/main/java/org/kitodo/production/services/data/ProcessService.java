@@ -41,9 +41,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +81,7 @@ import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -2319,5 +2322,69 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public void setFilter(String filter) {
         this.filter = filter;
+    }
+
+    /**
+     * Updates the linked child processes to the level specified in the root
+     * element. Processes linked in the root element are linked in the database.
+     * For processes that are not linked in the root element, the link in the
+     * database is removed.
+     *
+     * @param process
+     *            parent process
+     * @param rootElement
+     *            the current state of the root element
+     * @throws DAOException
+     *             if a process is referenced with a URI whose ID does not
+     *             appear in the database
+     * @throws DataException
+     *             if the process cannot be saved
+     */
+    public void updateChildrenFromRootElement(Process process, IncludedStructuralElement rootElement)
+            throws DAOException, DataException {
+        removeLinksFromNoLongerLinkedProcesses(process, rootElement);
+        addNewLinks(process, rootElement);
+    }
+
+    private void removeLinksFromNoLongerLinkedProcesses(Process process, IncludedStructuralElement rootElement)
+            throws DAOException, DataException {
+        ArrayList<Process> childrenToRemove = new ArrayList<>(process.getChildren());
+        childrenToRemove.removeAll(getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
+        for (Process childToRemove : childrenToRemove) {
+            childToRemove.setParent(null);
+            process.getChildren().remove(childToRemove);
+            save(childToRemove);
+        }
+        if (!childrenToRemove.isEmpty()) {
+            save(process);
+        }
+    }
+
+    private void addNewLinks(Process process, IncludedStructuralElement rootElement)
+            throws DAOException, DataException {
+        ArrayList<Process> childrenToAdd = new ArrayList(
+                getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
+        childrenToAdd.removeAll(process.getChildren());
+        for (Process childToAdd : childrenToAdd) {
+            childToAdd.setParent(process);
+            process.getChildren().add(childToAdd);
+            save(childToAdd);
+        }
+        if (!childrenToAdd.isEmpty()) {
+            save(process);
+        }
+    }
+
+    private Collection<Process> getProcessesLinkedInIncludedStructuralElementRecursive(
+            IncludedStructuralElement includedStructuralElement) throws DAOException {
+        Collection<Process> result = new HashSet<>();
+        if (Objects.nonNull(includedStructuralElement.getLink())) {
+            int processId = processIdFromUri(includedStructuralElement.getLink().getUri());
+            result.add(getById(processId));
+        }
+        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
+            result.addAll(getProcessesLinkedInIncludedStructuralElementRecursive(child));
+        }
+        return result;
     }
 }
