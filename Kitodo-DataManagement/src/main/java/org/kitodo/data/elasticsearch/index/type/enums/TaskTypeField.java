@@ -35,6 +35,7 @@ public enum TaskTypeField implements TypeInterface {
     PROCESS_ID("processForTask.id"),
     PROCESS_TITLE("processForTask.title"),
     CLIENT_ID("clientForTask"),
+    PROJECT_ID("projectForTask"),
     TEMPLATE_ID("templateForTask.id"),
     TEMPLATE_TITLE("templateForTask.title"),
     ROLES("roles");

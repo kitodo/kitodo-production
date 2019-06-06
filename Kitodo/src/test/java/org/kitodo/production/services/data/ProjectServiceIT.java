@@ -33,6 +33,7 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -172,5 +173,13 @@ public class ProjectServiceIT {
     public void shouldGetClientOfProject() throws Exception {
         Project project = projectService.getById(1);
         assertEquals("Client names doesnt match", "First client", project.getClient().getName());
+    }
+
+    @Test
+    public void findByIds() throws DataException {
+        ProjectService projectService = ServiceManager.getProjectService();
+        QueryBuilder projectsForCurrentUserQuery = projectService.getProjectsForCurrentUserQuery();
+        List<ProjectDTO> byQuery = projectService.findByQuery(projectsForCurrentUserQuery, true);
+        assertEquals("Wrong amount of projects found",2,byQuery.size());
     }
 }

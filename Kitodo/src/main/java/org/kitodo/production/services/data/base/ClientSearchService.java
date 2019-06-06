@@ -137,4 +137,9 @@ public abstract class ClientSearchService<T extends BaseIndexedBean, S extends B
     public List<S> findByQuery(QueryBuilder query, SortBuilder sort, Integer offset, Integer size, boolean related) throws DataException {
         return super.findByQuery(queryForClient(query), sort, offset, size, related);
     }
+
+    @Override
+    public Long countDocuments(QueryBuilder query) throws DataException {
+        return super.countDocuments(queryForClient(query));
+    }
 }

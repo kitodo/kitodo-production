@@ -59,10 +59,18 @@ public class TaskType extends BaseType<Task> {
         jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), getId(task.getProcess()));
         jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), getTitle(task.getProcess()));
         jsonObject.put(TaskTypeField.CLIENT_ID.getKey(), getClientId(task));
+        jsonObject.put(TaskTypeField.PROJECT_ID.getKey(), getProjectId(task));
         jsonObject.put(TaskTypeField.TEMPLATE_ID.getKey(), getId(task.getTemplate()));
         jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), getTitle(task.getTemplate()));
         jsonObject.put(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
         return jsonObject;
+    }
+
+    private int getProjectId(Task task) {
+        if (Objects.nonNull(task.getProcess())) {
+            return getId(task.getProcess().getProject());
+        }
+        return 0;
     }
 
     private int getClientId(Task task) {
@@ -74,4 +82,5 @@ public class TaskType extends BaseType<Task> {
         }
         return 0;
     }
+
 }
