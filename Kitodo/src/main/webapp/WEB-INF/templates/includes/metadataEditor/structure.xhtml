@@ -22,7 +22,7 @@
 
         <!-- Logical Tree -->
         <h:panelGroup layout="block" style="background-color: var(--cloudy-gray);"
-                      styleClass="ui-widget-content columnHeadingWrapper">#{msgs.logical} #{msgs.pageStructure}</h:panelGroup>
+                      styleClass="ui-widget-content columnHeadingWrapper">#{DataEditorForm.structurePanel.separateMedia ? msgs.logical : ''} #{msgs.structure}</h:panelGroup>
         <p:tree id="logicalTree"
                 value="#{DataEditorForm.structurePanel.logicalTree}"
                 disabled="#{readOnly}"
@@ -70,8 +70,10 @@
             <h:panelGroup id="physicalTreeHeader"
                           layout="block"
                           style="background-color: var(--cloudy-gray);"
-                          styleClass="ui-widget-content columnHeadingWrapper">#{msgs.physical} #{msgs.pageStructure}</h:panelGroup>
+                          rendered="#{DataEditorForm.structurePanel.separateMedia}"
+                          styleClass="ui-widget-content columnHeadingWrapper">#{msgs.physical} #{msgs.structure}</h:panelGroup>
             <p:tree id="physicalTree"
+                    rendered="#{DataEditorForm.structurePanel.separateMedia}"
                     value="#{DataEditorForm.structurePanel.physicalTree}"
                     disabled="#{readOnly}"
                     var="physicalNode"
@@ -95,8 +97,7 @@
                     <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
                 </p:treeNode>
             </p:tree>
-            <p:contextMenu id="phyiscalTreeMenu"
-                           for="physicalTree">
+            <p:contextMenu for="physicalTree">
                 <p:menuitem value="#{msgs.addMediaUnit}"
                             icon="fa fa-plus fa-sm"
                             styleClass="plain"
