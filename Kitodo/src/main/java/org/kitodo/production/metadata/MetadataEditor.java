@@ -145,16 +145,20 @@ public class MetadataEditor {
     public static IncludedStructuralElement addStructure(String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, List<View> viewsToAdd) {
         LinkedList<IncludedStructuralElement> parents = getAncestorsOfStructure(structure, workpiece.getRootElement());
-        if (parents.isEmpty()
-                && (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
-                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT))) {
-            Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
-            return null;
+        List<IncludedStructuralElement> siblings = new LinkedList<>();
+        if (parents.isEmpty()) {
+            if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
+                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT)
+                    || position.equals(InsertionPosition.PARENT_OF_CURRENT_ELEMENT)) {
+                Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
+                return null;
+            }
+        } else {
+            siblings = parents.getLast().getChildren();
         }
         IncludedStructuralElement newStructure = new IncludedStructuralElement();
         newStructure.setType(type);
         LinkedList<IncludedStructuralElement> structuresToAddViews = new LinkedList<>(parents);
-        List<IncludedStructuralElement> siblings = parents.getLast().getChildren();
         switch (position) {
             case AFTER_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure) + 1, newStructure);
