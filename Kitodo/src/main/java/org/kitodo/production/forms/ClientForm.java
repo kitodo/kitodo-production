@@ -186,7 +186,7 @@ public class ClientForm extends BaseForm {
             Role newRole = new Role();
             newRole.setTitle(role.getTitle());
             newRole.setClient(client);
-            newRole.setAuthorities(newRole.getAuthorities());
+            newRole.setAuthorities(new ArrayList<>(role.getAuthorities()));
             rolesForClient.add(newRole);
         }
     }

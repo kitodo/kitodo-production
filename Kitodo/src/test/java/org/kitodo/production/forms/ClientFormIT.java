@@ -49,8 +49,10 @@ public class ClientFormIT {
     public void testRoleAdding() throws DAOException {
         clientForm.setClient(ServiceManager.getClientService().getById(1));
         int numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
+        final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
+                .size();
 
-        Assert.assertEquals("Number of roles is incorrect",6,numberOfRolesForFirstClient);
+        Assert.assertEquals("Number of roles is incorrect", 6, numberOfRolesForFirstClient);
 
         clientForm.getRolesForClient();
         clientForm.setClientToCopyRoles(ServiceManager.getClientService().getById(2));
@@ -58,6 +60,13 @@ public class ClientFormIT {
         clientForm.save();
 
         numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
-        Assert.assertEquals("Role was not added",7,numberOfRolesForFirstClient);
+        int numberOfOldAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
+                .size();
+        int numberOfNewAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(1).get(6).getAuthorities()
+                .size();
+        Assert.assertEquals("Role was not added", 7, numberOfRolesForFirstClient);
+        Assert.assertEquals("Authorities were not added", numberOfOldAuthorities, numberOfNewAuthorities);
+        Assert.assertEquals("Authorities were removed from second client", numberOfAuthoritiesToCopy,
+                numberOfOldAuthorities);
     }
 }
