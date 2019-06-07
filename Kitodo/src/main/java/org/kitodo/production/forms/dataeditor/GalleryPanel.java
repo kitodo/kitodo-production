@@ -321,6 +321,11 @@ public class GalleryPanel {
         }
     }
 
+    void updateStripes() {
+        stripes = new ArrayList<>();
+        addStripesRecursive(dataEditor.getWorkpiece().getRootElement());
+    }
+
     private static MediaVariant getMediaVariant(Folder folderSettings, List<MediaUnit> mediaUnits) {
         String use = folderSettings.getFileGroup();
         Optional<MediaVariant> maybeMediaVariant = mediaUnits.parallelStream().map(MediaUnit::getMediaFiles)

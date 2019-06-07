@@ -120,6 +120,7 @@ public class StructurePanel implements Serializable {
         IncludedStructuralElement parent = ancestors.getLast();
         parent.getChildren().remove(selectedStructure.get());
         show();
+        dataEditor.getGalleryPanel().updateStripes();
     }
 
     void deleteSelectedMediaUnit() {
