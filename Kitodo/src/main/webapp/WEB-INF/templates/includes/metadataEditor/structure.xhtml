@@ -65,49 +65,52 @@
         </p:contextMenu>
 
         <!-- Physical Tree -->
-        <h:panelGroup layout="block" style="background-color: var(--cloudy-gray);"
-                      rendered="#{DataEditorForm.structurePanel.separateMedia}"
-                      styleClass="ui-widget-content columnHeadingWrapper">#{msgs.physical} #{msgs.pageStructure}</h:panelGroup>
-        <p:tree id="physicalTree"
-                rendered="#{DataEditorForm.structurePanel.separateMedia}"
-                value="#{DataEditorForm.structurePanel.physicalTree}"
-                disabled="#{readOnly}"
-                var="physicalNode"
-                selectionMode="single"
-                selection="#{DataEditorForm.structurePanel.selectedPhysicalNode}"
-                draggable="true"
-                droppable="true"
-                dragdropScope="physicalTree">
-            <p:ajax event="select"
-                    listener="#{physicalNode.treePhysicalSelect}"
-                    update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper"/>
-            <p:ajax event="dragdrop"
-                    listener="#{DataEditorForm.structurePanel.onDragDrop}"
-                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
-            <p:treeNode expandedIcon="ui-icon-document"
-                        collapsedIcon="ui-icon-document">
-                <!--@elvariable id="physicalElementType" type="java.lang.String"-->
-                <ui:param name="physicalElementType" value="#{physicalNode.label}"/>
-                <h:outputText value="#{physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
-                <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
-                <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
-            </p:treeNode>
-        </p:tree>
-        <p:contextMenu for="physicalTree">
-            <p:menuitem value="#{msgs.addMediaUnit}"
-                        icon="fa fa-plus fa-sm"
-                        styleClass="plain"
-                        disabled="#{readOnly}"
-                        onclick="PF('dialogAddMediaUnit').show()"/>
-            <p:menuitem value="#{msgs.removeMediaUnit}"
-                        icon="fa fa-trash fa-sm"
-                        styleClass="plain"
-                        disabled="#{readOnly}"
-                        action="#{DataEditorForm.deleteMediaUnit()}"
-                        onclick="$('#loadingScreen').show()"
-                        oncomplete="$('#loadingScreen').hide()"
-                        update="structureTreeForm,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
-        </p:contextMenu>
-
+        <h:panelGroup id="physicalTreeWrapper"
+                      rendered="#{DataEditorForm.structurePanel.separateMedia}">
+            <h:panelGroup id="physicalTreeHeader"
+                          layout="block"
+                          style="background-color: var(--cloudy-gray);"
+                          styleClass="ui-widget-content columnHeadingWrapper">#{msgs.physical} #{msgs.pageStructure}</h:panelGroup>
+            <p:tree id="physicalTree"
+                    value="#{DataEditorForm.structurePanel.physicalTree}"
+                    disabled="#{readOnly}"
+                    var="physicalNode"
+                    selectionMode="single"
+                    selection="#{DataEditorForm.structurePanel.selectedPhysicalNode}"
+                    draggable="true"
+                    droppable="true"
+                    dragdropScope="physicalTree">
+                <p:ajax event="select"
+                        listener="#{physicalNode.treePhysicalSelect}"
+                        update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper"/>
+                <p:ajax event="dragdrop"
+                        listener="#{DataEditorForm.structurePanel.onDragDrop}"
+                        update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+                <p:treeNode expandedIcon="ui-icon-document"
+                            collapsedIcon="ui-icon-document">
+                    <!--@elvariable id="physicalElementType" type="java.lang.String"-->
+                    <ui:param name="physicalElementType" value="#{physicalNode.label}"/>
+                    <h:outputText value="#{physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
+                    <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
+                    <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
+                </p:treeNode>
+            </p:tree>
+            <p:contextMenu id="phyiscalTreeMenu"
+                           for="physicalTree">
+                <p:menuitem value="#{msgs.addMediaUnit}"
+                            icon="fa fa-plus fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            onclick="PF('dialogAddMediaUnit').show()"/>
+                <p:menuitem value="#{msgs.removeMediaUnit}"
+                            icon="fa fa-trash fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            action="#{DataEditorForm.deleteMediaUnit()}"
+                            onclick="$('#loadingScreen').show()"
+                            oncomplete="$('#loadingScreen').hide()"
+                            update="structureTreeForm,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
+            </p:contextMenu>
+        </h:panelGroup>
     </p:panel>
 </ui:composition>
