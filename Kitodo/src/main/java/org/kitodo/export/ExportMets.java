@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -45,7 +46,7 @@ public class ExportMets {
      * @param process
      *            Process object
      */
-    public boolean startExport(Process process) throws IOException {
+    public boolean startExport(Process process) throws IOException, DAOException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
         URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
         return startExport(process, userHome);
@@ -59,7 +60,7 @@ public class ExportMets {
      * @param userHome
      *            String
      */
-    public boolean startExport(Process process, URI userHome) throws IOException {
+    public boolean startExport(Process process, URI userHome) throws IOException, DAOException {
 
         /*
          * Read Document
@@ -107,7 +108,7 @@ public class ExportMets {
      * @return true or false
      */
     protected boolean writeMetsFile(Process process, URI metaFile, LegacyMetsModsDigitalDocumentHelper gdzfile)
-            throws IOException {
+            throws IOException, DAOException {
 
         Workpiece workpiece = gdzfile.getWorkpiece();
         ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);

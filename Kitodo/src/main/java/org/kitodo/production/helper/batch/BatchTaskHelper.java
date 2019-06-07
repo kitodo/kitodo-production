@@ -27,6 +27,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
@@ -140,7 +141,7 @@ public class BatchTaskHelper extends BatchHelper {
             ExportDms export = new ExportDms();
             try {
                 export.startExport(step.getProcess());
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException | DAOException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);
             }

@@ -31,6 +31,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -108,7 +109,7 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process, destination,
                 ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | DAOException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
@@ -131,7 +132,7 @@ public class ExportDms extends ExportMets {
      * @return boolean
      */
     public boolean startExport(Process process, URI destination, LegacyMetsModsDigitalDocumentHelper newFile)
-            throws IOException {
+            throws IOException, DAOException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         this.atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
@@ -158,7 +159,7 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean prepareAndDownloadSaveLocation(Process process, URI destinationDirectory,
-            LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException {
+            LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException, DAOException {
         // TODO: why create again destinationDirectory if it is already given as
         // an
         // input??
@@ -200,7 +201,7 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
-            URI destination, URI userHome) throws IOException {
+            URI destination, URI userHome) throws IOException, DAOException {
 
         if (exportWithImages) {
             try {
@@ -299,7 +300,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
-            throws IOException {
+            throws IOException, DAOException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
         if (Objects.nonNull(exportDmsTask)) {
@@ -366,7 +367,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void exportWithoutImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI destinationDirectory)
-            throws IOException {
+            throws IOException, DAOException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
             writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile);

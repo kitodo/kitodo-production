@@ -11,7 +11,11 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import static org.kitodo.production.metadata.InsertionPosition.*;
+import static org.kitodo.production.metadata.InsertionPosition.AFTER_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.BEFOR_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
 import java.io.IOException;
 import java.math.BigInteger;

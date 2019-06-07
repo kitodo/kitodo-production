@@ -57,7 +57,7 @@ public class SchemaService {
      *            object
      */
     public <T extends ExportMets> void tempConvert(Workpiece workpiece, T exportMets, LegacyPrefsHelper prefs,
-            Process process) {
+            Process process) throws IOException, DAOException {
         /*
          * wenn Filegroups definiert wurden, werden diese jetzt in die
          * Metsstruktur übernommen
@@ -82,13 +82,9 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "purlUrl", vp.replace(process.getProject().getMetsPurl()));
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
-        try {
-            convertChildrenLinksForExportRecursive(workpiece, workpiece.getRootElement(), prefs);
-            if (Objects.nonNull(process.getParent())) {
-                addParentLinkForExport(prefs, workpiece, process.getParent());
-            }
-        } catch (DAOException | IOException e) {
-            throw new RuntimeException(e);
+        convertChildrenLinksForExport(workpiece, workpiece.getRootElement(), prefs);
+        if (Objects.nonNull(process.getParent())) {
+            addParentLinkForExport(prefs, workpiece, process.getParent());
         }
     }
 
@@ -186,8 +182,8 @@ public class SchemaService {
         mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
     }
 
-    private void convertChildrenLinksForExportRecursive(Workpiece workpiece, IncludedStructuralElement structure,
-            LegacyPrefsHelper prefs) throws DAOException, IOException {
+    private void convertChildrenLinksForExport(Workpiece workpiece, IncludedStructuralElement structure,
+                                               LegacyPrefsHelper prefs) throws DAOException, IOException {
 
         LinkedMetsResource link = structure.getLink();
         if (Objects.nonNull(link)) {
@@ -196,7 +192,7 @@ public class SchemaService {
             setLinkForExport(structure, process, prefs, workpiece);
         }
         for (IncludedStructuralElement child : structure.getChildren()) {
-            convertChildrenLinksForExportRecursive(workpiece, child, prefs);
+            convertChildrenLinksForExport(workpiece, child, prefs);
         }
     }
 
