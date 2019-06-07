@@ -1643,7 +1643,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *             because it is used in a parallel stream
      */
     private String getBaseType(Integer processId) throws DAOException, IOException {
-        return getBaseType(getById(processId));
+            return getBaseType(getById(processId));
     }
 
     /**
