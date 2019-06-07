@@ -17,16 +17,17 @@ import static org.kitodo.production.metadata.InsertionPosition.FIRST_CHILD_OF_CU
 import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.faces.model.SelectItem;
 
@@ -38,6 +39,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
@@ -70,9 +72,8 @@ public class AddDocStrucTypeDialog {
     private List<SelectItem> selectPageOnAddNodeItems;
     private AddDocStrucTypeDialogMode subdialog = AddDocStrucTypeDialogMode.ADD_MULTIPLE_LOGICAL_ELEMENTS;
     private String processNumber = "";
-    private boolean hint = true;
-    private Integer processSelectSelectedItem = 0;
-    private List<SelectItem> processSelectItems = Collections.emptyList();
+    private Process selectedProcess;
+    private List<ProcessDTO> processes = Collections.emptyList();
     private BigInteger orderSpinnerValue;
 
     /**
@@ -404,13 +405,18 @@ public class AddDocStrucTypeDialog {
 
     private void prepareSelectAddableMetadataTypesItems() {
         selectAddableMetadataTypesItems = new ArrayList<>();
-        for (MetadataViewInterface keyView : dataEditor.getRuleset()
-                .getStructuralElementView(
-                    dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
-                    dataEditor.getAcquisitionStage(), dataEditor.getPriorityList())
-                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList())) {
+        Collection<MetadataViewInterface> addableMetadata = getStructuralElementView()
+                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
+        for (MetadataViewInterface keyView : addableMetadata) {
             selectAddableMetadataTypesItems.add(new SelectItem(keyView.getId(), keyView.getLabel()));
         }
+    }
+
+    private StructuralElementViewInterface getStructuralElementView() {
+        return dataEditor.getRuleset()
+                .getStructuralElementView(
+                        dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+                        dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
     }
 
     private void prepareSelectPageOnAddNodeItems() {
@@ -453,33 +459,19 @@ public class AddDocStrucTypeDialog {
      * the wrong client.
      */
     public void searchButtonClick() {
-        final int timeoutSecs = 5;
         if (processNumber.trim().isEmpty()) {
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
             return;
         }
         try {
-            final long timeUp = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSecs);
-            Set<String> allowedSubstructuralElements = dataEditor.getRuleset()
-                    .getStructuralElementView(
-                        dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
-                        dataEditor.getAcquisitionStage(), dataEditor.getPriorityList())
-                    .getAllowedSubstructuralElements().keySet();
-            List<ProcessDTO> hitlist = ServiceManager.getProcessService().findLinkableProcesses(processNumber,
-                dataEditor.getProcess().getRuleset(), allowedSubstructuralElements,
-                TimeUnit.SECONDS.toMillis(timeoutSecs));
-            processSelectItems = new ArrayList<>(hitlist.size());
-            for (ProcessDTO hit : hitlist) {
-                processSelectItems.add(new SelectItem(hit.getId(), hit.getTitle()));
-            }
-            if (System.nanoTime() > timeUp) {
-                alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.timeout"));
-            } else if (hitlist.size() == 0) {
+            Set<String> allowedSubstructuralElements = getStructuralElementView().getAllowedSubstructuralElements()
+                    .keySet();
+            processes = ServiceManager.getProcessService().findLinkableProcesses(processNumber,
+                dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements);
+            if (processes.isEmpty()) {
                 alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.noHits"));
-            } else {
-                Collections.sort(processSelectItems, (one, another) -> one.getLabel().compareTo(another.getLabel()));
             }
-        } catch (DataException e) {
+        } catch (DataException | IOException | DAOException e) {
             logger.catching(e);
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.error", e.getMessage()));
         }
@@ -500,28 +492,28 @@ public class AddDocStrucTypeDialog {
      *
      * @return the selected process
      */
-    public Integer getProcessSelectSelectedItem() {
-        return processSelectSelectedItem;
+    public Process getSelectedProcess() {
+        return selectedProcess;
     }
 
     /**
      * Sets the number of the process selected by the user.
      *
-     * @param processSelectSelectedItem
+     * @param selectedProcess
      *            selected process
      */
-    public void setProcessSelectSelectedItem(Integer processSelectSelectedItem) {
-        this.processSelectSelectedItem = processSelectSelectedItem;
+    public void setSelectedProcess(Process selectedProcess) {
+        this.selectedProcess = selectedProcess;
     }
 
     /**
      * Returns the list of items to populate the drop-down list to select a
      * process.
      *
-     * @return the list of process selection items
+     * @return the list of processes
      */
-    public List<SelectItem> getProcessSelectItems() {
-        return processSelectItems;
+    public List<ProcessDTO> getProcesses() {
+        return processes;
     }
 
     /**
@@ -551,32 +543,23 @@ public class AddDocStrucTypeDialog {
         if (processNumber.trim().isEmpty()) {
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
             return;
-        } else if (Objects.isNull(processSelectSelectedItem)) {
+        } else {
             try {
-                processSelectSelectedItem = Integer.valueOf(processNumber.trim());
-            } catch (NumberFormatException e) {
+                selectedProcess = ServiceManager.getProcessService().getById(Integer.valueOf(processNumber.trim()));
+            } catch (DAOException e) {
                 logger.catching(Level.TRACE, e);
                 alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
             }
         }
-        if (Objects.nonNull(processSelectSelectedItem)) {
-            try {
-                dataEditor.getLiveProcessChildren()
-                        .add(ServiceManager.getProcessService().getById(processSelectSelectedItem));
-                MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
-                    orderSpinnerValue, processSelectSelectedItem);
-                dataEditor.getStructurePanel().show(true);
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-            if (processNumber.trim().equals(processSelectSelectedItem.toString()) && hint) {
-                alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.hint"));
-                hint = false;
-            }
+        dataEditor.getCurrentChildren().add(selectedProcess);
+        MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
+            orderSpinnerValue, selectedProcess.getId());
+        dataEditor.getStructurePanel().show(true);
+        if (processNumber.trim().equals(Integer.toString(selectedProcess.getId()))) {
+            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.hint"));
         }
-
         processNumber = "";
-        processSelectItems = Collections.emptyList();
+        processes = Collections.emptyList();
         orderSpinnerValue = null;
     }
 }

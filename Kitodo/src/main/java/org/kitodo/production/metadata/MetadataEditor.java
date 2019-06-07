@@ -70,22 +70,20 @@ public class MetadataEditor {
         includedStructuralElement.setLink(link);
 
         List<IncludedStructuralElement> children = parentIncludedStructuralElement.getChildren();
-        int position = children.size();
+        int position = getPositionForOrder(children, order);
+
+        children.add(position, includedStructuralElement);
+    }
+
+    private static int getPositionForOrder(List<IncludedStructuralElement> children, BigInteger order) {
         for (int i = 0; i < children.size(); i++) {
             LinkedMetsResource otherLink = children.get(i).getLink();
-            if (Objects.isNull(otherLink)) {
-                continue;
-            }
-            BigInteger otherOrder = otherLink.getOrder();
-            if (Objects.isNull(otherOrder)) {
-                continue;
-            }
-            if (Objects.isNull(order) || otherOrder.compareTo(order) > 0) {
-                position = i;
-                break;
+            if (Objects.nonNull(otherLink) && Objects.nonNull(otherLink.getOrder())
+                    && (Objects.isNull(order) || otherLink.getOrder().compareTo(order) > 0)) {
+                return i;
             }
         }
-        children.add(position, includedStructuralElement);
+        return children.size();
     }
 
     /**

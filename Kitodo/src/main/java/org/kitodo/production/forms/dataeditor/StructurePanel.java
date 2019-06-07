@@ -342,7 +342,7 @@ public class StructurePanel implements Serializable {
             node = new StructureTreeNode(this, divisionView.getLabel(), divisionView.isUndefined(), false, structure);
         } else {
             node = new StructureTreeNode(this, structure.getLink().getUri().toString(), true, true, structure);
-            for (Process child : dataEditor.getLiveProcessChildren()) {
+            for (Process child : dataEditor.getCurrentChildren()) {
                 try {
                     String type = ServiceManager.getProcessService().getBaseType(child);
                     if (child.getId() == ServiceManager.getProcessService()

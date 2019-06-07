@@ -163,9 +163,9 @@
                             </p:row>
                             <p:row>
                                 <p:column colspan="3">
-                                    <p:selectOneMenu id="processSelect"
-                                        value="#{DataEditorForm.addDocStrucTypeDialog.processSelectSelectedItem}">
-                                            <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.processSelectItems}"/>
+                                    <p:selectOneMenu id="processSelect" converter="#{processConverter}"
+                                        value="#{DataEditorForm.addDocStrucTypeDialog.selectedProcess}">
+                                            <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.processes}"/>
                                             <p:ajax update="docStructAddTypeSelection"/>
                                     </p:selectOneMenu>
                                 </p:column>

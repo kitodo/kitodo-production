@@ -85,12 +85,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private final GalleryPanel galleryPanel;
 
     /**
-     * Current child processes of this process. This variable represents the
-     * live actual state, that is, it contains children already added and no
-     * longer contains deleted children, which is not updated in the database
-     * until saved.
+     * The current process children.
      */
-    private Set<Process> liveProcessChildren = new HashSet<>();
+    private Set<Process> currentChildren = new HashSet<>();
 
     /**
      * The path to the main file, to save it later.
@@ -173,7 +170,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.referringView = referringView;
             Helper.getRequestParameter("referringView");
             this.process = ServiceManager.getProcessService().getById(id);
-            this.liveProcessChildren.addAll(process.getChildren());
+            this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
 
             ruleset = openRulesetFile(process.getRuleset().getFile());
@@ -240,7 +237,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         workpiece = null;
         mainFileUri = null;
         ruleset = null;
-        liveProcessChildren.clear();
+        currentChildren.clear();
         process = null;
         user = null;
         if (referringView.contains("?")) {
@@ -361,8 +358,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return galleryPanel;
     }
 
-    Set<Process> getLiveProcessChildren() {
-        return liveProcessChildren;
+    Set<Process> getCurrentChildren() {
+        return currentChildren;
     }
 
     /**
