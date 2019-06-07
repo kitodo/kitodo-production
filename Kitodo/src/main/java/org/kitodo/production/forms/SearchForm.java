@@ -24,10 +24,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -113,9 +113,14 @@ public class SearchForm {
      * Initialise drop down list of projects.
      */
     private void initProjects() {
-        List<Project> projectsSortedByTitle = ServiceManager.getProjectService().getAllProjectsSortedByTitle();
+        List<ProjectDTO> projectsSortedByTitle = null;
+        try {
+            projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
+        } catch (DataException e) {
+            Helper.setErrorMessage("Error initializing projects", logger, e);
+        }
 
-        for (Project projectSortedByTitle : projectsSortedByTitle) {
+        for (ProjectDTO projectSortedByTitle : projectsSortedByTitle) {
             this.projects.add(projectSortedByTitle.getTitle());
         }
     }

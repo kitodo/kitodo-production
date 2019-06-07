@@ -342,4 +342,13 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
         return query;
     }
+
+    /**
+     * Find all Projects for Current User.
+     * @return A list of all Projects assigned tot he current user
+     * @throws DataException when elasticsearch query is failing
+     */
+    public List<ProjectDTO> findAllProjectsForCurrentUser() throws DataException {
+        return findByQuery(getProjectsForCurrentUserQuery(), false);
+    }
 }
