@@ -203,6 +203,11 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindByProjectTitleWithWildcard() throws DataException {
+        assertEquals(processNotFound,3, processService.findByAnything("proj").size());
+    }
+
+    @Test
     public void shouldNotFindByAnything() throws DataException {
         assertEquals(processNotFound, 0, processService.findByAnything("Nope").size());
     }

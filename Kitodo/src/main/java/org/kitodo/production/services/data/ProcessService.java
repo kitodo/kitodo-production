@@ -567,7 +567,10 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         if (!searchQuery.contains(" ")) {
             QueryBuilder wildcardQueryForProcessTitle = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(),
                 searchQuery);
+            QueryBuilder wildcardQueryForProjectTitle = createSimpleWildcardQuery(ProcessTypeField.PROJECT_TITLE.getKey(),
+                    searchQuery);
             boolQuery.should(wildcardQueryForProcessTitle);
+            boolQuery.should(wildcardQueryForProjectTitle);
         }
 
         return findByQuery(boolQuery, false);
