@@ -64,6 +64,9 @@ public class SearchResultForm extends BaseForm {
             Helper.setErrorMessage("errorOnSearch", searchQuery);
             return this.stayOnCurrentPage;
         }
+        setCurrentTaskStatusFilter(null);
+        setCurrentProjectFilter(null);
+        setCurrentTaskFilter(null);
         return searchResultListPath;
     }
 
