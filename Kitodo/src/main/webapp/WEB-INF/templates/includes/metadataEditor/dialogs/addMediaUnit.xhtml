@@ -38,6 +38,8 @@
                             <p:selectOneMenu id="physicalPosition"
                                              value="#{DataEditorForm.addMediaUnitDialog.selectedPosition}">
                                 <f:selectItems value="#{DataEditorForm.addMediaUnitDialog.possiblePositions}"/>
+                                <p:ajax listener="#{DataEditorForm.addMediaUnitDialog.preparePossibleTypes}"
+                                        update="physicalType"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
