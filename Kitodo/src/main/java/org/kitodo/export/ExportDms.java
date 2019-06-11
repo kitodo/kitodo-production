@@ -265,14 +265,7 @@ public class ExportDms extends ExportMets {
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
-        // delete old success folder
-        URI successFolder = URI.create(project.getDmsImportRootPath() + "/" + normalizedTitle);
-        if (!fileService.delete(successFolder)) {
-            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
-                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
-            return false;
-        }
-
+       
         if (!fileService.fileExist(userHomeProcess)) {
             fileService.createDirectory(userHome, normalizedTitle);
         }
