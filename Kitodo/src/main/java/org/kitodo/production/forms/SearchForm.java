@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -113,11 +114,11 @@ public class SearchForm {
      * Initialise drop down list of projects.
      */
     private void initProjects() {
-        List<ProjectDTO> projectsSortedByTitle = null;
+        List<ProjectDTO> projectsSortedByTitle = Collections.emptyList();
         try {
             projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
         } catch (DataException e) {
-            Helper.setErrorMessage("Error initializing projects", logger, e);
+            Helper.setErrorMessage("errorInitializingProjects", logger, e);
         }
 
         for (ProjectDTO projectSortedByTitle : projectsSortedByTitle) {
