@@ -71,9 +71,13 @@
                                 value="#{DataEditorForm.galleryPanel.stripes}"
                                 type="definition"
                                 binding="#{currentElement}">
-                        <h:outputText value="#{stripe.label}" style="font-weight: bold;"/>
+                        <!-- Index 0 of stripes is used to identify the logical root element. -->
+                        <h:outputText value="#{stripe.label}"
+                                      style="font-weight: bold;"
+                                      rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
                         <!--@elvariable id="structuredThumbnail" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                         <p:dataList styleClass="structureElementDataList"
+                                    rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"
                                     id="structureElementDataList"
                                     var="media"
                                     value="#{stripe.medias}"
@@ -109,22 +113,23 @@
                         </p:droppable>
                     </p:dataList>
 
-                    <!-- Unassigned pages -->
-                    <h:outputText value="Unassigned pages"
+                    <!-- Unstructured media-->
+                    <h:outputText value="#{msgs['dataEditor.unstructuredMedia']}"
                                   styleClass="gallery-stripe-header"
                                   style="font-weight: bold;"/>
-                    <h:panelGroup id="unassignedPages"
+                    <h:panelGroup id="unstructuredMedia"
                                   layout="block">
+                        <!-- Index 0 of stripes is used to retrieve the logical root element. -->
                         <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
-                        <p:dataList id ="unassignedPagesList"
+                        <p:dataList id="unstructuredMediaList"
                                     styleClass="structureElementDataList"
-                                    value="#{DataEditorForm.galleryPanel.unassignedMedias}"
+                                    value="#{DataEditorForm.galleryPanel.stripes.get(0).medias}"
                                     binding="#{currentMedia}"
                                     var="media">
-                            <h:panelGroup id="unassignedPagePanel">
-                                <p:commandLink id="updateSelectedUnassignedPageLink"
+                            <h:panelGroup id="unstructuredMediaPanel">
+                                <p:commandLink id="updateSelectedUnstructuredMediaLink"
                                                action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
-                                               update="structureTreeForm:physicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
+                                               update="structureTreeForm:physicalTree structureTreeForm:logicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
                                     <h:panelGroup layout="block"
                                                   styleClass="thumbnail-container">
                                         <p:outputPanel deferred="true"
@@ -141,8 +146,8 @@
                                     <f:setPropertyActionListener value="#{media}" target="#{DataEditorForm.galleryPanel.selectedMedia}"/>
                                 </p:commandLink>
                             </h:panelGroup>
-                            <p:draggable id="unassignedPagesDraggable"
-                                         for="imagePreviewForm:unassignedPagesList:#{currentMedia.rowIndex}:unassignedPagePanel"
+                            <p:draggable id="unstructuredMediaDraggable"
+                                         for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredMediaPanel"
                                          revert="true"
                                          scope="assignedPagesDroppable"
                                          stack=".ui-panel"/>
