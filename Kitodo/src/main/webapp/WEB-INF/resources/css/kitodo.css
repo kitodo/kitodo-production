@@ -1460,6 +1460,22 @@ Column content
     background: var(--light-gray);
 }
 
+#metadataAccordion .ui-accordion-content {
+    padding: 0;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data label {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data input {
+    max-width: calc(100% - 90px);
+    margin-right: var(--default-half-size);
+    text-overflow: ellipsis;
+}
+
 .correction {
     color: var(--focused-orange);
     font-weight: bold;
