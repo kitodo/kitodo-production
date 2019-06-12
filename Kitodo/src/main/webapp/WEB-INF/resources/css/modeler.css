@@ -879,11 +879,28 @@ div[data-entry=id],
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
 }
-/* line 81, styles/modeler_custom.less */
+/* line 79, styles/modeler_custom.less */
 .bpp-textfield input,
 .bpp-properties-panel [contenteditable] {
   padding-right: 20px !important;
   width: calc(100% - 28px) !important;
+}
+/* line 84, styles/modeler_custom.less */
+.modeler-zoom-controls {
+  position: fixed;
+  bottom: 10px;
+}
+/* line 89, styles/modeler_custom.less */
+.modeler-zoom-controls ul {
+  list-style: none;
+}
+/* line 93, styles/modeler_custom.less */
+.modeler-zoom-controls button {
+  background: #FAFAFA;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  padding: 10px;
+  font-size: 1em;
 }
 
 @font-face {
