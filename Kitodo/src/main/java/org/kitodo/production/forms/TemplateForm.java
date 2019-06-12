@@ -25,6 +25,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Folder;
@@ -52,6 +53,8 @@ public class TemplateForm extends TemplateBaseForm {
     private List<Project> assignedProjects = new ArrayList<>();
     private Task task;
     private boolean showInactiveTemplates = false;
+    private static final String INCOMPLETE_DATA = "errorDataIncomplete";
+    private static final String TITLE_USED = "templateTitleAlreadyInUse";
     private final String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private final String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
 
@@ -124,7 +127,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to list view
      */
     public String save() {
-        if (Objects.nonNull(this.template.getTitle()) && !this.template.getTitle().isEmpty()) {
+        if (isTitleValid()) {
             try {
                 prepareTasks();
             } catch (DAOException e) {
@@ -136,8 +139,8 @@ public class TemplateForm extends TemplateBaseForm {
                     logger, e);
                 return this.stayOnCurrentPage;
             } catch (WorkflowException e) {
-                Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle(), e.getMessage() },
-                    logger, e);
+                Helper.setErrorMessage("errorDiagramTask",
+                    new Object[] {this.template.getWorkflow().getTitle(), e.getMessage() }, logger, e);
                 return this.stayOnCurrentPage;
             }
 
@@ -153,10 +156,32 @@ public class TemplateForm extends TemplateBaseForm {
                 return this.stayOnCurrentPage;
             }
         } else {
-            Helper.setErrorMessage("titleEmpty");
             return this.stayOnCurrentPage;
         }
         return templateListPath;
+    }
+
+    private boolean isTitleValid() {
+        String templateTitle = this.template.getTitle();
+        if (StringUtils.isNotBlank(templateTitle)) {
+            List<Template> templates = ServiceManager.getTemplateService().getTemplatesWithTitleAndClient(templateTitle,
+                    this.template.getClient().getId());
+            int count = templates.size();
+            if (count > 1) {
+                Helper.setErrorMessage(INCOMPLETE_DATA, TITLE_USED);
+                return false;
+            } else if (count == 1) {
+                Integer templateId = this.template.getId();
+                if (Objects.nonNull(templateId) && templates.get(0).getId().equals(templateId)) {
+                    return true;
+                }
+                Helper.setErrorMessage(INCOMPLETE_DATA, TITLE_USED);
+                return false;
+            }
+            return true;
+        }
+        Helper.setErrorMessage(INCOMPLETE_DATA, "templateTitleEmpty");
+        return false;
     }
 
     /**
