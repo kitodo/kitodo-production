@@ -115,7 +115,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).get(0).getId());
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"id:2 3\"", ObjectType.PROCESS, false, false);
-        assertEquals("Incorrect amount of processes with id equal 2 or 3!", 1,
+        assertEquals("Incorrect amount of processes with id equal 2 or 3!", 2,
             processService.findByQuery(thirdQuery, true).size());
     }
 
@@ -128,7 +128,7 @@ public class FilterServiceIT {
             processService.findByQuery(firstQuery, true).size());
 
         QueryBuilder secondQuery = filterService.queryBuilder("\"project:Second\"", ObjectType.PROCESS, false, false);
-        assertEquals("Incorrect amount of processes for project with title containing 'Second'!", 0,
+        assertEquals("Incorrect amount of processes for project with title containing 'Second'!", 1,
             processService.findByQuery(secondQuery, true).size());
 
         // it has only 2 templates - no processes
@@ -186,7 +186,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).size());
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-batch:1 2\"", ObjectType.PROCESS, false, false);
-        assertEquals("Incorrect amount of processes for batch with id 1 or 2!", 2,
+        assertEquals("Incorrect amount of processes for batch with not id 1 or 2!", 3,
             processService.findByQuery(thirdQuery, true).size());
     }
 

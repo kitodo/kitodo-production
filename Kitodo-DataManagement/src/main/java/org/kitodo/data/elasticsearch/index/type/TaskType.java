@@ -11,10 +11,13 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
@@ -59,18 +62,28 @@ public class TaskType extends BaseType<Task> {
         jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), getId(task.getProcess()));
         jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), getTitle(task.getProcess()));
         jsonObject.put(TaskTypeField.CLIENT_ID.getKey(), getClientId(task));
-        jsonObject.put(TaskTypeField.PROJECT_ID.getKey(), getProjectId(task));
+        jsonObject.put(TaskTypeField.PROJECT_ID.getKey(), getProjectIds(task));
         jsonObject.put(TaskTypeField.TEMPLATE_ID.getKey(), getId(task.getTemplate()));
         jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), getTitle(task.getTemplate()));
         jsonObject.put(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
         return jsonObject;
     }
 
-    private int getProjectId(Task task) {
+    private List<Integer> getProjectIds(Task task) {
+        ArrayList<Integer> projectIds = new ArrayList<>();
+
         if (Objects.nonNull(task.getProcess())) {
-            return getId(task.getProcess().getProject());
+            projectIds.add(getId(task.getProcess().getProject()));
+            return projectIds;
         }
-        return 0;
+        if (Objects.nonNull(task.getTemplate())) {
+            List<Project> projects = task.getTemplate().getProjects();
+            for (Project project : projects) {
+                projectIds.add(getId(project));
+            }
+            return projectIds;
+        }
+        return projectIds;
     }
 
     private int getClientId(Task task) {
