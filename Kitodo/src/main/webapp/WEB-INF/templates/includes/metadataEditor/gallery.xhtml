@@ -141,6 +141,9 @@
                                                 <f:param name="id"
                                                          value="#{media.id}"/>
                                             </p:graphicImage>
+                                            <h:panelGroup class="thumbnail-overlay">
+                                                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                            </h:panelGroup>
                                         </p:outputPanel>
                                     </h:panelGroup>
                                     <f:setPropertyActionListener value="#{media}" target="#{DataEditorForm.galleryPanel.selectedMedia}"/>
