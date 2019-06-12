@@ -38,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -987,7 +988,11 @@ public class FileService {
                     break;
                 }
             }
-            workpiece.getMediaUnits().add(insertionPoint, createMediaUnit(entry.getValue()));
+            MediaUnit mediaUnit = createMediaUnit(entry.getValue());
+            workpiece.getMediaUnit().getChildren().add(insertionPoint, mediaUnit);
+            View view = new View();
+            view.setMediaUnit(mediaUnit);
+            workpiece.getRootElement().getViews().add(view);
             canonicals.add(insertionPoint, entry.getKey());
         }
     }
