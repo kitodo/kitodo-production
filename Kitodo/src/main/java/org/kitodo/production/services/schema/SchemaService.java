@@ -39,8 +39,6 @@ import org.kitodo.production.services.dataformat.MetsService;
  */
 public class SchemaService {
 
-    private static final MetsService METS_SERVICE = ServiceManager.getMetsService();
-
     /**
      * Temporal method for separate file conversion from ExportMets class
      * (method writeMetsFile).
@@ -76,10 +74,6 @@ public class SchemaService {
         set(workpiece, MdSec.DIGIPROV_MD, "presentation",
             vp.replace(process.getProject().getMetsDigiprovPresentation()));
         set(workpiece, MdSec.DIGIPROV_MD, "reference", vp.replace(process.getProject().getMetsDigiprovReference()));
-        set(workpiece, MdSec.DIGIPROV_MD, "presentationAnchor",
-            vp.replace(process.getProject().getMetsDigiprovPresentationAnchor()));
-        set(workpiece, MdSec.DIGIPROV_MD, "referenceAnchor",
-            vp.replace(process.getProject().getMetsDigiprovReferenceAnchor()));
 
         set(workpiece, MdSec.TECH_MD, "purlUrl", vp.replace(process.getProject().getMetsPurl()));
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));

@@ -389,7 +389,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     static String getMetsPointerURL(Process process) throws IOException {
         VariableReplacer replacer = new VariableReplacer(ServiceManager.getProcessService().getDigitalDocument(process),
                 ServiceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
-        return replacer.replace(process.getProject().getMetsPointerPathAnchor());
+        return replacer.replace("");
     }
 
     /**

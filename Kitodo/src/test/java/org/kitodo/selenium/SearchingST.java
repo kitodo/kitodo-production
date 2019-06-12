@@ -51,7 +51,7 @@ public class SearchingST extends BaseTestSelenium {
 
     /**
      * Logout after every test.
-     * 
+     *
      * @throws Exception
      *             if topNavigationElement is not found
      */

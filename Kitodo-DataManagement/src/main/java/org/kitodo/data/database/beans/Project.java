@@ -75,15 +75,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @Column(name = "dmsImportRootPath")
     private String dmsImportRootPath;
 
-    @Column(name = "dmsImportImagesPath")
-    private String dmsImportImagesPath;
-
-    @Column(name = "dmsImportSuccessPath")
-    private String dmsImportSuccessPath;
-
-    @Column(name = "dmsImportErrorPath")
-    private String dmsImportErrorPath;
-
     @Column(name = "dmsImportCreateProcessFolder")
     private Boolean dmsImportCreateProcessFolder;
 
@@ -111,17 +102,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @Column(name = "metsDigiprovPresentation")
     private String metsDigiprovPresentation = "";
 
-    @Column(name = "metsDigiprovReferenceAnchor")
-    private String metsDigiprovReferenceAnchor = "";
-
-    @Column(name = "metsDigiprovPresentationAnchor")
-    private String metsDigiprovPresentationAnchor = "";
-
     @Column(name = "metsPointerPath")
     private String metsPointerPath = "";
-
-    @Column(name = "metsPointerPathAnchor")
-    private String metsPointerPathAnchor = "";
 
     @Column(name = "metsPurl")
     private String metsPurl = "";
@@ -199,11 +181,9 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.processes = new ArrayList<>();
         this.users = new ArrayList<>();
         this.folders = new ArrayList<>();
-        this.useDmsImport = false;
+        this.useDmsImport = true;
         this.dmsImportTimeOut = 20000;
-        this.dmsImportImagesPath = "";
         this.dmsImportRootPath = "";
-        this.dmsImportSuccessPath = "";
         this.dmsImportCreateProcessFolder = false;
         this.fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
         this.fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
@@ -275,28 +255,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.templates = templates;
     }
 
-    public String getDmsImportImagesPath() {
-        return this.dmsImportImagesPath;
-    }
-
-    public void setDmsImportImagesPath(String dmsImportImagesPath) {
-        this.dmsImportImagesPath = dmsImportImagesPath;
-    }
-
     public String getDmsImportRootPath() {
         return this.dmsImportRootPath;
     }
 
     public void setDmsImportRootPath(String dmsImportRootPath) {
         this.dmsImportRootPath = dmsImportRootPath;
-    }
-
-    public String getDmsImportSuccessPath() {
-        return this.dmsImportSuccessPath;
-    }
-
-    public void setDmsImportSuccessPath(String dmsImportSuccessPath) {
-        this.dmsImportSuccessPath = dmsImportSuccessPath;
     }
 
     public Integer getDmsImportTimeOut() {
@@ -315,14 +279,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.useDmsImport = useDmsImport;
     }
 
-    public String getDmsImportErrorPath() {
-        return this.dmsImportErrorPath;
-    }
-
-    public void setDmsImportErrorPath(String dmsImportErrorPath) {
-        this.dmsImportErrorPath = dmsImportErrorPath;
-    }
-
     /**
      * Get DMS import create process folder.
      *
@@ -330,7 +286,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public boolean isDmsImportCreateProcessFolder() {
         if (this.dmsImportCreateProcessFolder == null) {
-            this.dmsImportCreateProcessFolder = false;
+            this.dmsImportCreateProcessFolder = true;
         }
         return this.dmsImportCreateProcessFolder;
     }
@@ -408,14 +364,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.metsDigiprovReference = metsDigiprovReference;
     }
 
-    public String getMetsDigiprovReferenceAnchor() {
-        return this.metsDigiprovReferenceAnchor;
-    }
-
-    public void setMetsDigiprovReferenceAnchor(String metsDigiprovReferenceAnchor) {
-        this.metsDigiprovReferenceAnchor = metsDigiprovReferenceAnchor;
-    }
-
     public String getMetsDigiprovPresentation() {
         return this.metsDigiprovPresentation;
     }
@@ -424,28 +372,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.metsDigiprovPresentation = metsDigiprovPresentation;
     }
 
-    public String getMetsDigiprovPresentationAnchor() {
-        return this.metsDigiprovPresentationAnchor;
-    }
-
-    public void setMetsDigiprovPresentationAnchor(String metsDigiprovPresentationAnchor) {
-        this.metsDigiprovPresentationAnchor = metsDigiprovPresentationAnchor;
-    }
-
     public String getMetsPointerPath() {
         return this.metsPointerPath;
     }
 
     public void setMetsPointerPath(String metsPointerPath) {
         this.metsPointerPath = metsPointerPath;
-    }
-
-    public void setMetsPointerPathAnchor(String metsPointerPathAnchor) {
-        this.metsPointerPathAnchor = metsPointerPathAnchor;
-    }
-
-    public String getMetsPointerPathAnchor() {
-        return this.metsPointerPathAnchor;
     }
 
     public void setMetsPurl(String metsPurl) {

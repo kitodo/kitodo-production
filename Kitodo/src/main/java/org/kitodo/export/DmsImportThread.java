@@ -24,7 +24,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
 public class DmsImportThread extends Thread {
@@ -48,25 +47,9 @@ public class DmsImportThread extends Thread {
      */
     public DmsImportThread(Process process, String ats) {
         setDaemon(true);
-        /*
-         * aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter
-         * Stelle, ansonsten lieber in neuem FehlerOrdner
-         */
         Project project = process.getProject();
-        if (Objects.isNull(project.getDmsImportErrorPath()) || project.getDmsImportErrorPath().isEmpty()) {
-            this.fileError = new File(process.getProject().getDmsImportRootPath(), ats + ".log");
-        } else {
-            this.fileError = new File(process.getProject().getDmsImportErrorPath(), ats + ".log");
-        }
 
-        this.fileXml = new File(project.getDmsImportRootPath(), ats + ".xml");
-        this.fileSuccess = new File(project.getDmsImportSuccessPath(), ats + ".xml");
-        if (project.isDmsImportCreateProcessFolder()) {
-            this.fileSuccess = new File(project.getDmsImportSuccessPath(),
-                    Helper.getNormalizedTitle(process.getTitle()) + File.separator + ats + ".xml");
-        }
-
-        this.folderImages = new File(project.getDmsImportImagesPath(), ats + "_tif");
+        this.folderImages = new File(project.getDmsImportRootPath(), ats + "_tif");
 
         if (this.fileError.exists()) {
             this.timeFileError = this.fileError.getAbsoluteFile().lastModified();

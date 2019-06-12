@@ -1727,7 +1727,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         Project project = process.getProject();
 
         // prepare place for save and download
-        URI targetDirectory = new File(project.getDmsImportImagesPath()).toURI();
+        URI targetDirectory = new File(project.getDmsImportRootPath()).toURI();
         URI userHome = targetDirectory;
 
         // if necessary, create an operation folder
@@ -1776,7 +1776,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
             if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)
                     && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
-                File successFile = new File(project.getDmsImportSuccessPath() + File.separator
+                File successFile = new File(project.getDmsImportRootPath() + File.separator
                         + Helper.getNormalizedTitle(process.getTitle()));
                 fileService.delete(successFile.toURI());
             }
@@ -1820,23 +1820,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
-        // remove old success folder
-        File successFile = new File(
-                project.getDmsImportSuccessPath() + File.separator + Helper.getNormalizedTitle(process.getTitle()));
-        if (!fileService.delete(successFile.toURI())) {
-            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
-                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
-            return false;
-        }
-        // remove old error folder
-        File errorFile = new File(
-                project.getDmsImportErrorPath() + File.separator + Helper.getNormalizedTitle(process.getTitle()));
-        if (!fileService.delete(errorFile.toURI())) {
-            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
-                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
-            return false;
-        }
-
         if (!fileService.fileExist(userHome)) {
             fileService.createDirectory(userHome, File.separator + Helper.getNormalizedTitle(process.getTitle()));
         }
