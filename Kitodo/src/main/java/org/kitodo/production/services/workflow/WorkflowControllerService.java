@@ -68,34 +68,7 @@ public class WorkflowControllerService {
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
-    private static volatile WorkflowControllerService instance = null;
     private TaskService taskService = ServiceManager.getTaskService();
-
-    /**
-     * Empty private constructor to override default one.
-     */
-    private WorkflowControllerService() {
-
-    }
-
-    /**
-     * Return singleton variable of type WorkflowControllerService.
-     *
-     * @return unique instance of WorkflowControllerService
-     */
-    public static WorkflowControllerService getInstance() {
-        WorkflowControllerService localReference = instance;
-        if (Objects.isNull(localReference)) {
-            synchronized (WorkflowControllerService.class) {
-                localReference = instance;
-                if (Objects.isNull(localReference)) {
-                    localReference = new WorkflowControllerService();
-                    instance = localReference;
-                }
-            }
-        }
-        return localReference;
-    }
 
     /**
      * Set Task status up.

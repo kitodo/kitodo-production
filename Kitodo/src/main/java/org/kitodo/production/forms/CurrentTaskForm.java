@@ -57,6 +57,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
 
 @Named("CurrentTaskForm")
@@ -74,6 +75,7 @@ public class CurrentTaskForm extends BaseForm {
     private String scriptPath;
     private String doneDirectoryName;
     private transient BatchTaskHelper batchHelper;
+    private WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private List<Property> properties;
     private Property property;
     private final String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
@@ -116,7 +118,7 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage("stepInWorkError");
             return this.stayOnCurrentPage;
         } else {
-            ServiceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask);
+            this.workflowControllerService.assignTaskToUser(this.currentTask);
             try {
                 ServiceManager.getTaskService().save(this.currentTask);
             } catch (DataException e) {
@@ -248,7 +250,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String releaseTask() {
         try {
-            ServiceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask);
+            this.workflowControllerService.unassignTaskFromUser(this.currentTask);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
@@ -263,7 +265,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String closeTaskByUser() {
         try {
-            ServiceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask);
+            this.workflowControllerService.closeTaskByUser(this.currentTask);
         } catch (DataException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
