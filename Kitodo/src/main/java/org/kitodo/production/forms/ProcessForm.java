@@ -193,7 +193,7 @@ public class ProcessForm extends TemplateBaseForm {
                     logger, e);
             }
         } else {
-            Helper.setErrorMessage("titleEmpty");
+            Helper.setErrorMessage("errorDataIncomplete", "processTitleEmpty");
         }
         reload();
         return this.stayOnCurrentPage;

@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -456,5 +457,22 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
      */
     public List<Template> getProcessTemplatesWithTitle(String title) {
         return dao.getTemplatesWithTitle(title);
+    }
+
+    /**
+     * Get all process templates for given title and client id.
+     *
+     * @param title
+     *            of Template
+     * @param clientId
+     *            id of client
+     * @return list of all process templates as Template objects
+     */
+    public List<Template> getTemplatesWithTitleAndClient(String title, Integer clientId) {
+        String query = "SELECT t FROM Template AS t INNER JOIN t.client AS c WITH c.id = :clientId WHERE t.title = :title";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("clientId", clientId);
+        parameters.put("title", title);
+        return getByQuery(query, parameters);
     }
 }
