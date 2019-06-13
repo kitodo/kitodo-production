@@ -192,6 +192,7 @@ public class GalleryPanel {
             for (View toStripeView : toStripe.getStructure().getViews()) {
                 toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
             }
+            dataEditor.getStructurePanel().show();
             return;
         } else if (dropStripeMatcher.matches() && dragUnassignedPageMatcher.matches()) {
             int toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
@@ -205,6 +206,7 @@ public class GalleryPanel {
             for (View toStripeView : toStripe.getStructure().getViews()) {
                 toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
             }
+            dataEditor.getStructurePanel().show();
             return;
         }
 
