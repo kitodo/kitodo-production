@@ -18,10 +18,12 @@ import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.SessionScoped;
@@ -81,6 +83,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * Backing bean for the gallery panel.
      */
     private final GalleryPanel galleryPanel;
+
+    /**
+     * The current process children.
+     */
+    private Set<Process> currentChildren = new HashSet<>();
 
     /**
      * The path to the main file, to save it later.
@@ -163,6 +170,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.referringView = referringView;
             Helper.getRequestParameter("referringView");
             this.process = ServiceManager.getProcessService().getById(id);
+            this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
 
             ruleset = openRulesetFile(process.getRuleset().getFile());
@@ -229,6 +237,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         workpiece = null;
         mainFileUri = null;
         ruleset = null;
+        currentChildren.clear();
         process = null;
         user = null;
         if (referringView.contains("?")) {
@@ -347,6 +356,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public GalleryPanel getGalleryPanel() {
         return galleryPanel;
+    }
+
+    Set<Process> getCurrentChildren() {
+        return currentChildren;
     }
 
     /**

@@ -17,12 +17,17 @@ import static org.kitodo.production.metadata.InsertionPosition.FIRST_CHILD_OF_CU
 import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
@@ -34,9 +39,15 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 
 /**
  * Backing bean for the add doc struc type dialog of the meta-data editor.
@@ -59,7 +70,11 @@ public class AddDocStrucTypeDialog {
     private String selectFirstPageOnAddNodeSelectedItem;
     private String selectLastPageOnAddNodeSelectedItem;
     private List<SelectItem> selectPageOnAddNodeItems;
-    private boolean showingAddMultipleLogicalElements;
+    private AddDocStrucTypeDialogMode subdialog = AddDocStrucTypeDialogMode.ADD_MULTIPLE_LOGICAL_ELEMENTS;
+    private String processNumber = "";
+    private Process selectedProcess;
+    private List<ProcessDTO> processes = Collections.emptyList();
+    private BigInteger orderSpinnerValue;
 
     /**
      * Backing bean for the add doc struc type dialog of the meta-data editor.
@@ -282,24 +297,24 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     * Return flag indicating whether function to add multiple logical elements at once is visible or not.
+     * Returns the number of the subdialog to be displayed. This dialog has
+     * several sub-dialogs for switching. Strictly speaking, there are three (1
+     * to 3).
      *
-     * @return flag indicating whether function to add multiple logical elements at once is visible or not
+     * @return subdialog by number
      */
-    public boolean isShowingAddMultipleLogicalElements() {
-        return showingAddMultipleLogicalElements;
+    public int getSubdialog() {
+        return Arrays.binarySearch(AddDocStrucTypeDialogMode.values(), subdialog) + 1;
     }
 
     /**
-     * Sets whether the add doc struc type dialog is showing add multiple
-     * logical elements.
+     * Sets the subdialog selected by the user.
      *
-     * @param showingAddMultipleLogicalElements
-     *            whether the add doc struc type dialog is showing add multiple
-     *            logical elements
+     * @param subdialog
+     *            subdialog, from 1 to 3
      */
-    public void setShowingAddMultipleLogicalElements(boolean showingAddMultipleLogicalElements) {
-        this.showingAddMultipleLogicalElements = showingAddMultipleLogicalElements;
+    public void setSubdialog(int subdialog) {
+        this.subdialog = AddDocStrucTypeDialogMode.values()[subdialog - 1];
     }
 
     private List<View> getViewsToAdd() {
@@ -390,13 +405,18 @@ public class AddDocStrucTypeDialog {
 
     private void prepareSelectAddableMetadataTypesItems() {
         selectAddableMetadataTypesItems = new ArrayList<>();
-        for (MetadataViewInterface keyView : dataEditor.getRuleset()
-                .getStructuralElementView(
-                    dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
-                    dataEditor.getAcquisitionStage(), dataEditor.getPriorityList())
-                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList())) {
+        Collection<MetadataViewInterface> addableMetadata = getStructuralElementView()
+                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
+        for (MetadataViewInterface keyView : addableMetadata) {
             selectAddableMetadataTypesItems.add(new SelectItem(keyView.getId(), keyView.getLabel()));
         }
+    }
+
+    private StructuralElementViewInterface getStructuralElementView() {
+        return dataEditor.getRuleset()
+                .getStructuralElementView(
+                        dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+                        dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
     }
 
     private void prepareSelectPageOnAddNodeItems() {
@@ -408,5 +428,138 @@ public class AddDocStrucTypeDialog {
                     : mediaUnit.getOrder() + " : " + mediaUnit.getOrderlabel();
             selectPageOnAddNodeItems.add(new SelectItem(Integer.toString(i), label));
         }
+    }
+
+    /**
+     * Returns the process number. The process number is an input field where
+     * the user can enter the process number or the process title, and then it
+     * is searched for. But search is only when the button is clicked (too much
+     * load otherwise).
+     *
+     * @return the process number
+     */
+    public String getProcessNumber() {
+        return processNumber;
+    }
+
+    /**
+     * Sets the process number when the user entered it.
+     *
+     * @param processNumber
+     *            process number to set
+     */
+    public void setProcessNumber(String processNumber) {
+        this.processNumber = processNumber;
+    }
+
+    /**
+     * Function for the button for the search. Looks for suitable processes. If
+     * the process number is a number and the process exists, it is already
+     * found. Otherwise it must be searched for, excluding the wrong ruleset or
+     * the wrong client.
+     */
+    public void searchButtonClick() {
+        if (processNumber.trim().isEmpty()) {
+            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
+            return;
+        }
+        try {
+            Set<String> allowedSubstructuralElements = getStructuralElementView().getAllowedSubstructuralElements()
+                    .keySet();
+            processes = ServiceManager.getProcessService().findLinkableProcesses(processNumber,
+                dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements);
+            if (processes.isEmpty()) {
+                alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.noHits"));
+            }
+        } catch (DataException | IOException | DAOException e) {
+            logger.catching(e);
+            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Displays a dialog box with a message to the user.
+     *
+     * @param message
+     *            message to show
+     */
+    private void alert(String message) {
+        PrimeFaces.current().executeScript("alert('" + message + "');");
+    }
+
+    /**
+     * Returns the process selected by the user in the drop-down list.
+     *
+     * @return the selected process
+     */
+    public Process getSelectedProcess() {
+        return selectedProcess;
+    }
+
+    /**
+     * Sets the number of the process selected by the user.
+     *
+     * @param selectedProcess
+     *            selected process
+     */
+    public void setSelectedProcess(Process selectedProcess) {
+        this.selectedProcess = selectedProcess;
+    }
+
+    /**
+     * Returns the list of items to populate the drop-down list to select a
+     * process.
+     *
+     * @return the list of processes
+     */
+    public List<ProcessDTO> getProcesses() {
+        return processes;
+    }
+
+    /**
+     * Returns the value of the order spinner. The order has an influence on the
+     * order when adding links.
+     *
+     * @return the value of the order spinner
+     */
+    public BigInteger getOrderSpinnerValue() {
+        return orderSpinnerValue;
+    }
+
+    /**
+     * Sets the value of the order spinner if the user has entered a value here.
+     *
+     * @param orderSpinnerValue
+     *            value to set
+     */
+    public void setOrderSpinnerValue(BigInteger orderSpinnerValue) {
+        this.orderSpinnerValue = orderSpinnerValue;
+    }
+
+    /**
+     * Adds the link when the user clicks OK.
+     */
+    public void addLinkButtonClick() {
+        if (processNumber.trim().isEmpty()) {
+            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
+            return;
+        } else {
+            try {
+                selectedProcess = ServiceManager.getProcessService().getById(Integer.valueOf(processNumber.trim()));
+            } catch (DAOException e) {
+                logger.catching(Level.TRACE, e);
+                alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
+            }
+        }
+        dataEditor.getCurrentChildren().add(selectedProcess);
+        MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
+            orderSpinnerValue, selectedProcess.getId());
+        dataEditor.getStructurePanel().show(true);
+        if (processNumber.trim().equals(Integer.toString(selectedProcess.getId()))) {
+            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.hint"));
+        }
+        processNumber = "";
+        processes = Collections.emptyList();
+        orderSpinnerValue = null;
     }
 }

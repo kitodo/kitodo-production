@@ -47,6 +47,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -70,6 +71,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.Operator;
@@ -671,6 +673,42 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
+     * Searches for linkable processes based on user input. A process can be
+     * linked if it has the same rule set, belongs to the same client, and the
+     * topmost element of the logical outline below the selected parent element
+     * is an allowed child. For the latter, the data file must be read at the
+     * moment. This will be aborted after a timeout so that the user gets an
+     * answer (which may be incomplete) in finite time.
+     *
+     * @param searchInput
+     *            user input
+     * @param rulesetId
+     *            the id of the allowed ruleset
+     * @param allowedStructuralElementTypes
+     *            allowed topmost logical structural elements
+     * @return found processes
+     * @throws DataException
+     *             if the search engine fails
+     */
+    public List<ProcessDTO> findLinkableProcesses(String searchInput, int rulesetId,
+            Collection<String> allowedStructuralElementTypes) throws DataException, IOException, DAOException {
+
+        BoolQueryBuilder query = new BoolQueryBuilder()
+                .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput))
+                .should(new MatchQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*"))
+                .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
+        List<ProcessDTO> result = new LinkedList<>();
+
+        List<ProcessDTO> processDTOS = findByQuery(query, false);
+        for (ProcessDTO process : processDTOS) {
+            if (allowedStructuralElementTypes.contains(getBaseType(process.getId()))) {
+                result.add(process);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Find processes by property.
      *
      * @param title
@@ -1061,8 +1099,20 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      * @return a URI that identifies the process
      */
     public URI getProcessURI(Process process) {
+        return getProcessURI(process.getId());
+    }
+
+    /**
+     * Returns a URI that identifies the process. The URI has the form
+     * {@code database://?process.id=42}, where {@code 42} is the process ID.
+     *
+     * @param processId
+     *            process ID for which a URI is to be formed that identifies it
+     * @return a URI that identifies the process
+     */
+    public URI getProcessURI(Integer processId) {
         try {
-            return new URI("database", null, "//", "process.id=" + process.getId(), null);
+            return new URI("database", null, "//", "process.id=" + processId, null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
@@ -1580,6 +1630,20 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public LegacyMetsModsDigitalDocumentHelper getDigitalDocument(Process process) throws IOException {
         return readMetadataFile(process).getDigitalDocument();
+    }
+
+    /**
+     * Returns the type of the top element of the root element, and thus the
+     * type of the workpiece of the process.
+     *
+     * @param processId
+     *            process whose root type is to be determined
+     * @return the type of root element of the root element of the workpiece
+     * @throws RuntimeException
+     *             because it is used in a parallel stream
+     */
+    private String getBaseType(Integer processId) throws DAOException, IOException {
+        return getBaseType(getById(processId));
     }
 
     /**
@@ -2335,7 +2399,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     private void removeLinksFromNoLongerLinkedProcesses(Process process, IncludedStructuralElement rootElement)
             throws DAOException, DataException {
         ArrayList<Process> childrenToRemove = new ArrayList<>(process.getChildren());
-        childrenToRemove.removeAll(getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
+        childrenToRemove.removeAll(getProcessesLinkedInIncludedStructuralElement(rootElement));
         for (Process childToRemove : childrenToRemove) {
             childToRemove.setParent(null);
             process.getChildren().remove(childToRemove);
@@ -2348,8 +2412,8 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     private void addNewLinks(Process process, IncludedStructuralElement rootElement)
             throws DAOException, DataException {
-        ArrayList<Process> childrenToAdd = new ArrayList(
-                getProcessesLinkedInIncludedStructuralElementRecursive(rootElement));
+        HashSet<Process> childrenToAdd =
+                getProcessesLinkedInIncludedStructuralElement(rootElement);
         childrenToAdd.removeAll(process.getChildren());
         for (Process childToAdd : childrenToAdd) {
             childToAdd.setParent(process);
@@ -2361,15 +2425,15 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         }
     }
 
-    private Collection<Process> getProcessesLinkedInIncludedStructuralElementRecursive(
+    private HashSet<Process> getProcessesLinkedInIncludedStructuralElement(
             IncludedStructuralElement includedStructuralElement) throws DAOException {
-        Collection<Process> result = new HashSet<>();
+        HashSet<Process> result = new HashSet<>();
         if (Objects.nonNull(includedStructuralElement.getLink())) {
             int processId = processIdFromUri(includedStructuralElement.getLink().getUri());
             result.add(getById(processId));
         }
         for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
-            result.addAll(getProcessesLinkedInIncludedStructuralElementRecursive(child));
+            result.addAll(getProcessesLinkedInIncludedStructuralElement(child));
         }
         return result;
     }
