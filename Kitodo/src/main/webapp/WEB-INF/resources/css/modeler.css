@@ -903,6 +903,10 @@ div[data-entry=id],
   padding: 10px;
   font-size: 1em;
 }
+/* line 102, styles/modeler_custom.less */
+.content {
+  background-color: white;
+}
 
 @font-face {
   font-family: 'bpmn';
