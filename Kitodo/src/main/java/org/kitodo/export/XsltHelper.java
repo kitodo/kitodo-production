@@ -53,7 +53,7 @@ public class XsltHelper {
 
     static URI getXsltFileFromConfig(Process process) {
         String path = ConfigCore.getParameter(ParameterCore.DIR_XSLT);
-        String file = process.getTemplate().getRuleset().getFile().replaceFirst("\\.[Xx][Mm][Ll]$", ".xsl");
+        String file = process.getRuleset().getFile().replaceFirst("\\.[Xx][Mm][Ll]$", ".xsl");
         return Paths.get(FilenameUtils.concat(path, file)).toUri();
     }
 

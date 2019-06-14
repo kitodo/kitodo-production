@@ -219,7 +219,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         dividend = 0;
     }
 
-    private void runForActionTwo() throws IOException {
+    private void runForActionTwo() throws IOException, DAOException {
         while (processesIterator.hasNext()) {
             if (isInterrupted()) {
                 return;

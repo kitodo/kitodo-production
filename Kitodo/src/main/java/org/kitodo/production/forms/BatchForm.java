@@ -476,7 +476,7 @@ public class BatchForm extends BaseForm {
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException | DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
                 return this.stayOnCurrentPage;

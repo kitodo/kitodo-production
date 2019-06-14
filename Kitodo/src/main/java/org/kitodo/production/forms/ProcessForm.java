@@ -558,7 +558,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | RuntimeException | DAOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -579,7 +579,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                 new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
         }
@@ -605,7 +605,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 export.startExport(processToExport);
                 Helper.setMessage(EXPORT_FINISHED);
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException | DAOException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             }

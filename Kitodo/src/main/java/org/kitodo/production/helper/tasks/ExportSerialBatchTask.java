@@ -22,6 +22,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -136,7 +137,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     setProgress(100 * stepcounter / maxsize);
                 }
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | DAOException e) {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (Objects.nonNull(process) ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
