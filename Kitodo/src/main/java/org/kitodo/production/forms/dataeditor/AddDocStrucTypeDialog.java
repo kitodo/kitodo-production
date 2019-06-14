@@ -329,24 +329,43 @@ public class AddDocStrucTypeDialog {
         }
     }
 
-    void prepare() {
+    /**
+     * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
+     */
+    public void prepare() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
                 dataEditor.getWorkpiece().getRootElement());
-
             prepareDocStructPositionSelectionItems(parents.isEmpty());
-            prepareDocStructAddTypeSelectionItemsForChildren();
-            prepareDocStructAddTypeSelectionItemsForParent();
-            prepareDocStructAddTypeSelectionItemsForSiblings();
             prepareSelectAddableMetadataTypesItems();
+        } else {
+            docStructPositionSelectionItems = Collections.emptyList();
+            selectAddableMetadataTypesItems = Collections.emptyList();
+        }
+        this.prepareDocStructTypes();
+        prepareSelectPageOnAddNodeItems();
+    }
+
+    /**
+     * Update lists of available doc struct types that can be added to the currently selected structure element in the
+     * currently selected position.
+     */
+    public void prepareDocStructTypes() {
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
+                    dataEditor.getWorkpiece().getRootElement());
+            if (parents.isEmpty()) {
+                docStructAddTypeSelectionItemsForParent = Collections.emptyList();
+            } else {
+                prepareDocStructAddTypeSelectionItemsForParent();
+            }
+            prepareDocStructAddTypeSelectionItemsForChildren();
+            prepareDocStructAddTypeSelectionItemsForSiblings();
         } else {
             docStructAddTypeSelectionItemsForChildren = Collections.emptyList();
             docStructAddTypeSelectionItemsForParent = Collections.emptyList();
             docStructAddTypeSelectionItemsForSiblings = Collections.emptyList();
-            docStructPositionSelectionItems = Collections.emptyList();
-            selectAddableMetadataTypesItems = Collections.emptyList();
         }
-        prepareSelectPageOnAddNodeItems();
     }
 
     private void prepareDocStructAddTypeSelectionItemsForChildren() {
@@ -382,7 +401,7 @@ public class AddDocStrucTypeDialog {
             StructuralElementViewInterface parentDivisionView = dataEditor.getRuleset().getStructuralElementView(
                 parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
             for (Entry<String, String> entry : parentDivisionView.getAllowedSubstructuralElements().entrySet()) {
-                docStructAddTypeSelectionItemsForChildren.add(new SelectItem(entry.getKey(), entry.getValue()));
+                docStructAddTypeSelectionItemsForSiblings.add(new SelectItem(entry.getKey(), entry.getValue()));
             }
         }
     }

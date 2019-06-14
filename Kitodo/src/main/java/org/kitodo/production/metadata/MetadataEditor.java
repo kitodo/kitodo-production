@@ -145,16 +145,20 @@ public class MetadataEditor {
     public static IncludedStructuralElement addStructure(String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, List<View> viewsToAdd) {
         LinkedList<IncludedStructuralElement> parents = getAncestorsOfStructure(structure, workpiece.getRootElement());
-        if (parents.isEmpty()
-                && (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
-                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT))) {
-            Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
-            return null;
+        List<IncludedStructuralElement> siblings = new LinkedList<>();
+        if (parents.isEmpty()) {
+            if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
+                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT)
+                    || position.equals(InsertionPosition.PARENT_OF_CURRENT_ELEMENT)) {
+                Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
+                return null;
+            }
+        } else {
+            siblings = parents.getLast().getChildren();
         }
         IncludedStructuralElement newStructure = new IncludedStructuralElement();
         newStructure.setType(type);
         LinkedList<IncludedStructuralElement> structuresToAddViews = new LinkedList<>(parents);
-        List<IncludedStructuralElement> siblings = parents.getLast().getChildren();
         switch (position) {
             case AFTER_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure) + 1, newStructure);
@@ -192,13 +196,30 @@ public class MetadataEditor {
      * Create a new MediaUnit and insert it into the passed workpiece. The position of insertion
      * is determined by the passed parent and position.
      * @param type type of new MediaUnit
+     * @param workpiece workpiece from which the root media unit is retrieved
      * @param parent parent of the new MediaUnit
      * @param position position relative to the parent element
      */
-    public static void addMediaUnit(String type, MediaUnit parent, InsertionPosition position) {
+    public static void addMediaUnit(String type, Workpiece workpiece, MediaUnit parent, InsertionPosition position) {
+        LinkedList<MediaUnit> grandparents = getAncestorsOfMediaUnit(parent, workpiece.getMediaUnit());
+        List<MediaUnit> siblings = new LinkedList<>();
+        if (grandparents.isEmpty()) {
+            if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
+                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT)) {
+                Helper.setErrorMessage("No parent found for currently selected media unit to which new media unit can be appended!");
+            }
+        } else {
+            siblings = grandparents.getLast().getChildren();
+        }
         MediaUnit newMediaUnit = new MediaUnit();
         newMediaUnit.setType(type);
         switch (position) {
+            case AFTER_CURRENT_ELEMENT:
+                siblings.add(siblings.indexOf(parent) + 1, newMediaUnit);
+                break;
+            case BEFOR_CURRENT_ELEMENT:
+                siblings.add(siblings.indexOf(parent), newMediaUnit);
+                break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
                 parent.getChildren().add(0, newMediaUnit);
                 break;

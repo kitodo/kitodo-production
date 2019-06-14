@@ -1468,6 +1468,7 @@ Column content
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: block;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data input {

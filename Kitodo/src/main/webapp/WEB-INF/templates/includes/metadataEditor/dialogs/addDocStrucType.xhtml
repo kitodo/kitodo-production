@@ -41,7 +41,8 @@
                                        var="positionSelection"
                                        itemValue="#{positionSelection}"
                                        itemLabel="#{positionSelection.label}"/>
-                        <p:ajax update="docStructAddTypeSelection"/>
+                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareDocStructTypes}"
+                                update="docStructAddTypeSelection"/>
                     </p:selectOneMenu>
 
                     <h:outputLabel value="#{msgs.typ}:"
@@ -49,7 +50,6 @@
                     <p:selectOneMenu id="docStructAddTypeSelection"
                                      value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
                                      style="width: 180px;">
-                        <!--TODO check addable types-->
                         <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
                         <p:ajax update="dialogAddDocStrucTypeForm"/>
                     </p:selectOneMenu>

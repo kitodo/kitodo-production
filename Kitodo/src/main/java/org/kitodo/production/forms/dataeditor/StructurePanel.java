@@ -120,6 +120,7 @@ public class StructurePanel implements Serializable {
         IncludedStructuralElement parent = ancestors.getLast();
         parent.getChildren().remove(selectedStructure.get());
         show();
+        dataEditor.getGalleryPanel().updateStripes();
     }
 
     void deleteSelectedMediaUnit() {
@@ -174,7 +175,9 @@ public class StructurePanel implements Serializable {
      * @param selectedPhysicalNode as org.primefaces.model.TreeNode
      */
     public void setSelectedPhysicalNode(TreeNode selectedPhysicalNode) {
-        this.selectedPhysicalNode = selectedPhysicalNode;
+        if (Objects.nonNull(selectedPhysicalNode)) {
+            this.selectedPhysicalNode = selectedPhysicalNode;
+        }
     }
 
     Optional<IncludedStructuralElement> getSelectedStructure() {

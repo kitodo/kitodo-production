@@ -34,7 +34,7 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{logicalNode.treeLogicalSelect}"
-                    update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper"/>
+                    update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper,dialogAddDocStrucTypeForm"/>
             <p:ajax event="dragdrop"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
@@ -48,13 +48,14 @@
             </p:treeNode>
         </p:tree>
         <p:contextMenu for="logicalTree">
-            <p:menuitem value="#{msgs.addIncludedStructuralElement}"
+            <p:menuitem value="#{msgs.addElement}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
-                        onclick="PF('dialogAddDocStrucType').show()"
+                        actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
+                        oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeForm"/>
-            <p:menuitem value="#{msgs.removeIncludedStructuralElement}"
+            <p:menuitem value="#{msgs.removeElement}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -84,7 +85,7 @@
                     dragdropScope="physicalTree">
                 <p:ajax event="select"
                         listener="#{physicalNode.treePhysicalSelect}"
-                        update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper"/>
+                        update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper,dialogAddMediaUnitForm"/>
                 <p:ajax event="dragdrop"
                         listener="#{DataEditorForm.structurePanel.onDragDrop}"
                         update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
@@ -98,12 +99,14 @@
                 </p:treeNode>
             </p:tree>
             <p:contextMenu for="physicalTree">
-                <p:menuitem value="#{msgs.addMediaUnit}"
+                <p:menuitem value="#{msgs.addElement}"
                             icon="fa fa-plus fa-sm"
                             styleClass="plain"
                             disabled="#{readOnly}"
-                            onclick="PF('dialogAddMediaUnit').show()"/>
-                <p:menuitem value="#{msgs.removeMediaUnit}"
+                            actionListener="#{DataEditorForm.addMediaUnitDialog.prepare}"
+                            oncomplete="PF('dialogAddMediaUnit').show()"
+                            update="dialogAddMediaUnitForm"/>
+                <p:menuitem value="#{msgs.removeElement}"
                             icon="fa fa-trash fa-sm"
                             styleClass="plain"
                             disabled="#{readOnly}"
