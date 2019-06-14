@@ -887,14 +887,15 @@ div[data-entry=id],
 }
 /* line 84, styles/modeler_custom.less */
 .modeler-zoom-controls {
-  position: fixed;
+  position: absolute;
   bottom: 10px;
+  left: 10px;
 }
-/* line 89, styles/modeler_custom.less */
+/* line 90, styles/modeler_custom.less */
 .modeler-zoom-controls ul {
   list-style: none;
 }
-/* line 93, styles/modeler_custom.less */
+/* line 94, styles/modeler_custom.less */
 .modeler-zoom-controls button {
   background: #FAFAFA;
   border: solid 1px #CCC;
@@ -1392,8 +1393,7 @@ svg.new-parent {
 }
 
 .djs-palette.open .djs-palette-toggle {
-  width: 100%;
-  height: 10px;
+  display: none;
 }
 
 /**
