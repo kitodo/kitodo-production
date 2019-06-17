@@ -1314,4 +1314,10 @@ public class ProcessForm extends TemplateBaseForm {
         ServiceManager.getProcessService().setFilter(filter);
         return processListPath;
     }
+
+    @Override
+    public void setFilter(String filter) {
+        super.filter = filter;
+        ServiceManager.getProcessService().setFilter(filter);
+    }
 }

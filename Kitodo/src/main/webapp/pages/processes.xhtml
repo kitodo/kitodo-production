@@ -23,7 +23,6 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <h:outputScript name="js/filter.js" target="body" />
         <h3>#{msgs.processes}</h3>
 
         <!-- filters -->
@@ -32,7 +31,10 @@
                   outcome="searchProcess"/>
         <h:form id="filterMenu">
             <div class="ui-inputgroup">
-                <p:inputText forceId="true" id="filterfield" onkeypress="if (event.keyCode == 13){ProcessForm.filterList()}" value="#{ProcessForm.filter}" placeholder="#{msgs.filter}"/>
+                <p:inputText forceId="true" id="filterfield" value="#{ProcessForm.filter}" placeholder="#{msgs.filter}">
+                    <p:ajax event="change"
+                            oncomplete="document.getElementById('processesTabView:processesForm:processesTable:titleColumn:filter').dispatchEvent(new Event('keyup'));"/>
+                </p:inputText>
                 <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                 <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                     <ul>
