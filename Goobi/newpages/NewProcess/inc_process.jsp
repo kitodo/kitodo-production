@@ -49,7 +49,29 @@
         </h:column>
     </h:panelGroup>
 
-    <h:panelGroup rendered="#{ProzesskopieForm.fileUploadAvailable}">
+    <h:panelGroup>
+        <%-- source 1: search OPAC --%>
+        <h:column rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
+            <h:outputText value="#{msgs.feld}" style="display:inline;" />
+            <h:selectOneMenu id="feldauswahl" value="#{ProzesskopieForm.opacSuchfeld}" style="display:inline; margin-left:10px">
+                <f:selectItems value="#{ProzesskopieForm.searchFields}" />
+            </h:selectOneMenu>
+        </h:column>
+
+        <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}" style="margin-left:7px;margin-right:7px; width:45%"
+                    onkeypress="return checkOpac('OpacRequest',event)" />
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
+
+        <h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery" rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
+            <h:graphicImage value="/newpages/images/buttons/opac.gif" style="vertical-align:middle; margin-right:3px" />
+            <h:outputText value="#{msgs.uebernehmen}" />
+        </h:commandLink>
+
+    </h:panelGroup>
+
+    <h:panelGroup>
         <h:column>
             <h:selectOneRadio value="#{ProzesskopieForm.source}" onclick="this.form.submit()">
                 <f:selectItem itemValue="opac" itemLabel="#{msgs.OpacSearch}" />
@@ -57,18 +79,6 @@
             </h:selectOneRadio>
         </h:column>
     </h:panelGroup>
-
-    <h:panelGroup rendered="#{!ProzesskopieForm.fileUploadAvailable}" />
-
-    <h:panelGroup />
-
-    <%-- source 1: search OPAC --%>
-    <h:column rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
-        <h:outputText value="#{msgs.feld}" style="display:inline;" />
-        <h:selectOneMenu id="feldauswahl" value="#{ProzesskopieForm.opacSuchfeld}" style="display:inline; margin-left:10px">
-            <f:selectItems value="#{ProzesskopieForm.searchFields}" />
-        </h:selectOneMenu>
-    </h:column>
 
     <h:column rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
         <h:outputText value="#{msgs.einrichtungFiltern}" style="margin-left: 15px" rendered="#{ProzesskopieForm.institutionCount > 0}" />
@@ -93,21 +103,6 @@
     </h:panelGroup>
 
     <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}"/>
-
-    <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
-        <f:verbatim><div style="text-align:left;"></f:verbatim>
-            <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}" style="margin-left:7px;margin-right:7px; width:85%"
-                            onkeypress="return checkOpac('OpacRequest',event)" />
-
-        <f:verbatim></div></f:verbatim>
-    </h:panelGroup>
-
-    <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
-        <h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery" rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
-            <h:graphicImage value="/newpages/images/buttons/opac.gif" style="vertical-align:middle; margin-right:3px" />
-            <h:outputText value="#{msgs.uebernehmen}" />
-        </h:commandLink>
-    </h:panelGroup>
 
 </h:panelGrid>
 
