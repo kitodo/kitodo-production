@@ -351,8 +351,8 @@ public class ProzesskopieForm {
         }
 
         this.opacKatalog = "";
-        int count = cp.getParamList("createNewProcess.opac.catalogue").size();
-        for (int i = 0; i < count; i++) {
+        int catalogueCount = cp.getParamList("createNewProcess.opac.catalogue").size();
+        for (int i = 0; i < catalogueCount; i++) {
             if ("true".equals(cp.getParamString("createNewProcess.opac.catalogue(" + i + ")[@default]"))) {
                 this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue(" + i + ")");
                 break;
