@@ -705,6 +705,7 @@ public class IndexingForm {
             try {
                 if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
                     if (Objects.equals(currentIndexState, ObjectType.NONE)) {
+                        logger.debug("Starting indexing of type " + type);
                         indexingStartedTime = LocalDateTime.now();
                         currentIndexState = type;
                         objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
