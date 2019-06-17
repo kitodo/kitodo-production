@@ -37,7 +37,6 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer sortHelperImages;
     private Integer sortHelperMetadata;
     private boolean imageFolderInUse = false;
-    private boolean tifDirectoryExists = false;
 
     /**
      * Get project.
@@ -344,25 +343,6 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
-    }
-
-    /**
-     * Get information if tif directory exists.
-     *
-     * @return true or false
-     */
-    public boolean isTifDirectoryExists() {
-        return tifDirectoryExists;
-    }
-
-    /**
-     * Set information if tif directory exists.
-     *
-     * @param tifDirectoryExists
-     *            as boolean
-     */
-    public void setTifDirectoryExists(boolean tifDirectoryExists) {
-        this.tifDirectoryExists = tifDirectoryExists;
     }
 
     /**
