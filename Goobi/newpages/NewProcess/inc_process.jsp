@@ -49,7 +49,7 @@
         </h:column>
     </h:panelGroup>
 
-    <h:panelGroup rendered="true">
+    <h:panelGroup rendered="#{ProzesskopieForm.fileUploadAvailable}">
         <h:column>
             <h:selectOneRadio value="#{ProzesskopieForm.source}" onclick="this.form.submit()">
                 <f:selectItem itemValue="opac" itemLabel="#{msgs.OpacSearch}" />
@@ -57,6 +57,8 @@
             </h:selectOneRadio>
         </h:column>
     </h:panelGroup>
+
+    <h:panelGroup rendered="#{!ProzesskopieForm.fileUploadAvailable}" />
 
     <h:panelGroup />
 
@@ -69,8 +71,8 @@
     </h:column>
 
     <h:column rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
-        <h:outputText value="#{msgs.einrichtungFiltern}" style="margin-left: 15px" rendered="#{ProzesskopieForm.institutionCount == 0}" />
-        <h:selectOneMenu id="einrichtungsauswahl" value="#{ProzesskopieForm.institution}" style="margin-left:7px" rendered="#{ProzesskopieForm.institutionCount == 0}">
+        <h:outputText value="#{msgs.einrichtungFiltern}" style="margin-left: 15px" rendered="#{ProzesskopieForm.institutionCount > 0}" />
+        <h:selectOneMenu id="einrichtungsauswahl" value="#{ProzesskopieForm.institution}" style="margin-left:7px" rendered="#{ProzesskopieForm.institutionCount > 0}">
             <f:selectItems value="#{ProzesskopieForm.institutions}" />
         </h:selectOneMenu>
     </h:column>
@@ -90,15 +92,15 @@
         <h:commandButton action="#{ProzesskopieForm.uploadFile}"/>
     </h:panelGroup>
 
+    <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}"/>
+
     <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
-        <f:verbatim><div style="text-align:left;padding-left:5%;"></f:verbatim>
+        <f:verbatim><div style="text-align:left;"></f:verbatim>
             <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}" style="margin-left:7px;margin-right:7px; width:85%"
                             onkeypress="return checkOpac('OpacRequest',event)" />
 
         <f:verbatim></div></f:verbatim>
     </h:panelGroup>
-
-    <h:panelGroup/>
 
     <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
         <h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery" rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
