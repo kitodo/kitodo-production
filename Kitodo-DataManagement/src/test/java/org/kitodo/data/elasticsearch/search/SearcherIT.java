@@ -42,16 +42,16 @@ public class SearcherIT {
 
     private static Node node;
     private static IndexRestClient indexRestClient;
-    private static String testIndexName;
+    private static String testSearchType = "testsearch";
     private static QueryBuilder query = QueryBuilders.matchAllQuery();
-    private static Searcher searcher = new Searcher("testsearch");
+    private static Searcher searcher = new Searcher(testSearchType);
 
     @BeforeClass
     public static void prepareIndex() throws Exception {
         MockEntity.setUpAwaitility();
 
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        indexRestClient = initializeIndexRestClient();
+        String testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        indexRestClient = new IndexRestClient(testIndexName, testSearchType);
 
         node = MockEntity.prepareNode();
         node.start();
@@ -61,7 +61,7 @@ public class SearcherIT {
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2, false);
         indexRestClient.addDocument(MockEntity.createEntities().get(3), 3, false);
         indexRestClient.addDocument(MockEntity.createEntities().get(4), 4, false);
-        indexRestClient.enableSortingByTextField("testsearch", "title");
+        indexRestClient.enableSortingByTextField(testSearchType, "title");
     }
 
     @AfterClass
@@ -186,13 +186,6 @@ public class SearcherIT {
 
         await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 3,
             getIdFromJSONObject(searcher.findDocuments(query, sort, 1, 2).get(1)).intValue()));
-    }
-
-    private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(testIndexName);
-        restClient.setType("testsearch");
-        return restClient;
     }
 
     /**

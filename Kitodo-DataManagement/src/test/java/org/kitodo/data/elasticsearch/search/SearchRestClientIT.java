@@ -11,8 +11,6 @@
 
 package org.kitodo.data.elasticsearch.search;
 
-import java.util.Map;
-
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,8 +18,6 @@ import static org.junit.Assert.assertTrue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +47,7 @@ public class SearchRestClientIT {
 
         searchRestClient.createIndex();
 
-        IndexRestClient indexRestClient = initializeIndexRestClient();
+        IndexRestClient indexRestClient = new IndexRestClient(testIndexName, "testsearchclient");
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1, false);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2, false);
         indexRestClient.addDocument(MockEntity.createEntities().get(3), 3, false);
@@ -99,13 +95,6 @@ public class SearchRestClientIT {
 
     private static SearchRestClient initializeSearchRestClient() {
         SearchRestClient restClient = SearchRestClient.getInstance();
-        restClient.setIndex(testIndexName);
-        restClient.setType("testsearchclient");
-        return restClient;
-    }
-
-    private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(testIndexName);
         restClient.setType("testsearchclient");
         return restClient;

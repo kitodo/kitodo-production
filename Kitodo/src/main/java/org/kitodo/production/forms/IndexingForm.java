@@ -56,7 +56,7 @@ import org.omnifaces.util.Ajax;
 @ApplicationScoped
 public class IndexingForm {
 
-    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
+    private static IndexRestClient indexRestClient = new IndexRestClient();
     private static List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
 
     private static final String MAPPING_STARTED_MESSAGE = "mapping_started";

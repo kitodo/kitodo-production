@@ -36,7 +36,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
 
     private transient SearchDatabaseService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
-    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
+    private static IndexRestClient indexRestClient = new IndexRestClient();
     private transient List entities = new ArrayList();
 
     /**

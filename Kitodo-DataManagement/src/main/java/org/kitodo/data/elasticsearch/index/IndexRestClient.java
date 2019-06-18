@@ -38,33 +38,29 @@ import org.kitodo.data.exceptions.DataException;
  */
 public class IndexRestClient extends KitodoRestClient {
 
-    /**
-     * IndexRestClient singleton.
-     */
-    private static volatile IndexRestClient instance = null;
     private final Object lock = new Object();
 
-    private IndexRestClient() {
+    /**
+     * Empty constructor for IndexRestClient. It instantiate the client. Index and
+     * type can be set up later by set methods.
+     */
+    public IndexRestClient() {
+        initiateClient();
     }
 
     /**
-     * Return singleton variable of type IndexRestClient.
-     *
-     * @return unique instance of IndexRestClient
+     * Constructor of IndexRestClient. It instantiate the client and set up index
+     * and type.
+     * 
+     * @param index
+     *            with which client will interact
+     * @param type
+     *            with which client will interact
      */
-    public static IndexRestClient getInstance() {
-        IndexRestClient localReference = instance;
-        if (Objects.isNull(localReference)) {
-            synchronized (IndexRestClient.class) {
-                localReference = instance;
-                if (Objects.isNull(localReference)) {
-                    localReference = new IndexRestClient();
-                    localReference.initiateClient();
-                    instance = localReference;
-                }
-            }
-        }
-        return localReference;
+    public IndexRestClient(String index, String type) {
+        this.index = index;
+        this.type = type;
+        initiateClient();
     }
 
     /**
@@ -154,7 +150,7 @@ public class IndexRestClient extends KitodoRestClient {
             highLevelClient.delete(deleteRequest);
         } catch (ResponseException e) {
             handleResponseException(e);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             throw new DataException(e);
         }
     }

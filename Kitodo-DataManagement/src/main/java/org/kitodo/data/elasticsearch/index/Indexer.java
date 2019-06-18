@@ -28,6 +28,7 @@ import org.kitodo.data.exceptions.DataException;
  */
 public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index {
 
+    private IndexRestClient restClient;
     private String method;
     private static final String INCORRECT_HTTP = "Incorrect HTTP method!";
 
@@ -39,6 +40,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      */
     public Indexer(Class<?> beanClass) {
         super(beanClass);
+        this.restClient = new IndexRestClient(index, type);
     }
 
     /**
@@ -49,6 +51,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      */
     public Indexer(String type) {
         super(type);
+        this.restClient = new IndexRestClient(index, type);
     }
 
     /**
@@ -65,8 +68,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
     @SuppressWarnings("unchecked")
     public void performSingleRequest(T baseIndexedBean, S baseType, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
-        IndexRestClient restClient = initiateRestClient();
-
         if (method.equals(HttpMethod.PUT)) {
             Map<String, Object> document = baseType.createDocument(baseIndexedBean);
             restClient.addDocument(document, baseIndexedBean.getId(), forceRefresh);
@@ -88,8 +89,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *            object is right after that available for display
      */
     public void performSingleRequest(Integer beanId, boolean forceRefresh) throws CustomResponseException, DataException {
-        IndexRestClient restClient = initiateRestClient();
-
         if (method.equals(HttpMethod.DELETE)) {
             restClient.deleteDocument(beanId, forceRefresh);
         } else {
@@ -107,8 +106,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      */
     @SuppressWarnings("unchecked")
     public void performMultipleRequests(List<T> baseIndexedBeans, S baseType, boolean async) throws CustomResponseException {
-        IndexRestClient restClient = initiateRestClient();
-
         if (method.equals(HttpMethod.PUT)) {
             Map<Integer, Map<String, Object>> documents = baseType.createDocuments(baseIndexedBeans);
             if (async) {
@@ -119,13 +116,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
         }
-    }
-
-    private IndexRestClient initiateRestClient() {
-        IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(index);
-        restClient.setType(type);
-        return restClient;
     }
 
     /**

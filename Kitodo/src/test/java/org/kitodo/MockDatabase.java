@@ -208,7 +208,7 @@ public class MockDatabase {
     }
 
     private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = IndexRestClient.getInstance();
+        IndexRestClient restClient = new IndexRestClient();
         restClient.setIndex(testIndexName);
         return restClient;
     }

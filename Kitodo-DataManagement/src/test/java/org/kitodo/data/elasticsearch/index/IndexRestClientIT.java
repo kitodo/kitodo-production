@@ -32,13 +32,12 @@ public class IndexRestClientIT {
 
     private static IndexRestClient restClient;
     private static Node node;
-    private static String testIndexName;
     private static Searcher searcher = new Searcher("indexer");
 
     @BeforeClass
     public static void startElasticSearch() throws Exception {
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        restClient = initializeRestClient();
+        String testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        restClient = new IndexRestClient(testIndexName, "indexer");
 
         node = MockEntity.prepareNode();
         node.start();
@@ -123,13 +122,6 @@ public class IndexRestClientIT {
     public void shouldGetServerInfo() throws Exception {
         System.out.println(restClient.getServerInformation());
         System.out.println(restClient.getServerInfo());
-    }
-
-    private static IndexRestClient initializeRestClient() {
-        IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(testIndexName);
-        restClient.setType("indexer");
-        return restClient;
     }
 
     private static boolean isFound(Map<String, Object> response) {
