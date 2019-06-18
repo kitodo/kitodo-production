@@ -37,7 +37,7 @@ import org.kitodo.data.exceptions.DataException;
  * Implementation of Elastic Search Searcher for Kitodo - Data Management
  * Module.
  */
-public class Searcher extends Index {
+public class Searcher extends Index<SearchRestClient> {
 
     /**
      * Constructor for searcher with type names equal to table names.
@@ -47,6 +47,7 @@ public class Searcher extends Index {
      */
     public Searcher(Class<?> beanClass) {
         super(beanClass);
+        this.restClient = new SearchRestClient(index, type);
     }
 
     /**
@@ -57,6 +58,7 @@ public class Searcher extends Index {
      */
     public Searcher(String type) {
         super(type);
+        this.restClient = new SearchRestClient(index, type);
     }
 
     /**
@@ -76,8 +78,6 @@ public class Searcher extends Index {
      * @return amount of documents as Long
      */
     public Long countDocuments(QueryBuilder query) throws CustomResponseException, DataException {
-        SearchRestClient restClient = initiateRestClient();
-
         String response = restClient.countDocuments(query);
         if (!response.equals("")) {
             try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
@@ -100,7 +100,6 @@ public class Searcher extends Index {
      */
     public Aggregations aggregateDocuments(QueryBuilder query, AggregationBuilder aggregation)
             throws CustomResponseException, DataException {
-        SearchRestClient restClient = initiateRestClient();
         return restClient.aggregateDocuments(query, aggregation);
     }
 
@@ -112,7 +111,6 @@ public class Searcher extends Index {
      * @return JSONObject
      */
     public Map<String, Object> findDocument(Integer id) throws CustomResponseException, DataException {
-        SearchRestClient restClient = initiateRestClient();
         return restClient.getDocument(id);
     }
 
@@ -138,8 +136,6 @@ public class Searcher extends Index {
      */
     public Map<String, Object> findDocument(QueryBuilder query, SortBuilder sort)
             throws CustomResponseException, DataException {
-        SearchRestClient restClient = initiateRestClient();
-
         SearchHits searchHits = restClient.getDocument(query, sort, 0, 1);
         if (searchHits.getHits().length > 0) {
             SearchHit searchHit = searchHits.getAt(0);
@@ -198,7 +194,6 @@ public class Searcher extends Index {
      */
     public List<Map<String, Object>> findDocuments(QueryBuilder query, SortBuilder sort, Integer offset, Integer size)
             throws CustomResponseException, DataException {
-        SearchRestClient restClient = initiateRestClient();
         List<Map<String, Object>> searchResults = new ArrayList<>();
 
         SearchHits hits = restClient.getDocument(query, sort, offset, size);
@@ -208,12 +203,5 @@ public class Searcher extends Index {
             searchResults.add(result);
         }
         return searchResults;
-    }
-
-    private SearchRestClient initiateRestClient() {
-        SearchRestClient restClient = SearchRestClient.getInstance();
-        restClient.setIndex(index);
-        restClient.setType(type);
-        return restClient;
     }
 }

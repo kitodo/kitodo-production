@@ -26,9 +26,8 @@ import org.kitodo.data.exceptions.DataException;
 /**
  * Implementation of Elastic Search Indexer for index package.
  */
-public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index {
+public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index<IndexRestClient> {
 
-    private IndexRestClient restClient;
     private String method;
     private static final String INCORRECT_HTTP = "Incorrect HTTP method!";
 

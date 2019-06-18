@@ -18,8 +18,9 @@ import org.kitodo.config.ConfigMain;
 /**
  * Super class for Indexer and Searcher.
  */
-public abstract class Index {
+public abstract class Index<T extends KitodoRestClient> {
 
+    protected T restClient;
     protected String index;
     protected String type;
 
@@ -30,9 +31,9 @@ public abstract class Index {
      *            as Class
      */
     public Index(Class<?> beanClass) {
+        this();
         Table table = beanClass.getAnnotation(Table.class);
-        this.index = ConfigMain.getParameter("elasticsearch.index", "kitodo");
-        this.setType(table.name());
+        setType(table.name());
     }
 
     /**
@@ -42,8 +43,12 @@ public abstract class Index {
      *            as String
      */
     public Index(String type) {
+        this();
+        setType(type);
+    }
+
+    private Index() {
         this.index = ConfigMain.getParameter("elasticsearch.index", "kitodo");
-        this.setType(type);
     }
 
     /**

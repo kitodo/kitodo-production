@@ -32,15 +32,14 @@ public class SearchRestClientIT {
 
     private static Node node;
     private static SearchRestClient searchRestClient;
-    private static String testIndexName;
     private static QueryBuilder query = QueryBuilders.matchAllQuery();
 
     @BeforeClass
     public static void prepareIndex() throws Exception {
         MockEntity.setUpAwaitility();
 
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        searchRestClient = initializeSearchRestClient();
+        String testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        searchRestClient = new SearchRestClient(testIndexName, "testsearchclient");
 
         node = MockEntity.prepareNode();
         node.start();
@@ -91,12 +90,5 @@ public class SearchRestClientIT {
     public void shouldGetDocumentByQueryWithOffsetAndSize() {
         await().untilAsserted(() -> assertEquals("Get of document has failed!", 2,
             searchRestClient.getDocument(query, null, 2, 3).getHits().length));
-    }
-
-    private static SearchRestClient initializeSearchRestClient() {
-        SearchRestClient restClient = SearchRestClient.getInstance();
-        restClient.setIndex(testIndexName);
-        restClient.setType("testsearchclient");
-        return restClient;
     }
 }

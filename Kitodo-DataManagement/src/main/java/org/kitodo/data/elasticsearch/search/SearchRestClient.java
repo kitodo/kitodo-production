@@ -45,32 +45,20 @@ import org.kitodo.data.exceptions.DataException;
 public class SearchRestClient extends KitodoRestClient {
 
     /**
-     * SearchRestClient singleton.
-     */
-    private static volatile SearchRestClient instance = null;
-
-    private SearchRestClient() {
-    }
-
-    /**
-     * Return singleton variable of type SearchRestClient.
+     * Constructor of SearchRestClient. It instantiate the client and set up index
+     * and type.
      *
-     * @return unique instance of SearchRestClient
+     * @param index
+     *            with which client will interact
+     * @param type
+     *            with which client will interact
      */
-    public static SearchRestClient getInstance() {
-        SearchRestClient localReference = instance;
-        if (Objects.isNull(localReference)) {
-            synchronized (SearchRestClient.class) {
-                localReference = instance;
-                if (Objects.isNull(localReference)) {
-                    localReference = new SearchRestClient();
-                    localReference.initiateClient();
-                    instance = localReference;
-                }
-            }
-        }
-        return localReference;
+    public SearchRestClient(String index, String type) {
+        this.index = index;
+        this.type = type;
+        initiateClient();
     }
+
 
     /**
      * Count amount of documents responding to given query.
