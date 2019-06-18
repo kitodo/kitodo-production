@@ -479,18 +479,29 @@ public class WorkflowControllerService {
      * If no open parallel tasks are available, activate the next tasks.
      */
     public void activateNextTasks(List<Task> allHigherTasks) throws DataException, IOException {
+        List<Task> nextTasks = getNextTasks(allHigherTasks);
+
+        for (Task nextTask : nextTasks) {
+            activateTask(nextTask);
+        }
+    }
+
+    private List<Task> getNextTasks(List<Task> allHigherTasks) {
         int ordering = 0;
         boolean matched = false;
+
+        List<Task> nextTasks = new ArrayList<>();
         for (Task higherTask : allHigherTasks) {
             if (ordering < higherTask.getOrdering() && !matched) {
                 ordering = higherTask.getOrdering();
             }
 
             if (ordering == higherTask.getOrdering() && higherTask.getProcessingStatus().getValue() < 2) {
-                activateTask(higherTask);
+                nextTasks.add(higherTask);
                 matched = true;
             }
         }
+        return nextTasks;
     }
 
     /**
