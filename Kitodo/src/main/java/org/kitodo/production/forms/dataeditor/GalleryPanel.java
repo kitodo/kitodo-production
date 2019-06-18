@@ -55,8 +55,8 @@ public class GalleryPanel {
     private static final Pattern DROP_STRIPE = Pattern
             .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList");
 
-    private static final Pattern UNASSIGNED_IMAGE = Pattern
-            .compile("imagePreviewForm:unassignedPagesList:(\\d+):unassignedPagePanel");
+    private static final Pattern UNSTRUCTURED_MEDIA = Pattern
+            .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredMediaPanel");
 
     private final DataEditorForm dataEditor;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
@@ -164,17 +164,28 @@ public class GalleryPanel {
      */
     public void onPageDrop(DragDropEvent event) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(event.getDragId());
-        Matcher dragUnassignedPageMatcher = UNASSIGNED_IMAGE.matcher(event.getDragId());
+        Matcher dragUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA.matcher(event.getDragId());
         Matcher dropStripeMatcher = DROP_STRIPE.matcher(event.getDropId());
-        if (dragStripeImageMatcher.matches() && dropStripeMatcher.matches()) {
-            int fromStripeIndex = Integer.parseInt(dragStripeImageMatcher.group(1));
-            int fromStripeMediaIndex = Integer.parseInt(dragStripeImageMatcher.group(2));
+        if ((dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches()) && dropStripeMatcher.matches()) {
+            int fromStripeIndex;
+            int fromStripeMediaIndex;
+            GalleryStripe fromStripe;
             int toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
-            if (fromStripeIndex == toStripeIndex) {
+            if (dragStripeImageMatcher.matches()) {
+                fromStripeIndex = Integer.parseInt(dragStripeImageMatcher.group(1));
+                if (fromStripeIndex == toStripeIndex) {
+                    return;
+                }
+                fromStripeMediaIndex = Integer.parseInt(dragStripeImageMatcher.group(2));
+                fromStripe = stripes.get(fromStripeIndex);
+            } else if (dragUnstructuredMediaMatcher.matches()) {
+                // First (0) stripe represents logical root element (unstructured media)
+                fromStripe = stripes.get(0);
+                fromStripeMediaIndex = Integer.parseInt(dragUnstructuredMediaMatcher.group(1));
+            } else {
                 return;
             }
 
-            GalleryStripe fromStripe = stripes.get(fromStripeIndex);
             GalleryMediaContent mediaContent = fromStripe.getMedias().get(fromStripeMediaIndex);
             GalleryStripe toStripe = stripes.get(toStripeIndex);
 
@@ -188,20 +199,6 @@ public class GalleryPanel {
             for (View fromStripeView : fromStripe.getStructure().getViews()) {
                 fromStripe.getMedias().add(createGalleryMediaContent(fromStripeView));
             }
-            toStripe.getMedias().clear();
-            for (View toStripeView : toStripe.getStructure().getViews()) {
-                toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
-            }
-            dataEditor.getStructurePanel().show();
-            return;
-        } else if (dropStripeMatcher.matches() && dragUnassignedPageMatcher.matches()) {
-            int toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
-            int fromMediaIndex = Integer.parseInt(dragUnassignedPageMatcher.group(1));
-            GalleryMediaContent mediaContent = getUnassignedMedias().get(fromMediaIndex);
-            GalleryStripe toStripe = stripes.get(toStripeIndex);
-            toStripe.getStructure().getViews().add(mediaContent.getView());
-
-            // update stripe
             toStripe.getMedias().clear();
             for (View toStripeView : toStripe.getStructure().getViews()) {
                 toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
@@ -385,17 +382,6 @@ public class GalleryPanel {
             }
         }
         return null;
-    }
-
-    /**
-     * Return list of all medias that are not assigned to a logical structure element.
-     *
-     * @return list of medias not assigned to a logical structure element
-     */
-    public List<GalleryMediaContent> getUnassignedMedias() {
-        return medias.stream()
-                .filter(c -> Objects.isNull(getLogicalStructureOfMedia(c)))
-                .collect(Collectors.toList());
     }
 
     GalleryMediaContent getGalleryMediaContent(View view) {

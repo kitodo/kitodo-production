@@ -1700,7 +1700,7 @@ Column content
     color: var(--pure-white);
 }
 
-#imagePreviewForm\:unassignedPagesList .ui-datalist-item {
+#imagePreviewForm\:unstructuredMedia .ui-datalist-item {
     display: inline;
 }
 
