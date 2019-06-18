@@ -34,6 +34,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class BatchTaskHelper extends BatchHelper {
     private List<Task> steps;
@@ -188,7 +189,7 @@ public class BatchTaskHelper extends BatchHelper {
                 if (valid) {
                     this.myDav.uploadFromHome(task.getProcess());
                     task.setEditType(TaskEditType.MANUAL_MULTI);
-                    ServiceManager.getWorkflowControllerService().close(task);
+                    new WorkflowControllerService().close(task);
                 }
             } catch (DataException | IOException e) {
                 Helper.setErrorMessage(e.getMessage(), logger, e);

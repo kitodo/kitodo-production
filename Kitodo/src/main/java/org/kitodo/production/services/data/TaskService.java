@@ -61,6 +61,7 @@ import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -494,7 +495,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             task.setEditType(TaskEditType.AUTOMATIC);
             if (successful) {
                 task.setProcessingStatus(TaskStatus.DONE);
-                ServiceManager.getWorkflowControllerService().close(task);
+                new WorkflowControllerService().close(task);
             } else {
                 task.setProcessingStatus(TaskStatus.OPEN);
                 save(task);
@@ -550,7 +551,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             boolean validate = ServiceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
                 automaticExportWithOcr);
             if (validate) {
-                ServiceManager.getWorkflowControllerService().close(task);
+                new WorkflowControllerService().close(task);
             } else {
                 abortTask(task);
             }

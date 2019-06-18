@@ -36,6 +36,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 @Named("CommentForm")
 @SessionScoped
@@ -47,7 +48,7 @@ public class CommentForm extends BaseForm {
     private String processId;
     private Process process;
     private BatchTaskHelper batchHelper;
-
+    private WorkflowControllerService workflowControllerService = new WorkflowControllerService();
 
     /**
      * Get all process Comments.
@@ -148,7 +149,7 @@ public class CommentForm extends BaseForm {
      */
     public void reportProblem(Comment comment) {
         try {
-            ServiceManager.getWorkflowControllerService().reportProblem(comment);
+            this.workflowControllerService.reportProblem(comment);
         } catch (DataException e) {
             Helper.setErrorMessage("reportingProblem", logger, e);
         }
@@ -214,7 +215,7 @@ public class CommentForm extends BaseForm {
      */
     public String solveProblem(Comment comment) {
         try {
-            ServiceManager.getWorkflowControllerService().solveProblem(comment);
+            this.workflowControllerService.solveProblem(comment);
         } catch (DataException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }

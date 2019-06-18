@@ -42,6 +42,7 @@ import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 
 @Named("TemplateForm")
@@ -149,7 +150,7 @@ public class TemplateForm extends TemplateBaseForm {
 
             try {
                 ServiceManager.getTemplateService().save(this.template);
-                ServiceManager.getWorkflowControllerService().activateNextTasks(template.getTasks());
+                new WorkflowControllerService().activateNextTasks(template.getTasks());
             } catch (DataException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);

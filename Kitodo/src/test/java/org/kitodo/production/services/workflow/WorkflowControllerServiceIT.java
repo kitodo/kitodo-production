@@ -51,7 +51,7 @@ public class WorkflowControllerServiceIT {
     private static final File usersDirectory = new File("src/test/resources/users");
     private static final FileService fileService = ServiceManager.getFileService();
     private static final TaskService taskService = ServiceManager.getTaskService();
-    private static final WorkflowControllerService workflowService = ServiceManager.getWorkflowControllerService();
+    private static final WorkflowControllerService workflowService = new WorkflowControllerService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

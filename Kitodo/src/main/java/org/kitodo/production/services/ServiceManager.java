@@ -46,7 +46,6 @@ import org.kitodo.production.services.security.SessionService;
 import org.kitodo.production.services.validation.FileStructureValidationService;
 import org.kitodo.production.services.validation.LongTermPreservationValidationService;
 import org.kitodo.production.services.validation.MetadataValidationService;
-import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class ServiceManager {
 
@@ -81,7 +80,6 @@ public class ServiceManager {
     private static MetadataValidationService metadataValidationService;
     private static RulesetManagementService rulesetManagementService;
     private static SessionService sessionService;
-    private static WorkflowControllerService workflowControllerService;
     private static ListColumnService listColumnService;
     private static CommentService commentService;
 
@@ -274,12 +272,6 @@ public class ServiceManager {
     private static void initializeRulesetManagementService() {
         if (Objects.isNull(rulesetManagementService)) {
             rulesetManagementService = RulesetManagementService.getInstance();
-        }
-    }
-
-    private static void initializeWorkflowControllerService() {
-        if (Objects.isNull(workflowControllerService)) {
-            workflowControllerService = WorkflowControllerService.getInstance();
         }
     }
 
@@ -621,17 +613,6 @@ public class ServiceManager {
     public static RulesetManagementService getRulesetManagementService() {
         initializeRulesetManagementService();
         return rulesetManagementService;
-    }
-
-    /**
-     * Initialize WorkflowControllerService if it is not yet initialized and
-     * next return it.
-     *
-     * @return WorkflowControllerService object
-     */
-    public static WorkflowControllerService getWorkflowControllerService() {
-        initializeWorkflowControllerService();
-        return workflowControllerService;
     }
 
     /**

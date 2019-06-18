@@ -80,7 +80,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> workpieces;
     private Property property;
     private transient FileService fileService = ServiceManager.getFileService();
-    private transient WorkflowControllerService workflowControllerService = ServiceManager.getWorkflowControllerService();
+    private transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private String doneDirectoryName;
     private static final String ERROR_CREATING = "errorCreating";
     private static final String EXPORT_FINISHED = "exportFinished";
