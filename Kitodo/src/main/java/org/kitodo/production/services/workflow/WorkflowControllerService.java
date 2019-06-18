@@ -375,6 +375,7 @@ public class WorkflowControllerService {
         updateProcessSortHelperStatus(process);
 
         for (Task automaticTask : automaticTasks) {
+            automaticTask.setProcessingBegin(new Date());
             TaskScriptThread thread = new TaskScriptThread(automaticTask);
             TaskManager.addTask(thread);
         }
