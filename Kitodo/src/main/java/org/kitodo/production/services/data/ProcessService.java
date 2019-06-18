@@ -254,8 +254,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, this.showClosedProcesses,
                 this.showInactiveProjects);
-        return findByQuery(searchResultGeneration.getQueryForFilter(), getSortBuilder(sortField, sortOrder), first, pageSize,
-            false);
+        return findByQuery(searchResultGeneration.getQueryForFilter(), getSortBuilder(sortField, sortOrder), first,
+            pageSize, false);
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
@@ -488,7 +488,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Find processes by metadata.
      *
      * @param metadata
-     *             key is metadata tag and value is metadata content
+     *            key is metadata tag and value is metadata content
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
     List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
@@ -542,8 +542,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (!searchQuery.contains(" ")) {
             QueryBuilder wildcardQueryForProcessTitle = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(),
                 searchQuery);
-            QueryBuilder wildcardQueryForProjectTitle = createSimpleWildcardQuery(ProcessTypeField.PROJECT_TITLE.getKey(),
-                    searchQuery);
+            QueryBuilder wildcardQueryForProjectTitle = createSimpleWildcardQuery(
+                ProcessTypeField.PROJECT_TITLE.getKey(), searchQuery);
             boolQuery.should(wildcardQueryForProcessTitle);
             boolQuery.should(wildcardQueryForProjectTitle);
         }
@@ -778,9 +778,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
             processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
             processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
-            processDTO.setTifDirectoryExists(
-                checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
-            processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
+
             if (!related) {
                 convertRelatedJSONObjects(jsonObject, processDTO);
             } else {
@@ -801,9 +799,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
 
         processDTO.setBatchID(getBatchID(processDTO));
+        processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
         // TODO: leave it for now - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
+
+        processDTO.setTifDirectoryExists(
+            checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
@@ -1036,7 +1038,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param process
      *            object
      * @param forIndexingAll
-     *              if the dataDirectory is created for indexingAll
+     *            if the dataDirectory is created for indexingAll
      * @return path
      */
     public URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
@@ -2251,9 +2253,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return propertiesForDocket;
     }
 
-    @SuppressWarnings("unchecked")
     private List<Map<String, Object>> getMetadataForIndex(Process process) {
-        return getMetadataForIndex(process,false);
+        return getMetadataForIndex(process, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -2312,11 +2313,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Retrieve and return process property value of property with given name 'propertyName' from given ProcessDTO
-     * 'process'.
-     * @param process the ProcessDTO object from which the property value is retrieved
-     * @param propertyName name of the property for the property value is retrieved
-     * @return property value if process has property with name 'propertyName', empty String otherwise
+     * Retrieve and return process property value of property with given name
+     * 'propertyName' from given ProcessDTO 'process'.
+     * 
+     * @param process
+     *            the ProcessDTO object from which the property value is retrieved
+     * @param propertyName
+     *            name of the property for the property value is retrieved
+     * @return property value if process has property with name 'propertyName',
+     *         empty String otherwise
      */
     public static String getPropertyValue(ProcessDTO process, String propertyName) {
         for (PropertyDTO property : process.getProperties()) {
@@ -2330,7 +2335,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Calculate and return duration/age of given process as a String.
      *
-     * @param process ProcessDTO object for which duration/age is calculated
+     * @param process
+     *            ProcessDTO object for which duration/age is calculated
      * @return process age of given process
      */
     public static String getProcessDuration(ProcessDTO process) {
@@ -2338,12 +2344,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
         Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
-        return String.format("%sd; %sh", duration.toDays(), duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
+        return String.format("%sd; %sh", duration.toDays(),
+            duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
     }
 
     /**
      * Set the filter.
-     * @param filter the filter to set
+     * 
+     * @param filter
+     *            the filter to set
      */
     public void setFilter(String filter) {
         this.filter = filter;
@@ -2387,8 +2396,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     private void addNewLinks(Process process, IncludedStructuralElement rootElement)
             throws DAOException, DataException {
-        HashSet<Process> childrenToAdd =
-                getProcessesLinkedInIncludedStructuralElement(rootElement);
+        HashSet<Process> childrenToAdd = getProcessesLinkedInIncludedStructuralElement(rootElement);
         childrenToAdd.removeAll(process.getChildren());
         for (Process childToAdd : childrenToAdd) {
             childToAdd.setParent(process);
