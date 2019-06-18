@@ -766,4 +766,27 @@ public class CurrentTaskForm extends BaseForm {
     public String getProcessDuration(TaskDTO task) {
         return ProcessService.getProcessDuration(task.getProcess());
     }
+
+    /**
+     * Changes the filter of the CurrentTaskForm and reloads it.
+     *
+     * @param filter
+     *            the filter to apply
+     * @return path of the page
+     */
+    public String changeFilter(String filter) {
+        setFilter(filter);
+        return filterList();
+    }
+
+    private String filterList() {
+        ServiceManager.getProcessService().setFilter(filter);
+        return taskListPath;
+    }
+
+    @Override
+    public void setFilter(String filter) {
+        super.filter = filter;
+        ServiceManager.getTaskService().setFilter(filter);
+    }
 }

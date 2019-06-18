@@ -80,7 +80,7 @@ public class SearchResultGeneration {
         List<ProcessDTO> processDTOS = new ArrayList<>();
 
         try {
-            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(),
+            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
                     ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
@@ -91,14 +91,15 @@ public class SearchResultGeneration {
 
     /**
      * Gets the query with filters.
-     * 
+     *
+     * @param objectType Type of object that should be filtered
      * @return A BoolQueryBuilder
      */
-    public BoolQueryBuilder getQueryForFilter() {
+    public BoolQueryBuilder getQueryForFilter(ObjectType objectType) {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         try {
-            query = ServiceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false, false);
+            query = ServiceManager.getFilterService().queryBuilder(this.filter, objectType, false, false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }

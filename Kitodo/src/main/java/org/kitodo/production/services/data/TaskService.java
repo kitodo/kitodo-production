@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -50,6 +51,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.GenerationMode;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -77,6 +79,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
+    private String filter = "";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -116,6 +119,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForTemplate(0));
+        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
+        query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
 
         if (onlyOpenTasks) {
             query.must(getQueryForProcessingStatus(TaskStatus.OPEN.getValue()));
@@ -741,6 +746,15 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      */
     private QueryBuilder getQueryForTemplate(int templateId) {
         return createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), templateId, true);
+    }
+
+    /**
+     * Set filter.
+     *
+     * @param filter as java.lang.String
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     /**

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.model.SelectItem;
@@ -77,6 +78,7 @@ public class SearchForm {
     private String stepOperand = "";
 
     private ProcessForm processForm;
+    private CurrentTaskForm taskForm;
 
     /**
      * Constructor with inject process form.
@@ -85,7 +87,7 @@ public class SearchForm {
      *            managed bean
      */
     @Inject
-    public SearchForm(ProcessForm processForm) {
+    public SearchForm(ProcessForm processForm, CurrentTaskForm taskForm) {
         initStepStatus();
         initProjects();
         initMasterpiecePropertyTitles();
@@ -94,6 +96,7 @@ public class SearchForm {
         initStepTitles();
         initUserList();
         this.processForm = processForm;
+        this.taskForm = taskForm;
     }
 
     /**
@@ -346,14 +349,28 @@ public class SearchForm {
     }
 
     /**
-     * Filter.
+     * Filter processes.
      *
-     * @return String
+     * @return filter as java.lang.String
      */
-    public String filter() {
+    public String filterProcesses() {
+        processForm.changeFilter(createFilter());
+        return processForm.processListPath;
+    }
+
+    /**
+     * Filter tasks.
+     *
+     * @return filter as java.lang.String
+     */
+    public String filterTasks() {
+        taskForm.changeFilter(createFilter());
+        return taskForm.getTaskListPath();
+    }
+
+    private String createFilter() {
         String search = "";
         if (!this.processTitle.isEmpty()) {
-
             search += "\"" + this.processOperand + this.processTitle + "\" ";
         }
         if (!this.idin.isEmpty()) {
@@ -362,34 +379,12 @@ public class SearchForm {
         if (!this.project.isEmpty()) {
             search += "\"" + this.projectOperand + FilterString.PROJECT.getFilterEnglish() + this.project + "\" ";
         }
-        if (!this.processPropertyValue.isEmpty()) {
-            if (!this.processPropertyTitle.isEmpty()) {
-                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()
-                        + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
-            } else {
-                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()
-                        + this.processPropertyValue + "\" ";
-            }
-        }
-        if (!this.masterpiecePropertyValue.isEmpty()) {
-            if (!this.masterpiecePropertyTitle.isEmpty()) {
-                search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE.getFilterEnglish()
-                        + this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
-            } else {
-                search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE.getFilterEnglish()
-                        + this.masterpiecePropertyValue + "\" ";
-            }
-        }
-        if (!this.templatePropertyValue.isEmpty()) {
-            if (!this.templatePropertyTitle.isEmpty()) {
-                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()
-                        + this.templatePropertyTitle + ":" + this.templatePropertyValue + "\" ";
-            } else {
-                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()
-                        + this.templatePropertyValue + "\" ";
-            }
-        }
-
+        search += createSearchProperty(this.processPropertyTitle, this.processPropertyValue,
+                this.processPropertyOperand, FilterString.PROCESSPROPERTY);
+        search += createSearchProperty(this.masterpiecePropertyTitle, this.masterpiecePropertyValue,
+                this.masterpiecePropertyOperand, FilterString.WORKPIECE);
+        search += createSearchProperty(this.templatePropertyTitle, this.templatePropertyValue,
+                this.templatePropertyOperand, FilterString.TEMPLATE);
         if (!this.stepname.isEmpty()) {
             search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
@@ -398,9 +393,18 @@ public class SearchForm {
             search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
+        return search;
+    }
 
-        processForm.changeFilter(search);
-        return processForm.processListPath;
+    private String createSearchProperty(String title, String value, String operand, FilterString filterString) {
+        if (Objects.nonNull(value) && !value.isEmpty()) {
+            if (Objects.nonNull(title) && !title.isEmpty()) {
+                return "\"" + operand + filterString.getFilterEnglish() + title + ":" + value + "\" ";
+            } else {
+                return "\"" + operand + filterString.getFilterEnglish() + value + "\" ";
+            }
+        }
+        return "";
     }
 
     /**
