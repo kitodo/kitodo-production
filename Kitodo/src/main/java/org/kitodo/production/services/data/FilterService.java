@@ -157,11 +157,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
         BoolQueryBuilder query = new BoolQueryBuilder();
 
-        // this is needed if we filter processes
-        if (objectType == ObjectType.PROCESS) {
-            query = ServiceManager.getProcessService().createUserProcessesQuery();
-        }
-
         // this is needed if we filter task
         if (objectType == ObjectType.TASK) {
             query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks);

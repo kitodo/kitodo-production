@@ -20,7 +20,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
@@ -328,13 +330,12 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * @return query for finding projects for current user
      */
     public QueryBuilder getProjectsForCurrentUserQuery() {
-        int currentUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
-        int sessionClientId = ServiceManager.getUserService().getSessionClientId();
-
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForUserId(currentUserId, true));
-        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
-        return query;
+        List<Project> projects = ServiceManager.getUserService().getAuthenticatedUser().getProjects();
+        IdsQueryBuilder idsQueryBuilder = QueryBuilders.idsQuery();
+        for (Project project : projects) {
+            idsQueryBuilder.addIds(project.getId().toString());
+        }
+        return idsQueryBuilder;
     }
 
     /**

@@ -725,6 +725,9 @@
                 "clientForTask": {
                     "type": "long"
                 },
+                "projectForTask": {
+                    "type": "long"
+                },
                 "templateForTask": {
                     "properties": {
                         "id": {

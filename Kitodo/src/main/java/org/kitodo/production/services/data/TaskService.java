@@ -58,7 +58,7 @@ import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
-import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.primefaces.model.SortOrder;
@@ -68,7 +68,7 @@ import org.primefaces.model.SortOrder;
  * functions on the task because the task itself is a database bean and
  * therefore may not include functionality.
  */
-public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
+public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private static volatile TaskService instance = null;
@@ -81,7 +81,8 @@ public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
      * Constructor with Searcher and Indexer assigning.
      */
     private TaskService() {
-        super(new TaskDAO(), new TaskType(), new Indexer<>(Task.class), new Searcher(Task.class), TaskTypeField.CLIENT_ID.getKey());
+        super(new TaskDAO(), new TaskType(), new Indexer<>(Task.class), new Searcher(Task.class),
+                TaskTypeField.CLIENT_ID.getKey(), TaskTypeField.PROJECT_ID.getKey());
     }
 
     /**

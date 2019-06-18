@@ -132,11 +132,11 @@ import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
-public class ProcessService extends ClientSearchService<Process, ProcessDTO, ProcessDAO> {
+public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final MetadataLock msp = new MetadataLock();
     private final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
@@ -164,7 +164,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     private ProcessService() {
         super(new ProcessDAO(), new ProcessType(), new Indexer<>(Process.class), new Searcher(Process.class),
-                ProcessTypeField.PROJECT_CLIENT_ID.getKey());
+                ProcessTypeField.PROJECT_CLIENT_ID.getKey(), ProcessTypeField.PROJECT_ID.getKey());
     }
 
     /**
@@ -268,27 +268,12 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         return query;
     }
 
-    /**
-     * Creates and returns a query to retrieve processes for which the currently
-     * logged in user is eligible.
-     *
-     * @return query to retrieve processes for which the user eligible
-     */
-    public BoolQueryBuilder createUserProcessesQuery() throws DataException {
-        return createUserProcessesQuery(null);
-    }
-
     @SuppressWarnings("unchecked")
     private BoolQueryBuilder createUserProcessesQuery(Map filters) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
             query.must(readFilters(filters));
-        }
-
-        QueryBuilder userProjectQuery = createUserProjectQuery();
-        if (Objects.nonNull(userProjectQuery)) {
-            query.must(userProjectQuery);
         }
 
         if (!this.showClosedProcesses) {
@@ -300,18 +285,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         }
         return query;
     }
-
-    private QueryBuilder createUserProjectQuery() {
-        User currentUser = ServiceManager.getUserService().getCurrentUser();
-
-        if (Objects.nonNull(currentUser)) {
-            List<Project> projects = currentUser.getProjects();
-            return createSetQueryForBeans(ProcessTypeField.PROJECT_ID.getKey(), projects, true);
-        }
-
-        return null;
-    }
-
 
     /**
      * Method saves or removes batches, tasks and project related to modified

@@ -17,6 +17,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -26,9 +28,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.enums.BatchType;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -38,11 +42,16 @@ public class BatchServiceIT {
 
     private static final BatchService batchService = ServiceManager.getBatchService();
 
+    private static final String BATCH_NOT_FOUND = "Batch was not found in index!";
+    private static final String BATCHES_NOT_FOUND = "Batches were not found in index!";
+
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
+        await().untilTrue(new AtomicBoolean(Objects.nonNull(batchService.findById(1, true))));
     }
 
     @AfterClass
@@ -55,16 +64,14 @@ public class BatchServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllBatches() {
-        await().untilAsserted(
-            () -> assertEquals("Batches were not counted correctly!", Long.valueOf(4), batchService.count()));
+    public void shouldCountAllBatches() throws DataException {
+        assertEquals("Batches were not counted correctly!", Long.valueOf(4), batchService.count());
     }
 
     @Test
-    public void shouldCountAllBatchesAccordingToQuery() {
+    public void shouldCountAllBatchesAccordingToQuery() throws DataException {
         QueryBuilder query = matchQuery("title", "First batch").operator(Operator.AND);
-        await().untilAsserted(
-            () -> assertEquals("Batches were not counted correctly!", Long.valueOf(1), batchService.count(query)));
+        assertEquals("Batches were not counted correctly!", Long.valueOf(1), batchService.count(query));
     }
 
     @Test
@@ -120,88 +127,82 @@ public class BatchServiceIT {
     }
 
     @Test
-    public void shouldFindById() {
+    public void shouldFindById() throws DataException {
         String expected = "First batch";
-        await().untilAsserted(
-            () -> assertEquals("Batch was not found in index!", expected, batchService.findById(1).getTitle()));
+        assertEquals(BATCH_NOT_FOUND, expected, batchService.findById(1).getTitle());
     }
 
     @Test
-    public void shouldFindManyByTitle() {
-        await().untilAsserted(
-            () -> assertEquals("Batches were not found in index!", 3, batchService.findByTitle("batch", true).size()));
+    public void shouldFindManyByTitle() throws DataException {
+        assertEquals(BATCHES_NOT_FOUND, 3, batchService.findByTitle("batch", true).size());
     }
 
     @Test
-    public void shouldFindOneByTitle() {
-        await().untilAsserted(() -> assertEquals("Batch was not found in index!", 1,
-            batchService.findByTitle("First batch", true).size()));
+    public void shouldFindOneByTitle() throws DataException {
+        assertEquals(BATCH_NOT_FOUND, 1,
+                batchService.findByTitle("First batch", true).size());
     }
 
     @Test
-    public void shouldNotFindByType() {
-        await().untilAsserted(
-            () -> assertEquals("Batch was found in index!", 0, batchService.findByTitle("noBatch", true).size()));
+    public void shouldNotFindByType() throws DataException {
+        assertEquals("Batch was found in index!", 0, batchService.findByTitle("noBatch", true).size());
     }
 
     @Test
-    public void shouldFindByTitleAndType() {
-        await().untilAsserted(() -> assertEquals("Batch was not found in index!", 1,
-            batchService.findByTitleAndType("First batch", BatchType.LOGISTIC).size()));
+    public void shouldFindByTitleAndType() throws DataException {
+        assertEquals(BATCH_NOT_FOUND, 1,
+                batchService.findByTitleAndType("First batch", BatchType.LOGISTIC).size());
     }
 
     @Test
-    public void shouldNotFindByTitleAndType() {
-        await().untilAsserted(() -> assertEquals("Batch was found in index!", 0,
-            batchService.findByTitleAndType("Second batch", BatchType.SERIAL).size()));
+    public void shouldNotFindByTitleAndType() throws DataException {
+        assertEquals("Batch was found in index!", 0,
+                batchService.findByTitleAndType("Second batch", BatchType.SERIAL).size());
     }
 
     @Test
-    public void shouldFindManyByTitleOrType() {
-        await().untilAsserted(() -> assertEquals("Batches were not found in index!", 2,
-            batchService.findByTitleOrType("First batch", BatchType.SERIAL).size()));
+    public void shouldFindManyByTitleOrType() throws DataException {
+        assertEquals(BATCHES_NOT_FOUND, 2,
+                batchService.findByTitleOrType("First batch", BatchType.SERIAL).size());
     }
 
     @Test
-    public void shouldFindByTitleOrType() {
-        await().untilAsserted(() -> assertEquals("More batches were found in index!", 1,
-            batchService.findByTitleOrType("None", BatchType.SERIAL).size()));
+    public void shouldFindByTitleOrType() throws DataException {
+        assertEquals("More batches were found in index!", 1,
+                batchService.findByTitleOrType("None", BatchType.SERIAL).size());
     }
 
     @Test
-    public void shouldFindManyByProcessId() {
-        await().untilAsserted(
-            () -> assertEquals("Batches were not found in index!", 2, batchService.findByProcessId(1).size()));
+    public void shouldFindManyByProcessId() throws DataException {
+        assertEquals(BATCHES_NOT_FOUND, 2, batchService.findByProcessId(1).size());
     }
 
     @Test
-    public void shouldFindOneByProcessId() {
-        await().untilAsserted(
-            () -> assertEquals("Batch was not found in index!", 1, batchService.findByProcessId(2).size()));
+    public void shouldFindOneByProcessId() throws DataException {
+        assertEquals(BATCH_NOT_FOUND, 1, batchService.findByProcessId(2).size());
     }
 
     @Test
-    public void shouldNotFindByProcessId() {
-        await().untilAsserted(
-            () -> assertEquals("Some batches were found in index!", 0, batchService.findByProcessId(3).size()));
+    public void shouldNotFindByProcessId() throws DataException {
+        assertEquals("Some batches were found in index!", 0, batchService.findByProcessId(3).size());
     }
 
     @Test
-    public void shouldFindManyByProcessTitle() {
-        await().untilAsserted(() -> assertEquals("Batches were not found in index!", 2,
-            batchService.findByProcessTitle("First process").size()));
+    public void shouldFindManyByProcessTitle() throws DataException {
+        assertEquals(BATCHES_NOT_FOUND, 2,
+                batchService.findByProcessTitle("First process").size());
     }
 
     @Test
-    public void shouldFindOneByProcessTitle() {
-        await().untilAsserted(() -> assertEquals("Batch was not found in index!", 1,
-            batchService.findByProcessTitle("Second process").size()));
+    public void shouldFindOneByProcessTitle() throws DataException {
+        assertEquals(BATCH_NOT_FOUND, 1,
+                batchService.findByProcessTitle("Second process").size());
     }
 
     @Test
-    public void shouldNotFindByProcessTitle() {
-        await().untilAsserted(() -> assertEquals("Some batches were found in index!", 0,
-            batchService.findByProcessTitle("DBConnectionTest").size()));
+    public void shouldNotFindByProcessTitle() throws DataException {
+        assertEquals("Some batches were found in index!", 0,
+                batchService.findByProcessTitle("DBConnectionTest").size());
     }
 
     @Test
