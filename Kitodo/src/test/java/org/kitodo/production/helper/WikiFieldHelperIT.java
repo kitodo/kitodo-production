@@ -28,7 +28,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
-public class WikiFieldHelperTest {
+public class WikiFieldHelperIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
