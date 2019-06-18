@@ -11,9 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index;
 
-import java.util.Map;
-
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
 
 import org.elasticsearch.node.Node;
 import org.junit.After;
@@ -34,6 +35,7 @@ public class IndexRestClientIT {
     private static Node node;
     private static String testIndexName;
     private static Searcher searcher = new Searcher("indexer");
+    private static final String DOCUMENT_EXISTS = "Document exists!";
 
     @BeforeClass
     public static void startElasticSearch() throws Exception {
@@ -62,7 +64,7 @@ public class IndexRestClientIT {
     @Test
     public void shouldAddDocument() throws Exception {
         Map<String, Object> response = searcher.findDocument(1);
-        assertTrue("Document exists!", !isFound(response));
+        assertFalse(DOCUMENT_EXISTS, isFound(response));
 
         restClient.addDocument(MockEntity.createEntities().get(1), 1, false);
 
@@ -73,9 +75,9 @@ public class IndexRestClientIT {
     @Test
     public void shouldAddTypeAsync() throws Exception {
         Map<String, Object> response = searcher.findDocument(1);
-        assertTrue("Document exists!", !isFound(response));
+        assertFalse(DOCUMENT_EXISTS, isFound(response));
         response = searcher.findDocument(2);
-        assertTrue("Document exists!", !isFound(response));
+        assertFalse(DOCUMENT_EXISTS, isFound(response));
 
         restClient.addTypeSync(MockEntity.createEntities());
 
@@ -89,9 +91,9 @@ public class IndexRestClientIT {
     @Test
     public void shouldAddTypeSync() throws Exception {
         Map<String, Object> response = searcher.findDocument(1);
-        assertTrue("Document exists!", !isFound(response));
+        assertFalse(DOCUMENT_EXISTS, isFound(response));
         response = searcher.findDocument(2);
-        assertTrue("Document exists!", !isFound(response));
+        assertFalse(DOCUMENT_EXISTS, isFound(response));
 
         restClient.addTypeAsync(MockEntity.createEntities());
 
@@ -111,12 +113,12 @@ public class IndexRestClientIT {
 
         restClient.deleteDocument(1, false);
         response = searcher.findDocument(1);
-        assertTrue("Delete of document has failed!", !isFound(response));
+        assertFalse("Delete of document has failed!", isFound(response));
 
         // remove even if document doesn't exist should be possible
         restClient.deleteDocument(100, false);
         response = searcher.findDocument(100);
-        assertTrue("Delete of document has failed!", !isFound(response));
+        assertFalse("Delete of document has failed!", isFound(response));
     }
 
     @Test

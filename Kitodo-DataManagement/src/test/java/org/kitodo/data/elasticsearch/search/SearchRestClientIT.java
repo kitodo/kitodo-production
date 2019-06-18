@@ -11,17 +11,14 @@
 
 package org.kitodo.data.elasticsearch.search;
 
-import java.util.Map;
-
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,8 +69,8 @@ public class SearchRestClientIT {
 
     @Test
     public void shouldGetDocumentById() {
-        await().untilAsserted(() -> assertTrue("Get of document has failed - source is empty!",
-            !searchRestClient.getDocument(1).isEmpty()));
+        await().untilAsserted(() -> assertFalse("Get of document has failed - source is empty!",
+            searchRestClient.getDocument(1).isEmpty()));
 
         await().untilAsserted(() -> assertEquals("Get of document has failed - id is incorrect!", 1,
             (int) Integer.valueOf((String) searchRestClient.getDocument(1).get("id"))));
