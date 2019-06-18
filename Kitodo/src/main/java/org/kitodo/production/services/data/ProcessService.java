@@ -804,8 +804,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
 
-        processDTO.setTifDirectoryExists(
-            checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
@@ -929,21 +927,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
 
         return tifDirectory;
-    }
-
-    /**
-     * Check if Tif directory exists.
-     *
-     * @return true if the Tif-Image-Directory exists, false if not
-     */
-    Boolean checkIfTifDirectoryExists(Integer processId, String processTitle, String processBaseURI) {
-        URI testMe;
-        if (Objects.nonNull(processBaseURI)) {
-            testMe = getImagesTifDirectory(true, processId, processTitle, URI.create(processBaseURI));
-        } else {
-            testMe = getImagesTifDirectory(true, processId, processTitle, null);
-        }
-        return fileService.fileExist(testMe) && !fileService.getSubUris(testMe).isEmpty();
     }
 
     /**
