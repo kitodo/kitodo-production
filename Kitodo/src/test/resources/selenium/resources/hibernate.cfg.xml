@@ -43,6 +43,7 @@
         <property name="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.JCacheRegionFactory</property>
         <property name="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</property>
         <property name="hibernate.javax.cache.missing_cache_strategy">create</property>
+        <property name="hibernate.javax.cache.uri">ehcache.xml</property>
 
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
