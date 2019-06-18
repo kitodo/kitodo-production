@@ -16,6 +16,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.production.helper.Helper;
 
@@ -28,6 +30,9 @@ import org.kitodo.production.helper.Helper;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class EmptyTask extends Thread implements INameableTask {
+
+    private static final Logger logger = LogManager.getLogger(EmptyTask.class);
+
     /**
      * The enum Actions lists the available instructions to the housekeeper what
      * to do with a terminated thread. These are:
@@ -235,6 +240,7 @@ public class EmptyTask extends Thread implements INameableTask {
                     return label;
                 }
             case CRASHED:
+                logger.error(exception.getMessage(), exception);
                 if (Objects.nonNull(exception.getMessage())) {
                     return label + " (" + exception.getMessage() + ")";
                 } else if (Objects.nonNull(detail)) {
