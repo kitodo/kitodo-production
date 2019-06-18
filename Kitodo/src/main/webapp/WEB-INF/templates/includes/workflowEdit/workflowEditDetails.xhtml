@@ -73,6 +73,24 @@
 
             <div class="canvas" id="js-canvas"></div>
             <div class="properties-panel-parent" id="js-properties-panel"></div>
+            <div class="modeler-zoom-controls">
+              <ul>
+                <li>
+                  <button title="Zoom Plus" jsaction="click:modeler.zoomIn">
+                    #{msgs['modeler.controls.zoomplus']}
+                  </button>
+                   <button title="Zoom Minus" jsaction="click:modeler.zoomOut">
+                    #{msgs['modeler.controls.zoomminus']}
+                  </button>
+                  <button title="Zoom Reset" jsaction="click:modeler.zoomReset">
+                    #{msgs['modeler.controls.zoomreset']}
+                  </button>
+                   <button title="Toggle Fullscreen" jsaction="click:modeler.toggleFullscreen">
+                    #{msgs['modeler.controls.zoomfullscreen']}
+                  </button>
+                </li>
+              </ul>
+            </div>
         </div>
     </p:panel>
 </ui:composition>
