@@ -229,7 +229,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     @Override
     public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException {
         for (Process process : processes) {
-            process.setMetadata(getMetadataForIndex(process));
+            process.setMetadata(getMetadataForIndex(process, true));
         }
         super.addAllObjectsToIndex(processes);
     }
@@ -765,29 +765,31 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     @Override
     public ProcessDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         ProcessDTO processDTO = new ProcessDTO();
-        processDTO.setId(getIdFromJSONObject(jsonObject));
-        processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
-        processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
-        processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
-        processDTO.setProperties(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.PROPERTIES.getKey(),
-            ServiceManager.getPropertyService()));
-        processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
-        processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
-        processDTO.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
-        processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
-        processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
-        processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
-        processDTO.setTifDirectoryExists(
-            checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
-        processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
-        if (!related) {
-            convertRelatedJSONObjects(jsonObject, processDTO);
-        } else {
-            ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(ProcessTypeField.PROJECT_ID.getIntValue(jsonObject));
-            projectDTO.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(jsonObject));
-            projectDTO.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(jsonObject));
-            processDTO.setProject(projectDTO);
+        if (!jsonObject.isEmpty()) {
+            processDTO.setId(getIdFromJSONObject(jsonObject));
+            processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
+            processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
+            processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
+            processDTO.setProperties(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.PROPERTIES.getKey(),
+                ServiceManager.getPropertyService()));
+            processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
+            processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
+            processDTO.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
+            processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
+            processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
+            processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
+            processDTO.setTifDirectoryExists(
+                checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
+            processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
+            if (!related) {
+                convertRelatedJSONObjects(jsonObject, processDTO);
+            } else {
+                ProjectDTO projectDTO = new ProjectDTO();
+                projectDTO.setId(ProcessTypeField.PROJECT_ID.getIntValue(jsonObject));
+                projectDTO.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(jsonObject));
+                projectDTO.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(jsonObject));
+                processDTO.setProject(projectDTO);
+            }
         }
         return processDTO;
     }
