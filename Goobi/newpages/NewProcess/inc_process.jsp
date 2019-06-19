@@ -49,7 +49,9 @@
         </h:column>
     </h:panelGroup>
 
-    <h:panelGroup>
+    <h:panelGroup rendered="#{ProzesskopieForm.source == 'file' && ProzesskopieForm.fileUploadAvailable}"/>
+
+    <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
         <%-- source 1: search OPAC --%>
         <h:column rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
             <h:outputText value="#{msgs.feld}" style="display:inline;" />
@@ -70,6 +72,8 @@
         </h:commandLink>
 
     </h:panelGroup>
+
+    <h:panelGroup rendered="#{ProzesskopieForm.source == 'file' && ProzesskopieForm.fileUploadAvailable}"/>
 
     <h:panelGroup>
         <h:column>
@@ -95,11 +99,8 @@
     </h:panelGroup>
 
     <h:panelGroup rendered="#{ProzesskopieForm.source == 'file' && ProzesskopieForm.fileUploadAvailable}">
-        <h:outputText value="Name: #{ProzesskopieForm.uploadedFile.name}"/>
-    </h:panelGroup>
-
-    <h:panelGroup rendered="#{ProzesskopieForm.source == 'file' && ProzesskopieForm.fileUploadAvailable}">
         <h:commandButton action="#{ProzesskopieForm.uploadFile}"/>
+        <h:outputText value="Name: #{ProzesskopieForm.uploadedFile.name}"/>
     </h:panelGroup>
 
     <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}"/>
