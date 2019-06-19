@@ -69,9 +69,9 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
 
         if (method.equals(HttpMethod.PUT)) {
             Map<String, Object> document = baseType.createDocument(baseIndexedBean);
-            restClient.addDocument(document, baseIndexedBean.getId(), forceRefresh);
+            restClient.addDocument(this.type, document, baseIndexedBean.getId(), forceRefresh);
         } else if (method.equals(HttpMethod.DELETE)) {
-            restClient.deleteDocument(baseIndexedBean.getId(), forceRefresh);
+            restClient.deleteDocument(this.type, baseIndexedBean.getId(), forceRefresh);
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
         }
@@ -91,7 +91,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         IndexRestClient restClient = initiateRestClient();
 
         if (method.equals(HttpMethod.DELETE)) {
-            restClient.deleteDocument(beanId, forceRefresh);
+            restClient.deleteDocument(this.type, beanId, forceRefresh);
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
         }
@@ -112,9 +112,9 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         if (method.equals(HttpMethod.PUT)) {
             Map<Integer, Map<String, Object>> documents = baseType.createDocuments(baseIndexedBeans);
             if (async) {
-                restClient.addTypeAsync(documents);
+                restClient.addTypeAsync(this.type, documents);
             } else {
-                restClient.addTypeSync(documents);
+                restClient.addTypeSync(this.type, documents);
             }
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
@@ -124,7 +124,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
     private IndexRestClient initiateRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(index);
-        restClient.setType(type);
         return restClient;
     }
 
