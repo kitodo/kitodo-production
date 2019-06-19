@@ -103,8 +103,6 @@
         <h:outputText value="Name: #{ProzesskopieForm.uploadedFile.name}"/>
     </h:panelGroup>
 
-    <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}"/>
-
 </h:panelGrid>
 
 <h:panelGroup rendered="#{ProzesskopieForm.useOpac || ProzesskopieForm.useTemplates}">
