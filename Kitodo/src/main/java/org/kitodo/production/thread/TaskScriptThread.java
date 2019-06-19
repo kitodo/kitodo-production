@@ -26,8 +26,15 @@ public class TaskScriptThread extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(TaskScriptThread.class);
     private TaskService taskService = ServiceManager.getTaskService();
 
+    /**
+     * Constructor to set up task for script execution.
+     * 
+     * @param task
+     *            for script execution
+     */
     public TaskScriptThread(Task task) {
-        super(task.toString());
+        super(task.getTitle() + ", " + Helper.getTranslation("process") + ": " + task.getProcess().getTitle() + " ("
+                + task.getProcess().getId() + ")");
         this.task = task;
     }
 
