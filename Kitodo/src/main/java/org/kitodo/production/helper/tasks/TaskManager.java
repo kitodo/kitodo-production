@@ -29,7 +29,7 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 /**
  * The class TaskManager serves to handle the execution of threads. It can be
  * user controlled by the “Long running task manager”, backed by
- * {@link org.kitodo.production.forms.LongRunningTasksForm}.
+ * {@link org.kitodo.production.forms.TaskManagerForm}.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
