@@ -16,49 +16,79 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:dataTable var="item" value="#{TaskManagerForm.tasks}">
-        <p:column headerText="#{msgs.title}">
-            <h:outputText value="#{item.name}"/>
-        </p:column>
-        <p:column headerText="#{msgs.progress}">
-            <h:outputText value="#{item.progress}"/>
-        </p:column>
-        <p:column headerText="#{msgs.status}">
-            <h:outputText value="#{item.stateDescription}"/>
-        </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-            <!-- move up -->
-            <p:commandLink action="#{TaskManagerForm.moveTaskUp}" title="#{msgs.up}">
-                <h:outputText><i class="fa fa-long-arrow-up fa-lg"/></h:outputText>
-                <f:setPropertyActionListener target="#{TaskManagerForm.task}"
-                                             value="#{item}"/>
-            </p:commandLink>
-            <!-- move down -->
-            <p:commandLink action="#{TaskManagerForm.moveTaskDown}" title="#{msgs.down}">
-                <h:outputText><i class="fa fa-long-arrow-down"/></h:outputText>
-                <f:setPropertyActionListener target="#{TaskManagerForm.task}"
-                                             value="#{item}"/>
-            </p:commandLink>
-            <!-- start -->
-            <p:commandLink action="#{TaskManagerForm.executeTask}" title="#{msgs.start}"
-                           rendered="#{item.startable}">
-                <h:outputText><i class="fa fa-play fa-lg"/></h:outputText>
-                <f:setPropertyActionListener target="#{TaskManagerForm.task}"
-                                             value="#{item}"/>
-            </p:commandLink>
-            <!-- stop -->
-            <p:commandLink action="#{TaskManagerForm.cancelTask}" title="#{msgs.stop}"
-                           rendered="#{item.stoppable}">
-                <h:outputText><i class="fa fa-stop fa-lg"/></h:outputText>
-                <f:setPropertyActionListener target="#{TaskManagerForm.task}"
-                                             value="#{item}"/>
-            </p:commandLink>
-            <!-- delete -->
-            <p:commandLink action="#{TaskManagerForm.removeTask}" title="#{msgs.delete}">
-                <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
-                <f:setPropertyActionListener target="#{TaskManagerForm.task}"
-                                             value="#{item}"/>
-            </p:commandLink>
-        </p:column>
-    </p:dataTable>
+
+    <h:form id="taskManagerForm">
+
+        <p:dataTable id="tasksTable" var="item" value="#{TaskManagerForm.tasks}">
+            <p:column headerText="#{msgs.title}">
+                <h:outputText value="#{item.name}"/>
+            </p:column>
+            <p:column headerText="#{msgs.progress}">
+                <h:outputText value="#{item.progress}"/>
+            </p:column>
+            <p:column headerText="#{msgs.status}">
+                <h:outputText value="#{item.stateDescription}"/>
+            </p:column>
+            <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+                <!-- move up -->
+                <p:commandLink action="#{TaskManagerForm.moveTaskUp}" title="#{msgs.up}">
+                    <h:outputText><i class="fa fa-long-arrow-up fa-lg"/></h:outputText>
+                    <f:setPropertyActionListener target="#{TaskManagerForm.task}"
+                                                 value="#{item}"/>
+                </p:commandLink>
+                <!-- move down -->
+                <p:commandLink action="#{TaskManagerForm.moveTaskDown}" title="#{msgs.down}">
+                    <h:outputText><i class="fa fa-long-arrow-down"/></h:outputText>
+                    <f:setPropertyActionListener target="#{TaskManagerForm.task}"
+                                                 value="#{item}"/>
+                </p:commandLink>
+                <!-- start -->
+                <p:commandLink action="#{TaskManagerForm.executeTask}" title="#{msgs.start}"
+                               rendered="#{item.startable}">
+                    <h:outputText><i class="fa fa-play fa-lg"/></h:outputText>
+                    <f:setPropertyActionListener target="#{TaskManagerForm.task}"
+                                                 value="#{item}"/>
+                </p:commandLink>
+                <!-- stop -->
+                <p:commandLink action="#{TaskManagerForm.cancelTask}" title="#{msgs.stop}"
+                               rendered="#{item.stoppable}">
+                    <h:outputText><i class="fa fa-stop fa-lg"/></h:outputText>
+                    <f:setPropertyActionListener target="#{TaskManagerForm.task}"
+                                                 value="#{item}"/>
+                </p:commandLink>
+                <!-- delete -->
+                <p:commandLink action="#{TaskManagerForm.removeTask}" title="#{msgs.delete}">
+                    <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
+                    <f:setPropertyActionListener target="#{TaskManagerForm.task}"
+                                                 value="#{item}"/>
+                </p:commandLink>
+            </p:column>
+        </p:dataTable>
+
+        <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
+        <p:menu overlay="true" trigger="systemTabView:taskManagerForm:actionsButton" my="left bottom" at="left top">
+            <p:menuitem id="removeClosedTasks"
+                        value="#{msgs.removeClosedTasks}"
+                        action="#{TaskManagerForm.clearFinishedTasks}"
+                        update="systemTabView:taskManagerForm:tasksTable"
+                        icon="fa fa-arrow-circle-o-up"/>
+            <p:menuitem id="removeAllTasks"
+                        value="#{msgs.removeAllTasks}"
+                        action="#{TaskManagerForm.clearAllTasks}"
+                        update="systemTabView:taskManagerForm:tasksTable"
+                        icon="fa fa-arrow-circle-o-down"/>
+            <p:menuitem id="toggleRunningIsRunning" rendered="#{TaskManagerForm.running}"
+                        value="#{msgs.taskManagerIsRunning}"
+                        action="#{TaskManagerForm.toggleRunning}"
+                        update="systemTabView:taskManagerForm:tasksTable"
+                        icon="fa fa-download"/>
+            <p:menuitem id="toggleRunningIsStopped" rendered="#{not TaskManagerForm.running}"
+                        value="#{msgs.taskManagerIsStopped}"
+                        action="#{TaskManagerForm.toggleRunning}"
+                        update="systemTabView:taskManagerForm:tasksTable"
+                        icon="fa fa-download"/>
+        </p:menu>
+
+    </h:form>
+
 </ui:composition>
