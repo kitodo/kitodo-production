@@ -870,6 +870,7 @@
                                     <downloadDir>${project.build.directory}/downloads</downloadDir>
                                     <extractDir>${project.build.directory}/extracts</extractDir>
                                 </zipUrlInstaller>
+                                <timeout>240000</timeout>
                             </container>
 
                             <!-- Tomcat configuration -->
