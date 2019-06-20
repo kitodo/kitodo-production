@@ -13,20 +13,12 @@ package org.kitodo.production.forms;
 
 import java.util.List;
 
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.TaskSitter;
 
 public class TaskManagerForm {
-    /**
-     * When adding demo tasks, the task number is incremented and passed in as
-     * task detail. This is to have some task detail showing, so they can be
-     * told apart from each other in the screen.
-     */
-    private static long demoTaskNo = 0;
 
     /**
      * The field task can be populated by a task object by the Tomahawk
@@ -46,16 +38,6 @@ public class TaskManagerForm {
      */
     public List<EmptyTask> getTasks() {
         return TaskManager.getTaskList();
-    }
-
-    /**
-     * The method addDemoTask() in executed if the user clicks the link to "add
-     * a sample task" in the task manager. This is—if for anything at all—useful
-     * for debugging or demonstration purposes only.
-     */
-    public void addDemoTask() {
-        task = new EmptyTask("#".concat(Long.toString(++demoTaskNo)));
-        TaskManager.addTask(task);
     }
 
     public void executeTask() {
@@ -85,21 +67,6 @@ public class TaskManagerForm {
 
     public void removeTask() {
         task.interrupt(Behaviour.DELETE_IMMEDIATELY);
-    }
-
-    /**
-     * The function isDemoTasksLinkShowing() returns true, if the boolean
-     * parameter <code>taskManager.showSampleTask</code> is set to true in the
-     * global configuration file. Depending on this an option to "add a sample
-     * task" in been shown in the task manager. This is—if for anything at
-     * all—useful for debugging or demonstration purposes only. Defaults to
-     * false.
-     *
-     * @return whether <code>taskManager.showSampleTask</code> is set true in
-     *         the configuration
-     */
-    public boolean isDemoTasksLinkShowing() {
-        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.TASK_MANAGER_SHOW_SAMPLE_TASK);
     }
 
     /**
