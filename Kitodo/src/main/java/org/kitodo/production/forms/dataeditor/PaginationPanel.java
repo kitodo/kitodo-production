@@ -60,7 +60,7 @@ public class PaginationPanel {
     /**
      * This method is invoked if the create pagination button is clicked.
      */
-    public void createPaginationButtonClick() {
+    public void createPagination() {
         ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
         Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
@@ -279,7 +279,7 @@ public class PaginationPanel {
             MediaUnit mediaUnit = mediaUnits.get(i);
             String label = Objects.isNull(mediaUnit.getOrderlabel()) ? Integer.toString(mediaUnit.getOrder())
                     : mediaUnit.getOrder() + " : " + mediaUnit.getOrderlabel();
-            paginationSelectionItems.add(new SelectItem(Integer.toString(i), label));
+            paginationSelectionItems.add(new SelectItem(i, label));
         }
     }
 
@@ -333,13 +333,14 @@ public class PaginationPanel {
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
         if (selectPaginationScopeSelectedItem) {
             for (int i = paginationSelectionSelectedItems.get(0); i < mediaUnits.size(); i++) {
-                mediaUnits.get(0).setOrderlabel(paginator.next());
+                mediaUnits.get(i).setOrderlabel(paginator.next());
             }
         } else {
             for (int i : paginationSelectionSelectedItems) {
                 mediaUnits.get(i).setOrderlabel(paginator.next());
             }
         }
+        dataEditor.refreshStructurePanel();
     }
 
     /**

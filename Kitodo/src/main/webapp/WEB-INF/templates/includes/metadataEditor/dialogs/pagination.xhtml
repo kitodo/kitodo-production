@@ -36,7 +36,7 @@
 
                             <div>
                                 <p:commandButton id="createPaginationButton"
-                                                 action="#{DataEditorForm.paginationPanel.createPaginationButtonClick()}"
+                                                 action="#{DataEditorForm.paginationPanel.createPagination()}"
                                                  value="#{msgs.paginationRead}"
                                                  icon="fa fa-magic fa-lg"
                                                  iconPos="right"
@@ -122,6 +122,7 @@
                                              style="width: 70%;"
                                              label="#{msgs.paginationStartValue}">
                                     <p:ajax event="blur"/>
+                                    <f:convertNumber integerOnly="true"/>
                                 </p:inputText>
 
                                 <p:commandButton id="generateDummyImagesButton"
@@ -148,10 +149,11 @@
 
                             <p:commandButton id="startPagination"
                                              action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
+                                             oncomplete="PF('paginationDialog').hide();"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"
-                                             update="paginationForm:paginationSelection,structureTreeForm:structureWrapperPanel"
+                                             update="paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
                                              value="#{msgs.save}">
                             </p:commandButton>
 
