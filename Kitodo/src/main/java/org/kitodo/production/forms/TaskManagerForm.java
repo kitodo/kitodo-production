@@ -20,7 +20,7 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.TaskSitter;
 
-public class LongRunningTasksForm {
+public class TaskManagerForm {
     /**
      * When adding demo tasks, the task number is incremented and passed in as
      * task detail. This is to have some task detail showing, so they can be
