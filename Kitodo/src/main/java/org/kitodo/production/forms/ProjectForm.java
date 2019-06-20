@@ -30,6 +30,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
@@ -54,6 +55,7 @@ public class ProjectForm extends BaseForm {
     private Project project;
     private List<Template> deletedTemples = new ArrayList<>();
     private boolean locked = true;
+    private static final String TITLE_USED = "projectTitleAlreadyInUse";
 
     /**
      * Initialize the list of displayed list columns.
@@ -211,10 +213,7 @@ public class ProjectForm extends BaseForm {
         ServiceManager.getProjectService().evict(this.project);
         // call this to make saving and deleting permanent
         this.commitFolders();
-        if (Objects.isNull(this.project.getTitle()) || this.project.getTitle().isEmpty()) {
-            Helper.setErrorMessage("errorProjectNoTitleGiven");
-            return this.stayOnCurrentPage;
-        } else {
+        if (isTitleValid()) {
             try {
                 addFirstUserToNewProject();
 
@@ -243,7 +242,32 @@ public class ProjectForm extends BaseForm {
                     logger, e);
                 return this.stayOnCurrentPage;
             }
+        } else {
+            return this.stayOnCurrentPage;
         }
+    }
+
+    private boolean isTitleValid() {
+        String projectTitle = this.project.getTitle();
+        if (StringUtils.isNotBlank(projectTitle)) {
+            List<Project> projects = ServiceManager.getProjectService().getProjectsWithTitleAndClient(projectTitle,
+                    this.project.getClient().getId());
+            int count = projects.size();
+            if (count > 1) {
+                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
+                return false;
+            } else if (count == 1) {
+                Integer projectId = this.project.getId();
+                if (Objects.nonNull(projectId) && projects.get(0).getId().equals(projectId)) {
+                    return true;
+                }
+                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
+                return false;
+            }
+            return true;
+        }
+        Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, "errorProjectNoTitleGiven");
+        return false;
     }
 
     private void addFirstUserToNewProject() throws DAOException {

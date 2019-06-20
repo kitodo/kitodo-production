@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -345,5 +346,22 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      */
     public List<ProjectDTO> findAllProjectsForCurrentUser() throws DataException {
         return findByQuery(getProjectsForCurrentUserQuery(), false);
+    }
+
+    /**
+     * Get all projects templates for given title and client id.
+     *
+     * @param title
+     *            of Project
+     * @param clientId
+     *            id of client
+     * @return list of all projects templates as Project objects
+     */
+    public List<Project> getProjectsWithTitleAndClient(String title, Integer clientId) {
+        String query = "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId WHERE p.title = :title";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("clientId", clientId);
+        parameters.put("title", title);
+        return getByQuery(query, parameters);
     }
 }
