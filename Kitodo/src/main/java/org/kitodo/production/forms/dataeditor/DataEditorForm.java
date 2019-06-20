@@ -216,8 +216,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         galleryPanel.show();
         paginationPanel.show();
 
-        addDocStrucTypeDialog.prepare();
-        addMediaUnitDialog.prepare();
         editPagesDialog.prepare();
 
         if (logger.isTraceEnabled()) {
@@ -443,7 +441,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     void switchStructure(Object treeNodeData) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         metadataPanel.preserveLogical();
         metadataPanel.showLogical(structurePanel.getSelectedStructure());
-        addDocStrucTypeDialog.prepare();
         if (Objects.nonNull(treeNodeData) && treeNodeData instanceof  StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNodeData;
             if (Objects.nonNull(structureTreeNode.getDataObject())) {
@@ -471,7 +468,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     void switchMediaUnit() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         metadataPanel.preservePhysical();
         metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
-        addMediaUnitDialog.prepare();
         if (structurePanel.getSelectedMediaUnit().isPresent()) {
             // update gallery
             galleryPanel.updateSelection(structurePanel.getSelectedMediaUnit().get());
