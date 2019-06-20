@@ -28,7 +28,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -175,8 +174,7 @@ public class ExportDms extends ExportMets {
                 URI userHomeProcess = fileService.createResource(userHome,
                     File.separator + Helper.getNormalizedTitle(process.getTitle()));
                 destination = userHomeProcess;
-                boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getProject(),
-                    process.getTitle());
+                boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getTitle());
                 if (!createProcessFolderResult) {
                     return false;
                 }
@@ -256,10 +254,8 @@ public class ExportDms extends ExportMets {
         return true;
     }
 
-    private boolean createProcessFolder(URI userHomeProcess, URI userHome, Project project, String processTitle)
+    private boolean createProcessFolder(URI userHomeProcess, URI userHome, String processTitle)
             throws IOException {
-        String normalizedTitle = Helper.getNormalizedTitle(processTitle);
-
         // delete old import folder
         if (!fileService.delete(userHomeProcess)) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
@@ -268,7 +264,7 @@ public class ExportDms extends ExportMets {
         }
        
         if (!fileService.fileExist(userHomeProcess)) {
-            fileService.createDirectory(userHome, normalizedTitle);
+            fileService.createDirectory(userHome, Helper.getNormalizedTitle(processTitle));
         }
 
         return true;
@@ -329,7 +325,7 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void exportWithTimeLimit(Process process) throws IOException {
+    private void exportWithTimeLimit(Process process) {
         DmsImportThread asyncThread = new DmsImportThread(process, atsPpnBand);
         asyncThread.start();
         String processTitle = process.getTitle();
