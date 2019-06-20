@@ -349,15 +349,20 @@ public class ProzesskopieForm {
         for (String catalogue : cp.getParamList("createNewProcess.opac.catalogue")) {
             this.configuredOpacCatalogues.add(catalogue);
         }
-        
-        this.opacKatalog = "";
-        int catalogueCount = cp.getParamList("createNewProcess.opac.catalogue").size();
-        for (int i = 0; i < catalogueCount; i++) {
-            if ("true".equals(cp.getParamString("createNewProcess.opac.catalogue(" + i + ")[@default]"))) {
-                this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue(" + i + ")");
-                break;
-            }
 
+        if (!this.opacKatalog.equals("") && !this.configuredOpacCatalogues.contains(this.opacKatalog)) {
+            this.opacKatalog = "";
+            this.source = "opac";
+        }
+
+        if (this.opacKatalog.equals("")) {
+            int catalogueCount = cp.getParamList("createNewProcess.opac.catalogue").size();
+            for (int i = 0; i < catalogueCount; i++) {
+                if ("true".equals(cp.getParamString("createNewProcess.opac.catalogue(" + i + ")[@default]"))) {
+                    this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue(" + i + ")");
+                    break;
+                }
+            }
         }
 
         if (this.opacKatalog.equals("")) {
