@@ -54,7 +54,6 @@ public class TemplateForm extends TemplateBaseForm {
     private List<Project> assignedProjects = new ArrayList<>();
     private Task task;
     private boolean showInactiveTemplates = false;
-    private static final String INCOMPLETE_DATA = "errorDataIncomplete";
     private static final String TITLE_USED = "templateTitleAlreadyInUse";
     private final String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private final String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
@@ -169,19 +168,19 @@ public class TemplateForm extends TemplateBaseForm {
                     this.template.getClient().getId());
             int count = templates.size();
             if (count > 1) {
-                Helper.setErrorMessage(INCOMPLETE_DATA, TITLE_USED);
+                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
                 return false;
             } else if (count == 1) {
                 Integer templateId = this.template.getId();
                 if (Objects.nonNull(templateId) && templates.get(0).getId().equals(templateId)) {
                     return true;
                 }
-                Helper.setErrorMessage(INCOMPLETE_DATA, TITLE_USED);
+                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
                 return false;
             }
             return true;
         }
-        Helper.setErrorMessage(INCOMPLETE_DATA, "templateTitleEmpty");
+        Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, "templateTitleEmpty");
         return false;
     }
 
