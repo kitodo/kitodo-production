@@ -192,19 +192,6 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         return projectDTOS;
     }
 
-    private QueryBuilder getQueryForUserId(Integer id, boolean contains) {
-        return createSimpleQuery(ProjectTypeField.USERS + ".id", id, contains);
-    }
-
-    /**
-     * Get all projects sorted by title.
-     *
-     * @return all projects sorted by title as Project objects
-     */
-    public List<Project> getAllProjectsSortedByTitle() {
-        return dao.getAllProjectsSortedByTitle();
-    }
-
     @Override
     public ProjectDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         ProjectDTO projectDTO = new ProjectDTO();
