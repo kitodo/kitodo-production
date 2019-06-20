@@ -11,9 +11,15 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+
 
 public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
 
@@ -21,6 +27,10 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = EDIT_FORM + ":submitSearch")
+    private WebElement submitMenuButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = EDIT_FORM + ":submitSearchProcess")
     private WebElement submitButton;
 
     @SuppressWarnings("unused")
@@ -48,7 +58,7 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     private WebElement taskDone;
 
     public ExtendedSearchPage() {
-        super("searchProcess.jsf");
+        super("extendedSearch.jsf");
     }
 
     @Override
@@ -75,6 +85,11 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     }
 
     private ProcessesPage triggerSearch() throws IllegalAccessException, InstantiationException {
+        submitMenuButton.click();
+        await("Wait for search menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .until(() -> submitButton.isDisplayed());
         clickButtonAndWaitForRedirect(submitButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }

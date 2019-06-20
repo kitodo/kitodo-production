@@ -254,8 +254,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, this.showClosedProcesses,
                 this.showInactiveProjects);
-        return findByQuery(searchResultGeneration.getQueryForFilter(), getSortBuilder(sortField, sortOrder), first,
-            pageSize, false);
+        return findByQuery(searchResultGeneration.getQueryForFilter(ObjectType.PROCESS),
+                getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {

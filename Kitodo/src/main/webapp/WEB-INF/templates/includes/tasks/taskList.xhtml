@@ -33,7 +33,9 @@
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="#{msgs.task}"
+        <p:column id="titleColumn"
+                  headerText="#{msgs.task}"
+                  filterBy="#{item.title}"
                   rendered="#{CurrentTaskForm.showColumn('task.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
