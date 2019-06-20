@@ -75,34 +75,38 @@ public class SearchRestClient extends KitodoRestClient {
     /**
      * Count amount of documents responding to given query.
      *
+     * @param type
+     *            for which request is performed
      * @param query
      *            to find a document
      * @return http entity as String
      */
-    String countDocuments(QueryBuilder query) throws CustomResponseException, DataException {
+    String countDocuments(String type, QueryBuilder query) throws CustomResponseException, DataException {
         String wrappedQuery = "{\n \"query\": " + query.toString() + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
-        return performRequest(entity, HttpMethod.GET, "_count");
+        return performRequest(type, entity, HttpMethod.GET, "_count");
     }
 
     /**
      * Aggregate documents responding to given query and aggregation's conditions.
      * Possible aggregation types are sum, count or terms.
      *
+     * @param type
+     *            for which request is performed
      * @param query
      *            to find a document
      * @param aggregation
      *            conditions as String
      * @return http entity as String
      */
-    Aggregations aggregateDocuments(QueryBuilder query, AggregationBuilder aggregation)
+    Aggregations aggregateDocuments(String type, QueryBuilder query, AggregationBuilder aggregation)
             throws CustomResponseException, DataException {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(query);
         sourceBuilder.aggregation(aggregation);
 
         SearchRequest searchRequest = new SearchRequest(this.index);
-        searchRequest.types(this.type);
+        searchRequest.types(type);
         searchRequest.source(sourceBuilder);
 
         try {
@@ -119,13 +123,15 @@ public class SearchRestClient extends KitodoRestClient {
     /**
      * Get document by id.
      *
+     * @param type
+     *            for which request is performed
      * @param id
      *            of searched document
      * @return http entity as String
      */
-    Map<String, Object> getDocument(Integer id) throws CustomResponseException, DataException {
+    Map<String, Object> getDocument(String type, Integer id) throws CustomResponseException, DataException {
         try {
-            GetRequest getRequest = new GetRequest(this.index, this.type, String.valueOf(id));
+            GetRequest getRequest = new GetRequest(this.index, type, String.valueOf(id));
             GetResponse getResponse = highLevelClient.get(getRequest);
             if (getResponse.isExists()) {
                 Map<String, Object> response = getResponse.getSourceAsMap();
@@ -143,6 +149,8 @@ public class SearchRestClient extends KitodoRestClient {
     /**
      * Get document by query with possible sort of results.
      *
+     * @param type
+     *            for which request is performed
      * @param query
      *            to find a document
      * @param sort
@@ -153,7 +161,7 @@ public class SearchRestClient extends KitodoRestClient {
      *            as Integer
      * @return http entity as String
      */
-    SearchHits getDocument(QueryBuilder query, SortBuilder sort, Integer offset, Integer size)
+    SearchHits getDocument(String type, QueryBuilder query, SortBuilder sort, Integer offset, Integer size)
             throws CustomResponseException, DataException {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(query);
@@ -170,7 +178,7 @@ public class SearchRestClient extends KitodoRestClient {
         }
 
         SearchRequest searchRequest = new SearchRequest(this.index);
-        searchRequest.types(this.type);
+        searchRequest.types(type);
         searchRequest.source(sourceBuilder);
 
         try {
@@ -184,7 +192,7 @@ public class SearchRestClient extends KitodoRestClient {
         }
     }
 
-    private String performRequest(HttpEntity entity, String httpMethod, String urlRequest)
+    private String performRequest(String type, HttpEntity entity, String httpMethod, String urlRequest)
             throws CustomResponseException, DataException {
         String output = "";
         try {

@@ -46,7 +46,6 @@ public abstract class KitodoRestClient implements RestClientInterface {
     private static final Logger logger = LogManager.getLogger(KitodoRestClient.class);
 
     protected String index;
-    protected String type;
     protected RestClient client;
     protected RestHighLevelClient highLevelClient;
 
@@ -193,25 +192,6 @@ public abstract class KitodoRestClient implements RestClientInterface {
      */
     public void setIndex(String index) {
         this.index = index;
-    }
-
-    /**
-     * Getter for type.
-     *
-     * @return type name
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Setter for type.
-     *
-     * @param type
-     *            - equal to the name of table in database, but not necessary
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     protected void handleResponseException(ResponseException e) throws CustomResponseException {

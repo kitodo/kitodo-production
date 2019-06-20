@@ -34,7 +34,8 @@ public class IndexRestClientIT {
     private static IndexRestClient restClient;
     private static Node node;
     private static String testIndexName;
-    private static Searcher searcher = new Searcher("indexer");
+    private static String testTypeName = "indexer";
+    private static Searcher searcher = new Searcher(testTypeName);
     private static final String DOCUMENT_EXISTS = "Document exists!";
 
     @BeforeClass
@@ -66,7 +67,7 @@ public class IndexRestClientIT {
         Map<String, Object> response = searcher.findDocument(1);
         assertFalse(DOCUMENT_EXISTS, isFound(response));
 
-        restClient.addDocument(MockEntity.createEntities().get(1), 1, false);
+        restClient.addDocument(testTypeName, MockEntity.createEntities().get(1), 1, false);
 
         response = searcher.findDocument(1);
         assertTrue("Add of document has failed!", isFound(response));
@@ -79,7 +80,7 @@ public class IndexRestClientIT {
         response = searcher.findDocument(2);
         assertFalse(DOCUMENT_EXISTS, isFound(response));
 
-        restClient.addTypeSync(MockEntity.createEntities());
+        restClient.addTypeSync(testTypeName, MockEntity.createEntities());
 
         response = searcher.findDocument(1);
         assertTrue("Add of type has failed - document id 1!", isFound(response));
@@ -95,7 +96,7 @@ public class IndexRestClientIT {
         response = searcher.findDocument(2);
         assertFalse(DOCUMENT_EXISTS, isFound(response));
 
-        restClient.addTypeAsync(MockEntity.createEntities());
+        restClient.addTypeAsync(testTypeName, MockEntity.createEntities());
 
         response = searcher.findDocument(1);
         assertTrue("Add of type has failed - document id 1!", isFound(response));
@@ -106,17 +107,17 @@ public class IndexRestClientIT {
 
     @Test
     public void shouldDeleteDocument() throws Exception {
-        restClient.addTypeSync(MockEntity.createEntities());
+        restClient.addTypeSync(testTypeName, MockEntity.createEntities());
 
         Map<String, Object> response = searcher.findDocument(1);
         assertTrue("Document doesn't exist!", isFound(response));
 
-        restClient.deleteDocument(1, false);
+        restClient.deleteDocument(testTypeName, 1, false);
         response = searcher.findDocument(1);
         assertFalse("Delete of document has failed!", isFound(response));
 
         // remove even if document doesn't exist should be possible
-        restClient.deleteDocument(100, false);
+        restClient.deleteDocument(testTypeName, 100, false);
         response = searcher.findDocument(100);
         assertFalse("Delete of document has failed!", isFound(response));
     }
@@ -130,7 +131,6 @@ public class IndexRestClientIT {
     private static IndexRestClient initializeRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(testIndexName);
-        restClient.setType("indexer");
         return restClient;
     }
 

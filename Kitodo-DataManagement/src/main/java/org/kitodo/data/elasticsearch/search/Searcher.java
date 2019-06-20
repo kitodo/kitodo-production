@@ -78,7 +78,7 @@ public class Searcher extends Index {
     public Long countDocuments(QueryBuilder query) throws CustomResponseException, DataException {
         SearchRestClient restClient = initiateRestClient();
 
-        String response = restClient.countDocuments(query);
+        String response = restClient.countDocuments(this.type, query);
         if (!response.equals("")) {
             try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
                 JsonObject result = jsonReader.readObject();
@@ -101,7 +101,7 @@ public class Searcher extends Index {
     public Aggregations aggregateDocuments(QueryBuilder query, AggregationBuilder aggregation)
             throws CustomResponseException, DataException {
         SearchRestClient restClient = initiateRestClient();
-        return restClient.aggregateDocuments(query, aggregation);
+        return restClient.aggregateDocuments(this.type, query, aggregation);
     }
 
     /**
@@ -113,7 +113,7 @@ public class Searcher extends Index {
      */
     public Map<String, Object> findDocument(Integer id) throws CustomResponseException, DataException {
         SearchRestClient restClient = initiateRestClient();
-        return restClient.getDocument(id);
+        return restClient.getDocument(this.type, id);
     }
 
     /**
@@ -140,7 +140,7 @@ public class Searcher extends Index {
             throws CustomResponseException, DataException {
         SearchRestClient restClient = initiateRestClient();
 
-        SearchHits searchHits = restClient.getDocument(query, sort, 0, 1);
+        SearchHits searchHits = restClient.getDocument(this.type, query, sort, 0, 1);
         if (searchHits.getHits().length > 0) {
             SearchHit searchHit = searchHits.getAt(0);
             if (Objects.nonNull(searchHit)) {
@@ -201,7 +201,7 @@ public class Searcher extends Index {
         SearchRestClient restClient = initiateRestClient();
         List<Map<String, Object>> searchResults = new ArrayList<>();
 
-        SearchHits hits = restClient.getDocument(query, sort, offset, size);
+        SearchHits hits = restClient.getDocument(this.type, query, sort, offset, size);
         for (SearchHit hit : hits.getHits()) {
             Map<String,Object> result = hit.getSourceAsMap();
             result.put("id", hit.getId());
@@ -213,7 +213,6 @@ public class Searcher extends Index {
     private SearchRestClient initiateRestClient() {
         SearchRestClient restClient = SearchRestClient.getInstance();
         restClient.setIndex(index);
-        restClient.setType(type);
         return restClient;
     }
 }

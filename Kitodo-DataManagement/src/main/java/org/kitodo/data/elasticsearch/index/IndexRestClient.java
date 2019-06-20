@@ -71,6 +71,8 @@ public class IndexRestClient extends KitodoRestClient {
      * Add document to the index. This method will be used for add or update of
      * single document.
      *
+     * @param type
+     *            for which request is performed
      * @param entity
      *            with document which is going to be indexed
      * @param id
@@ -79,9 +81,9 @@ public class IndexRestClient extends KitodoRestClient {
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
-    public void addDocument(Map<String, Object> entity, Integer id, boolean forceRefresh)
+    public void addDocument(String type, Map<String, Object> entity, Integer id, boolean forceRefresh)
             throws IOException, CustomResponseException {
-        IndexRequest indexRequest = new IndexRequest(this.index, this.type, String.valueOf(id)).source(entity);
+        IndexRequest indexRequest = new IndexRequest(this.index, type, String.valueOf(id)).source(entity);
         if (forceRefresh) {
             indexRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         }
@@ -94,11 +96,13 @@ public class IndexRestClient extends KitodoRestClient {
      * Add list of documents to the index. This method will be used for add whole
      * table to the index. It performs asynchronous request.
      *
+     * @param type
+     *            for which request is performed
      * @param documentsToIndex
      *            list of json documents to the index
      */
-    void addTypeSync(Map<Integer, Map<String, Object>> documentsToIndex) throws CustomResponseException {
-        BulkRequest bulkRequest = prepareBulkRequest(documentsToIndex);
+    void addTypeSync(String type, Map<Integer, Map<String, Object>> documentsToIndex) throws CustomResponseException {
+        BulkRequest bulkRequest = prepareBulkRequest(type, documentsToIndex);
 
         try {
             BulkResponse bulkResponse = highLevelClient.bulk(bulkRequest);
@@ -114,13 +118,15 @@ public class IndexRestClient extends KitodoRestClient {
      * Add list of documents to the index. This method will be used for add whole
      * table to the index. It performs asynchronous request.
      *
+     * @param type
+     *            for which request is performed
      * @param documentsToIndex
      *            list of json documents to the index
      */
-    void addTypeAsync(Map<Integer, Map<String, Object>> documentsToIndex) {
-        BulkRequest bulkRequest = prepareBulkRequest(documentsToIndex);
+    void addTypeAsync(String type, Map<Integer, Map<String, Object>> documentsToIndex) {
+        BulkRequest bulkRequest = prepareBulkRequest(type, documentsToIndex);
 
-        ResponseListener responseListener = new ResponseListener(this.type, documentsToIndex.size());
+        ResponseListener responseListener = new ResponseListener(type, documentsToIndex.size());
         highLevelClient.bulkAsync(bulkRequest, responseListener);
 
         synchronized (lock) {
@@ -138,14 +144,16 @@ public class IndexRestClient extends KitodoRestClient {
     /**
      * Delete document from the index.
      *
+     * @param type
+     *            for which request is performed
      * @param id
      *            of the document
      * @param forceRefresh
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
-    void deleteDocument(Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
-        DeleteRequest deleteRequest = new DeleteRequest(this.index, this.type, String.valueOf(id));
+    void deleteDocument(String type, Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
+        DeleteRequest deleteRequest = new DeleteRequest(this.index, type, String.valueOf(id));
         if (forceRefresh) {
             deleteRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         }
@@ -177,11 +185,11 @@ public class IndexRestClient extends KitodoRestClient {
         processStatusCode(indexResponse.getStatusLine());
     }
 
-    private BulkRequest prepareBulkRequest(Map<Integer, Map<String, Object>> documentsToIndex) {
+    private BulkRequest prepareBulkRequest(String type, Map<Integer, Map<String, Object>> documentsToIndex) {
         BulkRequest bulkRequest = new BulkRequest();
 
         for (Map.Entry<Integer, Map<String, Object>> entry : documentsToIndex.entrySet()) {
-            IndexRequest indexRequest = new IndexRequest(this.index, this.type, String.valueOf(entry.getKey()));
+            IndexRequest indexRequest = new IndexRequest(this.index, type, String.valueOf(entry.getKey()));
             bulkRequest.add(indexRequest.source(entry.getValue()));
         }
 

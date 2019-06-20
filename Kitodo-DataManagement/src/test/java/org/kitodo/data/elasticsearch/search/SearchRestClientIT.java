@@ -34,6 +34,7 @@ public class SearchRestClientIT {
     private static Node node;
     private static SearchRestClient searchRestClient;
     private static String testIndexName;
+    private static String testTypeName = "testsearchclient";
     private static QueryBuilder query = QueryBuilders.matchAllQuery();
 
     @BeforeClass
@@ -49,10 +50,10 @@ public class SearchRestClientIT {
         searchRestClient.createIndex();
 
         IndexRestClient indexRestClient = initializeIndexRestClient();
-        indexRestClient.addDocument(MockEntity.createEntities().get(1), 1, false);
-        indexRestClient.addDocument(MockEntity.createEntities().get(2), 2, false);
-        indexRestClient.addDocument(MockEntity.createEntities().get(3), 3, false);
-        indexRestClient.addDocument(MockEntity.createEntities().get(4), 4, false);
+        indexRestClient.addDocument(testTypeName, MockEntity.createEntities().get(1), 1, false);
+        indexRestClient.addDocument(testTypeName, MockEntity.createEntities().get(2), 2, false);
+        indexRestClient.addDocument(testTypeName, MockEntity.createEntities().get(3), 3, false);
+        indexRestClient.addDocument(testTypeName, MockEntity.createEntities().get(4), 4, false);
     }
 
     @AfterClass
@@ -64,47 +65,45 @@ public class SearchRestClientIT {
     @Test
     public void shouldCountDocuments() {
         await().untilAsserted(() -> assertTrue("Count of documents has failed!",
-            searchRestClient.countDocuments(query).contains("\"count\" : 4")));
+            searchRestClient.countDocuments(testTypeName, query).contains("\"count\" : 4")));
     }
 
     @Test
     public void shouldGetDocumentById() {
         await().untilAsserted(() -> assertFalse("Get of document has failed - source is empty!",
-            searchRestClient.getDocument(1).isEmpty()));
+            searchRestClient.getDocument(testTypeName, 1).isEmpty()));
 
         await().untilAsserted(() -> assertEquals("Get of document has failed - id is incorrect!", 1,
-            (int) Integer.valueOf((String) searchRestClient.getDocument(1).get("id"))));
+            (int) Integer.valueOf((String) searchRestClient.getDocument(testTypeName, 1).get("id"))));
     }
 
     @Test
     public void shouldGetDocumentByQuery() {
         await().untilAsserted(() -> assertEquals("Get of document has failed!", 4,
-            searchRestClient.getDocument(query, null, null, null).getHits().length));
+            searchRestClient.getDocument(testTypeName, query, null, null, null).getHits().length));
     }
 
     @Test
     public void shouldGetDocumentByQueryWithSize() {
         await().untilAsserted(() -> assertEquals("Get of document has failed!", 3,
-            searchRestClient.getDocument(query, null, null, 3).getHits().length));
+            searchRestClient.getDocument(testTypeName, query, null, null, 3).getHits().length));
     }
 
     @Test
     public void shouldGetDocumentByQueryWithOffsetAndSize() {
         await().untilAsserted(() -> assertEquals("Get of document has failed!", 2,
-            searchRestClient.getDocument(query, null, 2, 3).getHits().length));
+            searchRestClient.getDocument(testTypeName, query, null, 2, 3).getHits().length));
     }
 
     private static SearchRestClient initializeSearchRestClient() {
         SearchRestClient restClient = SearchRestClient.getInstance();
         restClient.setIndex(testIndexName);
-        restClient.setType("testsearchclient");
         return restClient;
     }
 
     private static IndexRestClient initializeIndexRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(testIndexName);
-        restClient.setType("testsearchclient");
         return restClient;
     }
 }
