@@ -13,6 +13,7 @@ package org.kitodo.data.database.enums;
 
 public enum MetadataFormat {
 
+    //TODO: clarify if this enum is needed if internal format is not going to be changed
     RDF("Rdf", true),
     METS("Mets", true),
     XSTREAM("XStream", true),
@@ -47,10 +48,10 @@ public enum MetadataFormat {
                 return metadataFormat;
             }
         }
-        return XSTREAM;
+        return METS;
     }
 
     public static MetadataFormat getDefaultFileFormat() {
-        return XSTREAM;
+        return METS;
     }
 }
