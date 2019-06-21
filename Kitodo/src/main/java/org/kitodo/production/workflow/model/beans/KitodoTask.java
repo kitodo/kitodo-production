@@ -23,6 +23,7 @@ public class KitodoTask {
     private Integer processingStatus;
     private boolean concurrent;
     private boolean typeMetadata;
+    private boolean separateStructure;
     private boolean typeAutomatic;
     private boolean typeExportDms;
     private boolean typeImagesRead;
@@ -50,6 +51,7 @@ public class KitodoTask {
         this.processingStatus = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "processingStatus"));
         this.concurrent = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "concurrent"));
         this.typeMetadata = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeMetadata"));
+        this.separateStructure = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "separateStructure"));
         this.typeAutomatic = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAutomatic"));
         this.typeExportDms = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportDMS"));
         this.typeImagesRead = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesRead"));
@@ -105,32 +107,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set editType.
-     *
-     * @param editType
-     *            as Integer
-     */
-    public void setEditType(Integer editType) {
-        this.editType = editType;
-    }
-
-    /**
      * Get processingStatus.
      *
      * @return value of processingStatus
      */
     public Integer getProcessingStatus() {
         return processingStatus;
-    }
-
-    /**
-     * Set processingStatus.
-     *
-     * @param processingStatus
-     *            as java.lang.Integer
-     */
-    public void setProcessingStatus(Integer processingStatus) {
-        this.processingStatus = processingStatus;
     }
 
     /**
@@ -143,16 +125,6 @@ public class KitodoTask {
     }
 
     /**
-     * Set concurrent.
-     *
-     * @param concurrent
-     *            as true or false
-     */
-    public void setConcurrent(boolean concurrent) {
-        this.concurrent = concurrent;
-    }
-
-    /**
      * Get typeMetadata.
      *
      * @return value of typeMetadata
@@ -162,13 +134,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set typeMetadata.
+     * Get separate structure.
      *
-     * @param typeMetadata
-     *            as true or false
+     * @return value of separateStructure
      */
-    public void setTypeMetadata(boolean typeMetadata) {
-        this.typeMetadata = typeMetadata;
+    public boolean isSeparateStructure() {
+        return separateStructure;
     }
 
     /**
@@ -181,32 +152,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set typeAutomatic.
-     *
-     * @param typeAutomatic
-     *            as true or false
-     */
-    public void setTypeAutomatic(boolean typeAutomatic) {
-        this.typeAutomatic = typeAutomatic;
-    }
-
-    /**
      * Get typeExportDms.
      *
      * @return value of typeExportDms
      */
     public boolean isTypeExportDms() {
         return typeExportDms;
-    }
-
-    /**
-     * Set typeExportDms.
-     *
-     * @param typeExportDms
-     *            as true or false
-     */
-    public void setTypeExportDms(boolean typeExportDms) {
-        this.typeExportDms = typeExportDms;
     }
 
     /**
@@ -219,32 +170,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set typeImagesRead.
-     *
-     * @param typeImagesRead
-     *            as true or false
-     */
-    public void setTypeImagesRead(boolean typeImagesRead) {
-        this.typeImagesRead = typeImagesRead;
-    }
-
-    /**
      * Get typeImagesWrite.
      *
      * @return value of typeImagesWrite
      */
     public boolean isTypeImagesWrite() {
         return typeImagesWrite;
-    }
-
-    /**
-     * Set typeImagesWrite.
-     *
-     * @param typeImagesWrite
-     *            as true or false
-     */
-    public void setTypeImagesWrite(boolean typeImagesWrite) {
-        this.typeImagesWrite = typeImagesWrite;
     }
 
     /**
@@ -257,32 +188,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set typeAcceptClose.
-     *
-     * @param typeAcceptClose
-     *            as true or false
-     */
-    public void setTypeAcceptClose(boolean typeAcceptClose) {
-        this.typeAcceptClose = typeAcceptClose;
-    }
-
-    /**
      * Get typeCloseVerify.
      *
      * @return value of typeCloseVerify
      */
     public boolean isTypeCloseVerify() {
         return typeCloseVerify;
-    }
-
-    /**
-     * Set typeCloseVerify.
-     *
-     * @param typeCloseVerify
-     *            as true or false
-     */
-    public void setTypeCloseVerify(boolean typeCloseVerify) {
-        this.typeCloseVerify = typeCloseVerify;
     }
 
     /**
@@ -295,31 +206,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set batchStep.
-     *
-     * @param batchStep
-     *            true or false
-     */
-    public void setBatchStep(boolean batchStep) {
-        this.batchStep = batchStep;
-    }
-
-    /**
      * Get information if task should be repeated on correction.
      *
      * @return value of repeatOnCorrection
      */
     public boolean isRepeatOnCorrection() {
         return repeatOnCorrection;
-    }
-
-    /**
-     * Set information if task should be repeated on correction.
-     *
-     * @param repeatOnCorrection as boolean
-     */
-    public void setRepeatOnCorrection(boolean repeatOnCorrection) {
-        this.repeatOnCorrection = repeatOnCorrection;
     }
 
     /**
@@ -332,32 +224,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set condition type (XPath or Script) for conditional task.
-     *
-     * @param conditionType
-     *            as java.lang.String
-     */
-    public void setConditionType(String conditionType) {
-        this.conditionType = conditionType;
-    }
-
-    /**
      * Get condition value for conditional task.
      *
      * @return value of condition
      */
     public String getConditionValue() {
         return conditionValue;
-    }
-
-    /**
-     * Set condition value for conditional task.
-     *
-     * @param conditionValue
-     *            as java.lang.String
-     */
-    public void setConditionValue(String conditionValue) {
-        this.conditionValue = conditionValue;
     }
 
     /**
