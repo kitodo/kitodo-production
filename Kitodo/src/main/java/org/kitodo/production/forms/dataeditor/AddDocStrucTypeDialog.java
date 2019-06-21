@@ -389,7 +389,7 @@ public class AddDocStrucTypeDialog {
                     newParent, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                 if (newParentDivisionView.getAllowedSubstructuralElements().containsKey(
                     dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType())) {
-                    docStructAddTypeSelectionItemsForChildren.add(new SelectItem(newParent, entry.getValue()));
+                    docStructAddTypeSelectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
         }
