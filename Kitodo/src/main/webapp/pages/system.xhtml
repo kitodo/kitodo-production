@@ -26,15 +26,15 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="systemTabView">
-            <p:tab id="indexingTab" title="#{msgs.indexing}">
-                <ui:include src="/WEB-INF/templates/includes/system/indexing.xhtml" />
-            </p:tab>
+        <p:tabView id="systemTabView" dynamic="true">
             <p:tab id="taskManagerTab" title="#{msgs.taskManager}">
                 <ui:include src="/WEB-INF/templates/includes/system/taskmanager.xhtml" />
             </p:tab>
             <p:tab id="termsTab" title="#{msgs.legal}">
                 <ui:include src="/WEB-INF/templates/includes/system/legalTextEditor.xhtml" />
+            </p:tab>
+            <p:tab id="indexingTab" title="#{msgs.indexing}">
+                <ui:include src="/WEB-INF/templates/includes/system/indexing.xhtml" />
             </p:tab>
         </p:tabView>
     </ui:define>
