@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,6 +26,10 @@ import org.openqa.selenium.support.FindBy;
 import static org.awaitility.Awaitility.await;
 
 public class SystemPage extends Page<SystemPage> {
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "systemTabView")
+    private WebElement systemTabView;
 
     @SuppressWarnings("unused")
     @FindBy(id = "systemTabView:indexing_form:indexingTable")
@@ -63,7 +68,8 @@ public class SystemPage extends Page<SystemPage> {
     /**
      * Clicks on "delete index" button and accept dialog.
      */
-    private void deleteIndex() throws InterruptedException {
+    private void deleteIndex() throws Exception {
+        switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         await("Wait for delete index button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isButtonClicked.matches(deleteIndexButton));
 
@@ -82,7 +88,8 @@ public class SystemPage extends Page<SystemPage> {
     /**
      * Clicks on "create mapping" button.
      */
-    private void createMapping() throws InterruptedException {
+    private void createMapping() throws Exception {
+        switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         await("Wait for create mapping button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isButtonClicked.matches(createMappingButton));
         Thread.sleep(Browser.getDelayIndexing());
@@ -91,7 +98,8 @@ public class SystemPage extends Page<SystemPage> {
     /**
      * Clicks on "start indexing all" button.
      */
-    private void startIndexingAll() throws InterruptedException {
+    private void startIndexingAll() throws Exception {
+        switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         await("Wait for start indexing button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isButtonClicked.matches(startIndexingAllButton));
         Thread.sleep(Browser.getDelayIndexing());
@@ -100,7 +108,8 @@ public class SystemPage extends Page<SystemPage> {
     /**
      * Deletes the old index, creates the mapping and starts new indexing.
      */
-    public void startReindexingAll() throws InterruptedException {
+    public void startReindexingAll() throws Exception {
+        switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         deleteIndex();
         createMapping();
         startIndexingAll();
@@ -112,7 +121,8 @@ public class SystemPage extends Page<SystemPage> {
      * @return The indexing progress value as String. Empty String in case element
      *         is not readable.
      */
-    public String getIndexingProgress() {
+    public String getIndexingProgress() throws Exception {
+        switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
         WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
         return lastRow.findElement(By.className("ui-progressbar-label")).getText();

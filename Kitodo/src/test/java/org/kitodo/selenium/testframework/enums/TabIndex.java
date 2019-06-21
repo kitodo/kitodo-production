@@ -51,8 +51,8 @@ public enum TabIndex {
     PROCESS_PROPERTIES(1),
 
     // system page
-    INDEXING(0),
-    TASKMANAGER(1),
+    TASKMANAGER(0),
+    INDEXING(2),
 
     // user configuration
     SETTINGS(0),
