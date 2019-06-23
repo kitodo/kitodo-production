@@ -259,8 +259,7 @@ a.plain.ui-state-disabled,
 .ui-commandlink.plain,
 .ui-commandlink.plain.ui-state-active,
 .ui-commandlink.plain.ui-state-focus,
-.ui-commandlink.plain.ui-state-hover,
-.ui-commandlink.plain.ui-state-disabled {
+.ui-commandlink.plain.ui-state-hover {
     background: transparent;
     border: none;
     color: var(--blue);
@@ -535,6 +534,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled {
     background: var(--cloudy-gray);
     border-color: var(--cloudy-gray);
+}
+
+.ui-commandlink.plain.ui-state-disabled {
+    color: var(--medium-gray);
 }
 
 .ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon::before {

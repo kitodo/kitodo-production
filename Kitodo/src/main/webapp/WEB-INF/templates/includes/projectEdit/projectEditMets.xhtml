@@ -136,6 +136,7 @@
                                id="edit"
                                styleClass="buttonset plain"
                                update="@(.editDialog)"
+                               disabled="#{ProjectForm.locked}"
                                immediate="true">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:setPropertyActionListener target="#{ProjectForm.myFolder}" value="#{folder}"/>
@@ -147,6 +148,7 @@
                                onclick="if (!confirm('#{msgs.shouldItemBeRemoved}')) return"
                                oncomplete="toggleSave()"
                                styleClass="buttonset plain"
+                               disabled="#{ProjectForm.locked}"
                                immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{ProjectForm.myFolder}" value="#{folder}"/>
