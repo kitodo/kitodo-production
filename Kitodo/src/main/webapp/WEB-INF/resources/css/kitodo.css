@@ -1190,11 +1190,11 @@ form#metadata div label,
     padding: 0;
 }
 
-.new-comment-box {
+#newCommentForm\:newCommentTextArea {
     width: 100%;
     background-color: var(--trans-blue);
     margin-bottom: 32px;
-    height: calc(var(--default-double-size) * 3) !important;
+    height: calc(var(--default-double-size) * 3);
 }
 
 #metadata\:personTable_data button.secondary,
