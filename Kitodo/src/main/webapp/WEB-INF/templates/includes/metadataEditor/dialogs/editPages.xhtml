@@ -58,7 +58,7 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="takePagesFromChildrenBtn"
                                          value="#{msgs.seitenVonUnterelementenZuweisen}"
-                                         action="#{DataEditorForm.editPagesDialog.takePagesFromChildrenBtnClick}"
+                                         action="#{DataEditorForm.editPagesDialog.takePagesFromChildren}"
                                          styleClass="secondary"
                                          style="margin-left: var(--default-double-size);"
                                          update="structureTreeForm,paginationSubSelection"/>
@@ -66,7 +66,7 @@
                                          value="#{msgs.pageAssign}"
                                          styleClass="secondary"
                                          style="margin-left: var(--default-double-size);"
-                                         action="#{DataEditorForm.editPagesDialog.setPageStartAndEndBtnClick}"
+                                         action="#{DataEditorForm.editPagesDialog.setPageStartAndEnd}"
                                          update="structureTreeForm,paginationSubSelection"/>
                     </h:panelGroup>
 
@@ -85,11 +85,11 @@
                                 <h:panelGroup>
                                     <h:panelGrid columns="1">
                                         <p:commandButton id="addPageBtn"
-                                                         action="#{DataEditorForm.editPagesDialog.addPageBtnClick}"
+                                                         action="#{DataEditorForm.editPagesDialog.addPage}"
                                                          icon="fa fa-arrow-right"
                                                          update="structureTreeForm,paginationSubSelection"/>
                                         <p:commandButton id="removePageBtn"
-                                                         action="#{DataEditorForm.editPagesDialog.removePageBtnClick}"
+                                                         action="#{DataEditorForm.editPagesDialog.removePage}"
                                                          icon="fa fa-arrow-left"
                                                          update="structureTreeForm,paginationSubSelection"/>
                                     </h:panelGrid>

@@ -69,7 +69,7 @@
                                      disabled="#{readOnly}"
                                      onclick="$('#loadingScreen').show()"
                                      oncomplete="$('#loadingScreen').hide()"
-                                     action="#{item.deleteClick}">
+                                     action="#{item.delete}">
                     </p:commandButton>
                     <p:commandButton update="metadataAccordion:metadata:metadataTable"
                                      id="copyMetadata"
@@ -81,7 +81,7 @@
                                      disabled="#{readOnly}"
                                      onclick="$('#loadingScreen').show()"
                                      oncomplete="$('#loadingScreen').hide()"
-                                     action="#{item.copyClick}">
+                                     action="#{item.copy}">
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
