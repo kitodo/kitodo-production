@@ -179,20 +179,20 @@ public class ExportXmlLog {
     private List<Element> getProcessInformation(Namespace xmlns, Process process) {
         List<Element> processElements = new ArrayList<>();
 
-        processElements.add(getElement("title", process.getTitle(), xmlns));
-        processElements.add(getElement("project", process.getProject().getTitle(), xmlns));
+        processElements.add(createElement("title", process.getTitle(), xmlns));
+        processElements.add(createElement("project", process.getProject().getTitle(), xmlns));
 
-        Element date = getElement("time", String.valueOf(process.getCreationDate()), xmlns);
+        Element date = createElement("time", String.valueOf(process.getCreationDate()), xmlns);
         date.setAttribute("type", "creation date");
         processElements.add(date);
 
-        processElements.add(getElement("ruleset", process.getRuleset().getFile(), xmlns));
-        processElements.add(getElement("comment", process.getWikiField(), xmlns));
+        processElements.add(createElement("ruleset", process.getRuleset().getFile(), xmlns));
+        processElements.add(createElement("comment", process.getWikiField(), xmlns));
 
         String batches = getBatches(process.getBatches());
 
         if (!batches.isEmpty()) {
-            processElements.add(getElement("batch", batches, xmlns));
+            processElements.add(createElement("batch", batches, xmlns));
         }
 
         List<Element> processProperties = prepareProperties(process.getProperties(), xmlns);
@@ -204,14 +204,14 @@ public class ExportXmlLog {
         }
 
         // task information
-        Element tasks = getTasksElement(process.getTasks(), xmlns);
+        Element tasks = createTasksElement(process.getTasks(), xmlns);
         processElements.add(tasks);
 
         // template information
         Element templates = new Element("originals", xmlns);
         List<Element> templateElements = new ArrayList<>();
 
-        Element template = getTemplateElement(process, xmlns);
+        Element template = createTemplateElement(process, xmlns);
         templateElements.add(template);
         templates.addContent(templateElements);
         processElements.add(templates);
@@ -237,7 +237,7 @@ public class ExportXmlLog {
 
         // METS information
         Element metsElement = new Element("metsInformation", xmlns);
-        List<Element> metadataElements = getMetadataElements(xmlns, process);
+        List<Element> metadataElements = createMetadataElements(xmlns, process);
         metsElement.addContent(metadataElements);
         processElements.add(metsElement);
 
@@ -259,7 +259,7 @@ public class ExportXmlLog {
         return batches.toString();
     }
 
-    private Element getTasksElement(List<Task> tasks, Namespace xmlns) {
+    private Element createTasksElement(List<Task> tasks, Namespace xmlns) {
         // step information
         Element steps = new Element("steps", xmlns);
         List<Element> stepElements = new ArrayList<>();
@@ -267,26 +267,26 @@ public class ExportXmlLog {
             Element taskElement = new Element("step", xmlns);
             taskElement.setAttribute("stepID", String.valueOf(task.getId()));
 
-            Element taskTitle = getElement("title", task.getTitle(), xmlns);
+            Element taskTitle = createElement("title", task.getTitle(), xmlns);
             taskElement.addContent(taskTitle);
 
-            Element state = getElement("processingstatus", String.valueOf(task.getProcessingStatus().getValue()), xmlns);
+            Element state = createElement("processingstatus", String.valueOf(task.getProcessingStatus().getValue()), xmlns);
             taskElement.addContent(state);
 
-            Element begin = getElement("time", String.valueOf(task.getProcessingBegin()), xmlns);
+            Element begin = createElement("time", String.valueOf(task.getProcessingBegin()), xmlns);
             begin.setAttribute("type", "start time");
             taskElement.addContent(begin);
 
-            Element end = getElement("time", String.valueOf(ServiceManager.getTaskService().getProcessingEndAsFormattedString(task)),
+            Element end = createElement("time", String.valueOf(ServiceManager.getTaskService().getProcessingEndAsFormattedString(task)),
                     xmlns);
             end.setAttribute("type", "end time");
             taskElement.addContent(end);
 
             if (isNonOpenStateAndHasRegularUser(task)) {
-                Element user = getElement("user", ServiceManager.getUserService().getFullName(task.getProcessingUser()), xmlns);
+                Element user = createElement("user", ServiceManager.getUserService().getFullName(task.getProcessingUser()), xmlns);
                 taskElement.addContent(user);
             }
-            Element editType = getElement("edittype", task.getEditType().getTitle(), xmlns);
+            Element editType = createElement("edittype", task.getEditType().getTitle(), xmlns);
             taskElement.addContent(editType);
 
             stepElements.add(taskElement);
@@ -295,7 +295,7 @@ public class ExportXmlLog {
         return steps;
     }
 
-    private Element getTemplateElement(Process process, Namespace xmlns) {
+    private Element createTemplateElement(Process process, Namespace xmlns) {
         Element template = new Element("original", xmlns);
         template.setAttribute("originalID", String.valueOf(process.getId()));
 
@@ -303,7 +303,7 @@ public class ExportXmlLog {
         for (Property property : process.getTemplates()) {
             Element propertyElement = preparePropertyElement(xmlns, property);
 
-            Element label = getElement(LABEL, property.getTitle(), xmlns);
+            Element label = createElement(LABEL, property.getTitle(), xmlns);
             propertyElement.addContent(label);
             templateProperties.add(propertyElement);
 
@@ -312,7 +312,7 @@ public class ExportXmlLog {
                 secondProperty.setAttribute(PROPERTY_IDENTIFIER, property.getTitle() + "Encoded");
                 if (Objects.nonNull(property.getValue())) {
                     secondProperty.setAttribute(VALUE, "vorl:" + replacer(property.getValue()));
-                    Element secondLabel = getElement(LABEL, property.getTitle(), xmlns);
+                    Element secondLabel = createElement(LABEL, property.getTitle(), xmlns);
                     secondProperty.addContent(secondLabel);
                     templateProperties.add(secondProperty);
                 }
@@ -331,7 +331,7 @@ public class ExportXmlLog {
         for (Property property : properties) {
             Element propertyElement = preparePropertyElement(xmlns, property);
 
-            Element label = getElement(LABEL, property.getTitle(), xmlns);
+            Element label = createElement(LABEL, property.getTitle(), xmlns);
             propertyElement.addContent(label);
             preparedProperties.add(propertyElement);
         }
@@ -363,13 +363,13 @@ public class ExportXmlLog {
         }
     }
 
-    private Element getElement(String name, String text, Namespace xmlns) {
+    private Element createElement(String name, String text, Namespace xmlns) {
         Element element = new Element(name, xmlns);
         element.setText(text);
         return element;
     }
 
-    private List<Element> getMetadataElements(Namespace xmlns, Process process) {
+    private List<Element> createMetadataElements(Namespace xmlns, Process process) {
         List<Element> metadataElements = new ArrayList<>();
         try {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
