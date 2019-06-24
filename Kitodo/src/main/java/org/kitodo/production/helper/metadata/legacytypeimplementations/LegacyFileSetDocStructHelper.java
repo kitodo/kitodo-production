@@ -35,12 +35,6 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
         this.mediaUnits = mediaUnits;
     }
 
-    @Deprecated
-    public Iterable<LegacyContentFileHelper> getAllFiles() {
-        // TODO remove
-        throw LegacyDocStructHelperInterface.andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     @Override
     @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {

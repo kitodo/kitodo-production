@@ -92,7 +92,6 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilt
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -100,7 +99,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.enums.IndexAction;
-import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -2007,21 +2005,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset());
-        URI imageFolderPath = fileService.getImagesDirectory(process);
-        File imageFolder = new File(imageFolderPath);
-        /*
-         * before creating mets file, change relative path to absolute -
-         */
+        // before creating mets file, change relative path to absolute -
         LegacyMetsModsDigitalDocumentHelper dd = gdzfile.getDigitalDocument();
         if (Objects.isNull(dd.getFileSet())) {
             Helper.setErrorMessage(process.getTitle() + ": digital document does not contain images; aborting");
             return false;
         }
 
-        /*
-         * get the topstruct element of the digital document depending on anchor
-         * property
-         */
+        //get the topstruct element of the digital document depending on anchor property
         LegacyDocStructHelperInterface topElement = dd.getLogicalDocStruct();
         if (preferences.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
             if (Objects.isNull(topElement.getAllChildren()) || topElement.getAllChildren().isEmpty()) {
@@ -2033,9 +2024,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
 
-        /*
-         * if the top element does not have any image related, set them all
-         */
+        //if the top element does not have any image related, set them all
         if (Objects.isNull(topElement.getAllToReferences("logical_physical"))
                 || topElement.getAllToReferences("logical_physical").isEmpty()) {
             if (Objects.nonNull(dd.getPhysicalDocStruct())
@@ -2052,59 +2041,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
 
-        for (LegacyContentFileHelper cf : dd.getFileSet().getAllFiles()) {
-            String location = cf.getLocation();
-            // If the file's location string shoes no sign of any protocol,
-            // use the file protocol.
-            if (!location.contains("://")) {
-                location = "file://" + location;
-            }
-            String url = new URL(location).getFile();
-            File f = new File(!url.startsWith(imageFolder.toURI().toURL().getPath()) ? imageFolder : null, url);
-            cf.setLocation(f.toURI().toString());
-        }
-
         mm.setDigitalDocument(dd);
-
-        /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur
-         * übernommen
-         */
-        // Replace all paths with the given VariableReplacer, also the file
-        // group paths!
-        Project project = process.getProject();
-        List<Folder> folders = project.getFolders();
-        for (Folder folder : folders) {
-            // check if source files exists
-            if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = new File(folder.getRelativePath()).toURI();
-                if (fileService.fileExist(folderUri)
-                        && !ServiceManager.getFileService().getSubUris(folderUri).isEmpty()) {
-                    throw new UnsupportedOperationException("Dead code pending removal");
-                }
-            } else if (!folder.getLinkingMode().equals(LinkingMode.NO)) {
-                throw new UnsupportedOperationException("Dead code pending removal");
-            }
-        }
-
-        try {
-            // TODO andere Dateigruppen nicht mit image Namen ersetzen
-            List<URI> images = getDataFiles(process);
-            List<String> imageStrings = new ArrayList<>();
-            for (URI image : images) {
-                imageStrings.add(image.getPath());
-            }
-            int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
-            int sizeOfImages = images.size();
-            if (sizeOfPagination == sizeOfImages) {
-                throw new UnsupportedOperationException("Not yet implemented");
-            } else {
-                Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages });
-                return false;
-            }
-        } catch (IndexOutOfBoundsException | InvalidImagesException e) {
-            logger.error(e.getMessage(), e);
-        }
         mm.write(targetFileName);
         Helper.setMessage(process.getTitle() + ": ", "exportFinished");
         return true;
