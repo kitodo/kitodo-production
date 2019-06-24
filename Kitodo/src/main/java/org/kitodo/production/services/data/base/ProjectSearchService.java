@@ -56,8 +56,7 @@ public abstract class ProjectSearchService<T extends BaseIndexedBean, S extends 
 
         if (Objects.nonNull(currentUser)) {
             List<Project> projects = currentUser.getProjects();
-            QueryBuilder setQueryForBeans = createSetQueryForBeans(projectKey, projects, true);
-            return setQueryForBeans;
+            return createSetQueryForBeans(projectKey, projects, true);
         }
 
         return null;
@@ -66,7 +65,10 @@ public abstract class ProjectSearchService<T extends BaseIndexedBean, S extends 
     private BoolQueryBuilder queryForProjects(QueryBuilder query) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery.must(query);
-        boolQuery.must(createUserProjectQuery());
+        QueryBuilder userProjectQuery = createUserProjectQuery();
+        if (Objects.nonNull(userProjectQuery)) {
+            boolQuery.must(userProjectQuery);
+        }
         return boolQuery;
     }
 
