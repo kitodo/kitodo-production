@@ -1783,7 +1783,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (project.isUseDmsImport()) {
             if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
                 // if METS, then write by writeMetsFile...
-                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
+                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".xml", gdzfile);
             } else {
                 // ...if not, just write a Fileformat
                 gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
@@ -1792,7 +1792,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             // if necessary, METS and RDF should be written in the export
             if (MetadataFormat
                     .findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile);
             }
 
             Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
@@ -1837,7 +1837,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     private boolean createOperationDirectory(URI userHome, Process process) throws IOException {
-        Project project = process.getProject();
         // remove old import folder
         if (!fileService.delete(userHome)) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
@@ -2004,8 +2003,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
-    protected boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile,
-            boolean writeLocalFilegroup) throws IOException {
+    protected boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile)
+            throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset());
         URI imageFolderPath = fileService.getImagesDirectory(process);
