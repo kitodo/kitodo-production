@@ -54,6 +54,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -156,6 +157,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
     private static final String METADATA_FILE_NAME = "meta.xml";
     private String filter = "";
+    private static final String NEW_LINE_ENTITY = "\n";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
 
@@ -1113,6 +1115,47 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
         return null;
+    }
+
+    private List<Task> getOpenTasks(Process process) {
+        return process.getTasks().stream()
+                .filter(t -> TaskStatus.OPEN.equals(t.getProcessingStatus())).collect(Collectors.toList());
+    }
+
+    private List<Task> getTasksInWork(Process process) {
+        return process.getTasks().stream()
+                .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
+    }
+
+    /**
+     * Create and return String used as progress tooltip for a given process. Tooltip contains OPEN tasks and tasks
+     * INWORK.
+     *
+     * @param processDTO
+     *          process for which the tooltop is created
+     * @return String containing the progress tooltip for the given process
+     */
+    public String createProgressTooltip(ProcessDTO processDTO) throws DAOException {
+        Process processObject = ServiceManager.getProcessService().getById(processDTO.getId());
+        String openTasks = ServiceManager.getProcessService().getOpenTasks(processObject).stream()
+                .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
+        if (!openTasks.isEmpty()) {
+            openTasks = Helper.getTranslation(TaskStatus.OPEN.getTitle()) + ":" + NEW_LINE_ENTITY + openTasks;
+        }
+        String tasksInWork = ServiceManager.getProcessService().getTasksInWork(processObject).stream()
+                .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
+        if (!tasksInWork.isEmpty()) {
+            tasksInWork = Helper.getTranslation(TaskStatus.INWORK.getTitle()) + ":" + NEW_LINE_ENTITY + tasksInWork;
+        }
+        if (!openTasks.isEmpty() && !tasksInWork.isEmpty()) {
+            return openTasks + NEW_LINE_ENTITY + tasksInWork;
+        } else if (!openTasks.isEmpty()) {
+            return openTasks;
+        } else if (!tasksInWork.isEmpty()) {
+            return tasksInWork;
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -2298,7 +2341,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Retrieve and return process property value of property with given name
      * 'propertyName' from given ProcessDTO 'process'.
-     * 
+     *
      * @param process
      *            the ProcessDTO object from which the property value is retrieved
      * @param propertyName
@@ -2333,7 +2376,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Set the filter.
-     * 
+     *
      * @param filter
      *            the filter to set
      */

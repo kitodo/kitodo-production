@@ -136,7 +136,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Return list of process properties configured as custom list columns in kitodo
      * configuration.
-     * 
+     *
      * @return list of process property names
      */
     public String[] getProcessPropertyNames() {
@@ -146,7 +146,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Retrieve and return process property value of property with given name
      * 'propertyName' from given ProcessDTO 'process'.
-     * 
+     *
      * @param process
      *            the ProcessDTO object from which the property value is retrieved
      * @param propertyName
@@ -668,7 +668,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Download to home for single process. First check if this volume is currently
      * being edited by another user and placed in his home directory, otherwise
      * download.
-     * 
+     *
      * @param webDav
      *            for download
      * @param processForDownload
@@ -880,7 +880,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Get kitodo script for selected results.
-     * 
+     *
      * @return kitodo script for selected results
      */
     public String getKitodoScriptSelection() {
@@ -899,7 +899,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Get kitodo script for all results.
-     * 
+     *
      * @return kitodo script for all results
      */
     public String getKitodoScriptAll() {
@@ -1300,7 +1300,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Changes the filter of the ProcessForm and reloads it.
-     * 
+     *
      * @param filter
      *            the filter to apply.
      * @return reloadpath of th page.
@@ -1319,5 +1319,22 @@ public class ProcessForm extends TemplateBaseForm {
     public void setFilter(String filter) {
         super.filter = filter;
         ServiceManager.getProcessService().setFilter(filter);
+    }
+
+    /**
+     * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
+     * "INWORK".
+     *
+     * @param processDTO
+     *          process for which current task titles are returned
+     * @return String containing titles of current tasks of given process
+     */
+    public String getCurrentTaskTitles(ProcessDTO processDTO) {
+        try {
+            return ServiceManager.getProcessService().createProgressTooltip(processDTO);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to retrieve process with process ID " + processDTO.getId());
+            return "";
+        }
     }
 }
