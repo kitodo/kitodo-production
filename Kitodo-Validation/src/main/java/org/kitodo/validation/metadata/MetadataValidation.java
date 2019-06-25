@@ -136,6 +136,21 @@ public class MetadataValidation implements MetadataValidationInterface {
                 divisionView, includedStructuralElement.toString().concat(": "), translations));
         }
 
+        for (MediaUnit mediaUnit : treeStream(workpiece.getMediaUnit(),
+            MediaUnit::getChildren)
+                .collect(Collectors.toList())) {
+            StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(mediaUnit.getType(), null,
+                metadataLanguage);
+            results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(
+                mediaUnit.getMetadata().parallelStream()
+                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
+                divisionView, mediaUnit.toString().concat(": "), translations));
+            results.add(checkForDetailsInTheMetadataRecursive(
+                mediaUnit.getMetadata().parallelStream()
+                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
+                divisionView, mediaUnit.toString().concat(": "), translations));
+        }
+
         return merge(results);
     }
 

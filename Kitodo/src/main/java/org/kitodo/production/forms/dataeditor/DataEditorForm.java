@@ -276,6 +276,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String save() {
         try {
+            validate();
             metadataPanel.preserve();
             structurePanel.preserve();
             ServiceManager.getProcessService().updateChildrenFromRootElement(process, workpiece.getRootElement());
