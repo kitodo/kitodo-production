@@ -31,11 +31,6 @@ public class LegacyLogicalDocStructTypeHelper {
     }
 
     @Deprecated
-    public String getAnchorClass() {
-        return null;
-    }
-
-    @Deprecated
     public String getName() {
         return divisionView.getId();
     }

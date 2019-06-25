@@ -2024,15 +2024,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
          * property
          */
         LegacyDocStructHelperInterface topElement = dd.getLogicalDocStruct();
-        if (preferences.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
-            if (Objects.isNull(topElement.getAllChildren()) || topElement.getAllChildren().isEmpty()) {
-                throw new IllegalStateException(process.getTitle()
-                        + ": the topstruct element is marked as anchor, but does not have any children for "
-                        + "physical docstrucs");
-            } else {
-                topElement = topElement.getAllChildren().get(0);
-            }
-        }
 
         /*
          * if the top element does not have any image related, set them all
