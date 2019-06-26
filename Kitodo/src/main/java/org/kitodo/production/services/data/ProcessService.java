@@ -1137,24 +1137,24 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public String createProgressTooltip(ProcessDTO processDTO) throws DAOException {
         Process processObject = ServiceManager.getProcessService().getById(processDTO.getId());
-        String openTasks = ServiceManager.getProcessService().getOpenTasks(processObject).stream()
+        String openTasks = getOpenTasks(processObject).stream()
                 .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!openTasks.isEmpty()) {
             openTasks = Helper.getTranslation(TaskStatus.OPEN.getTitle()) + ":" + NEW_LINE_ENTITY + openTasks;
         }
-        String tasksInWork = ServiceManager.getProcessService().getTasksInWork(processObject).stream()
+        String tasksInWork = getTasksInWork(processObject).stream()
                 .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!tasksInWork.isEmpty()) {
             tasksInWork = Helper.getTranslation(TaskStatus.INWORK.getTitle()) + ":" + NEW_LINE_ENTITY + tasksInWork;
         }
-        if (!openTasks.isEmpty() && !tasksInWork.isEmpty()) {
-            return openTasks + NEW_LINE_ENTITY + tasksInWork;
-        } else if (!openTasks.isEmpty()) {
-            return openTasks;
-        } else if (!tasksInWork.isEmpty()) {
-            return tasksInWork;
-        } else {
+        if (openTasks.isEmpty() && tasksInWork.isEmpty()) {
             return "";
+        } else if (openTasks.isEmpty()) {
+            return tasksInWork;
+        } else if (tasksInWork.isEmpty()) {
+            return openTasks;
+        } else {
+            return openTasks + NEW_LINE_ENTITY + tasksInWork;
         }
     }
 

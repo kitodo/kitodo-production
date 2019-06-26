@@ -1333,7 +1333,8 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             return ServiceManager.getProcessService().createProgressTooltip(processDTO);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to retrieve process with process ID " + processDTO.getId());
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
+                    processDTO.getId()});
             return "";
         }
     }
