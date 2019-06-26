@@ -35,16 +35,12 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.batch.BatchProcessHelper;
-import org.kitodo.production.helper.tasks.ExportNewspaperBatchTask;
-import org.kitodo.production.helper.tasks.ExportSerialBatchTask;
-import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 
@@ -456,25 +452,12 @@ public class BatchForm extends BaseForm {
 
         for (Batch selectedBatch : selectedBatches) {
             try {
-                //TODO: remove special export modules
-                /*switch (selectedBatch.getType()) {
-                    case LOGISTIC:
-                        for (Process process : selectedBatch.getProcesses()) {
-                            ExportDms dms = new ExportDms(
-                                    ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
-                            dms.startExport(process);
-                        }
-                        break;
-                    case NEWSPAPER:
-                        TaskManager.addTask(new ExportNewspaperBatchTask(selectedBatch));
-                        break;
-                    case SERIAL:
-                        TaskManager.addTask(new ExportSerialBatchTask(selectedBatch));
-                        break;
-                    default:
-                        throw new UnreachableCodeException("Complete switch statement");
-                }*/
-            } catch (Exception e) {
+                for (Process process : selectedBatch.getProcesses()) {
+                    ExportDms dms = new ExportDms(
+                            ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
+                    dms.startExport(process);
+                }
+            } catch (IOException | DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
                 return this.stayOnCurrentPage;
