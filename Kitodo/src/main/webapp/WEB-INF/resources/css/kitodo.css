@@ -1482,6 +1482,10 @@ Column content
     text-overflow: ellipsis;
 }
 
+#metadataAccordion\:metadata\:metadataTable_data .ui-spinner-input {
+    max-width: inherit;
+}
+
 .correction {
     color: var(--focused-orange);
     font-weight: bold;

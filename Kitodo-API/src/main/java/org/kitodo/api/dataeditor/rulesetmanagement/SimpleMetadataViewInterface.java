@@ -29,6 +29,9 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      *         meta-data entry.
      */
     default Optional<String> convertBoolean(boolean value) {
+        if (getSelectItems().isEmpty()) {
+            return Optional.empty();
+        }
         return value ? Optional.of(getSelectItems().entrySet().iterator().next().getKey()) : Optional.empty();
     }
 

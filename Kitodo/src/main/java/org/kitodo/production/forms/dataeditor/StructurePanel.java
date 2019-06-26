@@ -194,6 +194,44 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Select given MediaUnit in physical structure tree.
+     *
+     * @param mediaUnit
+     *          MediaUnit to be selected in physical structure tree
+     */
+    public void selectMediaUnit(MediaUnit mediaUnit) {
+        TreeNode matchingTreeNode = getMatchingTreeNode(getPhysicalTree(), mediaUnit);
+        if (Objects.nonNull(matchingTreeNode)) {
+            updatePhysicalNodeSelection(matchingTreeNode);
+            matchingTreeNode.setSelected(true);
+        }
+    }
+
+    private TreeNode getMatchingTreeNode(TreeNode parent, MediaUnit mediaUnit) {
+        TreeNode matchingTreeNode = null;
+        for (TreeNode treeNode : parent.getChildren()) {
+            if (Objects.nonNull(treeNode.getData()) && treeNode.getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+                if (Objects.nonNull(structureTreeNode.getDataObject()) && structureTreeNode.getDataObject() instanceof MediaUnit) {
+                    MediaUnit currentMediaUnit = (MediaUnit) structureTreeNode.getDataObject();
+                    if (Objects.nonNull(currentMediaUnit.getDivId())
+                            && Objects.nonNull(mediaUnit.getDivId())
+                            && currentMediaUnit.getDivId().equals(mediaUnit.getDivId())) {
+                        matchingTreeNode = treeNode;
+                        break;
+                    } else {
+                        matchingTreeNode = getMatchingTreeNode(treeNode, mediaUnit);
+                        if (Objects.nonNull(matchingTreeNode)) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return matchingTreeNode;
+    }
+
+    /**
      * Get parentTrees.
      *
      * @return value of parentTrees
@@ -572,7 +610,7 @@ public class StructurePanel implements Serializable {
         try {
             dataEditor.switchStructure(treeNodeData);
             previouslySelectedLogicalNode = selectedLogicalNode;
-        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
+        } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             selectedLogicalNode = previouslySelectedLogicalNode;
         }
@@ -586,7 +624,7 @@ public class StructurePanel implements Serializable {
         try {
             dataEditor.switchMediaUnit();
             previouslySelectedPhysicalNode = selectedPhysicalNode;
-        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
+        } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             selectedPhysicalNode = previouslySelectedPhysicalNode;
         }
@@ -597,7 +635,7 @@ public class StructurePanel implements Serializable {
         this.updatePhysicalNodeSelection(galleryMediaContent);
     }
 
-    void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
+    void updatePhysicalNodeSelection(TreeNode treeNode) {
         if (this.separateMedia) {
             if (Objects.nonNull(previouslySelectedPhysicalNode)) {
                 previouslySelectedPhysicalNode.setSelected(false);
@@ -606,13 +644,20 @@ public class StructurePanel implements Serializable {
                 selectedPhysicalNode.setSelected(false);
             }
             if (Objects.nonNull(physicalTree)) {
-                TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, physicalTree);
-                if (Objects.nonNull(selectedTreeNode)) {
-                    setSelectedPhysicalNode(selectedTreeNode);
+                if (Objects.nonNull(treeNode)) {
+                    setSelectedPhysicalNode(treeNode);
+                    this.dataEditor.getMetadataPanel().showPhysical(this.dataEditor.getSelectedMediaUnit());
                 } else {
                     Helper.setErrorMessage("Unable to update Node selection in physical structure!");
                 }
             }
+        }
+    }
+
+    void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
+        if (Objects.nonNull(physicalTree)) {
+            TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, physicalTree);
+            updatePhysicalNodeSelection(selectedTreeNode);
         }
     }
 

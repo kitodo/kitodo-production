@@ -13,9 +13,12 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.faces.application.FacesMessage;
@@ -24,6 +27,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
@@ -31,8 +36,10 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.production.helper.Helper;
 
 public class TextMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
+    private static final Logger logger = LogManager.getLogger(TextMetadataTableRow.class);
 
     private String value;
+    private Date date;
 
     TextMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
                          SimpleMetadataViewInterface settings, MetadataEntry value) {
@@ -99,6 +106,32 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Get date.
+     *
+     * @return value of date
+     */
+    public Date getDate() {
+        if (Objects.isNull(date) && Objects.nonNull(getValue())) {
+            try {
+                date = new SimpleDateFormat("yyyy-mm-dd").parse(getValue());
+            } catch (ParseException e) {
+                logger.error(e.getLocalizedMessage());
+            }
+        }
+        return date;
+    }
+
+    /**
+     * Set date.
+     *
+     * @param date as java.util.Date
+     */
+    public void setDate(Date date) {
+        this.date = date;
+        this.value = new SimpleDateFormat("yyyy-mm-dd").format(date);
     }
 
     @Override

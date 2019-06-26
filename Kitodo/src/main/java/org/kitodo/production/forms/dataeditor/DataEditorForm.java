@@ -445,8 +445,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.process = process;
     }
 
-    void switchStructure(Object treeNodeData) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        metadataPanel.preserveLogical();
+    void switchStructure(Object treeNodeData) throws NoSuchMetadataFieldException {
+        try {
+            metadataPanel.preserveLogical();
+        } catch (InvalidMetadataValueException e) {
+            logger.info(e.getLocalizedMessage());
+        }
         metadataPanel.showLogical(structurePanel.getSelectedStructure());
         if (Objects.nonNull(treeNodeData) && treeNodeData instanceof  StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNodeData;
@@ -472,8 +476,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
     }
 
-    void switchMediaUnit() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        metadataPanel.preservePhysical();
+    void switchMediaUnit() throws NoSuchMetadataFieldException {
+        try {
+            metadataPanel.preservePhysical();
+        } catch (InvalidMetadataValueException e) {
+            logger.info(e.getLocalizedMessage());
+        }
         metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
         if (structurePanel.getSelectedMediaUnit().isPresent()) {
             // update gallery

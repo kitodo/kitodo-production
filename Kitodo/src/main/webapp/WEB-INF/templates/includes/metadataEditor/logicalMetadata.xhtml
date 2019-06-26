@@ -36,24 +36,120 @@
                                  disabled="#{not item.editable or readOnly}"
                                  styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
                                  style="width:100%;"
-                                 validator="#{item.validatorQuery}"
                                  rendered="#{item.input eq 'inputText'}">
                         <p:ajax event="blur"/>
                     </p:inputText>
-                    <p:outputLabel value="Not yet implemented: inputTextarea" rendered="#{item.input eq 'inputTextarea'}"/>
-                    <p:outputLabel value="Not yet implemented: spinner" rendered="#{item.input eq 'spinner'}"/>
-                    <p:outputLabel value="Not yet implemented: calendar" rendered="#{item.input eq 'calendar'}"/>
-                    <p:outputLabel value="Not yet implemented: dataTable" rendered="#{item.input eq 'dataTable'}"/>
-                    <p:selectManyMenu value="#{item.selectedItems}" readonly="#{not item.editable}"
-                                      validator="#{item.validatorQuery}"
+
+                    <p:inputTextarea value="#{item.value}"
+                                     rows="2"
+                                     disabled="#{not item.editable or readOnly}"
+                                     styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
+                                     style="width:100%;"
+                                     rendered="#{item.input eq 'inputTextarea'}">
+                        <p:ajax event="blur"/>
+                    </p:inputTextarea>
+                    <p:spinner value="#{item.value}"
+                               style="width:100%;"
+                               disabled="#{not item.editable or readOnly}"
+                               rendered="#{item.input eq 'spinner'}">
+                        <p:ajax event="blur"/>
+                    </p:spinner>
+
+                    <p:calendar value="#{item.date}"
+                                pattern="yyyy-mm-dd"
+                                styleClass="input-with-button"
+                                showOn="button"
+                                disabled="#{not item.editable or readOnly}"
+                                rendered="#{item.input eq 'calendar'}">
+                        <p:ajax event="dateSelect"/>
+                    </p:calendar>
+                    <p:dataTable value="#{item.rows}"
+                                 var="entry"
+                                 rendered="#{item.input eq 'dataTable'}"
+                                 styleClass="no-header">
+                        <p:column style="width: 100%;">
+                            <p:outputLabel value="#{entry.label}:" rendered="#{not entry.undefined}"/>
+                            <p:outputLabel value="#{entry.label}: ⚠️" style="background-color: gold;"
+                                           title="#{msgs['dataEditor.undefinedKey']}" rendered="#{entry.undefined}"/>
+                            <p:inputText value="#{entry.value}"
+                                         disabled="#{not entry.editable or readOnly}"
+                                         styleClass="#{not entry.editable or readOnly ? 'disabled' : ''}"
+                                         style="width:90%;"
+                                         rendered="#{entry.input eq 'inputText'}">
+                                <p:ajax event="blur"/>
+                            </p:inputText>
+                            <p:inputTextarea value="#{entry.value}"
+                                             rows="2"
+                                             disabled="#{not entry.editable or readOnly}"
+                                             styleClass="#{not entry.editable or readOnly ? 'disabled' : ''}"
+                                             style="width:90%;"                                             validator="#{entry.validatorQuery}"
+                                             rendered="#{entry.input eq 'inputTextarea'}">
+                                <p:ajax event="blur"/>
+                            </p:inputTextarea>
+                            <p:spinner value="#{entry.value}"
+                                       style="width:90%;"
+                                       disabled="#{not entry.editable or readOnly}"
+                                       rendered="#{entry.input eq 'spinner'}">
+                                <p:ajax event="blur"/>
+                            </p:spinner>
+
+                            <p:calendar value="#{entry.date}"
+                                        pattern="yyyy-mm-dd"
+                                        styleClass="input-with-button"
+                                        showOn="button"
+                                        disabled="#{not entry.editable or readOnly}"
+                                        rendered="#{entry.input eq 'calendar'}">
+                                <p:ajax event="dateSelect"/>
+                            </p:calendar>
+                            <p:selectOneMenu value="#{entry.selectedItem}"
+                                             style="width:90%"
+                                             readonly="#{not entry.editable}"
+                                             rendered="#{entry.input eq 'oneMenu'}">
+                                <f:selectItems value="#{entry.items}"/>
+                                <p:ajax event="blur"/>
+                            </p:selectOneMenu>
+                            <p:selectManyMenu value="#{entry.selectedItems}"
+                                              readonly="#{not entry.editable}"
+                                              style="width:90%;"
+                                              rendered="#{entry.input eq 'manyMenu'}">
+                                <f:selectItems value="#{entry.items}"/>
+                                <p:ajax event="blur"/>
+                            </p:selectManyMenu>
+                            <p:selectOneRadio value="#{entry.selectedItem}"
+                                              readonly="#{not entry.editable}"
+                                              rendered="#{entry.input eq 'oneRadio'}">
+                                <f:selectItems value="#{entry.items}"/>
+                                <p:ajax event="blur"/>
+                            </p:selectOneRadio>
+                            <p:selectBooleanCheckbox value="#{entry.active}"
+                                                     rendered="#{entry.input eq 'toggleSwitch'}">
+                                <p:ajax event="blur"/>
+                            </p:selectBooleanCheckbox>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:selectManyMenu value="#{item.selectedItems}"
+                                      readonly="#{not item.editable}"
                                       rendered="#{item.input eq 'manyMenu'}">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="blur"/>
                     </p:selectManyMenu>
-                    <p:outputLabel value="Not yet implemented: selectOneMenu" rendered="#{item.input eq 'oneMenu'}"/>
-                    <p:outputLabel value="Not yet implemented: selectOneRadio" rendered="#{item.input eq 'oneRadio'}"/>
-                    <p:outputLabel value="Not yet implemented: toggleSwitch" rendered="#{item.input eq 'toggleSwitch'}"/>
-
+                    <p:selectOneMenu value="#{item.selectedItem}"
+                                     readonly="#{not item.editable}"
+                                     rendered="#{item.input eq 'oneMenu'}">
+                        <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="blur"/>
+                    </p:selectOneMenu>
+                    <p:selectOneRadio value="#{item.selectedItem}"
+                                      readonly="#{not item.editable}"
+                                      rendered="#{item.input eq 'oneRadio'}">
+                        <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="blur"/>
+                    </p:selectOneRadio>
+                    <p:selectBooleanCheckbox value="#{item.active}"
+                                             rendered="#{item.input eq 'toggleSwitch'}">
+                        <p:ajax event="blur"/>
+                    </p:selectBooleanCheckbox>
                     <p:commandButton update="metadataAccordion:metadata:metadataTable"
                                      id="deleteMetadata"
                                      icon="fa fa-trash"
