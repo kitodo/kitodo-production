@@ -27,8 +27,8 @@ import org.kitodo.production.model.bibliography.Citation;
  * <p>
  * The class Hit unwraps the contents of a hit result of the basic java types
  * <code>Map&lt;String, Object&gt;</code>. The map should contain a key
- * <code>fileformat</code> holding an instance of {@link ugh.dl.Fileformat} with
- * the record data and a field <code>type</code> holding the DocType.
+ * <code>fileformat</code> holding an instance of {@link LegacyMetsModsDigitalDocumentHelper}
+ * with the record data and a field <code>type</code> holding the DocType.
  * </p>
  *
  * <p>
@@ -146,7 +146,7 @@ public class Hit {
 
     /**
      * The function getFileformat() returns the full hit record as provided by
-     * the library catalogue as {@link ugh.dl.Fileformat} object.
+     * the library catalogue as {@link LegacyMetsModsDigitalDocumentHelper} object.
      *
      * @return the full hit record
      */
