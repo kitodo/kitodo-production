@@ -247,10 +247,8 @@ public class ExportXmlLog {
     private String getBatches(List<Batch> batchList) {
         StringBuilder batches = new StringBuilder();
         for (Batch batch : batchList) {
-            if (Objects.nonNull(batch.getType())) {
-                batches.append(ServiceManager.getBatchService().getTypeTranslated(batch));
-                batches.append(": ");
-            }
+            batches.append(batch.getTitle());
+            batches.append(": ");
             if (batches.length() != 0) {
                 batches.append(", ");
             }

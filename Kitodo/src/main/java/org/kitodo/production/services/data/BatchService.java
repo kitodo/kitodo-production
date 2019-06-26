@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -128,39 +127,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * Find batches with exact title and type. Necessary to assure that user pickup
-     * type from the list which contains enums.
-     *
-     * @param title
-     *            of the searched batches
-     * @param type
-     *            of the searched batches
-     * @return list of JSON objects with batches of exact type
-     */
-    public List<Map<String, Object>> findByTitleAndType(String title, org.kitodo.data.database.enums.BatchType type) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
-        query.must(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));
-        return findDocuments(query);
-    }
-
-    /**
-     * Find batch with exact title or type.
-     *
-     * @param title
-     *            of the searched batch
-     * @param type
-     *            of the searched batch
-     * @return search result
-     */
-    public List<Map<String, Object>> findByTitleOrType(String title, org.kitodo.data.database.enums.BatchType type) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
-        query.should(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));
-        return findDocuments(query);
-    }
-
-    /**
      * Find batches by id of process.
      *
      * @param id
@@ -189,7 +155,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         BatchDTO batchDTO = new BatchDTO();
         batchDTO.setId(getIdFromJSONObject(jsonObject));
         batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
-        batchDTO.setType(BatchTypeField.TYPE.getStringValue(jsonObject));
         if (!related) {
             convertRelatedJSONObjects(jsonObject, batchDTO);
         }
@@ -274,19 +239,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * Returns the translated batch type label.
-     *
-     * @return the display label for the batch type
-     */
-    public String getTypeTranslated(Batch batch) {
-        if (Objects.nonNull(batch.getType())) {
-            return Helper.getTranslation(BATCH + "_type_".concat(batch.getType().toString().toLowerCase()));
-        } else {
-            return "";
-        }
-    }
-
-    /**
      * Returns the number of processes in this batch. If this batch contains
      * more than Integer.MAX_VALUE processes, returns Integer.MAX_VALUE.
      *
@@ -309,11 +261,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
             StringBuilder result = new StringBuilder(
                     Objects.nonNull(batch.getTitle()) ? batch.getTitle().length() + 20 : 30);
             result.append(prepareLabel(batch));
-            if (Objects.nonNull(batch.getType())) {
-                result.append(" [");
-                result.append(getTypeTranslated(batch));
-                result.append(']');
-            }
             batch.setLabel(result.toString());
         } catch (RuntimeException fallback) {
             batch.setLabel("");

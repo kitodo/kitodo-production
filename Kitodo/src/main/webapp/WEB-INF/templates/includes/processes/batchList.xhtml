@@ -46,23 +46,6 @@
                         <h:outputText><i class="fa fa-file"/> #{msgs.exportBatch}</h:outputText>
                     </h:commandLink>
 
-                    <h:panelGroup>
-                        <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
-                        <h:outputText value="#{msgs.typeSet}"/>
-                        <h:outputText value=" "/>
-                        <h:commandLink action="#{BatchForm.setLogistic}">
-                            <h:outputText value="#{msgs.typeSetLogistic}"/>
-                        </h:commandLink>
-                        <h:outputText value=", "/>
-                        <h:commandLink action="#{BatchForm.setNewspaper}">
-                            <h:outputText value="#{msgs.typeSetNewspaper}"/>
-                        </h:commandLink>
-                        <h:outputText value=", "/>
-                        <h:commandLink action="#{BatchForm.setSerial}">
-                            <h:outputText value="#{msgs.typeSetSerial}"/>
-                        </h:commandLink>
-                    </h:panelGroup>
-
                     <h:commandLink action="#{BatchForm.loadProcessData}">
                         <h:outputText><i class="fa fa-refresh"/> #{msgs.loadProcessesOfBatch}</h:outputText>
                     </h:commandLink>

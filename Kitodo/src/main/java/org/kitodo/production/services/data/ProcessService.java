@@ -97,7 +97,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -815,40 +814,20 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             BatchDTO batchDTO = new BatchDTO();
             batchDTO.setId(BatchTypeField.ID.getIntValue(singleObject));
             batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(singleObject));
-            batchDTO.setType(BatchTypeField.TYPE.getStringValue(singleObject));
             batchDTOList.add(batchDTO);
         }
         return batchDTOList;
     }
 
     /**
-     * Check if process is assigned only to one LOGISTIC batch.
+     * Check if process is assigned only to one batch.
      *
      * @param batchDTOList
      *            list of batches for checkout
      * @return true or false
      */
-    boolean isProcessAssignedToOnlyOneLogisticBatch(List<BatchDTO> batchDTOList) {
-        List<BatchDTO> result = new ArrayList<>(batchDTOList);
-        result.removeIf(batch -> !batch.getType().equals("LOGISTIC"));
-        return result.size() == 1;
-    }
-
-    /**
-     * Returns the batches of the desired type for a process.
-     *
-     * @param type
-     *            of batches to return
-     * @return all batches of the desired type
-     */
-    public List<Batch> getBatchesByType(Process process, BatchType type) {
-        List<Batch> batches = process.getBatches();
-        if (Objects.nonNull(type)) {
-            List<Batch> result = new ArrayList<>(batches);
-            result.removeIf(batch -> !batch.getType().equals(type));
-            return result;
-        }
-        return batches;
+    boolean isProcessAssignedToOnlyOneBatch(List<BatchDTO> batchDTOList) {
+        return batchDTOList.size() == 1;
     }
 
     /**

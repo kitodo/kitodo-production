@@ -19,8 +19,6 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -28,7 +26,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
 
 /**
@@ -50,13 +47,6 @@ public class Batch extends BaseIndexedBean {
     private String title;
 
     /**
-     * The field type holds the batch type.
-     */
-    @Column(name = "type")
-    @Enumerated(EnumType.STRING)
-    private BatchType type;
-
-    /**
      * The field processes holds the processes that belong to the batch.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
@@ -76,42 +66,25 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Constructor to create an empty batch object with a given type.
-     *
-     * @param type
-     *            of the batch
-     */
-    public Batch(BatchType type) {
-        this.processes = new ArrayList<>();
-        this.type = type;
-    }
-
-    /**
      * Constructor to create an empty batch object with a given title and a
      * type.
      *
      * @param title
      *            for the batch
-     * @param type
-     *            of the batch
      */
-    public Batch(String title, BatchType type) {
+    public Batch(String title) {
         this.processes = new ArrayList<>();
         this.title = title;
-        this.type = type;
     }
 
     /**
      * Constructor to create a batch that holds the given processes.
      *
-     * @param type
-     *            of the batch
      * @param processes
      *            that go into the batch
      */
-    public Batch(BatchType type, Collection<? extends Process> processes) {
+    public Batch(Collection<? extends Process> processes) {
         this.processes = new ArrayList<>(processes);
-        this.type = type;
     }
 
     /**
@@ -120,14 +93,11 @@ public class Batch extends BaseIndexedBean {
      *
      * @param title
      *            for the batch
-     * @param type
-     *            of the batch
      * @param processes
      *            that go into the batch
      */
-    public Batch(String title, BatchType type, Collection<? extends Process> processes) {
+    public Batch(String title, Collection<? extends Process> processes) {
         this.title = title;
-        this.type = type;
         this.processes = new ArrayList<>(processes);
     }
 
@@ -150,26 +120,6 @@ public class Batch extends BaseIndexedBean {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Returns the batch type.
-     *
-     * @return the batch type
-     */
-    public BatchType getType() {
-        return type;
-    }
-
-    /**
-     * The method setType() can be used to set a batch title. This function is
-     * also required by Hibernate when creating objects from the database.
-     *
-     * @param type
-     *            for the batch
-     */
-    public void setType(BatchType type) {
-        this.type = type;
     }
 
     /**
@@ -237,7 +187,7 @@ public class Batch extends BaseIndexedBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, type, processes);
+        return Objects.hash(title, processes);
     }
 
     @Override

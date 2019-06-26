@@ -32,7 +32,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -399,9 +398,9 @@ public class BatchForm extends BaseForm {
         } else {
             Batch batch;
             if (Objects.nonNull(batchTitle) && !batchTitle.trim().isEmpty()) {
-                batch = new Batch(batchTitle.trim(), BatchType.LOGISTIC, selectedProcesses);
+                batch = new Batch(batchTitle.trim(), selectedProcesses);
             } else {
-                batch = new Batch(BatchType.LOGISTIC, selectedProcesses);
+                batch = new Batch(selectedProcesses);
             }
 
             ServiceManager.getBatchService().save(batch);
@@ -457,7 +456,8 @@ public class BatchForm extends BaseForm {
 
         for (Batch selectedBatch : selectedBatches) {
             try {
-                switch (selectedBatch.getType()) {
+                //TODO: remove special export modules
+                /*switch (selectedBatch.getType()) {
                     case LOGISTIC:
                         for (Process process : selectedBatch.getProcesses()) {
                             ExportDms dms = new ExportDms(
@@ -473,8 +473,8 @@ public class BatchForm extends BaseForm {
                         break;
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
-                }
-            } catch (IOException | DAOException e) {
+                }*/
+            } catch (Exception e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
                 return this.stayOnCurrentPage;
@@ -482,47 +482,6 @@ public class BatchForm extends BaseForm {
         }
 
         return "/pages/taskmanager";
-    }
-
-    /**
-     * Sets the type of all currently selected batches to LOGISTIC.
-     */
-    public void setLogistic() {
-        setType(BatchType.LOGISTIC);
-    }
-
-    /**
-     * Sets the type of all currently selected batches to NEWSPAPER.
-     */
-    public void setNewspaper() {
-        setType(BatchType.NEWSPAPER);
-    }
-
-    /**
-     * Sets the type of all currently selected batches to SERIAL.
-     */
-    public void setSerial() {
-        setType(BatchType.SERIAL);
-    }
-
-    /**
-     * Sets the type of all currently selected batches to the named one, overriding
-     * a previously set type, if any.
-     *
-     * @param type
-     *            type to set
-     */
-    private void setType(BatchType type) {
-        try {
-            for (Batch batch : currentBatches) {
-                if (selectedBatches.contains(batch)) {
-                    batch.setType(type);
-                    ServiceManager.getBatchService().save(batch);
-                }
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
-        }
     }
 
     /**

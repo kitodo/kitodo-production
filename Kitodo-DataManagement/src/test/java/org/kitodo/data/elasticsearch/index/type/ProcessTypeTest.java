@@ -313,7 +313,7 @@ public class ProcessTypeTest {
 
         List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         Map<String, Object> batch = batches.get(0);
-        assertEquals("Amount of keys in batches is incorrect!", 3, batch.keySet().size());
+        assertEquals("Amount of keys in batches is incorrect!", 2, batch.keySet().size());
 
         List<Map<String, Object>> tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         Map<String, Object> task = tasks.get(0);

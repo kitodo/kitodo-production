@@ -46,7 +46,6 @@ public class BatchTypeTest {
         Batch firstBatch = new Batch();
         firstBatch.setId(1);
         firstBatch.setTitle("Batch1");
-        firstBatch.setType(org.kitodo.data.database.enums.BatchType.LOGISTIC);
         firstBatch.setProcesses(processes);
         batches.add(firstBatch);
 
@@ -58,7 +57,6 @@ public class BatchTypeTest {
         Batch thirdBatch = new Batch();
         thirdBatch.setId(3);
         thirdBatch.setTitle("Batch3");
-        thirdBatch.setType(org.kitodo.data.database.enums.BatchType.LOGISTIC);
         batches.add(thirdBatch);
 
         return batches;
@@ -72,7 +70,6 @@ public class BatchTypeTest {
         Map<String, Object> actual = batchType.createDocument(batch);
 
         assertEquals("Key title doesn't match to given value!", "Batch1", BatchTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key type doesn't match to given value!", "LOGISTIC", BatchTypeField.TYPE.getStringValue(actual));
 
         List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 2, processes.size());
@@ -96,7 +93,6 @@ public class BatchTypeTest {
         Map<String, Object> actual = batchType.createDocument(batch);
 
         assertEquals("Key title doesn't match to given value!", "Batch2", BatchTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key type doesn't match to given value!", "", BatchTypeField.TYPE.getStringValue(actual));
 
         List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
@@ -109,7 +105,7 @@ public class BatchTypeTest {
         Batch batch = prepareData().get(0);
         Map<String, Object> actual = batchType.createDocument(batch);
 
-        assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
 
         List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         Map<String, Object> process = processes.get(0);

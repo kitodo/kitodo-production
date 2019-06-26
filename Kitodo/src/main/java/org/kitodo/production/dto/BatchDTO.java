@@ -20,7 +20,6 @@ import java.util.List;
 public class BatchDTO extends BaseDTO {
 
     private String title;
-    private String type;
     private List<ProcessDTO> processes = new ArrayList<>();
 
     /**
@@ -40,25 +39,6 @@ public class BatchDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Get type.
-     *
-     * @return type as String
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Set type.
-     *
-     * @param type
-     *            as String
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**

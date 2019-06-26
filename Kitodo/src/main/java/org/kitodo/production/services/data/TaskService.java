@@ -296,7 +296,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         if (process > 0) {
             taskDTO.setProcess(ServiceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(ServiceManager.getProcessService()
-                    .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
+                    .isProcessAssignedToOnlyOneBatch(taskDTO.getProcess().getBatches()));
         }
 
         int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(jsonObject);
