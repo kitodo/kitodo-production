@@ -104,7 +104,7 @@ public class CopyProcess extends ProzesskopieForm {
                 return this.naviFirstPage;
             }
         } catch (ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return null;
     }
@@ -152,7 +152,7 @@ public class CopyProcess extends ProzesskopieForm {
                     try {
                         setMetadataForMetadataFile(field, myTempStruct);
                     } catch (IllegalArgumentException e) {
-                        Helper.setErrorMessage(e.getMessage(), logger, e);
+                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                     }
                 }
             }

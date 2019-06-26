@@ -19,6 +19,8 @@ import java.util.Objects;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.Record;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.production.helper.Helper;
@@ -34,8 +36,9 @@ import org.w3c.dom.NodeList;
 @Named("ImportForm")
 @ViewScoped
 public class ImportForm implements Serializable {
-    private ProzesskopieForm prozesskopieForm;
+    private static final Logger logger = LogManager.getLogger(ImportForm.class);
 
+    private ProzesskopieForm prozesskopieForm;
     private String selectedCatalog;
     private String selectedField;
     private String searchTerm;
@@ -127,7 +130,7 @@ public class ImportForm implements Serializable {
         try {
             return ServiceManager.getImportService().getAvailableCatalogs();
         } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return new LinkedList<>();
         }
     }
@@ -144,7 +147,7 @@ public class ImportForm implements Serializable {
             try {
                 return ServiceManager.getImportService().getAvailableSearchFields(this.selectedCatalog);
             } catch (IllegalArgumentException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage());
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return new LinkedList<>();
             }
         }
@@ -159,7 +162,7 @@ public class ImportForm implements Serializable {
                 this.selectedCatalog);
             PrimeFaces.current().executeScript("PF('hitlist').show()");
         } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 

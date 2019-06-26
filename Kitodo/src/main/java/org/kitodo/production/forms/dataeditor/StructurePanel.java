@@ -572,7 +572,7 @@ public class StructurePanel implements Serializable {
             dataEditor.switchStructure(treeNodeData);
             previouslySelectedLogicalNode = selectedLogicalNode;
         } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             selectedLogicalNode = previouslySelectedLogicalNode;
         }
     }
@@ -586,7 +586,7 @@ public class StructurePanel implements Serializable {
             dataEditor.switchMediaUnit();
             previouslySelectedPhysicalNode = selectedPhysicalNode;
         } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             selectedPhysicalNode = previouslySelectedPhysicalNode;
         }
     }

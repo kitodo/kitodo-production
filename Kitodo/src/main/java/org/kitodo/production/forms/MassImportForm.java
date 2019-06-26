@@ -123,7 +123,7 @@ public class MassImportForm extends BaseForm {
         try {
             ServiceManager.getTemplateService().checkForUnreachableTasks(this.template.getTasks());
         } catch (ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return this.stayOnCurrentPage;
         }
 
@@ -252,7 +252,7 @@ public class MassImportForm extends BaseForm {
         try {
             FileUtils.copyToFile(this.uploadedFile.getInputstream(), temporalFile);
         } catch (IOException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 

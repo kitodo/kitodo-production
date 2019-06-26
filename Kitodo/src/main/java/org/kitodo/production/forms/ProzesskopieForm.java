@@ -212,7 +212,7 @@ public class ProzesskopieForm extends BaseForm {
                 return true;
             }
         } catch (ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
         return false;
@@ -691,7 +691,7 @@ public class ProzesskopieForm extends BaseForm {
             // write Rdf file
             ServiceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
         } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage("UghHelperException", logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -821,7 +821,7 @@ public class ProzesskopieForm extends BaseForm {
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
             } catch (IllegalArgumentException e) {
-                Helper.setErrorMessage(e.getMessage(), logger, e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
@@ -838,7 +838,7 @@ public class ProzesskopieForm extends BaseForm {
                 colStruct.removeMetadata(md);
             }
         } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -1225,7 +1225,7 @@ public class ProzesskopieForm extends BaseForm {
             // atstsl is created in title generator and next used in tiff header generator
             this.atstsl = titleGenerator.getAtstsl();
         } catch (ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
@@ -1245,7 +1245,7 @@ public class ProzesskopieForm extends BaseForm {
         try {
             this.tifHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tifDefinition, this.docType);
         } catch (ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
