@@ -371,6 +371,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     color: var(--pure-white);
 }
 
+.ui-menu.new-element-menu .ui-menuitem-link {
+    width: 100%;
+}
+
 .ui-menu-overlay {
     min-width: 250px;
     padding: var(--default-full-size);
