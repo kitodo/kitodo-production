@@ -295,7 +295,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * is called by PrimeFaces to inform the application that the user has
      * clicked on the shortcut menu entry to clear the outline point.
      */
-    public void deleteButtonClick() {
+    public void deleteStructure() {
         structurePanel.deleteSelectedStructure();
     }
 

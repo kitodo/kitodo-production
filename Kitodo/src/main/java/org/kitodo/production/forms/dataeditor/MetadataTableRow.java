@@ -74,7 +74,7 @@ abstract class MetadataTableRow implements Serializable {
     /**
      * This method is triggered when the user clicks the copy meta-data button.
      */
-    public void copyClick() {
+    public void copy() {
         try {
             panel.getClipboard().addAll(this.getMetadata());
         } catch (InvalidMetadataValueException e) {
@@ -87,7 +87,7 @@ abstract class MetadataTableRow implements Serializable {
      * This method is triggered when the user clicks the delete meta-data
      * button.
      */
-    public void deleteClick() {
+    public void delete() {
         container.remove(this);
     }
 

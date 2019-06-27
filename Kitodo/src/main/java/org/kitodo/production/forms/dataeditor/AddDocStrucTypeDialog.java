@@ -89,7 +89,7 @@ public class AddDocStrucTypeDialog {
      * This method is invoked if the user clicks on the add multi doc struc
      * submit btn command button.
      */
-    public void addMultiDocStrucSubmitBtnClick() {
+    public void addMultiDocStruc() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                 dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
@@ -103,7 +103,7 @@ public class AddDocStrucTypeDialog {
      * This method is invoked if the user clicks on the add single doc struc
      * submit btn command button.
      */
-    public void addSingleDocStrucSubmitBtnClick() {
+    public void addSingleDocStruc() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem, dataEditor.getWorkpiece(),
                 dataEditor.getSelectedStructure().get(), docStructPositionSelectionSelectedItem, getViewsToAdd());

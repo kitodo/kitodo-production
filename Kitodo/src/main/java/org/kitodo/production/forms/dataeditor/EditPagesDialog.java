@@ -80,7 +80,7 @@ public class EditPagesDialog {
      * This method is invoked if the user clicks on the add page btn command
      * button.
      */
-    public void addPageBtnClick() {
+    public void addPage() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             dataEditor.getSelectedStructure().get().getViews().addAll(getViewsToAdd(paginationSelectionSelectedItems));
             dataEditor.refreshStructurePanel();
@@ -208,7 +208,7 @@ public class EditPagesDialog {
      * This method is invoked if the user clicks on the set page start and end
      * btn command button.
      */
-    public void setPageStartAndEndBtnClick() {
+    public void setPageStartAndEnd() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             dataEditor.getSelectedStructure().get().getViews()
                     .addAll(getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem));
@@ -256,7 +256,7 @@ public class EditPagesDialog {
      * This method is invoked if the user clicks on the take pages from children
      * btn command button.
      */
-    public void takePagesFromChildrenBtnClick() {
+    public void takePagesFromChildren() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             MetadataEditor.assignViewsFromChildren(dataEditor.getSelectedStructure().get());
             dataEditor.refreshStructurePanel();
@@ -268,7 +268,7 @@ public class EditPagesDialog {
      * This method is invoked if the user clicks on the remove page btn command
      * button.
      */
-    public void removePageBtnClick() {
+    public void removePage() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             dataEditor.getSelectedStructure().get().getViews()
                     .removeAll(getViewsToAdd(paginationSubSelectionSelectedItems));
