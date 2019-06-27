@@ -65,7 +65,7 @@ public class Citation {
     private static final DateTimeFormatter PUBLICATION_DATE_FORMAT = DateTimeFormat.forPattern("d. MMMM yyyy");
 
     /**
-     * The field style holds the {@link Citation.Style} used for formatting this
+     * The field style holds the {@link Citation.Type} used for formatting this
      * citation.
      */
     private final Type style;
