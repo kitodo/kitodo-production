@@ -144,7 +144,7 @@ public class BatchTaskHelper extends BatchHelper {
                 export.startExport(step.getProcess());
             } catch (IOException | DAOException e) {
                 Helper.setErrorMessage("errorExporting",
-                    new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);
+                    new Object[] {Helper.getTranslation("task"), step.getId() }, logger, e);
             }
         }
     }
@@ -232,7 +232,7 @@ public class BatchTaskHelper extends BatchHelper {
             ImageHelper mih = new ImageHelper();
             if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
                 ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess()))) {
-                Helper.setErrorMessage("Error on image validation!");
+                Helper.setErrorMessage("errorImageValidation");
                 return true;
             }
         }
@@ -250,7 +250,7 @@ public class BatchTaskHelper extends BatchHelper {
 
     private boolean isPropertyInvalid(Property property, Task task) {
         if (Objects.isNull(property.getValue()) || property.getValue().isEmpty()) {
-            Helper.setErrorMessage("BatchPropertyEmpty",
+            Helper.setErrorMessage("batchPropertyEmpty",
                 new Object[] {property.getTitle(), task.getProcess().getTitle() });
             return true;
         }
