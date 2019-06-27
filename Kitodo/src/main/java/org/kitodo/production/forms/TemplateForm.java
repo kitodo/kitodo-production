@@ -33,12 +33,15 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
+import org.kitodo.production.migration.TemplateConverter;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
@@ -165,7 +168,7 @@ public class TemplateForm extends TemplateBaseForm {
         String templateTitle = this.template.getTitle();
         if (StringUtils.isNotBlank(templateTitle)) {
             List<Template> templates = ServiceManager.getTemplateService().getTemplatesWithTitleAndClient(templateTitle,
-                    this.template.getClient().getId());
+                this.template.getClient().getId());
             int count = templates.size();
             if (count > 1) {
                 Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
@@ -224,6 +227,45 @@ public class TemplateForm extends TemplateBaseForm {
         saveTask(this.task, this.template, ObjectType.TEMPLATE.getTranslationSingular(),
             ServiceManager.getTemplateService());
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
+    }
+
+    /**
+     * Convert template to workflow.
+     * 
+     * @return redirect to workflow edit page where user can verify workflow
+     *         correctness and make it free to usage
+     */
+    public String convertTemplateToWorkflow() {
+        TemplateConverter templateConverter = new TemplateConverter();
+        try {
+            templateConverter.convertTemplateToWorkflowFile(this.template);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+
+        Workflow workflow = new Workflow(this.template.getTitle());
+        workflow.setClient(this.template.getClient());
+        workflow.setStatus(WorkflowStatus.DRAFT);
+        workflow.getTemplates().add(this.template);
+
+        try {
+            ServiceManager.getWorkflowService().save(workflow);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger,
+                e);
+            return this.stayOnCurrentPage;
+        }
+
+        this.template.setWorkflow(workflow);
+        try {
+            ServiceManager.getTemplateService().save(this.template);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
+                e);
+            return this.stayOnCurrentPage;
+        }
+
+        return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflow.getId();
     }
 
     /**

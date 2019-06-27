@@ -75,6 +75,13 @@
                                    message="#{msgs.confirmDeleteTemplate}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
+
+                    <h:commandLink action="#{TemplateForm.convertTemplateToWorkflow()}" immediate="true"
+                                   title="#{msgs.convertTemplateToWorkflow}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow() and item.workflow.title eq ''}">
+                        <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
+                        <h:outputText><i class="fa fa-random fa-lg"/></h:outputText>
+                    </h:commandLink>
                 </h:form>
             </h:outputText>
         </p:column>
