@@ -234,6 +234,7 @@ public class ProjectForm extends BaseForm {
                 }
                 this.deletedTemples = new ArrayList<>();
 
+                this.project = ServiceManager.getProjectService().getById(this.project.getId());
                 ServiceManager.getProjectService().save(this.project);
 
                 return projectListPath;
