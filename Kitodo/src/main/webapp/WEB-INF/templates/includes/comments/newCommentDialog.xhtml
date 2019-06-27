@@ -18,13 +18,13 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:dialog id="newCommentDialog"
+              width="480"
               resizable="false"
               modal="true"
               widgetVar="newCommentDialog">
         <h:body>
             <h:form id="newCommentForm">
                 <h3>#{msgs.commentWrite}</h3>
-                <br/>
 
                 <p:outputLabel value="Text"
                                for="newCommentTextArea"/>

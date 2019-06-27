@@ -144,12 +144,13 @@
                 <p:commandLink action="#{ProjectForm.deleteFolder()}"
                                update="editForm"
                                title="#{msgs.fileGroupDelete}"
-                               onclick="if (!confirm('#{msgs.shouldItemBeRemoved}')) return"
                                oncomplete="toggleSave()"
                                styleClass="buttonset plain"
                                immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{ProjectForm.myFolder}" value="#{folder}"/>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{msgs.shouldItemBeRemoved}"/>
                 </p:commandLink>
             </p:column>
         </p:dataTable>
