@@ -100,6 +100,11 @@ input.ui-state-error {
     box-shadow: 0 0 0;
 }
 
+.ui-accordion .ui-state-default,
+.ui-fieldset .ui-state-default {
+    background: var(--cloudy-gray);
+}
+
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger,
 .timeline-content .ui-state-default {
     background: var(--blue);
@@ -1006,11 +1011,6 @@ Popup dialogs
 
 #loadingScreen i.fa-spinner {
     color: var(--blue);
-}
-
-.ui-accordion .ui-state-default,
-.ui-fieldset .ui-state-default {
-    background: var(--cloudy-gray);
 }
 
 .ui-tabs.ui-widget-content,
