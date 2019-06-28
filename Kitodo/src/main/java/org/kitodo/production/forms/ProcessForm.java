@@ -119,7 +119,7 @@ public class ProcessForm extends TemplateBaseForm {
                     .getListColumnsForListAsSelectItemGroup("process");
             columns.add(processColumnGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
         // Read process properties to display from configuration

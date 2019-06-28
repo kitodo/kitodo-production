@@ -319,7 +319,7 @@ public class WorkflowControllerService {
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
         } catch (DAOException e) {
-            Helper.setErrorMessage("SaveCommentError", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
         }
     }
 

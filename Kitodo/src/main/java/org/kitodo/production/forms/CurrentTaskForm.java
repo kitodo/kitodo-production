@@ -103,7 +103,7 @@ public class CurrentTaskForm extends BaseForm {
         try {
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("task"));
         } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("task");
     }
@@ -195,10 +195,10 @@ public class CurrentTaskForm extends BaseForm {
                     URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(false,
                         task.getProcess());
                     if (!ServiceManager.getFileService().fileExist(imagesOrigDirectory)) {
-                        Helper.setErrorMessage("Directory doesn't exists!", new Object[] {imagesOrigDirectory });
+                        Helper.setErrorMessage("errorDirectoryNotFound", new Object[] {imagesOrigDirectory });
                     }
                 } catch (Exception e) {
-                    Helper.setErrorMessage("Error retrieving image directory: ", logger, e);
+                    Helper.setErrorMessage("errorDirectoryRetrieve", new Object[] {"image" }, logger, e);
                 }
                 task.setProcessingTime(new Date());
                 this.myDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());

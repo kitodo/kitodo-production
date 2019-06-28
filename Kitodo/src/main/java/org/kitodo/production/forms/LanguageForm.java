@@ -35,6 +35,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LegalTexts;
 import org.kitodo.production.services.ServiceManager;
@@ -72,11 +73,12 @@ public class LanguageForm implements Serializable {
         if (Objects.isNull(ServiceManager.getUserService().getAuthenticatedUser())) {
             key = ConfigCore.getParameterOrDefaultValue(ParameterCore.LANGUAGE_DEFAULT);
         } else {
+            Integer id = ServiceManager.getUserService().getAuthenticatedUser().getId();
             try {
-                User user = ServiceManager.getUserService().getById(ServiceManager.getUserService().getAuthenticatedUser().getId());
+                User user = ServiceManager.getUserService().getById(id);
                 key = user.getLanguage();
             } catch (DAOException e) {
-                Helper.setErrorMessage("Error in retrieving user ", logger, e);
+                Helper.setErrorMessage("errorLoadingOne", new Object[] {ObjectType.USER.getTranslationSingular(), id }, logger, e);
             }
         }
         Locale locale = new Locale.Builder().setLanguageTag(key).build();
@@ -175,7 +177,7 @@ public class LanguageForm implements Serializable {
             user.setLanguage(locale.toString());
             ServiceManager.getUserService().saveToDatabase(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error in saving user", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular()}, logger, e);
         }
         FacesContext context = FacesContext.getCurrentInstance();
         context.getViewRoot().setLocale(locale);

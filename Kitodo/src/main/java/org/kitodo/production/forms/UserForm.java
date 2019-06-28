@@ -96,7 +96,7 @@ public class UserForm extends BaseForm {
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("client"));
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("ldapgroup"));
         } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         selectedColumns = new ArrayList<>();
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("user"));

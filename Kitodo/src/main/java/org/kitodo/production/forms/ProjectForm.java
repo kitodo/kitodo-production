@@ -71,7 +71,7 @@ public class ProjectForm extends BaseForm {
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("docket"));
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("ruleset"));
         } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
         // Lists of selected list columns

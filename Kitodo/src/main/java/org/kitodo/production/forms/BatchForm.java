@@ -266,9 +266,7 @@ public class BatchForm extends BaseForm {
             try {
                 ServiceManager.getProcessService().downloadDocket(selectedBatches.get(0).getProcesses());
             } catch (IOException e) {
-                //TODO: needed message for case of IOException
-                Helper.setErrorMessage(e.getMessage(), new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
-                        e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         } else {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);

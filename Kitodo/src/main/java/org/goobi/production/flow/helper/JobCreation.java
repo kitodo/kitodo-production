@@ -93,10 +93,8 @@ public class JobCreation {
                 process = cp.createProcess(importObject);
                 startThreads(process, metsFilename, metsFilename);
             } catch (IOException e) {
-                Helper.setErrorMessage("Cannot read file " + processTitle, logger, e);
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e.getMessage(), logger, e);
-            } catch (DataException e) {
+                Helper.setErrorMessage("errorReading", new Object[] {Helper.getTranslation("file") + " " + processTitle}, logger, e);
+            } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("errorSaving",
                     new Object[] {Helper.getTranslation("process") + " " + processTitle }, logger, e);
             }

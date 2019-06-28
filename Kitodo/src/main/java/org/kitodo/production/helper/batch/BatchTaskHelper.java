@@ -30,6 +30,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.metadata.ImageHelper;
@@ -169,7 +170,7 @@ public class BatchTaskHelper extends BatchHelper {
             try {
                 ServiceManager.getTaskService().save(task);
             } catch (DataException e) {
-                Helper.setErrorMessage(e.getMessage(), logger, e);
+                Helper.setErrorMessage("errorSaving",  new Object[] {ObjectType.TASK.getTranslationSingular()}, logger, e);
             }
         }
         return "";
@@ -192,7 +193,7 @@ public class BatchTaskHelper extends BatchHelper {
                     new WorkflowControllerService().close(task);
                 }
             } catch (DataException | IOException e) {
-                Helper.setErrorMessage(e.getMessage(), logger, e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
 

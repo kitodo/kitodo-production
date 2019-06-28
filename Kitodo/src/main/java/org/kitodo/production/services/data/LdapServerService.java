@@ -326,7 +326,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             rueckgabe = (String) la.get(0);
             ctx.close();
         } catch (NamingException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return rueckgabe;
     }
