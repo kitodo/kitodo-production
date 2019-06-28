@@ -17,76 +17,76 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
-    <p:dataTable id="taskTable"
-                 var="item"
-                 value="#{CurrentTaskForm.lazyDTOModel}"
-                 lazy="true"
-                 paginator="true"
-                 rows="#{LoginForm.loggedUser.tableSize}"
-                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
-                 currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
-                 paginatorPosition="bottom">
+    <h:form id="tasksForm">
+        <p:dataTable id="taskTable"
+                     var="item"
+                     value="#{CurrentTaskForm.lazyDTOModel}"
+                     lazy="true"
+                     paginator="true"
+                     rows="#{LoginForm.loggedUser.tableSize}"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
+                     paginatorPosition="bottom">
 
-        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();"/>
+            <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();"/>
 
-        <p:column style="width: var(--default-full-size);">
-            <p:rowToggler/>
-        </p:column>
+            <p:column style="width: var(--default-full-size);">
+                <p:rowToggler/>
+            </p:column>
 
-        <p:column id="titleColumn"
-                  headerText="#{msgs.task}"
-                  filterBy="#{item.title}"
-                  rendered="#{CurrentTaskForm.showColumn('task.title')}">
-            <h:outputText value="#{item.title}"/>
-        </p:column>
+            <p:column id="titleColumn"
+                      headerText="#{msgs.task}"
+                      filterBy="#{item.title}"
+                      rendered="#{CurrentTaskForm.showColumn('task.title')}">
+                <h:outputText value="#{item.title}"/>
+            </p:column>
 
-        <!-- columns for tasks that have been configured in kitodo config file! -->
-        <p:columns value="#{CurrentTaskForm.getTaskCustomColumnNames()}"
-                   var="taskColumn"
-                   headerText="#{fn:replace(taskColumn, 'task.', '')}"
-                   rendered="#{CurrentTaskForm.showColumn(taskColumn)}">
-            <h:outputText value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
-        </p:columns>
+            <!-- columns for tasks that have been configured in kitodo config file! -->
+            <p:columns value="#{CurrentTaskForm.getTaskCustomColumnNames()}"
+                       var="taskColumn"
+                       headerText="#{fn:replace(taskColumn, 'task.', '')}"
+                       rendered="#{CurrentTaskForm.showColumn(taskColumn)}">
+                <h:outputText value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
+            </p:columns>
 
-        <p:column headerText="#{msgs.process}"
-                  rendered="#{CurrentTaskForm.showColumn('task.process')}">
-            <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.editProcess}"
-                    rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
-                <i class="fa fa-pencil-square-o fa-lg"/>
-                <f:param name="id" value="#{item.process.id}"/>
-            </h:link>
-            <h:outputText value=" #{item.process.title}"/>
-        </p:column>
+            <p:column headerText="#{msgs.process}"
+                      rendered="#{CurrentTaskForm.showColumn('task.process')}">
+                <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.editProcess}"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                    <f:param name="id" value="#{item.process.id}"/>
+                </h:link>
+                <h:outputText value=" #{item.process.title}"/>
+            </p:column>
 
-        <p:column headerText="#{msgs.project}"
-                  rendered="#{CurrentTaskForm.showColumn('task.project')}">
-            <h:outputText value="#{item.process.project.title}"/>
-        </p:column>
+            <p:column headerText="#{msgs.project}"
+                      rendered="#{CurrentTaskForm.showColumn('task.project')}">
+                <h:outputText value="#{item.process.project.title}"/>
+            </p:column>
 
-        <p:column headerText="#{msgs.status}"
-                  rendered="#{CurrentTaskForm.showColumn('task.state')}">
-            <h:panelGroup class="task-status"
-                          title="#{item.processingStatusTitle}"
-                          style="margin-right:10px; background-color:
-                            #{item.processingStatus.title == 'statusDone' ? 'var(--green)' : ''}
-                            #{item.processingStatus.title == 'statusInProcessing' ? 'var(--light-green)' : ''}
-                            #{item.processingStatus.title == 'statusOpen' ? 'var(--light-orange)' : ''}
-                            #{item.processingStatus.title == 'statusLocked' ? 'var(--orange)' : ''};"
-            />
-        </p:column>
+            <p:column headerText="#{msgs.status}"
+                      rendered="#{CurrentTaskForm.showColumn('task.state')}">
+                <h:panelGroup class="task-status"
+                              title="#{item.processingStatusTitle}"
+                              style="margin-right:10px; background-color:
+                                #{item.processingStatus.title == 'statusDone' ? 'var(--green)' : ''}
+                                #{item.processingStatus.title == 'statusInProcessing' ? 'var(--light-green)' : ''}
+                                #{item.processingStatus.title == 'statusOpen' ? 'var(--light-orange)' : ''}
+                                #{item.processingStatus.title == 'statusLocked' ? 'var(--orange)' : ''};"
+                />
+            </p:column>
 
-        <p:column headerText="#{msgs.correction}"
-                  rendered="#{CurrentTaskForm.showColumn('task.correction')}">
-            <h:outputText value="#{item.correction}"/>
-        </p:column>
+            <p:column headerText="#{msgs.correction}"
+                      rendered="#{CurrentTaskForm.showColumn('task.correction')}">
+                <h:outputText value="#{item.correction}"/>
+            </p:column>
 
-        <p:column headerText="#{msgs.duration} (#{msgs.process})"
-                  rendered="#{CurrentTaskForm.showColumn('task.duration')}">
-            <h:outputText value="#{CurrentTaskForm.getProcessDuration(item)}"/>
-        </p:column>
+            <p:column headerText="#{msgs.duration} (#{msgs.process})"
+                      rendered="#{CurrentTaskForm.showColumn('task.duration')}">
+                <h:outputText value="#{CurrentTaskForm.getProcessDuration(item)}"/>
+            </p:column>
 
-        <p:column headerText="#{msgs.actions}">
-            <h:form id="actions">
+            <p:column headerText="#{msgs.actions}">
                 <!-- assign task -->
                 <h:commandLink id="take"
                                actionListener="#{CommentForm.setProcessId(item.process.id)}"
@@ -139,30 +139,30 @@
                     <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
                     <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
-            </h:form>
-        </p:column>
+            </p:column>
 
-        <p:rowExpansion styleClass="expansion-class">
-            <div class="row-expansion-wrapper">
-                <p:panelGrid columns="2" columnClasses="label, value" id="currentTaskDetailTable">
-                    <h:outputText value="#{msgs.correction}:"/>
-                    <h:outputText value="#{item.correction}"/>
+            <p:rowExpansion styleClass="expansion-class">
+                <div class="row-expansion-wrapper">
+                    <p:panelGrid columns="2" columnClasses="label, value" id="currentTaskDetailTable">
+                        <h:outputText value="#{msgs.correction}:"/>
+                        <h:outputText value="#{item.correction}"/>
 
-                    <h:outputText value="#{msgs.processingBegin}:"/>
-                    <h:outputText value="#{item.processingBegin}"/>
+                        <h:outputText value="#{msgs.processingBegin}:"/>
+                        <h:outputText value="#{item.processingBegin}"/>
 
-                    <h:outputText value="#{msgs.lastEdited}:"/>
-                    <h:outputText value="#{item.processingTime}"/>
+                        <h:outputText value="#{msgs.lastEdited}:"/>
+                        <h:outputText value="#{item.processingTime}"/>
 
-                    <h:outputText value="#{msgs.lastUpdatedBy}:"/>
-                    <h:outputText value="#{item.processingUser.fullName}"/>
+                        <h:outputText value="#{msgs.lastUpdatedBy}:"/>
+                        <h:outputText value="#{item.processingUser.fullName}"/>
 
-                    <h:outputText value="#{msgs.editType}:"/>
-                    <h:outputText value="#{item.editTypeTitle}"/>
-                </p:panelGrid>
-            </div>
-        </p:rowExpansion>
-    </p:dataTable>
+                        <h:outputText value="#{msgs.editType}:"/>
+                        <h:outputText value="#{item.editTypeTitle}"/>
+                    </p:panelGrid>
+                </div>
+            </p:rowExpansion>
+        </p:dataTable>
+        </h:form>
 
     <h:panelGrid columns="1">
         <h:panelGroup>
