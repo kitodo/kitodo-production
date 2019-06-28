@@ -11,7 +11,6 @@
 
 package org.goobi.production.properties;
 
-import java.util.Date;
 import java.util.List;
 
 public interface IProperty {
@@ -36,30 +35,9 @@ public interface IProperty {
 
     void setValue(String value);
 
-    List<String> getPossibleValues();
-
-    void setPossibleValues(List<String> possibleValues);
-
     List<String> getProjects();
 
     void setProjects(List<String> projects);
 
-    List<ShowStepCondition> getShowStepConditions();
-
-    void setShowStepConditions(List<ShowStepCondition> showStepConditions);
-
-    AccessCondition getShowProcessGroupAccessCondition();
-
-    void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition);
-
     boolean isValid();
-
-    void setDateValue(Date inDate);
-
-    Date getDateValue();
-
-    IProperty getClone(int containerNumber);
-
-    void transfer();
-
 }

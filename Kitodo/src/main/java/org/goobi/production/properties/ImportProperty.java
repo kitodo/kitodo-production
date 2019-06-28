@@ -11,12 +11,8 @@
 
 package org.goobi.production.properties;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +24,6 @@ public class ImportProperty implements IProperty {
     private String validation = "";
     private Type type = Type.TEXT;
     private String value = "";
-    private List<String> possibleValues;
     private List<String> projects;
     private boolean required = false;
 
@@ -36,7 +31,6 @@ public class ImportProperty implements IProperty {
      * Constructor.
      */
     public ImportProperty() {
-        this.possibleValues = new ArrayList<>();
         this.projects = new ArrayList<>();
     }
 
@@ -91,16 +85,6 @@ public class ImportProperty implements IProperty {
     }
 
     @Override
-    public List<String> getPossibleValues() {
-        return this.possibleValues;
-    }
-
-    @Override
-    public void setPossibleValues(List<String> possibleValues) {
-        this.possibleValues = possibleValues;
-    }
-
-    @Override
     public List<String> getProjects() {
         return this.projects;
     }
@@ -111,37 +95,10 @@ public class ImportProperty implements IProperty {
     }
 
     @Override
-    public List<ShowStepCondition> getShowStepConditions() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setShowStepConditions(List<ShowStepCondition> showStepConditions) {
-    }
-
-    @Override
-    public AccessCondition getShowProcessGroupAccessCondition() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition) {
-    }
-
-    @Override
     public boolean isValid() {
         Pattern pattern = Pattern.compile(this.validation);
         Matcher matcher = pattern.matcher(this.value);
         return matcher.matches();
-    }
-
-    @Override
-    public ImportProperty getClone(int containerNumber) {
-        return new ImportProperty();
-    }
-
-    @Override
-    public void transfer() {
     }
 
     /**
@@ -189,25 +146,6 @@ public class ImportProperty implements IProperty {
             this.value = "true";
         } else {
             this.value = "false";
-        }
-    }
-
-    @Override
-    public void setDateValue(Date inDate) {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        value = format.format(inDate);
-    }
-
-    @Override
-    public Date getDateValue() {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        try {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(format.parse(value));
-            cal.set(Calendar.HOUR, 12);
-            return cal.getTime();
-        } catch (ParseException | NullPointerException e) {
-            return new Date();
         }
     }
 
