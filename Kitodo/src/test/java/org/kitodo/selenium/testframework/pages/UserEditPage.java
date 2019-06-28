@@ -140,32 +140,34 @@ public class UserEditPage extends EditPage<UserEditPage> {
     public void addUserToRole(String roleTitle) throws Exception {
         switchToTabByIndex(TabIndex.USER_ROLES.getIndex());
         addUserToRoleButton.click();
+		
+        await("Wait for visible role selection dialog").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .untilTrue(new AtomicBoolean(selectRoleTable.isDisplayed()));
+
         List<WebElement> tableRows = Browser.getRowsOfTable(selectRoleTable);
-        try {
-            addRow(tableRows, roleTitle, addToRoleDialog);
-        } catch (StaleElementReferenceException e) {
-            tableRows = Browser.getRowsOfTable(Browser.getDriver().findElement(By.id("roleForm:selectRoleTable_data")));
-            addToRoleDialog = Browser.getDriver().findElement(By.id("addRoleDialog"));
-            addRow(tableRows, roleTitle, addToRoleDialog);
-        }
+        addRow(tableRows, roleTitle, addToRoleDialog);
+        
     }
 
     public void addUserToClient(String clientName) throws Exception {
         switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
         addUserToClientButton.click();
+		
+        await("Wait for visible client selection dialog").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .untilTrue(new AtomicBoolean(selectClientTable.isDisplayed()));
+
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-        try {
-            addRow(tableRows, clientName, addToClientDialog);
-        } catch (StaleElementReferenceException e) {
-            tableRows = Browser.getRowsOfTable(Browser.getDriver().findElement(By.id("userClientForm:selectClientTable_data")));
-            addToClientDialog = Browser.getDriver().findElement(By.id("addClientDialog"));
-            addRow(tableRows, clientName, addToClientDialog);
-        }
+		addRow(tableRows, clientName, addToClientDialog);
+        
     }
 
     public UserEditPage addUserToProject(String projectName) throws Exception {
         switchToTabByIndex(TabIndex.USER_PROJECT_LIST.getIndex());
         addUserToProjectButton.click();
+		
+        await("Wait for visible project selection dialog").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+     .untilTrue(new AtomicBoolean(selectProjectTable.isDisplayed()));
+		
         List<WebElement> tableRows = Browser.getRowsOfTable(selectProjectTable);
         addRow(tableRows, projectName, addToProjectDialog);
         return this;
