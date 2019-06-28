@@ -140,9 +140,9 @@ public class UserEditPage extends EditPage<UserEditPage> {
     public void addUserToRole(String roleTitle) throws Exception {
         switchToTabByIndex(TabIndex.USER_ROLES.getIndex());
         addUserToRoleButton.click();
-		
+
         await("Wait for visible role selection dialog").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
-                .untilTrue(new AtomicBoolean(selectRoleTable.isDisplayed()));
+        .untilTrue(new AtomicBoolean(selectRoleTable.isDisplayed()));
 
         List<WebElement> tableRows = Browser.getRowsOfTable(selectRoleTable);
         addRow(tableRows, roleTitle, addToRoleDialog);
@@ -152,22 +152,22 @@ public class UserEditPage extends EditPage<UserEditPage> {
     public void addUserToClient(String clientName) throws Exception {
         switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
         addUserToClientButton.click();
-		
+
         await("Wait for visible client selection dialog").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
-                .untilTrue(new AtomicBoolean(selectClientTable.isDisplayed()));
+        .untilTrue(new AtomicBoolean(selectClientTable.isDisplayed()));
 
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-		addRow(tableRows, clientName, addToClientDialog);
+        addRow(tableRows, clientName, addToClientDialog);
         
     }
 
     public UserEditPage addUserToProject(String projectName) throws Exception {
         switchToTabByIndex(TabIndex.USER_PROJECT_LIST.getIndex());
         addUserToProjectButton.click();
-		
+
         await("Wait for visible project selection dialog").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
-     .untilTrue(new AtomicBoolean(selectProjectTable.isDisplayed()));
-		
+        .untilTrue(new AtomicBoolean(selectProjectTable.isDisplayed()));
+
         List<WebElement> tableRows = Browser.getRowsOfTable(selectProjectTable);
         addRow(tableRows, projectName, addToProjectDialog);
         return this;
@@ -186,7 +186,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
 
     private void openUserConfig() {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
+        .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
 
         hoverWebElement(userMenuButton);
         hoverWebElement(userConfigButton);
