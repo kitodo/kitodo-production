@@ -29,7 +29,7 @@
             <div class="ui-inputgroup">
                 <p:inputText forceId="true" id="filterfield" value="#{CurrentTaskForm.filter}" placeholder="#{msgs.filter}">
                     <p:ajax event="change"
-                            oncomplete="filterTasks()"/>
+                            oncomplete="filter.filterTasks()"/>
                 </p:inputText>
                 <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                 <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
