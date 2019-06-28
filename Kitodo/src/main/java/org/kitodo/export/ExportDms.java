@@ -317,48 +317,9 @@ public class ExportDms extends ExportMets {
         }
 
         Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
-        if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
-            exportWithTimeLimit(process);
-        }
+
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(100);
-        }
-    }
-
-    private void exportWithTimeLimit(Process process) {
-        DmsImportThread asyncThread = new DmsImportThread(process, atsPpnBand);
-        asyncThread.start();
-        String processTitle = process.getTitle();
-
-        try {
-            // wait 30 seconds for the thread, possibly kill
-            asyncThread.join(process.getProject().getDmsImportTimeOut().longValue());
-            if (asyncThread.isAlive()) {
-                asyncThread.stopThread();
-            }
-        } catch (InterruptedException e) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setException(e);
-                logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)));
-            } else {
-                Thread.currentThread().interrupt();
-                Helper.setErrorMessage(ERROR_EXPORT, new Object[] {processTitle }, logger, e);
-            }
-        }
-
-        String result = asyncThread.getResult();
-        if (!result.isEmpty()) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setException(new RuntimeException(processTitle + ": " + result));
-            } else {
-                Helper.setErrorMessage(processTitle + ": ", result);
-            }
-        } else {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setProgress(100);
-            } else {
-                Helper.setMessage(process.getTitle() + ": ", "exportFinished");
-            }
         }
     }
 
