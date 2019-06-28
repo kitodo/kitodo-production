@@ -27,20 +27,30 @@
         </mods:mods>
     </xsl:template>
 
-    <!-- ### TitleDocMain ### -->
-    <xsl:template match="kitodo:metadata[@name='TitleDocMain']">
+    <xsl:template match="kitodo:kitodo">
+        <xsl:variable name="title" select="kitodo:metadata[@name='TitleDocMain']"/>
+
+        <xsl:variable name="role" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='Role']"/>
+        <xsl:variable name="last_name" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='lastName']"/>
+        <xsl:variable name="first_name" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='firstName']"/>
+
+        <xsl:variable name="place" select="kitodo:metadata[@name='PlaceOfPublication']"/>
+        <xsl:variable name="publisher" select="kitodo:metadata[@name='PublisherName']"/>
+        <xsl:variable name="dateIssued" select="kitodo:metadata[@name='PublicationYear']"/>
+
+        <xsl:variable name="physicalDescription" select="kitodo:metadata[@name='FormatSourcePrint']"/>
+
+        <xsl:variable name="shelfLocator" select="kitodo:metadata[@name='shelfmarksource']"/>
+        <xsl:variable name="url" select="kitodo:metadata[@name='slub_link']"/>
+
+        <xsl:variable name="recordIdentifier" select="kitodo:metadata[@name='CatalogIDDigital']"/>
+
         <mods:titleInfo>
             <mods:title>
-                <xsl:value-of select="normalize-space()"/>
+                <xsl:value-of select="$title"/>
             </mods:title>
         </mods:titleInfo>
-    </xsl:template>
 
-    <!-- ### Author, slub_Recipient ### -->
-    <xsl:template match="kitodo:metadataGroup[@name='Person']">
-        <xsl:variable name="role" select="../kitodo:metadata[@name='Role']"/>
-        <xsl:variable name="last_name" select="../kitodo:metadata[@name='lastName']"/>
-        <xsl:variable name="first_name" select="../kitodo:metadata[@name='firstName']"/>
         <xsl:choose>
             <xsl:when test="$role='author'">
                 <mods:name>
@@ -65,71 +75,41 @@
                 </mods:name>
             </xsl:when>
         </xsl:choose>
-    </xsl:template>
 
-    <!-- ### PlaceOfPublication ### -->
-    <xsl:template match="kitodo:metadata[@name='PlaceOfPublication']">
         <mods:originInfo eventType="publication">
             <mods:place>
                 <mods:placeTerm type="text">
-                    <xsl:value-of select="normalize-space()"/>
+                    <xsl:value-of select="$place"/>
                 </mods:placeTerm>
+                <mods:publisher>
+                    <xsl:value-of select="$publisher"/>
+                </mods:publisher>
+                <mods:dateIssued keyDate="yes" encoding="iso8601">
+                    <xsl:value-of select="$dateIssued"/>
+                </mods:dateIssued>
             </mods:place>
         </mods:originInfo>
-    </xsl:template>
 
-    <!-- ### PublisherName ### -->
-    <xsl:template match="kitodo:metadata[@name='PublisherName']">
-        <mods:originInfo eventType="publication">
-            <mods:publisher>
-                <xsl:value-of select="normalize-space()"/>
-            </mods:publisher>
-        </mods:originInfo>
-    </xsl:template>
-
-    <!-- ### PublicationYear ### -->
-    <xsl:template match="kitodo:metadata[@name='PublicationYear']">
-        <mods:originInfo eventType="publication">
-            <mods:dateIssued keyDate="yes" encoding="iso8601">
-                <xsl:value-of select="normalize-space()"/>
-            </mods:dateIssued>
-        </mods:originInfo>
-    </xsl:template>
-
-    <!-- ### ShelfMarkSource ### -->
-    <xsl:template match="kitodo:metadata[@name='shelfmarksource']">
-        <mods:location>
-            <mods:shelfLocator>
-                <xsl:value-of select="normalize-space()"/>
-            </mods:shelfLocator>
-        </mods:location>
-    </xsl:template>
-
-    <!-- ### FormatSourcePrint ### -->
-    <xsl:template match="kitodo:metadata[@name='FormatSourcePrint']">
         <mods:physicalDescription>
             <mods:extent>
-                <xsl:value-of select="normalize-space()"/>
+                <xsl:value-of select="$physicalDescription"/>
             </mods:extent>
         </mods:physicalDescription>
-    </xsl:template>
 
-    <!-- ### CatalogIDDigital ### -->
-    <xsl:template match="kitodo:metadata[@name='CatalogIDDigital']">
-        <mods:recordInfo>
-            <mods:recordIdentifier>
-                <xsl:value-of select="normalize-space()"/>
-            </mods:recordIdentifier>
-        </mods:recordInfo>
-    </xsl:template>
-
-    <!-- ### slub_link, slub_linktext ### -->
-    <xsl:template match="kitodo:metadata[@name='slub_link']">
         <mods:location>
+            <mods:shelfLocator>
+                <xsl:value-of select="$shelfLocator"/>
+            </mods:shelfLocator>
             <mods:url>
-                <xsl:value-of select="normalize-space()"/>
+                <xsl:value-of select="$url"/>
             </mods:url>
         </mods:location>
+
+        <mods:recordInfo>
+            <mods:recordIdentifier>
+                <xsl:value-of select="$recordIdentifier"/>
+            </mods:recordIdentifier>
+        </mods:recordInfo>
     </xsl:template>
 
     <!-- pass-through rule -->
