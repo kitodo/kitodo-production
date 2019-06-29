@@ -510,128 +510,22 @@ public class Citation {
         StringBuilder result = new StringBuilder();
         switch (style) {
             case MONOGRAPH:
-                if (!creators.isEmpty()) {
-                    appendNames(creators, result);
-                    appendYear(result);
-                    appendTitle(result);
-                    appendVolumeInformation(result);
-                    appendEdition(result, true);
-                    appendPlaceAndPublisher(result);
-                    appendOverallTitleAndNumber(result);
-                } else {
-                    appendTitle(result, null);
-                    appendVolumeInformation(result);
-                    appendEdition(result, true);
-                    appendPlaceAndPublisher(result);
-                    appendYearSimple(result);
-                    appendOverallTitleAndNumber(result);
-                }
+                toHtmlForMonograph(result);
                 break;
             case ANTHOLOGY:
-                appendNames(creators, result);
-                appendYear(result);
-                appendArticle(result);
-                appendContainedIn(result);
-                appendNames(contributors, result);
-                appendTitle(result);
-                appendVolumeInformation(result);
-                appendEdition(result, true);
-                appendPlaceAndPublisher(result);
-                appendOverallTitleAndNumber(result);
-                appendPagerange(result);
+                toHtmlForAnthology(result);
                 break;
             case PERIODICAL:
-                appendNames(creators, result);
-                appendYear(result);
-                appendArticle(result);
-                if (Objects.nonNull(part)) {
-                    result.append(' ');
-                    result.append(part);
-                }
-                appendContainedIn(result);
-                appendTitle(result);
-                if (Objects.nonNull(subseries)) {
-                    result.append(' ');
-                    result.append(subseries);
-                }
-                if (Objects.nonNull(volume)) {
-                    result.append(' ');
-                    result.append(volume);
-                }
-                if (Objects.nonNull(published)) {
-                    result.append(" (");
-                    result.append(published.toString(PUBLICATION_DATE_FORMAT));
-                    result.append(')');
-                }
-                if (Objects.nonNull(number)) {
-                    result.append(' ');
-                    result.append(number);
-                }
-                appendPagerange(result);
-                if (Objects.nonNull(accessed)) {
-                    result.append(" (");
-                    appendAccessed(result);
-                    result.append(')');
-                }
-                appendURL(result);
+                toHtmlForPeriodical(result);
                 break;
             case THESIS:
-                appendNames(creators, result);
-                appendYear(result);
-                appendTitle(result);
-                if (Objects.nonNull(employer)) {
-                    result.append(' ');
-                    result.append(employer);
-                }
-                if (Objects.nonNull(place)) {
-                    result.append(' ');
-                    result.append(place);
-                }
-                if (Objects.nonNull(department) && (Objects.nonNull(employer) || Objects.nonNull(place))) {
-                    result.append(',');
-                }
-                if (Objects.nonNull(department)) {
-                    result.append(' ');
-                    result.append(department);
-                }
-                if (Objects.nonNull(type) && (Objects.nonNull(employer) || Objects.nonNull(place) || Objects.nonNull(department))) {
-                    result.append(',');
-                }
-                if (Objects.nonNull(type)) {
-                    result.append(' ');
-                    result.append(type);
-                }
+                toHtmlForThesis(result);
                 break;
             case STANDARD:
-                if (Objects.nonNull(number)) {
-                    result.append(number);
-                }
-                appendEdition(result, false);
-                appendTitle(result);
+                toHtmlForStandard(result);
                 break;
             case INTERNET:
-                if (!creators.isEmpty()) {
-                    appendNames(creators, result);
-                    appendYear(result);
-                    appendTitle(result);
-                } else {
-                    appendTitle(result, null);
-                    appendYearSimple(result);
-                }
-                if (Objects.nonNull(published) || Objects.nonNull(accessed)) {
-                    result.append(" (");
-                    if (Objects.nonNull(published)) {
-                        appendPublished(result);
-                    }
-                    if (Objects.nonNull(published) && Objects.nonNull(accessed)) {
-                        result.append(", ");
-                    }
-                    if (Objects.nonNull(accessed)) {
-                        appendAccessed(result);
-                    }
-                    result.append(')');
-                }
-                appendURL(result);
+                toHtmlForInternet(result);
                 break;
             default:
                 throw new UnreachableCodeException();
@@ -643,12 +537,142 @@ public class Citation {
      * The function toString() returns a string that textually represents this
      * object.
      *
-     * @return a human raedable String representation
+     * @return a human readable String representation
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
         return toHTML().replaceAll("</?span.*?>", "");
+    }
+
+    private void toHtmlForMonograph(StringBuilder result) {
+        if (!creators.isEmpty()) {
+            appendNames(creators, result);
+            appendYear(result);
+            appendTitle(result);
+            appendVolumeInformation(result);
+            appendEdition(result, true);
+            appendPlaceAndPublisher(result);
+            appendOverallTitleAndNumber(result);
+        } else {
+            appendTitle(result, null);
+            appendVolumeInformation(result);
+            appendEdition(result, true);
+            appendPlaceAndPublisher(result);
+            appendYearSimple(result);
+            appendOverallTitleAndNumber(result);
+        }
+    }
+
+    private void toHtmlForAnthology(StringBuilder result) {
+        appendNames(creators, result);
+        appendYear(result);
+        appendArticle(result);
+        appendContainedIn(result);
+        appendNames(contributors, result);
+        appendTitle(result);
+        appendVolumeInformation(result);
+        appendEdition(result, true);
+        appendPlaceAndPublisher(result);
+        appendOverallTitleAndNumber(result);
+        appendPagerange(result);
+    }
+
+    private void toHtmlForPeriodical(StringBuilder result) {
+        appendNames(creators, result);
+        appendYear(result);
+        appendArticle(result);
+        if (Objects.nonNull(part)) {
+            result.append(' ');
+            result.append(part);
+        }
+        appendContainedIn(result);
+        appendTitle(result);
+        if (Objects.nonNull(subseries)) {
+            result.append(' ');
+            result.append(subseries);
+        }
+        if (Objects.nonNull(volume)) {
+            result.append(' ');
+            result.append(volume);
+        }
+        if (Objects.nonNull(published)) {
+            result.append(" (");
+            result.append(published.toString(PUBLICATION_DATE_FORMAT));
+            result.append(')');
+        }
+        if (Objects.nonNull(number)) {
+            result.append(' ');
+            result.append(number);
+        }
+        appendPagerange(result);
+        if (Objects.nonNull(accessed)) {
+            result.append(" (");
+            appendAccessed(result);
+            result.append(')');
+        }
+        appendURL(result);
+    }
+
+    private void toHtmlForThesis(StringBuilder result) {
+        appendNames(creators, result);
+        appendYear(result);
+        appendTitle(result);
+        if (Objects.nonNull(employer)) {
+            result.append(' ');
+            result.append(employer);
+        }
+        if (Objects.nonNull(place)) {
+            result.append(' ');
+            result.append(place);
+        }
+        if (Objects.nonNull(department) && (Objects.nonNull(employer) || Objects.nonNull(place))) {
+            result.append(',');
+        }
+        if (Objects.nonNull(department)) {
+            result.append(' ');
+            result.append(department);
+        }
+        if (Objects.nonNull(type) && (Objects.nonNull(employer) || Objects.nonNull(place) || Objects.nonNull(department))) {
+            result.append(',');
+        }
+        if (Objects.nonNull(type)) {
+            result.append(' ');
+            result.append(type);
+        }
+    }
+
+    private void toHtmlForStandard(StringBuilder result) {
+        if (Objects.nonNull(number)) {
+            result.append(number);
+        }
+        appendEdition(result, false);
+        appendTitle(result);
+    }
+
+    private void toHtmlForInternet(StringBuilder result) {
+        if (!creators.isEmpty()) {
+            appendNames(creators, result);
+            appendYear(result);
+            appendTitle(result);
+        } else {
+            appendTitle(result, null);
+            appendYearSimple(result);
+        }
+        if (Objects.nonNull(published) || Objects.nonNull(accessed)) {
+            result.append(" (");
+            if (Objects.nonNull(published)) {
+                appendPublished(result);
+            }
+            if (Objects.nonNull(published) && Objects.nonNull(accessed)) {
+                result.append(", ");
+            }
+            if (Objects.nonNull(accessed)) {
+                appendAccessed(result);
+            }
+            result.append(')');
+        }
+        appendURL(result);
     }
 
     /**
