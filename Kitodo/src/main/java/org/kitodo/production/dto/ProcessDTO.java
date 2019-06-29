@@ -36,7 +36,6 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
     private Integer sortHelperMetadata;
-    private boolean imageFolderInUse = false;
 
     /**
      * Get project.
@@ -343,24 +342,5 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
-    }
-
-    /**
-     * Get information if image folder is in use.
-     *
-     * @return true or false
-     */
-    public boolean isImageFolderInUse() {
-        return imageFolderInUse;
-    }
-
-    /**
-     * Set information if image folder is in use.
-     *
-     * @param imageFolderInUse
-     *            as boolean
-     */
-    public void setImageFolderInUse(boolean imageFolderInUse) {
-        this.imageFolderInUse = imageFolderInUse;
     }
 }

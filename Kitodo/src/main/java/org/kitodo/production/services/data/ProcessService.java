@@ -806,7 +806,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
 
-        processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
@@ -1412,23 +1411,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public boolean isImageFolderInUse(Process process) {
         for (Task task : process.getTasks()) {
-            if (task.getProcessingStatus() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if there is one task in edit mode, where the user has the rights to
-     * write to image folder.
-     *
-     * @param process
-     *            DTO object
-     * @return true or false
-     */
-    public boolean isImageFolderInUse(ProcessDTO process) {
-        for (TaskDTO task : process.getTasks()) {
             if (task.getProcessingStatus() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
                 return true;
             }
