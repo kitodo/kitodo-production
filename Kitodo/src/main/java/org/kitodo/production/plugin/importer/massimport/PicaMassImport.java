@@ -152,10 +152,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             boolean multivolue = false;
             LegacyDocStructHelperInterface logicalDS = digitalDocument.getLogicalDocStruct();
             LegacyDocStructHelperInterface child = null;
-            if (logicalDS.getDocStructType().getAnchorClass() != null) {
-                child = logicalDS.getAllChildren().get(0);
-                multivolue = true;
-            }
 
             readCurrentTitle(logicalDS);
             readIdentifier(child, logicalDS);
