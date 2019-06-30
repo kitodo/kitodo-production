@@ -93,7 +93,7 @@ public class Browser {
 
         if (!driverFile.exists()) {
             logger.debug(driverFile.getAbsolutePath() + " does not exist, providing chrome driver now");
-            WebDriverProvider.provideChromeDriver(CHROME_DRIVER_VERSION, DOWNLOAD_DIR, DRIVER_DIR);
+            WebDriverProvider.provideChromeDriver(DOWNLOAD_DIR, DRIVER_DIR);
         }
 
         ChromeDriverService service = new ChromeDriverService.Builder()
