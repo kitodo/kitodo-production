@@ -13,6 +13,8 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -35,6 +37,15 @@ abstract class EditPage<T> extends Page<T> {
         for (WebElement tableRow : tableRows) {
             if (Browser.getCellDataByRow(tableRow, 0).equals(title)) {
                 clickLinkOfTableRow(tableRow);
+
+                // Hold up a second…
+                try {
+                    Thread.sleep(1*1000);
+                } catch (InterruptedException e) {
+                    Logger logger = LogManager.getLogger(Browser.class);
+                    logger.error(e.getMessage());
+                }
+
                 Browser.closeDialog(dialog);
                 return;
             }
