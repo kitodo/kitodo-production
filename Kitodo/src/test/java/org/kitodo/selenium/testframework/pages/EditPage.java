@@ -44,7 +44,7 @@ abstract class EditPage<T> extends Page<T> {
                 try {
                     Thread.sleep(3 * 1000);
                 } catch (InterruptedException e) {
-                    Logger logger = LogManager.getLogger(Browser.class);
+                    Logger logger = LogManager.getLogger(EditPage.class);
                     logger.error(e.getMessage(), e);
                 }
 
