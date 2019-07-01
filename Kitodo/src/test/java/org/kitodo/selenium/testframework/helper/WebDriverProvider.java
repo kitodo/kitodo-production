@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -187,7 +188,9 @@ public class WebDriverProvider {
 
             logger.info("Latest Chrome Driver Release found: " + version);
 
-        } catch(Exception exception){
+        } catch (MalformedURLException exception) {
+            logger.error("Failed to fetch latest Chrome Driver Release");
+        } catch (IOException exception) {
             logger.error("Failed to fetch latest Chrome Driver Release");
         }
 
