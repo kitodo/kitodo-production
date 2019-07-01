@@ -45,11 +45,13 @@
 
         <xsl:variable name="recordIdentifier" select="kitodo:metadata[@name='CatalogIDDigital']"/>
 
-        <mods:titleInfo>
-            <mods:title>
-                <xsl:value-of select="$title"/>
-            </mods:title>
-        </mods:titleInfo>
+        <xsl:if test="$title">
+            <mods:titleInfo>
+                <mods:title>
+                    <xsl:value-of select="$title"/>
+                </mods:title>
+            </mods:titleInfo>
+        </xsl:if>
 
         <xsl:choose>
             <xsl:when test="$role='author'">
@@ -76,40 +78,58 @@
             </xsl:when>
         </xsl:choose>
 
-        <mods:originInfo eventType="publication">
-            <mods:place>
-                <mods:placeTerm type="text">
-                    <xsl:value-of select="$place"/>
-                </mods:placeTerm>
-                <mods:publisher>
-                    <xsl:value-of select="$publisher"/>
-                </mods:publisher>
-                <mods:dateIssued keyDate="yes" encoding="iso8601">
-                    <xsl:value-of select="$dateIssued"/>
-                </mods:dateIssued>
-            </mods:place>
-        </mods:originInfo>
+        <xsl:if test="$place or $publisher or $dateIssued">
+            <mods:originInfo eventType="publication">
+                <mods:place>
+                    <xsl:if test="$place">
+                        <mods:placeTerm type="text">
+                            <xsl:value-of select="$place"/>
+                        </mods:placeTerm>
+                    </xsl:if>
+                    <xsl:if test="$publisher">
+                        <mods:publisher>
+                            <xsl:value-of select="$publisher"/>
+                        </mods:publisher>
+                    </xsl:if>
+                    <xsl:if test="$dateIssued">
+                        <mods:dateIssued keyDate="yes" encoding="iso8601">
+                            <xsl:value-of select="$dateIssued"/>
+                        </mods:dateIssued>
+                    </xsl:if>
+                </mods:place>
+            </mods:originInfo>
+        </xsl:if>
 
-        <mods:physicalDescription>
-            <mods:extent>
-                <xsl:value-of select="$physicalDescription"/>
-            </mods:extent>
-        </mods:physicalDescription>
+        <xsl:if test="$physicalDescription">
+            <mods:physicalDescription>
+                <mods:extent>
+                    <xsl:value-of select="$physicalDescription"/>
+                </mods:extent>
+            </mods:physicalDescription>
+        </xsl:if>
 
-        <mods:location>
-            <mods:shelfLocator>
-                <xsl:value-of select="$shelfLocator"/>
-            </mods:shelfLocator>
-            <mods:url>
-                <xsl:value-of select="$url"/>
-            </mods:url>
-        </mods:location>
+        <xsl:if test="$shelfLocator or $url">
+            <mods:location>
+                <xsl:if test="$shelfLocator">
+                    <mods:shelfLocator>
+                        <xsl:value-of select="$shelfLocator"/>
+                    </mods:shelfLocator>
+                </xsl:if>
+                <xsl:if test="$url">
+                    <mods:url>
+                        <xsl:value-of select="$url"/>
+                    </mods:url>
+                </xsl:if>
+            </mods:location>
+        </xsl:if>
 
-        <mods:recordInfo>
-            <mods:recordIdentifier>
-                <xsl:value-of select="$recordIdentifier"/>
-            </mods:recordIdentifier>
-        </mods:recordInfo>
+        <xsl:if test="$recordIdentifier">
+            <mods:recordInfo>
+                <mods:recordIdentifier>
+                    <xsl:value-of select="$recordIdentifier"/>
+                </mods:recordIdentifier>
+            </mods:recordInfo>
+        </xsl:if>
     </xsl:template>
 
     <!-- pass-through rule -->
