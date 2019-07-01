@@ -525,7 +525,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    EXPORT_WITHOUT_TIME_LIMIT(new Parameter<>("exportWithoutTimeLimit", false)),
+    EXPORT_WITHOUT_TIME_LIMIT(new Parameter<>("exportWithoutTimeLimit", true)),
 
     /*
      * REMOTE SERVICES
