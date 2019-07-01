@@ -20,6 +20,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 abstract class EditPage<T> extends Page<T> {
 
@@ -40,7 +42,7 @@ abstract class EditPage<T> extends Page<T> {
 
                 // Hold up a second…
                 try {
-                    Thread.sleep(1 * 1000);
+                    Thread.sleep(3 * 1000);
                 } catch (InterruptedException e) {
                     Logger logger = LogManager.getLogger(Browser.class);
                     logger.error(e.getMessage());
@@ -55,6 +57,10 @@ abstract class EditPage<T> extends Page<T> {
 
     private void clickLinkOfTableRow(WebElement tableRow) {
         WebElement link = tableRow.findElement(By.tagName("a"));
+        
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
+        wait.until(ExpectedConditions.elementToBeClickable(link));
+
         link.click();
     }
 }
