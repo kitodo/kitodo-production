@@ -40,7 +40,7 @@ abstract class EditPage<T> extends Page<T> {
             if (Browser.getCellDataByRow(tableRow, 0).equals(title)) {
                 clickLinkOfTableRow(tableRow);
 
-                // Hold up a second…
+                // Hold up for some seconds…
                 try {
                     Thread.sleep(3 * 1000);
                 } catch (InterruptedException e) {
@@ -56,11 +56,10 @@ abstract class EditPage<T> extends Page<T> {
     }
 
     private void clickLinkOfTableRow(WebElement tableRow) {
-        WebElement link = tableRow.findElement(By.tagName("a"));
-        
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
-        wait.until(ExpectedConditions.elementToBeClickable(link));
 
-        link.click();
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
+        wait.until(ExpectedConditions.elementToBeClickable(tableRow.findElement(By.tagName("a"))));
+
+        tableRow.findElement(By.tagName("a")).click();
     }
 }
