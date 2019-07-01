@@ -880,22 +880,26 @@ div[data-entry=id],
   clip: rect(1px, 1px, 1px, 1px);
 }
 /* line 79, styles/modeler_custom.less */
+div[data-entry=separateStructure] {
+  padding-left: 15px;
+}
+/* line 83, styles/modeler_custom.less */
 .bpp-textfield input,
 .bpp-properties-panel [contenteditable] {
   padding-right: 20px !important;
   width: calc(100% - 28px) !important;
 }
-/* line 84, styles/modeler_custom.less */
+/* line 88, styles/modeler_custom.less */
 .modeler-zoom-controls {
   position: absolute;
   bottom: 10px;
   left: 10px;
 }
-/* line 90, styles/modeler_custom.less */
+/* line 94, styles/modeler_custom.less */
 .modeler-zoom-controls ul {
   list-style: none;
 }
-/* line 94, styles/modeler_custom.less */
+/* line 98, styles/modeler_custom.less */
 .modeler-zoom-controls button {
   background: #FAFAFA;
   border: solid 1px #CCC;
@@ -903,7 +907,7 @@ div[data-entry=id],
   padding: 10px;
   font-size: 1em;
 }
-/* line 102, styles/modeler_custom.less */
+/* line 106, styles/modeler_custom.less */
 .content {
   background-color: white;
 }
