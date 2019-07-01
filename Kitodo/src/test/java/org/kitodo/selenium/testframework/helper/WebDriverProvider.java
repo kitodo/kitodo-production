@@ -171,7 +171,7 @@ public class WebDriverProvider {
 
     private static String fetchLatestStableChromeDriverVersion() {
 
-        String version = null;
+        String version = "";
         try {
 
             URL url = new URL(CHROME_DRIVER_LATEST_RELEASE_URL);
