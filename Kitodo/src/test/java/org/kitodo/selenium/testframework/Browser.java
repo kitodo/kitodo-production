@@ -45,7 +45,6 @@ public class Browser {
     private static RemoteWebDriver webDriver;
     private static Actions actions;
     private static final String GECKO_DRIVER_VERSION = "0.19.1";
-    private static final String CHROME_DRIVER_VERSION = "2.40";
     private static boolean onTravis = false;
     private static BrowserType browserType = BrowserType.CHROME;
     private static final String USER_DIR = System.getProperty("user.dir");
