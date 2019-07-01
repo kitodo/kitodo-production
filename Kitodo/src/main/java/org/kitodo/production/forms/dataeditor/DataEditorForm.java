@@ -46,6 +46,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 
 @Named("DataEditorForm")
 @SessionScoped
@@ -247,25 +248,31 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     /**
      * Validate the structure and metadata.
+     *
+     * @return whether the validation was successful or not
      */
-    public void validate() {
+    public boolean validate() {
         try {
             ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece,
                 ruleset);
             State state = validationResult.getState();
             if (State.ERROR.equals(state)) {
-                Helper.setErrorMessage("dataEditor.validation.state.error");
+                Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
                 for (String message : validationResult.getResultMessages()) {
                     Helper.setErrorMessage(message);
                 }
+                return false;
             } else {
-                Helper.setMessage("dataEditor.validation.state.".concat(state.toString().toLowerCase()));
+                Helper.setMessage(Helper.getTranslation("dataEditor.validation.state.".concat(state.toString()
+                        .toLowerCase())));
                 for (String message : validationResult.getResultMessages()) {
                     Helper.setMessage(message);
                 }
+                return true;
             }
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return false;
         }
     }
 
@@ -275,20 +282,20 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return navigation target
      */
     public String save() {
-        try {
-            validate();
-            metadataPanel.preserve();
-            structurePanel.preserve();
-            ServiceManager.getProcessService().updateChildrenFromRootElement(process, workpiece.getRootElement());
+        metadataPanel.preserve();
+        structurePanel.preserve();
+        if (validate()) {
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
+                return close();
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                logger.error(e.getLocalizedMessage());
             }
-            return close();
-        } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException | DAOException
-                | DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
         }
+        PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
+        PrimeFaces.current().ajax().update("notifications");
+        return null;
     }
 
     /**

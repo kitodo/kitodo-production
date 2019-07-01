@@ -124,34 +124,35 @@ public class MetadataValidation implements MetadataValidationInterface {
         for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getRootElement(),
             IncludedStructuralElement::getChildren)
                 .collect(Collectors.toList())) {
-            StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(includedStructuralElement.getType(), null,
-                metadataLanguage);
-            results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                includedStructuralElement.getMetadata().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, includedStructuralElement.toString().concat(": "), translations));
-            results.add(checkForDetailsInTheMetadataRecursive(
-                includedStructuralElement.getMetadata().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, includedStructuralElement.toString().concat(": "), translations));
+            results.addAll(checkMetadataRules(includedStructuralElement.toString(), includedStructuralElement.getType(),
+                    includedStructuralElement.getMetadata(), ruleset, metadataLanguage, translations));
         }
 
-        for (MediaUnit mediaUnit : treeStream(workpiece.getMediaUnit(),
-            MediaUnit::getChildren)
+        for (MediaUnit mediaUnit : treeStream(workpiece.getMediaUnit(), MediaUnit::getChildren)
                 .collect(Collectors.toList())) {
-            StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(mediaUnit.getType(), null,
-                metadataLanguage);
-            results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                mediaUnit.getMetadata().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, mediaUnit.toString().concat(": "), translations));
-            results.add(checkForDetailsInTheMetadataRecursive(
-                mediaUnit.getMetadata().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, mediaUnit.toString().concat(": "), translations));
+            results.addAll(checkMetadataRules(mediaUnit.toString(), mediaUnit.getType(), mediaUnit.getMetadata(),
+                    ruleset, metadataLanguage, translations));
         }
 
         return merge(results);
+    }
+
+    private Collection<ValidationResult> checkMetadataRules(String elementString,
+                                                            String type,
+                                                            Collection<Metadata> metadata,
+                                                            RulesetManagementInterface ruleset,
+                                                            List<LanguageRange> metadataLanguage,
+                                                            Map<String, String> translations) {
+        Collection<ValidationResult> results = new ArrayList<>();
+        StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(type, null,
+                metadataLanguage);
+        results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(metadata.parallelStream().collect(
+                Collectors.toMap(Function.identity(), Metadata::getKey)),
+                divisionView, elementString.concat(": "), translations));
+        results.add(checkForDetailsInTheMetadataRecursive(metadata.parallelStream().collect(
+                Collectors.toMap(Function.identity(), Metadata::getKey)),
+                divisionView, elementString.concat(": "), translations));
+        return results;
     }
 
     /**
@@ -232,6 +233,7 @@ public class MetadataValidation implements MetadataValidationInterface {
     private static ValidationResult checkForMandatoryQuantitiesOfTheMetadataRecursive(
             Map<Metadata, String> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations) {
+        boolean error = false;
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
@@ -246,15 +248,15 @@ public class MetadataValidation implements MetadataValidationInterface {
             if (count == 0 && (min == 1 && max == 1)) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_MISSING),
                         Collections.singletonList(location + metadataView.getLabel())));
-                warning = true;
+                error = true;
             } else if (count < min) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_TOO_RARE),
                     Arrays.asList(location + metadataView.getLabel(), Integer.toString(count), Integer.toString(min))));
-                warning = true;
+                error = true;
             } else if (count > max) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_TOO_OFTEN),
                     Arrays.asList(location + metadataView.getLabel(), Integer.toString(count), Integer.toString(min))));
-                warning = true;
+                error = true;
             }
 
             if (metadataView instanceof ComplexMetadataViewInterface) {
@@ -277,7 +279,7 @@ public class MetadataValidation implements MetadataValidationInterface {
             }
         }
 
-        return new ValidationResult(warning ? State.WARNING : State.SUCCESS, messages);
+        return new ValidationResult(error ? State.ERROR : warning ? State.WARNING : State.SUCCESS, messages);
     }
 
     /**

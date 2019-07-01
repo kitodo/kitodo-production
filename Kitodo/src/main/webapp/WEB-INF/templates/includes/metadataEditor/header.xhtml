@@ -38,8 +38,9 @@
                          onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton value="#{msgs.validate}"
-                         action="#{DataEditorForm.validate}"
-                         update="metadataEditor"
+                         actionListener="#{DataEditorForm.validate}"
+                         oncomplete="setSizes();"
+                         update="error-messages"
                          icon="fa fa-check fa-lg"
                          iconPos="right"
                          style="margin-left: 16px;"
