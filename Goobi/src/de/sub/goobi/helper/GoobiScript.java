@@ -148,14 +148,14 @@ public class GoobiScript {
             case "exportDms":
                 exportDms(inProzesse, this.myParameters.get("exportImages"), true);
                 break;
-            case "export":
+            case "exportDmsCustomizedConfiguration":
                 exportDms(inProzesse, this.myParameters.get("exportImages"),
                           Boolean.valueOf(this.myParameters.get("exportOcr")));
                 break;
-            case "doit":
+            case "exportDMSMetadataOnly":
                 exportDms(inProzesse, "false", false);
                 break;
-            case "doit2":
+            case "exportDMSMetadataAndOcr":
                 exportDms(inProzesse, "false", true);
                 break;
             case "runscript":
@@ -184,7 +184,7 @@ public class GoobiScript {
                 break;
             default:
                 Helper.setFehlerMeldung("goobiScriptfield", "Unknown action",
-                                        " - use: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
+                                        " - use: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem, ...'");
                 return;
         }
 
