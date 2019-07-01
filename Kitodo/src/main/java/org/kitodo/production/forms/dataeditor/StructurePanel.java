@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -731,19 +732,29 @@ public class StructurePanel implements Serializable {
         StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
         StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
 
-        if (dropNode.getDataObject() instanceof IncludedStructuralElement
-                && dragNode.getDataObject() instanceof IncludedStructuralElement) {
-            checkLogicalDragDrop((IncludedStructuralElement) dragNode.getDataObject(),
-                    (IncludedStructuralElement) dropNode.getDataObject());
-        } else if ((dropNode.getDataObject()) instanceof MediaUnit && dropNode.getDataObject() instanceof MediaUnit) {
-            checkPhysicalDragDrop((MediaUnit) dragNode.getDataObject(), (MediaUnit) dropNode.getDataObject());
-        } else {
+
+        try {
+            if (dragNode.getDataObject() instanceof IncludedStructuralElement
+                    && dropNode.getDataObject() instanceof IncludedStructuralElement) {
+                checkLogicalDragDrop(dragNode, dropNode);
+            } else if (dragNode.getDataObject() instanceof MediaUnit
+                    && dropNode.getDataObject() instanceof MediaUnit) {
+                checkPhysicalDragDrop(dragNode, dropNode);
+            } else {
+                Helper.setErrorMessage("Unable to move element of type " + dragNode.getLabel() + " to element of type "
+                        + dropNode.getLabel());
+            }
+        } catch (ClassCastException exception) {
             Helper.setErrorMessage("Unable to move structure element!");
         }
     }
 
-    private void checkLogicalDragDrop(IncludedStructuralElement dragStructure,
-                                      IncludedStructuralElement dropStructure) {
+    private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode)
+            throws ClassCastException {
+
+        IncludedStructuralElement dragStructure = (IncludedStructuralElement) dragNode.getDataObject();
+        IncludedStructuralElement dropStructure = (IncludedStructuralElement) dropNode.getDataObject();
+
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
@@ -756,20 +767,25 @@ public class StructurePanel implements Serializable {
                     preserveLogical();
                     return;
                 } else {
-                    Helper.setErrorMessage("Parents of structure " + dragStructure.getType()
+                    Helper.setErrorMessage("Parents of structure " + dragNode.getLabel()
                             + " do not contain structure!");
                 }
             } else {
-                Helper.setErrorMessage("No parents of structure " + dragStructure.getType() + " found!");
+                Helper.setErrorMessage("No parents of structure " + dragNode.getLabel() + " found!");
             }
         } else {
-            Helper.setErrorMessage("Structure of type '" + dragStructure.getType()
-                    + "' NOT allowed as child of structure of type '" + dropStructure.getType() + "'! ");
+            Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
+                    Arrays.asList(dragNode.getLabel(), dropNode.getLabel())));
         }
         show();
     }
 
-    private void checkPhysicalDragDrop(MediaUnit dragUnit, MediaUnit dropUnit) {
+    private void checkPhysicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode)
+            throws ClassCastException {
+
+        MediaUnit dragUnit = (MediaUnit) dragNode.getDataObject();
+        MediaUnit dropUnit = (MediaUnit) dropNode.getDataObject();
+
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 dropUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 

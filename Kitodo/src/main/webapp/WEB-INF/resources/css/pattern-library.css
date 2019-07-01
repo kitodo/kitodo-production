@@ -1150,11 +1150,40 @@ Popup dialogs
 
 .alignTop45wide {
     vertical-align: top;
-    width: 45%
+    width: 45%;
 }
 
 .buttonColumn {
     vertical-align: center;
     width: 40px;
     padding: 0;
+}
+
+/* Messages */
+#error-messages > div.ui-corner-all {
+    border: 0;
+    border-radius: 0;
+    color: var(--pure-white);
+}
+
+#error-messages span.ui-icon-close {
+    background: none;
+}
+
+#error-messages span.ui-icon-close:before {
+    color: var(--pure-white);
+    content: "\f00d";
+    display: inherit;
+    font: normal normal normal large/1 FontAwesome;
+    text-indent: 0;
+}
+
+/* Info messages */
+#error-messages div.ui-messages-info {
+    background-color: var(--green);
+}
+
+/* Error messages */
+#error-messages div.ui-messages-error {
+    background-color: var(--orange);
 }
