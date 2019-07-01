@@ -215,14 +215,30 @@
                                             onclick="document.getElementById('goobiScriptfield').value='action:addShellScriptToStep \"steptitle:TITLE_STEP\" \"label:LABEL_FOR_SCRIPT\" \"script:PATH_TO_SCRIPT\"'" />
                                         <h:outputText styleClass="goobiScriptLink" value="setTaskProperty"
                                             onclick="document.getElementById('goobiScriptfield').value='action:setTaskProperty \"steptitle:TITLE_STEP\" property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'" />
-                                        <h:outputText styleClass="goobiScriptLink" value="tiffWriter"
-                                            onclick="document.getElementById('goobiScriptfield').value='action:tiffWriter'" />
                                          <h:outputText styleClass="goobiScriptLink" value="exportDms"
-                                            onclick="document.getElementById('goobiScriptfield').value='action:exportDms exportImages:false'" />
+                                            onclick="document.getElementById('goobiScriptfield').value='action:exportDms exportImages:true_OR_false'" />
                                         <h:outputText styleClass="goobiScriptLink" value="copyData"
                                             onclick="document.getElementById('goobiScriptfield').value='action:copyData <rule(s)>'" />
                                         <h:outputText styleClass="goobiScriptLink" value="rewriteProcessMetadata"
                                             onclick="document.getElementById('goobiScriptfield').value='action:rewriteProcessMetadata'" />
+                                    </htm:td>
+                                </htm:tr>
+                                <htm:tr>
+                                    <htm:td colspan="3">
+                                        <h:outputText styleClass="goobiScriptLink" value="exportDMSMetadataOnly"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:exportDMSMetadataOnly'"/>
+                                        <h:outputText styleClass="goobiScriptLink" value="exportDMSMetadataAndOcr"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:exportDMSMetadataAndOcr'"/>
+                                        <h:outputText styleClass="goobiScriptLink" value="exportDmsCustomizedConfiguration"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:exportDmsCustomizedConfiguration exportImages:true_OR_false exportOcr:true_OR_false'"/>
+                                        <h:outputText styleClass="goobiScriptLink" value="runscript"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:runscript \"stepname:TITLE_STEP\" \"script:SCRIPT_NAME\"'"/>
+                                        <h:outputText styleClass="goobiScriptLink" value="deleteProcess"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:deleteProcess contentOnly:true_OR_false'"/>
+                                        <h:outputText styleClass="goobiScriptLink" value="updateContentFiles"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:updateContentFiles'"/>
+                                        <h:outputText styleClass="goobiScriptLink" value="updateImagePath"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:updateImagePath'"/>
                                     </htm:td>
                                 </htm:tr>
                                 <htm:tr>
