@@ -672,10 +672,8 @@ public class ProzesskopieForm extends BaseForm {
             LegacyMetadataTypeHelper mdt = ProcessService.getMetadataType(this.prozessKopie, "pathimagefiles");
             List<? extends LegacyMetadataHelper> allImagePaths = digitalDocument.getPhysicalDocStruct()
                     .getAllMetadataByType(mdt);
-            if (Objects.nonNull(allImagePaths)) {
-                for (LegacyMetadataHelper metadata : allImagePaths) {
-                    digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
-                }
+            for (LegacyMetadataHelper metadata : allImagePaths) {
+                digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
             }
             LegacyMetadataHelper newMetadata = new LegacyMetadataHelper(mdt);
             String path = ServiceManager.getFileService().getImagesDirectory(this.prozessKopie)

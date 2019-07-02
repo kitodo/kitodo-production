@@ -161,7 +161,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             // reading ats
             LegacyMetadataTypeHelper atsType = prefs.getMetadataTypeByName("TSL_ATS");
             List<? extends LegacyMetadataHelper> mdList = logicalDS.getAllMetadataByType(atsType);
-            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+            if (!mdList.isEmpty()) {
                 LegacyMetadataHelper atstsl = mdList.get(0);
                 ats = atstsl.getValue();
             } else {
@@ -180,7 +180,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             LegacyMetadataTypeHelper identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
             mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
-            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+            if (!mdList.isEmpty()) {
                 String analog = mdList.get(0).getValue();
                 templateProperties.add(prepareProperty("Identifier", analog));
             }
@@ -188,7 +188,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             LegacyMetadataTypeHelper identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
             if (child != null) {
                 mdList = child.getAllMetadataByType(identifierType);
-                if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+                if (!mdList.isEmpty()) {
                     LegacyMetadataHelper identifier = mdList.get(0);
                     workpieceProperties.add(prepareProperty("Identifier Band", identifier.getValue()));
                 }
@@ -232,7 +232,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private void readCurrentTitle(LegacyDocStructHelperInterface logicalDS) {
         LegacyMetadataTypeHelper titleType = prefs.getMetadataTypeByName("TitleDocMain");
         List<? extends LegacyMetadataHelper> mdList = logicalDS.getAllMetadataByType(titleType);
-        if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+        if (!mdList.isEmpty()) {
             LegacyMetadataHelper title = mdList.get(0);
             currentTitle = title.getValue();
         }
@@ -250,7 +250,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         } else {
             mdList = logicalDS.getAllMetadataByType(identifierType);
         }
-        if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+        if (!mdList.isEmpty()) {
             LegacyMetadataHelper identifier = mdList.get(0);
             currentIdentifier = identifier.getValue();
         } else {
@@ -268,13 +268,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         if (child != null) {
             LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
             List<? extends LegacyMetadataHelper> mdList = child.getAllMetadataByType(mdt);
-            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+            if (!mdList.isEmpty()) {
                 LegacyMetadataHelper md = mdList.get(0);
                 volumeNumber = md.getValue();
             } else {
                 mdt = prefs.getMetadataTypeByName("DateIssuedSort");
                 mdList = child.getAllMetadataByType(mdt);
-                if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+                if (!mdList.isEmpty()) {
                     LegacyMetadataHelper md = mdList.get(0);
                     volumeNumber = md.getValue();
                 }
