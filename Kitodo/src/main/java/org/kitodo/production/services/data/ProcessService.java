@@ -2037,8 +2037,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         LegacyDocStructHelperInterface topElement = dd.getLogicalDocStruct();
 
         //if the top element does not have any image related, set them all
-        if (Objects.isNull(topElement.getAllToReferences("logical_physical"))
-                || topElement.getAllToReferences("logical_physical").isEmpty()) {
+        if (topElement.getAllToReferences("logical_physical").isEmpty()) {
             if (Objects.nonNull(dd.getPhysicalDocStruct()) && dd.getPhysicalDocStruct().getAllChildren().isEmpty()) {
                 Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
