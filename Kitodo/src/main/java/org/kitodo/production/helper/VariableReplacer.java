@@ -280,7 +280,7 @@ public class VariableReplacer {
             /* TopStruct und FirstChild ermitteln */
             LegacyDocStructHelperInterface topstruct = this.dd.getLogicalDocStruct();
             LegacyDocStructHelperInterface firstchildstruct = null;
-            if (Objects.nonNull(topstruct.getAllChildren()) && !topstruct.getAllChildren().isEmpty()) {
+            if (!topstruct.getAllChildren().isEmpty()) {
                 firstchildstruct = topstruct.getAllChildren().get(0);
             }
 

@@ -1913,10 +1913,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
 
         // run through all children of docStruct
-        if (Objects.nonNull(docStruct.getAllChildren())) {
-            for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
-                trimAllMetadata(child);
-            }
+        for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
+            trimAllMetadata(child);
         }
     }
 
@@ -2043,8 +2041,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         //if the top element does not have any image related, set them all
         if (Objects.isNull(topElement.getAllToReferences("logical_physical"))
                 || topElement.getAllToReferences("logical_physical").isEmpty()) {
-            if (Objects.nonNull(dd.getPhysicalDocStruct())
-                    && Objects.nonNull(dd.getPhysicalDocStruct().getAllChildren())) {
+            if (Objects.nonNull(dd.getPhysicalDocStruct()) && dd.getPhysicalDocStruct().getAllChildren().isEmpty()) {
                 Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");

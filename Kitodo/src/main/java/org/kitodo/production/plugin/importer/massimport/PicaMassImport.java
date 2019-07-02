@@ -209,9 +209,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 LegacyMetadataTypeHelper mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
                 LegacyDocStructHelperInterface topLogicalStruct = digitalDocument.getLogicalDocStruct();
                 List<LegacyDocStructHelperInterface> volumes = topLogicalStruct.getAllChildren();
-                if (volumes == null) {
-                    volumes = Collections.emptyList();
-                }
+
                 for (String collection : this.currentCollectionList) {
                     LegacyMetadataHelper mdCollection = new LegacyMetadataHelper(mdTypeCollection);
                     mdCollection.setStringValue(collection);

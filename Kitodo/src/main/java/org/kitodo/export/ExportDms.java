@@ -370,10 +370,8 @@ public class ExportDms extends ExportMets {
         }
 
         // run through all children of docstruct
-        if (Objects.nonNull(inStruct.getAllChildren())) {
-            for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
-                trimAllMetadata(child);
-            }
+        for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
+            trimAllMetadata(child);
         }
     }
 

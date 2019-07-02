@@ -191,9 +191,7 @@ public class MetadataPathSelector extends MetadataSelector {
     protected Iterable<MetadataSelector> findAll(LegacyDocStructHelperInterface logicalNode) {
         LinkedList<MetadataSelector> result = new LinkedList<>();
         List<LegacyDocStructHelperInterface> children = logicalNode.getAllChildren();
-        if (Objects.isNull(children)) {
-            children = Collections.emptyList();
-        }
+
         int lastChild = children.size() - 1;
         int count = 0;
         for (LegacyDocStructHelperInterface child : children) {
