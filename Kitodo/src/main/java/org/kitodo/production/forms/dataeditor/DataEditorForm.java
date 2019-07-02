@@ -290,7 +290,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 return close();
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                logger.error(e.getLocalizedMessage());
             }
         }
         PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
