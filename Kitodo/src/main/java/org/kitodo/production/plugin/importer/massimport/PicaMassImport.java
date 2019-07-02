@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -161,15 +160,15 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             // reading ats
             LegacyMetadataTypeHelper atsType = prefs.getMetadataTypeByName("TSL_ATS");
             List<? extends LegacyMetadataHelper> mdList = logicalDS.getAllMetadataByType(atsType);
-            if (!mdList.isEmpty()) {
-                LegacyMetadataHelper atstsl = mdList.get(0);
-                ats = atstsl.getValue();
-            } else {
+            if (mdList.isEmpty()) {
                 // generating ats
                 ats = createAtstsl(currentTitle, author);
                 LegacyMetadataHelper atstsl = new LegacyMetadataHelper(atsType);
                 atstsl.setStringValue(ats);
                 logicalDS.addMetadata(atstsl);
+            } else {
+                LegacyMetadataHelper atstsl = mdList.get(0);
+                ats = atstsl.getValue();
             }
 
             templateProperties.add(prepareProperty("Titel", currentTitle));
@@ -250,11 +249,11 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         } else {
             mdList = logicalDS.getAllMetadataByType(identifierType);
         }
-        if (!mdList.isEmpty()) {
+        if (mdList.isEmpty()) {
+            currentIdentifier = String.valueOf(System.currentTimeMillis());
+        } else {
             LegacyMetadataHelper identifier = mdList.get(0);
             currentIdentifier = identifier.getValue();
-        } else {
-            currentIdentifier = String.valueOf(System.currentTimeMillis());
         }
     }
 
@@ -268,16 +267,16 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         if (child != null) {
             LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
             List<? extends LegacyMetadataHelper> mdList = child.getAllMetadataByType(mdt);
-            if (!mdList.isEmpty()) {
-                LegacyMetadataHelper md = mdList.get(0);
-                volumeNumber = md.getValue();
-            } else {
+            if (mdList.isEmpty()) {
                 mdt = prefs.getMetadataTypeByName("DateIssuedSort");
                 mdList = child.getAllMetadataByType(mdt);
                 if (!mdList.isEmpty()) {
                     LegacyMetadataHelper md = mdList.get(0);
                     volumeNumber = md.getValue();
                 }
+            } else {
+                LegacyMetadataHelper md = mdList.get(0);
+                volumeNumber = md.getValue();
             }
         }
     }
