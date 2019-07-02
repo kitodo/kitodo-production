@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -650,7 +649,7 @@ public class ProzesskopieForm extends BaseForm {
 
     private void insertCollections() {
         LegacyDocStructHelperInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-        if (!colStruct.getAllChildren().isEmpty()) {
+        if (Objects.nonNull(colStruct) && !colStruct.getAllChildren().isEmpty()) {
             try {
                 addCollections(colStruct);
                 // falls ein erstes Kind vorhanden ist, sind die Collectionen
@@ -778,9 +777,7 @@ public class ProzesskopieForm extends BaseForm {
     private boolean isAddable(LegacyDocStructHelperInterface enricher, String enrichable) {
         boolean addable = false;
         List<LegacyMetadataTypeHelper> addableTypesNotNull = enricher.getAddableMetadataTypes();
-        if (Objects.isNull(addableTypesNotNull)) {
-            addableTypesNotNull = Collections.emptyList();
-        }
+
         for (LegacyMetadataTypeHelper addableMetadata : addableTypesNotNull) {
             if (addableMetadata.getName().equals(enrichable)) {
                 addable = true;
