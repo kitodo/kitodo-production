@@ -118,6 +118,8 @@ public class Converter {
         task.setTypeAutomatic(kitodoTask.isTypeAutomatic());
         task.setTypeImagesRead(kitodoTask.isTypeImagesRead());
         task.setTypeImagesWrite(kitodoTask.isTypeImagesWrite());
+        task.setTypeGenerateImages(kitodoTask.isTypeGenerateImages());
+        task.setTypeValidateImages(kitodoTask.isTypeValidateImages());
         task.setTypeExportDMS(kitodoTask.isTypeExportDms());
         task.setTypeAcceptClose(kitodoTask.isTypeAcceptClose());
         task.setTypeCloseVerify(kitodoTask.isTypeCloseVerify());
