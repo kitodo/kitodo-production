@@ -722,9 +722,7 @@ public class ProzesskopieForm extends BaseForm {
 
             // save higher level metadata for lower enrichment
             List<LegacyMetadataHelper> allMetadata = enricher.getAllMetadata();
-            if (Objects.isNull(allMetadata)) {
-                allMetadata = Collections.emptyList();
-            }
+
             iterateOverAllMetadata(higherLevelMetadata, allMetadata);
 
             // enrich children with inherited metadata
@@ -761,9 +759,7 @@ public class ProzesskopieForm extends BaseForm {
 
             for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue().entrySet()) {
                 List<LegacyMetadataHelper> amNotNull = enricher.getAllMetadata();
-                if (Objects.isNull(amNotNull)) {
-                    amNotNull = Collections.emptyList();
-                }
+
                 boolean breakMiddle = false;
                 for (LegacyMetadataHelper existentMetadata : amNotNull) {
                     if (existentMetadata.getMetadataType().getName().equals(enrichable)
@@ -974,10 +970,8 @@ public class ProzesskopieForm extends BaseForm {
 
     private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct,
             LegacyDocStructHelperInterface newDocStruct) {
-        if (Objects.nonNull(oldDocStruct.getAllMetadata())) {
-            for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
-                newDocStruct.addMetadata(md);
-            }
+        for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
+            newDocStruct.addMetadata(md);
         }
     }
 

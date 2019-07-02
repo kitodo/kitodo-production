@@ -1904,11 +1904,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     private void trimAllMetadata(LegacyDocStructHelperInterface docStruct) {
         // trim all metadata values
-        if (Objects.nonNull(docStruct.getAllMetadata())) {
-            for (LegacyMetadataHelper md : docStruct.getAllMetadata()) {
-                if (Objects.nonNull(md.getValue())) {
-                    md.setStringValue(md.getValue().trim());
-                }
+        for (LegacyMetadataHelper md : docStruct.getAllMetadata()) {
+            if (Objects.nonNull(md.getValue())) {
+                md.setStringValue(md.getValue().trim());
             }
         }
 
