@@ -254,17 +254,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
         String filter = "";
-        if (Objects.nonNull(filters) && filters.entrySet().size() > 0) {
-            if (filters.entrySet().size() > 1) {
-                logger.error("Filter map contains to many entries (only 0 or 1 allowed)!");
-            } else {
-                LinkedList<Object> filterList = new LinkedList<Object>(filters.values());
-                if (filterList.get(0) instanceof String) {
-                    filter = (String) filterList.get(0);
-                } else {
-                    logger.error("Given filter is not a String!");
-                }
-            }
+        try {
+            filter = ServiceManager.getFilterService().parsePrimeFacesFilter(filters);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
         }
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, this.showClosedProcesses,
                 this.showInactiveProjects);

@@ -14,7 +14,6 @@ package org.kitodo.production.services.data;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -188,17 +187,10 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
         String filter = "";
-        if (Objects.nonNull(filters) && filters.entrySet().size() > 0) {
-            if (filters.entrySet().size() > 1) {
-                logger.error("Filter map contains to many entries (only 0 or 1 allowed)!");
-            } else {
-                LinkedList<Object> filterList = new LinkedList<Object>(filters.values());
-                if (filterList.get(0) instanceof String) {
-                    filter = (String) filterList.get(0);
-                } else {
-                    logger.error("Given filter is not a String!");
-                }
-            }
+        try {
+            filter = ServiceManager.getFilterService().parsePrimeFacesFilter(filters);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
         }
         return findByQuery(createUserTaskQuery(filter), getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
