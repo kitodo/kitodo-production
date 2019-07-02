@@ -123,6 +123,13 @@
                         </p:row>
                         <p:row>
                             <p:column>
+                                <p:outputLabel for="validateFolder" value="#{msgs['editFolderDialog.validateFolder']}"/>
+                                <p:selectBooleanCheckbox id="validateFolder" styleClass="switch input"
+                                                         value="#{ProjectForm.myFolder.validateFolder}">
+                                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
                                 <p:outputLabel for="copyFolder" value="#{msgs['editFolderDialog.copyFolder']}"/>
                                 <p:selectBooleanCheckbox id="copyFolder" styleClass="switch input"
                                                          value="#{ProjectForm.myFolder.copyFolder}">

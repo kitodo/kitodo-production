@@ -182,6 +182,12 @@ public class Folder extends BaseBean {
     }
 
     /**
+     * Whether the folder is included in validation.
+     */
+    @Column(name = "validateFolder")
+    private boolean validateFolder = true;
+
+    /**
      * Returns the number of DPI to change the resolution of the contents of the
      * folder form the content of another folder, if any. If absent, the
      * function is disabled.
@@ -361,6 +367,15 @@ public class Folder extends BaseBean {
     }
 
     /**
+     * Returns whether the folder is validate folder.
+     *
+     * @return whether the folder is validate folder
+     */
+    public boolean isValidateFolder() {
+        return validateFolder;
+    }
+
+    /**
      * Sets whether the folder is copied on DMS import.
      *
      * @param copyFolder
@@ -489,6 +504,16 @@ public class Folder extends BaseBean {
      */
     public void setUrlStructure(String urlStructure) {
         this.urlStructure = urlStructure;
+    }
+
+    /**
+     * Sets whether the folder is included in validation.
+     *
+     * @param validateFolder
+     *            whether the folder is included in validation
+     */
+    public void setValidateFolder(boolean validateFolder) {
+        this.validateFolder = validateFolder;
     }
 
     @Override
