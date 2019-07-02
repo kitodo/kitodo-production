@@ -36,7 +36,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.dataformat.MetsService;
 
 /**
  * Service for schema manipulations.
