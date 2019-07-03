@@ -251,7 +251,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private int getYear(LegacyMetsModsDigitalDocumentHelper act) {
         List<LegacyDocStructHelperInterface> children = act.getLogicalDocStruct().getAllChildren();
-        if (Objects.isNull(children)) {
+        if (children.isEmpty()) {
             throw new IllegalArgumentException(
                     "Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of "
                             + "type " + yearLevelName + " is required.");

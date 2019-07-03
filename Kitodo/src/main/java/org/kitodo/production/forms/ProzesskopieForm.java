@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -650,8 +649,7 @@ public class ProzesskopieForm extends BaseForm {
 
     private void insertCollections() {
         LegacyDocStructHelperInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-        if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
-                && !colStruct.getAllChildren().isEmpty()) {
+        if (Objects.nonNull(colStruct) && !colStruct.getAllChildren().isEmpty()) {
             try {
                 addCollections(colStruct);
                 // falls ein erstes Kind vorhanden ist, sind die Collectionen
@@ -673,10 +671,8 @@ public class ProzesskopieForm extends BaseForm {
             LegacyMetadataTypeHelper mdt = ProcessService.getMetadataType(this.prozessKopie, "pathimagefiles");
             List<? extends LegacyMetadataHelper> allImagePaths = digitalDocument.getPhysicalDocStruct()
                     .getAllMetadataByType(mdt);
-            if (Objects.nonNull(allImagePaths)) {
-                for (LegacyMetadataHelper metadata : allImagePaths) {
-                    digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
-                }
+            for (LegacyMetadataHelper metadata : allImagePaths) {
+                digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
             }
             LegacyMetadataHelper newMetadata = new LegacyMetadataHelper(mdt);
             String path = ServiceManager.getFileService().getImagesDirectory(this.prozessKopie)
@@ -720,19 +716,16 @@ public class ProzesskopieForm extends BaseForm {
         if (ConfigCore.getBooleanParameter(ParameterCore.USE_METADATA_ENRICHMENT)) {
             LegacyDocStructHelperInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
             Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata = new HashMap<>();
-            while (Objects.nonNull(enricher.getAllChildren())) {
-                // save higher level metadata for lower enrichment
-                List<LegacyMetadataHelper> allMetadata = enricher.getAllMetadata();
-                if (Objects.isNull(allMetadata)) {
-                    allMetadata = Collections.emptyList();
-                }
-                iterateOverAllMetadata(higherLevelMetadata, allMetadata);
 
-                // enrich children with inherited metadata
-                for (LegacyDocStructHelperInterface nextChild : enricher.getAllChildren()) {
-                    enricher = nextChild;
-                    iterateOverHigherLevelMetadata(enricher, higherLevelMetadata);
-                }
+            // save higher level metadata for lower enrichment
+            List<LegacyMetadataHelper> allMetadata = enricher.getAllMetadata();
+
+            iterateOverAllMetadata(higherLevelMetadata, allMetadata);
+
+            // enrich children with inherited metadata
+            for (LegacyDocStructHelperInterface nextChild : enricher.getAllChildren()) {
+                enricher = nextChild;
+                iterateOverHigherLevelMetadata(enricher, higherLevelMetadata);
             }
         }
     }
@@ -763,9 +756,7 @@ public class ProzesskopieForm extends BaseForm {
 
             for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue().entrySet()) {
                 List<LegacyMetadataHelper> amNotNull = enricher.getAllMetadata();
-                if (Objects.isNull(amNotNull)) {
-                    amNotNull = Collections.emptyList();
-                }
+
                 boolean breakMiddle = false;
                 for (LegacyMetadataHelper existentMetadata : amNotNull) {
                     if (existentMetadata.getMetadataType().getName().equals(enrichable)
@@ -786,9 +777,7 @@ public class ProzesskopieForm extends BaseForm {
     private boolean isAddable(LegacyDocStructHelperInterface enricher, String enrichable) {
         boolean addable = false;
         List<LegacyMetadataTypeHelper> addableTypesNotNull = enricher.getAddableMetadataTypes();
-        if (Objects.isNull(addableTypesNotNull)) {
-            addableTypesNotNull = Collections.emptyList();
-        }
+
         for (LegacyMetadataTypeHelper addableMetadata : addableTypesNotNull) {
             if (addableMetadata.getName().equals(enrichable)) {
                 addable = true;
@@ -949,20 +938,20 @@ public class ProzesskopieForm extends BaseForm {
                     LegacyDocStructHelperInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
                     LegacyDocStructHelperInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
                     // both have no children
-                    if (oldLogicalDocstruct.getAllChildren() == null && newLogicalDocstruct.getAllChildren() == null) {
+                    if (oldLogicalDocstruct.getAllChildren().isEmpty() && newLogicalDocstruct.getAllChildren().isEmpty()) {
                         copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                    } else if (oldLogicalDocstruct.getAllChildren() != null
-                            && newLogicalDocstruct.getAllChildren() == null) {
+                    } else if (!oldLogicalDocstruct.getAllChildren().isEmpty()
+                            && newLogicalDocstruct.getAllChildren().isEmpty()) {
                         // old has a child, new has no child
                         copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                         copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
-                    } else if (oldLogicalDocstruct.getAllChildren() == null
-                            && newLogicalDocstruct.getAllChildren() != null) {
+                    } else if (oldLogicalDocstruct.getAllChildren().isEmpty()
+                            && !newLogicalDocstruct.getAllChildren().isEmpty()) {
                         // new has a child, but old not
                         copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                         throw new UnsupportedOperationException("Dead code pending removal");
-                    } else if (oldLogicalDocstruct.getAllChildren() != null
-                            && newLogicalDocstruct.getAllChildren() != null) {
+                    } else if (!oldLogicalDocstruct.getAllChildren().isEmpty()
+                            && !newLogicalDocstruct.getAllChildren().isEmpty()) {
                         // both have children
                         copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                         copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
@@ -976,10 +965,8 @@ public class ProzesskopieForm extends BaseForm {
 
     private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct,
             LegacyDocStructHelperInterface newDocStruct) {
-        if (Objects.nonNull(oldDocStruct.getAllMetadata())) {
-            for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
-                newDocStruct.addMetadata(md);
-            }
+        for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
+            newDocStruct.addMetadata(md);
         }
     }
 

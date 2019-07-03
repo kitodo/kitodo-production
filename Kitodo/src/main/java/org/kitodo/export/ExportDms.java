@@ -361,19 +361,15 @@ public class ExportDms extends ExportMets {
      */
     private void trimAllMetadata(LegacyDocStructHelperInterface inStruct) {
         // trim all metadata values
-        if (Objects.nonNull(inStruct.getAllMetadata())) {
-            for (LegacyMetadataHelper md : inStruct.getAllMetadata()) {
-                if (Objects.nonNull(md.getValue())) {
-                    md.setStringValue(md.getValue().trim());
-                }
+        for (LegacyMetadataHelper md : inStruct.getAllMetadata()) {
+            if (Objects.nonNull(md.getValue())) {
+                md.setStringValue(md.getValue().trim());
             }
         }
 
         // run through all children of docstruct
-        if (Objects.nonNull(inStruct.getAllChildren())) {
-            for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
-                trimAllMetadata(child);
-            }
+        for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
+            trimAllMetadata(child);
         }
     }
 

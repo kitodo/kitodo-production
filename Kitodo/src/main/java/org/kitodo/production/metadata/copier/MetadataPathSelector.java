@@ -11,7 +11,6 @@
 
 package org.kitodo.production.metadata.copier;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -191,9 +190,7 @@ public class MetadataPathSelector extends MetadataSelector {
     protected Iterable<MetadataSelector> findAll(LegacyDocStructHelperInterface logicalNode) {
         LinkedList<MetadataSelector> result = new LinkedList<>();
         List<LegacyDocStructHelperInterface> children = logicalNode.getAllChildren();
-        if (Objects.isNull(children)) {
-            children = Collections.emptyList();
-        }
+
         int lastChild = children.size() - 1;
         int count = 0;
         for (LegacyDocStructHelperInterface child : children) {
@@ -287,9 +284,7 @@ public class MetadataPathSelector extends MetadataSelector {
     private LegacyDocStructHelperInterface getSubnode(LegacyDocStructHelperInterface logicalNode) {
         List<LegacyDocStructHelperInterface> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
             ANY_METADATA_TYPE_SYMBOL);
-        if (children == null) {
-            children = Collections.emptyList();
-        }
+
         switch (children.size()) {
             case 0:
                 return null;
