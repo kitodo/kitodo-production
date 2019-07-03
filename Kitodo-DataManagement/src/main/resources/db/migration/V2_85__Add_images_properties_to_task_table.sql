@@ -22,7 +22,7 @@ SET SQL_SAFE_UPDATES = 0;
 -- 3. Set default value for this columns
 --
 
-UPDATE task SET typeGenerateImages = 0, separateStructure = 0 WHERE id IS NOT NULL;
+UPDATE task SET typeGenerateImages = 0, typeValidateImages = 0 WHERE id IS NOT NULL;
 
 -- 4. Switch on safe updates
 --
