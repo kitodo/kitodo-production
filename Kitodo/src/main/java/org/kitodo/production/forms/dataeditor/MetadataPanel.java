@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
@@ -28,6 +30,8 @@ import org.kitodo.production.helper.Helper;
  * Backing bean for the meta-data panel of the meta-data editor.
  */
 public class MetadataPanel implements Serializable {
+
+    private static final Logger logger = LogManager.getLogger(MetadataPanel.class);
 
     private String addMetadataKeySelectedItem = "";
 
@@ -186,9 +190,13 @@ public class MetadataPanel implements Serializable {
         logicalMetadataTable.pasteClick();
     }
 
-    void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        this.preserveLogical();
-        this.preservePhysical();
+    void preserve() {
+        try {
+            this.preserveLogical();
+            this.preservePhysical();
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            logger.info(e.getMessage());
+        }
     }
 
     void preserveLogical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
