@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -725,51 +726,66 @@ public class StructurePanel implements Serializable {
         Object dropNodeObject = dropTreeNode.getData();
 
         if (!(dragNodeObject instanceof StructureTreeNode) || !(dropNodeObject instanceof StructureTreeNode)) {
-            Helper.setErrorMessage("Unable to move structure element!");
+            Helper.setErrorMessage(Helper.getTranslation("dataEditor.unableToMoveError"));
             return;
         }
         StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
         StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
 
-        if (dropNode.getDataObject() instanceof IncludedStructuralElement
-                && dragNode.getDataObject() instanceof IncludedStructuralElement) {
-            checkLogicalDragDrop((IncludedStructuralElement) dragNode.getDataObject(),
-                    (IncludedStructuralElement) dropNode.getDataObject());
-        } else if ((dropNode.getDataObject()) instanceof MediaUnit && dropNode.getDataObject() instanceof MediaUnit) {
-            checkPhysicalDragDrop((MediaUnit) dragNode.getDataObject(), (MediaUnit) dropNode.getDataObject());
-        } else {
-            Helper.setErrorMessage("Unable to move structure element!");
+
+        try {
+            if (dragNode.getDataObject() instanceof IncludedStructuralElement
+                    && dropNode.getDataObject() instanceof IncludedStructuralElement) {
+                checkLogicalDragDrop(dragNode, dropNode);
+            } else if (dragNode.getDataObject() instanceof MediaUnit
+                    && dropNode.getDataObject() instanceof MediaUnit) {
+                checkPhysicalDragDrop(dragNode, dropNode);
+            } else {
+                Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(
+                        dragNode.getLabel(), dropNode.getLabel())));
+            }
+        } catch (ClassCastException exception) {
+            Helper.setErrorMessage(Helper.getTranslation("dataEditor.unableToMoveError"));
         }
     }
 
-    private void checkLogicalDragDrop(IncludedStructuralElement dragStructure,
-                                      IncludedStructuralElement dropStructure) {
+    private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
+
+        IncludedStructuralElement dragStructure = (IncludedStructuralElement) dragNode.getDataObject();
+        IncludedStructuralElement dropStructure = (IncludedStructuralElement) dropNode.getDataObject();
+
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
         LinkedList<IncludedStructuralElement> dragParents;
         if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())) {
-            dragParents = MetadataEditor.getAncestorsOfStructure(dragStructure, dataEditor.getWorkpiece().getRootElement());
+            dragParents = MetadataEditor.getAncestorsOfStructure(dragStructure,
+                    dataEditor.getWorkpiece().getRootElement());
             if (!dragParents.isEmpty()) {
                 IncludedStructuralElement parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
                     preserveLogical();
                     return;
                 } else {
-                    Helper.setErrorMessage("Parents of structure " + dragStructure.getType()
-                            + " do not contain structure!");
+                    Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
+                            Collections.singletonList(dragNode.getLabel())));
                 }
             } else {
-                Helper.setErrorMessage("No parents of structure " + dragStructure.getType() + " found!");
+                Helper.setErrorMessage(Helper.getTranslation("dataEditor.noParentsError",
+                        Collections.singletonList(dragNode.getLabel())));
             }
         } else {
-            Helper.setErrorMessage("Structure of type '" + dragStructure.getType()
-                    + "' NOT allowed as child of structure of type '" + dropStructure.getType() + "'! ");
+            Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
+                    Arrays.asList(dragNode.getLabel(), dropNode.getLabel())));
         }
         show();
     }
 
-    private void checkPhysicalDragDrop(MediaUnit dragUnit, MediaUnit dropUnit) {
+    private void checkPhysicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
+
+        MediaUnit dragUnit = (MediaUnit) dragNode.getDataObject();
+        MediaUnit dropUnit = (MediaUnit) dropNode.getDataObject();
+
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 dropUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
@@ -777,20 +793,21 @@ public class StructurePanel implements Serializable {
         if (divisionView.getAllowedSubstructuralElements().containsKey(dragUnit.getType())) {
             dragParents = MetadataEditor.getAncestorsOfMediaUnit(dragUnit, dataEditor.getWorkpiece().getMediaUnit());
             if (dragParents.isEmpty()) {
-                Helper.setErrorMessage("No parents of media unit " + dragUnit.getType() + " found!");
+                Helper.setErrorMessage(Helper.getTranslation("dataEditor.noParentsError",
+                        Collections.singletonList(dragNode.getLabel())));
             } else {
                 MediaUnit parentUnit = dragParents.get(dragParents.size() - 1);
                 if (parentUnit.getChildren().contains(dragUnit)) {
                     preservePhysical();
                     return;
                 } else {
-                    Helper.setErrorMessage("Parents of media unit " + dragUnit.getType() + " do not contain media "
-                            + "unit!");
+                    Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
+                            Collections.singletonList(dragUnit.getType())));
                 }
             }
         } else {
-            Helper.setErrorMessage("Media unit of type '" + dragUnit.getType()
-                    + "' NOT allowed as child of media unit of type '" + dropUnit.getType() + "!");
+            Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
+                    Arrays.asList(dragNode.getLabel(), dropNode.getLabel())));
         }
         show();
     }
