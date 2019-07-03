@@ -28,6 +28,8 @@ public class KitodoTask {
     private boolean typeExportDms;
     private boolean typeImagesRead;
     private boolean typeImagesWrite;
+    private boolean typeGenerateImages;
+    private boolean typeValidateImages;
     private boolean typeAcceptClose;
     private boolean typeCloseVerify;
     private boolean batchStep;
@@ -56,6 +58,8 @@ public class KitodoTask {
         this.typeExportDms = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportDMS"));
         this.typeImagesRead = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesRead"));
         this.typeImagesWrite = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesWrite"));
+        this.typeGenerateImages = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeGenerateImages"));
+        this.typeValidateImages = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeValidateImages"));
         this.typeAcceptClose = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAcceptClose"));
         this.typeCloseVerify = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeCloseVerify"));
         this.batchStep = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "batchStep"));
@@ -176,6 +180,24 @@ public class KitodoTask {
      */
     public boolean isTypeImagesWrite() {
         return typeImagesWrite;
+    }
+
+    /**
+     * Get typeGenerateImages.
+     *
+     * @return value of typeGenerateImages
+     */
+    public boolean isTypeGenerateImages() {
+        return typeGenerateImages;
+    }
+
+    /**
+     * Get typeValidateImages.
+     *
+     * @return value of typeValidateImages
+     */
+    public boolean isTypeValidateImages() {
+        return typeValidateImages;
     }
 
     /**

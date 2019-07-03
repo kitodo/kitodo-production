@@ -88,6 +88,12 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeImagesWrite")
     private boolean typeImagesWrite = false;
 
+    @Column(name = "typeGenerateImages")
+    private boolean typeGenerateImages = false;
+
+    @Column(name = "typeValidateImages")
+    private boolean typeValidateImages = false;
+
     @Column(name = "typeExportDms")
     private boolean typeExportDMS = false;
 
@@ -197,6 +203,8 @@ public class Task extends BaseIndexedBean {
         this.typeImagesWrite = templateTask.isTypeImagesWrite();
         this.typeMetadata = templateTask.isTypeMetadata();
         this.separateStructure = templateTask.isSeparateStructure();
+        this.typeGenerateImages = templateTask.isTypeGenerateImages();
+        this.typeValidateImages = templateTask.isTypeValidateImages();
         this.repeatOnCorrection = templateTask.isRepeatOnCorrection();
         this.processingStatus = templateTask.getProcessingStatus();
         this.homeDirectory = templateTask.getHomeDirectory();
@@ -480,6 +488,42 @@ public class Task extends BaseIndexedBean {
         if (typeImagesWrite) {
             this.typeImagesRead = true;
         }
+    }
+
+    /**
+     * Get type generate images.
+     *
+     * @return value of typeGenerateImages
+     */
+    public boolean isTypeGenerateImages() {
+        return typeGenerateImages;
+    }
+
+    /**
+     * Set type generate images.
+     *
+     * @param generateImages as boolean
+     */
+    public void setTypeGenerateImages(boolean generateImages) {
+        this.typeGenerateImages = generateImages;
+    }
+
+    /**
+     * Get type validate images.
+     *
+     * @return value of typeValidateImages
+     */
+    public boolean isTypeValidateImages() {
+        return typeValidateImages;
+    }
+
+    /**
+     * Set type validate images.
+     *
+     * @param validateImages as boolean
+     */
+    public void setTypeValidateImages(boolean validateImages) {
+        this.typeValidateImages = validateImages;
     }
 
     public boolean isTypeExportDMS() {
