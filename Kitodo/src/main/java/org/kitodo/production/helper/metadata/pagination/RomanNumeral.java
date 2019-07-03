@@ -87,55 +87,39 @@ public class RomanNumeral implements Fragment {
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {
                 case 'c':
-                    if (result >= NUMERAL_D) {
-                        result -= NUMERAL_C;
-                    } else {
-                        result += NUMERAL_C;
-                    }
+                    result += updateResult(result, NUMERAL_D, NUMERAL_C);
                     break;
                 case 'd':
-                    if (result >= NUMERAL_M) {
-                        result -= NUMERAL_D;
-                    } else {
-                        result += NUMERAL_D;
-                    }
+                    result += updateResult(result, NUMERAL_M, NUMERAL_D);
                     break;
                 case 'i':
-                    if (result >= NUMERAL_V) {
-                        result -= NUMERAL_I;
-                    } else {
-                        result += NUMERAL_I;
-                    }
+                    result += updateResult(result, NUMERAL_V, NUMERAL_I);
                     break;
                 case 'l':
-                    if (result >= NUMERAL_C) {
-                        result -= NUMERAL_L;
-                    } else {
-                        result += NUMERAL_L;
-                    }
+                    result += updateResult(result, NUMERAL_C, NUMERAL_L);
                     break;
                 case 'm':
                     result += NUMERAL_M;
                     break;
                 case 'v':
-                    if (result >= NUMERAL_X) {
-                        result -= NUMERAL_V;
-                    } else {
-                        result += NUMERAL_V;
-                    }
+                    result += updateResult(result, NUMERAL_X, NUMERAL_V);
                     break;
                 case 'x':
-                    if (result >= NUMERAL_L) {
-                        result -= NUMERAL_X;
-                    } else {
-                        result += NUMERAL_X;
-                    }
+                    result += updateResult(result, NUMERAL_L, NUMERAL_X);
                     break;
                 default:
                     throw new NumberFormatException("For string: " + value);
             }
         }
         return result;
+    }
+
+    private static int updateResult(int result, int threshold, int difference) {
+        if (result >= threshold) {
+            return -difference;
+        } else {
+            return difference;
+        }
     }
 
     /**
