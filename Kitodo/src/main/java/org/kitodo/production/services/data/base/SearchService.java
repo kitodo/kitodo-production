@@ -784,9 +784,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     protected List<String> findDistinctValues(QueryBuilder query, String field, boolean sort, long size) throws DataException {
         List<String> distinctValues = new ArrayList<>();
         try {
-            Aggregations jsonObject = searcher.aggregateDocuments(query,
-                AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort))
-                        .size(Math.toIntExact(size)));
+            Aggregations jsonObject;
+            if (size > 0) {
+                jsonObject = searcher.aggregateDocuments(query,
+                        AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort))
+                                .size(Math.toIntExact(size)));
+            } else {
+                jsonObject = searcher.aggregateDocuments(query,
+                        AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort)));
+            }
             ParsedStringTerms stringTerms = jsonObject.get(field);
             List<? extends Terms.Bucket> buckets = stringTerms.getBuckets();
             for (Terms.Bucket bucket : buckets) {
