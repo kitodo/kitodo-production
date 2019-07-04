@@ -129,14 +129,14 @@ public class WebDav implements Serializable {
         try {
             destination = userService.getHomeDirectory(user);
             if (user.isWithMassDownload()) {
-                destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
-                destination = Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri();
+                String destinationPath = new File(destination).getPath();
+                destination = Paths.get(destinationPath, process.getProject().getTitle()).toUri();
+                destinationPath = new File(destination).getPath().replaceAll(" ", "__");
+                destination = Paths.get(destinationPath).toUri();
                 if (!fileService.fileExist(destination)
                         && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
-                    String param = new File(destination).getPath().replaceAll(" ", "__");
-                    Helper.setErrorMessage("errorMassDownloadProjectCreation", new Object[] {param });
-                    logger.error("Can not create project directory {}",
-                            Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
+                    Helper.setErrorMessage("errorMassDownloadProjectCreation", new Object[] {destinationPath });
+                    logger.error("Can not create project directory {}", Paths.get(destinationPath).toUri());
                     return;
                 }
                 destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
