@@ -149,28 +149,6 @@ public class Task extends BaseIndexedBean {
                     @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_task_x_user_role_id")) })
     private List<Role> roles;
 
-    /**
-     * This field contains information about folders whose contents are to be
-     * generated in this task.
-     */
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "contentFolders_task_x_folder",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_contentFolders_task_x_folder_task_id")),
-        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
-    )
-    private List<Folder> contentFolders;
-
-    /**
-     * This field contains information about folders whose contents are to be
-     * validated in this task.
-     */
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "validationFolders_task_x_folder",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_validationFolders_task_x_folder_task_id")),
-        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
-    )
-    private List<Folder> validationFolders;
-
     @Transient
     private String localizedTitle;
 
@@ -215,9 +193,6 @@ public class Task extends BaseIndexedBean {
 
         // necessary to create new ArrayList in other case session problem!
         this.roles = new ArrayList<>(templateTask.getRoles());
-
-        // necessary to create new ArrayList in other case session problem!
-        this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
     }
 
     public String getTitle() {
@@ -426,22 +401,13 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     public List<Folder> getContentFolders() {
-        return typeGenerateImages
+        List<Folder> contentFolders = typeGenerateImages
                 ? process.getProject().getFolders().parallelStream()
                         .filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
                                 || folder.getImageScale().isPresent() || folder.getImageSize().isPresent())
                         .collect(Collectors.toList())
                 : Collections.emptyList();
-    }
-
-    /**
-     * Set list of folders whose contents are to be generated.
-     *
-     * @param contentFolders
-     *            as list
-     */
-    public void setContentFolders(List<Folder> contentFolders) {
-        this.contentFolders = contentFolders;
+        return contentFolders;
     }
 
     /**
@@ -450,21 +416,12 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     public List<Folder> getValidationFolders() {
-        return typeValidateImages
+        List<Folder> validationFolders = typeValidateImages
                 ? process.getProject().getFolders().parallelStream()
                         .filter(Folder::isValidateFolder)
                         .collect(Collectors.toList())
                 : Collections.emptyList();
-    }
-
-    /**
-     * Set list of folders whose contents are to be validated.
-     *
-     * @param validationFolders
-     *            as list
-     */
-    public void setValidationFolders(List<Folder> validationFolders) {
-        this.validationFolders = validationFolders;
+        return validationFolders;
     }
 
     public boolean isTypeImagesRead() {
