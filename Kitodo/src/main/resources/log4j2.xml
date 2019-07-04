@@ -24,7 +24,7 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="de.sub.goobi, de.unigoettingen.sub.search.opac, org.goobi, org.kitodo" level="error">
+        <Logger name="de.unigoettingen.sub.search.opac, org.goobi, org.kitodo" level="error">
             <AppenderRef ref="LOGFILE" level="error" />
         </Logger>
         <Root level="error">
