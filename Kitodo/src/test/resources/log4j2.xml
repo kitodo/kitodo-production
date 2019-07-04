@@ -18,6 +18,9 @@
         </Console>
     </Appenders>
     <Loggers>
+        <Logger name="de.unigoettingen.sub.search.opac, org.goobi, org.kitodo" level="debug">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
         <Root level="error">
             <AppenderRef ref="STDOUT"/>
         </Root>
