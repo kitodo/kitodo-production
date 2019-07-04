@@ -12,9 +12,11 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -424,11 +426,12 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     public List<Folder> getContentFolders() {
-        initialize(new TaskDAO(), this.contentFolders);
-        if (Objects.isNull(this.contentFolders)) {
-            this.contentFolders = new ArrayList<>();
-        }
-        return contentFolders;
+        return typeGenerateImages
+                ? process.getProject().getFolders().parallelStream()
+                        .filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
+                                || folder.getImageScale().isPresent() || folder.getImageSize().isPresent())
+                        .collect(Collectors.toList())
+                : Collections.emptyList();
     }
 
     /**
@@ -447,11 +450,11 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     public List<Folder> getValidationFolders() {
-        initialize(new TaskDAO(), this.validationFolders);
-        if (Objects.isNull(this.validationFolders)) {
-            this.validationFolders = new ArrayList<>();
-        }
-        return validationFolders;
+        return typeValidateImages
+                ? process.getProject().getFolders().parallelStream()
+                        .filter(Folder::isValidateFolder)
+                        .collect(Collectors.toList())
+                : Collections.emptyList();
     }
 
     /**
