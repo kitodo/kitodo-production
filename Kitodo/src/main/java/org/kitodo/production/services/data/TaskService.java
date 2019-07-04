@@ -259,8 +259,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *
      * @return a list of titles
      */
-    public List<String> findTaskTitlesDistinct() throws DataException {
-        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true);
+    public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
+        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
     }
 
     @Override
@@ -482,7 +482,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Make the necessary changes when performing an automatic task.
-     * 
+     *
      * @param task
      *            ongoing task
      * @param automatic
@@ -760,7 +760,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * The function determines, from projects, the folders whose contents can be
      * generated automatically.
-     * 
+     *
      * <p>
      * This feature is needed once by the task in the template to determine
      * which folders show buttons in the interface to turn content creation on
@@ -768,7 +768,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * to determine if there is at least one folder to be created in the task,
      * because then action links for generating are displayed, and not
      * otherwise.
-     * 
+     *
      * <p>
      * To create content automatically, a folder must be defined as the template
      * folder in the project. The templates serve to create the contents in the
@@ -777,7 +777,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * after a reconfiguration, this is still set as otherwise they would
      * overwrite themselves. Also, contents can not be created in folders where
      * nothing is configured. The folders that are left over can be created.
-     * 
+     *
      * @param projects
      *            an object stream of projects that may have folders defined
      *            whose contents can be auto-generated
@@ -791,7 +791,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Only lets projects pass where a source folder is selected.
-     * 
+     *
      * @param projects
      *            the unpurified stream of projects
      * @return a stream only of projects that define a source to generate images
@@ -819,7 +819,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Removes all folders to generate which do not have anything to generate
      * configured.
-     * 
+     *
      * @param folders
      *            a stream of folders
      * @return a stream only of those folders where an image generation module

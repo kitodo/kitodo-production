@@ -28,6 +28,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.FilterString;
@@ -107,7 +108,7 @@ public class SearchForm {
         try {
             workpiecePropertiesTitlesDistinct = ServiceManager.getPropertyService()
                     .findWorkpiecePropertiesTitlesDistinct();
-        } catch (DataException e) {
+        } catch (DataException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.masterpiecePropertyTitles = workpiecePropertiesTitlesDistinct;
@@ -136,7 +137,7 @@ public class SearchForm {
         List<String> processPropertiesTitlesDistinct = new ArrayList<>();
         try {
             processPropertiesTitlesDistinct = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
-        } catch (DataException e) {
+        } catch (DataException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.processPropertyTitles = processPropertiesTitlesDistinct;
@@ -156,7 +157,7 @@ public class SearchForm {
         List<String> taskTitles = new ArrayList<>();
         try {
             taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
-        } catch (DataException e) {
+        } catch (DataException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.stepTitles = taskTitles;
@@ -170,7 +171,7 @@ public class SearchForm {
         try {
             templatePropertiesTitlesDistinct = ServiceManager.getPropertyService()
                     .findTemplatePropertiesTitlesDistinct();
-        } catch (DataException e) {
+        } catch (DataException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.templatePropertyTitles = templatePropertiesTitlesDistinct;

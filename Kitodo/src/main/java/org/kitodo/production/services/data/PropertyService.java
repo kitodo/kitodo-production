@@ -115,7 +115,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *
      * @return a list of titles.
      */
-    public List<String> findWorkpiecePropertiesTitlesDistinct() throws DataException {
+    public List<String> findWorkpiecePropertiesTitlesDistinct() throws DataException, DAOException {
         return findDistinctTitles("workpiece");
     }
 
@@ -124,7 +124,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *
      * @return a list of titles.
      */
-    public List<String> findTemplatePropertiesTitlesDistinct() throws DataException {
+    public List<String> findTemplatePropertiesTitlesDistinct() throws DataException, DAOException {
         return findDistinctTitles("template");
     }
 
@@ -133,12 +133,12 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *
      * @return a list of titles.
      */
-    public List<String> findProcessPropertiesTitlesDistinct() throws DataException {
+    public List<String> findProcessPropertiesTitlesDistinct() throws DataException, DAOException {
         return findDistinctTitles("process");
     }
 
-    private List<String> findDistinctTitles(String type) throws DataException {
-        return findDistinctValues(getQueryForType(type), "title.keyword", true);
+    private List<String> findDistinctTitles(String type) throws DataException, DAOException {
+        return findDistinctValues(getQueryForType(type), "title.keyword", true, countDatabaseRows());
     }
 
     private QueryBuilder getQueryForType(String type) {
@@ -221,7 +221,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
 
     /**
      * Transfer property for duplication.
-     * 
+     *
      * @param property
      *            as Property object
      * @return duplicated property as Property object

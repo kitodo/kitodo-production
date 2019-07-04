@@ -38,6 +38,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.kitodo.data.database.beans.BaseBean;
@@ -777,13 +778,19 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            by which aggregation is going to be performed
      * @param sort
      *            asc true or false
+     * @param size
+     *            number of rows returned by query
      * @return sorted list of distinct values
      */
-    protected List<String> findDistinctValues(QueryBuilder query, String field, boolean sort) throws DataException {
+    protected List<String> findDistinctValues(QueryBuilder query, String field, boolean sort, long size) throws DataException {
         List<String> distinctValues = new ArrayList<>();
         try {
-            Aggregations jsonObject = searcher.aggregateDocuments(query,
-                AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort)));
+            TermsAggregationBuilder termsAggregation = AggregationBuilders.terms(field).field(field)
+                    .order(Terms.Order.aggregation("_term", sort));
+            if (size > 0) {
+                termsAggregation.size(Math.toIntExact(size));
+            }
+            Aggregations jsonObject = searcher.aggregateDocuments(query, termsAggregation);
             ParsedStringTerms stringTerms = jsonObject.get(field);
             List<? extends Terms.Bucket> buckets = stringTerms.getBuckets();
             for (Terms.Bucket bucket : buckets) {
