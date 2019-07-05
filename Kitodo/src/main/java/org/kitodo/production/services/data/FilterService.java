@@ -1059,25 +1059,19 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *      a Map containing only one String value
      * @return
      *      the only Entry's value as java.lang.String
-     * @throws IllegalArgumentException
-     *      when the passed Map contains more than one Entry or when the Entry does not contain a value of type String
-     *
      */
-    String parsePrimeFacesFilter(Map filters) throws IllegalArgumentException {
-        if (Objects.nonNull(filters) && filters.entrySet().size() > 0) {
-            if (filters.entrySet().size() > 1) {
-                throw new IllegalArgumentException("Filter map contains to many entries (only 0 or 1 allowed)!");
+    String parsePrimeFacesFilter(Map filters) {
+        if (Objects.nonNull(filters) && filters.entrySet().size() == 1) {
+            Map.Entry filter = (Map.Entry) filters.entrySet().stream().findAny().get();
+            if (filter.getValue() instanceof String) {
+                return (String) filter.getValue();
             } else {
-                List<Object> filterList = new ArrayList<Object>(filters.values());
-                if (filterList.get(0) instanceof String) {
-                    return (String) filterList.get(0);
-                } else {
-                    throw new IllegalArgumentException("Given filter is not a String!");
-                }
+                logger.warn("Given filter is not a String. Ignoring filter.");
             }
-        } else {
-            return "";
+        } else if (Objects.nonNull(filters) && filters.entrySet().size() > 1) {
+            logger.warn("Filter map contains to many entries (only 0 or 1 allowed). Ignoring filter map.");
         }
+        return "";
     }
 
 
