@@ -855,24 +855,6 @@ public class FileService {
     }
 
     /**
-     * Gets the URI to the temporal directory.
-     *
-     * @return the URI to the temporal directory.
-     */
-    public URI getTemporaryDirectory() {
-        return ConfigCore.getUriParameter(ParameterCore.DIR_TEMP);
-    }
-
-    /**
-     * Gets the URI to the users directory.
-     *
-     * @return the URI to the users directory.
-     */
-    public URI getUsersDirectory() {
-        return ConfigCore.getUriParameter(ParameterCore.DIR_USERS);
-    }
-
-    /**
      * Searches for new media and adds them to the media list of the workpiece,
      * if any are found.
      *
