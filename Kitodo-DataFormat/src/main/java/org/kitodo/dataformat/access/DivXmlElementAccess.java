@@ -115,12 +115,33 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
         if (Objects.nonNull(fileXmlElementAccesses)) {
             for (FileXmlElementAccess fileXmlElementAccess : fileXmlElementAccesses) {
-                if (Objects.nonNull(fileXmlElementAccess)) {
+                if (Objects.nonNull(fileXmlElementAccess)
+                    && !fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), mediaUnitsMap)) {
                     super.getViews().add(new AreaXmlElementAccess(fileXmlElementAccess).getView());
                 }
             }
         }
         super.setLink(MptrXmlElementAccess.getLinkFromDiv(div));
+    }
+
+    private boolean fileXmlElementAccessIsLinkedToChildren(FileXmlElementAccess fileXmlElementAccess,
+                                                           List<DivType> divs,
+                                                           Map<String, Set<FileXmlElementAccess>> mediaUnitsMap) {
+        if (divs.size() == 0) {
+            return false;
+        }
+        boolean test = false;
+        for (DivType div : divs) {
+            Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
+            if (Objects.nonNull(fileXmlElementAccesses) && fileXmlElementAccesses.contains(fileXmlElementAccess)) {
+                return true;
+            }
+            if (div.getDiv().size() > 0
+                    && fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), mediaUnitsMap)) {
+                test = true;
+            }
+        }
+        return test;
     }
 
     /**
