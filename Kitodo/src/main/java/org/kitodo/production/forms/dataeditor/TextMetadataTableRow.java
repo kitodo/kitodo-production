@@ -118,7 +118,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
             try {
                 date = new SimpleDateFormat("yyyy-mm-dd").parse(getValue());
             } catch (ParseException e) {
-                logger.error(e.getLocalizedMessage());
+                logger.error(e.getLocalizedMessage(), e);
             }
         }
         return date;

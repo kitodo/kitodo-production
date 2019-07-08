@@ -210,12 +210,11 @@ public class StructurePanel implements Serializable {
     private TreeNode getMatchingTreeNode(TreeNode parent, MediaUnit mediaUnit) {
         TreeNode matchingTreeNode = null;
         for (TreeNode treeNode : parent.getChildren()) {
-            if (Objects.nonNull(treeNode.getData()) && treeNode.getData() instanceof StructureTreeNode) {
+            if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
                 StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-                if (Objects.nonNull(structureTreeNode.getDataObject()) && structureTreeNode.getDataObject() instanceof MediaUnit) {
+                if (structureTreeNode.getDataObject() instanceof MediaUnit) {
                     MediaUnit currentMediaUnit = (MediaUnit) structureTreeNode.getDataObject();
                     if (Objects.nonNull(currentMediaUnit.getDivId())
-                            && Objects.nonNull(mediaUnit.getDivId())
                             && currentMediaUnit.getDivId().equals(mediaUnit.getDivId())) {
                         matchingTreeNode = treeNode;
                         break;
