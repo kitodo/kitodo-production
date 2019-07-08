@@ -82,7 +82,12 @@
                                     binding="#{structuredThumbnail}">
                             <p:panel id="structuredPagePanel">
                                 <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
-                                               update="structureTreeForm:logicalTree structureTreeForm:physicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
+                                               update="@this
+                                                       @(.active.thumbnail)
+                                                       structureTreeForm:logicalTree
+                                                       structureTreeForm:physicalTree
+                                                       metadataAccordion:logicalMetadataWrapperPanel
+                                                       imagePreviewForm:olWrapper">
                                     <h:panelGroup class="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                         class="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
@@ -109,7 +114,8 @@
                                      for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
                                      hoverStyleClass="media-stripe-hover">
                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                    update="imagePreviewForm, structureTreeForm:structureWrapperPanel"/>
+                                    update="imagePreviewForm
+                                            structureTreeForm:logicalTree"/>
                         </p:droppable>
                     </p:dataList>
 
@@ -130,7 +136,12 @@
                             <h:panelGroup id="unstructuredMediaPanel">
                                 <p:commandLink id="updateSelectedUnstructuredMediaLink"
                                                action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
-                                               update="structureTreeForm:physicalTree structureTreeForm:logicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
+                                               update="@this
+                                                       @(.active.thumbnail)
+                                                       structureTreeForm:logicalTree
+                                                       structureTreeForm:physicalTree
+                                                       metadataAccordion:logicalMetadataWrapperPanel
+                                                       imagePreviewForm:olWrapper">
                                     <h:panelGroup layout="block"
                                                   styleClass="thumbnail-container">
                                         <p:outputPanel deferred="true"
@@ -175,7 +186,10 @@
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
                         <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
-                                       update="@(.active.thumbnail) @this imagePreviewForm:olWrapper structureTreeForm:physicalTree">
+                                       update="@this
+                                               @(.active.thumbnail)
+                                               structureTreeForm:physicalTree
+                                               imagePreviewForm:olWrapper">
                             <h:panelGroup layout="block" styleClass="thumbnail-container">
                                 <p:outputPanel deferred="true"
                                                deferredMode="visible">
@@ -210,7 +224,9 @@
                                            var="media">
                                     <h:panelGroup layout="block">
                                         <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
-                                                       update="imagePreviewForm galleryHeadingWrapper structureTreeForm:physicalTree"
+                                                       update="imagePreviewForm
+                                                               galleryHeadingWrapper
+                                                               structureTreeForm:physicalTree"
                                                        oncomplete="checkScrollPosition()">
                                             <h:panelGroup layout="block" styleClass="thumbnail-container">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"

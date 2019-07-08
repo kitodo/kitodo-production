@@ -34,10 +34,15 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{logicalNode.treeLogicalSelect}"
-                    update="structureTreeForm:physicalTree,metadataAccordion:logicalMetadataWrapperPanel,@(.thumbnail),imagePreviewForm:olWrapper"/>
+                    update="@(.thumbnail)
+                            structureTreeForm:physicalTree
+                            metadataAccordion:logicalMetadataWrapperPanel
+                            imagePreviewForm:olWrapper"/>
             <p:ajax event="dragdrop"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
-                    update="structureTreeForm:logicalTree,metadataAccordion:logicalMetadataWrapperPanel,galleryWrapperPanel"/>
+                    update="structureTreeForm:logicalTree
+                            metadataAccordion:logicalMetadataWrapperPanel
+                            galleryWrapperPanel"/>
             <p:ajax event="collapse"
                     listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
             <p:ajax event="expand"
@@ -66,7 +71,10 @@
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
                         action="#{DataEditorForm.deleteStructure()}"
-                        update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,galleryWrapperPanel"/>
+                        update="structureTreeForm:logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
         </p:contextMenu>
 
         <!-- Physical Tree -->
@@ -89,10 +97,15 @@
                     dragdropScope="physicalTree">
                 <p:ajax event="select"
                         listener="#{physicalNode.treePhysicalSelect}"
-                        update="structureTreeForm:logicalTree,metadataAccordion:physicalMetadataWrapperPanel,@(.thumbnail),imagePreviewForm:olWrapper"/>
+                        update="@(.thumbnail)
+                                structureTreeForm:logicalTree
+                                metadataAccordion:physicalMetadataWrapperPanel
+                                imagePreviewForm:olWrapper"/>
                 <p:ajax event="dragdrop"
                         listener="#{DataEditorForm.structurePanel.onDragDrop}"
-                        update="structureTreeForm:physicalTree,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
+                        update="structureTreeForm:physicalTree
+                                metadataAccordion:physicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
                 <p:ajax event="collapse"
                         listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
                 <p:ajax event="expand"
@@ -121,7 +134,10 @@
                             action="#{DataEditorForm.deleteMediaUnit()}"
                             onclick="$('#loadingScreen').show()"
                             oncomplete="$('#loadingScreen').hide()"
-                            update="structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
+                            update="structureTreeForm:physicalTree
+                                    paginationForm:paginationWrapperPanel
+                                    metadataAccordion:physicalMetadataWrapperPanel
+                                    galleryWrapperPanel"/>
             </p:contextMenu>
         </h:panelGroup>
     </p:panel>

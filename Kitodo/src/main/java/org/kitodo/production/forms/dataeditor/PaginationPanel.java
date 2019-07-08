@@ -330,7 +330,7 @@ public class PaginationPanel {
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem,
                 paginationStartValue, fictitiousCheckboxChecked, selectPaginationSeparatorSelectedItem);
         Paginator paginator = new Paginator(initializer);
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnits();
         if (selectPaginationScopeSelectedItem) {
             for (int i = paginationSelectionSelectedItems.get(0); i < mediaUnits.size(); i++) {
                 mediaUnits.get(i).setOrderlabel(paginator.next());
