@@ -36,8 +36,8 @@ public class MetsServiceIT {
         // METS file has 183 associated images
         assertEquals(183, workpiece.getMediaUnits().size());
 
-        // all pages are linked to the root element
-        assertEquals(workpiece.getMediaUnits().size(), workpiece.getRootElement().getViews().size());
+        // METS file has 17 unstructured images
+        assertEquals(17, workpiece.getRootElement().getViews().size());
 
         // root node has 16 children
         assertEquals(16, workpiece.getRootElement().getChildren().size());
