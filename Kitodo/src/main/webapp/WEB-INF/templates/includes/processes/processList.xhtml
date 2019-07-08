@@ -69,11 +69,22 @@
                     <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
+
+                <!-- if there is more than one metadata editor task "INWORK", display "select current task" dialog -->
+                <p:commandLink id="openTaskSelectionDialogLink"
+                               title="Select current task"
+                               oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and DataEditorForm.getCurrentTaskOptions(process.id).size() gt 1}">
+                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                </p:commandLink>
+
+                <!-- else, open metadata editor directly -->
                 <h:commandLink id="readXML"
                                action="#{DataEditorForm.open(process.id, 'processes')}"
                                title="#{msgs.metadataEdit}"
                                actionListener="#{CommentForm.setProcessId(process.id)}"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and DataEditorForm.getCurrentTaskOptions(process.id).size() eq 1}">
+                    <f:setPropertyActionListener value="#{DataEditorForm.getCurrentTaskOptions(process.id).get(0)}" target="#{DataEditorForm.currentTask}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                 </h:commandLink>
 

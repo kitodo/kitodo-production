@@ -62,8 +62,21 @@
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
 
-                <h:commandLink id="readXML" action="#{DataEditorForm.open(process.id, 'processList')}" title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                <!-- if there is more than one metadata editor task "INWORK", display "select current task" dialog -->
+                <p:commandLink id="openTaskSelectionDialogLink"
+                               title="Select current task"
+                               oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and DataEditorForm.getCurrentTaskOptions(process.id).size() gt 1}">
+                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                </p:commandLink>
+
+                <!-- else, open metadata editor directly -->
+                <h:commandLink id="readXML"
+                               action="#{DataEditorForm.open(process.id, 'processes')}"
+                               title="#{msgs.metadataEdit}"
+                               actionListener="#{CommentForm.setProcessId(process.id)}"
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and DataEditorForm.getCurrentTaskOptions(process.id).size() eq 1}">
+                    <f:setPropertyActionListener value="#{DataEditorForm.getCurrentTaskOptions(process.id).get(0)}" target="#{DataEditorForm.currentTask}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                 </h:commandLink>
 
@@ -156,4 +169,9 @@
         <p:menuitem value="#{msgs.startPage}" url="desktop.jsf"/>
         <p:menuitem  value="#{msgs.searchResult}"/>
     </ui:define>
+
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/selectCurrentTask.xhtml"/>
+    </ui:define>
+
 </ui:composition>

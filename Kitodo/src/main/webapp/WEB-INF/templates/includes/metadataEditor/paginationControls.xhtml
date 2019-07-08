@@ -38,13 +38,6 @@
                          disabled="#{readOnly}"
                          icon="fa fa-list-ol fa-sm"
                          iconPos="right"/>
-        <p:selectBooleanCheckbox id="separateMediaSwitch"
-                                 styleClass="switch"
-                                 immediate="true"
-                                 title="#{msgs.physical} #{msgs.structureData}"
-                                 value="#{DataEditorForm.structurePanel.separateMedia}">
-            <p:ajax oncomplete="showStructure()"/>
-        </p:selectBooleanCheckbox>
     </ui:fragment>
 
 </ui:composition>

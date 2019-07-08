@@ -63,12 +63,6 @@ public class StructurePanel implements Serializable {
 
     private TreeNode selectedPhysicalNode;
 
-    /**
-     * Whether the media shall be shown separately in a second tree. If false,
-     * the media—if linked—will be merged shown within the structure tree.
-     */
-    private Boolean separateMedia = Boolean.FALSE;
-
     private IncludedStructuralElement structure;
 
     /**
@@ -348,9 +342,7 @@ public class StructurePanel implements Serializable {
         this.structure = dataEditor.getWorkpiece().getRootElement();
         Pair<LinkedList<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
         this.logicalTrees = result.getLeft();
-        if (separateMedia != null) {
-            this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit());
-        }
+        this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit());
         this.selectedLogicalNode = logicalTrees.getLast().getChildren().get(0);
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
@@ -411,7 +403,7 @@ public class StructurePanel implements Serializable {
             viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
         }
 
-        if (Boolean.FALSE.equals(separateMedia)) {
+        if (Boolean.FALSE.equals(this.isSeparateMedia())) {
             String page = Helper.getTranslation("page").concat(" ");
             for (View view : structure.getViews()) {
                 if (!viewsShowingOnAChild.contains(view)
@@ -635,7 +627,7 @@ public class StructurePanel implements Serializable {
     }
 
     void updatePhysicalNodeSelection(TreeNode treeNode) {
-        if (this.separateMedia) {
+        if (this.isSeparateMedia()) {
             if (Objects.nonNull(previouslySelectedPhysicalNode)) {
                 previouslySelectedPhysicalNode.setSelected(false);
             }
@@ -670,7 +662,7 @@ public class StructurePanel implements Serializable {
         if (Objects.nonNull(logicalTrees)) {
             GalleryStripe matchingGalleryStripe = this.dataEditor.getGalleryPanel().getLogicalStructureOfMedia(galleryMediaContent);
             if (Objects.nonNull(matchingGalleryStripe) && Objects.nonNull(matchingGalleryStripe.getStructure())) {
-                if (this.separateMedia) {
+                if (this.isSeparateMedia()) {
                     TreeNode selectedLogicalTreeNode =
                             updateLogicalNodeSelectionRecursive(matchingGalleryStripe.getStructure(),
                                 logicalTrees.getLast());
@@ -857,10 +849,11 @@ public class StructurePanel implements Serializable {
     }
 
     public boolean isSeparateMedia() {
-        return this.separateMedia;
+        return Objects.nonNull(this.dataEditor.getCurrentTask())
+                && this.dataEditor.getCurrentTask().isSeparateStructure();
     }
 
     public void setSeparateMedia(boolean separateMedia) {
-        this.separateMedia = separateMedia;
+        this.dataEditor.getCurrentTask().setSeparateStructure(separateMedia);
     }
 }
