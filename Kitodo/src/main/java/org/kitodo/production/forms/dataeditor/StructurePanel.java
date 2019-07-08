@@ -377,10 +377,13 @@ public class StructurePanel implements Serializable {
         if (Boolean.FALSE.equals(separateMedia)) {
             String page = Helper.getTranslation("page").concat(" ");
             for (View view : structure.getViews()) {
-                if (!viewsShowingOnAChild.contains(view)
-                        && Objects.nonNull(view.getMediaUnit())
-                        && Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
-                    addTreeNode(page.concat(view.getMediaUnit().getOrderlabel()), false, false, view, parent);
+                if (!viewsShowingOnAChild.contains(view) && Objects.nonNull(view.getMediaUnit())) {
+                    if (Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
+                        addTreeNode(page.concat(view.getMediaUnit().getOrderlabel()), false, false, view, parent);
+                    } else {
+                        addTreeNode(page, false, false, view, parent);
+                    }
+
                     viewsShowingOnAChild.add(view);
                 }
             }
@@ -719,34 +722,75 @@ public class StructurePanel implements Serializable {
      */
     public void onDragDrop(TreeDragDropEvent event) {
 
-        TreeNode dragTreeNode = event.getDragNode();
-        TreeNode dropTreeNode = event.getDropNode();
-
-        Object dragNodeObject = dragTreeNode.getData();
-        Object dropNodeObject = dropTreeNode.getData();
-
-        if (!(dragNodeObject instanceof StructureTreeNode) || !(dropNodeObject instanceof StructureTreeNode)) {
-            Helper.setErrorMessage(Helper.getTranslation("dataEditor.unableToMoveError"));
-            return;
-        }
-        StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
-        StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
-
+        Object dragNodeObject = event.getDragNode().getData();
+        Object dropNodeObject = event.getDropNode().getData();
 
         try {
+            StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
+            StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
             if (dragNode.getDataObject() instanceof IncludedStructuralElement
                     && dropNode.getDataObject() instanceof IncludedStructuralElement) {
                 checkLogicalDragDrop(dragNode, dropNode);
             } else if (dragNode.getDataObject() instanceof MediaUnit
                     && dropNode.getDataObject() instanceof MediaUnit) {
                 checkPhysicalDragDrop(dragNode, dropNode);
+            } else if (dragNode.getDataObject() instanceof  View && dropNode.getDataObject()
+                    instanceof IncludedStructuralElement) {
+                TreeNode dragParent = event.getDragNode().getParent();
+                if (dragParent.getData() instanceof StructureTreeNode) {
+                    StructureTreeNode dragParentTreeNode = (StructureTreeNode) dragParent.getData();
+                    if (dragParentTreeNode.getDataObject() instanceof IncludedStructuralElement) {
+                        View view = (View) dragNode.getDataObject();
+                        IncludedStructuralElement previousParent;
+                        if (dataEditor.getWorkpiece().getRootElement().getViews().contains(view)) {
+                            previousParent = dataEditor.getWorkpiece().getRootElement();
+                        } else {
+                            previousParent = getPageStructure(view, dataEditor.getWorkpiece().getRootElement());
+                        }
+                        if (Objects.nonNull(previousParent)) {
+                            IncludedStructuralElement element = (IncludedStructuralElement) dropNode.getDataObject();
+                            List<View> newViews = new LinkedList<>(element.getViews());
+                            // TODO: decide whether the order of pages inside an element should be changeable!
+                            newViews.add(event.getDropIndex(), view);
+                            element.getViews().clear();
+                            element.getViews().addAll(newViews);
+                            previousParent.getViews().remove(view);
+                            this.dataEditor.getGalleryPanel().updateStripes();
+                            return;
+                        }
+                    }
+                }
             } else {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(
                         dragNode.getLabel(), dropNode.getLabel())));
             }
         } catch (ClassCastException exception) {
-            Helper.setErrorMessage(Helper.getTranslation("dataEditor.unableToMoveError"));
+            logger.error(exception.getLocalizedMessage());
         }
+        Helper.setErrorMessage(Helper.getTranslation("dataEditor.unableToMoveError"));
+        show();
+    }
+
+    /**
+     * Determine the IncludedStructuralElement to which the given View is assigned.
+     *
+     * @param view
+     *          View for which the IncludedStructuralElement is determined
+     * @return the IncludedStructuralElement to which the given View is assigned
+     */
+    private IncludedStructuralElement getPageStructure(View view, IncludedStructuralElement parent) {
+        IncludedStructuralElement resultElement = null;
+        for (IncludedStructuralElement child : parent.getChildren()) {
+            if (child.getViews().contains(view)) {
+                resultElement = child;
+            } else {
+                resultElement =  getPageStructure(view, child);
+            }
+            if (Objects.nonNull(resultElement)) {
+                break;
+            }
+        }
+        return resultElement;
     }
 
     private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
