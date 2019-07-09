@@ -1611,7 +1611,7 @@ Column content
 }
 
 #thumbnailStripeScrollableContent a {
-    display: inline-block;
+    display: block;
 }
 
 #imagePreviewForm\:scroll-up,
