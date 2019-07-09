@@ -284,13 +284,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     public String save() {
         metadataPanel.preserve();
         structurePanel.preserve();
-        if (validate()) {
-            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
-                ServiceManager.getMetsService().save(workpiece, out);
-                return close();
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+        try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
+            ServiceManager.getMetsService().save(workpiece, out);
+            return close();
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
         PrimeFaces.current().ajax().update("notifications");
