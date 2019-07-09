@@ -151,7 +151,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
     private static final String METADATA_FILE_NAME = "meta.xml";
-    private String filter = "";
     private static final String NEW_LINE_ENTITY = "\n";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
@@ -249,6 +248,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     @Override
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
+        String filter = ServiceManager.getFilterService().parsePrimeFacesFilter(filters);
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, this.showClosedProcesses,
                 this.showInactiveProjects);
         return findByQuery(searchResultGeneration.getQueryForFilter(ObjectType.PROCESS),
@@ -2252,16 +2252,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
         return String.format("%sd; %sh", duration.toDays(),
             duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
-    }
-
-    /**
-     * Set the filter.
-     *
-     * @param filter
-     *            the filter to set
-     */
-    public void setFilter(String filter) {
-        this.filter = filter;
     }
 
     /**

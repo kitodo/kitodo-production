@@ -79,7 +79,6 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
-    private String filter = "";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -114,11 +113,14 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery() throws DataException {
+    private BoolQueryBuilder createUserTaskQuery(String filter) throws DataException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForTemplate(0));
+        if (Objects.isNull(filter)) {
+            filter = "";
+        }
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
         query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
 
@@ -168,7 +170,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return countDocuments(createUserTaskQuery());
+        return countDocuments(createUserTaskQuery(null));
     }
 
     @Override
@@ -184,7 +186,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return findByQuery(createUserTaskQuery(), getSortBuilder(sortField, sortOrder), first, pageSize, false);
+        String filter = ServiceManager.getFilterService().parsePrimeFacesFilter(filters);
+        return findByQuery(createUserTaskQuery(filter), getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
     /**
@@ -746,15 +749,6 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      */
     private QueryBuilder getQueryForTemplate(int templateId) {
         return createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), templateId, true);
-    }
-
-    /**
-     * Set filter.
-     *
-     * @param filter as java.lang.String
-     */
-    public void setFilter(String filter) {
-        this.filter = filter;
     }
 
     /**

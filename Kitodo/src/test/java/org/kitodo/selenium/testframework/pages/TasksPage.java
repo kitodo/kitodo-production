@@ -27,7 +27,7 @@ import org.openqa.selenium.support.FindBy;
 public class TasksPage extends Page<TasksPage> {
 
     private static final String TASKS_TAB_VIEW = "tasksTabView";
-    private static final String TASK_TABLE = TASKS_TAB_VIEW + ":taskTable";
+    private static final String TASK_TABLE = TASKS_TAB_VIEW + ":tasksForm:taskTable";
     private static final String FILTER_FORM = TASKS_TAB_VIEW + ":filterForm";
 
     @SuppressWarnings("unused")
@@ -101,12 +101,12 @@ public class TasksPage extends Page<TasksPage> {
 
     private void setEditTaskLink(String taskTitle, String processTitle) {
         int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
-        editTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":actions:editOwnTask");
+        editTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":editOwnTask");
     }
 
     private void setTakeTaskLink(String taskTitle, String processTitle) {
         int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
-        takeTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":actions:take");
+        takeTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":take");
     }
 
     private int getRowIndexForTask(WebElement dataTable, String searchedTaskTitle, String searchedProcessTitle) {

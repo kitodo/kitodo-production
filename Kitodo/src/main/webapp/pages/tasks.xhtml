@@ -18,6 +18,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
+        <h:outputScript name="js/filter.js" target="body" />
         <h3>#{msgs.tasks}</h3>
 
         <!-- filters -->
@@ -28,7 +29,7 @@
             <div class="ui-inputgroup">
                 <p:inputText forceId="true" id="filterfield" value="#{CurrentTaskForm.filter}" placeholder="#{msgs.filter}">
                     <p:ajax event="change"
-                            oncomplete="document.getElementById('tasksTabView:taskTable:titleColumn:filter').dispatchEvent(new Event('keyup'));"/>
+                            oncomplete="filter.filterTasks()"/>
                 </p:inputText>
                 <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                 <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">

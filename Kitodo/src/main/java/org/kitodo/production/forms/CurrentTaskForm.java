@@ -777,13 +777,11 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     private String filterList() {
-        ServiceManager.getProcessService().setFilter(filter);
         return taskListPath;
     }
 
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
-        ServiceManager.getTaskService().setFilter(filter);
     }
 }

@@ -1047,4 +1047,32 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         String[] strArray = parameter.split("-");
         return Integer.parseInt(strArray[1]);
     }
+
+    /**
+     * Parses the passed Map and returns the value. The Map should contain only one or no Entry.
+     * This method should be used to parse a Map passed by PrimeFaces' DataTable default filter functionality.
+     * It passes currently only one Entry because our custom filter input passes the complete filter string to
+     * the first input of PrimeFaces' default filter functionality.
+     * This triggers PrimeFaces to pass the filter string and update the DataTable automatically.
+     *
+     * @param filters
+     *      a Map containing only one String value
+     * @return
+     *      the only Entry's value as java.lang.String
+     */
+    String parsePrimeFacesFilter(Map filters) {
+        if (Objects.nonNull(filters) && filters.entrySet().size() == 1) {
+            Map.Entry filter = (Map.Entry) filters.entrySet().stream().findAny().get();
+            if (filter.getValue() instanceof String) {
+                return (String) filter.getValue();
+            } else {
+                logger.warn("Given filter is not a String. Ignoring filter.");
+            }
+        } else if (Objects.nonNull(filters) && filters.entrySet().size() > 1) {
+            logger.warn("Filter map contains to many entries (only 0 or 1 allowed). Ignoring filter map.");
+        }
+        return "";
+    }
+
+
 }
