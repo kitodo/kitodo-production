@@ -15,8 +15,10 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -29,6 +31,7 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
@@ -322,5 +325,46 @@ public class CommentForm extends BaseForm {
         }
         setCommentMessage("");
         setCorrectionComment(false);
+    }
+
+    /**
+     * Check whether there are concurrent tasks in work or not.
+     *
+     * @return whether there are concurrent tasks in work or not
+     */
+    public boolean isConcurrentTaskInWork() {
+        return !getConcurrentTasksInWork().isEmpty();
+    }
+
+    /**
+     * Create a tooltip explaining that there are concurrent tasks to the current task.
+     *
+     * @return concurrent task in work tooltip
+     */
+    public String getConcurrentTaskInWorkTooltip() {
+        List<Task> concurrentTasks = getConcurrentTasksInWork();
+        if (concurrentTasks.isEmpty()) {
+            return "";
+        } else {
+            return MessageFormat.format(Helper.getTranslation("dataEditor.comment.parallelTaskInWorkText"),
+                    concurrentTasks.get(0).getTitle(), concurrentTasks.get(0).getProcessingUser().getFullName());
+        }
+    }
+
+    private List<Task> getConcurrentTasksInWork() {
+        // FIXME: since we have parallel tasks now, "getCurrentTask" does not work correctly anymore!
+        Task currentTask = ServiceManager.getProcessService().getCurrentTask(this.process);
+        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        if (currentTask.isConcurrent()) {
+            return currentTask.getProcess().getTasks().stream()
+                    .filter(t -> !t.getId().equals(currentTask.getId())
+                            && t.isConcurrent()
+                            && t.getOrdering().equals(currentTask.getOrdering())
+                            && TaskStatus.INWORK.equals(t.getProcessingStatus())
+                            && authenticatedUserId != currentTask.getProcessingUser().getId())
+                    .collect(Collectors.toList());
+        } else {
+            return new LinkedList<>();
+        }
     }
 }
