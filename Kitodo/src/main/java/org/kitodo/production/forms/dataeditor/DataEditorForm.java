@@ -451,14 +451,17 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } catch (InvalidMetadataValueException e) {
             logger.info(e.getLocalizedMessage(), e);
         }
-        metadataPanel.showLogical(structurePanel.getSelectedStructure());
+
+        Optional<IncludedStructuralElement> selectedStructure = structurePanel.getSelectedStructure();
+
+        metadataPanel.showLogical(selectedStructure);
         if (treeNodeData instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNodeData;
             if (Objects.nonNull(structureTreeNode.getDataObject())) {
                 if (structureTreeNode.getDataObject() instanceof IncludedStructuralElement
-                        && structurePanel.getSelectedStructure().isPresent()) {
+                        && selectedStructure.isPresent()) {
                     // Logical structure element selected
-                    IncludedStructuralElement structuralElement = structurePanel.getSelectedStructure().get();
+                    IncludedStructuralElement structuralElement = selectedStructure.get();
                     if (!structuralElement.getViews().isEmpty()) {
                         ArrayList<View> views = new ArrayList<>(structuralElement.getViews());
                         if (Objects.nonNull(views.get(0))) {
@@ -482,13 +485,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } catch (InvalidMetadataValueException e) {
             logger.info(e.getLocalizedMessage(), e);
         }
-        metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
-        if (structurePanel.getSelectedMediaUnit().isPresent()) {
+
+        Optional<MediaUnit> selectedMediaUnit = structurePanel.getSelectedMediaUnit();
+
+        metadataPanel.showPhysical(selectedMediaUnit);
+        if (selectedMediaUnit.isPresent()) {
             // update gallery
-            galleryPanel.updateSelection(structurePanel.getSelectedMediaUnit().get());
+            galleryPanel.updateSelection(selectedMediaUnit.get());
             // update logical tree
             for (GalleryMediaContent galleryMediaContent : galleryPanel.getMedias()) {
-                if (structurePanel.getSelectedMediaUnit().get().getMediaFiles().values().contains(galleryMediaContent.getPreviewUri())) {
+                if (selectedMediaUnit.get().getMediaFiles().values().contains(galleryMediaContent.getPreviewUri())) {
                     structurePanel.updateLogicalNodeSelection(galleryMediaContent);
                     break;
                 }
