@@ -41,11 +41,9 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
@@ -228,13 +226,6 @@ public class ProcessServiceIT {
     public void shouldNotFindByProperty() throws DataException {
         assertEquals(processNotFound, 0,
             processService.findByProcessProperty("firstTemplate title", "first value", true).size());
-    }
-
-    @Test
-    public void shouldGetBatchesByType() throws Exception {
-        Process process = processService.getById(1);
-        List<Batch> batches = processService.getBatchesByType(process, BatchType.LOGISTIC);
-        assertEquals("Table size is incorrect!", 1, batches.size());
     }
 
     @Ignore("for second process is attached task which is processed by blocked user")
@@ -514,15 +505,15 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldBeProcessAssignedToOnlyOneLogisticBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(1);
-        assertTrue(processService.isProcessAssignedToOnlyOneLogisticBatch(processDTO.getBatches()));
+    public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
+        ProcessDTO processDTO = processService.findById(2);
+        assertTrue(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
     }
 
     @Test
-    public void shouldNotBeProcessAssignedToOnlyOneLogisticBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(2);
-        assertFalse(processService.isProcessAssignedToOnlyOneLogisticBatch(processDTO.getBatches()));
+    public void shouldNotBeProcessAssignedToOnlyOneBatch() throws Exception {
+        ProcessDTO processDTO = processService.findById(1);
+        assertFalse(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
     }
 
     @Test

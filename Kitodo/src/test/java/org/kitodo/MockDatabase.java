@@ -67,7 +67,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
-import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.enums.PasswordEncryption;
 import org.kitodo.data.database.enums.PropertyType;
@@ -432,24 +431,20 @@ public class MockDatabase {
     private static void insertBatches() throws DAOException, DataException {
         Batch firstBatch = new Batch();
         firstBatch.setTitle("First batch");
-        firstBatch.setType(BatchType.LOGISTIC);
         firstBatch.getProcesses().add(ServiceManager.getProcessService().getById(1));
         ServiceManager.getBatchService().save(firstBatch);
 
         Batch secondBatch = new Batch();
         secondBatch.setTitle("Second batch");
-        secondBatch.setType(BatchType.LOGISTIC);
         ServiceManager.getBatchService().save(secondBatch);
 
         Batch thirdBatch = new Batch();
         thirdBatch.setTitle("Third batch");
-        thirdBatch.setType(BatchType.NEWSPAPER);
         thirdBatch.getProcesses().add(ServiceManager.getProcessService().getById(1));
         thirdBatch.getProcesses().add(ServiceManager.getProcessService().getById(2));
         ServiceManager.getBatchService().save(thirdBatch);
 
         Batch fourthBatch = new Batch();
-        fourthBatch.setType(BatchType.SERIAL);
         ServiceManager.getBatchService().save(fourthBatch);
     }
 

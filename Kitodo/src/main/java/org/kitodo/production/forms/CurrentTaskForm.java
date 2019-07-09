@@ -34,7 +34,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -147,8 +146,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
-        List<Batch> batches = ServiceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
-            BatchType.LOGISTIC);
+        List<Batch> batches = this.currentTask.getProcess().getBatches();
 
         if (batches.isEmpty()) {
             return takeOverTask();
@@ -220,8 +218,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
-        List<Batch> batches = ServiceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
-            BatchType.LOGISTIC);
+        List<Batch> batches = this.currentTask.getProcess().getBatches();
 
         if (batches.isEmpty()) {
             return taskEditPath + "&id=" + getTaskIdForPath();

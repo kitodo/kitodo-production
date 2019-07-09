@@ -31,7 +31,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
@@ -83,7 +82,7 @@ public class BatchServiceIT {
     @Test
     public void shouldGetBatch() throws Exception {
         Batch batch = batchService.getById(1);
-        boolean condition = batch.getTitle().equals("First batch") && batch.getType().equals(BatchType.LOGISTIC);
+        boolean condition = batch.getTitle().equals("First batch");
         assertTrue("Batch was not found in database!", condition);
 
         assertEquals("Batch was found but processes were not inserted!", 1, batch.getProcesses().size());
@@ -105,7 +104,6 @@ public class BatchServiceIT {
     public void shouldRemoveBatch() throws Exception {
         Batch batch = new Batch();
         batch.setTitle("To Remove");
-        batch.setType(BatchType.SERIAL);
         batchService.save(batch);
         Batch foundBatch = batchService.getById(5);
         assertEquals("Additional batch was not inserted in database!", "To Remove", foundBatch.getTitle());
@@ -116,7 +114,6 @@ public class BatchServiceIT {
 
         batch = new Batch();
         batch.setTitle("To remove");
-        batch.setType(BatchType.SERIAL);
         batchService.save(batch);
         foundBatch = batchService.getById(6);
         assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
@@ -146,30 +143,6 @@ public class BatchServiceIT {
     @Test
     public void shouldNotFindByType() throws DataException {
         assertEquals("Batch was found in index!", 0, batchService.findByTitle("noBatch", true).size());
-    }
-
-    @Test
-    public void shouldFindByTitleAndType() throws DataException {
-        assertEquals(BATCH_NOT_FOUND, 1,
-                batchService.findByTitleAndType("First batch", BatchType.LOGISTIC).size());
-    }
-
-    @Test
-    public void shouldNotFindByTitleAndType() throws DataException {
-        assertEquals("Batch was found in index!", 0,
-                batchService.findByTitleAndType("Second batch", BatchType.SERIAL).size());
-    }
-
-    @Test
-    public void shouldFindManyByTitleOrType() throws DataException {
-        assertEquals(BATCHES_NOT_FOUND, 2,
-                batchService.findByTitleOrType("First batch", BatchType.SERIAL).size());
-    }
-
-    @Test
-    public void shouldFindByTitleOrType() throws DataException {
-        assertEquals("More batches were found in index!", 1,
-                batchService.findByTitleOrType("None", BatchType.SERIAL).size());
     }
 
     @Test
@@ -242,6 +215,6 @@ public class BatchServiceIT {
         Batch batch = batchService.getById(1);
         batchService.createLabel(batch);
         String toString = batch.toString();
-        assertEquals("Created label is incorrect!", "First batch (1 processes) [logistics]", toString);
+        assertEquals("Created label is incorrect!", "First batch (1 processes)", toString);
     }
 }

@@ -15,7 +15,6 @@ public enum BatchTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
-    TYPE("type"),
     PROCESSES("processes");
 
     private String name;

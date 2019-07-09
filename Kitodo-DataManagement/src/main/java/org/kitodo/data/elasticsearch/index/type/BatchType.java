@@ -24,11 +24,8 @@ public class BatchType extends BaseType<Batch> {
 
     @Override
     Map<String, Object> getJsonObject(Batch batch) {
-        String type = batch.getType() != null ? batch.getType().toString() : "";
-
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
-        jsonObject.put(BatchTypeField.TYPE.getKey(), type);
         jsonObject.put(BatchTypeField.PROCESSES.getKey(), addObjectRelation(batch.getProcesses(), true));
         return jsonObject;
     }
