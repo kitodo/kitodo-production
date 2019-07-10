@@ -47,10 +47,11 @@ public class AddMediaUnitDialog {
      */
     public void addMediaUnit() {
         if (dataEditor.getSelectedMediaUnit().isPresent()) {
-            MetadataEditor.addMediaUnit(selectedType, dataEditor.getWorkpiece(),
+            MediaUnit mediaUnit = MetadataEditor.addMediaUnit(selectedType, dataEditor.getWorkpiece(),
                     dataEditor.getSelectedMediaUnit().get(),
                     selectedPosition);
             dataEditor.refreshStructurePanel();
+            dataEditor.getStructurePanel().selectMediaUnit(mediaUnit);
         } else {
             Helper.setErrorMessage("No media unit selected!");
         }

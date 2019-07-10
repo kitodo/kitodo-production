@@ -74,6 +74,9 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
         for (MetadataEntry entry : selected) {
             selectedItems.add(entry.getValue());
         }
+        if (selectedItems.isEmpty() && !this.items.isEmpty()) {
+            selectedItems.add(this.items.get(0).getValue().toString());
+        }
     }
 
     /**

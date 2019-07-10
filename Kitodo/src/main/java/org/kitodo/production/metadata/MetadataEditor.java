@@ -200,7 +200,7 @@ public class MetadataEditor {
      * @param parent parent of the new MediaUnit
      * @param position position relative to the parent element
      */
-    public static void addMediaUnit(String type, Workpiece workpiece, MediaUnit parent, InsertionPosition position) {
+    public static MediaUnit addMediaUnit(String type, Workpiece workpiece, MediaUnit parent, InsertionPosition position) {
         LinkedList<MediaUnit> grandparents = getAncestorsOfMediaUnit(parent, workpiece.getMediaUnit());
         List<MediaUnit> siblings = new LinkedList<>();
         if (grandparents.isEmpty()) {
@@ -229,6 +229,7 @@ public class MetadataEditor {
             default:
                 throw new IllegalStateException("Used InsertionPosition not allowed.");
         }
+        return newMediaUnit;
     }
 
     /**

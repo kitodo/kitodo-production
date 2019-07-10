@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
@@ -205,6 +206,9 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          * This simplifies the examination considerably.
          */
         try {
+            if (Objects.isNull(universal) || Objects.isNull(value)) {
+                return false;
+            }
             switch (universal.getType()) {
                 case ANY_URI:
                     if (!isLocatedInTheNamespace(value)) {
