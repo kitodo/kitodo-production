@@ -114,7 +114,7 @@
                 <item from="vorlage" isdoctype="monograph" ughbinding="true" docstruct="topstruct"
                       metadata="PublisherName">Verlag
                 </item>
-                <item from="vorlage" ughbinding="true" docstruct="boundbook" metadata="shelfmarksource">Signatur</item>
+                <item from="vorlage" ughbinding="true" docstruct="physSequence" metadata="shelfmarksource">Signatur</item>
                 <processtitle isdoctype="multivolume">ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)
                 </processtitle>
                 <processtitle isdoctype="monograph">ATS+TSL+'_'+PPN digital a-Satz</processtitle>

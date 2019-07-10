@@ -169,7 +169,7 @@ public class CopyProcess extends ProzesskopieForm {
                 logger.error(e.getMessage(), e);
             }
         }
-        if (field.getDocStruct().equals("boundbook")) {
+        if (field.getDocStruct().equals("physSequence")) {
             myTempStruct = myRdf.getDigitalDocument().getPhysicalDocStruct();
         }
         return myTempStruct;
