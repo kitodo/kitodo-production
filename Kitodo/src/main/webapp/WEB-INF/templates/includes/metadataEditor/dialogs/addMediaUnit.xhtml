@@ -25,6 +25,7 @@
               resizable="false"
               showHeader="false"
               styleClass="editDialog"
+              dynamic="true"
               appendTo="@(body)">
         <h:form id="dialogAddMediaUnitForm">
             <p:panelGrid columns="1" layout="grid">
@@ -59,7 +60,7 @@
                                          icon="fa fa-check fa-lg"
                                          iconPos="right"
                                          styleClass="primary right"
-                                         update="structureTreeForm,metadataAccordion:physicalMetadataWrapperPanel"
+                                         update="structureTreeForm:physicalTree,metadataAccordion:physicalMetadataWrapperPanel"
                                          oncomplete="PF('dialogAddMediaUnit').hide();"/>
                         <p:commandButton value="#{msgs.cancel}"
                                          icon="fa fa-times fa-lg"

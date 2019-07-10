@@ -34,10 +34,10 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{logicalNode.treeLogicalSelect}"
-                    update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper,dialogAddDocStrucTypeForm"/>
+                    update="structureTreeForm:physicalTree,metadataAccordion:logicalMetadataWrapperPanel,@(.thumbnail),imagePreviewForm:olWrapper"/>
             <p:ajax event="dragdrop"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
-                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+                    update="structureTreeForm:logicalTree,metadataAccordion:logicalMetadataWrapperPanel,galleryWrapperPanel"/>
             <p:treeNode expandedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-open'}"
                         collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
@@ -62,7 +62,7 @@
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
                         action="#{DataEditorForm.deleteStructure()}"
-                        update="structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"/>
+                        update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,galleryWrapperPanel"/>
         </p:contextMenu>
 
         <!-- Physical Tree -->
@@ -85,10 +85,10 @@
                     dragdropScope="physicalTree">
                 <p:ajax event="select"
                         listener="#{physicalNode.treePhysicalSelect}"
-                        update="structureTreeForm:logicalTree,structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper,dialogAddMediaUnitForm"/>
+                        update="structureTreeForm:logicalTree,metadataAccordion:physicalMetadataWrapperPanel,@(.thumbnail),imagePreviewForm:olWrapper"/>
                 <p:ajax event="dragdrop"
                         listener="#{DataEditorForm.structurePanel.onDragDrop}"
-                        update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+                        update="structureTreeForm:physicalTree,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
                 <p:treeNode expandedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-open'}"
                             collapsedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                     <!--@elvariable id="physicalElementType" type="java.lang.String"-->
@@ -113,7 +113,7 @@
                             action="#{DataEditorForm.deleteMediaUnit()}"
                             onclick="$('#loadingScreen').show()"
                             oncomplete="$('#loadingScreen').hide()"
-                            update="structureTreeForm,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
+                            update="structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
             </p:contextMenu>
         </h:panelGroup>
     </p:panel>
