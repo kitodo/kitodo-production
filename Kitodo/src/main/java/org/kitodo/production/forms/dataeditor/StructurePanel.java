@@ -852,8 +852,4 @@ public class StructurePanel implements Serializable {
         return Objects.nonNull(this.dataEditor.getCurrentTask())
                 && this.dataEditor.getCurrentTask().isSeparateStructure();
     }
-
-    public void setSeparateMedia(boolean separateMedia) {
-        this.dataEditor.getCurrentTask().setSeparateStructure(separateMedia);
-    }
 }

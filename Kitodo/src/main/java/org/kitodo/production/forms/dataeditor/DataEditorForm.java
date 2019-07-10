@@ -440,7 +440,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public List<Task> getCurrentTaskOptions(int processID) {
         try {
-            this.process = ServiceManager.getProcessService().getById(processID);
+            Process process = ServiceManager.getProcessService().getById(processID);
             return process.getTasks().stream().filter(t -> t.isTypeMetadata()
                     && Objects.nonNull(t.getProcessingUser())
                     && ServiceManager.getUserService().getAuthenticatedUser().getId().equals(t.getProcessingUser().getId())
@@ -494,6 +494,20 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     void setProcess(Process process) {
         this.process = process;
+    }
+
+    /**
+     * Set the current process of the DataEditorForm by ID.
+     *
+     * @param id
+     *          ID of the process to set
+     */
+    public void setProcessByID(int id) {
+        try {
+            setProcess(ServiceManager.getProcessService().getById(id));
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+        }
     }
 
     void switchStructure(Object treeNodeData) throws NoSuchMetadataFieldException {
