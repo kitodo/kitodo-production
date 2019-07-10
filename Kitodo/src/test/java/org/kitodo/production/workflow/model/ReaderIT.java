@@ -185,7 +185,7 @@ public class ReaderIT {
 
         exception.expect(WorkflowException.class);
         exception.expectMessage(
-                "Task with name 'Task1' has than one more incoming elements - probably workflow contains not allowed loop.");
+                "Task with name 'Task1' has more than one incoming elements - probably workflow contains not allowed loop.");
         reader.readWorkflowTasks();
     }
 
