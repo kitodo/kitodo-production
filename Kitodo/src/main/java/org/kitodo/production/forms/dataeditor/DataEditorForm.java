@@ -499,12 +499,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     /**
      * Set the current process of the DataEditorForm by ID.
      *
-     * @param id
+     * @param processID
      *          ID of the process to set
      */
-    public void setProcessByID(int id) {
+    public void setProcessByID(int processID) {
         try {
-            setProcess(ServiceManager.getProcessService().getById(id));
+            setProcess(ServiceManager.getProcessService().getById(processID));
         } catch (DAOException e) {
             logger.error(e.getMessage());
         }
