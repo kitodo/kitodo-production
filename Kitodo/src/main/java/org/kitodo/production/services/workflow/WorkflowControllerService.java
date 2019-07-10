@@ -43,7 +43,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.WorkflowCondition;
@@ -143,10 +142,12 @@ public class WorkflowControllerService {
     }
 
     private boolean validateMetadata(Task task) throws IOException, DataException {
-        URI metaXMLURI = ServiceManager.getProcessService().getMetadataFileUri(task.getProcess());
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXMLURI);
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(task.getProcess());
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), task.getProcess().getRuleset().getFile()).toString()));
+        ruleset.load(new File(Paths.get(
+                ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
+                task.getProcess().getRuleset().getFile()).toString()));
         ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset);
         if (State.ERROR.equals(validationResult.getState())) {
             Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
