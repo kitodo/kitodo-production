@@ -23,6 +23,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
@@ -140,32 +142,34 @@ public class UserEditPage extends EditPage<UserEditPage> {
     public void addUserToRole(String roleTitle) throws Exception {
         switchToTabByIndex(TabIndex.USER_ROLES.getIndex());
         addUserToRoleButton.click();
+
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
+        wait.until(ExpectedConditions.elementToBeClickable(By.id(selectRoleTable.getAttribute("id"))));
+
         List<WebElement> tableRows = Browser.getRowsOfTable(selectRoleTable);
-        try {
-            addRow(tableRows, roleTitle, addToRoleDialog);
-        } catch (StaleElementReferenceException e) {
-            tableRows = Browser.getRowsOfTable(Browser.getDriver().findElement(By.id("roleForm:selectRoleTable_data")));
-            addToRoleDialog = Browser.getDriver().findElement(By.id("addRoleDialog"));
-            addRow(tableRows, roleTitle, addToRoleDialog);
-        }
+        addRow(tableRows, roleTitle, addToRoleDialog);
+
     }
 
     public void addUserToClient(String clientName) throws Exception {
         switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
         addUserToClientButton.click();
+
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
+        wait.until(ExpectedConditions.elementToBeClickable(By.id(selectClientTable.getAttribute("id"))));
+
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-        try {
-            addRow(tableRows, clientName, addToClientDialog);
-        } catch (StaleElementReferenceException e) {
-            tableRows = Browser.getRowsOfTable(Browser.getDriver().findElement(By.id("userClientForm:selectClientTable_data")));
-            addToClientDialog = Browser.getDriver().findElement(By.id("addClientDialog"));
-            addRow(tableRows, clientName, addToClientDialog);
-        }
+        addRow(tableRows, clientName, addToClientDialog);
+
     }
 
     public UserEditPage addUserToProject(String projectName) throws Exception {
         switchToTabByIndex(TabIndex.USER_PROJECT_LIST.getIndex());
         addUserToProjectButton.click();
+
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
+        wait.until(ExpectedConditions.elementToBeClickable(By.id(selectProjectTable.getAttribute("id"))));
+
         List<WebElement> tableRows = Browser.getRowsOfTable(selectProjectTable);
         addRow(tableRows, projectName, addToProjectDialog);
         return this;

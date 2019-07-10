@@ -13,11 +13,15 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 abstract class EditPage<T> extends Page<T> {
 
@@ -35,6 +39,15 @@ abstract class EditPage<T> extends Page<T> {
         for (WebElement tableRow : tableRows) {
             if (Browser.getCellDataByRow(tableRow, 0).equals(title)) {
                 clickLinkOfTableRow(tableRow);
+
+                // Hold up for some seconds…
+                try {
+                    Thread.sleep(3 * 1000);
+                } catch (InterruptedException e) {
+                    Logger logger = LogManager.getLogger(EditPage.class);
+                    logger.error(e.getMessage(), e);
+                }
+
                 Browser.closeDialog(dialog);
                 return;
             }
@@ -43,7 +56,10 @@ abstract class EditPage<T> extends Page<T> {
     }
 
     private void clickLinkOfTableRow(WebElement tableRow) {
-        WebElement link = tableRow.findElement(By.tagName("a"));
-        link.click();
+
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
+        wait.until(ExpectedConditions.elementToBeClickable(tableRow.findElement(By.tagName("a"))));
+
+        tableRow.findElement(By.tagName("a")).click();
     }
 }
