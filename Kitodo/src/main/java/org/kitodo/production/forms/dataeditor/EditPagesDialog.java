@@ -253,18 +253,6 @@ public class EditPagesDialog {
     }
 
     /**
-     * This method is invoked if the user clicks on the take pages from children
-     * btn command button.
-     */
-    public void takePagesFromChildren() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
-            MetadataEditor.assignViewsFromChildren(dataEditor.getSelectedStructure().get());
-            dataEditor.refreshStructurePanel();
-            prepare();
-        }
-    }
-
-    /**
      * This method is invoked if the user clicks on the remove page btn command
      * button.
      */
