@@ -240,7 +240,10 @@ public class MetadataEditor {
      *            structure to add all views of all children to
      */
     public static void assignViewsFromChildren(IncludedStructuralElement structure) {
-        structure.getViews().addAll(getViewsFromChildrenRecursive(structure));
+        Collection<View> viewsToAdd = getViewsFromChildrenRecursive(structure);
+        Collection<View> assignedViews = structure.getViews();
+        viewsToAdd.removeAll(assignedViews);
+        assignedViews.addAll(viewsToAdd);
     }
 
     private static Collection<View> getViewsFromChildrenRecursive(IncludedStructuralElement structure) {
