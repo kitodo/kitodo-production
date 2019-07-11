@@ -85,7 +85,7 @@ import org.primefaces.PrimeFaces;
 public class ProzesskopieForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private static final String OPAC_CONFIG = "configurationOPAC";
-    private static final String BOUND_BOOK = "boundbook";
+    private static final String PHYS_SEQUENCE = "physSequence";
     private static final String FIRST_CHILD = "firstchild";
     private static final String LIST_OF_CREATORS = "ListOfCreators";
 
@@ -421,7 +421,7 @@ public class ProzesskopieForm extends BaseForm {
         if (field.getDocStruct().equals(FIRST_CHILD)) {
             docStruct = digitalDocument.getLogicalDocStruct().getAllChildren().get(0);
         }
-        if (field.getDocStruct().equals(BOUND_BOOK)) {
+        if (field.getDocStruct().equals(PHYS_SEQUENCE)) {
             docStruct = digitalDocument.getPhysicalDocStruct();
         }
         return docStruct;
@@ -612,7 +612,7 @@ public class ProzesskopieForm extends BaseForm {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
-        if (fieldDocStruct.equals(BOUND_BOOK)) {
+        if (fieldDocStruct.equals(PHYS_SEQUENCE)) {
             tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
         }
         // which Metadata

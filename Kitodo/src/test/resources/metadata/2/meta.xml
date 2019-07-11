@@ -32,7 +32,7 @@
         <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph"/>
     </mets:structMap>
     <mets:structMap TYPE="PHYSICAL">
-        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="BoundBook"/>
+        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence"/>
     </mets:structMap>
     <mets:structLink>
         <mets:smLink xlink:to="PHYS_0000" xlink:from="LOG_0000" xmlns:xlink="http://www.w3.org/1999/xlink"/>

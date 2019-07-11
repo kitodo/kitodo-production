@@ -1678,7 +1678,7 @@
     </mets:div>
   </mets:structMap>
   <mets:structMap TYPE="PHYSICAL">
-    <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="BoundBook">
+    <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence">
       <mets:div ID="PHYS_0001" ORDER="1" ORDERLABEL="uncounted" TYPE="page">
         <mets:fptr FILEID="FILE_0001"/>
       </mets:div>
