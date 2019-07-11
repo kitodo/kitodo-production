@@ -36,11 +36,14 @@ public class XsltHelper {
     /**
      * Transforms a xml file by xslt and returns the result as string.
      *
-     * @param source  The xml file to transform.
-     * @param xslFile The xsl file.
+     * @param source
+     *            The xml file to transform.
+     * @param xslFile
+     *            The xsl file.
      * @return The Result of the transformation as String object.
      */
-    static ByteArrayOutputStream transformXmlByXslt(StreamSource source, URI xslFile) throws TransformerException, IOException {
+    static ByteArrayOutputStream transformXmlByXslt(StreamSource source, URI xslFile)
+            throws TransformerException, IOException {
         StreamSource xsltSource = new StreamSource(xslFile.getPath());
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(xsltSource);
