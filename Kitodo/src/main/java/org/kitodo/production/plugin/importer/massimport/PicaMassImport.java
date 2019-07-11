@@ -48,7 +48,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.importer.DocstructElement;
@@ -167,30 +166,14 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             ImportObject io = new ImportObject();
             LegacyMetsModsDigitalDocumentHelper ff = null;
             try {
+                // this method throws ImportPluginException or UnsupportedOperationException
+                // so ff is always null
                 ff = convertData();
             } catch (ImportPluginException e1) {
                 io.setErrorMessage(e1.getMessage());
             }
             io.setProcessTitle(getProcessTitle());
-            if (ff != null) {
-                r.setId(this.currentIdentifier);
-                try {
-                    LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(
-                            this.prefs.getRuleset());
-                    mm.setDigitalDocument(ff.getDigitalDocument());
-                    String fileName = getImportFolder() + getProcessTitle() + ".xml";
-                    logger.debug("Writing '{}' into given folder...", fileName);
-                    mm.write(fileName);
-                    io.setMetsFilename(new File(fileName).toURI());
-                    io.setImportReturnValue(ImportReturnValue.EXPORT_FINISHED);
 
-                } catch (IOException e) {
-                    logger.error(currentIdentifier + ": " + e.getMessage(), e);
-                    io.setImportReturnValue(ImportReturnValue.WRITE_ERROR);
-                }
-            } else {
-                io.setImportReturnValue(ImportReturnValue.INVALID_DATA);
-            }
             answer.add(io);
         }
 
@@ -376,15 +359,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Get OPAC catalogue.
-     *
-     * @return the opac catalogue
-     */
-    private String getOpacCatalogue() {
-        return this.opacCatalogue;
-    }
-
-    /**
      * Set Kitodo config directory.
      *
      * @param configDir
@@ -417,7 +391,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             XPath xPath = XPathFactory.newInstance().newXPath();
 
             Node node = (Node) xPath
-                    .compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config")
+                    .compile("/opacCatalogues/catalogue[@title='" + this.opacCatalogue + "']/config")
                     .evaluate(xmlDocument, XPathConstants.NODE);
 
             address = node.getAttributes().getNamedItem("address").getNodeValue();
