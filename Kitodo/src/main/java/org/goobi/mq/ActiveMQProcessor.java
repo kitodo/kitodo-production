@@ -51,7 +51,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * Instantiating the class ActiveMQProcessor always requires to pass the
      * name of the queue it should be attached to. That means, your constructor
      * should look like this:
-     * 
+     *
      * <pre>
      * public MyServiceProcessor() {
      *     super(ConfigCore.getParameter("activeMQ.myService.queue", null));
@@ -71,10 +71,10 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     /**
-     * The method onMessage() provides a corset which checks the message being a
-     * MapMessage, performs a type safe type cast, and extracts the job’s ID to
-     * be able to send useful results to the results topic, which it does after
-     * the abstract method process() has finished.
+     * Provides a corset which checks the message being a MapMessage, performs a
+     * type safe type cast, and extracts the job’s ID to be able to send useful
+     * results to the results topic, which it does after the abstract method
+     * process() has finished.
      *
      * <p>
      * Since this will be the same for all processors which use MapMessages, I

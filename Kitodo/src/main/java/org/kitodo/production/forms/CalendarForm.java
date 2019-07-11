@@ -83,7 +83,7 @@ public class CalendarForm implements Serializable {
         protected boolean onBlock = true;
 
         /**
-         * The function getDay() returns the day of month (that is a number in
+         * Returns the day of month (that is a number in
          * 1−31) of the date the cell represents, followed by a full stop, as
          * read-only property "day". For cells which are undefined by the
          * calendar system, it returns the empty String.
@@ -98,7 +98,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getIssues() returns the issues that may have appeared on
+         * Returns the issues that may have appeared on
          * that day as read-only field “issues”.
          *
          * @return the issues optionally appeared that day
@@ -140,7 +140,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setDate() sets the date represented by this calendar sheet
+         * Sets the date represented by this calendar sheet
          * cell.
          *
          * @param date
@@ -151,7 +151,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setIssues() sets the list of possible issues for the date
+         * Sets the list of possible issues for the date
          * represented by this calendar sheet cell.
          *
          * @param issues
@@ -162,7 +162,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setOnBlock() can be used to change the piece of
+         * Can be used to change the piece of
          * information whether the day is covered by the currently showing block
          * or not.
          *
@@ -206,7 +206,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method deleteClick() deletes the issue wrapped by this controller
+         * Deletes the issue wrapped by this controller
          * from the set of issues held by the block currently showing.
          */
         public void deleteClick() {
@@ -214,7 +214,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method getColour() returns a colour representative for optically
+         * Returns a colour representative for optically
          * distinguishing the given issue as read-only property "colour".
          *
          * @return the HTML colour code of the issue
@@ -224,7 +224,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getFriday() returns whether the issue held by this
+         * Returns whether the issue held by this
          * controller regularly appears on Fridays as read-write property
          * "friday".
          *
@@ -235,7 +235,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getHeading() returns the issue’s name as read-write
+         * Returns the issue’s name as read-write
          * property "heading".
          *
          * @return the issue’s name
@@ -245,7 +245,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getIssue() returns the issue held by this controller.
+         * Returns the issue held by this controller.
          *
          * @return the issue managed by this adapter
          */
@@ -254,7 +254,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getMonday() returns whether the issue held by this
+         * Returns whether the issue held by this
          * controller regularly appears on Mondays as read-write property
          * "monday".
          *
@@ -265,7 +265,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getSaturday() returns whether the issue held by this
+         * Returns whether the issue held by this
          * controller regularly appears on Saturdays as read-write property
          * "saturday".
          *
@@ -276,7 +276,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getSunday() returns whether the issue held by this
+         * Returns whether the issue held by this
          * controller regularly appears on Sundays as read-write property
          * "sunday".
          *
@@ -287,7 +287,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getThursday() returns whether the issue held by this
+         * Returns whether the issue held by this
          * controller regularly appears on Thursdays as read-write property
          * "thursday".
          *
@@ -298,7 +298,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getTuesday() returns whether the issue held by this
+         * Returns whether the issue held by this
          * controller regularly appears on Tuesdays as read-write property
          * "tuesday".
          *
@@ -309,7 +309,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getWednesday() returns whether the issue held by this
+         * Returns whether the issue held by this
          * controller regularly appears on Wednesdays as read-write property
          * "wednesday".
          *
@@ -320,7 +320,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setFriday() will be called by Faces to store a new value
+         * The method will be called by Faces to store a new value
          * of the read-write property "friday" which represents whether the
          * issue held by this controller regularly appears on Fridays.
          *
@@ -338,7 +338,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setMonday() will be called by Faces to store a new value
+         * The method will be called by Faces to store a new value
          * of the read-write property "heading" which represents the issue’s
          * name.
          *
@@ -352,7 +352,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setMonday() will be called by Faces to store a new value
+         * The method will be called by Faces to store a new value
          * of the read-write property "monday" which represents whether the
          * issue held by this controller regularly appears on Mondays.
          *
@@ -370,7 +370,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setSaturday() will be called by Faces to store a new value
+         * The method will be called by Faces to store a new value
          * of the read-write property "saturday" which represents whether the
          * issue held by this controller regularly appears on Saturdays.
          *
@@ -388,7 +388,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setSunday() will be called by Faces to store a new value
+         * The method will be called by Faces to store a new value
          * of the read-write property "sunday" which represents whether the
          * issue held by this controller regularly appears on Sundays.
          *
@@ -406,7 +406,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setThursday() will be called by Faces to store a new value
+         * The method will be called by Faces to store a new value
          * of the read-write property "thursday" which represents whether the
          * issue held by this controller regularly appears on Thursdays.
          *
@@ -424,7 +424,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setTuesday() will be called by Faces to store a new value
+         * The method will be called by Faces to store a new value
          * of the read-write property "tuesday" which represents whether the
          * issue held by this controller regularly appears on Tuesdays.
          *
@@ -442,7 +442,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method setWednesday() will be called by Faces to store a new
+         * The method will be called by Faces to store a new
          * value of the read-write property "wednesday" which represents whether
          * the issue held by this controller regularly appears on Wednesdays.
          *
@@ -498,7 +498,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getColour() returns a colour representative for
+         * Returns a colour representative for
          * optically distinguishing the given issue as read-only property
          * “colour”.
          *
@@ -509,7 +509,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getIssue() returns the issue’s name as read-only
+         * Returns the issue’s name as read-only
          * property “issue”.
          *
          * @return the issue’s name
@@ -519,7 +519,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The function getSelected() returns whether the issue appeared on the
+         * Returns whether the issue appeared on the
          * given date as read-only property “selected”, taking into
          * consideration the daysOfWeek of regular appearance, the Set of
          * exclusions and the Set of additions.
@@ -531,7 +531,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method selectClick() is executed if the user clicks an issue
+         * The method is executed if the user clicks an issue
          * option in unselected state. If this is an exception, the exception
          * will be removed. Otherwise, an additional issue will be added.
          */
@@ -544,7 +544,7 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * The method unselectClick() is executed if the user clicks an issue
+         * The method is executed if the user clicks an issue
          * option in selected state. If this is regular appearance of that
          * issue, an exception will be added. Otherwise, the additional issue
          * will be removed.
@@ -673,7 +673,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method addIssueClick() adds a new issue to the set of issues held by
+     * Adds a new issue to the set of issues held by
      * the block currently showing.
      */
     public void addIssueClick() {
@@ -681,7 +681,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method backwardClick() flips the calendar sheet back one year in
+     * Flips the calendar sheet back one year in
      * time.
      */
     public void backwardClick() {
@@ -689,7 +689,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function buildIssueOptions() creates a list of issueOptions for a
+     * Creates a list of issueOptions for a
      * given date.
      *
      * @param issueControllers
@@ -736,7 +736,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method copyBlockClick() creates and adds a copy of the currently
+     * Creates and adds a copy of the currently
      * showing block.
      */
     public void copyBlockClick() {
@@ -753,7 +753,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function downloadClick() is executed if the user clicks the action
+     * The function is executed if the user clicks the action
      * link to “export” the calendar data. If the course of appearance doesn’t
      * yet contain generated processes—which is always the case, except that the
      * user just came from uploading a data file and didn’t change anything
@@ -797,7 +797,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method forwardClick() flips the calendar sheet forward one year in
+     * Flips the calendar sheet forward one year in
      * time.
      */
     public void forwardClick() {
@@ -805,7 +805,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getBlank() returns whether the calendar editor is in mint
+     * Returns whether the calendar editor is in mint
      * condition, i.e. there is no block defined yet, as read-only property
      * “blank”.
      *
@@ -820,7 +820,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getBlockChangerOptions() returns the elements for the block
+     * Returns the elements for the block
      * changer drop down element as read only property "blockChangerOptions". It
      * returns a List of Map with each two entries: "value" and "label". "value"
      * is the hashCode() in hex of the block which will later be used if the
@@ -843,7 +843,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getBlockChangerSelected() returns the hashCode() value of
+     * Returns the hashCode() value of
      * the block currently selected as read-write property
      * "blockChangerSelected". If a new block is under edit, returns the empty
      * String.
@@ -855,7 +855,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getCalendarSheet() returns the data required to build the
+     * Returns the data required to build the
      * calendar sheet as read-only property "calendarSheet". The outer list
      * contains 31 entries, each representing a row of the calendar (the days
      * 1−31), each line then contains 12 cells representing the months. This is
@@ -870,7 +870,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getCourse() will return the course created with this editor
+     * The function will return the course created with this editor
      * as read-only property "course" to pass it to the next form.
      *
      * @return the course of appearance data model
@@ -880,7 +880,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getEmptySheet() builds the empty calendar sheet with 31 rows
+     * Builds the empty calendar sheet with 31 rows
      * of twelve cells with empty objects of type Cell().
      *
      * @return an empty calendar sheet
@@ -898,7 +898,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getFirstAppearance() returns the date of first appearance of
+     * Returns the date of first appearance of
      * the block currently showing as read-write property "firstAppearance".
      *
      * @return date of first appearance of currently showing block
@@ -912,7 +912,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getIssues() returns the list of issues held by the block
+     * Returns the list of issues held by the block
      * currently showing as read-only property "issues".
      *
      * @return the list of issues
@@ -922,7 +922,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getIssues() returns the list of issues for a given block.
+     * Returns the list of issues for a given block.
      *
      * @param block
      *            block whose issues are to be returned
@@ -939,7 +939,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getLastAppearance() returns the date of last appearance of
+     * Returns the date of last appearance of
      * the block currently showing as read-write property "lastAppearance".
      *
      * @return date of last appearance of currently showing block
@@ -953,7 +953,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getUploadedFile() is the getter method for the property
+     * The function is the getter method for the property
      * "uploadedFile" which is write-only, however Faces requires is.
      *
      * @return always null
@@ -963,7 +963,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getUploadShowing() returns whether the dialog to upload a
+     * Returns whether the dialog to upload a
      * course of appearance XML file shall be shown or not.
      *
      * @return whether the dialog to upload a course of appearance shows
@@ -973,7 +973,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function getYear() returns the year to be shown in the calendar sheet
+     * Returns the year to be shown in the calendar sheet
      * as read-only property "year".
      *
      * @return the year to show on the calendar sheet
@@ -983,7 +983,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method hideUploadClick() will be called by Faces if the user clicks
+     * The method will be called by Faces if the user clicks
      * the cancel button leave the dialog to upload a course of appearance XML
      * file.
      */
@@ -993,7 +993,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method navigate() alters the year the calendar sheet is shown for so
+     * Alters the year the calendar sheet is shown for so
      * that something of the current block is visible to prevent the user from
      * needing to click through centuries manually to get there.
      */
@@ -1011,7 +1011,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function neglectEmptyBlock() removes an empty block. Usually, an
+     * Removes an empty block. Usually, an
      * empty block cannot be created. But if the user clicks the upload dialog
      * button, the form must be submitted, which causes the setters of the form
      * fields to create one prior to the function call. To stay consistent, it
@@ -1025,7 +1025,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The function nextClick() is executed if the user clicks the button to go
+     * The function is executed if the user clicks the button to go
      * to the next screen. It returns either the String constant that indicates
      * Faces the next screen, or sets an error message if the user didn’t yet
      * input an issue and indicates Faces to stay on that screen by returning
@@ -1096,7 +1096,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method populateByCalendar() populates an empty calendar sheet by
+     * Populates an empty calendar sheet by
      * iterating on LocalDate.
      *
      * @param sheet
@@ -1126,7 +1126,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method removeBlockClick() deletes the currently selected block from
+     * Deletes the currently selected block from
      * the course of appearance. If there is only one block left, the editor
      * will instead be reset.
      *
@@ -1151,7 +1151,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method setBlockChangerSelected() will be called by Faces to store a
+     * The method will be called by Faces to store a
      * new value of the read-write property "blockChangerSelected". If it is
      * different from the current one, this means that the user selected a
      * different Block in the block changer drop down element. The event will be
@@ -1177,7 +1177,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method setFirstAppearance() will be called by Faces to store a new
+     * The method will be called by Faces to store a new
      * value of the read-write property "firstAppearance", which represents the
      * date of first appearance of the block currently showing. The event will
      * be used to either alter the date of first appearance of the block defined
@@ -1213,7 +1213,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method setLastAppearance() will be called by Faces to store a new
+     * The method will be called by Faces to store a new
      * value of the read-write property "lastAppearance", which represents the
      * date of last appearance of the block currently showing. The event will be
      * used to either alter the date of last appearance of the block defined by
@@ -1286,7 +1286,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method setUploadedFile() will be called by Faces to store the new
+     * The method will be called by Faces to store the new
      * value of the read-write property "uploadedFile", which is a reference to
      * the binary data the user provides for upload.
      *
@@ -1298,7 +1298,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method showUploadClick() will be called by Faces if the user clicks
+     * The method will be called by Faces if the user clicks
      * the button to upload a course of appearance XML file.
      */
     public void showUploadClick() {
@@ -1307,7 +1307,7 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method uploadClick() will be called by Faces if the user has selected
+     * The method will be called by Faces if the user has selected
      * a course of appearance XML file for upload in the window and clicks the
      * button to upload it. Old values of the granularity picker are removed—if
      * any—so that the screen is reinitialised with the current calendar state

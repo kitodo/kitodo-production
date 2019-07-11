@@ -102,7 +102,7 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * The function getTitle() returns the batch title. Using titles for batches
+     * Returns the batch title. Using titles for batches
      * is optional, the field may be null. If so, the function returns null.
      *
      * @return the batch title
@@ -112,7 +112,7 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * The method setTitle() can be used to set a batch title. This function is
+     * Can be used to set a batch title. This function is
      * also required by Hibernate when creating objects from the database.
      *
      * @param title
@@ -123,7 +123,7 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * The function getProcesses() return the processes that belong to the
+     * Return the processes that belong to the
      * batch.
      *
      * @return the processes that are in the batch
@@ -137,7 +137,7 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * The method setProcesses() sets the processes that belong to the batch.
+     * Sets the processes that belong to the batch.
      * This method is also required by Hibernate when creating objects from the
      * database.
      *
@@ -163,7 +163,7 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * The function equals() indicates whether some other object is “equal to”
+     * Indicates whether some other object is “equal to”
      * this one.
      *
      * @param object

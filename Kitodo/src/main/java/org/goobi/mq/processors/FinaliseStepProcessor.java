@@ -77,8 +77,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The method updateProperties() transfers the properties to set into
-     * Goobi’s data model.
+     * Transfers the properties to set into Production’s data model.
      *
      * @param dialog
      *            The CurrentTaskForm that we work with

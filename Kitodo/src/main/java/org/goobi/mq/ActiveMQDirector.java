@@ -69,7 +69,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     protected static MessageProducer resultsTopic;
 
     /**
-     * The method contextInitialized() is called by the web container on startup
+     * The method is called by the web container on startup
      * and is used to start up the active MQ connection. All processors from
      * services[] are registered.
      *

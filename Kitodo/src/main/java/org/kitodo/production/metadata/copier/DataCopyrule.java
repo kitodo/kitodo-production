@@ -113,7 +113,7 @@ public abstract class DataCopyrule {
     protected abstract int getMinObjects();
 
     /**
-     * The method setObjects() is called to pass the rule its objects. The list
+     * The method is called to pass the rule its objects. The list
      * passed is reliable to the restrictions defined by getMinObjects() and
      * getMaxObjects().
      *
@@ -125,7 +125,7 @@ public abstract class DataCopyrule {
     protected abstract void setObjects(List<String> objects) throws ConfigurationException;
 
     /**
-     * The method setSubject() is called to pass the rule its subject.
+     * The method is called to pass the rule its subject.
      *
      * @param subject
      *            a subject to be used by the rule

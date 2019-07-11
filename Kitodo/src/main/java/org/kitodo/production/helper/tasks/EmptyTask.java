@@ -148,7 +148,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getBehaviour() returns the instruction how the TaskSitter
+     * Returns the instruction how the TaskSitter
      * shall behave towards this task. Usually, the behaviour isn’t set while
      * the task is under normal execution. It can be set by calling
      * {@link #interrupt(Behaviour)}. It may also be set this way if the task is
@@ -185,7 +185,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getDurationDead() returns the duration the task is dead. If
+     * Returns the duration the task is dead. If
      * a time of death has not yet been recorded, null is returned.
      *
      * @return the duration since the task died
@@ -199,7 +199,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getException() provides access to the exception that
+     * Provides access to the exception that
      * occurred if the thread died abnormally. If no exception has occurred yet
      * or it wasn’t properly recorded, null is returned.
      *
@@ -210,7 +210,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getProgress() returns the progress of the task in percent,
+     * Returns the progress of the task in percent,
      * i.e. in a range from 0 to 100.
      *
      * @return the progress of the task
@@ -220,7 +220,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getStateDescription() returns a text string representing the
+     * Returns a text string representing the
      * state of the current task as read-only property "stateDescription".
      *
      * @return a string representing the state of the task
@@ -250,7 +250,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getTaskState() returns the task state. It can be one of
+     * Returns the task state. It can be one of
      * the followings:
      *
      * <dl>
@@ -302,7 +302,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getLongMessage() returns the read-only field "longMessage"
+     * Returns the read-only field "longMessage"
      * which will be shown in a pop-up window.
      *
      * @return the stack trace of the exception, if any
@@ -315,7 +315,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function interrupt() interrupts this thread and allows to set a
+     * Interrupts this thread and allows to set a
      * behaviour after interruption.
      *
      * @param mode
@@ -327,7 +327,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function isStartable() returns wether the start button shall be shown
+     * Returns wether the start button shall be shown
      * as read-only property "startable". A thread can be started as long as it
      * has not yet been started.
      *
@@ -338,7 +338,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function isStoppable() returns wether the stop button shall be shown
+     * Returns wether the stop button shall be shown
      * as read-only property "stopable". A thread can be stopped if it is
      * working.
      *
@@ -349,7 +349,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function isDeleteable() returns whether the delete button shall be
+     * Returns whether the delete button shall be
      * shown as read-only property "deleteable". In our interpretation, a thread
      * is deleteable if it is either new or has terminated and is still lounging
      * around.
@@ -422,7 +422,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setNameDetail() may be used to set the task’s name along
+     * May be used to set the task’s name along
      * with a detail that doesn’t require translation and is helpful when being
      * shown in the front end (such as the name of the entity the task is based
      * on). The name detail should be set once (in the constructor). You may
@@ -446,7 +446,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setProgress() may be used to set the task’s progress in
+     * May be used to set the task’s progress in
      * percent (i.e., from 0 to 100).
      *
      * @param progress
@@ -460,7 +460,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setProgress() may be used to set the task’s progress in
+     * May be used to set the task’s progress in
      * percent (i.e., from 0 to 100).
      *
      * @param statusProgress
@@ -478,7 +478,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setWorkDetail() may be used to set some detail information
+     * May be used to set some detail information
      * that don’t require translation and are helpful when being shown in the
      * front end (such as the name of the entity that is currently being
      * processed by the task). The name detail should be set every time the

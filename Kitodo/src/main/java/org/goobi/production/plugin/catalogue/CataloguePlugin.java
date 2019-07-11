@@ -39,7 +39,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  *
  * <p>
  * <code>Object find(String, long)</code><br>
- * The function find() is to perform a search request in a library catalogue.
+ * The function is to perform a search request in a library catalogue.
  * See {@link QueryBuilder} for the semantics of the query. It may return an
  * arbitrary Object identifying (or—at the implementor’s choice—containing) the
  * search result. The method shall return null if the search performed normally,
@@ -53,7 +53,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  *
  * <p>
  * <code>Map getHit(Object, long, long)</code><br>
- * The function getHit() shall return the hit identified by its index. The hit
+ * The function shall return the hit identified by its index. The hit
  * shall be a Map&lt;String, Object&gt; with the fields described in {@link Hit}
  * populated. The method shall ensure that it returns after the given timeout
  * and shall throw a javax.persistence.QueryTimeoutException if it was cancelled
@@ -61,7 +61,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  *
  * <p>
  * <code>long getNumberOfHits(Object, long)</code><br>
- * The function getNumberOfHits() shall return the number of hits scored by the
+ * The function shall return the number of hits scored by the
  * search represented by the given object. If the object isn’t the result of a
  * call to the find() function, the behaviour of the function may be undefined.
  * The method shall ensure that it returns after the given timeout and shall
@@ -74,18 +74,18 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  *
  * <p>
  * <code>void setPreferences(Prefs)</code><br>
- * The method setPreferences() is called before the first search request to the
+ * The method is called before the first search request to the
  * plug-in and passes the UGH preferences the plugin shall use.
  *
  * <p>
  * <code>boolean supportsCatalogue(String)</code><br>
- * The function supportsCatalogue() shall return whether the plug-in has
+ * The function shall return whether the plug-in has
  * sufficient knowledge to query a catalogue identified by the given String
  * literal or not.
  *
  * <p>
  * <code>void useCatalogue(String)</code><br>
- * The function useCatalogue() is called before the first search request to the
+ * The function is called before the first search request to the
  * plug-in and shall tell it to use the catalogue connection identified by the
  * given String literal. If the plugin doesn’t support the given catalogue
  * (supportsCatalogue() would return false) the behaviour may be unspecified.
@@ -159,7 +159,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function find() is intended to send a search request to a library
+     * The function is intended to send a search request to a library
      * catalogue and to return an Object identifying (or—at the implementor’s
      * choice—containing) the search result. The method shall return null if the
      * search didn’t yield any result. The method shall ensure that it returns
@@ -178,7 +178,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function getFirstHit() returns at random the first hit the catalogue
+     * Returns at random the first hit the catalogue
      * plugin returns for a given query. Making use of this utility method only
      * makes sense if there is only one result expected, which usually is the
      * case if a valid identifier is looked up in its respective column.
@@ -213,7 +213,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function getHit() shall return the hit identified by its index. The
+     * The function shall return the hit identified by its index. The
      * method shall ensure that it returns after the given timeout and shall
      * throw a javax.persistence.QueryTimeoutException in that case. The method
      * may throw exceptions.
@@ -234,7 +234,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function getNumberOfHits() shall return the hits scored by the search
+     * The function shall return the hits scored by the search
      * represented by the given object. If the object isn’t the result of a call
      * to the find() function, the behaviour may be undefined.
      *
@@ -250,7 +250,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function getTimeout() returns the timeout to be used in catalogue
+     * Returns the timeout to be used in catalogue
      * access. This defaults to thirty minutes if no catalogue timeout is set in
      * the configuration
      *
@@ -266,7 +266,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function getType() returns the PluginType.Opac as it corresponds to
+     * Returns the PluginType.Opac as it corresponds to
      * this class.
      *
      * @see org.goobi.production.plugin.UnspecificPlugin#getType()
@@ -277,7 +277,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The method setPreferences() must be used to set the UGH preferences the
+     * Must be used to set the UGH preferences the
      * plugin shall use.
      *
      * @param preferences
@@ -289,7 +289,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function supportsCatalogue() returns whether the plugin has
+     * Returns whether the plugin has
      * sufficient knowledge to query a catalogue identified by the given String
      * literal.
      *
@@ -302,7 +302,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * The function useCatalogue() shall tell the plugin to use a catalogue
+     * The function shall tell the plugin to use a catalogue
      * connection identified by the given String literal. If the plugin doesn’t
      * support the given catalogue (supportsCatalogue() would return false) the
      * behaviour is unspecified (throwing an unchecked exception is a good

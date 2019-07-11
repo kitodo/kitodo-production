@@ -92,7 +92,7 @@ public class LanguageForm implements Serializable {
     }
 
     /**
-     * The function getSupportedLocales() returns a list of maps, each
+     * Returns a list of maps, each
      * representing one locale configured in the faces-config.xml file. Each of
      * the maps will contain the fields. id − the locale’s ID String, e.g. “fr”
      * or “en_GB” displayLanguageSelf − the name of the language in the language

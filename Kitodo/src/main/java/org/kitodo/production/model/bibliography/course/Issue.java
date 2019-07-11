@@ -230,7 +230,7 @@ public class Issue {
     }
 
     /**
-     * The function countIndividualIssues() determines how many stampings of
+     * Determines how many stampings of
      * this issue physically appeared without generating a list of
      * IndividualIssue objects.
      *
@@ -300,7 +300,7 @@ public class Issue {
     }
 
     /**
-     * The function isMatch() returns whether the issue appeared on a given
+     * Returns whether the issue appeared on a given
      * LocalDate, taking into consideration the daysOfWeek of regular
      * appearance, the Set of exclusions and the Set of additions.
      *
@@ -313,7 +313,7 @@ public class Issue {
     }
 
     /**
-     * The function isMonday() can be used to determine whether the issue
+     * Can be used to determine whether the issue
      * regularly appears on Mondays.
      *
      * @return true, if the issue regularly appears on Mondays.
@@ -323,7 +323,7 @@ public class Issue {
     }
 
     /**
-     * The function isTuesday() can be used to determine whether the issue
+     * Can be used to determine whether the issue
      * regularly appears on Tuesdays.
      *
      * @return true, if the issue regularly appears on Tuesdays.
@@ -333,7 +333,7 @@ public class Issue {
     }
 
     /**
-     * The function isWednesday() can be used to determine whether the issue
+     * Can be used to determine whether the issue
      * regularly appears on Wednesdays.
      *
      * @return true, if the issue regularly appears on Wednesdays.
@@ -343,7 +343,7 @@ public class Issue {
     }
 
     /**
-     * The function isThursday() can be used to determine whether the issue
+     * Can be used to determine whether the issue
      * regularly appears on Sundays.
      *
      * @return true, if the issue regularly appears on Thursdays.
@@ -353,7 +353,7 @@ public class Issue {
     }
 
     /**
-     * The function isFriday() can be used to determine whether the issue
+     * Can be used to determine whether the issue
      * regularly appears on Fridays.
      *
      * @return true, if the issue regularly appears on Fridays.
@@ -363,7 +363,7 @@ public class Issue {
     }
 
     /**
-     * The function isSaturday() can be used to determine whether the issue
+     * Can be used to determine whether the issue
      * regularly appears on Saturdays.
      *
      * @return true, if the issue regularly appears on Saturdays.
@@ -373,7 +373,7 @@ public class Issue {
     }
 
     /**
-     * The function isSunday() can be used to determine whether the issue
+     * Can be used to determine whether the issue
      * regularly appears on Sundays.
      *
      * @return true, if the issue regularly appears on Sundays.
@@ -383,7 +383,7 @@ public class Issue {
     }
 
     /**
-     * The method recalculateRegularityOfIssues() recalculates for each Issue
+     * Recalculates for each Issue
      * the daysOfWeek of its regular appearance within the given interval of
      * time. This is especially sensible to detect the underlying regularity
      * after lots of individual issues whose existence is known have been added
@@ -540,7 +540,7 @@ public class Issue {
     }
 
     /**
-     * The function toString() provides returns a string that contains a concise
+     * Provides returns a string that contains a concise
      * but informative representation of this issue that is easy for a person to
      * read.
      *

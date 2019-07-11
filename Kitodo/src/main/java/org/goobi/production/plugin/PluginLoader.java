@@ -53,7 +53,7 @@ public class PluginLoader {
     }
 
     /**
-     * The function getCataloguePluginForCatalogue() returns a redirection class
+     * Returns a redirection class
      * to handle the first plug-in implementation object that positively
      * responds to <code>supportsCatalogue(catalogue)</code>.
      *
@@ -106,10 +106,10 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginByTitle() loads all plug-ins implementing the given
-     * UnspecificPlugin class type and returns a redirection class to handle the
-     * first plug-in implementation object that responds to
-     * <code>getTitle(language)</code> with the given title.
+     * Loads all plug-ins implementing the given UnspecificPlugin class type and
+     * returns a redirection class to handle the first plug-in implementation
+     * object that responds to <code>getTitle(language)</code> with the given
+     * title.
      *
      * <p>
      * Currently, this method is not referenced from within the Production code,
@@ -139,9 +139,9 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginConfiguration() creates a HashMap that is passed to
-     * the plug-ins upon creation to configure them. The plug-ins may or may not
-     * make use of the configuration provided.
+     * Creates a HashMap that is passed to the plug-ins upon creation to
+     * configure them. The plug-ins may or may not make use of the configuration
+     * provided.
      *
      * <p>
      * This is intended to be used for <em>general</em> configuration (probably)
@@ -159,9 +159,9 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPlugins() loads all plug-ins implementing the given
-     * UnspecificPlugin class type and returns a Collection of redirection
-     * classes, each to handle one plug-in implementation object.
+     * Loads all plug-ins implementing the given UnspecificPlugin class type and
+     * returns a Collection of redirection classes, each to handle one plug-in
+     * implementation object.
      *
      * @param clazz
      *            UnspecificPlugin class type of the plug-ins to load
@@ -195,8 +195,8 @@ public class PluginLoader {
     }
 
     /**
-     * The function getImportPluginsForType() returns a list of titles of import
-     * plug-ins matching the given ImportType.
+     * Returns a list of titles of import plug-ins matching the given
+     * ImportType.
      *
      * @param type
      *            ImportType of plug-ins to look for
@@ -215,7 +215,7 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginLoader() returns a PluginManagerUtil suitable for
+     * Returns a PluginManagerUtil suitable for
      * loading plug-ins from the subdirectory defined by the given PluginType.
      *
      * @param type

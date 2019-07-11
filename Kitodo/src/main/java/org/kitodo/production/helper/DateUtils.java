@@ -39,7 +39,7 @@ public class DateUtils {
     }
 
     /**
-     * The function lastMonthForYear() returns from an ordered set of dates for
+     * Returns from an ordered set of dates for
      * a given year the last month which a date can be found for in that year.
      *
      * <p>
@@ -59,7 +59,7 @@ public class DateUtils {
     }
 
     /**
-     * The function sameMonth() compares two LocalDate objects in regard to the
+     * Compares two LocalDate objects in regard to the
      * question whether their two dates reside in the same month of the calendar
      * system presumed. Two dates are considered to be in the same month exactly
      * if both their year and month of year fields are equal.
@@ -78,7 +78,7 @@ public class DateUtils {
     }
 
     /**
-     * The function sameYear() compares two LocalDate objects in regard to the
+     * Compares two LocalDate objects in regard to the
      * question whether their two dates reside in the same year of the calendar
      * system presumed. Two dates are considered to be in the same year exactly
      * if none of them is null and their year fields are equal.

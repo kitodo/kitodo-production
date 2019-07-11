@@ -342,7 +342,7 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
-     * The procedure removeManagedBean() removes a managed bean from the faces
+     * Removes a managed bean from the faces
      * context by name. If nothing such is available, nothing happens.
      *
      * @param name

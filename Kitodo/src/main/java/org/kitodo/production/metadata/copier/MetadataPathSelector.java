@@ -175,7 +175,7 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * The function findAll() returns all concrete metadata selectors the
+     * Returns all concrete metadata selectors the
      * potentially generic metadata selector expression resolves to.
      *
      * @param logicalNode
@@ -238,7 +238,7 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * The function getIndexValue() returns the numerical value represented by
+     * Returns the numerical value represented by
      * the symbolic (String) representation passed in. Since the method is
      * called from the constructor it must not be overridden in subclasses.
      *
@@ -311,7 +311,7 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * The function indexCheck() calculates whether the given child’s index is
+     * Calculates whether the given child’s index is
      * to be matched by this metadata path selector. A child index is to match
      * if
      * <ul>
@@ -341,7 +341,7 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * The function matchCurrentPathSegment() returns the path segment this
+     * Returns the path segment this
      * metadata path selector is responsible to represent. Since the method is
      * called from the constructor it must not be overridden in subclasses.
      *
@@ -381,7 +381,7 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * The function typeCheck() calculates whether the given child is to be
+     * Calculates whether the given child is to be
      * matched by type name by this metadata path selector. A child is to match
      * if
      * <ul>

@@ -89,8 +89,7 @@ public class Hit {
     }
 
     /**
-     * The function getAuthors() returns the creators of the work described in
-     * this hit.
+     * Returns the creators of the work described in this hit.
      *
      * @return the creators of the work
      */
@@ -99,8 +98,7 @@ public class Hit {
     }
 
     /**
-     * The function getBibliographicCitation() returns a summary of this hit in
-     * bibliographic citation style as HTML.
+     * Returns a summary of this hit in bibliographic citation style as HTML.
      *
      * @return a summary of this hit in bibliographic citation style as HTML
      */
@@ -131,7 +129,7 @@ public class Hit {
     }
 
     /**
-     * The function getDocType() returns the DocType of this hit.
+     * Returns the DocType of this hit.
      *
      * @return the DocType of this hit
      */
@@ -140,8 +138,8 @@ public class Hit {
     }
 
     /**
-     * The function getFileformat() returns the full hit record as provided by
-     * the library catalogue as {@link LegacyMetsModsDigitalDocumentHelper} object.
+     * Returns the full hit record as provided by the library catalogue as
+     * {@link LegacyMetsModsDigitalDocumentHelper} object.
      *
      * @return the full hit record
      */
@@ -150,8 +148,7 @@ public class Hit {
     }
 
     /**
-     * The function getTitle() returns the title of the work described in this
-     * hit.
+     * Returns the title of the work described in this hit.
      *
      * @return the title of the work
      */
@@ -160,10 +157,10 @@ public class Hit {
     }
 
     /**
-     * The function getAccessTime() returns the point in time when the work was
-     * last accessed as {@link org.joda.time.DateTime} object.
+     * Returns the point in time when the work was last accessed.
      *
-     * @return the point in time when the work was last accessed
+     * @return the point in time when the work was last accessed as
+     *         {@link DateTime}
      */
     private DateTime getAccessTime() {
         String accessed = getAs("accessed", String.class);
@@ -171,8 +168,7 @@ public class Hit {
     }
 
     /**
-     * The function getArticleTitle() returns the title of the article described
-     * in this hit as String.
+     * Returns the title of the article described in this hit as String.
      *
      * @return the title of the article
      */
@@ -181,10 +177,9 @@ public class Hit {
     }
 
     /**
-     * The function getAs() returns an entry form the map holding the hit result
-     * as an object of the given class (which may be null). If the object cannot
-     * be casted to the desired result type, a ClassCastException will be
-     * thrown.
+     * Returns an entry form the map holding the hit result as an object of the
+     * given class (which may be null). If the object cannot be casted to the
+     * desired result type, a ClassCastException will be thrown.
      *
      * @param key
      *            the key whose associated value is to be returned
@@ -208,10 +203,9 @@ public class Hit {
     }
 
     /**
-     * The function getDatePublished() returns the day when the work was
-     * published as {@link org.joda.time.LocalDate} object.
+     * Returns the day when the work was published.
      *
-     * @return the day when the work was published
+     * @return the day when the work was published as {@link LocalDate}
      */
     private LocalDate getDatePublished() {
         String date = getAs("date", String.class);
@@ -219,8 +213,8 @@ public class Hit {
     }
 
     /**
-     * The function getDepartment() returns the department of the author of the
-     * academic writing described in this hit is in.
+     * Returns the department of the author of the academic writing described in
+     * this hit is in.
      *
      * @return the department of the author of the academic writing
      */
@@ -229,8 +223,7 @@ public class Hit {
     }
 
     /**
-     * The function getEdition() returns edition information of the work
-     * described by this hit.
+     * Returns edition information of the work described by this hit.
      *
      * @return edition information
      */
@@ -239,8 +232,8 @@ public class Hit {
     }
 
     /**
-     * The function getEditors() returns the editors, compilers, translators, …
-     * of the anthology described in this hit.
+     * Returns the editors, compilers, translators, … of the anthology described
+     * in this hit.
      *
      * @return the editors of the anthology
      */
@@ -249,8 +242,8 @@ public class Hit {
     }
 
     /**
-     * The function getEmployer() returns the employer—usually a university—of
-     * the author of the academic writing described in this hit is in.
+     * Returns the employer—usually a university—of the author of the academic
+     * writing described in this hit is in.
      *
      * @return the employer of the author of the academic writing
      */
@@ -259,11 +252,11 @@ public class Hit {
     }
 
     /**
-     * The function getFormat() returns the citation format that is to be
-     * preferred to summarise the contents of this hit. Supported values are
-     * “monograph” (books), “thesis” (academic writings), “standard” (standards)
-     * and “internet” (online resources) for physical media and “anthology” and
-     * “periodical” for articles from these two kinds of publishing
+     * Returns the citation format that is to be preferred to summarize the
+     * contents of this hit. Supported values are “monograph” (books), “thesis”
+     * (academic writings), “standard” (standards) and “internet” (online
+     * resources) for physical media and “anthology” and “periodical” for
+     * articles from these two kinds of publishing
      *
      * @return the format that is to be preferred to cite this hit.
      */
@@ -272,8 +265,8 @@ public class Hit {
     }
 
     /**
-     * The function getPublisher() returns the name of the publishing house that
-     * published the work described in this hit.
+     * Returns the name of the publishing house that published the work
+     * described in this hit.
      *
      * @return the name of the house of publish
      */
@@ -282,8 +275,7 @@ public class Hit {
     }
 
     /**
-     * The function getNumber() returns the number of the work described in this
-     * hit.
+     * Returns the number of the work described in this hit.
      *
      * @return the number
      */
@@ -292,8 +284,8 @@ public class Hit {
     }
 
     /**
-     * The function getOverallTitle() returns the title of the series that the
-     * work described in this hit appeared in.
+     * Returns the title of the series that the work described in this hit
+     * appeared in.
      *
      * @return the title of the series
      */
@@ -302,8 +294,7 @@ public class Hit {
     }
 
     /**
-     * The function getPages() returns the page range covered by the article
-     * described in this hit.
+     * Returns the page range covered by the article described in this hit.
      *
      * @return the page range covered by this article
      */
@@ -323,8 +314,7 @@ public class Hit {
     }
 
     /**
-     * The function getPart() returns the part of the article described in this
-     * hit.
+     * Returns the part of the article described in this hit.
      *
      * @return the part of the article
      */
@@ -333,8 +323,7 @@ public class Hit {
     }
 
     /**
-     * The function getPlaceOfPublication() returns the place of publication of
-     * the work described in this hit.
+     * Returns the place of publication of the work described in this hit.
      *
      * @return the place of publication
      */
@@ -343,8 +332,7 @@ public class Hit {
     }
 
     /**
-     * The function getSubseries() returns the subseries of the work described
-     * in this hit appared in.
+     * Returns the subseries of the work described in this hit appared in.
      *
      * @return the subseries
      */
@@ -353,8 +341,7 @@ public class Hit {
     }
 
     /**
-     * The function getTheses() returns the kind of academic writing described
-     * in this hit, i.e. “Diss.”.
+     * Returns the kind of academic writing described in this hit, i.e. “Diss.”.
      *
      * @return the kind of academic writing
      */
@@ -363,8 +350,8 @@ public class Hit {
     }
 
     /**
-     * The function getURL() returns the Internet address of the online resource
-     * described in this hit.
+     * Returns the Internet address of the online resource described in this
+     * hit.
      *
      * @return the Internet address
      */
@@ -373,8 +360,7 @@ public class Hit {
     }
 
     /**
-     * The function getVolume() returns the volume count of the work described
-     * in this hit.
+     * Returns the volume count of the work described in this hit.
      *
      * @return the volume number
      */
@@ -383,8 +369,7 @@ public class Hit {
     }
 
     /**
-     * The function getVolumeTitle() returns the volume title of the work
-     * described in this hit.
+     * Returns the volume title of the work described in this hit.
      *
      * @return the volume title
      */
@@ -393,9 +378,8 @@ public class Hit {
     }
 
     /**
-     * The function getYearPublished() returns the year the work described in
-     * this hit was created as Integer. A String value is also supported, if it
-     * can be parsed to an Integer.
+     * Returns the year the work described in this hit was created as Integer. A
+     * String value is also supported, if it can be parsed to an Integer.
      *
      * @return the year the work was created
      */

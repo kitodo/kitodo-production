@@ -77,7 +77,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function isAutoRunningThreads() returns whether the TaskManager’s
+     * Returns whether the TaskManager’s
      * autorun mode is on or not.
      *
      * @return whether the TaskManager is auto-running threads or not
@@ -87,7 +87,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function run() examines the task list, deletes threads that have
+     * Examines the task list, deletes threads that have
      * died, replaces threads that are to be restarted by new copies of
      * themselves and finally starts new threads up to the given limit.
      *
@@ -227,7 +227,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function setAutoRunningThreads() turns the feature to auto-run tasks
+     * Turns the feature to auto-run tasks
      * on or off. To enable, it will set the limit of auto running threads to
      * the number of available cores of the runtime or to the value set in the
      * global configuration file, if any. To disable auto-running it will set

@@ -69,7 +69,7 @@ public class GranularityForm {
     protected Long numberOfPages;
 
     /**
-     * The procedure breakModeClick() is called from the procedures which are
+     * The procedure is called from the procedures which are
      * called if the user clicks one of the button to select the granularity
      * level. It sets the granularity to the given BreakMode and triggers the
      * recalculation of the processes in the course of appearance data model.
@@ -80,7 +80,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure daysClick() is called if the user clicks the button to
+     * The procedure is called if the user clicks the button to
      * select the granularity level “days”. It sets the granularity to
      * BreakMode.DAYS and triggers the recalculation of the breaks in the course
      * of appearance data model.
@@ -90,7 +90,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure createProcessesClick() is called if the user clicks the
+     * The procedure is called if the user clicks the
      * button to create processes for the course of appearance. If the
      * underlying ProzesskopieForm is incomplete, the user will be redirected
      * back to the page to fix the problems and nothing more happens. If
@@ -119,7 +119,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure downloadClick() is called if the user clicks the button to
+     * The procedure is called if the user clicks the button to
      * download the course of appearance in XML format.
      */
     public void downloadClick() {
@@ -140,7 +140,7 @@ public class GranularityForm {
     }
 
     /**
-     * The function getBatchOptions() returns the granularity levels available
+     * Returns the granularity levels available
      * to summarize the processes to create in batches along with their verbal
      * description to be shown to the user. The available values depend on the
      * granularity value of the global variable &ldquo;granularity&rdquo;: Only
@@ -184,7 +184,7 @@ public class GranularityForm {
     }
 
     /**
-     * The function getGranularity() returns the granularity level chosen by the
+     * Returns the granularity level chosen by the
      * user in lower case as read-only property “granularity”. If there are no
      * processes—indicating that the user didn’t choose anything yet or didn’t
      * choose anything again after clicking back in the bread crumbs and
@@ -202,7 +202,7 @@ public class GranularityForm {
     }
 
     /**
-     * The function getIssueCount() returns the number of issues that physically
+     * Returns the number of issues that physically
      * appeared as to the underlying course of appearance data model as
      * read-only property “issueCount”.
      *
@@ -213,7 +213,7 @@ public class GranularityForm {
     }
 
     /**
-     * The function getLockMessage() returns an empty string if either no limit
+     * Returns an empty string if either no limit
      * for the minimal number of pages per process has been configured, or the
      * limit has been reached, which will allow normal processing. Otherwise, an
      * error message string is returned, explaining the user how to fix the
@@ -277,7 +277,7 @@ public class GranularityForm {
     }
 
     /**
-     * The function getNumberOfProcesses() returns the number of processes that
+     * Returns the number of processes that
      * will be created. If the course had to condemn its processes because the
      * user changed the course, the recalculation of the processes will be
      * re-initiated here.
@@ -292,7 +292,7 @@ public class GranularityForm {
     }
 
     /**
-     * The function getPagesPerProcessRounded() returns the pages per process as
+     * Returns the pages per process as
      * a rounded string.
      *
      * <p>
@@ -316,7 +316,7 @@ public class GranularityForm {
     }
 
     /**
-     * The function getSelectedBatchOption() returns the level for which batches
+     * Returns the level for which batches
      * will be created as read-write property “numberOfPagesOptionallyGuessed”.
      *
      * @return an (optionally guessed) total number of pages
@@ -326,7 +326,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure issuesClick() is called if the user clicks the button to
+     * The procedure is called if the user clicks the button to
      * select the granularity level “issues”. It sets the granularity to
      * BreakMode.ISSUES and triggers the recalculation of the breaks in the
      * course of appearance data model.
@@ -336,7 +336,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure monthsClick() is called if the user clicks the button to
+     * The procedure is called if the user clicks the button to
      * select the granularity level “months”. It sets the granularity to
      * BreakMode.MONTHS and triggers the recalculation of the breaks in the
      * course of appearance data model.
@@ -346,7 +346,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure monthsClick() is called if the user clicks the button to
+     * The procedure is called if the user clicks the button to
      * select the granularity level “quarters”. It sets the granularity to
      * BreakMode.MONTHS and triggers the recalculation of the breaks in the
      * course of appearance data model.
@@ -356,7 +356,7 @@ public class GranularityForm {
     }
 
     /**
-     * The method setCourse() is called by JSF to inject the course data model
+     * The method is called by JSF to inject the course data model
      * into the form. This behaviour is configured in faces-config.xml
      *
      * @param course
@@ -367,7 +367,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure setNumberOfPagesPerIssue() is called by Faces on postbacks
+     * The procedure is called by Faces on postbacks
      * to save the received value of the read-write property
      * “numberOfPagesPerIssue”.
      *
@@ -379,7 +379,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure setSelectedBatchOption() is called by Faces on postbacks to
+     * The procedure is called by Faces on postbacks to
      * save the received value of the read-write property “selectedBatchOption”.
      *
      * @param option
@@ -394,7 +394,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure weeksClick() is called if the user clicks the button to
+     * The procedure is called if the user clicks the button to
      * select the granularity level “weeks”. It sets the granularity to
      * BreakMode.WEEKS and triggers the recalculation of the breaks in the
      * course of appearance data model.
@@ -404,7 +404,7 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure yearsClick() is called if the user clicks the button to
+     * The procedure is called if the user clicks the button to
      * select the granularity level “years”. It sets the granularity to
      * BreakMode.YEARS and triggers the recalculation of the breaks in the
      * course of appearance data model.

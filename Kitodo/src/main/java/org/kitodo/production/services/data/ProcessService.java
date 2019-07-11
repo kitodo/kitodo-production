@@ -1581,7 +1581,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * The function getDigitalDocument() returns the digital act of this process.
+     * Returns the digital act of this process.
      *
      * @return the digital act of this process
      * @throws IOException

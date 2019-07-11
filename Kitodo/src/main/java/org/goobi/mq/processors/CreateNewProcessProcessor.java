@@ -148,8 +148,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function newProcessFromTemplate() derives a ProzesskopieForm object
-     * from a given template.
+     * Derives a ProzesskopieForm object from a given template.
      *
      * @param templateTitle
      *            title value of the template to look for
@@ -168,8 +167,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function getTemplateByTitle() fetches the first Prozess with
-     * istTemplate and the given templateTitle from the database.
+     * Fetches the first process template with the given title from the
+     * database.
      *
      * @param templateTitle
      *            the title of the template to be picked up
@@ -189,9 +188,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function validCollectionsForProcess() tests whether a given set of
-     * collections can be assigned to new process. If so, the set of collections
-     * is returned as a list ready for assignment.
+     * Tests whether a given set of collections can be assigned to new process.
+     * If so, the set of collections is returned as a list ready for assignment.
      *
      * @param collections
      *            a set of collection names to be tested
@@ -213,9 +211,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function docTypeIsPossible() tests whether a given docType String can
-     * be applied to a given process template. If so, it will execute without exception,
-     * otherwise, it will throw an informative IllegalArgumentException.
+     * Tests whether a given docType String can be applied to a given process
+     * template. If so, it will execute without exception, otherwise, it will
+     * throw an informative IllegalArgumentException.
      *
      * @param dialog
      *            the ProzesskopieForm object to test against
@@ -246,8 +244,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The method setUserFields() allows to set any AdditionalField to a user
-     * specific value.
+     * Allows to set any additional field to a user-specific value.
      *
      * @param form
      *            a ProzesskopieForm object whose AdditionalField objects are
@@ -302,9 +299,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function countPopulatedAdditionalFields() returns the number of
-     * AdditionalFields in the given ProzesskopieForm that have meaningful
-     * content.
+     * Returns the number of AdditionalFields in the given ProzesskopieForm that
+     * have meaningful content.
      *
      * @param form
      *            a ProzesskopieForm object to examine

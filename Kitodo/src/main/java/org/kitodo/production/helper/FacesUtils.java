@@ -33,7 +33,7 @@ public class FacesUtils {
     }
 
     /**
-     * The procedure sendDownload() sends a byte[] of data in the HTTP response
+     * Sends a byte[] of data in the HTTP response
      * of a user interaction as a file download. Calling this procedure is only
      * sensible during the invoke application phase of the JSF life cycle, i.e.
      * in procedures that are designed to provide the action for a JSF command

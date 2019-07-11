@@ -32,7 +32,7 @@ public class TaskManagerForm {
     private EmptyTask task;
 
     /**
-     * The method getTasks() returns the task list held in the task manager.
+     * Returns the task list held in the task manager.
      *
      * @return the task list
      */
@@ -70,7 +70,7 @@ public class TaskManagerForm {
     }
 
     /**
-     * The method setTask() provides write access to the property "task" and
+     * Provides write access to the property "task" and
      * will be called by the Tomahawk updateActionListener tag when an action
      * event is fired by the parent UI component. This can be used to pass an
      * object to a method when it actually is the patient acted on—not the agent

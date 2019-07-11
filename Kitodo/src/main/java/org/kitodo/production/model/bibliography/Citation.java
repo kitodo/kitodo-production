@@ -193,7 +193,7 @@ public class Citation {
     }
 
     /**
-     * The method addMultipleAuthors() can be used to set the creators of the
+     * Can be used to set the creators of the
      * work.
      *
      * @param creators
@@ -206,7 +206,7 @@ public class Citation {
     }
 
     /**
-     * The method addMultipleContributors() can be used to set the editors,
+     * Can be used to set the editors,
      * compilers, translators, … of the anthology.
      *
      * @param contributors
@@ -219,7 +219,7 @@ public class Citation {
     }
 
     /**
-     * The function addMultiple() adds multiple entities from a String to a
+     * Adds multiple entities from a String to a
      * collection.
      *
      * @param list
@@ -246,7 +246,7 @@ public class Citation {
     }
 
     /**
-     * The method setAccessTime() can be used to set the point in time when the
+     * Can be used to set the point in time when the
      * work was last accessed.
      *
      * @param accessed
@@ -257,7 +257,7 @@ public class Citation {
     }
 
     /**
-     * The method setArticleTitle() can be used to set the title of the article.
+     * Can be used to set the title of the article.
      *
      * @param title
      *            the title of the article
@@ -270,7 +270,7 @@ public class Citation {
     }
 
     /**
-     * The method setDepartment() can be used to set the department of the
+     * Can be used to set the department of the
      * author of the academic writing.
      *
      * @param department
@@ -284,7 +284,7 @@ public class Citation {
     }
 
     /**
-     * The method setEdition() can be used to set edition information of the
+     * Can be used to set edition information of the
      * work.
      *
      * @param edition
@@ -298,7 +298,7 @@ public class Citation {
     }
 
     /**
-     * The method setEmployer() can be used to set the employer—usually a
+     * Can be used to set the employer—usually a
      * university—of the author of the academic writing.
      *
      * @param employer
@@ -312,7 +312,7 @@ public class Citation {
     }
 
     /**
-     * The method setNumber() can be used to set the number of the work.
+     * Can be used to set the number of the work.
      *
      * @param number
      *            the number
@@ -325,7 +325,7 @@ public class Citation {
     }
 
     /**
-     * The method setOverallTitle() can be used to set the title of the series
+     * Can be used to set the title of the series
      * that the work appeared in.
      *
      * @param title
@@ -339,7 +339,7 @@ public class Citation {
     }
 
     /**
-     * The method setPages() can be used to set the page range covered by the
+     * Can be used to set the page range covered by the
      * article.
      *
      * @param pages
@@ -353,7 +353,7 @@ public class Citation {
     }
 
     /**
-     * The method setPart() can be used to set the part of the article.
+     * Can be used to set the part of the article.
      *
      * @param part
      *            the part of the article
@@ -366,7 +366,7 @@ public class Citation {
     }
 
     /**
-     * The method setPlace() can be used to set the place of publication of the
+     * Can be used to set the place of publication of the
      * work.
      *
      * @param place
@@ -380,7 +380,7 @@ public class Citation {
     }
 
     /**
-     * The method setPublicationDate() can be used to set the day when the work
+     * Can be used to set the day when the work
      * was published.
      *
      * @param date
@@ -391,7 +391,7 @@ public class Citation {
     }
 
     /**
-     * The method setPublisher() can be used to set the name of the publishing
+     * Can be used to set the name of the publishing
      * house that published the work.
      *
      * @param publisher
@@ -405,7 +405,7 @@ public class Citation {
     }
 
     /**
-     * The method setSubseries() can be used to set the subseries the work
+     * Can be used to set the subseries the work
      * appeared in.
      *
      * @param subseries
@@ -419,7 +419,7 @@ public class Citation {
     }
 
     /**
-     * The method setTitle() can be used to set the title of the autonomous
+     * Can be used to set the title of the autonomous
      * work.
      *
      * @param title
@@ -433,7 +433,7 @@ public class Citation {
     }
 
     /**
-     * The method setType() can be used to set the kind of academic writing.
+     * Can be used to set the kind of academic writing.
      *
      * @param type
      *            the kind of academic writing
@@ -446,7 +446,7 @@ public class Citation {
     }
 
     /**
-     * The method setURL() can be used to set the Internet address of the online
+     * Can be used to set the Internet address of the online
      * resource.
      *
      * @param url
@@ -460,7 +460,7 @@ public class Citation {
     }
 
     /**
-     * The method setVolume() can be used to set the volume count of the work.
+     * Can be used to set the volume count of the work.
      *
      * @param volume
      *            the volume count
@@ -473,7 +473,7 @@ public class Citation {
     }
 
     /**
-     * The method setVolumeTitle() can be used to set the volume title of the
+     * Can be used to set the volume title of the
      * work.
      *
      * @param title
@@ -487,7 +487,7 @@ public class Citation {
     }
 
     /**
-     * The method setYear() can be used to set the year the work was published.
+     * Can be used to set the year the work was published.
      *
      * @param year
      *            the year the work was published
@@ -497,7 +497,7 @@ public class Citation {
     }
 
     /**
-     * The function toHTML() returns the bibliographic citation in HTML format.
+     * Returns the bibliographic citation in HTML format.
      *
      * @return the bibliographic citation as HTML
      */
@@ -529,7 +529,7 @@ public class Citation {
     }
 
     /**
-     * The function toString() returns a string that textually represents this
+     * Returns a string that textually represents this
      * object.
      *
      * @return a human readable String representation
@@ -671,7 +671,7 @@ public class Citation {
     }
 
     /**
-     * The method appendAccessed() appends the time of last access to the given
+     * Appends the time of last access to the given
      * StringBuilder.
      *
      * @param builder
@@ -693,7 +693,7 @@ public class Citation {
     }
 
     /**
-     * The method appendArticle() appends the article title to the given
+     * Appends the article title to the given
      * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
@@ -712,7 +712,7 @@ public class Citation {
     }
 
     /**
-     * The method appendContainedIn() appends the “ In: ” remark to the given
+     * Appends the “ In: ” remark to the given
      * StringBuilder.
      *
      * @param builder
@@ -725,7 +725,7 @@ public class Citation {
     }
 
     /**
-     * The method appendEdition() appends edition information to the given
+     * Appends edition information to the given
      * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
@@ -742,7 +742,7 @@ public class Citation {
     }
 
     /**
-     * The method appendNames() appends a list of names to the given
+     * Appends a list of names to the given
      * StringBuilder.
      *
      * @param names
@@ -761,7 +761,7 @@ public class Citation {
     }
 
     /**
-     * The method formatName() returns a name formatted in HTML. If colon is
+     * Returns a name formatted in HTML. If colon is
      * true, it returns “Lastname, Firstname”, otherwise it returns “Firstname
      * Lastname”. In either case, the last name will be formatted in small caps.
      *
@@ -794,7 +794,7 @@ public class Citation {
     }
 
     /**
-     * The method appendOverallTitleAndNumber() appends the series title and
+     * Appends the series title and
      * number to the given StringBuilder.
      *
      * @param builder
@@ -819,7 +819,7 @@ public class Citation {
     }
 
     /**
-     * The method appendPagerange() appends the page range to the given
+     * Appends the page range to the given
      * StringBuilder.
      *
      * @param builder
@@ -835,7 +835,7 @@ public class Citation {
     }
 
     /**
-     * The method appendPlaceAndPublisher() appends the place of publication and
+     * Appends the place of publication and
      * the publishing house to the given StringBuilder.
      *
      * @param builder
@@ -856,7 +856,7 @@ public class Citation {
     }
 
     /**
-     * The method appendPublished() appends the date of publish to the given
+     * Appends the date of publish to the given
      * StringBuilder.
      *
      * @param builder
@@ -869,7 +869,7 @@ public class Citation {
     }
 
     /**
-     * The method appendTitle() appends the main title to the given
+     * Appends the main title to the given
      * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
@@ -880,7 +880,7 @@ public class Citation {
     }
 
     /**
-     * The method appendTitle() appends the main title to the given
+     * Appends the main title to the given
      * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
@@ -901,7 +901,7 @@ public class Citation {
     }
 
     /**
-     * The method appendURL() appends an URL to the given StringBuilder.
+     * Appends an URL to the given StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -915,7 +915,7 @@ public class Citation {
     }
 
     /**
-     * The method appendVolumeInformation() appends volume information to the
+     * Appends volume information to the
      * given StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
@@ -940,7 +940,7 @@ public class Citation {
     }
 
     /**
-     * The method appendYear() appends information about the year of publishing
+     * Appends information about the year of publishing
      * to the given StringBuilder.
      *
      * @param builder
@@ -955,7 +955,7 @@ public class Citation {
     }
 
     /**
-     * The method appendYear() appends information about the year of publishing
+     * Appends information about the year of publishing
      * to the given StringBuilder.
      *
      * @param builder

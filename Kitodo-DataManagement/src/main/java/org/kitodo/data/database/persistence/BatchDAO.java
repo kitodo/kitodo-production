@@ -55,7 +55,7 @@ public class BatchDAO extends BaseDAO<Batch> {
     }
 
     /**
-     * The method removeAll() removes all batches specified by the given IDs from
+     * Removes all batches specified by the given IDs from
      * the database.
      *
      * @param ids

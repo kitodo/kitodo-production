@@ -66,7 +66,7 @@ public class QueryBuilder {
     }
 
     /**
-     * The function appendAll() appends a list of query tokens to an initial
+     * Appends a list of query tokens to an initial
      * query by means of a StringBuilder.
      *
      * @param query
@@ -93,7 +93,7 @@ public class QueryBuilder {
     }
 
     /**
-     * The function restrictToField() prefixes the tokens of a query by the
+     * Prefixes the tokens of a query by the
      * given search field.
      *
      * @param field

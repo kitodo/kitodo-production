@@ -286,7 +286,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The procedure clearProcesses() deletes the process list. This is
+     * Deletes the process list. This is
      * necessary if the processes must be regenerated because the data structure
      * they will be derived from has changed, or if they only had been added
      * temporarily to be able to retrieve an XML file containing values.
@@ -298,7 +298,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The method countIndividualIssues() determines how many stampings of
+     * Determines how many stampings of
      * issues physically appeared without generating a list of IndividualIssue
      * objects.
      *
@@ -340,7 +340,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getIndividualIssues() generates a list of IndividualIssue
+     * Generates a list of IndividualIssue
      * objects, each of them representing a stamping of one physically appeared
      * issue.
      *
@@ -362,7 +362,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getFirstAppearance() returns the date the regularity of this
+     * Returns the date the regularity of this
      * course of appearance starts with.
      *
      * @return the date of first appearance
@@ -382,7 +382,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getLastAppearance() returns the date the regularity of this
+     * Returns the date the regularity of this
      * course of appearance ends with.
      *
      * @return the date of last appearance
@@ -402,7 +402,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getNumberOfProcesses() returns the number of processes into
+     * Returns the number of processes into
      * which the course of appearance will be split.
      *
      * @return the number of processes
@@ -412,7 +412,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function guessTotalNumberOfPages() calculates a guessed number of
+     * Calculates a guessed number of
      * pages for a course of appearance of a newspaper, presuming each issue
      * having 40 pages and Sunday issues having six times that size because most
      * people buy the Sunday issue most often and therefore advertisers buy the
@@ -436,7 +436,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getProcesses() returns the processes to create from the
+     * Returns the processes to create from the
      * course of appearance.
      *
      * @return the processes
@@ -446,7 +446,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function isMatch() iterates over the array of blocks and returns the
+     * Iterates over the array of blocks and returns the
      * first one that matches a given date. Since there shouldn’t be overlapping
      * blocks, there should be at most one block for which this is true. If no
      * matching block is found, it will return null.
@@ -465,7 +465,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The method recalculateRegularityOfIssues() recalculates for all blocks of
+     * Recalculates for all blocks of
      * this Course for each Issue the daysOfWeek of its regular appearance
      * within the interval of time of the block. This is especially sensible to
      * detect the underlying regularity after lots of issues whose existence is
@@ -478,7 +478,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function remove() removes the element at the specified position in
+     * Removes the element at the specified position in
      * this list. Shifts any subsequent elements to the left (subtracts one from
      * their indices). Additionally, any references to the object held in the
      * map used for resolving are being removed so that the object can be
@@ -502,7 +502,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The method splitInto() calculates the processes depending on the given
+     * Calculates the processes depending on the given
      * BreakMode.
      *
      * @param mode
@@ -534,7 +534,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function toXML() transforms a course of appearance to XML.
+     * Transforms a course of appearance to XML.
      *
      * @return XML as String
      */

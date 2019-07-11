@@ -227,7 +227,7 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * The function evaluateOpac() is executed if a user clicks the command link
+     * The function is executed if a user clicks the command link
      * to start a catalogue search. It performs the search and loads the hit if
      * it is unique. Otherwise, it will cause a hit list to show up for the user
      * to select a hit.
@@ -344,7 +344,7 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * The method importHit() loads a hit into the display.
+     * Loads a hit into the display.
      *
      * @param hit
      *            Hit to load
@@ -1024,7 +1024,7 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * The method setAdditionalField() sets the value of an AdditionalField held
+     * Sets the value of an AdditionalField held
      * by a ProzesskopieForm object.
      *
      * @param key

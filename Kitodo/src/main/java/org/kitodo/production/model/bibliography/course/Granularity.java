@@ -45,7 +45,7 @@ public enum Granularity {
     YEARS;
 
     /**
-     * The function format() converts a given LocalDate to a String
+     * Converts a given LocalDate to a String
      * representation of the date in the given granularity. For the 1st January
      * 2000 it will return:
      * <p/>

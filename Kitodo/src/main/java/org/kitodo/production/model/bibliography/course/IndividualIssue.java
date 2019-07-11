@@ -112,7 +112,7 @@ public class IndividualIssue {
     }
 
     /**
-     * The function getDate() returns the date of this issue.
+     * Returns the date of this issue.
      *
      * @return the date of this issue
      */
@@ -121,7 +121,7 @@ public class IndividualIssue {
     }
 
     /**
-     * The function getGenericFields() returns a map with generic fields that
+     * Returns a map with generic fields that
      * can be configured for process title creation in kitodo_projects.xml. It
      * provides the issue information in the following fields:
      *
@@ -185,7 +185,7 @@ public class IndividualIssue {
     }
 
     /**
-     * The function getHeading() returns the name of the issue this is an issue
+     * Returns the name of the issue this is an issue
      * from.
      *
      * @return the issue’s name
@@ -195,7 +195,7 @@ public class IndividualIssue {
     }
 
     /**
-     * The function indexIn() returns the index of the first occurrence of the
+     * Returns the index of the first occurrence of the
      * block of this issue in the given course, or -1 if the course does not
      * contain the element.
      *
@@ -209,7 +209,7 @@ public class IndividualIssue {
     }
 
     /**
-     * The function toString() provides returns a string that contains a concise
+     * Provides returns a string that contains a concise
      * but informative representation of this issue that is easy for a person to
      * read.
      *

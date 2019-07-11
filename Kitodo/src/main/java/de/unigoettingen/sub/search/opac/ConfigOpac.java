@@ -148,18 +148,16 @@ public class ConfigOpac {
     }
 
     /**
-     * The function getRestrictionsForCatalogue() returns the content of all
-     * <kbd>&lt;restriction&gt;</kbd> elements from the
-     * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
-     * <kbd>kitodo_opac.xml</kbd>.
+     * Returns the content of all {@code <restriction>} elements from the
+     * {@code <catalogue>} entry with the given {@code title} from
+     * {@code <kitodo_opac.xml>}.
      *
      * <p>
      * The function will return an empty list if there are no such entries for
      * the given catalogue.
      *
      * @param title
-     *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
-     *            examine
+     *            Title parameter of the {@code <catalogue>} entry to examine
      * @return List
      */
     public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {

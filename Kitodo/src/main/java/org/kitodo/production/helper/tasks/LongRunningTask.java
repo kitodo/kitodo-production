@@ -59,7 +59,7 @@ public abstract class LongRunningTask extends EmptyTask {
     }
 
     /**
-     * The method setShowMessages() can be used to set a flag whether this long
+     * Can be used to set a flag whether this long
      * running task is executing asynchronously or not, in the latter case it
      * shall show messages to the user using
      * {@link org.kitodo.production.helper.Helper#setMessage(String)}, otherwise not.
