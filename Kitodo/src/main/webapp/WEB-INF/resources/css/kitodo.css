@@ -1010,12 +1010,21 @@ main i.fa {
     width: 250px;
 }
 
-.select-client-note {
+.select-note {
     background: var(--orange);
     padding: 16px 32px 16px 32px;
     color: var(--pure-white);
     hyphens: auto;
     line-height: 22px;
+}
+
+.ui-dialog-content .select-selector {
+    padding: 16px 32px 16px 32px;
+}
+
+.ui-dialog-content .select-selector .ui-selectonemenu {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .client-select-dialog {
@@ -1032,10 +1041,6 @@ main i.fa {
 .client-select-dialog > .ui-dialog-content {
     padding-left: 0;
     padding-right: 0;
-}
-
-.client-select-dialog > .ui-dialog-content > #select-session-client-form > .select-client-selector {
-    padding: 16px 32px 16px 32px;
 }
 
 #select-session-client-form > .select-client-selector > .ui-selectonemenu {

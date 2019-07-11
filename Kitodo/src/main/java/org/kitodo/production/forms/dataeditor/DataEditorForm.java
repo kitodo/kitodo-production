@@ -19,12 +19,14 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -41,9 +43,12 @@ import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
@@ -139,6 +144,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * The file content.
      */
     private Workpiece workpiece;
+
+    /**
+     * The task the user is currently working on when opening the Metadata Editor.
+     */
+    private Task currentTask;
 
     /**
      * Public constructor.
@@ -239,6 +249,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         currentChildren.clear();
         process = null;
         user = null;
+        this.setCurrentTask(null);
         if (referringView.contains("?")) {
             return referringView + "&faces-redirect=true";
         } else {
@@ -397,7 +408,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      *
      * @return value of process
      */
-    Process getProcess() {
+    public Process getProcess() {
         return process;
     }
 
@@ -408,6 +419,46 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String getProcessTitle() {
         return process.getTitle();
+    }
+
+    /**
+     * Get the current task.
+     *
+     * @return the current task
+     */
+    public Task getCurrentTask() {
+        return this.currentTask;
+    }
+
+    /**
+     * Return a list of tasks that are "INWORK", assigned to the current user and have type "metadata".
+     *
+     * @param processID
+     *          ID of the process for which the current task options will be determined
+     *
+     * @return list of tasks with type metadata that are "INWORK" assigned to the current user
+     */
+    public List<Task> getCurrentTaskOptions(int processID) {
+        try {
+            Process process = ServiceManager.getProcessService().getById(processID);
+            return process.getTasks().stream().filter(t -> t.isTypeMetadata()
+                    && Objects.nonNull(t.getProcessingUser())
+                    && ServiceManager.getUserService().getAuthenticatedUser().getId().equals(t.getProcessingUser().getId())
+                    && TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingOne",
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processID} , logger, e);
+            return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Set the current task.
+     *
+     * @param task the new value for the current task
+     */
+    public void setCurrentTask(Task task) {
+        this.currentTask = task;
     }
 
     @Override
@@ -443,6 +494,20 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     void setProcess(Process process) {
         this.process = process;
+    }
+
+    /**
+     * Set the current process of the DataEditorForm by ID.
+     *
+     * @param processID
+     *          ID of the process to set
+     */
+    public void setProcessByID(int processID) {
+        try {
+            setProcess(ServiceManager.getProcessService().getById(processID));
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+        }
     }
 
     void switchStructure(Object treeNodeData) throws NoSuchMetadataFieldException {

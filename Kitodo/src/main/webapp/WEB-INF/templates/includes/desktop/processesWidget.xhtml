@@ -43,13 +43,28 @@
                     <f:param name="id" value="#{process.id}"/>
                     <f:param name="referer" value="desktop"/>
                 </h:link>
+
+                <!--@elvariable id="taskOptions" type="java.util.List"-->
+                <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(process.id)}"/>
+                <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
+                <p:commandLink id="openTaskSelectionDialogLink"
+                               title="#{msgs['dataEditor.selectMetadataTask']} (#{process.title})"
+                               oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
+                    <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
+                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                </p:commandLink>
+                <!-- else, open metadata editor directly -->
                 <h:commandLink id="readXML"
                                action="#{DataEditorForm.open(process.id, 'desktop')}"
-                               actionListener="#{CommentForm.setProcessId(process.id)}"
                                title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
+                               actionListener="#{CommentForm.setProcessId(process.id)}"
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                    <f:setPropertyActionListener value="#{taskOptions.size() eq 1 ? taskOptions.get(0) : null}"
+                                                 target="#{DataEditorForm.currentTask}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                 </h:commandLink>
+
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                     <h:outputText><i class="fa fa-download"/></h:outputText>
