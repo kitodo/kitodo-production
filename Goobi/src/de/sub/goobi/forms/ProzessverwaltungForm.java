@@ -1927,7 +1927,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 Helper.setFehlerMeldung(value);
                 return;
             }
-            if (this.processProperty.getProzesseigenschaft() == null) {
+            if (this.processProperty.getProzesseigenschaft() == null
+                    || this.processProperty.getProzesseigenschaft().getProzess() == null) {
                 Prozesseigenschaft pe = new Prozesseigenschaft();
                 pe.setProzess(this.myProzess);
                 this.processProperty.setProzesseigenschaft(pe);
