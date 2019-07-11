@@ -22,9 +22,6 @@ import javax.ws.rs.core.MediaType;
 /**
  * The class FacesUtils contains an omnium-gatherum of functions that perform
  * recurring tasks related to JavaServer Faces.
- * <p/>
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FacesUtils {
 

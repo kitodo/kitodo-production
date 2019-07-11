@@ -60,8 +60,6 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * doesn’t denote a language, the plug-in shall return its human-readable name
  * in English.
  * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class UnspecificPlugin {
     /**

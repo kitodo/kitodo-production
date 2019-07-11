@@ -14,8 +14,6 @@ package org.kitodo.production.helper.tasks;
 /**
  * A task implementing this interface provides its readable name by a method
  * call.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public interface INameableTask {
 

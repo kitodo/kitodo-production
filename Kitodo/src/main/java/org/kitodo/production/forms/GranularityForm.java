@@ -38,8 +38,6 @@ import org.w3c.dom.Document;
  * The class GranularityForm provides the screen logic for a JSF page to choose
  * the granularity to split up the course of appearance of a newspaper into
  * Kitodo processes.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @ManagedBean(name = "GranularityForm")
 @SessionScoped

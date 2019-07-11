@@ -98,8 +98,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * given String literal. If the plugin doesn’t support the given catalogue
  * (supportsCatalogue() would return false) the behaviour may be unspecified.
  * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CataloguePlugin extends UnspecificPlugin {
 

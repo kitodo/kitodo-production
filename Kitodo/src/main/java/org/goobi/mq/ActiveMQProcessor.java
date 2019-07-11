@@ -31,8 +31,6 @@ import org.kitodo.production.helper.Helper;
  * an abstract class would be the right place for it. ActiveMQProcessor also
  * provides a place to save the checker for the ActiveMQDirector, to be able to
  * shut it down later.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class ActiveMQProcessor implements MessageListener {
 

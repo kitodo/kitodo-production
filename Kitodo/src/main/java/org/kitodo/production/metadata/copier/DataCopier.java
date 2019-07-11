@@ -20,10 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * A data copier is a class that can be parametrised to copy data in goobi
- * processes depending on rules.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * A data copier is a class that can be parametrised to copy data in processes
+ * depending on rules.
  */
 public class DataCopier {
 

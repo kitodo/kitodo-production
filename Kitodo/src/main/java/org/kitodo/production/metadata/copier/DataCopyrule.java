@@ -24,8 +24,6 @@ import org.kitodo.exceptions.MetadataException;
  * which may later be used to modify metadata depending on various conditions,
  * and provides a factory method to create the matching metadata copy rule
  * implementation from a given command string.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class DataCopyrule {
 

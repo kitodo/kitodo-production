@@ -23,8 +23,6 @@ import org.joda.time.format.DateTimeFormatter;
  * The class Block is a bean class that represents an interval of time in the
  * course of appearance of a newspaper within which it wasn’t suspended. A Block
  * instance handles one or more Issue objects.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Block {
     /**

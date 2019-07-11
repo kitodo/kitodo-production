@@ -26,8 +26,6 @@ import org.kitodo.production.helper.Helper;
  * independently to do the work in the background. The name empty task points
  * out that the task doesn’t do anything sensible yet. It is here to be
  * extended.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class EmptyTask extends Thread implements INameableTask {
 
@@ -49,8 +47,6 @@ public class EmptyTask extends Thread implements INameableTask {
      * <dd>If the thread was interrupted by a user, replace it by a new one,
      * passing in the state of the old one to be able to continue work.</dd>
      * </dl>
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     public enum Behaviour {
         DELETE_IMMEDIATELY,

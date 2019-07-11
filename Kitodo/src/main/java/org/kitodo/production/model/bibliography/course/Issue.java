@@ -37,8 +37,6 @@ import org.joda.time.LocalDate;
  * Each issue can be modeled by one Issue object each, which are held by a Block
  * object which provides the dates of first and last appearance.
  * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Issue {
 

@@ -68,8 +68,6 @@ import org.kitodo.production.services.ServiceManager;
  * <dt>Map&lt;String, String&gt; userFields collections</dt>
  * <dd>Fields to be populated manually.</dd>
  * </dl>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final Logger logger = LogManager.getLogger(CreateNewProcessProcessor.class);

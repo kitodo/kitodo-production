@@ -28,8 +28,6 @@ import org.kitodo.data.database.beans.Project;
  * element named &lt;projekts&gt; who’s name is still derived from the classes’
  * name, not from the ‘name’ property set in the annotation and cannot be
  * changed otherwise.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @XmlRootElement(name = "projects")
 public class ProjectsRootNode {

@@ -20,14 +20,15 @@ import org.apache.commons.configuration.ConfigurationException;
  * left in case that the structure node defined on the left exists but doesn’t
  * yet have a metadata as named. Examples:
  *
- * <code>/@CurrentNoSorting ""= /*[0]@CurrentNoSorting</code> − copy the sort
- * number form the first child to the top struct if it doesn’t have a sort
- * number yet
+ * <ul>
+ * <li><code>/@CurrentNoSorting ""= /*[0]@CurrentNoSorting</code> − copy the
+ * sort number form the first child to the top struct if it doesn’t have a sort
+ * number yet</li>
  *
- * <code>/*[0]@TitleDocMain ""= /@TitleDocMain</code> − copy the main title from
- * the top struct to its first child element if it doesn’t have a main tile yet
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * <li><code>/*[0]@TitleDocMain ""= /@TitleDocMain</code> − copy the main title
+ * from the top struct to its first child element if it doesn’t have a main tile
+ * yet</li>
+ * </ul>
  */
 public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 

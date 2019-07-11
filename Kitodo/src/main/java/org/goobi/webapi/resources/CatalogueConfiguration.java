@@ -22,8 +22,6 @@ import javax.ws.rs.core.MediaType;
  * The CatalogueConfiguration class provides the Jersey API URL pattern
  * ${SERVLET_CONTEXT}/rest/catalogueConfiguration which returns the major data
  * from the ConfigOpac() configuration class in XML or JSON format.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @Path("/catalogueConfiguration")
 public class CatalogueConfiguration {

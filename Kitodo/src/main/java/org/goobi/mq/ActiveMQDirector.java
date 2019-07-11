@@ -53,8 +53,6 @@ import org.kitodo.config.enums.ParameterCore;
  * The class ActiveMQDirector also provides a basic ExceptionListener
  * implementation as required for the connection.
  * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @WebListener
 public class ActiveMQDirector implements ServletContextListener, ExceptionListener {

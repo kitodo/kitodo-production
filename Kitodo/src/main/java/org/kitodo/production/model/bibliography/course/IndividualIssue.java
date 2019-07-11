@@ -21,15 +21,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.exceptions.UnreachableCodeException;
 
 /**
- * The class IndividualIssue represents a stamping of an Issue, that is one
- * distinguishable physically appeared issue (meanwhile the class Issue
- * represents the <em>type</em> of issue).
- * 
- * <p>
- * The class IndividualIssue is final.
- * </p>
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * Represents a stamping of an Issue, that is one distinguishable physically
+ * appeared issue. In opposition, the class {@link Issue} represents the
+ * <em>type</em> of issue.
  */
 public class IndividualIssue {
     /**

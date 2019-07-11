@@ -28,8 +28,6 @@ import org.kitodo.production.helper.Helper;
 /**
  * The class Citation represents a citation as they are used in academic
  * writings.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Citation {
     /**
@@ -44,9 +42,6 @@ public class Citation {
      * <b>THESIS</b> − to cite from an academic writing <b>STANDARD</b> − to
      * cite from a standard <b>INTERNET</b> − to cite from a web site (use
      * PERIODICAL for online journals as well)
-     * </p>
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     private enum Type {
         MONOGRAPH, ANTHOLOGY, PERIODICAL, THESIS, STANDARD, INTERNET

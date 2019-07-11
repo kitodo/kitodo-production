@@ -25,8 +25,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDoc
 /**
  * A MetadataPathSelector provides methods to retrieve or modify document
  * structure nodes on a document structure node.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class MetadataPathSelector extends MetadataSelector {
     /**

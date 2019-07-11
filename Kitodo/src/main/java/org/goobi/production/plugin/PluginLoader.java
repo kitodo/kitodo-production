@@ -38,9 +38,6 @@ import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
 
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
- *
- * @author Based on preceding works from authors not named
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class PluginLoader {
     private static final Logger logger = LogManager.getLogger(PluginLoader.class);

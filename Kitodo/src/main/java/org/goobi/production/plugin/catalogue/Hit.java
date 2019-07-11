@@ -72,8 +72,6 @@ import org.kitodo.production.model.bibliography.Citation;
  * <kbd>volumetitle</kbd> − Title of the volume, if any<br/>
  * <kbd>year</kbd> − 4-digit year of publication
  * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Hit {
 

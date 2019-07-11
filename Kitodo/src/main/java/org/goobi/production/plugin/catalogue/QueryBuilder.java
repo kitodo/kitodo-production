@@ -61,8 +61,6 @@ import java.util.List;
  * ISBN, “8” = ISSN, “12” = Record identifier, …; for a list of supported fields
  * see /Kitodo/src/main/webapp/pages/NewProcess/inc_process.xhtml)
  * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class QueryBuilder {
 

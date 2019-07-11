@@ -35,8 +35,6 @@ import org.kitodo.exceptions.NotImplementedException;
  * <dt>YEARS</dt>
  * <dd>All issues of a year are scanned in one process.</dd>
  * </dl>
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public enum Granularity {
     ISSUES,

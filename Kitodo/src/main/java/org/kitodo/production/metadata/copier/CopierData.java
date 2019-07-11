@@ -22,8 +22,6 @@ import org.kitodo.production.services.ServiceManager;
  * A CopierData object contains all the data the data copier has access to. It
  * has been implemented as an own bean class to allow to easily add variables
  * later without needing to extend many interfaces.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CopierData {
 

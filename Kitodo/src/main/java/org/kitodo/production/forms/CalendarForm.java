@@ -51,8 +51,6 @@ import org.xml.sax.SAXException;
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
  * enter the course of appearance of a newspaper.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @Named("CalendarForm")
 @SessionScoped
@@ -63,8 +61,6 @@ public class CalendarForm implements Serializable {
 
     /**
      * The class Cell represents a single table cell on the calendar sheet.
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     public static class Cell {
         /**
@@ -182,8 +178,6 @@ public class CalendarForm implements Serializable {
      * The class IssueController backs the control elements that are necessary
      * to manage the properties of an issue using Faces, including the option of
      * its deletion.
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     public class IssueController {
         /**
@@ -469,8 +463,6 @@ public class CalendarForm implements Serializable {
     /**
      * The class IssuesOption represents the option that an Issue may have been
      * issued on a certain day in history.
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     public static class IssueOption {
         /**

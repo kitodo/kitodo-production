@@ -21,7 +21,6 @@ import org.kitodo.production.helper.Helper;
 /**
  * Deprecated class.
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  * @deprecated New task implementations should directly implement EmptyTask.
  */
 @Deprecated

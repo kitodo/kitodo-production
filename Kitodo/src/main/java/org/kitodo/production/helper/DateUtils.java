@@ -23,8 +23,6 @@ import org.joda.time.format.DateTimeFormatter;
  * The class DateUtils contains an omnium-gatherum of functions that work on
  * calendar dates. All functionality is realized using the org.joda.time.*
  * library.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class DateUtils {
     /**

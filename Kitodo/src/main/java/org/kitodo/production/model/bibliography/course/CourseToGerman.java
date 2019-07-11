@@ -25,8 +25,6 @@ import org.kitodo.production.helper.DateUtils;
 /**
  * The static class CourseToGerman provides a toString() method to convert a
  * course of appearance into a verbal description in German language.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CourseToGerman {
     /**

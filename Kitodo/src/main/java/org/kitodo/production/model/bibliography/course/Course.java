@@ -35,9 +35,6 @@ import org.w3c.dom.Node;
  * <p>
  * A course of appearance consists of one or more blocks of time. Interruptions
  * in the course of appearance can be modeled by subsequent blocks.
- * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Course extends ArrayList<Block> {
 
