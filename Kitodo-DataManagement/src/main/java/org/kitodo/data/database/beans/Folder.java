@@ -308,38 +308,6 @@ public class Folder extends BaseBean {
     }
 
     /**
-     * Returns the filename suffix with file extension for the UGH library.
-     *
-     * @deprecated This is a temporary solution and should no longer be used after
-     *             that the UGH is removed.
-     * @param extensionWithoutDot
-     *            filename extension without dot, to be read from the configuration.
-     *            The extension can be retrieved from the configuration based on the
-     *            mimeType, but reading the configuration is part of the core
-     *            module, so it cannot be done here and must be returned here from
-     *            the collar.
-     * @return the filename suffix with file extension
-     */
-    @Deprecated
-    @Transient
-    public String getUGHTail(String extensionWithoutDot) {
-        String lastSegment = path.substring(path.lastIndexOf(File.separatorChar) + 1);
-        if (lastSegment.indexOf('*') > -1) {
-            if (lastSegment.startsWith("*.")) {
-                String tail = lastSegment.substring(2);
-                if (tail.endsWith(".*")) {
-                    tail = tail.substring(0, tail.length() - 1).concat(extensionWithoutDot);
-                }
-                return tail;
-            } else {
-                throw new UnsupportedOperationException("The UGH does not support file name prefixes");
-            }
-        } else {
-            return extensionWithoutDot;
-        }
-    }
-
-    /**
      * Returns the URL structure of the folder.
      *
      * @return the URL structure
