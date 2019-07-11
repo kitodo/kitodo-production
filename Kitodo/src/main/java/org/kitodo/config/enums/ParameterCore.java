@@ -176,6 +176,11 @@ public enum ParameterCore implements ParameterInterface {
      */
     SCRIPT_DELETE_SYMLINK(new Parameter<UndefinedParameter>("script_deleteSymLink")),
 
+    /**
+     * Process property to use in the name of the smLink.
+     */
+    PROCESS_PROPERTY_SYMLINK_NAME(new Parameter<>("processProperty_symLinkName", "")),
+
     /*
      * Runnotes
      */
