@@ -56,8 +56,8 @@ public class MetsXmlElementAccessIT {
         // METS file has 183 associated images
         assertEquals(183, workpiece.getMediaUnits().size());
 
-        // all pages are linked to the root element
-        assertEquals(workpiece.getMediaUnits().size(), workpiece.getRootElement().getViews().size());
+        // METS file has 17 unstructured images
+        assertEquals(17, workpiece.getRootElement().getViews().size());
 
         // root node has 16 children
         assertEquals(16, workpiece.getRootElement().getChildren().size());
@@ -233,7 +233,9 @@ public class MetsXmlElementAccessIT {
             assertEquals(2, mediaUnit.getMediaFiles().size());
         }
         IncludedStructuralElement includedStructuralElementRoot = reread.getRootElement();
-        assertEquals(4, includedStructuralElementRoot.getViews().size());
+        assertEquals(1, includedStructuralElementRoot.getChildren().get(0).getViews().size());
+        assertEquals(2, includedStructuralElementRoot.getChildren().get(1).getViews().size());
+        assertEquals(1, includedStructuralElementRoot.getChildren().get(2).getViews().size());
         assertEquals(3, includedStructuralElementRoot.getChildren().size());
         assertEquals(1, includedStructuralElementRoot.getMetadata().size());
 
