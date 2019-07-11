@@ -300,7 +300,6 @@ public class GranularityForm {
      * effect and the number still prints with a decimal fractions part that is
      * not desired. This JSF code should put the number rounded into the request
      * scope, but rounding doesn’t work for some unknown reason.
-     * </p>
      *
      * <pre>
      * &lt;h:outputText binding=&quot;#{requestScope.pagesPerProcess}&quot; rendered=&quot;false&quot;&gt;

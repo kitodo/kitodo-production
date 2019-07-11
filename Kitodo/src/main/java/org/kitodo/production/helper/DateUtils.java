@@ -47,7 +47,6 @@ public class DateUtils {
      * 1954, 13th October 1954, 5th February 1955, 23th March 1955, 15th October
      * 1956, …. Then the function will return 10 (DateTimeConstants.OCTOBER) for
      * 1954 and 3 (DateTimeConstants.MARCH) for 1955.
-     * </p>
      *
      * @param data
      *            an ordered set of dates

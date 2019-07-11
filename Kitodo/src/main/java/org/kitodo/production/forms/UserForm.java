@@ -178,7 +178,6 @@ public class UserForm extends BaseForm {
      * <p>
      * Please note that deleting a user in goobi.production will not delete the
      * user from a connected LDAP service.
-     * </p>
      */
     public void delete() {
         try {

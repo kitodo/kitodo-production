@@ -199,13 +199,12 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Sorting of images.
      * <p>
-     * Numeric sorting of images. 1 is lesser then 002, compares the number of image
-     * names, characters other than digits are not supported.
-     * </p>
+     * Numeric sorting of images. 1 is lesser then 002, compares the number of
+     * image names, characters other than digits are not supported.
+     *
      * <p>
-     * Alphanumeric sorting of images. 1 is greater then 002, compares character by
-     * character of image names, all characters are supported.
-     * </p>
+     * Alphanumeric sorting of images. 1 is greater then 002, compares character
+     * by character of image names, all characters are supported.
      */
     IMAGE_SORTING(new Parameter<>("image.sorting", "number", Arrays.asList("number", "alphanumeric"))),
 
@@ -563,7 +562,6 @@ public enum ParameterCore implements ParameterInterface {
      *
      * <p>
      * Example: authority.http\://d-nb.info/gnd/.id=gnd
-     * </p>
      */
     AUTHORITY_ID_FROM_URI(new Parameter<UndefinedParameter>("authority.{0}.id")),
 
@@ -574,7 +572,6 @@ public enum ParameterCore implements ParameterInterface {
      *
      * <p>
      * Example: authority.default=http\://d-nb.info/gnd/
-     * </p>
      */
     AUTHORITY_DEFAULT(new Parameter<UndefinedParameter>("authority.default")),
 

@@ -50,7 +50,6 @@ import org.kitodo.production.services.ServiceManager;
  *
  * <p>
  * Field summary:
- * </p>
  *
  * <dl>
  * <dt>String template</dt>
@@ -275,7 +274,6 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * count the populated “additional details” fields before and after running
      * the request and assume the method to have failed if not even one more
      * field was populated by the method call.
-     * </p>
      *
      * @param inputForm
      *            the ProzesskopieForm to be set

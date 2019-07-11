@@ -431,7 +431,6 @@ public class EmptyTask extends Thread implements INameableTask {
      * <p>
      * I.e., if your task is about creation of OCR for a process, the detail
      * here could be the process title.
-     * </p>
      *
      * @param detail
      *            a name detail, may be null
@@ -488,7 +487,6 @@ public class EmptyTask extends Thread implements INameableTask {
      * <p>
      * I.e., if your task is about creation of OCR for a process, the detail
      * here could be the image file being processed right now.
-     * </p>
      *
      * @param detail
      *            a work detail, may be null

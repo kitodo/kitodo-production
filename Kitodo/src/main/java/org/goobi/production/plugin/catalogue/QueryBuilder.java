@@ -23,25 +23,21 @@ import java.util.List;
  * <b>Double quotes</b> (<code>""</code>) may be used to embrace a sequence of
  * tokens that have to appear in exactly that order in the search result (aka.
  * string search). They must appear in pairs.
- * </p>
  * 
  * <p>
  * <b>Round brackets</b> (<code>()</code>) may be used for logical reordering.
  * They must appear in pairs.
- * </p>
  *
  * <p>
  * <b>Blanks</b> (<code> </code>) are used to separate tokens. They imply a
  * conjunction, i.e. <code>cat dog</code> shall return only hits that contain
  * both tokens.
- * </p>
  *
  * <p>
  * A <b>vertical dash</b> (<code>|</code>) indicates the freedom of choice, i.e.
  * <code>cat | dog</code> may return hits that contain the token “cat” but not
  * necessarily the token “dog” and the other way round and of course hits that
  * contain both tokens as well.
- * </p>
  *
  * <p>
  * A <b>minus sign</b> (<code>-</code>) indicates the exclusion of a search
@@ -50,7 +46,6 @@ import java.util.List;
  * In combination with <i>colon</i>, the minus sign shall prefix the whole
  * expression, not the search term (i.e. <code>track -4:running</code>, not
  * <code>track 4:-running</code>).
- * </p>
  *
  * <p>
  * A <b>colon</b> (<code>:</code>) indicates fielded search, so that the term
@@ -60,7 +55,6 @@ import java.util.List;
  * used to reference them in PICA library catalogues (i.e. “4” = title, “7” =
  * ISBN, “8” = ISSN, “12” = Record identifier, …; for a list of supported fields
  * see /Kitodo/src/main/webapp/pages/NewProcess/inc_process.xhtml)
- * </p>
  */
 public class QueryBuilder {
 

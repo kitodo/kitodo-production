@@ -36,7 +36,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * <p>
  * <code>void configure(Map)</code><br>
  * See {@link UnspecificPlugin}.
- * </p>
  *
  * <p>
  * <code>Object find(String, long)</code><br>
@@ -47,12 +46,10 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * but didn’t yield any result. The method shall ensure that it returns after
  * the given timeout and shall throw a javax.persistence.QueryTimeoutException
  * if it was cancelled by the timer. The method may throw exceptions.
- * </p>
  *
  * <p>
  * <code>String getDescription()</code><br>
  * See {@link UnspecificPlugin}.
- * </p>
  *
  * <p>
  * <code>Map getHit(Object, long, long)</code><br>
@@ -61,7 +58,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * populated. The method shall ensure that it returns after the given timeout
  * and shall throw a javax.persistence.QueryTimeoutException if it was cancelled
  * by the timer. The method may throw exceptions.
- * </p>
  *
  * <p>
  * <code>long getNumberOfHits(Object, long)</code><br>
@@ -71,25 +67,21 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * The method shall ensure that it returns after the given timeout and shall
  * throw a javax.persistence.QueryTimeoutException if it was cancelled by the
  * timer. The method may throw exceptions.
- * </p>
  *
  * <p>
  * <code>String getTitle()</code><br>
  * See {@link UnspecificPlugin}.
- * </p>
  *
  * <p>
  * <code>void setPreferences(Prefs)</code><br>
  * The method setPreferences() is called before the first search request to the
  * plug-in and passes the UGH preferences the plugin shall use.
- * </p>
  *
  * <p>
  * <code>boolean supportsCatalogue(String)</code><br>
  * The function supportsCatalogue() shall return whether the plug-in has
  * sufficient knowledge to query a catalogue identified by the given String
  * literal or not.
- * </p>
  *
  * <p>
  * <code>void useCatalogue(String)</code><br>
@@ -97,7 +89,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * plug-in and shall tell it to use the catalogue connection identified by the
  * given String literal. If the plugin doesn’t support the given catalogue
  * (supportsCatalogue() would return false) the behaviour may be unspecified.
- * </p>
  */
 public class CataloguePlugin extends UnspecificPlugin {
 
@@ -267,7 +258,6 @@ public class CataloguePlugin extends UnspecificPlugin {
      * Note that on large, database-backed catalogues, searches for common title
      * terms may take more than 15 minutes, so 30 minutes may be a fair average
      * between that and the moment the sun will swallow up the earth.
-     * </p>
      *
      * @return the timeout for catalogue access
      */

@@ -115,7 +115,6 @@ public class PluginLoader {
      * Currently, this method is not referenced from within the Production code,
      * but this may change in future. The function is provided to show how the
      * old plug-in API can be replaced in future.
-     * </p>
      *
      * @param clazz
      *            UnspecificPlugin class type of the plug-ins to load
@@ -148,7 +147,6 @@ public class PluginLoader {
      * This is intended to be used for <em>general</em> configuration (probably)
      * suitable for all plug-in types. Use setters on the plug-ins to set
      * type-specific settings.
-     * </p>
      *
      * @return a HashMap to configure the plug-ins
      */

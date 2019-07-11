@@ -146,7 +146,6 @@ public class Helper implements Observer, Serializable {
      * <p>
      * This method also accepts logger and exception instances to automatically log
      * the exceptions message or stackTrace values to the given logger.
-     * </p>
      *
      * @param title
      *            name of the message tag set as error message
@@ -171,7 +170,6 @@ public class Helper implements Observer, Serializable {
      * <p>
      * This method also accepts logger and exception instances to automatically log
      * the exceptions message or stackTrace values to the given logger.
-     * </p>
      *
      * @param title
      *            name of the message tag set as error message
@@ -194,7 +192,6 @@ public class Helper implements Observer, Serializable {
      * This method also accepts a description text and logger and exception
      * instances to automatically log the exceptions message or stackTrace values to
      * the given logger.
-     * </p>
      *
      * @param title
      *            name of the message tag set as error message

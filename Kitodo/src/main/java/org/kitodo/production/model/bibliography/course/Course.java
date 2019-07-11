@@ -52,7 +52,6 @@ public class Course extends ArrayList<Block> {
      * The attribute <code>index="…"</code> is optional. It may be used to
      * distinguish different blocks if needed and can be omitted if only one
      * block is used.
-     * </p>
      */
     private static final String ATTRIBUTE_VARIANT = "index";
 
@@ -65,7 +64,6 @@ public class Course extends ArrayList<Block> {
      * Newspapers, especially bigger ones, can have several issues that, e.g.,
      * may differ in time of publication (morning issue, evening issue, …) or
      * geographic distribution (Edinburgh issue, London issue, …).
-     * </p>
      */
     private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
 
@@ -78,7 +76,6 @@ public class Course extends ArrayList<Block> {
      * physically appeared. It has the attributes <code>issue="…"</code>
      * (required, may be empty) and <code>date="…"</code> (required) and cannot
      * hold child elements.
-     * </p>
      */
     private static final String ELEMENT_APPEARED = "appeared";
 
@@ -91,7 +88,6 @@ public class Course extends ArrayList<Block> {
      * representation. It can hold two children,
      * <code>&lt;description&gt;</code> (output only, optional) and
      * <code>&lt;processes&gt;</code> (required).
-     * </p>
      */
     private static final String ELEMENT_COURSE = "course";
 
@@ -103,7 +99,6 @@ public class Course extends ArrayList<Block> {
      * <code>&lt;description&gt;</code> holds a verbal, human-readable
      * description of the course of appearance, which is generated only and
      * doesn’t have an effect on input.
-     * </p>
      */
     private static final String ELEMENT_DESCRIPTION = "description";
 
@@ -115,7 +110,6 @@ public class Course extends ArrayList<Block> {
      * Each <code>&lt;process&gt;</code> element represents one process to be
      * generated in Goobi Production. It can hold <code>&lt;title&gt;</code>
      * elements (of any quantity).
-     * </p>
      */
     private static final String ELEMENT_PROCESS = "process";
 
@@ -127,7 +121,6 @@ public class Course extends ArrayList<Block> {
      * Each <code>&lt;processes&gt;</code> element represents the processes to
      * be generated in Goobi Production. It can hold
      * <code>&lt;process&gt;</code> elements (of any quantity).
-     * </p>
      */
     private static final String ELEMENT_PROCESSES = "processes";
 
@@ -143,7 +136,6 @@ public class Course extends ArrayList<Block> {
      * name changes. This was given up later, but for historical reasons, the
      * XML element’s name is still “title”. For the original design, see
      * https://github.com/kitodo/kitodo-production/issues/51#issuecomment-38035674
-     * </p>
      */
     private static final String ELEMENT_BLOCK = "title";
 

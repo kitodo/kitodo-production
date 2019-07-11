@@ -20,7 +20,6 @@ import org.apache.commons.configuration.ConfigurationException;
  * <p>
  * The factory method {{@link #create(String)} can be used to retrieve a
  * DataSelector instance for a given path.
- * </p>
  */
 public abstract class DataSelector {
     /**

@@ -156,7 +156,6 @@ public class ConfigOpac {
      * <p>
      * The function will return an empty list if there are no such entries for
      * the given catalogue.
-     * </p>
      *
      * @param title
      *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to

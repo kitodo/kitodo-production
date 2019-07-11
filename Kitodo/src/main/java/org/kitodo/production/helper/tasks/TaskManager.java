@@ -85,7 +85,6 @@ public class TaskManager {
      * This is a fallback method that is called by the overloaded start() method
      * of AbstractTask. Do not use it. Use TaskManager.addTask() to properly add
      * the tasks you created.
-     * </p>
      *
      * @param task
      *            task to add

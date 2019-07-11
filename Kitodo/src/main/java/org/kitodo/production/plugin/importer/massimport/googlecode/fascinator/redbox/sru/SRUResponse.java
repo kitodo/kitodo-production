@@ -27,13 +27,10 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 
 /**
- * <p>
  * A trivial wrapper for response Objects, allowing access to common information
  * without having to parse continually.
- * </p>
  * 
  * @author Greg Pendlebury
- * 
  */
 public class SRUResponse {
     private static Logger logger = LogManager.getLogger(SRUResponse.class);
@@ -43,9 +40,7 @@ public class SRUResponse {
     private List<Node> resultsList;
 
     /**
-     * <p>
      * Default Constructor. Extract some basic information.
-     * </p>
      * 
      * @param searchResponse
      *            A parsed DOM4J Document
@@ -72,10 +67,8 @@ public class SRUResponse {
     }
 
     /**
-     * <p>
      * Get the number of rows returned by this search. Not the total results
      * that match the search.
-     * </p>
      * 
      * @return int The number of rows returned from this search.
      */
@@ -84,11 +77,9 @@ public class SRUResponse {
     }
 
     /**
-     * <p>
      * Get the number of records that match this search. A subset of this will
      * be returned if the total is higher then the number of rows requested (or
      * defaulted).
-     * </p>
      *
      * @return int The number of records that match this search.
      */
@@ -97,9 +88,7 @@ public class SRUResponse {
     }
 
     /**
-     * <p>
      * Return the List of DOM4J Nodes extracted from the SRU XML wrapping it.
-     * </p>
      * 
      * @return int The number of records that match this search.
      */

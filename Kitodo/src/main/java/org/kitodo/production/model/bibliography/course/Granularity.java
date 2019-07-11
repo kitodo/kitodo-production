@@ -54,7 +54,6 @@ public enum Granularity {
      *
      * <p>
      * The remaining cases are undefined and will throw NotImplementedException.
-     * </p>
      *
      * @param date
      *            date to format

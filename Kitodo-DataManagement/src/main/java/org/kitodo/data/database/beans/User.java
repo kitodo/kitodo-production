@@ -406,7 +406,6 @@ public class User extends BaseBean {
      * otherwise it would be blocked eternally by the login existence test performed
      * in the UserForm.save() function. In addition, all personally identifiable
      * information is removed from the database as well.
-     * </p>
      */
 
     public void selfDestruct() {

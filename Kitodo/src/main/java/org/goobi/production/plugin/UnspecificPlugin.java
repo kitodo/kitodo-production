@@ -41,7 +41,6 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * after loading a plug-in to pass it the configuration map created in
  * {@link PluginLoader#getPluginConfiguration()}. The plug-in may or may not
  * implement this method.
- * </p>
  *
  * <p>
  * <code>String getDescription(Locale)</code><br>
@@ -50,7 +49,6 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * use of the provided locale to return a description in the named language. If
  * the Locale is null or doesn’t denote a language, the plug-in shall return a
  * human-readable description in English.
- * </p>
  *
  * <p>
  * <code>String getTitle(Locale)</code><br>
@@ -59,7 +57,6 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * locale to return a title in the named language. If the Locale is null or
  * doesn’t denote a language, the plug-in shall return its human-readable name
  * in English.
- * </p>
  */
 public abstract class UnspecificPlugin {
     /**
@@ -99,7 +96,6 @@ public abstract class UnspecificPlugin {
      * The constructor saves a reference to the plug-in implementation class in
      * the final field plugin and inspects the class for existence of the
      * methods configure, getDescription and getTitle.
-     * </p>
      *
      * @param implementation
      *            plug-in implementation class
@@ -272,7 +268,6 @@ public abstract class UnspecificPlugin {
      * Currently, this method is not referenced from within the Production code,
      * but this may change in future. The function is provided for completeness
      * since it was part of the old plug-in API, too.
-     * </p>
      *
      * @param language
      *            language to get the description in
@@ -464,7 +459,6 @@ public abstract class UnspecificPlugin {
      *
      * <p>
      * When changing the further plugin API to the new format, add the
-     * </p>
      *
      * @param clazz
      *            the class to inspect

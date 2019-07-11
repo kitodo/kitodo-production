@@ -1,7 +1,7 @@
 /*
  * The Fascinator - ReDBox/Mint SRU Client - NLA Identity Copyright (C) 2012
  * Queensland Cyber Infrastructure Foundation (http://www.qcif.edu.au/)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
@@ -35,7 +35,6 @@ import org.dom4j.Node;
  * National Library of Australia. This is neither a complete EAC-CPF handling
  * class, nor a complete implementation of NLA identities. It is just a utility
  * for access the things ReDBox/Mint cares about in common node.
- * </p>
  *
  * @author Greg Pendlebury
  */
@@ -58,9 +57,7 @@ public class NLAIdentity {
     private static final String INSTITUTION = "institution";
 
     /**
-     * <p>
      * Default Constructor. Extract some basic information.
-     * </p>
      *
      * @param node
      *            searchResponse A parsed DOM4J Document
@@ -246,9 +243,7 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Getter for the NLA Identifier in use by this Identity.
-     * </p>
      *
      * @return String The ID from the NLA for this Identity
      */
@@ -257,9 +252,7 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Getter for our best estimation on a display name for this Identity.
-     * </p>
      *
      * @return String The display name for this Identity
      */
@@ -268,9 +261,7 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Getter for the first name for this Identity.
-     * </p>
      *
      * @return String The first name for this Identity
      */
@@ -279,9 +270,7 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Getter for the surname for this Identity.
-     * </p>
      *
      * @return String The surname for this Identity
      */
@@ -290,9 +279,7 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Getter for the institution for this Identity.
-     * </p>
      *
      * @return String The institution for this Identity
      */
@@ -301,11 +288,10 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Getter for the List of Identities observed for this person. The return
      * Objects are Maps containing keys very similar to the methods found on the
      * top-level NLAIdentity Object.
-     * </p>
+     *
      * <ul>
      * <li>'displayName'</li>
      * <li>'firstName'</li>
@@ -321,10 +307,8 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
      * Individual Nodes that fail to process will be skipped.
-     * </p>
      *
      * @param nodes
      *            A List of Nodes to process
@@ -339,10 +323,8 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>
      * Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
      * Must indicate whether or not errors should cause processing to halt.
-     * </p>
      *
      * @param nodes
      *            A List of Nodes to process

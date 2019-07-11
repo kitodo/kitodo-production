@@ -53,7 +53,6 @@ public class MapMessageObjectReader {
      *
      * <p>
      * Please note that the Set is allowed to contain the empty String (“”).
-     * </p>
      *
      * @param key
      *            the name of the set to return

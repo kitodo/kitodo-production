@@ -183,11 +183,10 @@ public class WikiFieldHelper {
     }
 
     /*
-        Example of wiki Field's new format:
-        <p>Admin, test: bla bla</p>
-        <p>Orange K  Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla </p>
-        <p>Red K Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla</p>
-    */
+     * Example of wiki Field's new format: <p>Admin, test: bla bla <p>Orange K
+     * Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla <p>Red K Admin,
+     * test Korrektur f&uuml;r Schritt Scanning: bla bla
+     */
     private static void transformNewFormatWikiFieldToComments(String[] messages, Process process)
             throws DAOException, DataException, ParseException {
         List<Comment> newComments = new ArrayList<>();

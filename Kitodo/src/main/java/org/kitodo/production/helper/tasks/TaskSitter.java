@@ -40,7 +40,6 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
  * all threads that are still running. Because the TaskManager is singleton (its
  * constructor is private) a caring class is needed which will be available for
  * instantiation to the servlet container.
- * </p>
  */
 @WebListener
 public class TaskSitter implements Runnable, ServletContextListener {
@@ -101,20 +100,17 @@ public class TaskSitter implements Runnable, ServletContextListener {
      * available for garbage collection, these values have been chosen rather
      * restrictive. For the limit for auto starting threads, see
      * {@link #setAutoRunningThreads(boolean)}.
-     * </p>
      *
      * <p>
      * If the task list is empty, the method will exit without further delay,
      * otherwise it will initialise its variables and read the configuration.
      * Reading the configuration is done again in each iteration so
      * configuration changes will propagate here.
-     * </p>
      *
      * <p>
      * Then the function iterates along the task list and takes care for each
      * task. To be able to modify the list in passing, we need a
      * {@link java.util.ListIterator} here.
-     * </p>
      *
      * <p>
      * Running tasks reduce the clearance to run new tasks. (However, the
@@ -127,23 +123,19 @@ public class TaskSitter implements Runnable, ServletContextListener {
      * marked PREPARE_FOR_RESTART will be replaced (because a
      * {@link java.lang.Thread} cannot be started a second time) by a copy of
      * them.
-     * </p>
      *
      * <p>
      * If a ConcurrentModificationException arises during list examination, the
      * method will behave like a polite servant and retire silently until the
      * lordship has scarpered. This is not a pity because it will be started
      * every some seconds.
-     * </p>
      *
-     * </p>
      * After having finished iterating, the method will reduce the absolute
      * number of expired threads as configured. (Since new threads will be added
      * to the bottom of the list and we therefore want to remove older ones
      * top-down we cannot do this before we know their count, thus we cannot do
      * this while iterating.) Last, new threads will be started up to the
      * remaining available clearance.
-     * </p>
      *
      * @see java.lang.Runnable#run()
      */

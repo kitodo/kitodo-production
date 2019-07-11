@@ -231,7 +231,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * to Done and database is again updated. There is possibility that last step
      * fails and in that case, even if index is up to date, in some point of the
      * future it will be reindexed by administrator.
-     * </p>
      *
      * @param baseIndexedBean
      *            object

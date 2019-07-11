@@ -29,7 +29,6 @@ import org.kitodo.production.model.bibliography.Citation;
  * <code>Map&lt;String, Object&gt;</code>. The map should contain a key
  * <code>fileformat</code> holding an instance of {@link LegacyMetsModsDigitalDocumentHelper}
  * with the record data and a field <code>type</code> holding the DocType.
- * </p>
  *
  * <p>
  * The following additional basic bibliographic metadata entries in the map are
@@ -37,7 +36,6 @@ import org.kitodo.production.model.bibliography.Citation;
  * citation style. All of them must be String except for year where both Integer
  * and String are supported. The field <kbd>format</kbd> is used to pick the
  * appropriate citation formatting style.
- * </p>
  *
  * <p>
  * <kbd>accessed</kbd> − Date and time of last access (for internet resources
@@ -71,7 +69,6 @@ import org.kitodo.production.model.bibliography.Citation;
  * <kbd>volume</kbd> − Number of the volume, if any<br/>
  * <kbd>volumetitle</kbd> − Title of the volume, if any<br/>
  * <kbd>year</kbd> − 4-digit year of publication
- * </p>
  */
 public class Hit {
 

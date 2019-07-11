@@ -664,7 +664,6 @@ public class CalendarForm implements Serializable {
      * distinguishability also for users with red-green color vision deficiency.
      * Arbitrary colours can be defined in kitodo_config.properties by setting
      * the property “issue.colours”.
-     * </p>
      */
     public CalendarForm() {
         issueColours = ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";");
@@ -772,7 +771,6 @@ public class CalendarForm implements Serializable {
      * with the granularity “as imported”. However, since this is possible
      * and—as to our knowledge in late 2014, when this was written—this is the
      * best option of all, this default has been chosen here.
-     * </p>
      */
     public void downloadClick() {
         boolean granularityWasTemporarilyAdded = false;
@@ -814,7 +812,6 @@ public class CalendarForm implements Serializable {
      * <p>
      * Side note: “empty” is a reserved word in JSP and cannot be used as
      * property name.
-     * </p>
      *
      * @return whether there is no block yet
      */
@@ -1057,7 +1054,6 @@ public class CalendarForm implements Serializable {
      * side because the setter methods will be called by Faces before the link
      * action will be executed, but we want to skip the error message generation
      * in that case, too.
-     * </p>
      *
      * @param value
      *            value entered by the user

@@ -107,7 +107,6 @@ public class LanguageForm implements Serializable {
      * unknown, the id will be returned. displayLanguageTranslated − the name of
      * the language in the currently selected language, e.g., if the current
      * language is English: “English”, “German”, “French”, …
-     * </p>
      *
      * <p>
      * This is just a nice feature because the language names are provided by
@@ -115,11 +114,9 @@ public class LanguageForm implements Serializable {
      * e.g. “हिंदी” means, even if you don’t have a clue of the glyphs used. If
      * no translations are available, this will fall back to English. selected −
      * whether this is the current language
-     * </p>
      *
      * <p>
      * This can be used for a sophisticated layout.
-     * </p>
      *
      * @return a list of maps, each with the fields “id”, “displayName” and
      *         “selected”
