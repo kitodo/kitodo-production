@@ -40,10 +40,10 @@ import org.kitodo.production.services.ServiceManager;
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to
  * a queue configured by "activeMQ.createNewProcess.queue" on application
- * startup. It was designed to create new processes from outside Goobi. There
+ * startup. It was designed to create new processes from outside Production. There
  * are two ways providing to create new processes. If the MapMessage on that
  * queue contains of all the fields listed, the bibliographic data is retrieved
- * using a catalog configured within Goobi. If “opac” is missing, it will try
+ * using a catalog configured within Production. If “opac” is missing, it will try
  * to create a process just upon the data passed in the “userFields” − “field”
  * and “value” will be ignored in that case, and the “docType” can be set
  * manually.

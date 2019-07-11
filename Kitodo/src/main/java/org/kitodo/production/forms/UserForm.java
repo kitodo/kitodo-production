@@ -176,7 +176,7 @@ public class UserForm extends BaseForm {
      * Deletes a user account.
      *
      * <p>
-     * Please note that deleting a user in goobi.production will not delete the
+     * Please note that deleting a user in Production will not delete the
      * user from a connected LDAP service.
      */
     public void delete() {

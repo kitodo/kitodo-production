@@ -36,14 +36,14 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * plug-ins and must be provided by all of them:
  *
  * <p>
- * <code>void configure(Map)</code><br>
+ * {@code void configure(Map)}<br>
  * The function will be called by the {@link PluginLoader} right
  * after loading a plug-in to pass it the configuration map created in
  * {@link PluginLoader#getPluginConfiguration()}. The plug-in may or may not
  * implement this method.
  *
  * <p>
- * <code>String getDescription(Locale)</code><br>
+ * {@code String getDescription(Locale)}<br>
  * When being called, the function getDescription() shall return a
  * human-readable description for the plug-in. The plug-in may or may not make
  * use of the provided locale to return a description in the named language. If
@@ -51,7 +51,7 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * human-readable description in English.
  *
  * <p>
- * <code>String getTitle(Locale)</code><br>
+ * {@code String getTitle(Locale)}<br>
  * When being called, the function getTitle() shall return a human-readable name
  * / title for the plug-in. The plug-in may or may not make use of the provided
  * locale to return a title in the named language. If the Locale is null or
@@ -71,7 +71,7 @@ public abstract class UnspecificPlugin {
 
     /**
      * The field configure holds a Method reference to the method configure() of
-     * the plug-in implementation class or <code>null</code> if the plug-in
+     * the plug-in implementation class or {@code null} if the plug-in
      * doesn’t implement that method.
      */
     private final Method configure;

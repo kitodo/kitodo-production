@@ -34,11 +34,11 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * be thrown.
  *
  * <p>
- * <code>void configure(Map)</code><br>
+ * {@code void configure(Map)}<br>
  * See {@link UnspecificPlugin}.
  *
  * <p>
- * <code>Object find(String, long)</code><br>
+ * {@code Object find(String, long)}<br>
  * The function is to perform a search request in a library catalog.
  * See {@link QueryBuilder} for the semantics of the query. It may return an
  * arbitrary Object identifying (or—at the implementor’s choice—containing) the
@@ -48,11 +48,11 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * if it was cancelled by the timer. The method may throw exceptions.
  *
  * <p>
- * <code>String getDescription()</code><br>
+ * {@code String getDescription()}<br>
  * See {@link UnspecificPlugin}.
  *
  * <p>
- * <code>Map getHit(Object, long, long)</code><br>
+ * {@code Map getHit(Object, long, long)}<br>
  * The function shall return the hit identified by its index. The hit
  * shall be a Map&lt;String, Object&gt; with the fields described in {@link Hit}
  * populated. The method shall ensure that it returns after the given timeout
@@ -60,7 +60,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * by the timer. The method may throw exceptions.
  *
  * <p>
- * <code>long getNumberOfHits(Object, long)</code><br>
+ * {@code long getNumberOfHits(Object, long)}<br>
  * The function shall return the number of hits scored by the
  * search represented by the given object. If the object isn’t the result of a
  * call to the find() function, the behavior of the function may be undefined.
@@ -69,22 +69,22 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * timer. The method may throw exceptions.
  *
  * <p>
- * <code>String getTitle()</code><br>
+ * {@code String getTitle()}<br>
  * See {@link UnspecificPlugin}.
  *
  * <p>
- * <code>void setPreferences(Prefs)</code><br>
+ * {@code void setPreferences(Prefs)}<br>
  * The method is called before the first search request to the
  * plug-in and passes the UGH preferences the plug-in shall use.
  *
  * <p>
- * <code>boolean supportsCatalogue(String)</code><br>
+ * {@code boolean supportsCatalogue(String)}<br>
  * The function shall return whether the plug-in has
  * sufficient knowledge to query a catalog identified by the given String
  * literal or not.
  *
  * <p>
- * <code>void useCatalogue(String)</code><br>
+ * {@code void useCatalogue(String)}<br>
  * The function is called before the first search request to the
  * plug-in and shall tell it to use the catalog connection identified by the
  * given String literal. If the plug-in doesn’t support the given catalog

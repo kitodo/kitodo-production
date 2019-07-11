@@ -18,22 +18,22 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
  * the followings:
  * 
  * <dl>
- * <dt><code>CRASHED</code></dt>
+ * <dt>{@code CRASHED}</dt>
  * <dd>The thread has terminated abnormally. The field “exception” is holding
  * the exception that has occurred.</dd>
- * <dt><code>FINISHED</code></dt>
+ * <dt>{@code FINISHED}</dt>
  * <dd>The thread has finished its work without errors and is available for
  * clean-up.</dd>
- * <dt><code>NEW</code></dt>
+ * <dt>{@code NEW}</dt>
  * <dd>The thread has not yet been started.</dd>
- * <dt><code>STOPPED</code></dt>
+ * <dt>{@code STOPPED}</dt>
  * <dd>The thread was stopped by a front end user—resulting in a call to its
  * {@link EmptyTask#interrupt(Behaviour)} method with
  * {@link EmptyTask.Behaviour}.PREPARE_FOR_RESTART— and is able to restart after
  * cloning and replacing it.</dd>
- * <dt><code>STOPPING</code></dt>
+ * <dt>{@code STOPPING}</dt>
  * <dd>The thread has received a request to interrupt but didn’t stop yet.</dd>
- * <dt><code>WORKING</code></dt>
+ * <dt>{@code WORKING}</dt>
  * <dd>The thread is in operation.</dd>
  * </dl>
  */

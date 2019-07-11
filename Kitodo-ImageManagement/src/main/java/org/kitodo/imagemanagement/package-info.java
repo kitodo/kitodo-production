@@ -15,7 +15,7 @@
  * <p>
  * To use this plug-in, ImageMagick must be available on the system’s search
  * path, or the ImageMagick home must be configured as
- * <code>ImageManagement.searchPath</code> in
- * <code>kitodo_config.properties</code>.
+ * {@code ImageManagement.searchPath} in
+ * {@code kitodo_config.properties}.
  */
 package org.kitodo.imagemanagement;

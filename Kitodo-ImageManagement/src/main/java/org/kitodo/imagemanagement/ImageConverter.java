@@ -118,16 +118,16 @@ class ImageConverter {
      * <th>Arguments sent to ImageMagick</th>
      * </tr>
      * <tr>
-     * <td><code>ImageManagement.param.limit.memory=40MB</code></td>
-     * <td><code>-limit memory 40MB</code></td>
+     * <td>{@code ImageManagement.param.limit.memory=40MB}</td>
+     * <td>{@code -limit memory 40MB}</td>
      * </tr>
      * <tr>
-     * <td><code>ImageManagement.param.+set=date\:create</code></td>
-     * <td><code>+set date:create</code></td>
+     * <td>{@code ImageManagement.param.+set=date\:create}</td>
+     * <td>{@code +set date:create}</td>
      * </tr>
      * <tr>
-     * <td><code>ImageManagement.param.quiet=</code></td>
-     * <td><code>-quiet</code></td>
+     * <td>{@code ImageManagement.param.quiet=}</td>
+     * <td>{@code -quiet}</td>
      * </tr>
      * </table>
      *

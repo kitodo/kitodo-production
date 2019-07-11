@@ -21,11 +21,11 @@ import org.apache.commons.configuration.ConfigurationException;
  * yet have a metadata as named. Examples:
  *
  * <ul>
- * <li><code>/@CurrentNoSorting ""= /*[0]@CurrentNoSorting</code> − copy the
+ * <li>{@code /@CurrentNoSorting ""= /*[0]@CurrentNoSorting} − copy the
  * sort number form the first child to the top struct if it doesn’t have a sort
  * number yet</li>
  *
- * <li><code>/*[0]@TitleDocMain ""= /@TitleDocMain</code> − copy the main title
+ * <li>{@code /*[0]@TitleDocMain ""= /@TitleDocMain} − copy the main title
  * from the top struct to its first child element if it doesn’t have a main tile
  * yet</li>
  * </ul>

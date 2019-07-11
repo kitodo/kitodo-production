@@ -126,13 +126,13 @@ public class IndividualIssue {
      * provides the issue information in the following fields:
      *
      * <dl>
-     * <dt><code>#DAY</code></dt>
+     * <dt>{@code #DAY}</dt>
      * <dd>two-digit day of month</dd>
-     * <dt><code>#Issue</code></dt>
+     * <dt>{@code #Issue}</dt>
      * <dd>issue name</dd>
-     * <dt><code>#MONTH</code></dt>
+     * <dt>{@code #MONTH}</dt>
      * <dd>two-digit month of year</dd>
-     * <dt><code>#YEAR</code></dt>
+     * <dt>{@code #YEAR}</dt>
      * <dd>four-digit year</dd>
      *
      * </dl>
@@ -140,23 +140,23 @@ public class IndividualIssue {
      * In addition, the following abbreviated fields are provided:
      *
      * <dl>
-     * <dt><code>#i</code></dt>
+     * <dt>{@code #i}</dt>
      * <dd>first letter of issue name in lower case</dd>
-     * <dt><code>#I</code></dt>
+     * <dt>{@code #I}</dt>
      * <dd>first letter of issue name in upper case</dd>
-     * <dt><code>#is</code></dt>
+     * <dt>{@code #is}</dt>
      * <dd>first two letters of issue name in lower case</dd>
-     * <dt><code>#IS</code></dt>
+     * <dt>{@code #IS}</dt>
      * <dd>first two letters of issue name in upper case</dd>
-     * <dt><code>#iss</code></dt>
+     * <dt>{@code #iss}</dt>
      * <dd>first three letters of issue name in lower case</dd>
-     * <dt><code>#ISS</code></dt>
+     * <dt>{@code #ISS}</dt>
      * <dd>first three letters of issue name in upper case</dd>
-     * <dt><code>#issu</code></dt>
+     * <dt>{@code #issu}</dt>
      * <dd>first four letters of issue name in lower case</dd>
-     * <dt><code>#ISSU</code></dt>
+     * <dt>{@code #ISSU}</dt>
      * <dd>first four letters of issue name in upper case</dd>
-     * <dt><code>#YR</code></dt>
+     * <dt>{@code #YR}</dt>
      * <dd>two-digit year of century</dd>
      * </dl>
      *

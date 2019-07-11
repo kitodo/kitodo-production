@@ -36,14 +36,14 @@ public class EmptyTask extends Thread implements INameableTask {
      * to do with a terminated thread. These are:
      *
      * <dl>
-     * <dt><code>DELETE_IMMEDIATELY</code></dt>
+     * <dt>{@code DELETE_IMMEDIATELY}</dt>
      * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
      * </dd>
-     * <dt><code>KEEP_FOR_A_WHILE</code></dt>
+     * <dt>{@code KEEP_FOR_A_WHILE}</dt>
      * <dd>The default behavior: A thread that terminated either normally or
      * abnormally is kept around in memory for a while and then removed
      * automatically. Numeric and temporary limits can be configured.</dd>
-     * <dt><code>PREPARE_FOR_RESTART</code></dt>
+     * <dt>{@code PREPARE_FOR_RESTART}</dt>
      * <dd>If the thread was interrupted by a user, replace it by a new one,
      * passing in the state of the old one to be able to continue work.</dd>
      * </dl>
@@ -156,14 +156,14 @@ public class EmptyTask extends Thread implements INameableTask {
      * available:
      *
      * <dl>
-     * <dt><code>DELETE_IMMEDIATELY</code></dt>
+     * <dt>{@code DELETE_IMMEDIATELY}</dt>
      * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
      * </dd>
-     * <dt><code>KEEP_FOR_A_WHILE</code></dt>
+     * <dt>{@code KEEP_FOR_A_WHILE}</dt>
      * <dd>The default behavior: A thread that terminated either normally or
      * abnormally is kept around in memory for a while and then removed
      * automatically. Numeric and temporary limits can be configured.</dd>
-     * <dt><code>PREPARE_FOR_RESTART</code></dt>
+     * <dt>{@code PREPARE_FOR_RESTART}</dt>
      * <dd>If the thread was interrupted by a user, replace it by a new one,
      * passing in the state of the old one to be able to continue work.</dd>
      * </dl>
@@ -254,23 +254,23 @@ public class EmptyTask extends Thread implements INameableTask {
      * the followings:
      *
      * <dl>
-     * <dt><code>CRASHED</code></dt>
+     * <dt>{@code CRASHED}</dt>
      * <dd>The thread has terminated abnormally. The field “exception” is
      * holding the exception that has occurred.</dd>
-     * <dt><code>FINISHED</code></dt>
+     * <dt>{@code FINISHED}</dt>
      * <dd>The thread has finished its work without errors and is available for
      * clean-up.</dd>
-     * <dt><code>NEW</code></dt>
+     * <dt>{@code NEW}</dt>
      * <dd>The thread has not yet been started.</dd>
-     * <dt><code>STOPPED</code></dt>
+     * <dt>{@code STOPPED}</dt>
      * <dd>The thread was stopped by a front end user—resulting in a call to its
      * {@link #interrupt(Behaviour)} method with {@link Behaviour}
      * .PREPARE_FOR_RESTART— and is able to restart after cloning and replacing
      * it.</dd>
-     * <dt><code>STOPPING</code></dt>
+     * <dt>{@code STOPPING}</dt>
      * <dd>The thread has received a request to interrupt but didn’t stop
      * yet.</dd>
-     * <dt><code>WORKING</code></dt>
+     * <dt>{@code WORKING}</dt>
      * <dd>The thread is in operation.</dd>
      * </dl>
      *

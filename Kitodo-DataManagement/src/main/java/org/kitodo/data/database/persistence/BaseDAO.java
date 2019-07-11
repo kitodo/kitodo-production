@@ -237,7 +237,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
     /**
      * Removes the object from the database with with specified class type and
-     * <code>id</code>.
+     * {@code id}.
      *
      * @param cls
      *            the class type to remove
@@ -277,8 +277,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
-     * Retrieves an object of the class type specified by <code>cls</code>, and
-     * having the given <code>id</code>.
+     * Retrieves an object of the class type specified by {@code cls}, and
+     * having the given {@code id}.
      *
      * @param cls
      *            the class to load

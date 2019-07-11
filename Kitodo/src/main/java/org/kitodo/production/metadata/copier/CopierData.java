@@ -37,7 +37,7 @@ public class CopierData {
     private final LegacyMetsModsDigitalDocumentHelper fileformat;
 
     /**
-     * The Goobi process corresponding to the workspace file.
+     * The Production process corresponding to the workspace file.
      */
     private final Process process;
 
@@ -65,7 +65,7 @@ public class CopierData {
      * @param fileformat
      *            the document to modify
      * @param process
-     *            the related goobi process
+     *            the related Production process
      */
     public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Process process) {
         this.fileformat = fileformat;
@@ -80,7 +80,7 @@ public class CopierData {
      * @param fileformat
      *            the document to modify
      * @param template
-     *            the related goobi process
+     *            the related Production process
      */
     public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Template template) {
         this.fileformat = fileformat;

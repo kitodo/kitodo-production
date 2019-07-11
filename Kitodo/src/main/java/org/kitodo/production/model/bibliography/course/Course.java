@@ -39,28 +39,28 @@ import org.w3c.dom.Node;
 public class Course extends ArrayList<Block> {
 
     /**
-     * Attribute <code>date="…"</code> used in the XML representation of a
+     * Attribute {@code date="…"} used in the XML representation of a
      * course of appearance.
      */
     private static final String ATTRIBUTE_DATE = "date";
 
     /**
-     * Attribute <code>index="…"</code> used in the XML representation of a
+     * Attribute {@code index="…"} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * The attribute <code>index="…"</code> is optional. It may be used to
+     * The attribute {@code index="…"} is optional. It may be used to
      * distinguish different blocks if needed and can be omitted if only one
      * block is used.
      */
     private static final String ATTRIBUTE_VARIANT = "index";
 
     /**
-     * Attribute <code>issue="…"</code> used in the XML representation of a
+     * Attribute {@code issue="…"} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * The attribute <code>issue="…"</code> holds the name of the issue.
+     * The attribute {@code issue="…"} holds the name of the issue.
      * Newspapers, especially bigger ones, can have several issues that, e.g.,
      * may differ in time of publication (morning issue, evening issue, …) or
      * geographic distribution (Edinburgh issue, London issue, …).
@@ -68,68 +68,68 @@ public class Course extends ArrayList<Block> {
     private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
 
     /**
-     * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
+     * Element {@code <appeared>} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * Each <code>&lt;appeared&gt;</code> element represents one issue that
-     * physically appeared. It has the attributes <code>issue="…"</code>
-     * (required, may be empty) and <code>date="…"</code> (required) and cannot
+     * Each {@code <appeared>} element represents one issue that
+     * physically appeared. It has the attributes {@code issue="…"}
+     * (required, may be empty) and {@code date="…"} (required) and cannot
      * hold child elements.
      */
     private static final String ELEMENT_APPEARED = "appeared";
 
     /**
-     * Element <code>&lt;course&gt;</code> used in the XML representation of a
+     * Element {@code <course>} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * <code>&lt;course&gt;</code> is the root element of the XML
+     * {@code <course>} is the root element of the XML
      * representation. It can hold two children,
-     * <code>&lt;description&gt;</code> (output only, optional) and
-     * <code>&lt;processes&gt;</code> (required).
+     * {@code <description>} (output only, optional) and
+     * {@code <processes>} (required).
      */
     private static final String ELEMENT_COURSE = "course";
 
     /**
-     * Element <code>&lt;description&gt;</code> used in the XML representation
+     * Element {@code <description>} used in the XML representation
      * of a course of appearance.
      *
      * <p>
-     * <code>&lt;description&gt;</code> holds a verbal, human-readable
+     * {@code <description>} holds a verbal, human-readable
      * description of the course of appearance, which is generated only and
      * doesn’t have an effect on input.
      */
     private static final String ELEMENT_DESCRIPTION = "description";
 
     /**
-     * Element <code>&lt;process&gt;</code> used in the XML representation of a
+     * Element {@code <process>} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * Each <code>&lt;process&gt;</code> element represents one process to be
-     * generated in Goobi Production. It can hold <code>&lt;title&gt;</code>
+     * Each {@code <process>} element represents one process to be
+     * generated in Production. It can hold {@code <title>}
      * elements (of any quantity).
      */
     private static final String ELEMENT_PROCESS = "process";
 
     /**
-     * Element <code>&lt;processes&gt;</code> used in the XML representation of
+     * Element {@code <processes>} used in the XML representation of
      * a course of appearance.
      *
      * <p>
-     * Each <code>&lt;processes&gt;</code> element represents the processes to
-     * be generated in Goobi Production. It can hold
-     * <code>&lt;process&gt;</code> elements (of any quantity).
+     * Each {@code <processes>} element represents the processes to
+     * be generated in Production. It can hold
+     * {@code <process>} elements (of any quantity).
      */
     private static final String ELEMENT_PROCESSES = "processes";
 
     /**
-     * Element <code>&lt;title&gt;</code> used in the XML representation of a
-     * course of appearance. Each <code>&lt;title&gt;</code> element represents
+     * Element {@code <title>} used in the XML representation of a
+     * course of appearance. Each {@code <title>} element represents
      * a block in time the appeared issues belong to. It has the optional
-     * attribute <code>index="…"</code> and can hold
-     * <code>&lt;appeared&gt;</code> elements (of any quantity).
+     * attribute {@code index="…"} and can hold
+     * {@code <appeared>} elements (of any quantity).
      *
      * <p>
      * Note: In the original design, the element was intended to model title

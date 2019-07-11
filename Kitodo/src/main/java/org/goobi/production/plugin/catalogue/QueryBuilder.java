@@ -20,37 +20,37 @@ import java.util.List;
  * descending precedence of the operators:
  * 
  * <p>
- * <b>Double quotes</b> (<code>""</code>) may be used to embrace a sequence of
+ * <b>Double quotes</b> ({@code ""}) may be used to embrace a sequence of
  * tokens that have to appear in exactly that order in the search result (aka.
  * string search). They must appear in pairs.
  * 
  * <p>
- * <b>Round brackets</b> (<code>()</code>) may be used for logical reordering.
+ * <b>Round brackets</b> ({@code ()}) may be used for logical reordering.
  * They must appear in pairs.
  *
  * <p>
  * <b>Blanks</b> (<code> </code>) are used to separate tokens. They imply a
- * conjunction, i.e. <code>cat dog</code> shall return only hits that contain
+ * conjunction, i.e. {@code cat dog} shall return only hits that contain
  * both tokens.
  *
  * <p>
- * A <b>vertical dash</b> (<code>|</code>) indicates the freedom of choice, i.e.
- * <code>cat | dog</code> may return hits that contain the token “cat” but not
+ * A <b>vertical dash</b> ({@code |}) indicates the freedom of choice, i.e.
+ * {@code cat | dog} may return hits that contain the token “cat” but not
  * necessarily the token “dog” and the other way round and of course hits that
  * contain both tokens as well.
  *
  * <p>
- * A <b>minus sign</b> (<code>-</code>) indicates the exclusion of a search
+ * A <b>minus sign</b> ({@code -}) indicates the exclusion of a search
  * term, i.e. that the hits shall not contain the given term. (Example:
- * <code>track -running</code>)<br>
+ * {@code track -running})<br>
  * In combination with <i>colon</i>, the minus sign shall prefix the whole
- * expression, not the search term (i.e. <code>track -4:running</code>, not
- * <code>track 4:-running</code>).
+ * expression, not the search term (i.e. {@code track -4:running}, not
+ * {@code track 4:-running}).
  *
  * <p>
- * A <b>colon</b> (<code>:</code>) indicates fielded search, so that the term
+ * A <b>colon</b> ({@code :}) indicates fielded search, so that the term
  * must be found—or, in combination with a minus sign, must not be found—in the
- * prepended field of the database (i.e. <code>4:beagle</code> to search for the
+ * prepended field of the database (i.e. {@code 4:beagle} to search for the
  * term “beagle” in the field “4”). Search fields are referenced by the integers
  * used to reference them in PICA library catalogs (i.e. “4” = title, “7” =
  * ISBN, “8” = ISSN, “12” = Record identifier, …; for a list of supported fields

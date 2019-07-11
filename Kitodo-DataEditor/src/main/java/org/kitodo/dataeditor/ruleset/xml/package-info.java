@@ -36,9 +36,9 @@
  * <dd>Announcement of the elements for structuring the digitally represented
  * cultural work and of the possible metadata keys for the input of
  * metadata.</dd>
- * <dt><code>{@code <correlation>}</code></dt>
+ * <dt>{@code <correlation>}</dt>
  * <dd>Explanation of rules on how these elements may or may not be linked.</dd>
- * <dt><code>{@code <editing>}</code></dt>
+ * <dt>{@code <editing>}</dt>
  * <dd>Settings of the graphic editor, insofar as they relate to the specific
  * metadata keys.</dd>
  * </dl>
@@ -234,10 +234,10 @@
  * The difference between {@code <declaration>} and {@code <correlation>} is a
  * bit like the difference between well-formedness and validity in XML files.
  * {@code <declaration>} defines requirements for the well-formedness of the
- * data. If I define a metadata key that should be an integer, then “<kbd>19th
- * century</kbd>” is not a valid value for that key, nor “<kbd>18??</kbd>”. Data
- * that does not meet these minimum requirements should not make it into any
- * data store, but should be rejected directly from the interface. The validity
+ * data. If I define a metadata key that should be an integer, then “{@code 19th
+ * century}” is not a valid value for that key, nor “{@code 18??}”. Data that
+ * does not meet these minimum requirements should not make it into any data
+ * store, but should be rejected directly from the interface. The validity
  * criteria go beyond these minimum requirements and, for example, specify that
  * for each phonographic record, the revolution speed must be entered, but no
  * revolution speed can be entered for a book. While {@code <declaration>} is

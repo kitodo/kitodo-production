@@ -55,7 +55,7 @@ public class PluginLoader {
     /**
      * Returns a redirection class
      * to handle the first plug-in implementation object that positively
-     * responds to <code>supportsCatalogue(catalogue)</code>.
+     * responds to {@code supportsCatalogue(catalogue)}.
      *
      * @param catalogue
      *            catalog in question
@@ -74,7 +74,7 @@ public class PluginLoader {
      * Get plug-in list.
      *
      * @deprecated Using this function is discouraged. Use
-     *             <code>getPlugins(Class)</code> instead.
+     *             {@code getPlugins(Class)} instead.
      */
     @Deprecated
     public static List<IPlugin> getPluginList(PluginType inType) {
@@ -89,7 +89,7 @@ public class PluginLoader {
      * Get plug-in by title.
      *
      * @deprecated Using this function is discouraged. Use
-     *             <code>getPluginByTitle(Class, String, Locale)</code> instead.
+     *             {@code getPluginByTitle(Class, String, Locale)} instead.
      */
     @Deprecated
     public static IPlugin getPluginByTitle(PluginType inType, String inTitle) {
@@ -108,7 +108,7 @@ public class PluginLoader {
     /**
      * Loads all plug-ins implementing the given UnspecificPlugin class type and
      * returns a redirection class to handle the first plug-in implementation
-     * object that responds to <code>getTitle(language)</code> with the given
+     * object that responds to {@code getTitle(language)} with the given
      * title.
      *
      * <p>
