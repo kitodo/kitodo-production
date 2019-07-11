@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -34,6 +35,10 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.validation.State;
+import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Comment;
@@ -136,6 +141,23 @@ public class WorkflowControllerService {
         }
     }
 
+    private boolean validateMetadata(Task task) throws IOException, DataException {
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(task.getProcess());
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        ruleset.load(new File(Paths.get(
+                ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
+                task.getProcess().getRuleset().getFile()).toString()));
+        ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset);
+        if (State.ERROR.equals(validationResult.getState())) {
+            Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
+            for (String message : validationResult.getResultMessages()) {
+                Helper.setErrorMessage(message);
+            }
+        }
+        return !validationResult.getState().equals(State.ERROR);
+    }
+
     /**
      * Close method task called by user action.
      *
@@ -149,8 +171,8 @@ public class WorkflowControllerService {
             // metadata validation
             if (task.isTypeMetadata()
                     && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
-                    && !ServiceManager.getMetadataValidationService().validate(task.getProcess())) {
-                return;
+                    && !validateMetadata(task)) {
+                throw new DataException("Error on metadata validation!");
             }
 
             // image validation
@@ -158,8 +180,7 @@ public class WorkflowControllerService {
                 ImageHelper mih = new ImageHelper();
                 URI imageFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
-                    Helper.setErrorMessage("Error on image validation!");
-                    return;
+                    throw new DataException("Error on image validation!");
                 }
             }
         }
