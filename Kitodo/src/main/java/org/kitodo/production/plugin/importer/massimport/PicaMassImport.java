@@ -24,9 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
 
-import javax.faces.context.FacesContext;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,16 +57,9 @@ import org.goobi.production.importer.Record;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.properties.ImportProperty;
-import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.DOMOutputter;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.ImportPluginException;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
@@ -90,14 +81,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private String opacCatalogue;
     private String configDir;
     private static final String PPN_PATTERN = "\\d+X?";
-    private static final String[] SERIAL_TOTALITY_IDENTIFIER_FIELD = new String[] {"036F", "9" };
-    private static final String[] TOTALITY_IDENTIFIER_FIELD = new String[] {"036D", "9" };
 
     protected String ats;
-    protected List<Property> workpieceProperties = new ArrayList<>();
-    protected List<Property> templateProperties = new ArrayList<>();
 
-    protected String currentTitle;
     protected String author = "";
     protected String volumeNumber = "";
 
@@ -132,7 +118,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public LegacyMetsModsDigitalDocumentHelper convertData() throws ImportPluginException {
-
         currentIdentifier = data;
 
         logger.debug("retrieving pica record for {} with server address: {}", this.currentIdentifier, getOpacAddress());
@@ -145,229 +130,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 logger.error(mess);
                 throw new ImportPluginException(mess);
             }
-            pica = addParentDataForVolume(pica);
-            LegacyMetsModsDigitalDocumentHelper fileformat = SRUHelper.parsePicaFormat(pica, prefs);
-            LegacyMetsModsDigitalDocumentHelper digitalDocument = fileformat.getDigitalDocument();
-            boolean multivolue = false;
-            LegacyDocStructHelperInterface logicalDS = digitalDocument.getLogicalDocStruct();
-            LegacyDocStructHelperInterface child = null;
 
-            readCurrentTitle(logicalDS);
-            readIdentifier(child, logicalDS);
-            readAuthor(logicalDS);
-            readVolumeNumber(child);
-
-            // reading ats
-            LegacyMetadataTypeHelper atsType = prefs.getMetadataTypeByName("TSL_ATS");
-            List<? extends LegacyMetadataHelper> mdList = logicalDS.getAllMetadataByType(atsType);
-            if (mdList.isEmpty()) {
-                // generating ats
-                ats = createAtstsl(currentTitle, author);
-                LegacyMetadataHelper atstsl = new LegacyMetadataHelper(atsType);
-                atstsl.setStringValue(ats);
-                logicalDS.addMetadata(atstsl);
-            } else {
-                LegacyMetadataHelper atstsl = mdList.get(0);
-                ats = atstsl.getValue();
-            }
-
-            templateProperties.add(prepareProperty("Titel", currentTitle));
-
-            if (StringUtils.isNotBlank(volumeNumber) && multivolue) {
-                templateProperties.add(prepareProperty("Bandnummer", volumeNumber));
-            }
-
-            LegacyMetadataTypeHelper identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
-            mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
-            if (!mdList.isEmpty()) {
-                String analog = mdList.get(0).getValue();
-                templateProperties.add(prepareProperty("Identifier", analog));
-            }
-
-            LegacyMetadataTypeHelper identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
-            if (child != null) {
-                mdList = child.getAllMetadataByType(identifierType);
-                if (!mdList.isEmpty()) {
-                    LegacyMetadataHelper identifier = mdList.get(0);
-                    workpieceProperties.add(prepareProperty("Identifier Band", identifier.getValue()));
-                }
-            }
-
-            workpieceProperties.add(prepareProperty("Artist", author));
-            workpieceProperties.add(prepareProperty("ATS", ats));
-            workpieceProperties.add(prepareProperty("Identifier", currentIdentifier));
-
-            // pathimagefiles
-            LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("pathimagefiles");
-            LegacyMetadataHelper newmd = new LegacyMetadataHelper(mdt);
-            newmd.setStringValue("/images/");
-            digitalDocument.getPhysicalDocStruct().addMetadata(newmd);
-
-            // collections
-            if (this.currentCollectionList != null) {
-                LegacyMetadataTypeHelper mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
-                LegacyDocStructHelperInterface topLogicalStruct = digitalDocument.getLogicalDocStruct();
-                List<LegacyDocStructHelperInterface> volumes = topLogicalStruct.getAllChildren();
-
-                for (String collection : this.currentCollectionList) {
-                    LegacyMetadataHelper mdCollection = new LegacyMetadataHelper(mdTypeCollection);
-                    mdCollection.setStringValue(collection);
-                    topLogicalStruct.addMetadata(mdCollection);
-                    for (LegacyDocStructHelperInterface volume : volumes) {
-                        LegacyMetadataHelper mdCollectionForVolume = new LegacyMetadataHelper(mdTypeCollection);
-                        mdCollectionForVolume.setStringValue(collection);
-                        volume.addMetadata(mdCollectionForVolume);
-                    }
-                }
-            }
-
-            return fileformat;
+            throw new UnsupportedOperationException("Dead code pending removal");
         } catch (IOException | JDOMException | ParserConfigurationException e) {
             logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             throw new ImportPluginException(e);
         }
-    }
-
-    private void readCurrentTitle(LegacyDocStructHelperInterface logicalDS) {
-        LegacyMetadataTypeHelper titleType = prefs.getMetadataTypeByName("TitleDocMain");
-        List<? extends LegacyMetadataHelper> mdList = logicalDS.getAllMetadataByType(titleType);
-        if (!mdList.isEmpty()) {
-            LegacyMetadataHelper title = mdList.get(0);
-            currentTitle = title.getValue();
-        }
-    }
-
-    private void readIdentifier(LegacyDocStructHelperInterface child, LegacyDocStructHelperInterface logicalDS) {
-        LegacyMetadataTypeHelper identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
-        List<? extends LegacyMetadataHelper> childMdList = null;
-        List<? extends LegacyMetadataHelper> mdList;
-        if (Objects.nonNull(child)) {
-            childMdList = child.getAllMetadataByType(identifierType);
-        }
-        if (Objects.nonNull(childMdList)) {
-            mdList = childMdList;
-        } else {
-            mdList = logicalDS.getAllMetadataByType(identifierType);
-        }
-        if (mdList.isEmpty()) {
-            currentIdentifier = String.valueOf(System.currentTimeMillis());
-        } else {
-            LegacyMetadataHelper identifier = mdList.get(0);
-            currentIdentifier = identifier.getValue();
-        }
-    }
-
-    private void readAuthor(LegacyDocStructHelperInterface logicalDS) {
-        LegacyMetadataTypeHelper authorType = prefs.getMetadataTypeByName("Author");
-        throw new UnsupportedOperationException("Dead code pending removal");
-    }
-
-    private void readVolumeNumber(LegacyDocStructHelperInterface child) {
-        // reading volume number
-        if (child != null) {
-            LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
-            List<? extends LegacyMetadataHelper> mdList = child.getAllMetadataByType(mdt);
-            if (mdList.isEmpty()) {
-                mdt = prefs.getMetadataTypeByName("DateIssuedSort");
-                mdList = child.getAllMetadataByType(mdt);
-                if (!mdList.isEmpty()) {
-                    LegacyMetadataHelper md = mdList.get(0);
-                    volumeNumber = md.getValue();
-                }
-            } else {
-                LegacyMetadataHelper md = mdList.get(0);
-                volumeNumber = md.getValue();
-            }
-        }
-    }
-
-    private Property prepareProperty(String title, String value) {
-        Property property = new Property();
-        property.setTitle(title);
-        property.setValue(value);
-        return property;
-    }
-
-    /**
-     * If the record contains a volume of a serial publication, then the series
-     * data will be prepended to it.
-     *
-     * @param volumeRecord
-     *            hitlist with one hit which will may be a volume of a serial
-     *            publication
-     * @return hitlist that may have been extended to contain two hits, first
-     *         the series record and second the volume record
-     * @throws ImportPluginException
-     *             if something goes wrong in {@link #getOpacAddress()}
-     */
-    private Node addParentDataForVolume(Node volumeRecord) throws ImportPluginException {
-        try {
-            org.jdom.Document volumeAsJDOMDoc = new DOMBuilder().build(volumeRecord.getOwnerDocument());
-            Element volumeAsJDOM = volumeAsJDOMDoc.getRootElement().getChild("record");
-            String parentPPN = getFieldValueFromRecord(volumeAsJDOM, SERIAL_TOTALITY_IDENTIFIER_FIELD);
-            if (parentPPN.isEmpty()) {
-                parentPPN = getFieldValueFromRecord(volumeAsJDOM, TOTALITY_IDENTIFIER_FIELD);
-            }
-            if (!parentPPN.isEmpty()) {
-                Node parentRecord = SRUHelper.parseResult(SRUHelper.search(parentPPN, getOpacAddress()));
-                if (parentRecord == null) {
-                    String mess = "Could not retrieve superordinate record " + parentPPN;
-                    logger.error(mess);
-                    throw new ImportPluginException(mess);
-                }
-                org.jdom.Document resultAsJDOM = new DOMBuilder().build(parentRecord.getOwnerDocument());
-                volumeAsJDOM.getParent().removeContent(volumeAsJDOM);
-                resultAsJDOM.getRootElement().addContent(volumeAsJDOM);
-                return new DOMOutputter().output(resultAsJDOM).getFirstChild();
-            }
-        } catch (ParserConfigurationException | JDOMException | IOException e) {
-            throw new ImportPluginException(e.getMessage(), e);
-        }
-        return volumeRecord;
-    }
-
-    /**
-     * Reads a field value from an XML record. Returns the empty string if not
-     * found.
-     *
-     * @param record
-     *            record data to parse
-     * @param field
-     *            field value to return
-     * @return field value, or ""
-     *
-     */
-    @SuppressWarnings("unchecked")
-    private static String getFieldValueFromRecord(Element record, String[] field) {
-        for (Element child : (List<Element>) record.getChildren()) {
-            String fieldName = child.getAttributeValue("tag");
-            if (fieldName.equals(field[0])) {
-                return getSubelementValue(child, field[1]);
-            }
-        }
-        return "";
-    }
-
-    /**
-     * Reads a sub field value from an XML node. Returns the empty string if not
-     * found.
-     *
-     * @param inElement
-     *            XML node to look into
-     * @param attributeValue
-     *            attribute to locate
-     * @return value, or "" if not found
-     *
-     */
-    @SuppressWarnings("unchecked")
-    private static String getSubelementValue(Element inElement, String attributeValue) {
-        String result = "";
-        for (Element subElement : (List<Element>) inElement.getChildren()) {
-            if (subElement.getAttributeValue("code").equals(attributeValue)) {
-                result = subElement.getValue();
-            }
-        }
-        return result;
     }
 
     @Override
@@ -594,47 +362,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     @Override
     public void setDocstruct(DocstructElement dse) {
         throw new UnsupportedOperationException();
-    }
-
-    private String createAtstsl(String title, String author) {
-        StringBuilder atsTsl = new StringBuilder();
-        if (author != null && !author.equals("")) {
-            atsTsl.append(trimToken(author, 4));
-            atsTsl.append(trimToken(title, 4));
-        }
-
-        //calculate ATS-TSL for magazines
-        if (author == null || author.equals("")) {
-            atsTsl = new StringBuilder();
-            StringTokenizer tokenizer = new StringTokenizer(title);
-            int counter = 1;
-            while (tokenizer.hasMoreTokens()) {
-                String token = tokenizer.nextToken();
-                if (counter == 1) {
-                    atsTsl.append(trimToken(token, 4));
-                }
-                if (counter == 2 || counter == 3) {
-                    atsTsl.append(trimToken(token, 2));
-                }
-                if (counter == 4) {
-                    atsTsl.append(trimToken(token, 1));
-                }
-                counter++;
-            }
-        }
-        // replace the umlauts in the ATS-TSL
-        if (FacesContext.getCurrentInstance() != null) {
-            atsTsl = new StringBuilder(UghUtils.convertUmlaut(atsTsl.toString()));
-        }
-        return atsTsl.toString().replaceAll("[\\W]", "");
-    }
-
-    private String trimToken(String token, int length) {
-        if (token.length() > length) {
-            return token.substring(0, length);
-        } else {
-            return token;
-        }
     }
 
     /**

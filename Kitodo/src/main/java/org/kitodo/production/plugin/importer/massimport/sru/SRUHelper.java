@@ -34,8 +34,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -140,18 +138,5 @@ public class SRUHelper {
             return answer.getDocumentElement();
         }
         return null;
-    }
-
-    /**
-     * Parse pica format.
-     *
-     * @param pica
-     *            Node
-     * @param prefs
-     *            Prefs
-     * @return Fileformat
-     */
-    public static LegacyMetsModsDigitalDocumentHelper parsePicaFormat(Node pica, LegacyPrefsHelper prefs) {
-        throw new UnsupportedOperationException("Dead code pending removal");
     }
 }
