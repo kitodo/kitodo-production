@@ -161,15 +161,15 @@ public class ConfigOpac {
      * @return List
      */
     public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
-        List<String> result = new LinkedList<>();
+        List<String> restrictionsForCatalogue = new LinkedList<>();
         List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt(CATALOGUE);
         for (HierarchicalConfiguration catalogue : catalogues) {
             if (title.equals(catalogue.getString("[@title]"))) {
-                result.addAll(Arrays.asList(catalogue.getStringArray("restriction")));
+                restrictionsForCatalogue.addAll(Arrays.asList(catalogue.getStringArray("restriction")));
                 break;
             }
         }
-        return result;
+        return restrictionsForCatalogue;
     }
 
     /**

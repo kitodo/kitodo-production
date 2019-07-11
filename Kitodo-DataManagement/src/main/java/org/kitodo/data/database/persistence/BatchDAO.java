@@ -26,11 +26,11 @@ public class BatchDAO extends BaseDAO<Batch> {
 
     @Override
     public Batch getById(Integer id) throws DAOException {
-        Batch result = retrieveObject(Batch.class, id);
-        if (result == null) {
+        Batch batch = retrieveObject(Batch.class, id);
+        if (batch == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return batch;
     }
 
     @Override

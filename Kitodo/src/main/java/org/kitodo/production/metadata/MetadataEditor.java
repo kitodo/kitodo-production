@@ -247,11 +247,11 @@ public class MetadataEditor {
     }
 
     private static Collection<View> getViewsFromChildrenRecursive(IncludedStructuralElement structure) {
-        List<View> result = new ArrayList<>(structure.getViews());
+        List<View> viewsFromChildren = new ArrayList<>(structure.getViews());
         for (IncludedStructuralElement child : structure.getChildren()) {
-            result.addAll(getViewsFromChildrenRecursive(child));
+            viewsFromChildren.addAll(getViewsFromChildrenRecursive(child));
         }
-        return result;
+        return viewsFromChildren;
     }
 
     /**
@@ -263,9 +263,9 @@ public class MetadataEditor {
      * @return the created media unit
      */
     public static View createUnrestrictedViewOn(MediaUnit mediaUnit) {
-        View result = new View();
-        result.setMediaUnit(mediaUnit);
-        return result;
+        View unrestrictedView = new View();
+        unrestrictedView.setMediaUnit(mediaUnit);
+        return unrestrictedView;
     }
 
     /**
@@ -306,9 +306,9 @@ public class MetadataEditor {
             if (Objects.isNull(parent)) {
                 return new LinkedList<>();
             }
-            LinkedList<Parent<T>> result = new LinkedList<>();
-            result.add(parent);
-            return result;
+            LinkedList<Parent<T>> ancestors = new LinkedList<>();
+            ancestors.add(parent);
+            return ancestors;
 
         }
         for (T child : position.getChildren()) {

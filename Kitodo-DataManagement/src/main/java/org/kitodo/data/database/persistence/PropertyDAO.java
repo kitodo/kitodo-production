@@ -20,11 +20,11 @@ public class PropertyDAO extends BaseDAO<Property> {
 
     @Override
     public Property getById(Integer id) throws DAOException {
-        Property result = retrieveObject(Property.class, id);
-        if (result == null) {
+        Property property = retrieveObject(Property.class, id);
+        if (property == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return property;
     }
 
     @Override

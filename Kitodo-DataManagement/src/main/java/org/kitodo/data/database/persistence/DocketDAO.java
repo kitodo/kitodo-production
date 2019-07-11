@@ -20,11 +20,11 @@ public class DocketDAO extends BaseDAO<Docket> {
 
     @Override
     public Docket getById(Integer id) throws DAOException {
-        Docket result = retrieveObject(Docket.class, id);
-        if (result == null) {
+        Docket docket = retrieveObject(Docket.class, id);
+        if (docket == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return docket;
     }
 
     @Override

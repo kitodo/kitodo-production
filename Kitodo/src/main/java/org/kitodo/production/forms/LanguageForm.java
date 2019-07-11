@@ -122,7 +122,7 @@ public class LanguageForm implements Serializable {
      *         “selected”
      */
     public List<Map<String, Object>> getSupportedLocales() {
-        List<Map<String, Object>> result = new ArrayList<>();
+        List<Map<String, Object>> supportedLocales = new ArrayList<>();
         Locale currentDisplayLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         // It seems we have an old Faces API, Faces 2.1’s getSupportedLocales()
         // returns Iterator<Locale>
@@ -138,10 +138,10 @@ public class LanguageForm implements Serializable {
                     supportedLocale.getDisplayLanguage(currentDisplayLanguage));
                 translation.put("selected", supportedLocale.equals(currentDisplayLanguage));
                 translation.put("flag", "javax.faces.resource/images/" + supportedLocale.toString() + ".svg.jsf");
-                result.add(translation);
+                supportedLocales.add(translation);
             }
         }
-        return result;
+        return supportedLocales;
     }
 
     /**

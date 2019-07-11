@@ -200,13 +200,13 @@ public class IndexingForm {
      * @return number of indexed objects
      */
     public long getNumberOfIndexedObjects(ObjectType objectType) {
-        long result = 0;
+        long numberOfIndexedObjects = 0;
         try {
-            result = searchServices.get(objectType).count();
+            numberOfIndexedObjects = searchServices.get(objectType).count();
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return result;
+        return numberOfIndexedObjects;
     }
 
     /**

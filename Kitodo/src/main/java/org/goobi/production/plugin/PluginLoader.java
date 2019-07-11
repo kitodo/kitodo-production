@@ -169,29 +169,29 @@ public class PluginLoader {
      */
     @SuppressWarnings("unchecked")
     public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
-        ArrayList<T> result = new ArrayList<>();
+        ArrayList<T> plugins = new ArrayList<>();
 
         PluginType type = UnspecificPlugin.typeOf(clazz);
         if (Objects.nonNull(type)) {
             PluginManagerUtil pluginLoader = getPluginLoader(type);
-            Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class);
+            Collection<Plugin> pluginsFromPluginLoader = pluginLoader.getPlugins(Plugin.class);
             // Never API version supports no-arg getPlugins() TODO: update API
-            result = new ArrayList<>(plugins.size() - INTERNAL_CLASSES_COUNT);
-            for (Plugin implementation : plugins) {
+            plugins = new ArrayList<>(pluginsFromPluginLoader.size() - INTERNAL_CLASSES_COUNT);
+            for (Plugin implementation : pluginsFromPluginLoader) {
                 if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX)) {
                     continue; // Skip plugin API internal classes
                 }
                 try {
                     T plugin = (T) UnspecificPlugin.create(type, implementation);
                     plugin.configure(getPluginConfiguration());
-                    result.add(plugin);
+                    plugins.add(plugin);
                 } catch (NoSuchMethodException | SecurityException e) {
                     logger.warn("Bad implementation of {} plugin {}. Exception: {}",
                             type.getName(), implementation.getClass().getName(), e);
                 }
             }
         }
-        return result;
+        return plugins;
     }
 
     /**

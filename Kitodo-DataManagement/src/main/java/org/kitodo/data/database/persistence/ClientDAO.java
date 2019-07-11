@@ -20,11 +20,11 @@ public class ClientDAO extends BaseDAO<Client> {
 
     @Override
     public Client getById(Integer id) throws DAOException {
-        Client result = retrieveObject(Client.class, id);
-        if (result == null) {
+        Client client = retrieveObject(Client.class, id);
+        if (client == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return client;
     }
 
     @Override

@@ -653,12 +653,12 @@ public class Task extends BaseIndexedBean {
      * @return task title with user full name as String
      */
     public String getTitleWithUserName() {
-        String result = this.getTitle();
+        String titleWithUserName = this.getTitle();
         if (this.getProcessingUser() != null && this.getProcessingUser().getId() != null
                 && this.getProcessingUser().getId() != 0) {
-            result += " (" + this.getProcessingUser().getFullName() + ")";
+            titleWithUserName += " (" + this.getProcessingUser().getFullName() + ")";
         }
-        return result;
+        return titleWithUserName;
     }
 
     @Override

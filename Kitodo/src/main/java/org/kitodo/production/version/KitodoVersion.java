@@ -41,12 +41,12 @@ public class KitodoVersion {
     }
 
     private static String getValueOrThrowException(Attributes attributes, String attributeName) {
-        String result = attributes.getValue(attributeName);
-        if (null == result) {
+        String value = attributes.getValue(attributeName);
+        if (null == value) {
             throw new IllegalArgumentException(
                     "Manifest does not contain " + attributeName + ". The build may be corrupted.");
         }
-        return result;
+        return value;
     }
 
     public static String getVersion() {

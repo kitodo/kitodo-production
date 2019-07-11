@@ -161,7 +161,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             q.setFirstResult(first);
             q.setMaxResults(max);
             addParameters(q, parameters);
-            return (List<T>) q.list();
+            return q.list();
         }
     }
 
@@ -179,7 +179,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             Query q = session.createQuery(query);
             addParameters(q, parameters);
-            return (List<T>) q.list();
+            return q.list();
         }
     }
 
@@ -193,11 +193,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query) {
         try (Session session = HibernateUtil.getSession()) {
-            List<T> result = session.createQuery(query).list();
-            if (Objects.isNull(result)) {
-                result = new ArrayList<>();
+            List<T> baseBeanObjects = session.createQuery(query).list();
+            if (Objects.isNull(baseBeanObjects)) {
+                baseBeanObjects = new ArrayList<>();
             }
-            return result;
+            return baseBeanObjects;
         }
     }
 
@@ -312,7 +312,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             Query q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
-            return (List<T>) q.list();
+            return q.list();
         } catch (HibernateException e) {
             throw new DAOException(e);
         }
@@ -329,7 +329,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     List<T> retrieveAllObjects(Class cls) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
             Query query = session.createQuery("FROM " + cls.getSimpleName() + " ORDER BY id ASC");
-            return (List<T>) query.list();
+            return query.list();
         } catch (HibernateException e) {
             throw new DAOException(e);
         }

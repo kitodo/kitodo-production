@@ -20,11 +20,11 @@ public class LdapServerDAO extends BaseDAO<LdapServer> {
 
     @Override
     public LdapServer getById(Integer id) throws DAOException {
-        LdapServer result = retrieveObject(LdapServer.class, id);
-        if (result == null) {
+        LdapServer ldapServer = retrieveObject(LdapServer.class, id);
+        if (ldapServer == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return ldapServer;
     }
 
     @Override

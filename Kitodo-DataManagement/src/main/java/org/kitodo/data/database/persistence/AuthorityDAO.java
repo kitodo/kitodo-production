@@ -21,11 +21,11 @@ public class AuthorityDAO extends BaseDAO<Authority> {
 
     @Override
     public Authority getById(Integer id) throws DAOException {
-        Authority result = retrieveObject(Authority.class, id);
-        if (result == null) {
+        Authority authority = retrieveObject(Authority.class, id);
+        if (authority == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return authority;
     }
 
     @Override

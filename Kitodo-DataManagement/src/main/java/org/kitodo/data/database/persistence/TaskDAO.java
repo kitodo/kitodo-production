@@ -24,11 +24,11 @@ public class TaskDAO extends BaseDAO<Task> {
 
     @Override
     public Task getById(Integer id) throws DAOException {
-        Task result = retrieveObject(Task.class, id);
-        if (result == null) {
+        Task task = retrieveObject(Task.class, id);
+        if (task == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return task;
     }
 
     @Override

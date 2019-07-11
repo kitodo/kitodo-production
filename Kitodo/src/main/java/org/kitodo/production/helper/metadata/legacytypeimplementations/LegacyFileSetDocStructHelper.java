@@ -47,21 +47,21 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
-        List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
+        List<LegacyDocStructHelperInterface> allChildren = new ArrayList<>(mediaUnits.size());
         for (MediaUnit mediaUnit : mediaUnits) {
-            result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
+            allChildren.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
-        return result;
+        return allChildren;
     }
 
     @Override
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
-        List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
+        List<LegacyDocStructHelperInterface> allChildren = new ArrayList<>(mediaUnits.size());
         for (MediaUnit mediaUnit : mediaUnits) {
-            result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
+            allChildren.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
-        return result;
+        return allChildren;
     }
 
     @Override

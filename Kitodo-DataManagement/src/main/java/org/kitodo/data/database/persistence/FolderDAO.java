@@ -20,11 +20,11 @@ public class FolderDAO extends BaseDAO<Folder> {
 
     @Override
     public Folder getById(Integer id) throws DAOException {
-        Folder result = retrieveObject(Folder.class, id);
-        if (result == null) {
+        Folder folder = retrieveObject(Folder.class, id);
+        if (folder == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return folder;
     }
 
     @Override

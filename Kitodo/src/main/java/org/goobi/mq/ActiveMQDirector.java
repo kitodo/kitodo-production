@@ -151,13 +151,13 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      * @return a MessageProducer object ready for writing or “null” on error
      */
     protected MessageProducer setUpReportChannel(String topic) {
-        MessageProducer result;
+        MessageProducer reportChannel;
         try {
             Destination channel = session.createTopic(topic);
-            result = session.createProducer(channel);
-            result.setDeliveryMode(DeliveryMode.PERSISTENT);
-            result.setTimeToLive(ConfigCore.getLongParameterOrDefaultValue(ParameterCore.ACTIVE_MQ_RESULTS_TTL));
-            return result;
+            reportChannel = session.createProducer(channel);
+            reportChannel.setDeliveryMode(DeliveryMode.PERSISTENT);
+            reportChannel.setTimeToLive(ConfigCore.getLongParameterOrDefaultValue(ParameterCore.ACTIVE_MQ_RESULTS_TTL));
+            return reportChannel;
         } catch (JMSException | RuntimeException e) {
             logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);
         }

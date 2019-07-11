@@ -43,7 +43,7 @@ public class UseXmlAttributeAccess {
 
     /**
      * Constructor that creates a variant from a METS {@code <fileGrp>}.
-     * 
+     *
      * @param fileGrp
      *            METS {@code <fileGrp>} from which a media variant is to be
      *            created
@@ -79,9 +79,9 @@ public class UseXmlAttributeAccess {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mediaVariant == null) ? 0 : mediaVariant.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((mediaVariant == null) ? 0 : mediaVariant.hashCode());
+        return hashCode;
     }
 
     @Override

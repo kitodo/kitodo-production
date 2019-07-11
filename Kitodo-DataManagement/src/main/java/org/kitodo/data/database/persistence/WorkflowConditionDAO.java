@@ -20,11 +20,11 @@ public class WorkflowConditionDAO extends BaseDAO<WorkflowCondition> {
 
     @Override
     public WorkflowCondition getById(Integer id) throws DAOException {
-        WorkflowCondition result = retrieveObject(WorkflowCondition.class, id);
-        if (result == null) {
+        WorkflowCondition workflowCondition = retrieveObject(WorkflowCondition.class, id);
+        if (workflowCondition == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return workflowCondition;
     }
 
     @Override

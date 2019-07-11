@@ -40,7 +40,7 @@ public class ProcessingNote {
 
     /**
      * Returns the name of the entity causing the entry.
-     * 
+     *
      * @return the name of the entity causing the entry
      */
     public String getName() {
@@ -50,7 +50,7 @@ public class ProcessingNote {
     /**
      * Sets the name of the entity causing the entry. This may be the name of a
      * person, an institution, the software, or similar.
-     * 
+     *
      * @param name
      *            the name of the entity causing the entry
      */
@@ -60,7 +60,7 @@ public class ProcessingNote {
 
     /**
      * Returns the text of the entry.
-     * 
+     *
      * @return the text of the entry
      */
     public String getNote() {
@@ -69,7 +69,7 @@ public class ProcessingNote {
 
     /**
      * Sets the text of the processing note.
-     * 
+     *
      * @param note
      *            the text of the processing note
      */
@@ -79,7 +79,7 @@ public class ProcessingNote {
 
     /**
      * Returns the role of the entity causing the entry.
-     * 
+     *
      * @return the role of the entity causing the entry
      */
     public String getRole() {
@@ -107,7 +107,7 @@ public class ProcessingNote {
      * institution holding copyright, trade or service marks or other
      * intellectual property rights for the object
      * </ul>
-     * 
+     *
      * @param role
      *            role to set
      */
@@ -117,7 +117,7 @@ public class ProcessingNote {
 
     /**
      * Returns the type of the entity causing the entry.
-     * 
+     *
      * @return the type of the entity causing the entry
      */
     public String getType() {
@@ -134,7 +134,7 @@ public class ProcessingNote {
      * association, non-profit enterprise, government, religious body, etc. has
      * served as the agent
      * </ul>
-     * 
+     *
      * @param type
      *            type to set
      */
@@ -145,12 +145,12 @@ public class ProcessingNote {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((note == null) ? 0 : note.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((name == null) ? 0 : name.hashCode());
+        hashCode = prime * hashCode + ((note == null) ? 0 : note.hashCode());
+        hashCode = prime * hashCode + ((role == null) ? 0 : role.hashCode());
+        hashCode = prime * hashCode + ((type == null) ? 0 : type.hashCode());
+        return hashCode;
     }
 
     @Override

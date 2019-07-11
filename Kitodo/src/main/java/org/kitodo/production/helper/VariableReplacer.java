@@ -306,28 +306,28 @@ public class VariableReplacer {
 
     private String getResultAccordingToMetadataLevel(MetadataLevel metadataLevel, String metadata, String resultFirst,
             String resultTop) {
-        String result = "";
+        String resultAccordingToMetadataLevel = "";
         switch (metadataLevel) {
             case FIRSTCHILD:
                 // without existing FirstChild, this cannot be returned
                 if (Objects.isNull(resultFirst)) {
                     logger.info("Can not replace firstChild-variable for METS: {}", metadata);
                 } else {
-                    result = resultFirst;
+                    resultAccordingToMetadataLevel = resultFirst;
                 }
                 break;
             case TOPSTRUCT:
                 if (Objects.isNull(resultTop)) {
                     logger.warn("Can not replace topStruct-variable for METS: {}", metadata);
                 } else {
-                    result = resultTop;
+                    resultAccordingToMetadataLevel = resultTop;
                 }
                 break;
             case ALL:
                 if (Objects.nonNull(resultFirst)) {
-                    result = resultFirst;
+                    resultAccordingToMetadataLevel = resultFirst;
                 } else if (Objects.nonNull(resultTop)) {
-                    result = resultTop;
+                    resultAccordingToMetadataLevel = resultTop;
                 } else {
                     logger.warn("Can not replace variable for METS: {}", metadata);
                 }
@@ -335,7 +335,7 @@ public class VariableReplacer {
             default:
                 break;
         }
-        return result;
+        return resultAccordingToMetadataLevel;
     }
 
     /**

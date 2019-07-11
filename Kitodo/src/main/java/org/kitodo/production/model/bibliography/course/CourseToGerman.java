@@ -57,24 +57,24 @@ public class CourseToGerman {
      * @return Verbal description of the course in German
      */
     public static List<String> asReadableText(Course course) {
-        List<String> result = new ArrayList<>();
+        List<String> readableText = new ArrayList<>();
         if (course.isEmpty()) {
-            return result;
+            return readableText;
         }
         Iterator<Block> blocks = course.iterator();
         boolean hasPreviousBlock = false;
         do {
             Block block = blocks.next();
-            result.add(titleToString(block, hasPreviousBlock));
+            readableText.add(titleToString(block, hasPreviousBlock));
             for (Issue issue : block.getIssues()) {
                 String irregularities = irregularitiesToString(issue);
                 if (irregularities != null) {
-                    result.add(irregularities);
+                    readableText.add(irregularities);
                 }
             }
             hasPreviousBlock = true;
         } while (blocks.hasNext());
-        return result;
+        return readableText;
     }
 
     /**

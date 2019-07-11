@@ -20,11 +20,11 @@ public class ProcessDAO extends BaseDAO<Process> {
 
     @Override
     public Process getById(Integer id) throws DAOException {
-        Process result = retrieveObject(Process.class, id);
-        if (result == null) {
+        Process process = retrieveObject(Process.class, id);
+        if (process == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return process;
     }
 
     @Override

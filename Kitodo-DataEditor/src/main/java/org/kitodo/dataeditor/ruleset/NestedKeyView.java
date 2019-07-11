@@ -202,7 +202,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * Adds the keys selected by the user to be added to the list of keys to
      * add. This procedure is a part of the function to
      * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, UniversalRule, Collection, Collection)}.
-     * 
+     *
      * @param auxiliaryTable
      *            the target table. If the key is already here, it will not be
      *            added a second time.
@@ -231,7 +231,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * If the rule is unspecified unrestricted, the remaining keys are added to
      * the keys to be sorted. This procedure is a part of the function to
      * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, UniversalRule, Collection, Collection)}.
-     * 
+     *
      * @param auxiliaryTable
      *            the target table. If the key is already here, it will not be
      *            added a second time.
@@ -343,7 +343,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     public <V> Collection<MetadataViewInterface> getAddableMetadata(Map<V, String> currentEntries,
             Collection<String> additionalKeys) {
 
-        Collection<MetadataViewInterface> result = new LinkedList<>();
+        Collection<MetadataViewInterface> addableMetadata = new LinkedList<>();
         for (AuxiliaryTableRow<V> auxiliaryTableRow : createAuxiliaryTable(currentEntries, additionalKeys)) {
             if (auxiliaryTableRow.isPossibleToExpandAnotherField()) {
                 MetadataViewInterface keyView = auxiliaryTableRow
@@ -352,10 +352,10 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
                                 : new KeyView(auxiliaryTableRow.getUniversalKey(),
                                         universalRule.getUniversalPermitRuleForKey(auxiliaryTableRow.getId(), division),
                                         settings, priorityList);
-                result.add(keyView);
+                addableMetadata.add(keyView);
             }
         }
-        return result;
+        return addableMetadata;
     }
 
     /**
@@ -398,7 +398,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     public <V> List<MetadataViewWithValuesInterface<V>> getSortedVisibleMetadata(Map<V, String> currentEntries,
             Collection<String> additionalKeys) {
 
-        LinkedList<MetadataViewWithValuesInterface<V>> result = new LinkedList<>();
+        LinkedList<MetadataViewWithValuesInterface<V>> sortedVisibleMetadata = new LinkedList<>();
         Collection<V> excludedDataObjects = new HashSet<>();
         for (AuxiliaryTableRow<V> auxiliaryTableRow : createAuxiliaryTable(currentEntries, additionalKeys)) {
             if (auxiliaryTableRow.isContainingExcludedData()) {
@@ -412,14 +412,14 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
                                             universalRule.getUniversalPermitRuleForKey(auxiliaryTableRow.getId(), division),
                                             settings, priorityList);
                     Optional<MetadataViewInterface> definedTypeView = Optional.of(typeView);
-                    result.add(new FormRow<V>(definedTypeView, auxiliaryTableRow.getDataObjects(i)));
+                    sortedVisibleMetadata.add(new FormRow<>(definedTypeView, auxiliaryTableRow.getDataObjects(i)));
                 }
             }
         }
         if (!excludedDataObjects.isEmpty()) {
-            result.addFirst(new FormRow<V>(Optional.empty(), excludedDataObjects));
+            sortedVisibleMetadata.addFirst(new FormRow<>(Optional.empty(), excludedDataObjects));
         }
-        return result;
+        return sortedVisibleMetadata;
     }
 
     /**
@@ -444,7 +444,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
                 sortedAuxiliaryTable.get(keyId).add(entry.getKey());
             } else {
                 auxiliaryTableToBeSorted.computeIfAbsent(keyId,
-                    missing -> new AuxiliaryTableRow<V>(new UniversalKey(ruleset, keyId), settings));
+                    missing -> new AuxiliaryTableRow<>(new UniversalKey(ruleset, keyId), settings));
                 auxiliaryTableToBeSorted.get(keyId).add(entry.getKey());
             }
         }

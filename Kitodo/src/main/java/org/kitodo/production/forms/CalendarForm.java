@@ -699,11 +699,11 @@ public class CalendarForm implements Serializable {
      * @return a list of issue options for the date
      */
     protected List<IssueOption> buildIssueOptions(List<IssueController> issueControllers, LocalDate date) {
-        List<IssueOption> result = new ArrayList<>();
+        List<IssueOption> issueOptions = new ArrayList<>();
         for (IssueController controller : issueControllers) {
-            result.add(new IssueOption(controller, date));
+            issueOptions.add(new IssueOption(controller, date));
         }
-        return result;
+        return issueOptions;
     }
 
     /**
@@ -830,16 +830,16 @@ public class CalendarForm implements Serializable {
      * @return the elements for the block changer drop down element
      */
     public List<Map<String, String>> getBlockChangerOptions() {
-        List<Map<String, String>> result = new ArrayList<>();
+        List<Map<String, String>> blockChangerOptions = new ArrayList<>();
         for (Block block : course) {
             String value = Integer.toHexString(block.hashCode());
             blockChangerResolver.put(value, block);
             Map<String, String> item = new HashMap<>();
             item.put("value", value);
             item.put("label", block.toString(DateUtils.DATE_FORMATTER));
-            result.add(item);
+            blockChangerOptions.add(item);
         }
-        return result;
+        return blockChangerOptions;
     }
 
     /**
@@ -864,9 +864,9 @@ public class CalendarForm implements Serializable {
      * @return the table cells to build the calendar sheet
      */
     public List<List<Cell>> getCalendarSheet() {
-        List<List<Cell>> result = getEmptySheet();
-        populateByCalendar(result);
-        return result;
+        List<List<Cell>> calendarSheet = getEmptySheet();
+        populateByCalendar(calendarSheet);
+        return calendarSheet;
     }
 
     /**
@@ -886,15 +886,15 @@ public class CalendarForm implements Serializable {
      * @return an empty calendar sheet
      */
     protected List<List<Cell>> getEmptySheet() {
-        List<List<Cell>> result = new ArrayList<>(31);
+        List<List<Cell>> emptySheet = new ArrayList<>(31);
         for (int day = 1; day <= 31; day++) {
             ArrayList<Cell> row = new ArrayList<>(DateTimeConstants.DECEMBER);
             for (int month = 1; month <= 12; month++) {
                 row.add(new Cell());
             }
-            result.add(row);
+            emptySheet.add(row);
         }
-        return result;
+        return emptySheet;
     }
 
     /**
@@ -929,13 +929,13 @@ public class CalendarForm implements Serializable {
      * @return the list of issues
      */
     private List<IssueController> getIssues(Block block) {
-        List<IssueController> result = new ArrayList<>();
+        List<IssueController> issues = new ArrayList<>();
         if (Objects.nonNull(block)) {
             for (Issue issue : block.getIssues()) {
-                result.add(new IssueController(issue, result.size()));
+                issues.add(new IssueController(issue, issues.size()));
             }
         }
-        return result;
+        return issues;
     }
 
     /**

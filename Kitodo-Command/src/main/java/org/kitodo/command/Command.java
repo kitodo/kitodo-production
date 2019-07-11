@@ -88,14 +88,14 @@ public class Command implements CommandInterface {
      * @return A ArrayList holding the single lines.
      */
     private static ArrayList<String> inputStreamArrayToList(InputStream inputStream) {
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
 
         try (Scanner inputLines = new Scanner(inputStream, CHARSET)) {
             while (inputLines.hasNextLine()) {
                 String myLine = inputLines.nextLine();
-                result.add(myLine);
+                list.add(myLine);
             }
         }
-        return result;
+        return list;
     }
 }

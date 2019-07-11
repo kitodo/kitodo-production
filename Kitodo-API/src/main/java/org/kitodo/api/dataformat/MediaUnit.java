@@ -196,12 +196,12 @@ public class MediaUnit implements Parent<MediaUnit> {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
-        result = prime * result + order;
-        result = prime * result + ((orderlabel == null) ? 0 : orderlabel.hashCode());
-        result = prime * result + (Objects.isNull(type) ? 0 : type.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
+        hashCode = prime * hashCode + order;
+        hashCode = prime * hashCode + ((orderlabel == null) ? 0 : orderlabel.hashCode());
+        hashCode = prime * hashCode + (Objects.isNull(type) ? 0 : type.hashCode());
+        return hashCode;
     }
 
     @Override

@@ -153,9 +153,9 @@ public class Workpiece {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((id == null) ? 0 : id.hashCode());
+        return hashCode;
     }
 
     @Override
@@ -203,15 +203,15 @@ public class Workpiece {
     }
 
     private List<MediaUnit> getAllMediaUnitsRecursive(MediaUnit parent, List<MediaUnit> mediaUnits) {
-        List<MediaUnit> result = mediaUnits;
+        List<MediaUnit> allMediaUnits = mediaUnits;
         for (MediaUnit mediaUnit : parent.getChildren()) {
             if (Objects.nonNull(mediaUnit)) {
-                result.add(mediaUnit);
+                allMediaUnits.add(mediaUnit);
                 if (!mediaUnit.getChildren().isEmpty()) {
-                    result = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
+                    allMediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
                 }
             }
         }
-        return result;
+        return allMediaUnits;
     }
 }

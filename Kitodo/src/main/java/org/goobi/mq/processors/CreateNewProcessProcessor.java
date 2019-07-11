@@ -157,13 +157,13 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             if no suitable template is found
      */
     public static ProzesskopieForm newProcessFromTemplate(String templateTitle) {
-        ProzesskopieForm result = new ProzesskopieForm();
+        ProzesskopieForm prozesskopieFormFromTemplate = new ProzesskopieForm();
 
         Template selectedTemplate = getTemplateByTitle(templateTitle);
-        result.setTemplate(selectedTemplate);
+        prozesskopieFormFromTemplate.setTemplate(selectedTemplate);
         //TODO: how to get here id of correct project?
-        result.prepareProcess(selectedTemplate.getId(), 0);
-        return result;
+        prozesskopieFormFromTemplate.prepareProcess(selectedTemplate.getId(), 0);
+        return prozesskopieFormFromTemplate;
     }
 
     /**
@@ -307,16 +307,16 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * @return the number of AdditionalFields populated
      */
     private static int countPopulatedAdditionalFields(ProzesskopieForm form) {
-        int result = 0;
+        int populatedAdditionalFields = 0;
 
         for (AdditionalField field : form.getAdditionalFields()) {
             String value = field.getValue();
             if (Objects.nonNull(value) && !value.isEmpty()) {
-                result++;
+                populatedAdditionalFields++;
             }
         }
 
-        return result;
+        return populatedAdditionalFields;
     }
 
 }

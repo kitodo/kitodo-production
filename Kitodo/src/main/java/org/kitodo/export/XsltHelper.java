@@ -48,8 +48,8 @@ public class XsltHelper {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(xsltSource);
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            StreamResult result = new StreamResult(outputStream);
-            transformer.transform(source, result);
+            StreamResult streamResult = new StreamResult(outputStream);
+            transformer.transform(source, streamResult);
             return outputStream;
         }
     }

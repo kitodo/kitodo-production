@@ -44,7 +44,7 @@ class AuxiliaryTableRow<T> {
     private static <T> Collection<T> unorderedCollectionMemberByIndexAsList(Collection<T> unnumbered,
             int fictitiousNumber) {
 
-        List<T> result = new LinkedList<>();
+        List<T> unorderedCollectionMemberAsList = new LinkedList<>();
         Iterator<T> currentMetaDataObject = unnumbered.iterator();
         for (int i = 0; i < fictitiousNumber; i++) {
             if (currentMetaDataObject.hasNext()) {
@@ -52,9 +52,9 @@ class AuxiliaryTableRow<T> {
             }
         }
         if (currentMetaDataObject.hasNext()) {
-            result.add(currentMetaDataObject.next());
+            unorderedCollectionMemberAsList.add(currentMetaDataObject.next());
         }
-        return result;
+        return unorderedCollectionMemberAsList;
     }
 
     /**

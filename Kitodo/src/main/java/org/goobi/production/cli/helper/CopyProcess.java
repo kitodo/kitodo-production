@@ -395,21 +395,21 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private String calcProcessTitleCheck(String fieldName, String fieldValue) {
-        String result = fieldValue;
+        String processTitleCheck = fieldValue;
 
         if (fieldName.equals("Bandnummer")) {
             try {
                 int bandInt = Integer.parseInt(fieldValue);
                 java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
-                result = df.format(bandInt);
+                processTitleCheck = df.format(bandInt);
             } catch (NumberFormatException e) {
                 Helper.setErrorMessage(INCOMPLETE_DATA, "Bandnummer ist keine gültige Zahl", logger, e);
             }
-            if (Objects.nonNull(result) && result.length() < 4) {
-                result = "0000".substring(result.length()) + result;
+            if (Objects.nonNull(processTitleCheck) && processTitleCheck.length() < 4) {
+                processTitleCheck = "0000".substring(processTitleCheck.length()) + processTitleCheck;
             }
         }
-        return result;
+        return processTitleCheck;
     }
 
     @Override
@@ -443,7 +443,7 @@ public class CopyProcess extends ProzesskopieForm {
 
     /**
      * Evaluate the token as field name.
-     * 
+     *
      * @param token
      *            as String
      * @param stringBuilder

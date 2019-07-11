@@ -72,7 +72,7 @@ public class Label {
      * @return list of Label objects
      */
     public static List<Label> toListOfLabels(Map<String, String> data, KeyAttribute keyAttribute) {
-        List<Label> result = new ArrayList<>();
+        List<Label> listOfLabels = new ArrayList<>();
         for (Map.Entry<String, String> entry : data.entrySet()) {
             String key = entry.getKey();
             Label label = new Label();
@@ -87,9 +87,9 @@ public class Label {
                     throw new UnreachableCodeException();
             }
             label.value = entry.getValue();
-            result.add(label);
+            listOfLabels.add(label);
         }
-        return result;
+        return listOfLabels;
     }
 
     public void setLabel(String label) {

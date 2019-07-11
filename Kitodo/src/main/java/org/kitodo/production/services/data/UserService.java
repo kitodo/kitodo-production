@@ -338,21 +338,21 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      *             add description
      */
     public URI getHomeDirectory(User user) throws IOException {
-        URI result;
+        URI homeDirectory;
         if (Objects.nonNull(user)) {
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE)) {
-                result = Paths.get(ServiceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
+                homeDirectory = Paths.get(ServiceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
             } else {
-                result = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS), user.getLogin()).toUri();
+                homeDirectory = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS), user.getLogin()).toUri();
             }
 
-            if (!new File(result).exists()) {
-                ServiceManager.getFileService().createDirectoryForUser(result, user.getLogin());
+            if (!new File(homeDirectory).exists()) {
+                ServiceManager.getFileService().createDirectoryForUser(homeDirectory, user.getLogin());
             }
         } else {
             throw new IOException("No user for home directory!");
         }
-        return result;
+        return homeDirectory;
     }
 
     /**

@@ -102,29 +102,29 @@ public class Hit {
      * @return a summary of this hit in bibliographic citation style as HTML
      */
     public String getBibliographicCitation() {
-        Citation result = new Citation(getFormat());
-        result.setAccessTime(getAccessTime());
-        result.setArticleTitle(getArticleTitle());
-        result.addMultipleAuthors(getAuthors(), ";");
-        result.addMultipleContributors(getEditors(), ";");
-        result.setDepartment(getDepartment());
-        result.setEdition(getEdition());
-        result.setEmployer(getEmployer());
-        result.setNumber(getNumber());
-        result.setOverallTitle(getOverallTitle());
-        result.setPages(getPages());
-        result.setPart(getPart());
-        result.setPlace(getPlaceOfPublication());
-        result.setPublicationDate(getDatePublished());
-        result.setPublisher(getPublisher());
-        result.setSubseries(getSubseries());
-        result.setTitle(getTitle());
-        result.setType(getTheses());
-        result.setURL(getURL());
-        result.setVolume(getVolume());
-        result.setVolumeTitle(getVolumeTitle());
-        result.setYear(getYearPublished());
-        return result.toString();
+        Citation bibliographicCitation = new Citation(getFormat());
+        bibliographicCitation.setAccessTime(getAccessTime());
+        bibliographicCitation.setArticleTitle(getArticleTitle());
+        bibliographicCitation.addMultipleAuthors(getAuthors(), ";");
+        bibliographicCitation.addMultipleContributors(getEditors(), ";");
+        bibliographicCitation.setDepartment(getDepartment());
+        bibliographicCitation.setEdition(getEdition());
+        bibliographicCitation.setEmployer(getEmployer());
+        bibliographicCitation.setNumber(getNumber());
+        bibliographicCitation.setOverallTitle(getOverallTitle());
+        bibliographicCitation.setPages(getPages());
+        bibliographicCitation.setPart(getPart());
+        bibliographicCitation.setPlace(getPlaceOfPublication());
+        bibliographicCitation.setPublicationDate(getDatePublished());
+        bibliographicCitation.setPublisher(getPublisher());
+        bibliographicCitation.setSubseries(getSubseries());
+        bibliographicCitation.setTitle(getTitle());
+        bibliographicCitation.setType(getTheses());
+        bibliographicCitation.setURL(getURL());
+        bibliographicCitation.setVolume(getVolume());
+        bibliographicCitation.setVolumeTitle(getVolumeTitle());
+        bibliographicCitation.setYear(getYearPublished());
+        return bibliographicCitation.toString();
     }
 
     /**

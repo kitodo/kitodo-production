@@ -32,14 +32,14 @@ public class MediaVariant {
      * Identifier of use. In terms of METS, this is a string, but if the
      * generated METS file is to be used with the DFG Viewer this string must be
      * a prescribed value, depending on its intended use.
-     * 
+     *
      * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf#page=12"
      */
     private String use;
 
     /**
      * Returns the MIME type of the media variant.
-     * 
+     *
      * @return the MIME type
      */
     public String getMimeType() {
@@ -48,7 +48,7 @@ public class MediaVariant {
 
     /**
      * Sets the MIME type of the media variant.
-     * 
+     *
      * @param mimeType
      *            MIME type to set
      */
@@ -58,7 +58,7 @@ public class MediaVariant {
 
     /**
      * Returns the use of the media variant.
-     * 
+     *
      * @return the use
      */
     public String getUse() {
@@ -67,7 +67,7 @@ public class MediaVariant {
 
     /**
      * Sets the use of the media variant.
-     * 
+     *
      * @param use
      *            use type to set
      */
@@ -78,9 +78,9 @@ public class MediaVariant {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((use == null) ? 0 : use.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((use == null) ? 0 : use.hashCode());
+        return hashCode;
     }
 
     @Override
