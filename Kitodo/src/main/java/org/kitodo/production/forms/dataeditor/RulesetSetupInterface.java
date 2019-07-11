@@ -17,8 +17,8 @@ import java.util.Locale.LanguageRange;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 
 /**
- * An interface that a form needs to implement to include a meta-data panel.
- * This design provides for using the meta-data panel in different places of the
+ * An interface that a form needs to implement to include a metadata panel.
+ * This design provides for using the metadata panel in different places of the
  * application.
  */
 public interface RulesetSetupInterface {

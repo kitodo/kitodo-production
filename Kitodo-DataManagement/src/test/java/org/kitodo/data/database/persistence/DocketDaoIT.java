@@ -46,7 +46,7 @@ public class DocketDaoIT {
         assertEquals("Objects were not removed or not found!", 1, docketDAO.getAll().size());
 
         exception.expect(DAOException.class);
-        exception.expectMessage("Object can not be found in database");
+        exception.expectMessage("Object cannot be found in database");
         docketDAO.getById(1);
     }
 

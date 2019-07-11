@@ -348,10 +348,10 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Set OPAC catalogue.
+     * Set library catalog.
      *
      * @param opacCatalogue
-     *            the opac catalogue
+     *            the opac catalog
      */
     @Override
     public void setOpacCatalogue(String opacCatalogue) {
@@ -370,9 +370,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Get OPAC address.
+     * Get library catalog address.
      *
-     * @return the address of the opac catalogue
+     * @return the address of the library catalog
      */
     private String getOpacAddress() throws ImportPluginException {
 

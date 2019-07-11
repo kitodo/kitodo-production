@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * The class QueryBuilder provides methods to create query strings to be passed
- * to library catalogue access plug-in implementation objects as argument to
+ * to library catalog access plug-in implementation objects as argument to
  * their find() function. The semantics of the created query is as follows, in
  * descending precedence of the operators:
  * 
@@ -52,7 +52,7 @@ import java.util.List;
  * must be found—or, in combination with a minus sign, must not be found—in the
  * prepended field of the database (i.e. <code>4:beagle</code> to search for the
  * term “beagle” in the field “4”). Search fields are referenced by the integers
- * used to reference them in PICA library catalogues (i.e. “4” = title, “7” =
+ * used to reference them in PICA library catalogs (i.e. “4” = title, “7” =
  * ISBN, “8” = ISSN, “12” = Record identifier, …; for a list of supported fields
  * see /Kitodo/src/main/webapp/pages/NewProcess/inc_process.xhtml)
  */

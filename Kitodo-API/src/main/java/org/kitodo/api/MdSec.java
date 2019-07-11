@@ -12,36 +12,36 @@
 package org.kitodo.api;
 
 /**
- * An enumeration of possible meta-data locations in a METS file. METS
- * distinguishes five fundamentally different types of meta-data.
+ * An enumeration of possible metadata locations in a METS file. METS
+ * distinguishes five fundamentally different types of metadata.
  */
 public enum MdSec {
     /**
-     * Meta-data which describes the development of the digital representation
+     * Metadata which describes the development of the digital representation
      * of the digitally represented work.
      */
     DIGIPROV_MD,
 
     /**
-     * Meta-data which describes the digital representation of the digitally
+     * Metadata which describes the digital representation of the digitally
      * represented work.
      */
     DMD_SEC,
 
     /**
-     * Meta-data which describes the rights to the digital representation of the
+     * Metadata which describes the rights to the digital representation of the
      * digitally represented work.
      */
     RIGHTS_MD,
 
     /**
-     * Meta-data which describes the non-digital work that is digitally
+     * Metadata which describes the non-digital work that is digitally
      * represented here.
      */
     SOURCE_MD,
 
     /**
-     * Meta-data that is necessary for the technical processing in any way and
+     * Metadata that is necessary for the technical processing in any way and
      * therefore needs to be stored somewhere.
      */
     TECH_MD;

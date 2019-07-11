@@ -34,20 +34,20 @@ import org.apache.logging.log4j.Logger;
  * <ul>
  * <li>Retrieve information about the structure (add, move and remove children),
  * <li>set the parent (the top element has no parent),
- * <li>set and retrieve meta-data, which describe a structure entity,
+ * <li>set and retrieve metadata, which describe a structure entity,
  * <li>handle content files, which are linked to a structure entity.
  * </ul>
  *
  * <p>
  * Every structure entity is of a special kind. The kind of entity is stored in
  * a {@code DocStructType} element. Depending on the type of structure entities
- * certain meta-data and children a permitted or forbidden.
+ * certain metadata and children a permitted or forbidden.
  */
 public interface LegacyDocStructHelperInterface {
     Logger logger = LogManager.getLogger(LegacyDocStructHelperInterface.class);
 
     /**
-     * Adds a meta-data object to this instance. The method checks, if it is
+     * Adds a metadata object to this instance. The method checks, if it is
      * allowed to add it, based on the configuration. If so, the object is added
      * and the method returns {@code true}, otherwise it returns {@code false}.
      * 
@@ -60,11 +60,11 @@ public interface LegacyDocStructHelperInterface {
      * object by a local copy, which is retrieved from the {@code DocStructType}
      * of this instance. The internal name of both {@code MetadataType} objects
      * will still be identical afterwards. If a local copy cannot be found,
-     * which means that the meta-data type is invalid on this instance, false is
+     * which means that the metadata type is invalid on this instance, false is
      * returned.
      *
      * @param metadata
-     *            meta-data object to add
+     *            metadata object to add
      */
     @Deprecated
     default void addMetadata(LegacyMetadataHelper metadata) {
@@ -94,17 +94,17 @@ public interface LegacyDocStructHelperInterface {
     }
 
     /**
-     * Returns all meta-data types that can be added to this instance and shall
+     * Returns all metadata types that can be added to this instance and shall
      * be visible to the user. This method considers already added
-     * {@code Metadata}, so meta-data types which can only be available once
+     * {@code Metadata}, so metadata types which can only be available once
      * cannot be added a second time. Therefore these {@code MetadataType}s will
      * not be included in this list.
      *
      * <p>
-     * Internal meta-data groups, whose {@code MetadataGroupType} starts with
+     * Internal metadata groups, whose {@code MetadataGroupType} starts with
      * the {@code HIDDEN_METADATA_CHAR}, will also not be included.
      *
-     * @return all meta-data types that users can add to this instance
+     * @return all metadata types that users can add to this instance
      */
     @Deprecated
     default List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
@@ -124,7 +124,7 @@ public interface LegacyDocStructHelperInterface {
 
     /**
      * Returns all children of this instance which are of a given type and have
-     * a given type of meta-data attached. For example, you can get all articles
+     * a given type of metadata attached. For example, you can get all articles
      * which have an author. It is possible to use "{@code *}" as wildcard
      * character value for {@code theDocTypeName} and {@code theMDTypeName}.
      *
@@ -134,8 +134,8 @@ public interface LegacyDocStructHelperInterface {
      * @param docStructType
      *            name of the structural type
      * @param metaDataType
-     *            name of the meta-data type
-     * @return all children of the given type and with the given meta-data
+     *            name of the metadata type
+     * @return all children of the given type and with the given metadata
      */
     @Deprecated
     default List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType,
@@ -144,10 +144,10 @@ public interface LegacyDocStructHelperInterface {
     }
 
     /**
-     * Returns all meta-data from this instance. If no {@code Metadata} is
+     * Returns all metadata from this instance. If no {@code Metadata} is
      * available, {@code null} is returned.
      *
-     * @return all meta-data from this instance. A return type
+     * @return all metadata from this instance. A return type
      *         {@code Collection<>} would be sufficient.
      */
     @Deprecated
@@ -156,15 +156,15 @@ public interface LegacyDocStructHelperInterface {
     }
 
     /**
-     * Returns all meta-data of a given type, including persons. Can be used to
+     * Returns all metadata of a given type, including persons. Can be used to
      * get all titles, authors, etc.
      *
      * <p>
      * If no {@code MetadataGroup}s are available, an empty list is returned.
      *
      * @param metadataType
-     *            meta-data type to look for
-     * @return all meta-data of the given type
+     *            metadata type to look for
+     * @return all metadata of the given type
      */
     @Deprecated
     default List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {

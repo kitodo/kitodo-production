@@ -65,7 +65,7 @@ public abstract class UnspecificPlugin {
     private static final Class<?>[] NO_ARGS = new Class<?>[] {};
 
     /**
-     * The field plugin holds a reference to the plug-in implementation class.
+     * The field plug-in holds a reference to the plug-in implementation class.
      */
     protected final Object plugin;
 
@@ -94,7 +94,7 @@ public abstract class UnspecificPlugin {
      *
      * <p>
      * The constructor saves a reference to the plug-in implementation class in
-     * the final field plugin and inspects the class for existence of the
+     * the final field plug-in and inspects the class for existence of the
      * methods configure, getDescription and getTitle.
      *
      * @param implementation
@@ -137,7 +137,7 @@ public abstract class UnspecificPlugin {
      *             checkPackageAccess() denies access to the package of this
      *             class.
      * @throws NoSuchMethodException
-     *             if a required method is not found on the plugin
+     *             if a required method is not found on the plug-in
      */
     static UnspecificPlugin create(PluginType type, Object implementation) throws NoSuchMethodException {
         switch (type) {
@@ -166,7 +166,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * Looks up a no-arg method in the plugin
+     * Looks up a no-arg method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type.
@@ -193,7 +193,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * Looks up a 1-arg method in the plugin
+     * Looks up a 1-arg method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type.
@@ -223,7 +223,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * Looks up a method in the plugin
+     * Looks up a method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type.
@@ -304,7 +304,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * Looks up a 1-arg method in the plugin
+     * Looks up a 1-arg method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type. If no matching method can be found, it returns
@@ -370,7 +370,7 @@ public abstract class UnspecificPlugin {
      * denote a language, the plug-in will return its English name.
      *
      * @param language
-     *            language to get the plugin’s name in
+     *            language to get the plug-in’s name in
      * @return a human-readable name for the plug-in
      */
     public String getTitle(Locale language) {
@@ -458,7 +458,7 @@ public abstract class UnspecificPlugin {
      * Returns the PluginType of the given plugin class.
      *
      * <p>
-     * When changing the further plugin API to the new format, add the
+     * When changing the further plug-in API to the new format, add the
      *
      * @param clazz
      *            the class to inspect

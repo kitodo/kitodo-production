@@ -45,7 +45,7 @@ public class AuthorityDaoIT {
         assertEquals("Objects were not removed or not found!", 1, authorityDAO.getAll().size());
 
         exception.expect(DAOException.class);
-        exception.expectMessage("Object can not be found in database");
+        exception.expectMessage("Object cannot be found in database");
         authorityDAO.getById(1);
     }
 

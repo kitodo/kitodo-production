@@ -34,7 +34,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.production.helper.Helper;
 
 /**
- * A row on the meta-data panel that contains an on/off switch.
+ * A row on the metadata panel that contains an on/off switch.
  */
 public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
 
@@ -49,12 +49,12 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
     private final String optionLabel;
 
     /**
-     * Creates a new meta-data panel row with an on/off switch.
+     * Creates a new metadata panel row with an on/off switch.
      *
      * @param panel
      *            MetadataPanel instance
      * @param container
-     *            containing meta-data group
+     *            containing metadata group
      * @param settings
      *            configuration settings from the rule set
      * @param data

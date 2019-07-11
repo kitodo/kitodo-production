@@ -18,27 +18,26 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 
 /**
- * Bean für die Sperrung der Metadaten.
+ * Bean for locking the metadata.
  */
 public class MetadataLock implements Serializable {
     private static HashMap<Integer, HashMap<String, String>> locks = new HashMap<>();
     private static final String USER = "Benutzer";
     private static final String LIFE_SIGN = "Lebenszeichen";
     /*
-     * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
-     * behalten (30 min)
+     * Time within which the user must act to keep his lock (30 min)
      */
     private static final long LOCKING_TIME = ConfigCore.getLongParameterOrDefaultValue(ParameterCore.METS_EDITOR_LOCKING_TIME);
 
     /**
-     * Metadaten eines bestimmten Prozesses wieder freigeben.
+     * Unlock metadata of a particular process again.
      */
     public void setFree(int prozessID) {
         locks.remove(prozessID);
     }
 
     /**
-     * Metadaten eines bestimmten Prozesses für einen Benutzer sperren.
+     * Lock metadata of a specific process for a user.
      */
     public void setLocked(int prozessID, String benutzerID) {
         HashMap<String, String> map = new HashMap<>();
@@ -48,15 +47,15 @@ public class MetadataLock implements Serializable {
     }
 
     /**
-     * prüfen, ob bestimmte Metadaten noch durch anderen Benutzer gesperrt sind.
+     * Check if certain metadata is still locked by other users.
      */
     public static boolean isLocked(int processID) {
         HashMap<String, String> temp = locks.get(processID);
-        /* wenn der Prozess nicht in der Hashpmap ist, ist er nicht gesperrt */
+        /* if the process is not in the hash map, it is not locked */
         if (temp == null) {
             return false;
         } else {
-            /* wenn er in der Hashmap ist, muss die Zeit geprüft werden */
+            /* if it is in the hash map, the time must be checked */
             long lifeSign = Long.parseLong(temp.get(LIFE_SIGN));
             return lifeSign >= System.currentTimeMillis() - LOCKING_TIME;
         }
@@ -80,13 +79,13 @@ public class MetadataLock implements Serializable {
     }
 
     /**
-     * Benutzer zurückgeben, der Metadaten gesperrt hat.
+     * Return a user who has locked metadata.
      */
     public String getLockUser(int processID) {
         String result = "-1";
         HashMap<String, String> temp = locks.get(processID);
         /*
-         * wenn der Prozess nicht in der Hashpmap ist, gibt es keinen Benutzer
+         * if the process is not in the hash map, there is no user
          */
         if (temp != null) {
             result = temp.get(USER);
@@ -102,18 +101,18 @@ public class MetadataLock implements Serializable {
      */
     public static void unlockProcess(int processID) {
         HashMap<String, String> temp = locks.get(processID);
-        /* wenn der Prozess in der Hashpmap ist, dort rausnehmen */
+        /* if the process is in the hash map, take it out there */
         if (temp != null) {
             locks.remove(processID);
         }
     }
 
     /**
-     * Sekunden zurückgeben, seit der letzten Bearbeitung der Metadaten.
+     * Return seconds since the metadata was last edited.
      */
     public long getLockSeconds(int processID) {
         HashMap<String, String> temp = locks.get(processID);
-        /* wenn der Prozess nicht in der Hashmap ist, gibt es keine Zeit */
+        /* if the process is not in the hash map, there is no time */
         if (temp == null) {
             return 0;
         } else {

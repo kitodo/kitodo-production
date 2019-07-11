@@ -93,7 +93,7 @@ public class ProcessingNote {
      * <ul>
      * <li>{@code CREATOR} − a person or institution responsible for the METS
      * document
-     * <li>{@code EDITOR} − a person or institution that prepares the meta-data
+     * <li>{@code EDITOR} − a person or institution that prepares the metadata
      * for encoding
      * <li>{@code ARCHIVIST} − a person institution responsible for the
      * document/collection

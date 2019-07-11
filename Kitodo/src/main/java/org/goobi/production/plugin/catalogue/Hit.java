@@ -138,7 +138,7 @@ public class Hit {
     }
 
     /**
-     * Returns the full hit record as provided by the library catalogue as
+     * Returns the full hit record as provided by the library catalog as
      * {@link LegacyMetsModsDigitalDocumentHelper} object.
      *
      * @return the full hit record

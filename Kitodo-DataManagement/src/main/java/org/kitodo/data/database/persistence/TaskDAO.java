@@ -26,7 +26,7 @@ public class TaskDAO extends BaseDAO<Task> {
     public Task getById(Integer id) throws DAOException {
         Task result = retrieveObject(Task.class, id);
         if (result == null) {
-            throw new DAOException("Object can not be found in database");
+            throw new DAOException("Object cannot be found in database");
         }
         return result;
     }

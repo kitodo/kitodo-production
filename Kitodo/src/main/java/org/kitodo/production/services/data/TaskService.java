@@ -769,7 +769,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * other folders to be created. Under no circumstances should the contents
      * of the template folder be automatically generated, even if, for example,
      * after a reconfiguration, this is still set as otherwise they would
-     * overwrite themselves. Also, contents can not be created in folders where
+     * overwrite themselves. Also, contents cannot be created in folders where
      * nothing is configured. The folders that are left over can be created.
      *
      * @param projects

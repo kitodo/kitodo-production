@@ -40,7 +40,7 @@ public class EmptyTask extends Thread implements INameableTask {
      * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
      * </dd>
      * <dt><code>KEEP_FOR_A_WHILE</code></dt>
-     * <dd>The default behaviour: A thread that terminated either normally or
+     * <dd>The default behavior: A thread that terminated either normally or
      * abnormally is kept around in memory for a while and then removed
      * automatically. Numeric and temporary limits can be configured.</dd>
      * <dt><code>PREPARE_FOR_RESTART</code></dt>
@@ -67,17 +67,17 @@ public class EmptyTask extends Thread implements INameableTask {
     };
 
     /**
-     * The constant DEFAULT_BEHAVIOUR defines the default behaviour of the
-     * TaskKeeper towards a task that terminated. The default behaviour is that
+     * The constant DEFAULT_BEHAVIOUR defines the default behavior of the
+     * TaskKeeper towards a task that terminated. The default behavior is that
      * it will be kept in the front end as configured in the global
      * configuration file and then will be deleted.
      */
     private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
 
     /**
-     * The field behaviour defines the behaviour of the TaskKeeper towards the
+     * The field behavior defines the behavior of the TaskKeeper towards the
      * task if it has terminated. Setting this field to DELETE_IMMEDIATELY will
-     * also result in the desired behaviour if the task has not yet been started
+     * also result in the desired behavior if the task has not yet been started
      * at all.
      */
     private Behaviour behaviour;
@@ -149,7 +149,7 @@ public class EmptyTask extends Thread implements INameableTask {
 
     /**
      * Returns the instruction how the TaskSitter
-     * shall behave towards this task. Usually, the behaviour isn’t set while
+     * shall behave towards this task. Usually, the behavior isn’t set while
      * the task is under normal execution. It can be set by calling
      * {@link #interrupt(Behaviour)}. It may also be set this way if the task is
      * still new and wasn’t even started. The following instructions are
@@ -160,7 +160,7 @@ public class EmptyTask extends Thread implements INameableTask {
      * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
      * </dd>
      * <dt><code>KEEP_FOR_A_WHILE</code></dt>
-     * <dd>The default behaviour: A thread that terminated either normally or
+     * <dd>The default behavior: A thread that terminated either normally or
      * abnormally is kept around in memory for a while and then removed
      * automatically. Numeric and temporary limits can be configured.</dd>
      * <dt><code>PREPARE_FOR_RESTART</code></dt>
@@ -316,7 +316,7 @@ public class EmptyTask extends Thread implements INameableTask {
 
     /**
      * Interrupts this thread and allows to set a
-     * behaviour after interruption.
+     * behavior after interruption.
      *
      * @param mode
      *            how to behave after interruption

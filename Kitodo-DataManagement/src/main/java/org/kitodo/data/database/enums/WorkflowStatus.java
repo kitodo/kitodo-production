@@ -20,7 +20,7 @@ package org.kitodo.data.database.enums;
  * <dt>ACTIVE</dt>
  * <dd>workflow is not editable anymore but can be used</dd>
  * <dt>ARCHIVED</dt>
- * <dd>workflow can not be used anymore</dd>
+ * <dd>workflow cannot be used anymore</dd>
  * </dl>
  */
 public enum WorkflowStatus {

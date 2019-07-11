@@ -12,14 +12,14 @@
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 /**
- * The interface provides the method of storing the meta-data in the binding.
+ * The interface provides the method of storing the metadata in the binding.
  */
 public interface BindingSaveInterface {
     /**
-     * Saves the meta-data in the binding.
+     * Saves the metadata in the binding.
      * 
      * @param legacyMetadataHelper
-     *            meta-data to save
+     *            metadata to save
      */
     void saveMetadata(LegacyMetadataHelper legacyMetadataHelper);
 }

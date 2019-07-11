@@ -22,7 +22,7 @@ public class ClientDAO extends BaseDAO<Client> {
     public Client getById(Integer id) throws DAOException {
         Client result = retrieveObject(Client.class, id);
         if (result == null) {
-            throw new DAOException("Object can not be found in database");
+            throw new DAOException("Object cannot be found in database");
         }
         return result;
     }

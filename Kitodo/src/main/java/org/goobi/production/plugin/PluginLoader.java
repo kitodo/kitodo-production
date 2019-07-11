@@ -58,8 +58,8 @@ public class PluginLoader {
      * responds to <code>supportsCatalogue(catalogue)</code>.
      *
      * @param catalogue
-     *            catalogue in question
-     * @return the first plug-in that supports the given catalogue
+     *            catalog in question
+     * @return the first plug-in that supports the given catalog
      */
     public static CataloguePlugin getCataloguePluginForCatalogue(String catalogue) {
         for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
@@ -71,7 +71,7 @@ public class PluginLoader {
     }
 
     /**
-     * Get plugin list.
+     * Get plug-in list.
      *
      * @deprecated Using this function is discouraged. Use
      *             <code>getPlugins(Class)</code> instead.
@@ -86,7 +86,7 @@ public class PluginLoader {
     }
 
     /**
-     * Get plugin by title.
+     * Get plug-in by title.
      *
      * @deprecated Using this function is discouraged. Use
      *             <code>getPluginByTitle(Class, String, Locale)</code> instead.

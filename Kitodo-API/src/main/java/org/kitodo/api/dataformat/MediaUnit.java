@@ -41,8 +41,8 @@ public class MediaUnit implements Parent<MediaUnit> {
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
 
     /**
-     * The meta-data for this media unit. This media unit can be described with
-     * any meta-data.
+     * The metadata for this media unit. This media unit can be described with
+     * any metadata.
      */
     private Collection<Metadata> metadata = new HashSet<>();
 
@@ -92,9 +92,9 @@ public class MediaUnit implements Parent<MediaUnit> {
     }
 
     /**
-     * Returns the meta-data on this structure.
+     * Returns the metadata on this structure.
      *
-     * @return the meta-data
+     * @return the metadata
      */
     public Collection<Metadata> getMetadata() {
         return metadata;

@@ -18,12 +18,12 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 
 /**
- * Return type for list entries consisting of a meta-data key and a collection
- * of values. Instances of this class are returned by the meta-data acquisition
- * mask builder and each represent a line of the meta-data input mask.
+ * Return type for list entries consisting of a metadata key and a collection
+ * of values. Instances of this class are returned by the metadata acquisition
+ * mask builder and each represent a line of the metadata input mask.
  *
  * @param <T>
- *            type of meta-data objects
+ *            type of metadata objects
  */
 class FormRow<T> implements MetadataViewWithValuesInterface<T> {
     /**
@@ -42,7 +42,7 @@ class FormRow<T> implements MetadataViewWithValuesInterface<T> {
     }
 
     /**
-     * Returns a view of the key of the meta-data entry. This can not be even,
+     * Returns a view of the key of the metadata entry. This cannot be even,
      * if this is hidden and there is a value.
      *
      * @return the key view

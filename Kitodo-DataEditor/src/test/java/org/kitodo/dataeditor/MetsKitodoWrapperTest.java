@@ -319,7 +319,7 @@ public class MetsKitodoWrapperTest {
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
         expectedException.expect(UnsupportedOperationException.class);
-        expectedException.expectMessage("Root element can not have a parent!");
+        expectedException.expectMessage("Root element cannot have a parent!");
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFORE_ELEMENT);
     }
 

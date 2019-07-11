@@ -22,7 +22,7 @@ public class ProcessDAO extends BaseDAO<Process> {
     public Process getById(Integer id) throws DAOException {
         Process result = retrieveObject(Process.class, id);
         if (result == null) {
-            throw new DAOException("Object can not be found in database");
+            throw new DAOException("Object cannot be found in database");
         }
         return result;
     }

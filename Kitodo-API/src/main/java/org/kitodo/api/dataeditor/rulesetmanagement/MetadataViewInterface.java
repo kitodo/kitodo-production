@@ -15,13 +15,13 @@ import java.util.Optional;
 
 /**
  * Provides a shared super interface for type view services. Type view services
- * provide filtered views on meta-data types.
+ * provide filtered views on metadata types.
  */
 public interface MetadataViewInterface {
     /**
      * Returns the domain that determines in which of the six available
-     * containers the meta-data entry is stored. The domain is optional. It is
-     * not present on undefined meta-data keys or if it is not written in the
+     * containers the metadata entry is stored. The domain is optional. It is
+     * not present on undefined metadata keys or if it is not written in the
      * ruleset. Here the program has to know for itself what it has to do.
      * 
      * @return the domain
@@ -29,7 +29,7 @@ public interface MetadataViewInterface {
     Optional<Domain> getDomain();
 
     /**
-     * Returns the string used to encode this key in the meta-data file.
+     * Returns the string used to encode this key in the metadata file.
      *
      * @return the ID of this key
      */
@@ -43,14 +43,14 @@ public interface MetadataViewInterface {
     String getLabel();
 
     /**
-     * Returns the maximum number of occurrences for this type of meta-data.
+     * Returns the maximum number of occurrences for this type of metadata.
      * 
      * @return the maximum number
      */
     int getMaxOccurs();
 
     /**
-     * Returns the minimum number of occurrences for this type of meta-data.
+     * Returns the minimum number of occurrences for this type of metadata.
      * 
      * @return the minimum number
      */
@@ -69,7 +69,7 @@ public interface MetadataViewInterface {
 
     /**
      * Returns whether the key is undefined. This can happen when opening a METS
-     * file that contains meta-data that was not defined in the rule set. The
+     * file that contains metadata that was not defined in the rule set. The
      * application should indicate this fact. In this case, the label
      * corresponds to the transferred key ID string, regardless of the language.
      * If the key is not complex, it is configured as a simple text-type key.

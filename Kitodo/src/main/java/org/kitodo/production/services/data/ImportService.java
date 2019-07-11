@@ -104,7 +104,7 @@ public class ImportService {
     }
 
     /**
-     * Load search fields of catalog with given name 'opac' from OPAC configuration file and return them as a list
+     * Load search fields of catalog with given name 'opac' from library catalog configuration file and return them as a list
      * of Strings.
      *
      * @param opac name of catalog whose search fields are loaded
@@ -125,7 +125,7 @@ public class ImportService {
     }
 
     /**
-     * Load catalog names from OPAC configuration file and return them as a list of Strings.
+     * Load catalog names from library catalog configuration file and return them as a list of Strings.
      *
      * @return list of catalog names
      */
@@ -194,7 +194,7 @@ public class ImportService {
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
             return writer.toString();
         } catch (TransformerException e) {
-            throw new ConfigException("This document '" + doc.getTextContent() + "' can not be converted to String");
+            throw new ConfigException("This document '" + doc.getTextContent() + "' cannot be converted to String");
         }
     }
 }

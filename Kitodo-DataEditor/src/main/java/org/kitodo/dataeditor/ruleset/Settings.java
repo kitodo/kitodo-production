@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import org.kitodo.dataeditor.ruleset.xml.Setting;
 
 /**
- * Exposes settings from the ruleset. It is not about the meta-data, but how
+ * Exposes settings from the ruleset. It is not about the metadata, but how
  * they are displayed in the editor, so graphical interface is configurable.
  */
 public class Settings {

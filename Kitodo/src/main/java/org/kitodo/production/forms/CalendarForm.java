@@ -214,10 +214,10 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * Returns a colour representative for optically
+         * Returns a color representative for optically
          * distinguishing the given issue as read-only property "colour".
          *
-         * @return the HTML colour code of the issue
+         * @return the HTML color code of the issue
          */
         public String getColour() {
             return issueColours[index % issueColours.length];
@@ -466,7 +466,7 @@ public class CalendarForm implements Serializable {
      */
     public static class IssueOption {
         /**
-         * The field colour holds the colour representative for optically
+         * The field color holds the colour representative for optically
          * distinguishing the given issue.
          */
         protected final String colour;
@@ -498,11 +498,11 @@ public class CalendarForm implements Serializable {
         }
 
         /**
-         * Returns a colour representative for
+         * Returns a color representative for
          * optically distinguishing the given issue as read-only property
          * “colour”.
          *
-         * @return the HTML colour code of the issue
+         * @return the HTML color code of the issue
          */
         public String getColour() {
             return colour;
@@ -565,7 +565,7 @@ public class CalendarForm implements Serializable {
     private static final Pattern FLEXIBLE_DATE = Pattern.compile("\\D*(\\d+)\\D+(\\d+)\\D+(\\d+)\\D*");
 
     /**
-     * The constant field issueColours holds the colours used to represent the
+     * The constant field issueColours holds the colors used to represent the
      * issues in the calendar editor. It is populated on form bean creation, so
      * changing the configuration should take effect without need to restart the
      * servlet container.
@@ -660,9 +660,9 @@ public class CalendarForm implements Serializable {
      * Empty constructor. Creates a new form without yet any data.
      *
      * <p>
-     * The issue colour presets are samples which have been chosen to provide
+     * The issue color presets are samples which have been chosen to provide
      * distinguishability also for users with red-green color vision deficiency.
-     * Arbitrary colours can be defined in kitodo_config.properties by setting
+     * Arbitrary colors can be defined in kitodo_config.properties by setting
      * the property “issue.colours”.
      */
     public CalendarForm() {

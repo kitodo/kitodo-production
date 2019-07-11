@@ -117,7 +117,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
      * clearance must not become negative.) New tasks will be added to the
      * launch list, except if they have already been marked for removal, of
      * course. If a task has terminated, it is handled as specified by its
-     * behaviour variable: All tasks that are marked DELETE_IMMEDIATELY will
+     * behavior variable: All tasks that are marked DELETE_IMMEDIATELY will
      * instantly be disposed of; otherwise, they will be kept as long as
      * configured and only be removed if their dead body has become older. Tasks
      * marked PREPARE_FOR_RESTART will be replaced (because a

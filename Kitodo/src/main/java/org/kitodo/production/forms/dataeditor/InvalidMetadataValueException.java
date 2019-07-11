@@ -18,7 +18,7 @@ import javax.management.InvalidAttributeValueException;
 import org.kitodo.production.helper.Helper;
 
 /**
- * An error message that can be thrown if a meta-data value is invalid.
+ * An error message that can be thrown if a metadata value is invalid.
  */
 public class InvalidMetadataValueException extends InvalidAttributeValueException {
 
@@ -33,7 +33,7 @@ public class InvalidMetadataValueException extends InvalidAttributeValueExceptio
     private String value;
 
     /**
-     * Creates a new invalid meta-data value exception.
+     * Creates a new invalid metadata value exception.
      *
      * @param key
      *            the (translated) key whose value is incorrect
@@ -46,7 +46,7 @@ public class InvalidMetadataValueException extends InvalidAttributeValueExceptio
     }
 
     /**
-     * When the error occurs on a child meta-data element of a parent, while
+     * When the error occurs on a child metadata element of a parent, while
      * bubbling up, the exception can be added the name of the parent, so that
      * the user knows what input is wrong.
      *

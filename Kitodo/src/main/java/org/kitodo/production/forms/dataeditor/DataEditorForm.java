@@ -58,7 +58,7 @@ import org.primefaces.PrimeFaces;
 public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     /**
-     * Indicates to JSF to navigate to the web page containing the meta-data
+     * Indicates to JSF to navigate to the web page containing the metadata
      * editor.
      */
     private static final String PAGE_METADATA_EDITOR = "/pages/metadataEditor?faces-redirect=true";
@@ -101,7 +101,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private URI mainFileUri;
 
     /**
-     * Backing bean for the meta-data panel.
+     * Backing bean for the metadata panel.
      */
     private final MetadataPanel metadataPanel;
 
@@ -112,7 +112,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     /**
      * The language preference list of the editing user for displaying the
-     * meta-data labels. We cache this because it’s used thousands of times and
+     * metadata labels. We cache this because it’s used thousands of times and
      * otherwise the access would always go through the search engine, which
      * would delay page creation.
      */
@@ -165,8 +165,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * This method must be called to start the meta-data editor. When this
-     * method is executed, the meta-data editor is not yet open in the browser,
+     * This method must be called to start the metadata editor. When this
+     * method is executed, the metadata editor is not yet open in the browser,
      * but the previous page is still displayed.
      *
      * @param id
@@ -288,7 +288,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Save the structure and meta-data.
+     * Save the structure and metadata.
      *
      * @return navigation target
      */
@@ -377,10 +377,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Returns the backing bean for the meta-data panel. This function is used
-     * by PrimeFaces to access the elements of the meta-data panel.
+     * Returns the backing bean for the metadata panel. This function is used
+     * by PrimeFaces to access the elements of the metadata panel.
      *
-     * @return the backing bean for the meta-data panel
+     * @return the backing bean for the metadata panel
      */
     public MetadataPanel getMetadataPanel() {
         return metadataPanel;

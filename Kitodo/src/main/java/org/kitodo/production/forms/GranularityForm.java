@@ -357,7 +357,7 @@ public class GranularityForm {
 
     /**
      * The method is called by JSF to inject the course data model
-     * into the form. This behaviour is configured in faces-config.xml
+     * into the form. This behavior is configured in faces-config.xml
      *
      * @param course
      *            Course of appearance data model to be used

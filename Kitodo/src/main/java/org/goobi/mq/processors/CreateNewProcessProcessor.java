@@ -43,7 +43,7 @@ import org.kitodo.production.services.ServiceManager;
  * startup. It was designed to create new processes from outside Goobi. There
  * are two ways providing to create new processes. If the MapMessage on that
  * queue contains of all the fields listed, the bibliographic data is retrieved
- * using a catalogue configured within Goobi. If “opac” is missing, it will try
+ * using a catalog configured within Goobi. If “opac” is missing, it will try
  * to create a process just upon the data passed in the “userFields” − “field”
  * and “value” will be ignored in that case, and the “docType” can be set
  * manually.
@@ -61,7 +61,7 @@ import org.kitodo.production.services.ServiceManager;
  * <dt>String value</dt>
  * <dd>Value to look for, id of physical medium</dd>
  * <dt>String docType</dt>
- * <dd>DocType value to use if no catalogue request is performed.</dd>
+ * <dd>DocType value to use if no catalog request is performed.</dd>
  * <dt>Set&lt;String&gt; collections</dt>
  * <dd>Collections to be selected.</dd>
  * <dt>Map&lt;String, String&gt; userFields collections</dt>
@@ -101,10 +101,10 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *            title of the process template the new process shall be derived
      *            from
      * @param opac
-     *            name of the connection to a library catalogue to load the
+     *            name of the connection to a library catalog to load the
      *            bibliographic data from (may be null)
      * @param field
-     *            number of the catalogue search field (ignored if “opac” is
+     *            number of the catalog search field (ignored if “opac” is
      *            null)
      * @param value
      *            search string (ignored if “opac” is null)
@@ -262,8 +262,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * Sets the bibliographic data for a new process from a library catalogue.
-     * This is equal to manually choosing a catalogue and a getByQuery field,
+     * Sets the bibliographic data for a new process from a library catalog.
+     * This is equal to manually choosing a catalog and a getByQuery field,
      * entering the getByQuery string and clicking “apply”.
      *
      * <p>

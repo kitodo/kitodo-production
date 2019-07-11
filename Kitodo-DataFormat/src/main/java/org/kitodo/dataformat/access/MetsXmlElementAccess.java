@@ -359,7 +359,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            each media unit so that the link pairs of the struct link
      *            section can be formed later.
      * @param mets
-     *            the METS structure in which the meta-data is added
+     *            the METS structure in which the metadata is added
      * @return the physical struct map
      */
     private StructMapType generatePhysicalStructMap(

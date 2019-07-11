@@ -43,7 +43,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 /**
- * Backing bean for the gallery panel of the meta-data editor.
+ * Backing bean for the gallery panel of the metadata editor.
  */
 public class GalleryPanel {
     private static final Logger logger = LogManager.getLogger(GalleryPanel.class);

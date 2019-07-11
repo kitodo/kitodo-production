@@ -50,7 +50,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
 /**
- * Backing bean for the add doc struc type dialog of the meta-data editor.
+ * Backing bean for the add doc struc type dialog of the metadata editor.
  */
 public class AddDocStrucTypeDialog {
     private static final Logger logger = LogManager.getLogger(AddDocStrucTypeDialog.class);
@@ -77,7 +77,7 @@ public class AddDocStrucTypeDialog {
     private BigInteger orderSpinnerValue;
 
     /**
-     * Backing bean for the add doc struc type dialog of the meta-data editor.
+     * Backing bean for the add doc struc type dialog of the metadata editor.
      *
      * @see "WEB-INF/templates/includes/metadataEditor/dialogs/addDocStrucType.xhtml"
      */

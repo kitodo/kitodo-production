@@ -408,9 +408,9 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get all OPAC catalogues.
+     * Get all library catalogs.
      *
-     * @return the opac catalogues
+     * @return the library catalogs
      */
     public List<String> getAllOpacCatalogues() {
         List<String> allOpacCatalogues = new ArrayList<>();
@@ -423,7 +423,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Set OPAC catalogue.
+     * Set library catalog.
      *
      * @param opacCatalogue
      *            the opacCatalogue to set
@@ -434,9 +434,9 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get OPAC catalogue.
+     * Get library catalog.
      *
-     * @return the opac catalogues
+     * @return the opac catalogs
      */
 
     public String getOpacCatalogue() {
@@ -531,7 +531,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Set current plugin.
+     * Set current plug-in.
      *
      * @param currentPlugin
      *            the currentPlugin to set
@@ -551,7 +551,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get current plugin.
+     * Get current plug-in.
      *
      * @return the currentPlugin
      */
@@ -564,7 +564,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Set usable plugins for records.
+     * Set usable plug-ins for records.
      *
      * @param usablePluginsForRecords
      *            the usablePluginsForRecords to set
@@ -574,7 +574,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get usable plugins for records.
+     * Get usable plug-ins for records.
      *
      * @return the usablePluginsForRecords
      */
@@ -583,7 +583,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Set usable plugins for ids.
+     * Set usable plug-ins for ids.
      *
      * @param usablePluginsForIDs
      *            the usablePluginsForIDs to set
@@ -593,7 +593,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get usable plugins for ids.
+     * Get usable plug-ins for ids.
      *
      * @return the usablePluginsForIDs
      */
@@ -602,7 +602,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Set usable plugins for files.
+     * Set usable plug-ins for files.
      *
      * @param usablePluginsForFiles
      *            the usablePluginsForFiles to set
@@ -612,7 +612,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * get usable plugins for files.
+     * get usable plug-ins for files.
      *
      * @return the usablePluginsForFiles
      */

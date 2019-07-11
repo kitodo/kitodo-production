@@ -90,7 +90,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
     }
 
     /**
-     * Returns the contents of the text input field of this meta-data table row.
+     * Returns the contents of the text input field of this metadata table row.
      *
      * @return the contents of the input field
      */
@@ -99,7 +99,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
     }
 
     /**
-     * Sets the contents of the text input field of this meta-data table row.
+     * Sets the contents of the text input field of this metadata table row.
      *
      * @param value
      *            value to be set

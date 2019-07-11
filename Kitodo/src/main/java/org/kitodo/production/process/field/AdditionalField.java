@@ -38,7 +38,7 @@ public class AdditionalField {
 
     /**
      * Public constructor with setting document type for additional field.
-     * 
+     *
      * @param docType
      *            document type for additional field
      */
@@ -48,7 +48,7 @@ public class AdditionalField {
 
     /**
      * Get title.
-     * 
+     *
      * @return title
      */
     public String getTitle() {
@@ -57,7 +57,7 @@ public class AdditionalField {
 
     /**
      * Set title.
-     * 
+     *
      * @param title
      *            of additional field
      */
@@ -67,7 +67,7 @@ public class AdditionalField {
 
     /**
      * Get value.
-     * 
+     *
      * @return value
      */
     public String getValue() {
@@ -93,7 +93,7 @@ public class AdditionalField {
 
     /**
      * Get from.
-     * 
+     *
      * @return from
      */
     public String getFrom() {
@@ -114,7 +114,7 @@ public class AdditionalField {
 
     /**
      * Get list of select items.
-     * 
+     *
      * @return list of select items.
      */
     public List<SelectItem> getSelectList() {
@@ -126,7 +126,7 @@ public class AdditionalField {
 
     /**
      * Set list of select items.
-     * 
+     *
      * @param selectList
      *            as List of SelectItem objects
      */
@@ -136,7 +136,7 @@ public class AdditionalField {
 
     /**
      * Get information if additional field is required.
-     * 
+     *
      * @return true or false
      */
     public boolean isRequired() {
@@ -145,7 +145,7 @@ public class AdditionalField {
 
     /**
      * Set information if additional field is required.
-     * 
+     *
      * @param required
      *            true or false
      */
@@ -155,7 +155,7 @@ public class AdditionalField {
 
     /**
      * Get information if additional field is UGH binding.
-     * 
+     *
      * @return true or false
      */
     public boolean isUghBinding() {
@@ -164,7 +164,7 @@ public class AdditionalField {
 
     /**
      * Set information if additional field is UGH binding.
-     * 
+     *
      * @param ughBinding
      *            true or false
      */
@@ -174,7 +174,7 @@ public class AdditionalField {
 
     /**
      * Get document structure.
-     * 
+     *
      * @return document structure
      */
     public String getDocStruct() {
@@ -215,7 +215,7 @@ public class AdditionalField {
 
     /**
      * Get is document type.
-     * 
+     *
      * @return types for document
      */
     public String getIsDocType() {
@@ -237,7 +237,7 @@ public class AdditionalField {
 
     /**
      * Get is not document type.
-     * 
+     *
      * @return type of documents which this field is not
      */
     public String getIsNotDoctype() {
@@ -259,7 +259,7 @@ public class AdditionalField {
 
     /**
      * Get init start.
-     * 
+     *
      * @return init start
      */
     public String getInitStart() {

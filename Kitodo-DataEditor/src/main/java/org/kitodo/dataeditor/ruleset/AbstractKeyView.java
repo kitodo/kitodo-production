@@ -81,7 +81,7 @@ abstract class AbstractKeyView<U extends Labeled> implements MetadataViewInterfa
     }
 
     /**
-     * Returns the maximum number of occurrences for this type of meta-data.
+     * Returns the maximum number of occurrences for this type of metadata.
      * 
      * @return the maximum number
      */
@@ -91,7 +91,7 @@ abstract class AbstractKeyView<U extends Labeled> implements MetadataViewInterfa
     }
 
     /**
-     * Returns the minimum number of occurrences for this type of meta-data.
+     * Returns the minimum number of occurrences for this type of metadata.
      * 
      * @return the minimum number
      */

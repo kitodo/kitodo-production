@@ -13,7 +13,7 @@ package org.kitodo.api;
 
 public class Metadata {
     /**
-     * In which conceptual area in the METS file this meta-data entry is stored.
+     * In which conceptual area in the METS file this metadata entry is stored.
      */
     private MdSec domain;
 
@@ -21,9 +21,9 @@ public class Metadata {
     private String key;
 
     /**
-     * Returns the domain of the meta-data.
+     * Returns the domain of the metadata.
      *
-     * @return the location of the meta-data entry
+     * @return the location of the metadata entry
      */
     public MdSec getDomain() {
         return domain;
@@ -39,10 +39,10 @@ public class Metadata {
     }
 
     /**
-     * Sets the domain of the meta-data.
+     * Sets the domain of the metadata.
      *
      * @param domain
-     *            location to set for the meta-data entry
+     *            location to set for the metadata entry
      */
     public void setDomain(MdSec domain) {
         this.domain = domain;

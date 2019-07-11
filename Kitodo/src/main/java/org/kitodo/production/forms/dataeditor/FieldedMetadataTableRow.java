@@ -40,16 +40,16 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.production.helper.Helper;
 
 /**
- * Represents the meta-data panel in the meta-data editor, or a meta-data group
+ * Represents the metadata panel in the metadata editor, or a metadata group
  * within that panel. Basically both are the same, with the exception that the
- * label of the meta-data panel is not used.
+ * label of the metadata panel is not used.
  */
 public class FieldedMetadataTableRow extends MetadataTableRow implements Serializable {
 
     /**
-     * An empty meta-data group for the empty meta-data panel showing. The empty
-     * meta-data panel can be displayed if the element selected in the structure
-     * window isn’t a structure (has no meta-data).
+     * An empty metadata group for the empty metadata panel showing. The empty
+     * metadata panel can be displayed if the element selected in the structure
+     * window isn’t a structure (has no metadata).
      */
     static final FieldedMetadataTableRow EMPTY = new FieldedMetadataTableRow();
 
@@ -59,12 +59,12 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     private Collection<String> additionallySelectedFields = new ArrayList<>();
 
     /**
-     * Meta-data which is excluded by the rule set.
+     * Metadata which is excluded by the rule set.
      */
     private Collection<Metadata> hiddenMetadata;
 
     /**
-     * The meta-data object with the content of this panel.
+     * The metadata object with the content of this panel.
      */
     private Collection<Metadata> metadata;
 
@@ -84,7 +84,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     private IncludedStructuralElement structure;
 
     /**
-     * Creates an empty meta-data group. This constructor is used to create the
+     * Creates an empty metadata group. This constructor is used to create the
      * {@link #EMPTY} constant above.
      */
     private FieldedMetadataTableRow() {
@@ -95,8 +95,8 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Creates a new root meta-data group representing the meta-data table
-     * content in the meta-data panel.
+     * Creates a new root metadata group representing the metadata table
+     * content in the metadata panel.
      *
      * @param panel
      *            MetadataPanel to which the FieldedMetadataTableRow is added
@@ -110,13 +110,13 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Creates a new root meta-data group representing the meta-data table
-     * content in the meta-data panel.
+     * Creates a new root metadata group representing the metadata table
+     * content in the metadata panel.
      *
      * @param panel
-     *            meta-data panel on which this row is showing
+     *            metadata panel on which this row is showing
      * @param metadata
-     *            content for the meta-data table
+     *            content for the metadata table
      * @param divisionView
      *            information about that structure from the rule set
      */
@@ -125,12 +125,12 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Creates a sub-panel for a meta-data group.
+     * Creates a sub-panel for a metadata group.
      *
      * @param panel
-     *            meta-data panel on which this row is showing
+     *            metadata panel on which this row is showing
      * @param container
-     *            parental meta-data group
+     *            parental metadata group
      * @param metadataView
      *            information about that group from the rule set
      * @param metadata
@@ -142,19 +142,19 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Creates a new fielded meta-data panel. This constructor is called from
+     * Creates a new fielded metadata panel. This constructor is called from
      * one of the above ones and does the work.
      *
      * @param panel
-     *            meta-data panel on which this row is showing
+     *            metadata panel on which this row is showing
      * @param container
-     *            parental meta-data group
+     *            parental metadata group
      * @param structure
      *            structure selected by the user, null in case of a sub-panel
      * @param metadataView
      *            information about that structure or group from the rule set
      * @param metadata
-     *            meta-data, may be empty but must be modifiable
+     *            metadata, may be empty but must be modifiable
      */
     private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, IncludedStructuralElement structure,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
@@ -166,10 +166,10 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * The method for building the meta-data table.
+     * The method for building the metadata table.
      */
     private void createMetadataTable() {
-        // the existing meta-data is passed to the rule set, which sorts it
+        // the existing metadata is passed to the rule set, which sorts it
         Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         List<MetadataViewWithValuesInterface<Metadata>> tableData = metadataView
@@ -195,11 +195,11 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
 
     /**
      * Reads the labels from the structure (if any) and adds them to the
-     * returned meta-data collection.
+     * returned metadata collection.
      *
      * @param metadata
-     *            available meta-data
-     * @return meta-data with labels, if any
+     *            available metadata
+     * @return metadata with labels, if any
      */
     private Collection<Metadata> addLabels(Collection<Metadata> metadata) {
         Collection<Metadata> displayMetadata = metadata;
@@ -222,7 +222,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Creates an object to represent a meta-data group. This is done by
+     * Creates an object to represent a metadata group. This is done by
      * creating a {@code FieldedMetadataGroup} recursively.
      *
      * @param complexMetadataView
@@ -244,22 +244,22 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
                     MetadataGroup metadataGroup = (MetadataGroup) nextMetadata;
                     value = metadataGroup.getGroup();
                 } else {
-                    throw new IllegalStateException("Got simple meta-data entry with key \"" + metadataView.getId()
+                    throw new IllegalStateException("Got simple metadata entry with key \"" + metadataView.getId()
                             + "\" which is declared as substructured key in the rule set.");
                 }
                 break;
             default:
-                throw new IllegalStateException("Too many (" + values.size() + ") complex meta-data of type \""
+                throw new IllegalStateException("Too many (" + values.size() + ") complex metadata of type \""
                         + metadataView.getId() + "\" in a single row. Must be 0 or 1 per row.");
         }
         return new FieldedMetadataTableRow(panel, this, complexMetadataView, value);
     }
 
     /**
-     * Creates an object to represent a single-row meta-data input.
+     * Creates an object to represent a single-row metadata input.
      *
      * @param simpleMetadataView
-     *            presentation information about the meta-data entry from the
+     *            presentation information about the metadata entry from the
      *            ruleset
      * @param values
      *            the value(s) to be displayed
@@ -285,25 +285,25 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Returns the collection of simple meta-data entries. Throws an
+     * Returns the collection of simple metadata entries. Throws an
      * IllegalStateException if a cannot be casted.
      *
      * @param values
      *            values obtained
-     * @return a collection of simple meta-data entries
+     * @return a collection of simple metadata entries
      */
     @SuppressWarnings({"unchecked", "rawtypes" })
     private Collection<MetadataEntry> simpleValues(Collection<Metadata> values) {
         Optional<Metadata> fault = values.parallelStream().filter(entry -> !(entry instanceof MetadataEntry)).findAny();
         if (fault.isPresent()) {
-            throw new IllegalStateException("Got complex meta-data entry with key \"" + fault.get().getKey()
+            throw new IllegalStateException("Got complex metadata entry with key \"" + fault.get().getKey()
                     + "\" which isn't declared as substructured key in the rule set.");
         }
         return (Collection) values;
     }
 
     /**
-     * Returns the only meta-data entry or null. Throws an IllegalStateException
+     * Returns the only metadata entry or null. Throws an IllegalStateException
      * if the value is ambiguous or cannot be casted.
      *
      * @param values
@@ -319,11 +319,11 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
                 if (nextMetadata instanceof MetadataEntry) {
                     return (MetadataEntry) nextMetadata;
                 } else {
-                    throw new IllegalStateException("Got complex meta-data entry with key \"" + nextMetadata.getKey()
+                    throw new IllegalStateException("Got complex metadata entry with key \"" + nextMetadata.getKey()
                             + "\" which isn't declared as substructured key in the rule set.");
                 }
             default:
-                throw new IllegalStateException("Too many (" + values.size() + ") meta-data of type \""
+                throw new IllegalStateException("Too many (" + values.size() + ") metadata of type \""
                         + values.iterator().next().getKey() + "\" in a single row. Must be 0 or 1 per row.");
         }
     }
@@ -336,9 +336,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Returns the elements for the drop-down addable meta-data picklist.
+     * Returns the elements for the drop-down addable metadata picklist.
      *
-     * @return the addable meta-data elements
+     * @return the addable metadata elements
      */
     List<SelectItem> getAddableMetadata() {
         Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
@@ -353,9 +353,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Returns the meta-data of a meta-data group, when used recursively.
+     * Returns the metadata of a metadata group, when used recursively.
      *
-     * @return the meta-data of the meta-data group
+     * @return the metadata of the metadata group
      * @throws InvalidMetadataValueException
      *             if some value is invalid
      */
@@ -369,7 +369,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
             this.preserve();
         } catch (NoSuchMetadataFieldException e) {
             /*
-             * The domain attribute is not evaluated on members of meta-data
+             * The domain attribute is not evaluated on members of metadata
              * groups, so writing to fields can never happen here and thus
              * cannot cause the exception.
              */
@@ -399,13 +399,13 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Reads the contents of the meta-data panel and stores the values in the
+     * Reads the contents of the metadata panel and stores the values in the
      * appropriate place. If the line is used to edit a field of the METS
-     * structure, this field is set, otherwise the meta-data will be stored in
-     * the list. The hidden meta-data is also written back there again.
+     * structure, this field is set, otherwise the metadata will be stored in
+     * the list. The hidden metadata is also written back there again.
      *
      * @throws InvalidMetadataValueException
-     *             if the content of a meta-data input field is syntactically
+     *             if the content of a metadata input field is syntactically
      *             wrong
      * @throws NoSuchMetadataFieldException
      *             if an input shall be saved to a field of the structure, but
@@ -441,7 +441,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * This method is triggered when the user clicks the insert meta-data
+     * This method is triggered when the user clicks the insert metadata
      * button.
      */
     void pasteClick() {

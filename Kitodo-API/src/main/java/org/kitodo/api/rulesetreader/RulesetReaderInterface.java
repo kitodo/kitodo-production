@@ -23,7 +23,7 @@ public interface RulesetReaderInterface {
 
     /**
      * Get all possible divisions from the ruleset.
-     * 
+     *
      * @param languages
      *            the preferred languages for translation
      * @return a {@link Map} collection of all divisions that contains
@@ -33,7 +33,7 @@ public interface RulesetReaderInterface {
 
     /**
      * Get all possible acquisition stages.
-     * 
+     *
      * @return A Collection of all acquisition stages
      */
     Collection<String> getAllAcquisitionStages();

@@ -64,9 +64,9 @@ public class ConfigOpac {
     }
 
     /**
-     * Returns all configured catalogue titles from the config file.
+     * Returns all configured catalog titles from the config file.
      *
-     * @return all catalogue titles
+     * @return all catalog titles
      */
     public static List<String> getAllCatalogueTitles() {
         return getTitles(CATALOGUE);
@@ -154,7 +154,7 @@ public class ConfigOpac {
      *
      * <p>
      * The function will return an empty list if there are no such entries for
-     * the given catalogue.
+     * the given catalog.
      *
      * @param title
      *            Title parameter of the {@code <catalogue>} entry to examine
@@ -173,10 +173,10 @@ public class ConfigOpac {
     }
 
     /**
-     * Returns all configured catalogue titles from the config file. The Jersey
+     * Returns all configured catalog titles from the config file. The Jersey
      * API cannot invoke static methods, so we need this wrapper method.
      *
-     * @return all catalogue titles
+     * @return all catalog titles
      */
     @XmlElement(name = "interface")
     public List<String> getInterface() {

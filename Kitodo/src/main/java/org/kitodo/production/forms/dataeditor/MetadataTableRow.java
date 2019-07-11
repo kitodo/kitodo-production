@@ -46,22 +46,22 @@ abstract class MetadataTableRow implements Serializable {
     protected final String label;
 
     /**
-     * Meta-data panel on which this row is showing.
+     * Metadata panel on which this row is showing.
      */
     protected final MetadataPanel panel;
 
     /**
-     * Parental meta-data group.
+     * Parental metadata group.
      */
     private FieldedMetadataTableRow container;
 
     /**
-     * Creates a new meta-data panel row.
+     * Creates a new metadata panel row.
      *
      * @param panel
-     *            meta-data panel on which this row is showing
+     *            metadata panel on which this row is showing
      * @param container
-     *            parental meta-data group
+     *            parental metadata group
      * @param label
      *            the label of this row
      */
@@ -72,7 +72,7 @@ abstract class MetadataTableRow implements Serializable {
     }
 
     /**
-     * This method is triggered when the user clicks the copy meta-data button.
+     * This method is triggered when the user clicks the copy metadata button.
      */
     public void copy() {
         try {
@@ -84,7 +84,7 @@ abstract class MetadataTableRow implements Serializable {
     }
 
     /**
-     * This method is triggered when the user clicks the delete meta-data
+     * This method is triggered when the user clicks the delete metadata
      * button.
      */
     public void delete() {
@@ -185,24 +185,24 @@ abstract class MetadataTableRow implements Serializable {
     }
 
     /**
-     * Returns the meta-data from this row, as far as it has to be stored in the
+     * Returns the metadata from this row, as far as it has to be stored in the
      * collection obtainable from {@link IncludedStructuralElement#getMetadata()}.
      *
-     * @return the meta-data from this row
+     * @return the metadata from this row
      * @throws InvalidMetadataValueException
-     *             if the meta-data form contains syntactically wrong input
+     *             if the metadata form contains syntactically wrong input
      */
     abstract Collection<Metadata> getMetadata() throws InvalidMetadataValueException;
 
     /**
-     * If the meta-data entry addresses a property of the structure, returns a
+     * If the metadata entry addresses a property of the structure, returns a
      * pair of the setter and the value to set; else {@code null}. This method
      * it to be called when saving the data.
      *
      * @return if data is to be written a pair of the setter of the
      *         {@link IncludedStructuralElement} and the value to set, else null
      * @throws InvalidMetadataValueException
-     *             if the meta-data form contains syntactically wrong input
+     *             if the metadata form contains syntactically wrong input
      * @throws NoSuchMetadataFieldException
      *             if the field configured in the rule set does not exist
      */

@@ -37,7 +37,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.production.helper.Helper;
 
 /**
- * The meta-data input is some kind of select input.
+ * The metadata input is some kind of select input.
  */
 public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
 

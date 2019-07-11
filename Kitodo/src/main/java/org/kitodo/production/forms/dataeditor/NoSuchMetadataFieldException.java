@@ -28,7 +28,7 @@ public class NoSuchMetadataFieldException extends NoSuchFieldException {
     private final String label;
 
     /**
-     * Creates a new no such meta-data field exception.
+     * Creates a new no such metadata field exception.
      *
      * @param key
      *            the ID string on the non-existing field

@@ -22,7 +22,7 @@ public class ProjectDAO extends BaseDAO<Project> {
     public Project getById(Integer id) throws DAOException {
         Project result = retrieveObject(Project.class, id);
         if (result == null) {
-            throw new DAOException("Object can not be found in database");
+            throw new DAOException("Object cannot be found in database");
         }
         return result;
     }

@@ -126,7 +126,7 @@ public class ReaderIT {
 
         exception.expect(WorkflowException.class);
         exception.expectMessage(
-            "Task in parallel branch can not have second task. Please remove task after task with name 'Task9'.");
+            "Task in parallel branch cannot have second task. Please remove task after task with name 'Task9'.");
         reader.readWorkflowTasks();
     }
 

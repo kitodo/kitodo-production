@@ -33,7 +33,7 @@ public interface MetadataValidationInterface extends ValidationInterface {
      *            The uri to the ruleset file to validate against.
      * @param metadataLanguage
      *            The list of languages preferred by the requesting user to
-     *            display the meta-data labels
+     *            display the metadata labels
      * @param translations
      *            A map containing the validation error messages translated into
      *            the requesting user’s language. The map must contain the
@@ -57,7 +57,7 @@ public interface MetadataValidationInterface extends ValidationInterface {
      *            The ruleset to validate against.
      * @param metadataLanguage
      *            The list of languages preferred by the requesting user to
-     *            display the meta-data labels
+     *            display the metadata labels
      * @param translations
      *            A map containing the validation error messages translated into
      *            the requesting user’s language. The map must contain the

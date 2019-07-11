@@ -25,10 +25,10 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 
 /**
  * The class CataloguePlugin is a redirection class that takes a library
- * catalogue access plugin implementation object as argument. The plugin
+ * catalog access plug-in implementation object as argument. The plugin
  * implementation class can be a POJO that can be compiled without the necessity
  * to link it against the Production code, thus making it possible to provide
- * proprietary plugins that do not violate the GPL. The plugin class must
+ * proprietary plug-ins that do not violate the GPL. The plugin class must
  * however implement the following public methods which it is checked for upon
  * instantiation. If one of the methods is missing a NoSuchMethodException will
  * be thrown.
@@ -39,7 +39,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  *
  * <p>
  * <code>Object find(String, long)</code><br>
- * The function is to perform a search request in a library catalogue.
+ * The function is to perform a search request in a library catalog.
  * See {@link QueryBuilder} for the semantics of the query. It may return an
  * arbitrary Object identifying (or—at the implementor’s choice—containing) the
  * search result. The method shall return null if the search performed normally,
@@ -63,7 +63,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * <code>long getNumberOfHits(Object, long)</code><br>
  * The function shall return the number of hits scored by the
  * search represented by the given object. If the object isn’t the result of a
- * call to the find() function, the behaviour of the function may be undefined.
+ * call to the find() function, the behavior of the function may be undefined.
  * The method shall ensure that it returns after the given timeout and shall
  * throw a javax.persistence.QueryTimeoutException if it was cancelled by the
  * timer. The method may throw exceptions.
@@ -75,20 +75,20 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
  * <p>
  * <code>void setPreferences(Prefs)</code><br>
  * The method is called before the first search request to the
- * plug-in and passes the UGH preferences the plugin shall use.
+ * plug-in and passes the UGH preferences the plug-in shall use.
  *
  * <p>
  * <code>boolean supportsCatalogue(String)</code><br>
  * The function shall return whether the plug-in has
- * sufficient knowledge to query a catalogue identified by the given String
+ * sufficient knowledge to query a catalog identified by the given String
  * literal or not.
  *
  * <p>
  * <code>void useCatalogue(String)</code><br>
  * The function is called before the first search request to the
- * plug-in and shall tell it to use the catalogue connection identified by the
- * given String literal. If the plugin doesn’t support the given catalogue
- * (supportsCatalogue() would return false) the behaviour may be unspecified.
+ * plug-in and shall tell it to use the catalog connection identified by the
+ * given String literal. If the plug-in doesn’t support the given catalog
+ * (supportsCatalogue() would return false) the behavior may be unspecified.
  */
 public class CataloguePlugin extends UnspecificPlugin {
 
@@ -130,7 +130,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 
     /**
      * CataloguePlugin constructor. The constructor takes a reference to the
-     * plug-in implementation class, saves it in the final field plugin and
+     * plug-in implementation class, saves it in the final field plug-in and
      * inspects the class for existence of the methods configure,
      * getDescription, getTitle, find, getHit, getNumberOfHits, setPreferences,
      * supportsCatalogue and useCatalogue.
@@ -160,7 +160,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 
     /**
      * The function is intended to send a search request to a library
-     * catalogue and to return an Object identifying (or—at the implementor’s
+     * catalog and to return an Object identifying (or—at the implementor’s
      * choice—containing) the search result. The method shall return null if the
      * search didn’t yield any result. The method shall ensure that it returns
      * after the given timeout and shall throw a
@@ -178,13 +178,13 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * Returns at random the first hit the catalogue
-     * plugin returns for a given query. Making use of this utility method only
-     * makes sense if there is only one result expected, which usually is the
-     * case if a valid identifier is looked up in its respective column.
+     * Returns at random the first hit the catalog plug-in returns for a given
+     * query. Making use of this utility method only makes sense if there is
+     * only one result expected, which usually is the case if a valid identifier
+     * is looked up in its respective column.
      *
      * @param catalogue
-     *            catalogue in question
+     *            catalog in question
      * @param query
      *            Query string
      * @param preferences
@@ -236,7 +236,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     /**
      * The function shall return the hits scored by the search
      * represented by the given object. If the object isn’t the result of a call
-     * to the find() function, the behaviour may be undefined.
+     * to the find() function, the behavior may be undefined.
      *
      * @param searchResult
      *            search result object whose number of hits is to retrieve
@@ -250,16 +250,16 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * Returns the timeout to be used in catalogue
-     * access. This defaults to thirty minutes if no catalogue timeout is set in
+     * Returns the timeout to be used in catalog
+     * access. This defaults to thirty minutes if no catalog timeout is set in
      * the configuration
      *
      * <p>
-     * Note that on large, database-backed catalogues, searches for common title
+     * Note that on large, database-backed catalogs, searches for common title
      * terms may take more than 15 minutes, so 30 minutes may be a fair average
      * between that and the moment the sun will swallow up the earth.
      *
-     * @return the timeout for catalogue access
+     * @return the timeout for catalog access
      */
     public static long getTimeout() {
         return ConfigCore.getLongParameterOrDefaultValue(ParameterCore.CATALOGUE_TIMEOUT);
@@ -278,7 +278,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 
     /**
      * Must be used to set the UGH preferences the
-     * plugin shall use.
+     * plug-in shall use.
      *
      * @param preferences
      *            UGH preferences
@@ -289,27 +289,25 @@ public class CataloguePlugin extends UnspecificPlugin {
     }
 
     /**
-     * Returns whether the plugin has
-     * sufficient knowledge to query a catalogue identified by the given String
-     * literal.
+     * Returns whether the plug-in has sufficient knowledge to query a catalog
+     * identified by the given String literal.
      *
      * @param catalogue
-     *            catalogue in question
-     * @return whether the plugin supports that catalogue
+     *            catalog in question
+     * @return whether the plug-in supports that catalog
      */
     public boolean supportsCatalogue(String catalogue) {
         return invokeQuietly(plugin, supportsCatalogue, catalogue, boolean.class);
     }
 
     /**
-     * The function shall tell the plugin to use a catalogue
-     * connection identified by the given String literal. If the plugin doesn’t
-     * support the given catalogue (supportsCatalogue() would return false) the
-     * behaviour is unspecified (throwing an unchecked exception is a good
-     * option).
+     * The function shall tell the plug-in to use a catalog connection
+     * identified by the given String literal. If the plug-in doesn’t support
+     * the given catalog (supportsCatalogue() would return false) the behavior
+     * is unspecified (throwing an unchecked exception is a good option).
      *
      * @param catalogue
-     *            catalogue in question
+     *            catalog in question
      */
     public void useCatalogue(String catalogue) {
         invokeQuietly(plugin, useCatalogue, catalogue, null);

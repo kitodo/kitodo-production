@@ -112,18 +112,18 @@ public class FileManagementTest {
 
     @Test
     public void shouldCanRead() {
-        assertTrue("URI can not be read!", fileManagement.canRead(URI.create("fileTest")));
+        assertTrue("URI cannot be read!", fileManagement.canRead(URI.create("fileTest")));
     }
 
     @Test
     public void shouldGetNumberOfFiles() {
         int numberOfFiles = fileManagement.getNumberOfFiles(null, URI.create("2"));
-        assertEquals("URI can not be read!", 1, numberOfFiles);
+        assertEquals("URI cannot be read!", 1, numberOfFiles);
     }
 
     @Test
     public void shouldCreateUriForExistingProcess() {
-        assertEquals("URI can not be created!", URI.create("10"), fileManagement.createUriForExistingProcess("10"));
+        assertEquals("URI cannot be created!", URI.create("10"), fileManagement.createUriForExistingProcess("10"));
     }
 
     @Test

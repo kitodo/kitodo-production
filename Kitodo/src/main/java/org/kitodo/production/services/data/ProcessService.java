@@ -970,7 +970,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Returns the URI of the meta-data file of a process.
+     * Returns the URI of the metadata file of a process.
      *
      * @param process
      *            object

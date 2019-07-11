@@ -42,7 +42,7 @@ public class MetsServiceIT {
         // root node has 16 children
         assertEquals(16, workpiece.getRootElement().getChildren().size());
 
-        // root node has 11 meta-data entries
+        // root node has 11 metadata entries
         assertEquals(11, workpiece.getRootElement().getMetadata().size());
 
         // file URIs can be read

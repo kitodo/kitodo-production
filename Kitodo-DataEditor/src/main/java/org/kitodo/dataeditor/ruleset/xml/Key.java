@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 
 /**
- * This key contains the data format description for a meta-data entry. You can
+ * This key contains the data format description for a metadata entry. You can
  * create the keys yourself in the rule set.
  */
 @XmlAccessorType(XmlAccessType.FIELD)

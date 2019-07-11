@@ -369,13 +369,13 @@ public class MetadataValidation implements MetadataValidationInterface {
     }
 
     /**
-     * Merges multiple meta-data lines of identical type. The output format of
+     * Merges multiple metadata lines of identical type. The output format of
      * the rule set refers to the display form and therefore generates a
      * separate line for each metadata value. In the validation we need the
      * number. To get that, the lines are summarized here.
      *
      * @param metadataViewsWithValues
-     *            list of meta-data view objects, each with their value
+     *            list of metadata view objects, each with their value
      * @return merged lines of identical type
      */
     private static Map<MetadataViewInterface, Collection<Metadata>> squash(
