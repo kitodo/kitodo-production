@@ -34,6 +34,7 @@ import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyInnerPhysicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 
@@ -84,6 +85,26 @@ public class SchemaService {
         convertChildrenLinksForExport(workpiece, workpiece.getRootElement(), prefs);
         if (Objects.nonNull(process.getParent())) {
             addParentLinkForExport(prefs, workpiece, process.getParent());
+        }
+
+        assignViewsFromChildrenRecursive(workpiece.getRootElement());
+    }
+
+    /**
+     * At all levels, assigns the views of the children to the included
+     * structural elements.
+     *
+     * @param includedStructuralElement
+     *            included structural element on which the recursion is
+     *            performed
+     */
+    private void assignViewsFromChildrenRecursive(IncludedStructuralElement includedStructuralElement) {
+        List<IncludedStructuralElement> children = includedStructuralElement.getChildren();
+        if (!children.isEmpty()) {
+            for (IncludedStructuralElement child : children) {
+                assignViewsFromChildrenRecursive(child);
+            }
+            MetadataEditor.assignViewsFromChildren(includedStructuralElement);
         }
     }
 
