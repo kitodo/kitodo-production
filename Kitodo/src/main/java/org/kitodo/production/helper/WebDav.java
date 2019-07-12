@@ -32,6 +32,7 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.export.TiffHeader;
 import org.kitodo.production.services.ServiceManager;
@@ -194,15 +195,40 @@ public class WebDav implements Serializable {
      * @return encoded process link name
      */
     private String getEncodedProcessLinkName(Process process) {
-        String processLinkName = Helper.getNormalizedTitle(process.getTitle()) + "__[" + process.getId() + "]";
         String encodedProcessLinkName;
         try {
-            encodedProcessLinkName = URLEncoder.encode(processLinkName, StandardCharsets.UTF_8.name());
+            encodedProcessLinkName = URLEncoder.encode(getProcessLinkName(process), StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
             return "";
         }
         return encodedProcessLinkName;
+    }
+
+    /**
+     * Create the process link name.
+     *
+     * @param process
+     *          Process object to create the link name for
+     * @return
+     *          process link name as java.lang.String
+     */
+    private String getProcessLinkName(Process process) {
+        String processPropertySymlinkName = ConfigCore.getParameterOrDefaultValue(ParameterCore.PROCESS_PROPERTY_SYMLINK_NAME);
+        String propertyValue = "";
+        if (!processPropertySymlinkName.isEmpty()) {
+            for (Property property : process.getProperties()) {
+                if (processPropertySymlinkName.equals(property.getTitle())) {
+                    propertyValue = property.getValue();
+                    break;
+                }
+            }
+        }
+        if (propertyValue.isEmpty()) {
+            return Helper.getNormalizedTitle(process.getTitle()).replaceAll("[^A-Za-z0-9]", "_") + "__[" + process.getId() + "]";
+        } else {
+            return Helper.getNormalizedTitle(propertyValue.replaceAll("[^A-Za-z0-9]", "_") + "_" + process.getId());
+        }
     }
 
     /**
