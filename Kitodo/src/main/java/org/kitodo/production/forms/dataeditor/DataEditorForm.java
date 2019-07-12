@@ -151,6 +151,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private Task currentTask;
 
     /**
+     * Flag indicating whether the structure tree should be expanded or not. This is only true during the first
+     * initialization of the tree.
+     */
+    private boolean expandTree = true;
+
+    /**
      * Public constructor.
      */
     public DataEditorForm() {
@@ -221,6 +227,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void init() {
         final long begin = System.nanoTime();
 
+        expandTree = true;
+
         structurePanel.show();
         metadataPanel.showLogical(getSelectedStructure());
         metadataPanel.showPhysical(getSelectedMediaUnit());
@@ -228,6 +236,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         paginationPanel.show();
 
         editPagesDialog.prepare();
+
+        expandTree = false;
 
         if (logger.isTraceEnabled()) {
             logger.trace("Initializing editor beans took {} ms",
@@ -577,5 +587,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         if (Objects.nonNull(mediaUnit)) {
             galleryPanel.updateSelection(mediaUnit);
         }
+    }
+
+    boolean getExpandTree() {
+        return this.expandTree;
     }
 }
