@@ -74,11 +74,6 @@ public class GoobiScript {
      */
     public void execute(List<Prozess> inProzesse, String inScript) {
 
-        if (inScript.contains("action:copyData")) {
-            copyData(inProzesse, inScript);
-            return;
-        }
-
         this.myParameters = new HashMap<String, String>();
         /*
          * -------------------------------- alle Suchparameter zerlegen und erfassen --------------------------------
@@ -96,85 +91,101 @@ public class GoobiScript {
         }
 
         /*
-         * -------------------------------- die passende Methode mit den richtigen Parametern übergeben --------------------------------
-         */
-        if (this.myParameters.get("action") == null) {
-            Helper.setFehlerMeldung(
-                    "goobiScriptfield",
-                    "missing action",
-                    " - possible: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
-            return;
-        }
-
-        /*
          * -------------------------------- Aufruf der richtigen Methode über den Parameter --------------------------------
          */
-        if (this.myParameters.get("action").equals("swapSteps")) {
-            swapSteps(inProzesse);
-        } else if (this.myParameters.get("action").equals("swapProzessesOut")) {
-            swapOutProzesses(inProzesse);
-        } else if (this.myParameters.get("action").equals("swapProzessesIn")) {
-            swapInProzesses(inProzesse);
-        } else if (this.myParameters.get("action").equals("importFromFileSystem")) {
-            importFromFileSystem(inProzesse);
-        } else if (this.myParameters.get("action").equals("addUser")) {
-            adduser(inProzesse);
-        } else if (this.myParameters.get("action").equals("addUserGroup")) {
-            addusergroup(inProzesse);
-        } else if (this.myParameters.get("action").equals("setTaskProperty")) {
-            setTaskProperty(inProzesse);
-        } else if (this.myParameters.get("action").equals("deleteStep")) {
-            deleteStep(inProzesse);
-        } else if (this.myParameters.get("action").equals("addStep")) {
-            addStep(inProzesse);
-        } else if (this.myParameters.get("action").equals("setStepNumber")) {
-            setStepNumber(inProzesse);
-        } else if (this.myParameters.get("action").equals("setStepStatus")) {
-            setStepStatus(inProzesse);
-        } else if (this.myParameters.get("action").equals("addShellScriptToStep")) {
-            addShellScriptToStep(inProzesse);
-        } else if (this.myParameters.get("action").equals("addModuleToStep")) {
-            addModuleToStep(inProzesse);
-        } else if (this.myParameters.get("action").equals("updateImagePath")) {
-            updateImagePath(inProzesse);
-        } else if (this.myParameters.get("action").equals("updateContentFiles")) {
-            updateContentFiles(inProzesse);
-        } else if (this.myParameters.get("action").equals("deleteTiffHeaderFile")) {
-            deleteTiffHeaderFile(inProzesse);
-        } else if (this.myParameters.get("action").equals("setRuleset")) {
-            setRuleset(inProzesse);
-        } else if (this.myParameters.get("action").equals("exportDms")) {
-            exportDms(inProzesse, this.myParameters.get("exportImages"), true);
-        } else if (this.myParameters.get("action").equals("export")) {
-            exportDms(inProzesse, this.myParameters.get("exportImages"), Boolean.valueOf(this.myParameters.get("exportOcr")));
-        } else if (this.myParameters.get("action").equals("doit")) {
-            exportDms(inProzesse, "false", false);
-        } else if (this.myParameters.get("action").equals("doit2")) {
-            exportDms(inProzesse, "false", true);
-
-        } else if (this.myParameters.get("action").equals("runscript")) {
-            String stepname = this.myParameters.get("stepname");
-            String scriptname = this.myParameters.get("script");
-            if (stepname == null) {
-                Helper.setFehlerMeldung("goobiScriptfield", "", "Missing parameter");
-            } else {
-                runScript(inProzesse, stepname, scriptname);
-            }
-        } else if (this.myParameters.get("action").equals("deleteProcess")) {
-            String value = myParameters.get("contentOnly");
-            boolean contentOnly = true;
-            if (value != null && value.equalsIgnoreCase("false")) {
-                contentOnly = false;
-            }
-            deleteProcess(inProzesse, contentOnly);
-        } else if (this.myParameters.get("action").equals("rewriteProcessMetadata")) {
-            rewriteProcessMetadata(inProzesse);
-        } else {
-            Helper.setFehlerMeldung(
-                    "goobiScriptfield",
-                    "Unknown action",
-                    " - use: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
-            return;
+        switch (this.myParameters.get("action")) {
+            case "swapSteps":
+                swapSteps(inProzesse);
+                break;
+            case "swapProzessesOut":
+                swapOutProzesses(inProzesse);
+                break;
+            case "swapProzessesIn":
+                swapInProzesses(inProzesse);
+                break;
+            case "importFromFileSystem":
+                importFromFileSystem(inProzesse);
+                break;
+            case "addUser":
+                adduser(inProzesse);
+                break;
+            case "addUserGroup":
+                addusergroup(inProzesse);
+                break;
+            case "setTaskProperty":
+                setTaskProperty(inProzesse);
+                break;
+            case "deleteStep":
+                deleteStep(inProzesse);
+                break;
+            case "addStep":
+                addStep(inProzesse);
+                break;
+            case "setStepNumber":
+                setStepNumber(inProzesse);
+                break;
+            case "setStepStatus":
+                setStepStatus(inProzesse);
+                break;
+            case "addShellScriptToStep":
+                addShellScriptToStep(inProzesse);
+                break;
+            case "addModuleToStep":
+                addModuleToStep(inProzesse);
+                break;
+            case "updateImagePath":
+                updateImagePath(inProzesse);
+                break;
+            case "updateContentFiles":
+                updateContentFiles(inProzesse);
+                break;
+            case "deleteTiffHeaderFile":
+                deleteTiffHeaderFile(inProzesse);
+                break;
+            case "setRuleset":
+                setRuleset(inProzesse);
+                break;
+            case "exportDms":
+                exportDms(inProzesse, this.myParameters.get("exportImages"), true);
+                break;
+            case "exportDmsCustomizedConfiguration":
+                exportDms(inProzesse, this.myParameters.get("exportImages"),
+                          Boolean.valueOf(this.myParameters.get("exportOcr")));
+                break;
+            case "exportDMSMetadataOnly":
+                exportDms(inProzesse, "false", false);
+                break;
+            case "exportDMSMetadataAndOcr":
+                exportDms(inProzesse, "false", true);
+                break;
+            case "runscript":
+                String stepname = this.myParameters.get("stepname");
+                String scriptname = this.myParameters.get("script");
+                if (stepname == null) {
+                    Helper.setFehlerMeldung("goobiScriptfield", "", "Missing parameter");
+                    return;
+                } else {
+                    runScript(inProzesse, stepname, scriptname);
+                }
+                break;
+            case "deleteProcess":
+                String value = myParameters.get("contentOnly");
+                boolean contentOnly = true;
+                if (value != null && value.equalsIgnoreCase("false")) {
+                    contentOnly = false;
+                }
+                deleteProcess(inProzesse, contentOnly);
+                break;
+            case "copyData":
+                copyData(inProzesse, inScript);
+                break;
+            case "rewriteProcessMetadata":
+                rewriteProcessMetadata(inProzesse);
+                break;
+            default:
+                Helper.setFehlerMeldung("goobiScriptfield", "Unknown action",
+                                        " - use: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem, ...'");
+                return;
         }
 
         Helper.setMeldung("goobiScriptfield", "", "GoobiScript finished");
