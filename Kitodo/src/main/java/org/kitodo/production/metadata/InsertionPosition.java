@@ -12,7 +12,7 @@
 package org.kitodo.production.metadata;
 
 public enum InsertionPosition {
-    BEFOR_CURRENT_ELEMENT,
+    BEFORE_CURRENT_ELEMENT,
     AFTER_CURRENT_ELEMENT,
     FIRST_CHILD_OF_CURRENT_ELEMENT,
     LAST_CHILD_OF_CURRENT_ELEMENT,

@@ -74,16 +74,16 @@ public class AddMediaUnitDialog {
         if (dataEditor.getSelectedMediaUnit().isPresent()) {
             possiblePositions = new ArrayList<>();
             possiblePositions.add(new SelectItem(InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT,
-                    Helper.getTranslation("asFirstChildOfCurrentElement")));
+                    Helper.getTranslation("dataEditor.position.asFirstChildOfCurrentElement")));
             possiblePositions.add(new SelectItem(InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT,
-                    Helper.getTranslation("asLastChildOfCurrentElement")));
+                    Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
             List<MediaUnit> parents = MetadataEditor.getAncestorsOfMediaUnit(dataEditor.getSelectedMediaUnit().get(),
                     dataEditor.getWorkpiece().getMediaUnit());
             if (parents.size() > 0) {
-                possiblePositions.add(new SelectItem(InsertionPosition.BEFOR_CURRENT_ELEMENT,
-                        Helper.getTranslation("vorDasAktuelleElement")));
+                possiblePositions.add(new SelectItem(InsertionPosition.BEFORE_CURRENT_ELEMENT,
+                        Helper.getTranslation("dataEditor.metadata.position.beforeCurrentElement")));
                 possiblePositions.add(new SelectItem(InsertionPosition.AFTER_CURRENT_ELEMENT,
-                        Helper.getTranslation("hinterDasAktuelleElement")));
+                        Helper.getTranslation("dataEditor.metadata.position.afterCurrentElement")));
             }
         }
     }
@@ -106,7 +106,7 @@ public class AddMediaUnitDialog {
                         dataEditor.getPriorityList()
                 );
 
-            } else if (InsertionPosition.BEFOR_CURRENT_ELEMENT.equals(selectedPosition)
+            } else if (InsertionPosition.BEFORE_CURRENT_ELEMENT.equals(selectedPosition)
                     || InsertionPosition.AFTER_CURRENT_ELEMENT.equals(selectedPosition)) {
                 LinkedList<MediaUnit> parents = MetadataEditor.getAncestorsOfMediaUnit(
                         dataEditor.getSelectedMediaUnit().get(),

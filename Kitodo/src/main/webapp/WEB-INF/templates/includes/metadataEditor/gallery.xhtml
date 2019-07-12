@@ -60,9 +60,6 @@
             </p:panelGrid>
 
             <!-- Pages in structured view -->
-            <ui:fragment rendered="#{empty DataEditorForm.galleryPanel.medias}">
-                <h:outputText style="color: white; " value="#{msgs.noMedia}"/>
-            </ui:fragment>
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' and not empty DataEditorForm.galleryPanel.stripes}">
                 <p:fieldset id="structuredPagesField">
                     <!--@elvariable id="currentElement" type="org.kitodo.production.forms.dataeditor.GalleryStripe"-->
@@ -80,6 +77,7 @@
                                     rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"
                                     id="structureElementDataList"
                                     var="media"
+                                    emptyMessage="#{msgs['noMedia']}"
                                     value="#{stripe.medias}"
                                     binding="#{structuredThumbnail}">
                             <p:panel id="structuredPagePanel">
@@ -125,6 +123,7 @@
                                     styleClass="structureElementDataList"
                                     value="#{DataEditorForm.galleryPanel.stripes.get(0).medias}"
                                     binding="#{currentMedia}"
+                                    emptyMessage="#{msgs['noMedia']}"
                                     var="media">
                             <h:panelGroup id="unstructuredMediaPanel">
                                 <p:commandLink id="updateSelectedUnstructuredMediaLink"

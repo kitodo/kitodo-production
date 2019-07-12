@@ -21,6 +21,7 @@
               widgetVar="addMetadataDialog"
               resizable="false"
               showHeader="false"
+              dynamic="true"
               modal="true">
         <h:form id="addMetadataForm">
             <p:panelGrid columns="1" layout="grid">
@@ -46,7 +47,7 @@
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="save"
-                                         action="#{DataEditorForm.metadataPanel.addMetadataEntryClick}"
+                                         action="#{DataEditorForm.metadataPanel.addMetadataEntry}"
                                          update="metadataAccordion:metadata:metadataTable"
                                          oncomplete="PF('addMetadataDialog').hide();"
                                          value="#{msgs.apply}"

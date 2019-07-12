@@ -22,6 +22,7 @@
               widgetVar="dialogAddDocStrucType"
               width="480px"
               modal="true"
+              dynamic="true"
               showHeader="false"
               appendTo="@(body)">
         <h3>#{msgs.neuesStrukturelement}</h3>
@@ -154,7 +155,7 @@
                                 </p:column>
                                 <p:column>
                                     <p:commandButton id="searchButton" value="#{msgs['dialogAddDocStrucType.searchButton']}"
-                                        action="#{DataEditorForm.addDocStrucTypeDialog.searchButtonClick}"
+                                        action="#{DataEditorForm.addDocStrucTypeDialog.search}"
                                         styleClass="primary" icon="fa fa-search fa-lg" iconPos="right">
                                             <p:remoteCommand name="updateProcessSelect" update="processSelect"/>
                                             <p:ajax update="processSelect" oncomplete="updateProcessSelect()"/>

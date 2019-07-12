@@ -58,7 +58,7 @@ public class MetadataPanel implements Serializable {
      * The better approach would be to first create and display a field and then
      * give the user the option to enter or select the value.
      */
-    public void addMetadataEntryClick() {
+    public void addMetadataEntry() {
         try {
             /*
              * First, we get the translated label of the table line into which
