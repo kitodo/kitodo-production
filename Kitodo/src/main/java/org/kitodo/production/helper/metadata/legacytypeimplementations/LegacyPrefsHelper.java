@@ -47,31 +47,6 @@ public class LegacyPrefsHelper {
     private RulesetManagementInterface ruleset;
 
     /**
-     * Returns the {@code DocStructType} named by its identifier, if there is
-     * such in the rule set. Otherwise returns {@code null}.
-     *
-     * @param identifier
-     *            identifier (internal name) of the {@code DocStructType}
-     * @return the {@code DocStructType}, otherwise {@code null}.
-     */
-    @Deprecated
-    public LegacyLogicalDocStructTypeHelper getDocStrctTypeByName(String identifier) {
-        switch (identifier) {
-            case "page":
-                return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
-            default:
-                User user = ServiceManager.getUserService().getAuthenticatedUser();
-                String metadataLanguage = user != null ? user.getMetadataLanguage()
-                        : Helper.getRequestParameter("Accept-Language");
-                List<LanguageRange> priorityList = LanguageRange
-                        .parse(metadataLanguage != null ? metadataLanguage : "en");
-                StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(identifier, "edit",
-                    priorityList);
-                return new LegacyLogicalDocStructTypeHelper(divisionView);
-        }
-    }
-
-    /**
      * MetadataType aus Preferences ermitteln.
      *
      * @param inPrefs
