@@ -28,9 +28,4 @@ public class LegacyReferenceHelper {
     public LegacyReferenceHelper(LegacyInnerPhysicalDocStructHelper target) {
         this.target = target;
     }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface getTarget() {
-        return target;
-    }
 }

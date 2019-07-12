@@ -29,12 +29,6 @@ public class LegacyMetadataTypeHelper {
 
         @Override
         @Deprecated
-        public String getLanguage(String language) {
-            return "de".equals(language) ? "physische Seitenzahl (Imagenummer)" : "physical page number";
-        }
-
-        @Override
-        @Deprecated
         public String getName() {
             return "physPageNumber";
         }
@@ -46,12 +40,6 @@ public class LegacyMetadataTypeHelper {
      */
     @Deprecated
     public static final LegacyMetadataTypeHelper SPECIAL_TYPE_ORDERLABEL = new LegacyMetadataTypeHelper() {
-
-        @Override
-        @Deprecated
-        public String getLanguage(String language) {
-            return "de".equals(language) ? "logische Seitenzahl (gedruckte Zeitenzahl)" : "logical page number";
-        }
 
         @Override
         @Deprecated
@@ -72,11 +60,6 @@ public class LegacyMetadataTypeHelper {
     @Deprecated
     public LegacyMetadataTypeHelper(MetadataViewInterface keyView) {
         this.keyView = keyView;
-    }
-
-    @Deprecated
-    public String getLanguage(String language) {
-        return keyView.getLabel();
     }
 
     @Deprecated
