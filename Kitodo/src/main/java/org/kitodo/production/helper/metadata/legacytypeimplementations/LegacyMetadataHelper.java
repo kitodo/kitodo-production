@@ -75,27 +75,27 @@ public class LegacyMetadataHelper {
     }
 
     /**
-     * This allows the meta-data to be saved.
+     * This allows the metadata to be saved.
      */
     public void saveToBinding() {
         bindingSaveInterface.saveMetadata(this);
     }
 
     /**
-     * Sets the binding to a meta-data XML access interface through a binding
-     * save interface. This is needed so that the meta-data in its container can
+     * Sets the binding to a metadata XML access interface through a binding
+     * save interface. This is needed so that the metadata in its container can
      * automatically save itself if its value is subsequently changed. In fact,
-     * the value may be, aside from the value of a meta-data entry, the value of
+     * the value may be, aside from the value of a metadata entry, the value of
      * a field of the container, which makes the matter a bit unwieldy.
      *
      * @param bsi
-     *            thee binding save interface via which the meta-data can
+     *            thee binding save interface via which the metadata can
      *            automatically save itself afterwards
      * @param binding
-     *            the meta-data entry where the value should be stored, if
+     *            the metadata entry where the value should be stored, if
      *            applicable
      * @param domain
-     *            the domain where the meta-data entry is stored
+     *            the domain where the metadata entry is stored
      */
     public void setBinding(BindingSaveInterface bsi, MetadataEntry binding, Domain domain) {
         this.bindingSaveInterface = bsi;

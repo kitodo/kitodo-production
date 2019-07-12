@@ -269,7 +269,7 @@ public class BatchForm extends BaseForm {
     }
 
     /**
-     * The method deleteBatch() is called if the user clicks the action link to
+     * The method is called if the user clicks the action link to
      * delete batches. It runs the deletion of the batches.
      */
     public void delete() {

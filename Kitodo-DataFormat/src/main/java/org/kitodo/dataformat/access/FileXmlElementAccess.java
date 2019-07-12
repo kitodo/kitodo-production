@@ -126,7 +126,7 @@ public class FileXmlElementAccess {
      *            map with the assigned identifier for each media unit to form
      *            the link pairs of the struct link section
      * @param mets
-     *            the METS structure in which the meta-data is added
+     *            the METS structure in which the metadata is added
      * @return a new {@code <div>} element for this media unit
      */
     DivType toDiv(Map<URI, FileType> mediaFilesToIDFiles,

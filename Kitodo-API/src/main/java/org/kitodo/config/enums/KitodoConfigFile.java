@@ -29,7 +29,7 @@ public enum KitodoConfigFile {
     DIGITAL_COLLECTIONS("kitodo_digitalCollections.xml"),
 
     /**
-     * Configuration file that lists the available library catalogues along with
+     * Configuration file that lists the available library catalogs along with
      * their respective DocType mappings.
      */
     OPAC_CONFIGURATION("kitodo_opac.xml"),

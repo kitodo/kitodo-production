@@ -30,8 +30,6 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
  * The class TaskManager serves to handle the execution of threads. It can be
  * user controlled by the “Long running task manager”, backed by
  * {@link org.kitodo.production.forms.TaskManagerForm}.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class TaskManager {
 
@@ -68,7 +66,7 @@ public class TaskManager {
     }
 
     /**
-     * The function addTask() adds a task thread to the task list.
+     * Adds a task thread to the task list.
      *
      * @param task
      *            task to add
@@ -78,7 +76,7 @@ public class TaskManager {
     }
 
     /**
-     * The procedure addTaskIfMissing() will add a task to the task list if it
+     * The procedure will add a task to the task list if it
      * has not yet been added right after the last task that is currently
      * executing. If this fails for some reason (i.e. the list got concurrently
      * modified) it will be added in the end.
@@ -87,7 +85,6 @@ public class TaskManager {
      * This is a fallback method that is called by the overloaded start() method
      * of AbstractTask. Do not use it. Use TaskManager.addTask() to properly add
      * the tasks you created.
-     * </p>
      *
      * @param task
      *            task to add
@@ -105,7 +102,7 @@ public class TaskManager {
     }
 
     /**
-     * The function getTaskList() returns a copy of the task list usable for
+     * Returns a copy of the task list usable for
      * displaying. The result object cannot be used to modify the list. Use
      * removeAllFinishedTasks() to clean up the list or stopAndDeleteAllTasks()
      * if you wish to do so. To get rid of one specific task, call
@@ -120,7 +117,7 @@ public class TaskManager {
     }
 
     /**
-     * The function lastIndexOf() returns the index of the last task in the task
+     * Returns the index of the last task in the task
      * list that is in the given TaskState.
      *
      * @param state
@@ -140,7 +137,7 @@ public class TaskManager {
     }
 
     /**
-     * The function removeAllFinishedTasks() can be called to remove all
+     * Can be called to remove all
      * terminated threads from the list.
      */
     public static void removeAllFinishedTasks() {
@@ -156,7 +153,7 @@ public class TaskManager {
     }
 
     /**
-     * The function runEarlier() can be called to move a task by one forwards on
+     * Can be called to move a task by one forwards on
      * the queue.
      *
      * @param task
@@ -171,7 +168,7 @@ public class TaskManager {
     }
 
     /**
-     * The function runLater() can be called to move a task by one backwards on
+     * Can be called to move a task by one backwards on
      * the queue.
      *
      * @param task
@@ -199,7 +196,7 @@ public class TaskManager {
     }
 
     /**
-     * The function shutdownNow() will be called by the TaskSitter to gracefully
+     * The function will be called by the TaskSitter to gracefully
      * exit the task manager as well as its managed threads during container
      * shutdown.
      */
@@ -209,7 +206,7 @@ public class TaskManager {
     }
 
     /**
-     * The function stopAndDeleteAllTasks() can be called to both request
+     * Can be called to both request
      * interrupt and immediate deletion for all threads that are alive and at
      * the same time remove all threads that aren’t alive anyhow.
      */

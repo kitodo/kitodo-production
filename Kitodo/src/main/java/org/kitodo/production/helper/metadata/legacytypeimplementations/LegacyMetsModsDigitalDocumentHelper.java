@@ -69,7 +69,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     private RulesetManagementInterface ruleset;
 
     /**
-     * The user’s meta-data language priority list.
+     * The user’s metadata language priority list.
      */
     private List<LanguageRange> priorityList;
 

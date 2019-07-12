@@ -167,7 +167,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function contains() returns true if the title (if set) or the
+     * Returns true if the title (if set) or the
      * id-based label contain the specified sequence of char values.
      *
      * @param sequence
@@ -180,7 +180,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function getIdString() returns the identifier for the batch as
+     * Returns the identifier for the batch as
      * read-only property "idString". This method is required by Faces which
      * silently fails if you try to use the id Integer.
      *
@@ -191,7 +191,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function getLabel() returns a readable label for the batch, which is
+     * Returns a readable label for the batch, which is
      * either its title, if defined, or, for batches not having a title (in
      * recent versions of Production, batches didn’t support titles) its ancient
      * label, consisting of the prefix “Batch ” (in the desired translation)
@@ -204,7 +204,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function getLabel() returns a readable label for the batch, which is
+     * Returns a readable label for the batch, which is
      * either its title, if defined, or, for batches not having a title (in
      * recent versions of Production, batches didn’t support titles) its ancient
      * label, consisting of the prefix “Batch ” (in the desired translation)
@@ -217,7 +217,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function getNumericLabel() returns a readable label for the batch,
+     * Returns a readable label for the batch,
      * consisting of the prefix “Batch ” (in the desired translation) together
      * with its id number.
      *
@@ -228,7 +228,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function getNumericLabel() returns a readable label for the batch,
+     * Returns a readable label for the batch,
      * consisting of the prefix “Batch ” (in the desired translation) together
      * with its id number.
      *

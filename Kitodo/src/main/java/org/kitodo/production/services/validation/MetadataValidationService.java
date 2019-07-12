@@ -225,9 +225,9 @@ public class MetadataValidationService {
     // helper methods
 
     /**
-     * Returns the meta-data language for a user.
+     * Returns the metadata language for a user.
      * 
-     * @return the meta-data language
+     * @return the metadata language
      */
     private List<LanguageRange> getMetadataLanguage() {
         User user = ServiceManager.getUserService().getAuthenticatedUser();

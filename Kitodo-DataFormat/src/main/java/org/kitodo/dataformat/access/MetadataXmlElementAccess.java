@@ -16,32 +16,32 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 
 /**
- * A meta-data entry. A meta-data entry consists of a key and a value. The key
+ * A metadata entry. A metadata entry consists of a key and a value. The key
  * is stored in the superclass {@link MetadataXmlElementsAccess}. There is also the domain, that
- * is an indication in which container within the METS file the meta-data entry
+ * is an indication in which container within the METS file the metadata entry
  * is stored.
  */
 public class MetadataXmlElementAccess extends MetadataXmlElementsAccess {
     /**
-     * The data object of this meta-data XML element access.
+     * The data object of this metadata XML element access.
      */
     private final MetadataEntry metadataEntry;
 
     /**
-     * Public constructor for creating a new meta-data entry. This constructor
-     * can be used with the service loader to create a new meta-data entry.
+     * Public constructor for creating a new metadata entry. This constructor
+     * can be used with the service loader to create a new metadata entry.
      */
     public MetadataXmlElementAccess() {
         metadataEntry = new MetadataEntry();
     }
 
     /**
-     * Constructor for producing a meta-data entry from METS/Kitodo format.
+     * Constructor for producing a metadata entry from METS/Kitodo format.
      * 
      * @param domain
      *            at which place the entry was found
      * @param metadataType
-     *            Kitodo meta-data object (input)
+     *            Kitodo metadata object (input)
      */
     MetadataXmlElementAccess(MdSec domain, MetadataType metadataType) {
         this();
@@ -59,7 +59,7 @@ public class MetadataXmlElementAccess extends MetadataXmlElementsAccess {
     }
 
     /**
-     * Creates a Kitodo XML element from the meta-data entry.
+     * Creates a Kitodo XML element from the metadata entry.
      * 
      * @return a Kitodo XML element
      */

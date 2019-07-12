@@ -26,8 +26,6 @@ import org.joda.time.format.ISODateTimeFormat;
 /**
  * Data copy rule that either overwrites the metadata described by the selector
  * on the left hand side or creates it anew, if it isn’t yet present.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ComposeFormattedRule extends DataCopyrule {
 
@@ -46,7 +44,7 @@ public class ComposeFormattedRule extends DataCopyrule {
     protected static final String OPERATOR = "=format";
 
     /**
-     * The function typecast() converts the String arguments so that they can be
+     * Converts the String arguments so that they can be
      * used by {@link String#format(String, Object...)}. Only arguments that are
      * referenced by number can be typecasted. If the format String contains
      * “%2$02d”, the function will convert the second list object to long, if

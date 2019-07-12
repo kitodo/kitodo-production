@@ -14,14 +14,14 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 
 /**
- * Connects a legacy meta-data type to a key view. This is a soldering class to
+ * Connects a legacy metadata type to a key view. This is a soldering class to
  * keep legacy code operational which is about to be removed. Do not use this
  * class.
  */
 public class LegacyMetadataTypeHelper {
 
     /**
-     * A representative for a special legacy meta-data type to read and write
+     * A representative for a special legacy metadata type to read and write
      * the METS ORDER attribute.
      */
     @Deprecated
@@ -41,7 +41,7 @@ public class LegacyMetadataTypeHelper {
     };
 
     /**
-     * A representative for a special legacy meta-data type to read and write
+     * A representative for a special legacy metadata type to read and write
      * the METS ORDERLABEL attribute.
      */
     @Deprecated

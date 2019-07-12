@@ -21,12 +21,12 @@ import java.util.Set;
 
 /**
  * Class of the data row objects of the auxiliary table. You can imagine the
- * list of these objects in the meta-data acquisition mask builder as a large
- * table in which all relevant information is entered, one row per meta-data
- * type, in the order in which the meta-data types must be displayed later.
+ * list of these objects in the metadata acquisition mask builder as a large
+ * table in which all relevant information is entered, one row per metadata
+ * type, in the order in which the metadata types must be displayed later.
  *
  * @param <T>
- *            the type of meta-data objects
+ *            the type of metadata objects
  */
 class AuxiliaryTableRow<T> {
     /**
@@ -34,7 +34,7 @@ class AuxiliaryTableRow<T> {
      * exists. Otherwise the empty list.
      *
      * @param <T>
-     *            the type of the meta-data objects
+     *            the type of the metadata objects
      * @param unnumbered
      *            unnumbered collection
      * @param fictitiousNumber
@@ -70,7 +70,7 @@ class AuxiliaryTableRow<T> {
     private UniversalRule universalPermitRule;
 
     /**
-     * If there are edit settings for this meta-data type.
+     * If there are edit settings for this metadata type.
      */
     private Settings settings;
 
@@ -81,7 +81,7 @@ class AuxiliaryTableRow<T> {
     private boolean oneAdditionalField = false;
 
     /**
-     * The meta-data values for this type. Although the table is agnostic about
+     * The metadata values for this type. Although the table is agnostic about
      * which class these objects have, it still accepts them and provides for
      * possibly necessary grouping.
      */
@@ -99,7 +99,7 @@ class AuxiliaryTableRow<T> {
     }
 
     /**
-     * Adds a meta-data value object to this meta-data type.
+     * Adds a metadata value object to this metadata type.
      *
      * @param metaDataObject
      *            valuable object added
@@ -118,7 +118,7 @@ class AuxiliaryTableRow<T> {
     }
 
     /**
-     * Returns the data object(s). If the meta-data type is a multiple-choice,
+     * Returns the data object(s). If the metadata type is a multiple-choice,
      * all objects in the first (and only) element are returned, otherwise one
      * will be used, which in turn must be included in a list as a container
      * because of the method signature.
@@ -183,7 +183,7 @@ class AuxiliaryTableRow<T> {
     }
 
     /**
-     * Returns whether there are data values for a hidden meta-data entry. These
+     * Returns whether there are data values for a hidden metadata entry. These
      * must persist when the view is saved and must not be deleted simply
      * because they no longer appear in the display.
      *
@@ -194,18 +194,18 @@ class AuxiliaryTableRow<T> {
     }
 
     /**
-     * Returns whether the meta-data type is a multiple choice.
+     * Returns whether the metadata type is a multiple choice.
      *
-     * @return whether the meta-data type is a multiple choice
+     * @return whether the metadata type is a multiple choice
      */
     private boolean isMultipleChoice() {
         return universalKey.isHavingOptions() && universalPermitRule.isRepeatable();
     }
 
     /**
-     * Returns whether you can add another field to this meta-data type. For
+     * Returns whether you can add another field to this metadata type. For
      * excluded keys you cannot add a field, and for multiple selection keys
-     * only if there is no meta-data entry for this key. Otherwise it must be
+     * only if there is no metadata entry for this key. Otherwise it must be
      * looked out if one more is possible after the rule.
      *
      * @return whether you can add another field

@@ -18,7 +18,7 @@
  * <p>
  * The ruleset is the heart of Production. It describes the elements from which
  * the structure of the digitally represented cultural work can exist, and in
- * what form meta-data for describing the structure can be entered. Technically,
+ * what form metadata for describing the structure can be entered. Technically,
  * this means that it determines which input masks the web interface displays.
  * This part has always been a bunch of XML files. Therefore, the rule set is
  * also maintained in the current version as an XML file, because otherwise you
@@ -34,13 +34,13 @@
  * <dl>
  * <dt>{@code <declaration>}</dt>
  * <dd>Announcement of the elements for structuring the digitally represented
- * cultural work and of the possible meta-data keys for the input of
- * meta-data.</dd>
- * <dt><code>{@code <correlation>}</code></dt>
+ * cultural work and of the possible metadata keys for the input of
+ * metadata.</dd>
+ * <dt>{@code <correlation>}</dt>
  * <dd>Explanation of rules on how these elements may or may not be linked.</dd>
- * <dt><code>{@code <editing>}</code></dt>
+ * <dt>{@code <editing>}</dt>
  * <dd>Settings of the graphic editor, insofar as they relate to the specific
- * meta-data keys.</dd>
+ * metadata keys.</dd>
  * </dl>
  *
  * <p>
@@ -51,7 +51,7 @@
  * <ol>
  * <li>the outline elements from which the tree-shaped outline of the digital
  * representation of the cultural work can be constructed, and
- * <li>the meta-data keys that can be used to meaningfully describe these
+ * <li>the metadata keys that can be used to meaningfully describe these
  * structures.
  * </ol>
  * From a technical point of view,
@@ -187,7 +187,7 @@
  * </pre>
  *
  * With {@code <preset>}, you can specify a value that is pre-filled when
- * creating an entry with this meta-data key.
+ * creating an entry with this metadata key.
  *
  * <pre>
  * {@code
@@ -234,10 +234,10 @@
  * The difference between {@code <declaration>} and {@code <correlation>} is a
  * bit like the difference between well-formedness and validity in XML files.
  * {@code <declaration>} defines requirements for the well-formedness of the
- * data. If I define a meta-data key that should be an integer, then “<kbd>19th
- * century</kbd>” is not a valid value for that key, nor “<kbd>18??</kbd>”. Data
- * that does not meet these minimum requirements should not make it into any
- * data store, but should be rejected directly from the interface. The validity
+ * data. If I define a metadata key that should be an integer, then “{@code 19th
+ * century}” is not a valid value for that key, nor “{@code 18??}”. Data that
+ * does not meet these minimum requirements should not make it into any data
+ * store, but should be rejected directly from the interface. The validity
  * criteria go beyond these minimum requirements and, for example, specify that
  * for each phonographic record, the revolution speed must be entered, but no
  * revolution speed can be entered for a book. While {@code <declaration>} is
@@ -255,7 +255,7 @@
  *
  * <p>
  * One can discuss whether the editing settings belong to the rule set at all.
- * However, since they refer directly to the meta-data keys declared at the
+ * However, since they refer directly to the metadata keys declared at the
  * outset, they are also recorded here because otherwise there would be
  * references between several files, which would more easily lead to errors.
  * There are two levels of settings: general and specific, which apply only to

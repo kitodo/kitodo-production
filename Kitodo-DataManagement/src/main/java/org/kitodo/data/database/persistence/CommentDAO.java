@@ -24,7 +24,7 @@ public class CommentDAO extends BaseDAO<Comment> {
     public Comment getById(Integer commentId) throws DAOException {
         Comment result = retrieveObject(Comment.class, commentId);
         if (result == null) {
-            throw new DAOException("Object can not be found in database");
+            throw new DAOException("Object cannot be found in database");
         }
         return result;
     }

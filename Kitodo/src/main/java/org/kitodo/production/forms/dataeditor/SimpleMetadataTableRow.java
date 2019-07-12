@@ -35,9 +35,9 @@ abstract class SimpleMetadataTableRow extends MetadataTableRow implements Serial
      * Constructor, must be called from the subclass.
      *
      * @param panel
-     *            the meta-data panel this row is in
+     *            the metadata panel this row is in
      * @param container
-     *            the parental meta-data group
+     *            the parental metadata group
      * @param settings
      *            the ruleset settings for this field.
      */

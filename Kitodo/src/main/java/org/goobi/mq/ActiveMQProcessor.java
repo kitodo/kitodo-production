@@ -31,8 +31,6 @@ import org.kitodo.production.helper.Helper;
  * an abstract class would be the right place for it. ActiveMQProcessor also
  * provides a place to save the checker for the ActiveMQDirector, to be able to
  * shut it down later.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class ActiveMQProcessor implements MessageListener {
 
@@ -53,7 +51,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * Instantiating the class ActiveMQProcessor always requires to pass the
      * name of the queue it should be attached to. That means, your constructor
      * should look like this:
-     * 
+     *
      * <pre>
      * public MyServiceProcessor() {
      *     super(ConfigCore.getParameter("activeMQ.myService.queue", null));
@@ -63,7 +61,6 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * <p>
      * If the parameter is not set in kitodo_config.properties, it will return
      * “null” and so prevents it from being set up in ActiveMQDirector.
-     * </p>
      *
      * @param queueName
      *            the queue name, if configured, or “null” to prevent the
@@ -74,15 +71,14 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     /**
-     * The method onMessage() provides a corset which checks the message being a
-     * MapMessage, performs a type safe type cast, and extracts the job’s ID to
-     * be able to send useful results to the results topic, which it does after
-     * the abstract method process() has finished.
+     * Provides a corset which checks the message being a MapMessage, performs a
+     * type safe type cast, and extracts the job’s ID to be able to send useful
+     * results to the results topic, which it does after the abstract method
+     * process() has finished.
      *
      * <p>
      * Since this will be the same for all processors which use MapMessages, I
      * extracted the portion into the abstract class.
-     * </p>
      *
      * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
      */

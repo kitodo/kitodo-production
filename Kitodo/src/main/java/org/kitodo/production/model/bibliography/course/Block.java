@@ -23,8 +23,6 @@ import org.joda.time.format.DateTimeFormatter;
  * The class Block is a bean class that represents an interval of time in the
  * course of appearance of a newspaper within which it wasn’t suspended. A Block
  * instance handles one or more Issue objects.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Block {
     /**
@@ -45,7 +43,6 @@ public class Block {
      * time ranges would be represented in one combined block, what would be
      * factual correct but would result in a multitude of exceptions, which
      * could be undesired.
-     * </p>
      */
     private final String variant;
 
@@ -100,7 +97,7 @@ public class Block {
     }
 
     /**
-     * The function addIssue() adds an Issue to this block if it is not already
+     * Adds an Issue to this block if it is not already
      * present.
      *
      * @param issue
@@ -135,7 +132,7 @@ public class Block {
     }
 
     /**
-     * The function clone() creates and returns a copy of this Block.
+     * Creates and returns a copy of this Block.
      *
      * @param course
      *            Course this block belongs to
@@ -154,7 +151,7 @@ public class Block {
     }
 
     /**
-     * The function countIndividualIssues() determines how many stampings of
+     * Determines how many stampings of
      * issues physically appeared without generating a list of IndividualIssue
      * objects.
      *
@@ -176,7 +173,7 @@ public class Block {
     }
 
     /**
-     * The function getIssues() returns the list of issues contained in this
+     * Returns the list of issues contained in this
      * Block.
      *
      * @return the list of issues from this Block
@@ -186,7 +183,7 @@ public class Block {
     }
 
     /**
-     * The function getIndividualIssues() generates a list of IndividualIssue
+     * Generates a list of IndividualIssue
      * objects for a given day, each of them representing a stamping of one
      * physically appeared issue.
      *
@@ -209,7 +206,7 @@ public class Block {
     }
 
     /**
-     * The function getIssue() returns an issue from the Block by the issue’s
+     * Returns an issue from the Block by the issue’s
      * heading, or null if the block doesn’t contain an issue with that heading.
      *
      * @param heading
@@ -226,7 +223,7 @@ public class Block {
     }
 
     /**
-     * The function getFirstAppearance() returns the date the regularity of this
+     * Returns the date the regularity of this
      * block begins with.
      *
      * @return the date of first appearance
@@ -236,7 +233,7 @@ public class Block {
     }
 
     /**
-     * The function getLastAppearance() returns the date the regularity of this
+     * Returns the date the regularity of this
      * block ends with.
      *
      * @return the date of last appearance
@@ -246,7 +243,7 @@ public class Block {
     }
 
     /**
-     * The function isEmpty() returns whether the block is in an empty state or
+     * Returns whether the block is in an empty state or
      * not.
      *
      * @return whether the block is dataless
@@ -269,7 +266,7 @@ public class Block {
     }
 
     /**
-     * The function isMatch() returns whether a given LocalDate comes within the
+     * Returns whether a given LocalDate comes within the
      * limits of this block. Defaults to false if either the argument or one of
      * the fields to compare against is null.
      *
@@ -286,7 +283,7 @@ public class Block {
     }
 
     /**
-     * The method recalculateRegularityOfIssues() recalculates for each Issue
+     * Recalculates for each Issue
      * the daysOfWeek of its regular appearance within the interval of time of
      * the Block. This is especially sensible to detect the underlying
      * regularity after lots of issues whose existence is known have been added
@@ -299,7 +296,7 @@ public class Block {
     }
 
     /**
-     * The function removeIssue() removes the specified Issue from this Block if
+     * Removes the specified Issue from this Block if
      * it is present.
      *
      * @param issue
@@ -312,7 +309,7 @@ public class Block {
     }
 
     /**
-     * The method setFirstAppearance() sets a LocalDate as day of first
+     * Sets a LocalDate as day of first
      * appearance for this Block.
      *
      * @param firstAppearance
@@ -335,7 +332,7 @@ public class Block {
     }
 
     /**
-     * The method setLastAppearance() sets a LocalDate as day of last appearance
+     * Sets a LocalDate as day of last appearance
      * for this Block.
      *
      * @param lastAppearance
@@ -358,7 +355,7 @@ public class Block {
     }
 
     /**
-     * The method setPublicationPeriod() sets two LocalDate instances as days of
+     * Sets two LocalDate instances as days of
      * first and last appearance for this Block.
      *
      * @param firstAppearance
@@ -393,7 +390,7 @@ public class Block {
     }
 
     /**
-     * The method checkForOverlaps() tests an not yet set time range for this
+     * Tests an not yet set time range for this
      * block whether it doesn’t overlap with other titles in this course and can
      * be set. (Because this method is called prior to setting a new value as a
      * field value, it doesn’t take the values from the classes’ fields even
@@ -419,7 +416,7 @@ public class Block {
     }
 
     /**
-     * The function toString() provides returns a string that contains a concise
+     * Provides returns a string that contains a concise
      * but informative representation of this block that is easy for a person to
      * read.
      *
@@ -450,7 +447,7 @@ public class Block {
     }
 
     /**
-     * The function toString() provides returns a string that contains a textual
+     * Provides returns a string that contains a textual
      * representation of this block that is easy for a person to read.
      *
      * @param dateConverter
@@ -478,7 +475,6 @@ public class Block {
      * The method was generated by Eclipse using right-click → Source → Generate
      * hashCode() and equals()…. If you will ever change the classes’ fields,
      * just re-generate it.
-     * </p>
      *
      * @see java.lang.Object#hashCode()
      */
@@ -501,7 +497,6 @@ public class Block {
      * The method was generated by Eclipse using right-click → Source → Generate
      * hashCode() and equals()…. If you will ever change the classes’ fields,
      * just re-generate it.
-     * </p>
      *
      * @see java.lang.Object#equals(java.lang.Object)
      */

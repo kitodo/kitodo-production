@@ -81,14 +81,14 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
     }
 
     /**
-     * Returns the input field type for the input field for this meta-data key.
+     * Returns the input field type for the input field for this metadata key.
      *
      * @return the input type
      */
     @Override
     public InputType getInputType() {
         /*
-         * If the meta-data key has a type that requires a special input field,
+         * If the metadata key has a type that requires a special input field,
          * return the corresponding field type.
          */
         switch (universal.getType()) {
@@ -105,7 +105,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
         }
 
         /*
-         * If the meta-data key defines options, return the corresponding
+         * If the metadata key defines options, return the corresponding
          * selection type.
          */
         if (universal.isHavingOptions()) {
@@ -133,7 +133,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
     }
 
     /**
-     * Returns the possible values if the meta-data key is a list of values.
+     * Returns the possible values if the metadata key is a list of values.
      * Depending on the operating mode, the values are either re-sorted or
      * restricted based on the specified values in the presence of a permit
      * rule.

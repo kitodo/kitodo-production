@@ -432,7 +432,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testDisplaySettingsWithoutAcquisitionStage.xml"));
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
 
-        // 1. Without meta-data, and without additional fields being selected,
+        // 1. Without metadata, and without additional fields being selected,
         // you should see exactly the fields that are always showing, minus
         // those that are excluded (excluded overrules always showing).
         List<MetadataViewWithValuesInterface<Void>> mvwviListNoMetadata = sevi
@@ -447,7 +447,7 @@ public class RulesetManagementIT {
         assertThat(ids(mviCollNoMetadata), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline",
             "testAlwaysShowingEditable", "testAlwaysShowingMultiline", "testEditableMultiline", "testNestedSettings"));
 
-        // 1a. In the nested meta-data field, the only value that should be
+        // 1a. In the nested metadata field, the only value that should be
         // visible is the one marked as always showing. The field has to be
         // added first:
         List<MetadataViewWithValuesInterface<Void>> mvwviListNestedSettings = sevi
@@ -460,13 +460,13 @@ public class RulesetManagementIT {
         assertEquals(1, nestedMvwviList.size());
         assertEquals("testAlwaysShowing", nestedMvwviList.get(0).getMetadata().get().getId());
 
-        // 2a. Also with nested meta-data, all fields except those that are
+        // 2a. Also with nested metadata, all fields except those that are
         // excluded should be allowed to be added.
         Collection<MetadataViewInterface> nestedMviColl = nestedSettings.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
         assertThat(ids(nestedMviColl), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline"));
 
-        // 3. With meta-data, all fields should be visible except those that are
+        // 3. With metadata, all fields should be visible except those that are
         // excluded. There should be an entry without a key in the list
         // containing the values of the excluded keys.
         Map<Object, String> metadata = new HashMap<>();
@@ -491,7 +491,7 @@ public class RulesetManagementIT {
                     .flatMap(mvwvi -> mvwvi.getValues().stream()).collect(Collectors.toList()),
             containsInAnyOrder("exclude1", "exclude2", "exclude3", "exclude4"));
 
-        // 3a. Also with nested meta-data, that should work that way.
+        // 3a. Also with nested metadata, that should work that way.
         Map<Object, String> nestedMetadata = new HashMap<>();
         nestedMetadata.put("udv-q@bC", "testAlwaysShowing");
         nestedMetadata.put("/F5Mu=/1", "testEditable");
@@ -983,14 +983,14 @@ public class RulesetManagementIT {
     }
 
     /**
-     * The method provides a simple access to a meta-data key in a list of
+     * The method provides a simple access to a metadata key in a list of
      * MetadataViewWithValuesInterface.
      * 
      * @param mvwviList
      *            list of MetadataViewWithValuesInterface to extract from
      * @param keyId
      *            ID of key to extract
-     * @return meta-data key
+     * @return metadata key
      */
     private SimpleMetadataViewInterface getSmvi(List<MetadataViewWithValuesInterface<Object>> mvwviList, String keyId) {
         return (SimpleMetadataViewInterface) mvwviList.stream().filter(mvwvi -> mvwvi.getMetadata().isPresent())
@@ -998,14 +998,14 @@ public class RulesetManagementIT {
     }
 
     /**
-     * The method provides a simple access to a meta-data key in a list of
+     * The method provides a simple access to a metadata key in a list of
      * MetadataViewWithValuesInterface.
      * 
      * @param metadataViewWithValuesInterfaceList
      *            list of MetadataViewWithValuesInterface to extract from
      * @param keyId
      *            ID of key to extract
-     * @return meta-data key
+     * @return metadata key
      */
     private ComplexMetadataViewInterface getCmvi(
             List<MetadataViewWithValuesInterface<Object>> metadataViewWithValuesInterfaceList, String keyId) {
@@ -1017,26 +1017,26 @@ public class RulesetManagementIT {
     }
 
     /**
-     * Returns the IDs of the meta-data keys in a collection of meta-data view
+     * Returns the IDs of the metadata keys in a collection of metadata view
      * interfaces.
      * 
      * @param mviColl
-     *            collection of meta-data view interfaces to return the IDs of
-     *            the meta-data keys from
-     * @return the IDs of the meta-data keys
+     *            collection of metadata view interfaces to return the IDs of
+     *            the metadata keys from
+     * @return the IDs of the metadata keys
      */
     private List<String> ids(Collection<MetadataViewInterface> mviColl) {
         return mviColl.stream().map(MetadataViewInterface::getId).collect(Collectors.toList());
     }
 
     /**
-     * Returns the IDs of the meta-data keys in a meta-data view with values
+     * Returns the IDs of the metadata keys in a metadata view with values
      * interface list.
      * 
      * @param metadataViewWithValuesInterfaceList
-     *            meta-data view with values interface list to return the IDs of
-     *            the meta-data keys from
-     * @return the IDs of the meta-data keys
+     *            metadata view with values interface list to return the IDs of
+     *            the metadata keys from
+     * @return the IDs of the metadata keys
      */
     private <T> List<String> ids(List<MetadataViewWithValuesInterface<T>> metadataViewWithValuesInterfaceList) {
         return metadataViewWithValuesInterfaceList.stream()

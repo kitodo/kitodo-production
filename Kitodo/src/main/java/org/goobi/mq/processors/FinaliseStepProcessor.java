@@ -32,8 +32,6 @@ import org.kitodo.production.services.ServiceManager;
  * This is a web service interface to close steps. You have to provide the step
  * id as “id”; you can add a field “message” which will be added to the wiki
  * field.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FinaliseStepProcessor extends ActiveMQProcessor {
 
@@ -79,8 +77,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The method updateProperties() transfers the properties to set into
-     * Goobi’s data model.
+     * Transfers the properties to set into Production’s data model.
      *
      * @param dialog
      *            The CurrentTaskForm that we work with

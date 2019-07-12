@@ -39,7 +39,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
         /*
-         * Legacy code tries to add (empty) meta-data entries here. I guess this
+         * Legacy code tries to add (empty) metadata entries here. I guess this
          * is a bug.
          */
     }

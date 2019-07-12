@@ -156,7 +156,7 @@ public class LogicalStructMapType extends StructMapType {
 
     private DivType getParentDivOfChildDivFromDivList(DivType childDiv, List<DivType> divTypeList) {
         if (childDiv.getID().contains("ROOT")) {
-            throw new UnsupportedOperationException("Root element can not have a parent!");
+            throw new UnsupportedOperationException("Root element cannot have a parent!");
         }
         for (DivType div : divTypeList) {
             if (div.getDiv().contains(childDiv)) {

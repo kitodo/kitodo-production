@@ -33,7 +33,7 @@ import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.services.ServiceManager;
 
 /**
- * This class contains some methods to handle meta-data (semi) automatically.
+ * This class contains some methods to handle metadata (semi) automatically.
  */
 public class MetadataEditor {
     /**
@@ -89,7 +89,7 @@ public class MetadataEditor {
     /**
      * Creates a given number of new structures and inserts them into the
      * workpiece. The insertion position is given relative to an existing
-     * structure. In addition, you can specify meta-data, which is assigned to
+     * structure. In addition, you can specify metadata, which is assigned to
      * the structures consecutively with a counter.
      *
      * @param number
@@ -104,9 +104,9 @@ public class MetadataEditor {
      * @param position
      *            relative insertion position
      * @param metadataKey
-     *            key of the meta-data to create
+     *            key of the metadata to create
      * @param metadataValue
-     *            value of the first meta-data entry
+     *            value of the first metadata entry
      */
     public static void addMultipleStructures(int number, String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, String metadataKey, String metadataValue) {

@@ -16,9 +16,8 @@ import java.lang.reflect.Field;
 import org.kitodo.exceptions.MetadataException;
 
 /**
- * A VariableSelector provides methods to retrieve variables used in Goobi.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * A VariableSelector provides methods to retrieve variables used in the source
+ * code.
  */
 public class VariableSelector extends DataSelector {
 

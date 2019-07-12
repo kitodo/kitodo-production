@@ -64,7 +64,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     private StructuralElementViewInterface divisionView;
 
     /**
-     * The user’s meta-data language priority list.
+     * The user’s metadata language priority list.
      */
     private List<LanguageRange> priorityList;
 

@@ -309,7 +309,7 @@ public class VariableReplacer {
         String result = "";
         switch (metadataLevel) {
             case FIRSTCHILD:
-                // without existing FirstChild, this can not be returned
+                // without existing FirstChild, this cannot be returned
                 if (Objects.isNull(resultFirst)) {
                     logger.info("Can not replace firstChild-variable for METS: {}", metadata);
                 } else {

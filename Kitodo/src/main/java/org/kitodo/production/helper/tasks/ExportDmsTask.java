@@ -22,8 +22,6 @@ import org.kitodo.production.helper.Helper;
  * process and provides the ability to run the export in the background this
  * way. This is especially valuable if the export has a big load of images to
  * copy.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ExportDmsTask extends EmptyTask {
 

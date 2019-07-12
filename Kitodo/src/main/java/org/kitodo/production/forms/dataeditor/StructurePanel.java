@@ -79,7 +79,7 @@ public class StructurePanel implements Serializable {
      * Creates a new structure panel.
      *
      * @param dataEditor
-     *            the master meta-data editor
+     *            the master metadata editor
      */
     StructurePanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -516,7 +516,7 @@ public class StructurePanel implements Serializable {
             }
         } catch (IOException e) {
             /*
-             * Error case: The meta-data file of the parent process cannot be
+             * Error case: The metadata file of the parent process cannot be
              * loaded. Show the process title of the parent process and the
              * warning sign.
              */

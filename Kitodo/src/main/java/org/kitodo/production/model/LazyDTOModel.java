@@ -109,7 +109,6 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      * overwrites a function from the PrimeFaces LazyDataModel and therefore its
      * method signature cannot be changed, e.g. now thrown exceptions can be added
      * to it.
-     * </p>
      *
      * @return whether the ElasticSearch index is running or not
      */

@@ -98,7 +98,7 @@ public class ProzesskopieForm extends BaseForm {
 
     /**
      * The field hitlist holds some reference to the hitlist retrieved from a
-     * library catalogue. The internals of this object are subject to the plugin
+     * library catalog. The internals of this object are subject to the plug-in
      * implementation and are not to be accessed directly.
      */
     private Object hitlist;
@@ -111,13 +111,13 @@ public class ProzesskopieForm extends BaseForm {
     private long hitlistPage = -1;
     /**
      * The field hits holds the number of hits in the hitlist last retrieved
-     * from a library catalogue.
+     * from a library catalog.
      */
     private long hits;
 
     /**
-     * The field importCatalogue holds the catalogue plugin used to access the
-     * library catalogue.
+     * The field importCatalogue holds the catalog plug-in used to access the
+     * library catalog.
      */
     private transient CataloguePlugin importCatalogue;
 
@@ -227,8 +227,8 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * The function evaluateOpac() is executed if a user clicks the command link
-     * to start a catalogue search. It performs the search and loads the hit if
+     * The function is executed if a user clicks the command link
+     * to start a catalog search. It performs the search and loads the hit if
      * it is unique. Otherwise, it will cause a hit list to show up for the user
      * to select a hit.
      */
@@ -297,18 +297,18 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * The function pluginAvailableFor(catalogue) verifies that a plugin
-     * suitable for accessing the library catalogue identified by the given
-     * String is available in the global variable importCatalogue. If
-     * importCatalogue is empty or the current plugin doesn’t support the given
-     * catalogue, the function will try to load a suitable plugin. Upon success
-     * the preferences and the catalogue to use will be configured in the
-     * plugin, otherwise an error message will be set to be shown.
+     * The function pluginAvailableFor(catalog) verifies that a plugin suitable
+     * for accessing the library catalog identified by the given String is
+     * available in the global variable importCatalogue. If importCatalogue is
+     * empty or the current plug-in doesn’t support the given catalog, the
+     * function will try to load a suitable plug-in. Upon success the
+     * preferences and the catalog to use will be configured in the plug-in,
+     * otherwise an error message will be set to be shown.
      *
      * @param catalogue
-     *            identifier string for the catalogue that the plugin shall
+     *            identifier string for the catalog that the plug-in shall
      *            support
-     * @return whether a plugin is available in the global variable
+     * @return whether a plug-in is available in the global variable
      *         importCatalogue
      */
     private boolean pluginAvailableFor(String catalogue) {
@@ -344,7 +344,7 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * The method importHit() loads a hit into the display.
+     * Loads a hit into the display.
      *
      * @param hit
      *            Hit to load
@@ -495,7 +495,7 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * Create the process and save the meta-data.
+     * Create the process and save the metadata.
      */
     public String createNewProcess() {
         if (createProcess()) {
@@ -560,8 +560,8 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * If there is an RDF configuration (for example, from the OPAC import, or
-     * freshly created), then supplement these.
+     * If there is an RDF configuration (for example, from the catalog import,
+     * or freshly created), then supplement these.
      */
     private void processRdfConfiguration() {
         // create RDF config if there is none
@@ -1024,7 +1024,7 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * The method setAdditionalField() sets the value of an AdditionalField held
+     * Sets the value of an AdditionalField held
      * by a ProzesskopieForm object.
      *
      * @param key
@@ -1100,9 +1100,9 @@ public class ProzesskopieForm extends BaseForm {
     }
 
     /**
-     * Get all OPAC catalogues.
+     * Get all library catalogs.
      *
-     * @return list of catalogues
+     * @return list of catalogs
      */
     public List<String> getAllOpacCatalogues() {
         try {

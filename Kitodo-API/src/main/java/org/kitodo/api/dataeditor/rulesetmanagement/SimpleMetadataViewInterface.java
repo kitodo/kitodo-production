@@ -16,17 +16,17 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Provides an interface for the meta-data key view service. The meta-data key
- * view service provides a filtered view on meta-data keys.
+ * Provides an interface for the metadata key view service. The metadata key
+ * view service provides a filtered view on metadata keys.
  */
 public interface SimpleMetadataViewInterface extends MetadataViewInterface {
     /**
-     * Maps a boolean value to a meta-data value.
+     * Maps a boolean value to a metadata value.
      *
      * @param value
      *            boolean input value
-     * @return value to save as a meta-data entry. If absent, delete the
-     *         meta-data entry.
+     * @return value to save as a metadata entry. If absent, delete the
+     *         metadata entry.
      */
     default Optional<String> convertBoolean(boolean value) {
         if (getSelectItems().isEmpty()) {
@@ -71,14 +71,14 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
     InputType getInputType();
 
     /**
-     * Returns the possible values if the meta-data key is a list of values.
+     * Returns the possible values if the metadata key is a list of values.
      *
      * @return the possible values
      */
     Map<String, String> getSelectItems();
 
     /**
-     * Returns {@code false}. A simple meta-data key is not complex.
+     * Returns {@code false}. A simple metadata key is not complex.
      *
      * @return always false
      */

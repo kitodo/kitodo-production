@@ -27,7 +27,7 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.production.helper.Helper;
 
 /**
- * Backing bean for the meta-data panel of the meta-data editor.
+ * Backing bean for the metadata panel of the metadata editor.
  */
 public class MetadataPanel implements Serializable {
 
@@ -48,13 +48,13 @@ public class MetadataPanel implements Serializable {
         this.rulesetSetup = rulesetSetup;
     }
 
-    // TODO create similar method for physical meta-data entries
+    // TODO create similar method for physical metadata entries
     /**
-     * The method is executed when a user clicks the add meta-data button. A new
-     * meta-data entry will be created with the entered type and value. Actually
+     * The method is executed when a user clicks the add metadata button. A new
+     * metadata entry will be created with the entered type and value. Actually
      * this procedure is not in the sense of the inventor. Especially with
      * selection types, the user must enter the coded value, which is
-     * inconvenient. Nor can this procedure be transferred to meta-data groups.
+     * inconvenient. Nor can this procedure be transferred to metadata groups.
      * The better approach would be to first create and display a field and then
      * give the user the option to enter or select the value.
      */
@@ -63,7 +63,7 @@ public class MetadataPanel implements Serializable {
             /*
              * First, we get the translated label of the table line into which
              * the value must be entered. It could disappear from the list of
-             * addable meta-data if we specify the field as additionally
+             * addable metadata if we specify the field as additionally
              * selected and the maximum number of occurrences would be reached.
              * That's why we have to do that first.
              */
@@ -72,7 +72,7 @@ public class MetadataPanel implements Serializable {
                     .orElseThrow(IllegalStateException::new).getLabel();
 
             /*
-             * Then we add the meta-data to add. This will rebuild the table and
+             * Then we add the metadata to add. This will rebuild the table and
              * create an empty table line (somewhere) into which we can enter
              * the value.
              */
@@ -110,7 +110,7 @@ public class MetadataPanel implements Serializable {
     }
 
     /**
-     * Empties the meta-data panel.
+     * Empties the metadata panel.
      */
     public void clear() {
         logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
@@ -144,18 +144,18 @@ public class MetadataPanel implements Serializable {
     }
 
     /**
-     * Returns the rows of logical meta-data that JSF has to display.
+     * Returns the rows of logical metadata that JSF has to display.
      *
-     * @return the rows of logical meta-data
+     * @return the rows of logical metadata
      */
     public List<MetadataTableRow> getLogicalMetadataRows() {
         return logicalMetadataTable.getRows();
     }
 
     /**
-     * Returns the rows of physical meta-data that JSF has to display.
+     * Returns the rows of physical metadata that JSF has to display.
      *
-     * @return the rows of physical meta-data
+     * @return the rows of physical metadata
      */
     public List<MetadataTableRow> getPhysicalMetadataRows() {
         return physicalMetadataTable.getRows();

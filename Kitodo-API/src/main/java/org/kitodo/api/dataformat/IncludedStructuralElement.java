@@ -39,8 +39,8 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
     private LinkedMetsResource link;
 
     /**
-     * The meta-data for this included structural element. This included
-     * structural element level can be described with any meta-data.
+     * The metadata for this included structural element. This included
+     * structural element level can be described with any metadata.
      */
     private Collection<Metadata> metadata = new HashSet<>();
 
@@ -154,9 +154,9 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
     }
 
     /**
-     * Returns the meta-data on this included structural element.
+     * Returns the metadata on this included structural element.
      *
-     * @return the meta-data
+     * @return the metadata
      */
     public Collection<Metadata> getMetadata() {
         return metadata;

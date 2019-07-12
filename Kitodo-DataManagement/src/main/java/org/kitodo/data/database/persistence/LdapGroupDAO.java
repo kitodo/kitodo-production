@@ -22,7 +22,7 @@ public class LdapGroupDAO extends BaseDAO<LdapGroup> {
     public LdapGroup getById(Integer id) throws DAOException {
         LdapGroup result = retrieveObject(LdapGroup.class, id);
         if (result == null) {
-            throw new DAOException("Object can not be found in database");
+            throw new DAOException("Object cannot be found in database");
         }
         return result;
     }

@@ -33,8 +33,6 @@ import org.kitodo.production.services.ServiceManager;
  * The CatalogueConfiguration class provides the Jersey API URL pattern
  * ${SERVLET_CONTEXT}/rest/projects which returns the major data from the
  * project configuration in XML or JSON format.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @Path("/projects")
 public class Projects {

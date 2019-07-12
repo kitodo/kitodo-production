@@ -40,17 +40,16 @@ import org.kitodo.production.services.ServiceManager;
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to
  * a queue configured by "activeMQ.createNewProcess.queue" on application
- * startup. It was designed to create new processes from outside Goobi. There
+ * startup. It was designed to create new processes from outside Production. There
  * are two ways providing to create new processes. If the MapMessage on that
  * queue contains of all the fields listed, the bibliographic data is retrieved
- * using a catalogue configured within Goobi. If “opac” is missing, it will try
+ * using a catalog configured within Production. If “opac” is missing, it will try
  * to create a process just upon the data passed in the “userFields” − “field”
  * and “value” will be ignored in that case, and the “docType” can be set
  * manually.
  *
  * <p>
  * Field summary:
- * </p>
  *
  * <dl>
  * <dt>String template</dt>
@@ -62,14 +61,12 @@ import org.kitodo.production.services.ServiceManager;
  * <dt>String value</dt>
  * <dd>Value to look for, id of physical medium</dd>
  * <dt>String docType</dt>
- * <dd>DocType value to use if no catalogue request is performed.</dd>
+ * <dd>DocType value to use if no catalog request is performed.</dd>
  * <dt>Set&lt;String&gt; collections</dt>
  * <dd>Collections to be selected.</dd>
  * <dt>Map&lt;String, String&gt; userFields collections</dt>
  * <dd>Fields to be populated manually.</dd>
  * </dl>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final Logger logger = LogManager.getLogger(CreateNewProcessProcessor.class);
@@ -104,10 +101,10 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *            title of the process template the new process shall be derived
      *            from
      * @param opac
-     *            name of the connection to a library catalogue to load the
+     *            name of the connection to a library catalog to load the
      *            bibliographic data from (may be null)
      * @param field
-     *            number of the catalogue search field (ignored if “opac” is
+     *            number of the catalog search field (ignored if “opac” is
      *            null)
      * @param value
      *            search string (ignored if “opac” is null)
@@ -151,8 +148,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function newProcessFromTemplate() derives a ProzesskopieForm object
-     * from a given template.
+     * Derives a ProzesskopieForm object from a given template.
      *
      * @param templateTitle
      *            title value of the template to look for
@@ -171,8 +167,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function getTemplateByTitle() fetches the first Prozess with
-     * istTemplate and the given templateTitle from the database.
+     * Fetches the first process template with the given title from the
+     * database.
      *
      * @param templateTitle
      *            the title of the template to be picked up
@@ -192,9 +188,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function validCollectionsForProcess() tests whether a given set of
-     * collections can be assigned to new process. If so, the set of collections
-     * is returned as a list ready for assignment.
+     * Tests whether a given set of collections can be assigned to new process.
+     * If so, the set of collections is returned as a list ready for assignment.
      *
      * @param collections
      *            a set of collection names to be tested
@@ -216,9 +211,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function docTypeIsPossible() tests whether a given docType String can
-     * be applied to a given process template. If so, it will execute without exception,
-     * otherwise, it will throw an informative IllegalArgumentException.
+     * Tests whether a given docType String can be applied to a given process
+     * template. If so, it will execute without exception, otherwise, it will
+     * throw an informative IllegalArgumentException.
      *
      * @param dialog
      *            the ProzesskopieForm object to test against
@@ -249,8 +244,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The method setUserFields() allows to set any AdditionalField to a user
-     * specific value.
+     * Allows to set any additional field to a user-specific value.
      *
      * @param form
      *            a ProzesskopieForm object whose AdditionalField objects are
@@ -268,8 +262,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * Sets the bibliographic data for a new process from a library catalogue.
-     * This is equal to manually choosing a catalogue and a getByQuery field,
+     * Sets the bibliographic data for a new process from a library catalog.
+     * This is equal to manually choosing a catalog and a getByQuery field,
      * entering the getByQuery string and clicking “apply”.
      *
      * <p>
@@ -277,7 +271,6 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * count the populated “additional details” fields before and after running
      * the request and assume the method to have failed if not even one more
      * field was populated by the method call.
-     * </p>
      *
      * @param inputForm
      *            the ProzesskopieForm to be set
@@ -306,9 +299,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The function countPopulatedAdditionalFields() returns the number of
-     * AdditionalFields in the given ProzesskopieForm that have meaningful
-     * content.
+     * Returns the number of AdditionalFields in the given ProzesskopieForm that
+     * have meaningful content.
      *
      * @param form
      *            a ProzesskopieForm object to examine

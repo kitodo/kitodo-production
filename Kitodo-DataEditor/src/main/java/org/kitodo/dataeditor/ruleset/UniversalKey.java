@@ -92,7 +92,7 @@ class UniversalKey extends Labeled {
 
     /**
      * Returns the default element(s) that will be displayed when creating a new
-     * meta-data entry. Empty, however, is the nominal case.
+     * metadata entry. Empty, however, is the nominal case.
      *
      * @return the default element(s)
      */

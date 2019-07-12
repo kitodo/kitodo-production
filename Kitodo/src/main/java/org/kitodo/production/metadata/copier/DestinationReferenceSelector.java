@@ -21,8 +21,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDoc
  * A DestinationReferenceSelector provides methods to retrieve document
  * structure nodes relative to the respective document structure that the result
  * of the operation shall be written to for reading from them.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class DestinationReferenceSelector extends DataSelector {
 

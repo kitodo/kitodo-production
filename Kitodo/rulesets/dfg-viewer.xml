@@ -80,7 +80,7 @@
                         xsd:NMTOKEN (that is, do not include spaces).
 
                 - required attribute 'dates':
-                        meta-data key containing the date value
+                        metadata key containing the date value
 
                 - required attribute 'scheme':
                         Formatting pattern for the date value. Either
@@ -4347,26 +4347,26 @@
     <editing>
         <!--
             'setting' tag:
-                Sets display preferences for meta-data keys.
+                Sets display preferences for metadata keys.
 
                 - required attribute 'key':
-                        meta-data key whose display properties you want to 
+                        metadata key whose display properties you want to 
                         configure
 
                 - optional attribute 'alwaysShowing':
-                        If true, a form field for this meta-data key is always 
+                        If true, a form field for this metadata key is always 
                         displayed by default. By default, no empty form fields
                         are displayed, but must first be selected from a list
                         and added to the display. Defaults to false.
 
                 - optional attribute 'editable':
-                        If false, this meta-data key is displayed if a value
+                        If false, this metadata key is displayed if a value
                         has been entered, but the value cannot be changed,
                         deleted, and no other entry can be created using this
                         key. Defaults to true.
                         This setting is intended to write-protect individual
                         keys. If the entire document is to be displayed as
-                        immutable, the meta-data editor should be started in
+                        immutable, the metadata editor should be started in
                         read-only mode instead.
 
                 - optional attribute 'excluded':
@@ -4377,7 +4377,7 @@
 
                 - optional attribute 'multiline':
                         If true, a multi-line input field is displayed for this
-                        meta-data key. For enumerated types, a multi-line
+                        metadata key. For enumerated types, a multi-line
                         selection list is displayed, otherwise a multi-line
                         text field.
 

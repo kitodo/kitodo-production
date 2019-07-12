@@ -26,8 +26,6 @@ import javax.servlet.annotation.WebListener;
  * <p>
  * Bug and solution described here:
  * https://bugs.launchpad.net/goobi-production/+bug/788160
- * </p>
- *
  */
 @WebListener
 public class ImageIOInitializer implements ServletContextListener {

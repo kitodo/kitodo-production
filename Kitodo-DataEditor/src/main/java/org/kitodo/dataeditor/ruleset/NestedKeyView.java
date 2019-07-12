@@ -53,7 +53,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * </pre>
      *
      * @param <V>
-     *            the type of meta-data values
+     *            the type of metadata values
      * @param additionallySelectedKeys
      *            key for which the user has requested an additional blank field
      * @param auxiliaryTable
@@ -74,7 +74,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * relevant, you cannot parallelize here.
      *
      * @param <V>
-     *            the type of meta-data values
+     *            the type of metadata values
      * @param rows
      *            rows to append
      * @param auxiliaryTable
@@ -91,11 +91,11 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     /**
      * Sorts the table by copying it into a TreeMap with the translated label as
      * the key. The label will also be appended with the id if there are ever
-     * two meta-data keys with the same label in the rule set. Since TreeMap is
+     * two metadata keys with the same label in the rule set. Since TreeMap is
      * not thread safe, it cannot be parallelized here.
      *
      * @param <V>
-     *            the type of meta-data values
+     *            the type of metadata values
      * @param auxiliaryTableToBeSorted
      *            auxiliary table to be sorted
      * @param priorityList
@@ -132,7 +132,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * Manufacturer for a nested subkey. As you can see from the constructor
      * being private, this shows that it is called only from this class to
      * create a nested subkey view for a nested key view. In that case, this is
-     * always a grouped meta-data.
+     * always a grouped metadata.
      *
      * @param ruleset
      *            the ruleset
@@ -255,7 +255,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * This table contains values if there is no restriction rule or if the
      * restriction rule specifies unspecified as unrestricted. Otherwise the
      * table is empty for now. However, it can still receive elements in the
-     * further course, namely when meta-data entries name a key that is not
+     * further course, namely when metadata entries name a key that is not
      * specified in the rule set. Then in this table namely for undefined key
      * views are created.
      *
@@ -289,10 +289,10 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * functions are called from the class.
      *
      * @param currentEntries
-     *            which meta-data are present in the view
+     *            which metadata are present in the view
      * @param additionalKeys
      *            which keys the user has additionally selected
-     * @return A helper table for all meta-data keys
+     * @return A helper table for all metadata keys
      */
     private <V> Collection<AuxiliaryTableRow<V>> createAuxiliaryTable(Map<V, String> currentEntries,
             Collection<String> additionalKeys) {
@@ -311,7 +311,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     /**
      * Generates the auxiliary table with the keys already specified by the
      * restriction rule in their order. Since the order of the keys is relevant,
-     * you can not parallelize them here.
+     * you cannot parallelize them here.
      *
      * @param explicitlyPermittedKeys
      *            keys given in their order by the restriction rule
@@ -328,16 +328,16 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     }
 
     /**
-     * Here the addable meta-data keys are fetched. To do this, the table must
+     * Here the addable metadata keys are fetched. To do this, the table must
      * first be made and then an output made.
      *
      * @param <V>
-     *            the type of meta-data objects
+     *            the type of metadata objects
      * @param currentEntries
-     *            meta-data objects that have already been entered, along with
+     *            metadata objects that have already been entered, along with
      *            their key
      * @param additionalKeys
-     *            meta-data keys that the user has already selected
+     *            metadata keys that the user has already selected
      */
     @Override
     public <V> Collection<MetadataViewInterface> getAddableMetadata(Map<V, String> currentEntries,
@@ -377,21 +377,21 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     }
 
     /**
-     * Sorts and visibly outputs the meta-data. That’s the main function of the
-     * mask. The structure of meta-data mask is like this: If there is rule,
+     * Sorts and visibly outputs the metadata. That’s the main function of the
+     * mask. The structure of metadata mask is like this: If there is rule,
      * then the order of elements is by rule. But if the rule allows more
      * elements or if there are data elements that are not in the rule, then
-     * they come in alphabetical order below them. The meta-data elements must
+     * they come in alphabetical order below them. The metadata elements must
      * be sorted and therefore sometimes more fields are needed. Exceptions here
      * are multiple selections only once, and with multiple values.
      *
      * @param <V>
-     *            the type of meta-data objects
+     *            the type of metadata objects
      * @param currentEntries
-     *            meta-data objects that have already been entered, along witht
+     *            metadata objects that have already been entered, along witht
      *            heir key
      * @param additionalKeys
-     *            meta-data keys that the user has already selected
+     *            metadata keys that the user has already selected
      * @return mask
      */
     @Override
@@ -423,12 +423,12 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     }
 
     /**
-     * Adds the already entered meta-data to the helper tables. For meta-data
+     * Adds the already entered metadata to the helper tables. For metadata
      * that does not belong to any field, an undefined field is created. Since
      * LinkedHashMap is not thread safe, it cannot be parallelized here.
      *
      * @param enteredMetaData
-     *            already entered meta-data to be added to the auxiliary tables
+     *            already entered metadata to be added to the auxiliary tables
      * @param sortedAuxiliaryTable
      *            help table with rows with default sorting
      * @param auxiliaryTableToBeSorted

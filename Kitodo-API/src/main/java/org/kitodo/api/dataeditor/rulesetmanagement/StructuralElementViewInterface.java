@@ -29,7 +29,7 @@ public interface StructuralElementViewInterface extends ComplexMetadataViewInter
     Map<String, String> getAllowedSubstructuralElements();
 
     /**
-     * Returns view on the meta-data key that is used to store on which date the
+     * Returns view on the metadata key that is used to store on which date the
      * division dates, if any.
      * 
      * @return a view on the key that stores on which date the division dates,

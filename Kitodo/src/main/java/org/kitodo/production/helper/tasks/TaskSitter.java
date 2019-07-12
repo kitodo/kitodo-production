@@ -40,9 +40,6 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
  * all threads that are still running. Because the TaskManager is singleton (its
  * constructor is private) a caring class is needed which will be available for
  * instantiation to the servlet container.
- * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @WebListener
 public class TaskSitter implements Runnable, ServletContextListener {
@@ -80,7 +77,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function isAutoRunningThreads() returns whether the TaskManager’s
+     * Returns whether the TaskManager’s
      * autorun mode is on or not.
      *
      * @return whether the TaskManager is auto-running threads or not
@@ -90,7 +87,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function run() examines the task list, deletes threads that have
+     * Examines the task list, deletes threads that have
      * died, replaces threads that are to be restarted by new copies of
      * themselves and finally starts new threads up to the given limit.
      *
@@ -103,49 +100,42 @@ public class TaskSitter implements Runnable, ServletContextListener {
      * available for garbage collection, these values have been chosen rather
      * restrictive. For the limit for auto starting threads, see
      * {@link #setAutoRunningThreads(boolean)}.
-     * </p>
      *
      * <p>
      * If the task list is empty, the method will exit without further delay,
      * otherwise it will initialise its variables and read the configuration.
      * Reading the configuration is done again in each iteration so
      * configuration changes will propagate here.
-     * </p>
      *
      * <p>
      * Then the function iterates along the task list and takes care for each
      * task. To be able to modify the list in passing, we need a
      * {@link java.util.ListIterator} here.
-     * </p>
      *
      * <p>
      * Running tasks reduce the clearance to run new tasks. (However, the
      * clearance must not become negative.) New tasks will be added to the
      * launch list, except if they have already been marked for removal, of
      * course. If a task has terminated, it is handled as specified by its
-     * behaviour variable: All tasks that are marked DELETE_IMMEDIATELY will
+     * behavior variable: All tasks that are marked DELETE_IMMEDIATELY will
      * instantly be disposed of; otherwise, they will be kept as long as
      * configured and only be removed if their dead body has become older. Tasks
      * marked PREPARE_FOR_RESTART will be replaced (because a
      * {@link java.lang.Thread} cannot be started a second time) by a copy of
      * them.
-     * </p>
      *
      * <p>
      * If a ConcurrentModificationException arises during list examination, the
      * method will behave like a polite servant and retire silently until the
      * lordship has scarpered. This is not a pity because it will be started
      * every some seconds.
-     * </p>
      *
-     * </p>
      * After having finished iterating, the method will reduce the absolute
      * number of expired threads as configured. (Since new threads will be added
      * to the bottom of the list and we therefore want to remove older ones
      * top-down we cannot do this before we know their count, thus we cannot do
      * this while iterating.) Last, new threads will be started up to the
      * remaining available clearance.
-     * </p>
      *
      * @see java.lang.Runnable#run()
      */
@@ -237,7 +227,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function setAutoRunningThreads() turns the feature to auto-run tasks
+     * Turns the feature to auto-run tasks
      * on or off. To enable, it will set the limit of auto running threads to
      * the number of available cores of the runtime or to the value set in the
      * global configuration file, if any. To disable auto-running it will set

@@ -47,13 +47,12 @@ public class MapMessageObjectReader {
     }
 
     /**
-     * The function getMandatorySetOfString() fetches a Set&lt;String&gt; from a
-     * MapMessage. This is a strict implementation that requires the collection
-     * not to be empty and not to contain the null element.
+     * Fetches a {@code Set<String>} from a MapMessage. This is a strict
+     * implementation that requires the collection not to be empty and not to
+     * contain the null element.
      *
      * <p>
      * Please note that the Set is allowed to contain the empty String (“”).
-     * </p>
      *
      * @param key
      *            the name of the set to return
@@ -91,9 +90,8 @@ public class MapMessageObjectReader {
     }
 
     /**
-     * The function getMandatoryString() fetches a String from a MapMessage.
-     * This is a strict implementation that requires the string not to be null
-     * and not to be empty.
+     * Fetches a String from a MapMessage. This is a strict implementation that
+     * requires the string not to be null and not to be empty.
      *
      * @param key
      *            the name of the string to return
@@ -113,9 +111,9 @@ public class MapMessageObjectReader {
     }
 
     /**
-     * The function getString() fetches a String from a MapMessage. This is an
-     * access forward to the native function of the MapMessage. You may consider
-     * to use getMandatoryString() instead.
+     * Fetches a String from a MapMessage. This is an access forward to the
+     * native function of the MapMessage. You may consider to use
+     * getMandatoryString() instead.
      *
      * @param key
      *            the name of the string to return
@@ -129,9 +127,8 @@ public class MapMessageObjectReader {
     }
 
     /**
-     * The function getMandatoryInteger() fetches an Integer object from a
-     * MapMessage. This is a strict implementation that requires the Integer not
-     * to be null.
+     * Fetches an Integer object from a MapMessage. This is a strict
+     * implementation that requires the Integer not to be null.
      *
      * @param key
      *            the name of the string to return
@@ -149,12 +146,11 @@ public class MapMessageObjectReader {
     }
 
     /**
-     * The function getMapOfStringToString() fetches a Map&lt;String,String&gt;
-     * from a MapMessage. This is a partly strict implementation that allows no
-     * null element neither as key, nor as value. However, if no object was
-     * found for the given key, or the key returned a null object, the function
-     * returns null. Also, the Map is allowed to contain the empty String (“”)
-     * as key and as values.
+     * Fetches a {@code Map<String,String>} from a MapMessage. This is a partly
+     * strict implementation that allows no null element neither as key, nor as
+     * value. However, if no object was found for the given key, or the key
+     * returned a null object, the function returns null. Also, the Map is
+     * allowed to contain the empty String (“”) as key and as values.
      *
      * @param key
      *            the name of the map to return
@@ -198,12 +194,11 @@ public class MapMessageObjectReader {
     }
 
     /**
-     * The function hasField() tests whether a field can be obtained from a
-     * MapMessage.
+     * Tests whether a field can be obtained from a MapMessage.
      *
      * @param string
      *            name of the field
-     * @return true or false
+     * @return whether the field can be obtained
      * @throws IllegalArgumentException
      *             can be thrown by MapMessage
      * @throws JMSException

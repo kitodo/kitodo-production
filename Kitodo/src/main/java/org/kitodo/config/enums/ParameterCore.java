@@ -204,13 +204,12 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Sorting of images.
      * <p>
-     * Numeric sorting of images. 1 is lesser then 002, compares the number of image
-     * names, characters other than digits are not supported.
-     * </p>
+     * Numeric sorting of images. 1 is lesser then 002, compares the number of
+     * image names, characters other than digits are not supported.
+     *
      * <p>
-     * Alphanumeric sorting of images. 1 is greater then 002, compares character by
-     * character of image names, all characters are supported.
-     * </p>
+     * Alphanumeric sorting of images. 1 is greater then 002, compares character
+     * by character of image names, all characters are supported.
      */
     IMAGE_SORTING(new Parameter<>("image.sorting", "number", Arrays.asList("number", "alphanumeric"))),
 
@@ -239,7 +238,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Start-up language: If not set, Kitodo.Production will start up with the
      * language best matching the user's Accept-Languages HTTP Request header. You
-     * can override this behaviour by setting a default language here.
+     * can override this behavior by setting a default language here.
      */
     LANGUAGE_FORCE_DEFAULT(new Parameter<>("language.force-default", "de")),
 
@@ -276,12 +275,12 @@ public enum ParameterCore implements ParameterInterface {
 
     /**
      * Number of hits to show per page on the hitlist when multiple hits were found
-     * on a catalogue search. Integer, defaults to 12.
+     * on a catalog search. Integer, defaults to 12.
      */
     HITLIST_PAGE_SIZE(new Parameter<>("catalogue.hitlist.pageSize", 12)),
 
     /**
-     * Indicates the maximum duration an interaction with a library catalogue may
+     * Indicates the maximum duration an interaction with a library catalog may
      * take. Milliseconds, defaults to 30 minutes.
      */
     CATALOGUE_TIMEOUT(new Parameter<>("catalogue.timeout", TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES))),
@@ -302,7 +301,7 @@ public enum ParameterCore implements ParameterInterface {
     METS_EDITOR_DEFAULT_SUFFIX(new Parameter<UndefinedParameter>("metsEditor.defaultSuffix")),
 
     /**
-     * Enables or disables automatic pagination changes in the meta-data editor. If
+     * Enables or disables automatic pagination changes in the metadata editor. If
      * false, pagination must be updated manually by clicking the link “Read in
      * pagination from images”. Boolean, defaults to {@code true}.
      */
@@ -365,7 +364,7 @@ public enum ParameterCore implements ParameterInterface {
 
     /**
      * Data copy rules may be used to copy Kitodo internal data and metadata on
-     * catalogue query.
+     * catalog query.
      */
     COPY_DATA_ON_CATALOGUE_QUERY(new Parameter<UndefinedParameter>("copyData.onCatalogueQuery")),
 
@@ -568,7 +567,6 @@ public enum ParameterCore implements ParameterInterface {
      *
      * <p>
      * Example: authority.http\://d-nb.info/gnd/.id=gnd
-     * </p>
      */
     AUTHORITY_ID_FROM_URI(new Parameter<UndefinedParameter>("authority.{0}.id")),
 
@@ -579,7 +577,6 @@ public enum ParameterCore implements ParameterInterface {
      *
      * <p>
      * Example: authority.default=http\://d-nb.info/gnd/
-     * </p>
      */
     AUTHORITY_DEFAULT(new Parameter<UndefinedParameter>("authority.default")),
 

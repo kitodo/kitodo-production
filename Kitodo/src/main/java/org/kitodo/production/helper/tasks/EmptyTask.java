@@ -26,8 +26,6 @@ import org.kitodo.production.helper.Helper;
  * independently to do the work in the background. The name empty task points
  * out that the task doesn’t do anything sensible yet. It is here to be
  * extended.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class EmptyTask extends Thread implements INameableTask {
 
@@ -38,19 +36,17 @@ public class EmptyTask extends Thread implements INameableTask {
      * to do with a terminated thread. These are:
      *
      * <dl>
-     * <dt><code>DELETE_IMMEDIATELY</code></dt>
+     * <dt>{@code DELETE_IMMEDIATELY}</dt>
      * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
      * </dd>
-     * <dt><code>KEEP_FOR_A_WHILE</code></dt>
-     * <dd>The default behaviour: A thread that terminated either normally or
+     * <dt>{@code KEEP_FOR_A_WHILE}</dt>
+     * <dd>The default behavior: A thread that terminated either normally or
      * abnormally is kept around in memory for a while and then removed
      * automatically. Numeric and temporary limits can be configured.</dd>
-     * <dt><code>PREPARE_FOR_RESTART</code></dt>
+     * <dt>{@code PREPARE_FOR_RESTART}</dt>
      * <dd>If the thread was interrupted by a user, replace it by a new one,
      * passing in the state of the old one to be able to continue work.</dd>
      * </dl>
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     public enum Behaviour {
         DELETE_IMMEDIATELY,
@@ -71,17 +67,17 @@ public class EmptyTask extends Thread implements INameableTask {
     };
 
     /**
-     * The constant DEFAULT_BEHAVIOUR defines the default behaviour of the
-     * TaskKeeper towards a task that terminated. The default behaviour is that
+     * The constant DEFAULT_BEHAVIOUR defines the default behavior of the
+     * TaskKeeper towards a task that terminated. The default behavior is that
      * it will be kept in the front end as configured in the global
      * configuration file and then will be deleted.
      */
     private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
 
     /**
-     * The field behaviour defines the behaviour of the TaskKeeper towards the
+     * The field behavior defines the behavior of the TaskKeeper towards the
      * task if it has terminated. Setting this field to DELETE_IMMEDIATELY will
-     * also result in the desired behaviour if the task has not yet been started
+     * also result in the desired behavior if the task has not yet been started
      * at all.
      */
     private Behaviour behaviour;
@@ -152,22 +148,22 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getBehaviour() returns the instruction how the TaskSitter
-     * shall behave towards this task. Usually, the behaviour isn’t set while
+     * Returns the instruction how the TaskSitter
+     * shall behave towards this task. Usually, the behavior isn’t set while
      * the task is under normal execution. It can be set by calling
      * {@link #interrupt(Behaviour)}. It may also be set this way if the task is
      * still new and wasn’t even started. The following instructions are
      * available:
      *
      * <dl>
-     * <dt><code>DELETE_IMMEDIATELY</code></dt>
+     * <dt>{@code DELETE_IMMEDIATELY}</dt>
      * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
      * </dd>
-     * <dt><code>KEEP_FOR_A_WHILE</code></dt>
-     * <dd>The default behaviour: A thread that terminated either normally or
+     * <dt>{@code KEEP_FOR_A_WHILE}</dt>
+     * <dd>The default behavior: A thread that terminated either normally or
      * abnormally is kept around in memory for a while and then removed
      * automatically. Numeric and temporary limits can be configured.</dd>
-     * <dt><code>PREPARE_FOR_RESTART</code></dt>
+     * <dt>{@code PREPARE_FOR_RESTART}</dt>
      * <dd>If the thread was interrupted by a user, replace it by a new one,
      * passing in the state of the old one to be able to continue work.</dd>
      * </dl>
@@ -189,7 +185,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getDurationDead() returns the duration the task is dead. If
+     * Returns the duration the task is dead. If
      * a time of death has not yet been recorded, null is returned.
      *
      * @return the duration since the task died
@@ -203,7 +199,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getException() provides access to the exception that
+     * Provides access to the exception that
      * occurred if the thread died abnormally. If no exception has occurred yet
      * or it wasn’t properly recorded, null is returned.
      *
@@ -214,7 +210,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getProgress() returns the progress of the task in percent,
+     * Returns the progress of the task in percent,
      * i.e. in a range from 0 to 100.
      *
      * @return the progress of the task
@@ -224,7 +220,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getStateDescription() returns a text string representing the
+     * Returns a text string representing the
      * state of the current task as read-only property "stateDescription".
      *
      * @return a string representing the state of the task
@@ -254,27 +250,27 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getTaskState() returns the task state. It can be one of
+     * Returns the task state. It can be one of
      * the followings:
      *
      * <dl>
-     * <dt><code>CRASHED</code></dt>
+     * <dt>{@code CRASHED}</dt>
      * <dd>The thread has terminated abnormally. The field “exception” is
      * holding the exception that has occurred.</dd>
-     * <dt><code>FINISHED</code></dt>
+     * <dt>{@code FINISHED}</dt>
      * <dd>The thread has finished its work without errors and is available for
      * clean-up.</dd>
-     * <dt><code>NEW</code></dt>
+     * <dt>{@code NEW}</dt>
      * <dd>The thread has not yet been started.</dd>
-     * <dt><code>STOPPED</code></dt>
+     * <dt>{@code STOPPED}</dt>
      * <dd>The thread was stopped by a front end user—resulting in a call to its
      * {@link #interrupt(Behaviour)} method with {@link Behaviour}
      * .PREPARE_FOR_RESTART— and is able to restart after cloning and replacing
      * it.</dd>
-     * <dt><code>STOPPING</code></dt>
+     * <dt>{@code STOPPING}</dt>
      * <dd>The thread has received a request to interrupt but didn’t stop
      * yet.</dd>
-     * <dt><code>WORKING</code></dt>
+     * <dt>{@code WORKING}</dt>
      * <dd>The thread is in operation.</dd>
      * </dl>
      *
@@ -306,7 +302,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getLongMessage() returns the read-only field "longMessage"
+     * Returns the read-only field "longMessage"
      * which will be shown in a pop-up window.
      *
      * @return the stack trace of the exception, if any
@@ -319,8 +315,8 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function interrupt() interrupts this thread and allows to set a
-     * behaviour after interruption.
+     * Interrupts this thread and allows to set a
+     * behavior after interruption.
      *
      * @param mode
      *            how to behave after interruption
@@ -331,7 +327,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function isStartable() returns wether the start button shall be shown
+     * Returns wether the start button shall be shown
      * as read-only property "startable". A thread can be started as long as it
      * has not yet been started.
      *
@@ -342,7 +338,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function isStoppable() returns wether the stop button shall be shown
+     * Returns wether the stop button shall be shown
      * as read-only property "stopable". A thread can be stopped if it is
      * working.
      *
@@ -353,7 +349,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function isDeleteable() returns whether the delete button shall be
+     * Returns whether the delete button shall be
      * shown as read-only property "deleteable". In our interpretation, a thread
      * is deleteable if it is either new or has terminated and is still lounging
      * around.
@@ -426,7 +422,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setNameDetail() may be used to set the task’s name along
+     * May be used to set the task’s name along
      * with a detail that doesn’t require translation and is helpful when being
      * shown in the front end (such as the name of the entity the task is based
      * on). The name detail should be set once (in the constructor). You may
@@ -435,7 +431,6 @@ public class EmptyTask extends Thread implements INameableTask {
      * <p>
      * I.e., if your task is about creation of OCR for a process, the detail
      * here could be the process title.
-     * </p>
      *
      * @param detail
      *            a name detail, may be null
@@ -451,7 +446,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setProgress() may be used to set the task’s progress in
+     * May be used to set the task’s progress in
      * percent (i.e., from 0 to 100).
      *
      * @param progress
@@ -465,7 +460,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setProgress() may be used to set the task’s progress in
+     * May be used to set the task’s progress in
      * percent (i.e., from 0 to 100).
      *
      * @param statusProgress
@@ -483,7 +478,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The procedure setWorkDetail() may be used to set some detail information
+     * May be used to set some detail information
      * that don’t require translation and are helpful when being shown in the
      * front end (such as the name of the entity that is currently being
      * processed by the task). The name detail should be set every time the
@@ -492,7 +487,6 @@ public class EmptyTask extends Thread implements INameableTask {
      * <p>
      * I.e., if your task is about creation of OCR for a process, the detail
      * here could be the image file being processed right now.
-     * </p>
      *
      * @param detail
      *            a work detail, may be null

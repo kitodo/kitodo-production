@@ -45,7 +45,7 @@ public class ClientDaoIT {
         assertEquals("Objects were not removed or not found!", 1, clientDAO.getAll().size());
 
         exception.expect(DAOException.class);
-        exception.expectMessage("Object can not be found in database");
+        exception.expectMessage("Object cannot be found in database");
         clientDAO.getById(1);
     }
 

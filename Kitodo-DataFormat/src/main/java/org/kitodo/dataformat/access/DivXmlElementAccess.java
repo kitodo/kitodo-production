@@ -53,8 +53,8 @@ import org.kitodo.dataformat.metskitodo.Mets;
  */
 public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
-     * The qualified name of the Kitodo meta-data format, needed to assemble the
-     * meta-data entries in METS using JAXB.
+     * The qualified name of the Kitodo metadata format, needed to assemble the
+     * metadata entries in METS using JAXB.
      */
     private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", "kitodo");
 
@@ -145,7 +145,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     }
 
     /**
-     * Determines from a METS data structure of which type is a meta-data
+     * Determines from a METS data structure of which type is a metadata
      * section.
      *
      * <p>
@@ -153,12 +153,12 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      * parallelization.
      *
      * @param mets
-     *            METS data structure that determines what type of meta-data
+     *            METS data structure that determines what type of metadata
      *            section is
      * @param mdSec
-     *            administrative meta-data section whose type is to be
+     *            administrative metadata section whose type is to be
      *            determined
-     * @return the type of administrative meta-data section
+     * @return the type of administrative metadata section
      */
     static final MdSec amdSecTypeOf(Mets mets, MdSecType mdSec) {
         for (AmdSecType amdSec : mets.getAmdSec()) {
@@ -176,12 +176,12 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     }
 
     /**
-     * Reads a meta-data section and adds the meta-data to the structure.
+     * Reads a metadata section and adds the metadata to the structure.
      *
      * @param mdSecType
-     *            type of meta-data section
+     *            type of metadata section
      * @param mdSec
-     *            meta-data section to be read
+     *            metadata section to be read
      *
      * @return
      */
@@ -215,7 +215,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      *            the link pairs of the struct link section are added to this
      *            list
      * @param mets
-     *            the METS structure in which the meta-data is added
+     *            the METS structure in which the metadata is added
      * @return a METS {@code <div>} element
      */
     DivType toDiv(Map<MediaUnit, String> mediaUnitIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
@@ -250,7 +250,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     }
 
     /**
-     * Creates a meta-data section of the specified domain of the Kitodo type
+     * Creates a metadata section of the specified domain of the Kitodo type
      * and returns it with its connection to the METS if there is data for it.
      *
      * @param domain
@@ -283,12 +283,12 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     }
 
     /**
-     * Generates an {@code <amdSec>} if administrative meta-data exists on this
+     * Generates an {@code <amdSec>} if administrative metadata exists on this
      * structure.
      *
      * @param div
      *            div where ADMID references must be added to the generated
-     *            meta-data sections
+     *            metadata sections
      * @return an {@code <amdSec>}, if necessary
      */
     static Optional<AmdSecType> createAmdSec(Iterable<Metadata> metadata, String metsReferrerId, DivType div) {
@@ -305,24 +305,24 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     }
 
     /**
-     * Adds a meta-data section to an administrative meta-data section, if there
+     * Adds a metadata section to an administrative metadata section, if there
      * is one. This function deduplicates fourfold existing function for four
-     * different meta-data sections.
+     * different metadata sections.
      *
      * @param optionalMdSec
-     *            perhaps existing meta-data section to be added if it exists
+     *            perhaps existing metadata section to be added if it exists
      * @param mdSecType
      *            the type of the mdSec, used in ID generation
      * @param mdSecTypeGetter
-     *            the getter via which the meta-data section can be added to the
-     *            administrative meta-data section
+     *            the getter via which the metadata section can be added to the
+     *            administrative metadata section
      * @param amdSec
-     *            administrative meta-data section to which the meta-data
+     *            administrative metadata section to which the metadata
      *            section should be added, if any
      * @param div
      *            div where ADMID references must be added to the generated
-     *            meta-data sections
-     * @return whether something has been added to the administrative meta-data
+     *            metadata sections
+     * @return whether something has been added to the administrative metadata
      *         section
      */
     private static boolean addMdSec(Optional<MdSecType> optionalMdSec, String metsReferrerId, MdSec mdSecType,

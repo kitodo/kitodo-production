@@ -20,7 +20,6 @@ import java.util.Map;
  * <p>
  * Note: MySQL -> Databases -> Tables -> Columns/Rows ElasticSearch -> Indices
  * -> Types -> Documents with Properties
- * </p>
  */
 public interface TypeInterface<T> {
 

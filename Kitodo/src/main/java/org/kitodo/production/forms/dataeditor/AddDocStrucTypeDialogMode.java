@@ -21,7 +21,7 @@ public enum AddDocStrucTypeDialogMode {
     ADD_MULTIPLE_LOGICAL_ELEMENTS,
 
     /**
-     * In this way meta-data can be added.
+     * In this way metadata can be added.
      */
     ADD_METADATA,
 

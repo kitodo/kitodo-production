@@ -22,8 +22,6 @@ import org.kitodo.production.services.ServiceManager;
  * A CopierData object contains all the data the data copier has access to. It
  * has been implemented as an own bean class to allow to easily add variables
  * later without needing to extend many interfaces.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CopierData {
 
@@ -39,7 +37,7 @@ public class CopierData {
     private final LegacyMetsModsDigitalDocumentHelper fileformat;
 
     /**
-     * The Goobi process corresponding to the workspace file.
+     * The Production process corresponding to the workspace file.
      */
     private final Process process;
 
@@ -67,7 +65,7 @@ public class CopierData {
      * @param fileformat
      *            the document to modify
      * @param process
-     *            the related goobi process
+     *            the related Production process
      */
     public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Process process) {
         this.fileformat = fileformat;
@@ -82,7 +80,7 @@ public class CopierData {
      * @param fileformat
      *            the document to modify
      * @param template
-     *            the related goobi process
+     *            the related Production process
      */
     public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Template template) {
         this.fileformat = fileformat;

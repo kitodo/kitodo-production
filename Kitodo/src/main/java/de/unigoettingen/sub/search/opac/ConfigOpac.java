@@ -64,9 +64,9 @@ public class ConfigOpac {
     }
 
     /**
-     * Returns all configured catalogue titles from the config file.
+     * Returns all configured catalog titles from the config file.
      *
-     * @return all catalogue titles
+     * @return all catalog titles
      */
     public static List<String> getAllCatalogueTitles() {
         return getTitles(CATALOGUE);
@@ -148,19 +148,16 @@ public class ConfigOpac {
     }
 
     /**
-     * The function getRestrictionsForCatalogue() returns the content of all
-     * <kbd>&lt;restriction&gt;</kbd> elements from the
-     * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
-     * <kbd>kitodo_opac.xml</kbd>.
+     * Returns the content of all {@code <restriction>} elements from the
+     * {@code <catalogue>} entry with the given {@code title} from
+     * {@code <kitodo_opac.xml>}.
      *
      * <p>
      * The function will return an empty list if there are no such entries for
-     * the given catalogue.
-     * </p>
+     * the given catalog.
      *
      * @param title
-     *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
-     *            examine
+     *            Title parameter of the {@code <catalogue>} entry to examine
      * @return List
      */
     public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
@@ -176,10 +173,10 @@ public class ConfigOpac {
     }
 
     /**
-     * Returns all configured catalogue titles from the config file. The Jersey
+     * Returns all configured catalog titles from the config file. The Jersey
      * API cannot invoke static methods, so we need this wrapper method.
      *
-     * @return all catalogue titles
+     * @return all catalog titles
      */
     @XmlElement(name = "interface")
     public List<String> getInterface() {

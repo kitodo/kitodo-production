@@ -47,14 +47,10 @@ import org.kitodo.config.enums.ParameterCore;
  * should be emptied or commented out. Otherwise, a valid configuration would
  * not start working and an administrator will hardly have a chance to find out
  * why without inspecting the source code.
- * </p>
  *
  * <p>
  * The class ActiveMQDirector also provides a basic ExceptionListener
  * implementation as required for the connection.
- * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @WebListener
 public class ActiveMQDirector implements ServletContextListener, ExceptionListener {
@@ -73,7 +69,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     protected static MessageProducer resultsTopic;
 
     /**
-     * The method contextInitialized() is called by the web container on startup
+     * The method is called by the web container on startup
      * and is used to start up the active MQ connection. All processors from
      * services[] are registered.
      *
@@ -122,7 +118,6 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      * to listen on that queue and, in case of incoming messages, make the
      * service process the message. The message checker is saved inside the
      * service to be able to shut it down later.
-     * </p>
      */
     protected void registerListeners(ActiveMQProcessor[] processors) {
         for (ActiveMQProcessor processor : processors) {

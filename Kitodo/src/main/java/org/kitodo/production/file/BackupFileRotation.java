@@ -32,7 +32,6 @@ import org.kitodo.production.services.file.FileService;
  * All backup files are named by the original file with a number appended. The
  * bigger the number, the older the backup. A specified maximum number of backup
  * files are generated:
- * </p>
  * 
  * <pre>
  * file.xml	// would be the original
@@ -57,7 +56,6 @@ public class BackupFileRotation {
      *
      * <p>
      * If the maximum backup count is less then 1, nothing happens.
-     * </p>
      *
      * @throws IOException
      *             if a file system operation fails

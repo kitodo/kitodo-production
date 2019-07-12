@@ -35,118 +35,107 @@ import org.w3c.dom.Node;
  * <p>
  * A course of appearance consists of one or more blocks of time. Interruptions
  * in the course of appearance can be modeled by subsequent blocks.
- * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Course extends ArrayList<Block> {
 
     /**
-     * Attribute <code>date="…"</code> used in the XML representation of a
+     * Attribute {@code date="…"} used in the XML representation of a
      * course of appearance.
      */
     private static final String ATTRIBUTE_DATE = "date";
 
     /**
-     * Attribute <code>index="…"</code> used in the XML representation of a
+     * Attribute {@code index="…"} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * The attribute <code>index="…"</code> is optional. It may be used to
+     * The attribute {@code index="…"} is optional. It may be used to
      * distinguish different blocks if needed and can be omitted if only one
      * block is used.
-     * </p>
      */
     private static final String ATTRIBUTE_VARIANT = "index";
 
     /**
-     * Attribute <code>issue="…"</code> used in the XML representation of a
+     * Attribute {@code issue="…"} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * The attribute <code>issue="…"</code> holds the name of the issue.
+     * The attribute {@code issue="…"} holds the name of the issue.
      * Newspapers, especially bigger ones, can have several issues that, e.g.,
      * may differ in time of publication (morning issue, evening issue, …) or
      * geographic distribution (Edinburgh issue, London issue, …).
-     * </p>
      */
     private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
 
     /**
-     * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
+     * Element {@code <appeared>} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * Each <code>&lt;appeared&gt;</code> element represents one issue that
-     * physically appeared. It has the attributes <code>issue="…"</code>
-     * (required, may be empty) and <code>date="…"</code> (required) and cannot
+     * Each {@code <appeared>} element represents one issue that
+     * physically appeared. It has the attributes {@code issue="…"}
+     * (required, may be empty) and {@code date="…"} (required) and cannot
      * hold child elements.
-     * </p>
      */
     private static final String ELEMENT_APPEARED = "appeared";
 
     /**
-     * Element <code>&lt;course&gt;</code> used in the XML representation of a
+     * Element {@code <course>} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * <code>&lt;course&gt;</code> is the root element of the XML
+     * {@code <course>} is the root element of the XML
      * representation. It can hold two children,
-     * <code>&lt;description&gt;</code> (output only, optional) and
-     * <code>&lt;processes&gt;</code> (required).
-     * </p>
+     * {@code <description>} (output only, optional) and
+     * {@code <processes>} (required).
      */
     private static final String ELEMENT_COURSE = "course";
 
     /**
-     * Element <code>&lt;description&gt;</code> used in the XML representation
+     * Element {@code <description>} used in the XML representation
      * of a course of appearance.
      *
      * <p>
-     * <code>&lt;description&gt;</code> holds a verbal, human-readable
+     * {@code <description>} holds a verbal, human-readable
      * description of the course of appearance, which is generated only and
      * doesn’t have an effect on input.
-     * </p>
      */
     private static final String ELEMENT_DESCRIPTION = "description";
 
     /**
-     * Element <code>&lt;process&gt;</code> used in the XML representation of a
+     * Element {@code <process>} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * Each <code>&lt;process&gt;</code> element represents one process to be
-     * generated in Goobi Production. It can hold <code>&lt;title&gt;</code>
+     * Each {@code <process>} element represents one process to be
+     * generated in Production. It can hold {@code <title>}
      * elements (of any quantity).
-     * </p>
      */
     private static final String ELEMENT_PROCESS = "process";
 
     /**
-     * Element <code>&lt;processes&gt;</code> used in the XML representation of
+     * Element {@code <processes>} used in the XML representation of
      * a course of appearance.
      *
      * <p>
-     * Each <code>&lt;processes&gt;</code> element represents the processes to
-     * be generated in Goobi Production. It can hold
-     * <code>&lt;process&gt;</code> elements (of any quantity).
-     * </p>
+     * Each {@code <processes>} element represents the processes to
+     * be generated in Production. It can hold
+     * {@code <process>} elements (of any quantity).
      */
     private static final String ELEMENT_PROCESSES = "processes";
 
     /**
-     * Element <code>&lt;title&gt;</code> used in the XML representation of a
-     * course of appearance. Each <code>&lt;title&gt;</code> element represents
+     * Element {@code <title>} used in the XML representation of a
+     * course of appearance. Each {@code <title>} element represents
      * a block in time the appeared issues belong to. It has the optional
-     * attribute <code>index="…"</code> and can hold
-     * <code>&lt;appeared&gt;</code> elements (of any quantity).
+     * attribute {@code index="…"} and can hold
+     * {@code <appeared>} elements (of any quantity).
      *
      * <p>
      * Note: In the original design, the element was intended to model title
      * name changes. This was given up later, but for historical reasons, the
      * XML element’s name is still “title”. For the original design, see
      * https://github.com/kitodo/kitodo-production/issues/51#issuecomment-38035674
-     * </p>
      */
     private static final String ELEMENT_BLOCK = "title";
 
@@ -297,7 +286,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The procedure clearProcesses() deletes the process list. This is
+     * Deletes the process list. This is
      * necessary if the processes must be regenerated because the data structure
      * they will be derived from has changed, or if they only had been added
      * temporarily to be able to retrieve an XML file containing values.
@@ -309,7 +298,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The method countIndividualIssues() determines how many stampings of
+     * Determines how many stampings of
      * issues physically appeared without generating a list of IndividualIssue
      * objects.
      *
@@ -351,7 +340,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getIndividualIssues() generates a list of IndividualIssue
+     * Generates a list of IndividualIssue
      * objects, each of them representing a stamping of one physically appeared
      * issue.
      *
@@ -373,7 +362,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getFirstAppearance() returns the date the regularity of this
+     * Returns the date the regularity of this
      * course of appearance starts with.
      *
      * @return the date of first appearance
@@ -393,7 +382,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getLastAppearance() returns the date the regularity of this
+     * Returns the date the regularity of this
      * course of appearance ends with.
      *
      * @return the date of last appearance
@@ -413,7 +402,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getNumberOfProcesses() returns the number of processes into
+     * Returns the number of processes into
      * which the course of appearance will be split.
      *
      * @return the number of processes
@@ -423,7 +412,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function guessTotalNumberOfPages() calculates a guessed number of
+     * Calculates a guessed number of
      * pages for a course of appearance of a newspaper, presuming each issue
      * having 40 pages and Sunday issues having six times that size because most
      * people buy the Sunday issue most often and therefore advertisers buy the
@@ -447,7 +436,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function getProcesses() returns the processes to create from the
+     * Returns the processes to create from the
      * course of appearance.
      *
      * @return the processes
@@ -457,7 +446,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function isMatch() iterates over the array of blocks and returns the
+     * Iterates over the array of blocks and returns the
      * first one that matches a given date. Since there shouldn’t be overlapping
      * blocks, there should be at most one block for which this is true. If no
      * matching block is found, it will return null.
@@ -476,7 +465,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The method recalculateRegularityOfIssues() recalculates for all blocks of
+     * Recalculates for all blocks of
      * this Course for each Issue the daysOfWeek of its regular appearance
      * within the interval of time of the block. This is especially sensible to
      * detect the underlying regularity after lots of issues whose existence is
@@ -489,7 +478,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function remove() removes the element at the specified position in
+     * Removes the element at the specified position in
      * this list. Shifts any subsequent elements to the left (subtracts one from
      * their indices). Additionally, any references to the object held in the
      * map used for resolving are being removed so that the object can be
@@ -513,7 +502,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The method splitInto() calculates the processes depending on the given
+     * Calculates the processes depending on the given
      * BreakMode.
      *
      * @param mode
@@ -545,7 +534,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * The function toXML() transforms a course of appearance to XML.
+     * Transforms a course of appearance to XML.
      *
      * @return XML as String
      */

@@ -34,8 +34,6 @@ import org.xml.sax.SAXException;
 
 /**
  * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class XMLUtils {
 
@@ -47,7 +45,7 @@ public class XMLUtils {
     }
 
     /**
-     * The method documentToByteArray() converts an org.w3c.dom.Document to a
+     * Converts an org.w3c.dom.Document to a
      * ByteArray for Downloading
      *
      * @param data
@@ -73,7 +71,7 @@ public class XMLUtils {
     }
 
     /**
-     * The function getFirstChildWithTagName() returns the first child node from
+     * Returns the first child node from
      * a node, identified by its node name.
      *
      * @param data
@@ -97,7 +95,7 @@ public class XMLUtils {
     }
 
     /**
-     * The function load() is a convenience method load a DOM Document object
+     * The function is a convenience method load a DOM Document object
      * from an input stream.
      *
      * @param data
@@ -124,7 +122,7 @@ public class XMLUtils {
     }
 
     /**
-     * The function newDocument() is a convenience method to obtain a new
+     * The function is a convenience method to obtain a new
      * instance of a DOM Document object.
      *
      * @return A new DOM Document

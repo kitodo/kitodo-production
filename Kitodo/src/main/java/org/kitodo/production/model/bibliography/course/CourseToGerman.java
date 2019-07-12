@@ -25,8 +25,6 @@ import org.kitodo.production.helper.DateUtils;
 /**
  * The static class CourseToGerman provides a toString() method to convert a
  * course of appearance into a verbal description in German language.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CourseToGerman {
     /**
@@ -53,7 +51,7 @@ public class CourseToGerman {
     }
 
     /**
-     * The function toString() returns a verbal description of the course of
+     * Returns a verbal description of the course of
      * appearance in German.
      *
      * @return Verbal description of the course in German
@@ -80,7 +78,7 @@ public class CourseToGerman {
     }
 
     /**
-     * The function titleToString() formulates the regular appearance of a block
+     * Formulates the regular appearance of a block
      * in German language.
      *
      * @param block
@@ -143,7 +141,7 @@ public class CourseToGerman {
     }
 
     /**
-     * The function irregularitiesToString() formulates the irregularities of a
+     * Formulates the irregularities of a
      * given issue in German language.
      *
      * @param issue
@@ -176,7 +174,7 @@ public class CourseToGerman {
     }
 
     /**
-     * The method appendManyDates() converts a lot of date objects into readable
+     * Converts a lot of date objects into readable
      * text in German language.
      *
      * @param buffer
@@ -257,7 +255,7 @@ public class CourseToGerman {
     }
 
     /**
-     * The method appendDate() writes a date to the buffer.
+     * Writes a date to the buffer.
      *
      * @param buffer
      *            Buffer to write to

@@ -15,54 +15,46 @@ import java.util.List;
 
 /**
  * The class QueryBuilder provides methods to create query strings to be passed
- * to library catalogue access plug-in implementation objects as argument to
+ * to library catalog access plug-in implementation objects as argument to
  * their find() function. The semantics of the created query is as follows, in
  * descending precedence of the operators:
  * 
  * <p>
- * <b>Double quotes</b> (<code>""</code>) may be used to embrace a sequence of
+ * <b>Double quotes</b> ({@code ""}) may be used to embrace a sequence of
  * tokens that have to appear in exactly that order in the search result (aka.
  * string search). They must appear in pairs.
- * </p>
  * 
  * <p>
- * <b>Round brackets</b> (<code>()</code>) may be used for logical reordering.
+ * <b>Round brackets</b> ({@code ()}) may be used for logical reordering.
  * They must appear in pairs.
- * </p>
  *
  * <p>
  * <b>Blanks</b> (<code> </code>) are used to separate tokens. They imply a
- * conjunction, i.e. <code>cat dog</code> shall return only hits that contain
+ * conjunction, i.e. {@code cat dog} shall return only hits that contain
  * both tokens.
- * </p>
  *
  * <p>
- * A <b>vertical dash</b> (<code>|</code>) indicates the freedom of choice, i.e.
- * <code>cat | dog</code> may return hits that contain the token “cat” but not
+ * A <b>vertical dash</b> ({@code |}) indicates the freedom of choice, i.e.
+ * {@code cat | dog} may return hits that contain the token “cat” but not
  * necessarily the token “dog” and the other way round and of course hits that
  * contain both tokens as well.
- * </p>
  *
  * <p>
- * A <b>minus sign</b> (<code>-</code>) indicates the exclusion of a search
+ * A <b>minus sign</b> ({@code -}) indicates the exclusion of a search
  * term, i.e. that the hits shall not contain the given term. (Example:
- * <code>track -running</code>)<br>
+ * {@code track -running})<br>
  * In combination with <i>colon</i>, the minus sign shall prefix the whole
- * expression, not the search term (i.e. <code>track -4:running</code>, not
- * <code>track 4:-running</code>).
- * </p>
+ * expression, not the search term (i.e. {@code track -4:running}, not
+ * {@code track 4:-running}).
  *
  * <p>
- * A <b>colon</b> (<code>:</code>) indicates fielded search, so that the term
+ * A <b>colon</b> ({@code :}) indicates fielded search, so that the term
  * must be found—or, in combination with a minus sign, must not be found—in the
- * prepended field of the database (i.e. <code>4:beagle</code> to search for the
+ * prepended field of the database (i.e. {@code 4:beagle} to search for the
  * term “beagle” in the field “4”). Search fields are referenced by the integers
- * used to reference them in PICA library catalogues (i.e. “4” = title, “7” =
+ * used to reference them in PICA library catalogs (i.e. “4” = title, “7” =
  * ISBN, “8” = ISSN, “12” = Record identifier, …; for a list of supported fields
  * see /Kitodo/src/main/webapp/pages/NewProcess/inc_process.xhtml)
- * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class QueryBuilder {
 
@@ -74,7 +66,7 @@ public class QueryBuilder {
     }
 
     /**
-     * The function appendAll() appends a list of query tokens to an initial
+     * Appends a list of query tokens to an initial
      * query by means of a StringBuilder.
      *
      * @param query
@@ -101,7 +93,7 @@ public class QueryBuilder {
     }
 
     /**
-     * The function restrictToField() prefixes the tokens of a query by the
+     * Prefixes the tokens of a query by the
      * given search field.
      *
      * @param field

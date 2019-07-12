@@ -397,7 +397,7 @@ public class User extends BaseBean {
     }
 
     /**
-     * The function selfDestruct() removes a user from the environment. Since the
+     * Removes a user from the environment. Since the
      * user ID may still be referenced somewhere, the user is not hard deleted from
      * the database, instead the account is set inactive and invisible.
      *
@@ -406,7 +406,6 @@ public class User extends BaseBean {
      * otherwise it would be blocked eternally by the login existence test performed
      * in the UserForm.save() function. In addition, all personally identifiable
      * information is removed from the database as well.
-     * </p>
      */
 
     public void selfDestruct() {

@@ -38,9 +38,6 @@ import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
 
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
- *
- * @author Based on preceding works from authors not named
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class PluginLoader {
     private static final Logger logger = LogManager.getLogger(PluginLoader.class);
@@ -56,13 +53,13 @@ public class PluginLoader {
     }
 
     /**
-     * The function getCataloguePluginForCatalogue() returns a redirection class
+     * Returns a redirection class
      * to handle the first plug-in implementation object that positively
-     * responds to <code>supportsCatalogue(catalogue)</code>.
+     * responds to {@code supportsCatalogue(catalogue)}.
      *
      * @param catalogue
-     *            catalogue in question
-     * @return the first plug-in that supports the given catalogue
+     *            catalog in question
+     * @return the first plug-in that supports the given catalog
      */
     public static CataloguePlugin getCataloguePluginForCatalogue(String catalogue) {
         for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
@@ -74,10 +71,10 @@ public class PluginLoader {
     }
 
     /**
-     * Get plugin list.
+     * Get plug-in list.
      *
      * @deprecated Using this function is discouraged. Use
-     *             <code>getPlugins(Class)</code> instead.
+     *             {@code getPlugins(Class)} instead.
      */
     @Deprecated
     public static List<IPlugin> getPluginList(PluginType inType) {
@@ -89,10 +86,10 @@ public class PluginLoader {
     }
 
     /**
-     * Get plugin by title.
+     * Get plug-in by title.
      *
      * @deprecated Using this function is discouraged. Use
-     *             <code>getPluginByTitle(Class, String, Locale)</code> instead.
+     *             {@code getPluginByTitle(Class, String, Locale)} instead.
      */
     @Deprecated
     public static IPlugin getPluginByTitle(PluginType inType, String inTitle) {
@@ -109,16 +106,15 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginByTitle() loads all plug-ins implementing the given
-     * UnspecificPlugin class type and returns a redirection class to handle the
-     * first plug-in implementation object that responds to
-     * <code>getTitle(language)</code> with the given title.
+     * Loads all plug-ins implementing the given UnspecificPlugin class type and
+     * returns a redirection class to handle the first plug-in implementation
+     * object that responds to {@code getTitle(language)} with the given
+     * title.
      *
      * <p>
      * Currently, this method is not referenced from within the Production code,
      * but this may change in future. The function is provided to show how the
      * old plug-in API can be replaced in future.
-     * </p>
      *
      * @param clazz
      *            UnspecificPlugin class type of the plug-ins to load
@@ -143,15 +139,14 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginConfiguration() creates a HashMap that is passed to
-     * the plug-ins upon creation to configure them. The plug-ins may or may not
-     * make use of the configuration provided.
+     * Creates a HashMap that is passed to the plug-ins upon creation to
+     * configure them. The plug-ins may or may not make use of the configuration
+     * provided.
      *
      * <p>
      * This is intended to be used for <em>general</em> configuration (probably)
      * suitable for all plug-in types. Use setters on the plug-ins to set
      * type-specific settings.
-     * </p>
      *
      * @return a HashMap to configure the plug-ins
      */
@@ -164,9 +159,9 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPlugins() loads all plug-ins implementing the given
-     * UnspecificPlugin class type and returns a Collection of redirection
-     * classes, each to handle one plug-in implementation object.
+     * Loads all plug-ins implementing the given UnspecificPlugin class type and
+     * returns a Collection of redirection classes, each to handle one plug-in
+     * implementation object.
      *
      * @param clazz
      *            UnspecificPlugin class type of the plug-ins to load
@@ -200,8 +195,8 @@ public class PluginLoader {
     }
 
     /**
-     * The function getImportPluginsForType() returns a list of titles of import
-     * plug-ins matching the given ImportType.
+     * Returns a list of titles of import plug-ins matching the given
+     * ImportType.
      *
      * @param type
      *            ImportType of plug-ins to look for
@@ -220,7 +215,7 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginLoader() returns a PluginManagerUtil suitable for
+     * Returns a PluginManagerUtil suitable for
      * loading plug-ins from the subdirectory defined by the given PluginType.
      *
      * @param type

@@ -90,10 +90,10 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * The function startExport() performs a DMS export to a desired place. In
-     * addition, it accepts an optional ExportDmsTask object. If that is passed
-     * in, the progress in it will be updated during processing and occurring
-     * errors will be passed to it to be visible in the task manager screen.
+     * Performs a DMS export to a desired place. In addition, it accepts an
+     * optional ExportDmsTask object. If that is passed in, the progress in it
+     * will be updated during processing and occurring errors will be passed to
+     * it to be visible in the task manager screen.
      *
      * @param process
      *            process to export
@@ -262,7 +262,7 @@ public class ExportDms extends ExportMets {
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
-       
+
         if (!fileService.fileExist(userHomeProcess)) {
             fileService.createDirectory(userHome, Helper.getNormalizedTitle(processTitle));
         }

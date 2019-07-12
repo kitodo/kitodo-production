@@ -20,8 +20,8 @@ import org.kitodo.api.MetadataGroup;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;
 
 /**
- * A group of meta-data entries. A group of meta-data entries is like a table
- * with different meta-data entries, which can be groups again. This allows any
+ * A group of metadata entries. A group of metadata entries is like a table
+ * with different metadata entries, which can be groups again. This allows any
  * nesting depths to be achieved.
  */
 public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
@@ -29,8 +29,8 @@ public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
     private final MetadataGroup metadataGroup;
 
     /**
-     * Constructor for a new, empty meta-data entries group. This constructor
-     * can be used with the module loader to create a new meta-data entries
+     * Constructor for a new, empty metadata entries group. This constructor
+     * can be used with the module loader to create a new metadata entries
      * group.
      */
     public MetadataGroupXmlElementAccess() {
@@ -38,7 +38,7 @@ public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
     }
 
     /**
-     * Constructor for a meta-data entry group gained from METS.
+     * Constructor for a metadata entry group gained from METS.
      * 
      * @param domain
      *            domain of the METS document where the metadata was read

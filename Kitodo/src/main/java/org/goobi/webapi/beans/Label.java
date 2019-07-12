@@ -25,8 +25,6 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * where keys are language identifiers (examples include “en”, “de”, …) and
  * values are texts in the respective language. This is necessary because Maps
  * unfortunately do not natively serialize to XML.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Label {
     public enum KeyAttribute {

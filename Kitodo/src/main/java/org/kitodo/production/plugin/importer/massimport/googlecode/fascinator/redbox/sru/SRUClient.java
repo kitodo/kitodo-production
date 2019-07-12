@@ -45,26 +45,22 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 /**
- * <p>
  * A light-weight SRU client implementation. Originally written for the purpose
  * of searching the National Library of Australia's Party Infrastructure Project
  * (PIP) via GET (ie. not POST or SOAP, both of which PIP also supports).
- * </p>
+ *
  * <p>
  * More information/documentation for PIP is
  * <a href="https://wiki.nla.gov.au/display/ARDCPIP/Documentation"> available on
  * the NLA wiki</a>.
- * </p>
  *
  * @author Greg Pendlebury
  *
- *         <p>
- *         Credit for some of inspiration has to go to another light-weight
+ * @author Credit for some of inspiration has to go to another light-weight
  *         implementation available under LGPL we looked at before we started
  *         coding: <a href=
  *         "http://code.google.com/p/sinciput/source/browse/trunk/sinciput/src/com/technosophos/sinciput/sru/SRUClient.java">
  *         SRUClient</a> from 'Sinciput'.
- *         </p>
  *
  */
 public class SRUClient {
@@ -131,10 +127,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Constructor indicating the base URL, metadata schema and format packing
      * for responses.
-     * </p>
      *
      * @param baseUrl
      *            The Base URL for the SRU interface. Required.
@@ -152,11 +146,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * This constructor is where the real work happens. All the constructors
      * above provide wrappers of this one based on how much you want to deviate
      * from the defaults (which assume you are connecting to the NLA.
-     * </p>
      *
      * @param baseUrl
      *            The Base URL for the SRU interface. Required.
@@ -200,10 +192,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Used to change the 'recordSchema' after instantiation. All outgoing
      * requests sent after this call will use the new schema.
-     * </p>
      *
      * @param newSchema
      *            The new schema to use.
@@ -213,10 +203,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Used to change the 'version' after instantiation. All outgoing requests
      * sent after this call will use the new version.
-     * </p>
      *
      * @param newVersion
      *            The new version to use.
@@ -226,10 +214,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Used to change 'recordPacking' after instantiation. All outgoing requests
      * sent after this call will use the new format.
-     * </p>
      *
      * @param newPacking
      *            The new packing format to use.
@@ -239,9 +225,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Simple init for the SAX Reader.
-     * </p>
      */
     private void saxInit() {
         namespaces = new HashMap<>();
@@ -251,10 +235,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Used in unit testing to indicate a package resource to use as search
      * responses, rather then submitting a real SRU query.
-     * </p>
      *
      * @param fileName
      *            The name of a resource 'file' to use as simulated search
@@ -291,9 +273,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Parse an XML String response and populate a response Object.
-     * </p>
      *
      * @param xmlData
      *            The XML String returned from the search
@@ -318,10 +298,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Parse an XML String response and get a List Object containing all of the
      * SRU search results.
-     * </p>
      *
      * @param xmlData
      *            The XML String returned from the search
@@ -339,9 +317,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Basic wrapper for safely encoding Strings used in URLs.
-     * </p>
      *
      * @param value
      *            The String to be used in the URL
@@ -357,16 +333,13 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Get the requested URL and return the GetMethod Object afterwards. To
      * access more info use its method: eg. GetMethod.getStatusCode() and
      * GetMethod.getResponseBodyAsString()
-     * </p>
      *
      * <p>
      * Internally wraps a Fascinator BasicHttpClient Object, so any configured
      * proxy details from the system will be used automatically.
-     * </p>
      *
      * @param url
      *            The URL to retrieve
@@ -384,9 +357,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Generate a basic search URL for this SRU interface.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -397,9 +368,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Generate a search URL for this SRU interface. No sorting or pagination.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -414,9 +383,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Generate a search URL for this SRU interface. No pagination.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -433,11 +400,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Generate a search URL for this SRU interface. This is the actual
      * implementation method wrapped by the methods above with most parameters
      * as optional.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -489,9 +454,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Perform a basic search and return the response body.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -502,9 +465,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Perform a search and return the response body. No sorting or pagination.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -519,9 +480,7 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Perform a search and return the response body. No pagination.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -538,11 +497,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Perform a search and return the response body. This is the actual
      * implementation method wrapped by the methods above with most parameters
      * as optional.
-     * </p>
      *
      * @param query
      *            The query String to perform against the SRU interface.
@@ -599,10 +556,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Make sure that the SAX Reader is aware of the XML namespaces used by the
      * NLA when parsing their.
-     * </p>
      */
     private void nlaNamespaces() {
         if (!namespaces.containsKey("srw")) {
@@ -614,11 +569,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Search for a record from the National Library of Australia with the
      * provided identifier. If multiple records match this identifier only the
      * first will be returned.
-     * </p>
      *
      * @param id
      *            The identifier to search for
@@ -655,11 +608,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Search for a record from the National Library of Australia with the
      * provided identifier. If multiple records match this identifier only the
      * first will be returned.
-     * </p>
      *
      * @param id
      *            The identifier to search for
@@ -680,11 +631,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Search for a record from the National Library of Australia with the
      * provided identifier. If multiple records match this identifier only the
      * first will be returned.
-     * </p>
      *
      * @param id
      *            The identifier to search for
@@ -709,10 +658,8 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Search for a record from the National Library of Australia with the
      * provided identifier. Process and return their Identity record.
-     * </p>
      *
      * @param id
      *            The identifier to search for
@@ -764,11 +711,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Search for records from the National Library of Australia. Process and
      * return their Identity records. It is important to note that if any
      * Identity fails to process it will not appear in the List.
-     * </p>
      *
      * @param search
      *            The search to submit to the NLA
@@ -779,11 +724,9 @@ public class SRUClient {
     }
 
     /**
-     * <p>
      * Search for records from the National Library of Australia. Process and
      * return their Identity records. It is important to note that if any
      * Identity fails to process it will not appear in the List.
-     * </p>
      *
      * @param search
      *            The search to submit to the NLA

@@ -14,8 +14,8 @@ package org.kitodo.api.dataeditor.rulesetmanagement;
 import java.time.MonthDay;
 
 /**
- * Provides an interface for the meta-data key view service for a view on the
- * meta-data key that is used to store on which date the division dates.
+ * Provides an interface for the metadata key view service for a view on the
+ * metadata key that is used to store on which date the division dates.
  */
 public interface DatesSimpleMetadataViewInterface extends SimpleMetadataViewInterface {
     /**

@@ -19,8 +19,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDoc
  * Provides a factory method to create its subclasses depending on a a given
  * String path, and defines methods that shall be implemented by the
  * implementing metadata selectors.
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class MetadataSelector extends DataSelector {
 

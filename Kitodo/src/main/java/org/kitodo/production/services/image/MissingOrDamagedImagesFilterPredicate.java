@@ -36,7 +36,7 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
     private static final String IMAGE_MISSING = "Image {0} not found in folder {1}: Marked for generation.";
 
     /**
-     * This message is written to the log if the image file can not be validated
+     * This message is written to the log if the image file cannot be validated
      * because no Validator is configured for the MIME type.
      */
     private static final String NO_VALIDATOR_CONFIGURED

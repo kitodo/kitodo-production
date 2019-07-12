@@ -36,32 +36,27 @@ import org.kitodo.exceptions.UnreachableCodeException;
  * plug-ins and must be provided by all of them:
  *
  * <p>
- * <code>void configure(Map)</code><br>
- * The function configure() will be called by the {@link PluginLoader} right
+ * {@code void configure(Map)}<br>
+ * The function will be called by the {@link PluginLoader} right
  * after loading a plug-in to pass it the configuration map created in
  * {@link PluginLoader#getPluginConfiguration()}. The plug-in may or may not
  * implement this method.
- * </p>
  *
  * <p>
- * <code>String getDescription(Locale)</code><br>
+ * {@code String getDescription(Locale)}<br>
  * When being called, the function getDescription() shall return a
  * human-readable description for the plug-in. The plug-in may or may not make
  * use of the provided locale to return a description in the named language. If
  * the Locale is null or doesn’t denote a language, the plug-in shall return a
  * human-readable description in English.
- * </p>
  *
  * <p>
- * <code>String getTitle(Locale)</code><br>
+ * {@code String getTitle(Locale)}<br>
  * When being called, the function getTitle() shall return a human-readable name
  * / title for the plug-in. The plug-in may or may not make use of the provided
  * locale to return a title in the named language. If the Locale is null or
  * doesn’t denote a language, the plug-in shall return its human-readable name
  * in English.
- * </p>
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class UnspecificPlugin {
     /**
@@ -70,13 +65,13 @@ public abstract class UnspecificPlugin {
     private static final Class<?>[] NO_ARGS = new Class<?>[] {};
 
     /**
-     * The field plugin holds a reference to the plug-in implementation class.
+     * The field plug-in holds a reference to the plug-in implementation class.
      */
     protected final Object plugin;
 
     /**
      * The field configure holds a Method reference to the method configure() of
-     * the plug-in implementation class or <code>null</code> if the plug-in
+     * the plug-in implementation class or {@code null} if the plug-in
      * doesn’t implement that method.
      */
     private final Method configure;
@@ -99,9 +94,8 @@ public abstract class UnspecificPlugin {
      *
      * <p>
      * The constructor saves a reference to the plug-in implementation class in
-     * the final field plugin and inspects the class for existence of the
+     * the final field plug-in and inspects the class for existence of the
      * methods configure, getDescription and getTitle.
-     * </p>
      *
      * @param implementation
      *            plug-in implementation class
@@ -125,7 +119,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function create() is called by the {@link PluginLoader} to create a
+     * The function is called by the {@link PluginLoader} to create a
      * redirection class of the given PluginType to handle a given plug-in
      * implementation class.
      *
@@ -143,7 +137,7 @@ public abstract class UnspecificPlugin {
      *             checkPackageAccess() denies access to the package of this
      *             class.
      * @throws NoSuchMethodException
-     *             if a required method is not found on the plugin
+     *             if a required method is not found on the plug-in
      */
     static UnspecificPlugin create(PluginType type, Object implementation) throws NoSuchMethodException {
         switch (type) {
@@ -157,7 +151,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function configure() is called by the {@link PluginLoader} right
+     * The function is called by the {@link PluginLoader} right
      * after loading a plug-in to pass it the configuration map created in
      * {@link PluginLoader#getPluginConfiguration()}. The plug-in may or may not
      * make use of the configuration provided.
@@ -172,7 +166,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getDeclaredMethod() looks up a no-arg method in the plugin
+     * Looks up a no-arg method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type.
@@ -199,7 +193,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getDeclaredMethod() looks up a 1-arg method in the plugin
+     * Looks up a 1-arg method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type.
@@ -229,7 +223,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getDeclaredMethod() looks up a method in the plugin
+     * Looks up a method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type.
@@ -264,7 +258,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getDescription() returns a human-readable description for
+     * Returns a human-readable description for
      * the plug-in. The plug-in may or may not make use of the provided locale
      * to return a description in the named language. If the Locale is null or
      * doesn’t denote a language, the plug-in will return a description in
@@ -274,7 +268,6 @@ public abstract class UnspecificPlugin {
      * Currently, this method is not referenced from within the Production code,
      * but this may change in future. The function is provided for completeness
      * since it was part of the old plug-in API, too.
-     * </p>
      *
      * @param language
      *            language to get the description in
@@ -285,7 +278,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getDeclaredMethod() looks up a no-arg method in the plug-in
+     * Looks up a no-arg method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type. If no matching method can be found, it returns
@@ -311,7 +304,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getDeclaredMethod() looks up a 1-arg method in the plugin
+     * Looks up a 1-arg method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type. If no matching method can be found, it returns
@@ -339,7 +332,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getOptionalMethod() looks up a method in the plug-in
+     * Looks up a method in the plug-in
      * implementation object. It extends
      * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
      * checks the result type. If no matching method can be found, it returns
@@ -371,13 +364,13 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function getTitle() returns a human-readable name title for the
+     * Returns a human-readable name title for the
      * plug-in. The plug-in may or may not make use of the provided locale to
      * return a title in the named language. If the Locale is null or doesn’t
      * denote a language, the plug-in will return its English name.
      *
      * @param language
-     *            language to get the plugin’s name in
+     *            language to get the plug-in’s name in
      * @return a human-readable name for the plug-in
      */
     public String getTitle(Locale language) {
@@ -385,7 +378,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The method getType() must be implemented in the redirection class that
+     * Must be implemented in the redirection class that
      * implements this abstract class. It must return the PluginType
      * corresponding to that class.
      *
@@ -394,7 +387,7 @@ public abstract class UnspecificPlugin {
     public abstract PluginType getType();
 
     /**
-     * The function invokeQuietly() invokes a no-arg method on a given object,
+     * Invokes a no-arg method on a given object,
      * returning a result of the given resultType. RuntimeExceptions wrapped as
      * InvocationTargetException by Method.invoke() will be unwrapped, any other
      * wrapped exceptions will be unwrapped and rewrapped as RuntimeExceptions,
@@ -413,7 +406,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function invokeQuietly() invokes a method on a given object, passing
+     * Invokes a method on a given object, passing
      * the argument provided and returning a result of the given resultType.
      * RuntimeExceptions wrapped as InvocationTargetException by Method.invoke()
      * will be unwrapped, any other wrapped exceptions will be unwrapped and
@@ -435,7 +428,7 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function invokeQuietly() invokes a method on a given object, passing
+     * Invokes a method on a given object, passing
      * the arguments provided and returning a result of the given resultType.
      * RuntimeExceptions wrapped as InvocationTargetException by Method.invoke()
      * will be unwrapped, any other wrapped exceptions will be unwrapped and
@@ -462,11 +455,10 @@ public abstract class UnspecificPlugin {
     }
 
     /**
-     * The function typeOf() returns the PluginType of the given plugin class.
+     * Returns the PluginType of the given plugin class.
      *
      * <p>
-     * When changing the further plugin API to the new format, add the
-     * </p>
+     * When changing the further plug-in API to the new format, add the
      *
      * @param clazz
      *            the class to inspect

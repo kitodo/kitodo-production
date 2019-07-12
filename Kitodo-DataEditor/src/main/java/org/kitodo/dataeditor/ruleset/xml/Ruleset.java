@@ -224,10 +224,10 @@ public class Ruleset {
     }
 
     /**
-     * Returns a fictitious meta-data key for the rule set that contains all the
+     * Returns a fictitious metadata key for the rule set that contains all the
      * keys of the rule set.
      *
-     * @return a fictitious meta-data key for the rule set
+     * @return a fictitious metadata key for the rule set
      */
     public Key getFictiousRulesetKey() {
         Key fictiousRulesetKey = new Key();

@@ -35,8 +35,6 @@ import org.kitodo.exceptions.NotImplementedException;
  * <dt>YEARS</dt>
  * <dd>All issues of a year are scanned in one process.</dd>
  * </dl>
- * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public enum Granularity {
     ISSUES,
@@ -47,7 +45,7 @@ public enum Granularity {
     YEARS;
 
     /**
-     * The function format() converts a given LocalDate to a String
+     * Converts a given LocalDate to a String
      * representation of the date in the given granularity. For the 1st January
      * 2000 it will return:
      * <p/>
@@ -56,7 +54,6 @@ public enum Granularity {
      *
      * <p>
      * The remaining cases are undefined and will throw NotImplementedException.
-     * </p>
      *
      * @param date
      *            date to format
