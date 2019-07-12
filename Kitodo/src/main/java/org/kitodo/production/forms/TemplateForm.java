@@ -404,49 +404,6 @@ public class TemplateForm extends TemplateBaseForm {
         this.task = task;
     }
 
-    /**
-     * Get list of switch objects for all folders whose contents can be
-     * generated.
-     *
-     * @return list of FolderProcessingSwitch objects or empty list
-     */
-    public List<FolderProcessingSwitch> getGeneratableFolderSwitches() {
-        Stream<Project> projectsStream = template.getProjects().stream();
-        Stream<Folder> generatableFolders = TaskService.generatableFoldersFromProjects(projectsStream);
-        return getSwitches(generatableFolders, task.getContentFolders());
-    }
-
-    /**
-     * Convert the stream of folders to a list of switch objects.
-     *
-     * @param folders
-     *            folders for which generation or validation can be switched on
-     *            or off
-     * @param activated
-     *            Folders for which generation or validation is switched on.
-     *            This list must be modifiable and connected to the database so
-     *            that changes made by the switches are persisted when the
-     *            template is stored in the database.
-     * @return a list of switch objects to be rendered by JSF
-     */
-    private List<FolderProcessingSwitch> getSwitches(Stream<Folder> folders, List<Folder> activated) {
-        Stream<FolderProcessingSwitch> validatorSwitches = folders
-                .map(folder -> new FolderProcessingSwitch(folder, activated));
-        return validatorSwitches.collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Get list of switch objects for all folders whose contents can be
-     * generated.
-     *
-     * @return list of FolderProcessingSwitch objects or empty list
-     */
-    public List<FolderProcessingSwitch> getValidatableFolderSwitches() {
-        Stream<Folder> validatableFolders = template.getProjects().stream()
-                .flatMap(project -> project.getFolders().stream());
-        return getSwitches(validatableFolders, task.getValidationFolders());
-    }
-
     private void prepareTasks() throws DAOException, IOException, WorkflowException {
         if (!this.template.getTasks().isEmpty()) {
             for (Task oldTask : this.template.getTasks()) {

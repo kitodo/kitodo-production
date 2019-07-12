@@ -34,15 +34,6 @@
         </p:column>
 
         <!-- actions -->
-        <p:column rendered="#{not isViewMode and SecurityAccessController.hasAuthorityToEditTask()}"
-                  headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
-            <h:link outcome="taskTemplateEdit" id="editTask" title="#{msgs.detailsDesSchritts}"
-                    rendered="#{SecurityAccessController.hasAuthorityToEditTask()}">
-                <f:param name="id" value="#{item.id}"/>
-                <i class="fa fa-pencil-square-o fa-lg"/>
-            </h:link>
-        </p:column>
-
         <p:rowExpansion>
             <div class="row-expansion-wrapper">
                 <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.properties}">
