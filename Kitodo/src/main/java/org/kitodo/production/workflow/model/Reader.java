@@ -150,7 +150,7 @@ public class Reader {
      */
     private void iterateOverNodes(FlowNode node, int ordering) throws WorkflowException {
         if (node instanceof Task) {
-            addTask(node, ordering);
+            addTask((Task) node, ordering);
         } else if (node instanceof Gateway) {
             Query<FlowNode> nextNodes = node.getSucceedingNodes();
             if (nextNodes.count() == 1) {
@@ -198,33 +198,52 @@ public class Reader {
     }
 
     /**
-     * Add task to tasks list. If node has 0 following nodes, it makes assumption
+     * Add task to tasks list. If task has 0 following nodes, it makes assumption
      * that it is the last task in the workflow.
      *
-     * @param node
+     * @param task
      *            for task
      * @param ordering
      *            for task
      */
-    private void addTask(FlowNode node, int ordering) throws WorkflowException {
-        Query<FlowNode> nextNodes = node.getSucceedingNodes();
+    private void addTask(Task task, int ordering) throws WorkflowException {
+        Query<FlowNode> nextNodes = task.getSucceedingNodes();
         int nextNodesSize = nextNodes.count();
 
         if (nextNodesSize == 1) {
             FlowNode nextNode = nextNodes.singleResult();
 
             if (nextNode instanceof EndEvent) {
-                tasks.put((Task) node, new TaskInfo(ordering, true));
+                addTaskIfThereIsNoLoop(task, new TaskInfo(ordering, true));
             } else {
-                tasks.put((Task) node, new TaskInfo(ordering, false));
+                addTaskIfThereIsNoLoop(task, new TaskInfo(ordering, false));
                 ordering++;
                 iterateOverNodes(nextNode, ordering);
             }
         } else if (nextNodesSize == 0) {
-            tasks.put((Task) node, new TaskInfo(ordering, true));
+            addTaskIfThereIsNoLoop(task, new TaskInfo(ordering, true));
         } else {
             throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingGateway",
-                Collections.singletonList(node.getName())));
+                Collections.singletonList(task.getName())));
+        }
+    }
+
+    /**
+     * If there are more than one incoming node - it can mean that loop has appeared
+     * (more incoming nodes than outgoing).
+     * 
+     * @param task
+     *            for verification if there is no loop
+     * @param taskInfo
+     *            additional information needed for add task
+     */
+    private void addTaskIfThereIsNoLoop(Task task, TaskInfo taskInfo) throws WorkflowException {
+        Query<FlowNode> previousNodes = task.getPreviousNodes();
+        if (previousNodes.count() == 1) {
+            tasks.put(task, taskInfo);
+        } else {
+            throw new WorkflowException(
+                    Helper.getTranslation("workflowExceptionLoop", Collections.singletonList(task.getName())));
         }
     }
 

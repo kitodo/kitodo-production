@@ -179,6 +179,16 @@ public class ReaderIT {
         }
     }
 
+    @Test
+    public void shouldNotReadWorkflowWithLoop() throws Exception {
+        Reader reader = new Reader("gateway-test6");
+
+        exception.expect(WorkflowException.class);
+        exception.expectMessage(
+                "Task with name 'Task1' has more than one incoming elements - probably workflow contains not allowed loop.");
+        reader.readWorkflowTasks();
+    }
+
     private void assertCorrectTask(Task task, TaskInfo taskInfo, String title, int ordering, String condition) {
         assertEquals("Process definition - workflow's task title was read incorrectly!", title, task.getName());
         assertEquals("Process definition - workflow's task ordering was determined incorrectly!", ordering,
