@@ -36,7 +36,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -193,12 +192,5 @@ public class RulesetServiceIT {
         rulesetService.remove(5);
         exception.expect(DAOException.class);
         rulesetService.getById(5);
-    }
-
-    public void shouldGetPreferences() throws Exception {
-        Ruleset ruleset = rulesetService.getById(1);
-        LegacyPrefsHelper prefs = rulesetService.getPreferences(ruleset);
-
-        assertEquals("Seite", prefs.getDocStrctTypeByName("page").getNameByLanguage("de"));
     }
 }
