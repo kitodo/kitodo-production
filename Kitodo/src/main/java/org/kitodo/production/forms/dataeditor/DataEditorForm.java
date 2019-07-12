@@ -589,7 +589,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
     }
 
-    boolean getExpandTree() {
+    boolean isExpandTree() {
         return this.expandTree;
     }
 }

@@ -363,7 +363,7 @@ public class StructurePanel implements Serializable {
         LinkedList<DefaultTreeNode> result = new LinkedList<>();
 
         DefaultTreeNode main = new DefaultTreeNode();
-        if (this.dataEditor.getExpandTree()) {
+        if (this.dataEditor.isExpandTree()) {
             main.setExpanded(true);
         }
         Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, main);
@@ -401,7 +401,7 @@ public class StructurePanel implements Serializable {
          * framework. So you do not have to add the result anywhere.
          */
         DefaultTreeNode parent = new DefaultTreeNode(node, result);
-        if (this.dataEditor.getExpandTree()) {
+        if (this.dataEditor.isExpandTree()) {
             parent.setExpanded(true);
         }
 
@@ -470,7 +470,7 @@ public class StructurePanel implements Serializable {
             DefaultTreeNode parent) {
         DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(this, label, undefined, linked, dataObject),
                 parent);
-        if (this.dataEditor.getExpandTree()) {
+        if (this.dataEditor.isExpandTree()) {
             node.setExpanded(true);
         }
         return node;
@@ -497,7 +497,7 @@ public class StructurePanel implements Serializable {
         }
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
         DefaultTreeNode tree = new DefaultTreeNode();
-        if (this.dataEditor.getExpandTree()) {
+        if (this.dataEditor.isExpandTree()) {
             tree.setExpanded(true);
         }
         try {
@@ -587,7 +587,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode buildMediaTree(MediaUnit mediaRoot) {
         DefaultTreeNode rootTreeNode = new DefaultTreeNode();
-        if (this.dataEditor.getExpandTree()) {
+        if (this.dataEditor.isExpandTree()) {
             rootTreeNode.setExpanded(true);
         }
         buildMediaTreeRecursively(mediaRoot, rootTreeNode);
@@ -598,7 +598,7 @@ public class StructurePanel implements Serializable {
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 mediaUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         DefaultTreeNode treeNode = addTreeNode(divisionView.getLabel(), false, false, mediaUnit, parentTreeNode);
-        if (this.dataEditor.getExpandTree()) {
+        if (this.dataEditor.isExpandTree()) {
             treeNode.setExpanded(true);
         }
         if (Objects.nonNull(mediaUnit.getChildren())) {
