@@ -147,7 +147,7 @@ class GetOpac {
         try {
             return retrieveDataFromOPAC(SRU_VERSION + SEARCH_URL_BEFORE_QUERY + queryURL + RECORD_SCHEMA_MODS, timeout);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn(e.getLocalizedMessage(), e);
             return null;
         }
     }
@@ -243,7 +243,7 @@ class GetOpac {
             Element numberOfHitsElement = (Element) numberOfHitsPath.selectSingleNode(doc);
             numberOfHits = Integer.parseInt(numberOfHitsElement.getText());
         } catch (JDOMException | IOException e) {
-            e.printStackTrace();
+            logger.warn(e.getLocalizedMessage(), e);
         }
 
         return numberOfHits;
