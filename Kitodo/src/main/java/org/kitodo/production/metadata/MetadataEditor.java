@@ -148,7 +148,7 @@ public class MetadataEditor {
         List<IncludedStructuralElement> siblings = new LinkedList<>();
         if (parents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
-                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT)
+                    || position.equals(InsertionPosition.BEFORE_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.PARENT_OF_CURRENT_ELEMENT)) {
                 Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
                 return null;
@@ -163,7 +163,7 @@ public class MetadataEditor {
             case AFTER_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure) + 1, newStructure);
                 break;
-            case BEFOR_CURRENT_ELEMENT:
+            case BEFORE_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure), newStructure);
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
@@ -205,7 +205,7 @@ public class MetadataEditor {
         List<MediaUnit> siblings = new LinkedList<>();
         if (grandparents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
-                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT)) {
+                    || position.equals(InsertionPosition.BEFORE_CURRENT_ELEMENT)) {
                 Helper.setErrorMessage("No parent found for currently selected media unit to which new media unit can be appended!");
             }
         } else {
@@ -217,7 +217,7 @@ public class MetadataEditor {
             case AFTER_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(parent) + 1, newMediaUnit);
                 break;
-            case BEFOR_CURRENT_ELEMENT:
+            case BEFORE_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(parent), newMediaUnit);
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:

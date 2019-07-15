@@ -1636,11 +1636,11 @@ Column content
 
 .thumbnail {
     height: 60px;
-    border: solid var(--default-border-width) var(--carbon-blue);
+    border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
 }
 
 .thumbnail.active {
-    border: 2px solid var(--green);
+    border-color: var(--green);
 }
 
 .thumbnail-container {
@@ -1710,7 +1710,8 @@ Column content
     padding: 0;
 }
 
-#imagePreviewForm\:structuredPages .ui-widget-content {
+#imagePreviewForm\:structuredPages .ui-widget-content,
+.ui-datalist-empty-message {
     color: var(--pure-white);
 }
 

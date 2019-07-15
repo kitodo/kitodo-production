@@ -44,7 +44,7 @@
                         collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
-                <h:outputText value="#{logicalElementType}" style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.unknownType'] : logicalElementType}" style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>
                 <h:outputText value=" 🔗" rendered="#{logicalNode.linked}"/>
                 <h:outputText value=" ⚠️" rendered="#{logicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
             </p:treeNode>
@@ -97,7 +97,7 @@
                             collapsedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                     <!--@elvariable id="physicalElementType" type="java.lang.String"-->
                     <ui:param name="physicalElementType" value="#{physicalNode.label}"/>
-                    <h:outputText value="#{physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
+                    <h:outputText value="#{empty physicalElementType ? msgs['dataEditor.unknownType'] : physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
                     <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
                     <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
                 </p:treeNode>

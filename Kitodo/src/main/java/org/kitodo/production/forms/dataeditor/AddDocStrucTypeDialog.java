@@ -12,7 +12,7 @@
 package org.kitodo.production.forms.dataeditor;
 
 import static org.kitodo.production.metadata.InsertionPosition.AFTER_CURRENT_ELEMENT;
-import static org.kitodo.production.metadata.InsertionPosition.BEFOR_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.BEFORE_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
@@ -120,7 +120,7 @@ public class AddDocStrucTypeDialog {
     public List<SelectItem> getDocStructAddTypeSelectionItems() {
         switch (docStructPositionSelectionSelectedItem) {
             case AFTER_CURRENT_ELEMENT:
-            case BEFOR_CURRENT_ELEMENT:
+            case BEFORE_CURRENT_ELEMENT:
                 return docStructAddTypeSelectionItemsForSiblings;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
             case LAST_CHILD_OF_CURRENT_ELEMENT:
@@ -409,17 +409,17 @@ public class AddDocStrucTypeDialog {
     private void prepareDocStructPositionSelectionItems(boolean rootNode) {
         docStructPositionSelectionItems = new ArrayList<>();
         if (!rootNode) {
-            docStructPositionSelectionItems.add(new SelectItem(BEFOR_CURRENT_ELEMENT,
-                    Helper.getTranslation("vorDasAktuelleElement")));
+            docStructPositionSelectionItems.add(new SelectItem(BEFORE_CURRENT_ELEMENT,
+                    Helper.getTranslation("dataEditor.position.beforeCurrentElement")));
             docStructPositionSelectionItems.add(new SelectItem(AFTER_CURRENT_ELEMENT,
-                    Helper.getTranslation("hinterDasAktuelleElement")));
+                    Helper.getTranslation("dataEditor.position.afterCurrentElement")));
         }
         docStructPositionSelectionItems.add(new SelectItem(FIRST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("asFirstChildOfCurrentElement")));
+                Helper.getTranslation("dataEditor.position.asFirstChildOfCurrentElement")));
         docStructPositionSelectionItems.add(new SelectItem(LAST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("asLastChildOfCurrentElement")));
+                Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
         docStructPositionSelectionItems.add(new SelectItem(PARENT_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("asParentOfCurrentElement")));
+                Helper.getTranslation("dataEditor.position.asParentOfCurrentElement")));
     }
 
     private void prepareSelectAddableMetadataTypesItems() {
@@ -439,7 +439,7 @@ public class AddDocStrucTypeDialog {
     }
 
     private void prepareSelectPageOnAddNodeItems() {
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
         selectPageOnAddNodeItems = new ArrayList<>(mediaUnits.size());
         for (int i = 0; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
@@ -477,7 +477,7 @@ public class AddDocStrucTypeDialog {
      * found. Otherwise it must be searched for, excluding the wrong ruleset or
      * the wrong client.
      */
-    public void searchButtonClick() {
+    public void search() {
         if (processNumber.trim().isEmpty()) {
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
             return;
