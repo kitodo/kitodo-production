@@ -239,6 +239,7 @@ class GetOpac {
         try {
             Document doc = sb.build(new StringReader(opacResponse));
             XPath numberOfHitsPath = XPath.newInstance("//srw:numberOfRecords");
+            numberOfHitsPath.addNamespace("srw", "http://www.loc.gov/zing/srw/");
             Element numberOfHitsElement = (Element) numberOfHitsPath.selectSingleNode(doc);
             numberOfHits = Integer.parseInt(numberOfHitsElement.getText());
         } catch (JDOMException | IOException e) {
