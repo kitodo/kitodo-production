@@ -38,6 +38,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -152,6 +153,7 @@ public class StructurePanel implements Serializable {
     public void setSelectedLogicalNode(TreeNode selected) {
         if (Objects.nonNull(selected)) {
             this.selectedLogicalNode = selected;
+            expandNode(selected.getParent());
         }
     }
 
@@ -172,6 +174,7 @@ public class StructurePanel implements Serializable {
     public void setSelectedPhysicalNode(TreeNode selectedPhysicalNode) {
         if (Objects.nonNull(selectedPhysicalNode)) {
             this.selectedPhysicalNode = selectedPhysicalNode;
+            expandNode(selectedPhysicalNode.getParent());
         }
     }
 
@@ -360,7 +363,9 @@ public class StructurePanel implements Serializable {
         LinkedList<DefaultTreeNode> result = new LinkedList<>();
 
         DefaultTreeNode main = new DefaultTreeNode();
-        main.setExpanded(true);
+        if (this.dataEditor.isExpandTree()) {
+            main.setExpanded(true);
+        }
         Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, main);
         result.add(main);
         addParentLinksRecursive(dataEditor.getProcess(), result);
@@ -396,7 +401,9 @@ public class StructurePanel implements Serializable {
          * framework. So you do not have to add the result anywhere.
          */
         DefaultTreeNode parent = new DefaultTreeNode(node, result);
-        parent.setExpanded(true);
+        if (this.dataEditor.isExpandTree()) {
+            parent.setExpanded(true);
+        }
 
         Set<View> viewsShowingOnAChild = new HashSet<>();
         for (IncludedStructuralElement child : structure.getChildren()) {
@@ -463,7 +470,9 @@ public class StructurePanel implements Serializable {
             DefaultTreeNode parent) {
         DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(this, label, undefined, linked, dataObject),
                 parent);
-        node.setExpanded(true);
+        if (this.dataEditor.isExpandTree()) {
+            node.setExpanded(true);
+        }
         return node;
     }
 
@@ -488,7 +497,9 @@ public class StructurePanel implements Serializable {
         }
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
         DefaultTreeNode tree = new DefaultTreeNode();
-        tree.setExpanded(true);
+        if (this.dataEditor.isExpandTree()) {
+            tree.setExpanded(true);
+        }
         try {
             IncludedStructuralElement rootElement = ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement();
             List<IncludedStructuralElement> includedStructuralElementList
@@ -576,7 +587,9 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode buildMediaTree(MediaUnit mediaRoot) {
         DefaultTreeNode rootTreeNode = new DefaultTreeNode();
-        rootTreeNode.setExpanded(true);
+        if (this.dataEditor.isExpandTree()) {
+            rootTreeNode.setExpanded(true);
+        }
         buildMediaTreeRecursively(mediaRoot, rootTreeNode);
         return rootTreeNode;
     }
@@ -585,7 +598,9 @@ public class StructurePanel implements Serializable {
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 mediaUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         DefaultTreeNode treeNode = addTreeNode(divisionView.getLabel(), false, false, mediaUnit, parentTreeNode);
-        treeNode.setExpanded(true);
+        if (this.dataEditor.isExpandTree()) {
+            treeNode.setExpanded(true);
+        }
         if (Objects.nonNull(mediaUnit.getChildren())) {
             for (MediaUnit child : mediaUnit.getChildren()) {
                 buildMediaTreeRecursively(child, treeNode);
@@ -746,6 +761,19 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Callback function triggered on NodeCollapseEvent. Sets the 'expanded' flag of the corresponding tree node to
+     * 'false' because this is not done automatically by PrimeFaces on a NodeCollapseEvent.
+     *
+     * @param event
+     *          the NodeCollapseEvent triggered in the corresponding structure tree
+     */
+    public void onNodeCollapse(NodeCollapseEvent event) {
+        if (Objects.nonNull(event) && Objects.nonNull(event.getTreeNode())) {
+            event.getTreeNode().setExpanded(false);
+        }
+    }
+
+    /**
      * Callback function triggered on TreeDragDropEvent. Checks whether performed drag'n'drop action is allowed
      * considering ruleset restrictions on structure hierarchy. In case some ruleset rules were violated by the action
      * displays a corresponding error message to the user and reverts tree to prior state.
@@ -851,5 +879,12 @@ public class StructurePanel implements Serializable {
     public boolean isSeparateMedia() {
         return Objects.nonNull(this.dataEditor.getCurrentTask())
                 && this.dataEditor.getCurrentTask().isSeparateStructure();
+    }
+
+    private void expandNode(TreeNode node) {
+        if (Objects.nonNull(node)) {
+            node.setExpanded(true);
+            expandNode(node.getParent());
+        }
     }
 }
