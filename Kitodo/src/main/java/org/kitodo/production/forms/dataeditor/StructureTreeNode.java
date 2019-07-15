@@ -12,9 +12,11 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.View;
 
 public class StructureTreeNode implements Serializable {
 
@@ -81,5 +83,22 @@ public class StructureTreeNode implements Serializable {
         } else {
             return "";
         }
+    }
+
+    /**
+     * Check if the StructureTreeNode's MediaUnit is assigned to several IncludedStructuralElements.
+     *
+     * @return {@code true} when the MediaUnit is assigned to more than one logical element
+     */
+    public boolean isAssignedSeveralTimes() {
+        if (Objects.nonNull(this.dataObject)) {
+            if (this.dataObject instanceof View) {
+                View view = (View) this.dataObject;
+                return Objects.nonNull(view.getMediaUnit()) && view.getMediaUnit().getIncludedStructuralElements().size() > 1;
+            } else if (this.dataObject instanceof MediaUnit) {
+                return ((MediaUnit) this.dataObject).getIncludedStructuralElements().size() > 1;
+            }
+        }
+        return false;
     }
 }

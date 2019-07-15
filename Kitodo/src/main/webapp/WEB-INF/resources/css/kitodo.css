@@ -1434,6 +1434,16 @@ Column content
     bottom: 64px;
 }
 
+#structureTreeForm .ui-treenode-label .assigned-several-times {
+    margin-left: 5px;
+}
+
+#structureTreeForm .ui-treenode-label .assigned-several-times::before {
+    content: '\f0c1';
+    font-family: FontAwesome;
+    margin-right: 3px;
+}
+
 #structureTreeForm\:paginationPanel {
     margin-top: 5px;
     height: calc(50% - 45px);
@@ -1719,6 +1729,21 @@ Column content
 .thumbnail-container {
     position: relative;
     display: inline-block;
+}
+
+.thumbnail-container .assigned-several-times {
+    bottom: 5px;
+    color: var(--pure-white);
+    left: 5px;
+    opacity: .9;
+    position: absolute;
+    text-shadow: 0 0 3px var(--carbon-blue);
+}
+
+.thumbnail-container .assigned-several-times::before {
+    content: '\f0c1';
+    font-family: FontAwesome;
+    margin-right: 3px;
 }
 
 .thumbnail-overlay {

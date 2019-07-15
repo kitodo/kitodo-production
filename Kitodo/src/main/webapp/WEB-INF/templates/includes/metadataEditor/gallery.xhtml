@@ -101,6 +101,9 @@
                                                         rendered="#{media.showingInPreview}">
                                             <f:param name="id" value="#{media.id}" />
                                         </p:graphicImage>
+                                        <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                                                      rendered="#{media.assignedSeveralTimes}"
+                                                      styleClass="assigned-several-times"/>
                                         <h:panelGroup class="thumbnail-overlay">
                                             #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
                                         </h:panelGroup>

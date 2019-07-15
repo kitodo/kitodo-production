@@ -445,6 +445,12 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background: inherit;
 }
 
+.ui-contextmenu,
+.ui-contextmenu .ui-menuitem,
+.ui-contextmenu .ui-menuitem-link {
+    width: auto;
+}
+
 .ui-inputfield,
 .ui-selectcheckboxmenu-multiple-container.ui-inputfield,
 .ui-picklist-list-wrapper,

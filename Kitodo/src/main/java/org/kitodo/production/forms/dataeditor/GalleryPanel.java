@@ -601,4 +601,18 @@ public class GalleryPanel {
             dataEditor.getSelectedMedia().add(selectedMediaPair);
         }
     }
+
+    /*
+     * Get the index of this GalleryMediaContent's MediaUnit out of all MediaUnits
+     * which are assigned to more than one IncludedStructuralElement.
+     *
+     * @param galleryMediaContent object to find the index for
+     * @return index of the GalleryMediaContent's MediaUnit if present in the List of several assignments, or -1 if not present in the list.
+     */
+    public int getSeveralAssignmentsIndex(GalleryMediaContent galleryMediaContent) {
+        if (Objects.nonNull(galleryMediaContent.getView()) && Objects.nonNull(galleryMediaContent.getView().getMediaUnit())) {
+            return dataEditor.getStructurePanel().getSeveralAssignments().indexOf(galleryMediaContent.getView().getMediaUnit());
+        }
+        return -1;
+    }
 }

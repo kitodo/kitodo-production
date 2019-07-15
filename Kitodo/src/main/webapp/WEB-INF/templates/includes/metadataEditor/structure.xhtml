@@ -36,12 +36,14 @@
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     update="@(.thumbnail)
+                            structureTreeForm:contextMenuLogicalTree
                             structureTreeForm:physicalTree
                             metadataAccordion:logicalMetadataWrapperPanel
                             imagePreviewForm:olWrapper"/>
             <p:ajax event="dragdrop"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="structureTreeForm:logicalTree
+                            structureTreeForm:contextMenuLogicalTree
                             metadataAccordion:logicalMetadataWrapperPanel
                             galleryWrapperPanel"/>
             <p:ajax event="collapse"
@@ -53,11 +55,14 @@
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
                 <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.unknownType'] : logicalElementType}" style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
+                              rendered="#{logicalNode.assignedSeveralTimes}"
+                              styleClass="assigned-several-times"/>
                 <h:outputText value=" 🔗" rendered="#{logicalNode.linked}"/>
                 <h:outputText value=" ⚠️" rendered="#{logicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
             </p:treeNode>
         </p:tree>
-        <p:contextMenu for="logicalTree">
+        <p:contextMenu for="logicalTree" id="contextMenuLogicalTree">
             <p:menuitem value="#{msgs.addElement}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
@@ -72,6 +77,26 @@
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
                         action="#{DataEditorForm.deleteStructure()}"
+                        update="structureTreeForm:logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
+            <p:menuitem value="#{msgs.assignToNextElement}"
+                        icon="fa fa-link fa-sm"
+                        styleClass="plain"
+                        rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes}"
+                        action="#{DataEditorForm.structurePanel.assign}"
+                        oncomplete="$('#loadingScreen').hide()"
+                        update="structureTreeForm:logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
+            <p:menuitem value="#{msgs.unassign}"
+                        icon="fa fa-chain-broken fa-sm"
+                        styleClass="plain"
+                        rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes}"
+                        action="#{DataEditorForm.structurePanel.unassign}"
+                        oncomplete="$('#loadingScreen').hide()"
                         update="structureTreeForm:logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
