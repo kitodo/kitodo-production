@@ -980,6 +980,7 @@ public class FileService {
             View view = new View();
             view.setMediaUnit(mediaUnit);
             workpiece.getRootElement().getViews().add(view);
+            view.getMediaUnit().getIncludedStructuralElements().add(workpiece.getRootElement());
             canonicals.add(insertionPoint, entry.getKey());
         }
     }

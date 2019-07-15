@@ -128,6 +128,7 @@ public class MetsXmlElementAccessIT {
             View view = new View();
             view.setMediaUnit(page);
             workpiece.getRootElement().getViews().add(view);
+            page.getIncludedStructuralElements().add(workpiece.getRootElement());
         }
 
         IncludedStructuralElement frontCover = new IncludedStructuralElement();
@@ -136,6 +137,7 @@ public class MetsXmlElementAccessIT {
         View view = new View();
         view.setMediaUnit(pages.get(0));
         frontCover.getViews().add(view);
+        view.getMediaUnit().getIncludedStructuralElements().add(frontCover);
         workpiece.getRootElement().getChildren().add(frontCover);
 
         IncludedStructuralElement inside = new IncludedStructuralElement();
@@ -144,9 +146,11 @@ public class MetsXmlElementAccessIT {
         view = new View();
         view.setMediaUnit(pages.get(1));
         inside.getViews().add(view);
+        view.getMediaUnit().getIncludedStructuralElements().add(inside);
         view = new View();
         view.setMediaUnit(pages.get(2));
         inside.getViews().add(view);
+        view.getMediaUnit().getIncludedStructuralElements().add(inside);
         workpiece.getRootElement().getChildren().add(inside);
 
         IncludedStructuralElement backCover = new IncludedStructuralElement();
@@ -155,6 +159,7 @@ public class MetsXmlElementAccessIT {
         view = new View();
         view.setMediaUnit(pages.get(3));
         backCover.getViews().add(view);
+        view.getMediaUnit().getIncludedStructuralElements().add(backCover);
         workpiece.getRootElement().getChildren().add(backCover);
 
         // add metadata

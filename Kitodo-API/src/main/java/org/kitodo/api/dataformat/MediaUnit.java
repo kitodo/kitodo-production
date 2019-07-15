@@ -72,6 +72,19 @@ public class MediaUnit implements Parent<MediaUnit> {
     private String metsDivReferrerId;
 
     /**
+     * List of IncludedStructuralElements this view is assigned to.
+     */
+    private List<IncludedStructuralElement> includedStructuralElements;
+
+    /**
+     * Creates a new MediaUnit.
+     */
+    public MediaUnit() {
+        includedStructuralElements = new LinkedList<>();
+    }
+
+
+    /**
      * Returns the subordinate media units associated with this media unit.
      *
      * @return the subordinate media units
@@ -177,6 +190,15 @@ public class MediaUnit implements Parent<MediaUnit> {
      */
     public void setDivId(String divId) {
         this.metsDivReferrerId = divId;
+    }
+
+    /**
+     * Get includedStructuralElements.
+     *
+     * @return value of includedStructuralElements
+     */
+    public List<IncludedStructuralElement> getIncludedStructuralElements() {
+        return includedStructuralElements;
     }
 
     @Override

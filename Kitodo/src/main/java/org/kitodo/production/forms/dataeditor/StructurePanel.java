@@ -953,8 +953,12 @@ public class StructurePanel implements Serializable {
      */
     void moveViews(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
         for (Pair<View, IncludedStructuralElement> elementToBeMoved : elementsToBeMoved) {
-            toElement.getViews().add(elementToBeMoved.getKey());
             elementToBeMoved.getValue().getViews().remove(elementToBeMoved.getKey());
+            toElement.getViews().add(elementToBeMoved.getKey());
+            if (Objects.nonNull(elementToBeMoved.getKey().getMediaUnit())) {
+                elementToBeMoved.getKey().getMediaUnit().getIncludedStructuralElements().remove(elementToBeMoved.getValue());
+                elementToBeMoved.getKey().getMediaUnit().getIncludedStructuralElements().add(toElement);
+            }
         }
     }
 
