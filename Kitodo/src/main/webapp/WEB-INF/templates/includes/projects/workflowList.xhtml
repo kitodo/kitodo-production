@@ -63,7 +63,7 @@
                                    update="projectsTabView:workflowTable">
                         <h:outputText><i class="fa fa-archive"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
-                        <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmDeleteWorkflow}"
+                        <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmArchiveWorkflow}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
 
