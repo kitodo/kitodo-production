@@ -38,8 +38,7 @@
             <div>
                 <p:outputLabel for="location" value="#{msgs.location}"/>
                 <p:inputText id="location" class="input" disabled="#{isViewMode || isConfigMode}"
-                             placeholder="#{msgs.location}" value="#{UserForm.userObject.location}"
-                             required="#{empty param['editForm:saveButtonToggler']}"/>
+                             placeholder="#{msgs.location}" value="#{UserForm.userObject.location}"/>
             </div>
             <div>
                 <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
