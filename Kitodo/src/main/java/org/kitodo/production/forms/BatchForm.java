@@ -79,9 +79,6 @@ public class BatchForm extends BaseForm {
         if (this.selectedProcesses.isEmpty()) {
             try {
                 this.currentBatches = ServiceManager.getBatchService().getAll();
-                for (Batch batch : this.currentBatches) {
-                    ServiceManager.getBatchService().createLabel(batch);
-                }
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.BATCH.getTranslationPlural() },
                     logger, e);
@@ -159,9 +156,6 @@ public class BatchForm extends BaseForm {
             if (ServiceManager.getBatchService().contains(batch, batchfilter)) {
                 currentBatches.add(batch);
             }
-        }
-        for (Batch batch : this.currentBatches) {
-            ServiceManager.getBatchService().createLabel(batch);
         }
     }
 

@@ -71,7 +71,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
 
     /**
      * Method saves processes related to modified batch.
-     * 
+     *
      * @param batch
      *            object
      */
@@ -116,7 +116,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
 
     /**
      * Remove all passed batches.
-     * 
+     *
      * @param batches
      *            to remove
      */
@@ -250,21 +250,17 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function creates label as informative representation that is easy for a
-     * person to read and that "textually represents" this batch.
+     * The function creates label as informative representation that is easy for
+     * a person to read and that "textually represents" this batch.
      *
      * @param batch
      *            for which label is going to be created
      */
-    public void createLabel(Batch batch) {
-        try {
-            StringBuilder result = new StringBuilder(
-                    Objects.nonNull(batch.getTitle()) ? batch.getTitle().length() + 20 : 30);
-            result.append(prepareLabel(batch));
-            batch.setLabel(result.toString());
-        } catch (RuntimeException fallback) {
-            batch.setLabel("");
-        }
+    public String createLabel(Batch batch) {
+        StringBuilder result = new StringBuilder(
+                Objects.nonNull(batch.getTitle()) ? batch.getTitle().length() + 20 : 30);
+        result.append(prepareLabel(batch));
+        return result.toString();
     }
 
     private String prepareLabel(Batch batch) {

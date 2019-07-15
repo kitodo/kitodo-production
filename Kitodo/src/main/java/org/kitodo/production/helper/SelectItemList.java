@@ -51,8 +51,7 @@ public class SelectItemList {
     public static List<SelectItem> getBatches(List<Batch> batches) {
         List<SelectItem> selectItems = new ArrayList<>();
         for (Batch batch : batches) {
-            ServiceManager.getBatchService().createLabel(batch);
-            selectItems.add(new SelectItem(batch, batch.toString(), null));
+            selectItems.add(new SelectItem(batch, ServiceManager.getBatchService().createLabel(batch), null));
         }
         return selectItems;
     }
@@ -91,7 +90,7 @@ public class SelectItemList {
 
     /**
      * Get LDAP groups for select list.
-     * 
+     *
      * @return list of LDAP groups as SelectItem list
      */
     public static List<SelectItem> getLdapGroups() {
@@ -105,7 +104,7 @@ public class SelectItemList {
 
     /**
      * Get list of processes for select list.
-     * 
+     *
      * @return list of templates as SelectItem list
      */
     // TODO: check if this is still true - why take processes if it should be

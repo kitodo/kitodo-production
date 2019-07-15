@@ -24,7 +24,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.kitodo.data.database.persistence.BatchDAO;
 
@@ -54,19 +53,6 @@ public class Batch extends BaseIndexedBean {
             @JoinColumn(name = "batch_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")) })
     private List<Process> processes;
-
-    /**
-     * The display label of this batch.
-     *
-     * <p>
-     * Note: This is a strange hack that seems to be related to the lazy loading
-     * of the processes within the batch: The label, consisting of the title and
-     * the number of processes, is created manually by invoking a function at
-     * the time of loading a batch, and not when accessing {@code toString()}.
-     * TODO: Should be checked if this is still necessary.
-     */
-    @Transient
-    private String label = "";
 
     /**
      * Creates an empty batch.
@@ -157,16 +143,6 @@ public class Batch extends BaseIndexedBean {
         }
     }
 
-    /**
-     * Sets label of this batch.
-     *
-     * @param label
-     *            label to set
-     */
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -187,6 +163,6 @@ public class Batch extends BaseIndexedBean {
 
     @Override
     public String toString() {
-        return this.label;
+        return Objects.isNull(title) ? "Batch ".concat(Integer.toString(getId())) : title;
     }
 }
