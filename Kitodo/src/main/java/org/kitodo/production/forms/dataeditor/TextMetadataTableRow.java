@@ -131,7 +131,9 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
      */
     public void setDate(Date date) {
         this.date = date;
-        this.value = new SimpleDateFormat("yyyy-mm-dd").format(date);
+        if (Objects.nonNull(date)) {
+            this.value = new SimpleDateFormat("yyyy-mm-dd").format(date);
+        }
     }
 
     @Override

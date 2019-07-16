@@ -184,8 +184,9 @@
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      style="vertical-align: top; margin-left: 10px;"
                                      disabled="#{readOnly}"
-                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
+                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems}"
                                      title="#{msgs.neueMetadatenHinzufuegen}"
+                                     update="addMetadataForm"
                                      oncomplete="PF('addMetadataDialog').show();"/>
                 </p:row>
             </p:panelGrid>

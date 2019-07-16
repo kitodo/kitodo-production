@@ -29,18 +29,11 @@
                     <h3>#{msgs.neueMetadatenHinzufuegen}</h3>
                     <h:panelGroup layout="block"
                                   styleClass="dialogFieldWrapper">
-
                         <div>
                             <p:selectOneMenu id="metadataTypeSelection"
                                              value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesSelectedItem}">
                                 <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"/>
                             </p:selectOneMenu>
-                        </div>
-
-                        <div>
-                            <p:inputTextarea value="#{DataEditorForm.metadataPanel.addLogicalMetadataValue}"
-                                             rows="2"
-                                             style="width:83%; margin-top: 8px;"/>
                         </div>
                     </h:panelGroup>
 

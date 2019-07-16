@@ -35,8 +35,6 @@ public class MetadataPanel implements Serializable {
 
     private String addMetadataKeySelectedItem = "";
 
-    private String addMetadataValue = "";
-
     private Collection<Metadata> clipboard = new ArrayList<>();
 
     private final RulesetSetupInterface rulesetSetup;
@@ -61,50 +59,12 @@ public class MetadataPanel implements Serializable {
     public void addMetadataEntry() {
         try {
             /*
-             * First, we get the translated label of the table line into which
-             * the value must be entered. It could disappear from the list of
-             * addable metadata if we specify the field as additionally
-             * selected and the maximum number of occurrences would be reached.
-             * That's why we have to do that first.
-             */
-            String label = logicalMetadataTable.getAddableMetadata().parallelStream()
-                    .filter(selectItem -> addMetadataKeySelectedItem.equals(selectItem.getValue())).findAny()
-                    .orElseThrow(IllegalStateException::new).getLabel();
-
-            /*
-             * Then we add the metadata to add. This will rebuild the table and
+             * We add the metadata to add. This will rebuild the table and
              * create an empty table line (somewhere) into which we can enter
              * the value.
              */
             logicalMetadataTable.addAdditionallySelectedField(addMetadataKeySelectedItem);
-
-            /*
-             * Now we just have to find the line and enter the value. The latter
-             * happens differently depending on what kind of input field it is.
-             */
-            for (MetadataTableRow row : logicalMetadataTable.getRows()) {
-                if (label.equals(row.getLabel())) {
-                    if (row instanceof TextMetadataTableRow) {
-                        TextMetadataTableRow textInput = (TextMetadataTableRow) row;
-                        if (textInput.getValue().isEmpty()) {
-                            textInput.setValue(addMetadataValue);
-                            break;
-                        }
-                    } else if (row instanceof SelectMetadataTableRow) {
-                        SelectMetadataTableRow selectInput = (SelectMetadataTableRow) row;
-                        if (selectInput.getSelectedItem().isEmpty()) {
-                            selectInput.setSelectedItem(addMetadataValue);
-                            break;
-                        }
-                    } else if (row instanceof BooleanMetadataTableRow) {
-                        BooleanMetadataTableRow booleanInput = (BooleanMetadataTableRow) row;
-                        if (!booleanInput.isActive()) {
-                            booleanInput.setActive(!addMetadataValue.isEmpty());
-                        }
-                    }
-                }
-            }
-        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
+        } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
     }
@@ -117,26 +77,15 @@ public class MetadataPanel implements Serializable {
         physicalMetadataTable = FieldedMetadataTableRow.EMPTY;
         clipboard.clear();
         addMetadataKeySelectedItem = "";
-        addMetadataValue = "";
     }
 
     /**
-     * Returns the value of the addLogicalMetadata text box.
+     * Set addMetadataKeySelectedItem.
      *
-     * @return the value of the addLogicalMetadata
+     * @param addMetadataKeySelectedItem as java.lang.String
      */
-    public String getAddLogicalMetadataValue() {
-        return addMetadataValue;
-    }
-
-    /**
-     * Sets the value of the addMetadata text box.
-     *
-     * @param addMetadataValue
-     *            value to set
-     */
-    public void setAddLogicalMetadataValue(String addMetadataValue) {
-        this.addMetadataValue = addMetadataValue;
+    public void setAddMetadataKeySelectedItem(String addMetadataKeySelectedItem) {
+        this.addMetadataKeySelectedItem = addMetadataKeySelectedItem;
     }
 
     Collection<Metadata> getClipboard() {
@@ -166,6 +115,17 @@ public class MetadataPanel implements Serializable {
             StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
                     optionalStructure.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
             logicalMetadataTable = new FieldedMetadataTableRow(this, optionalStructure.get(), divisionView);
+        } else {
+            logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
+        }
+
+    }
+
+    void showPageInLogical(MediaUnit mediaUnit) {
+        if (Objects.nonNull(mediaUnit)) {
+            StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
+                    mediaUnit.getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+            logicalMetadataTable = new FieldedMetadataTableRow(this, mediaUnit.getMetadata(), divisionView);
         } else {
             logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
         }
