@@ -80,23 +80,23 @@ public abstract class Generator {
     }
 
     protected String calculateProcessTitleCheck(String fieldName, String fieldValue) throws ProcessGenerationException {
-        String result = fieldValue;
+        String processTitleCheck = fieldValue;
 
         if ("Bandnummer".equals(fieldName) || "Volume number".equals(fieldName)) {
             try {
                 int bandInt = Integer.parseInt(fieldValue);
                 DecimalFormat df = new DecimalFormat("#0000");
-                result = df.format(bandInt);
+                processTitleCheck = df.format(bandInt);
             } catch (NumberFormatException e) {
                 throw new ProcessGenerationException(
                         Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("errorVolume"), e);
             }
 
-            if (result.length() < 4) {
-                result = "0000".substring(result.length()) + result;
+            if (processTitleCheck.length() < 4) {
+                processTitleCheck = "0000".substring(processTitleCheck.length()) + processTitleCheck;
             }
         }
 
-        return result;
+        return processTitleCheck;
     }
 }

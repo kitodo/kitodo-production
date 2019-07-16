@@ -667,15 +667,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput))
                 .should(new MatchQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*"))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-        List<ProcessDTO> result = new LinkedList<>();
+        List<ProcessDTO> linkableProcesses = new LinkedList<>();
 
         List<ProcessDTO> processDTOS = findByQuery(query, false);
         for (ProcessDTO process : processDTOS) {
             if (allowedStructuralElementTypes.contains(getBaseType(process.getId()))) {
-                result.add(process);
+                linkableProcesses.add(process);
             }
         }
-        return result;
+        return linkableProcesses;
     }
 
     /**
@@ -836,16 +836,16 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return blocked metadata (user)
      */
     public User getBlockedUser(Process process) {
-        User result = null;
+        User user = null;
         if (MetadataLock.isLocked(process.getId())) {
             String userID = this.msp.getLockUser(process.getId());
             try {
-                result = ServiceManager.getUserService().getById(Integer.valueOf(userID));
+                user = ServiceManager.getUserService().getById(Integer.valueOf(userID));
             } catch (DAOException | RuntimeException e) {
                 Helper.setErrorMessage("userNotFound", logger, e);
             }
         }
-        return result;
+        return user;
     }
 
     public long getBlockedMinutes(Process process) {
@@ -2306,14 +2306,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     private HashSet<Process> getProcessesLinkedInIncludedStructuralElement(
             IncludedStructuralElement includedStructuralElement) throws DAOException {
-        HashSet<Process> result = new HashSet<>();
+        HashSet<Process> processesLinkedInIncludedStructuralElement = new HashSet<>();
         if (Objects.nonNull(includedStructuralElement.getLink())) {
             int processId = processIdFromUri(includedStructuralElement.getLink().getUri());
-            result.add(getById(processId));
+            processesLinkedInIncludedStructuralElement.add(getById(processId));
         }
         for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
-            result.addAll(getProcessesLinkedInIncludedStructuralElement(child));
+            processesLinkedInIncludedStructuralElement.addAll(getProcessesLinkedInIncludedStructuralElement(child));
         }
-        return result;
+        return processesLinkedInIncludedStructuralElement;
     }
 }

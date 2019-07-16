@@ -186,7 +186,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     @Override
     protected Iterable<MetadataSelector> findAll(LegacyDocStructHelperInterface logicalNode) {
-        LinkedList<MetadataSelector> result = new LinkedList<>();
+        LinkedList<MetadataSelector> all = new LinkedList<>();
         List<LegacyDocStructHelperInterface> children = logicalNode.getAllChildren();
 
         int lastChild = children.size() - 1;
@@ -194,12 +194,12 @@ public class MetadataPathSelector extends MetadataSelector {
         for (LegacyDocStructHelperInterface child : children) {
             if (typeCheck(child) && indexCheck(count, lastChild)) {
                 for (MetadataSelector cms : selector.findAll(child)) {
-                    result.add(new MetadataPathSelector(ANY_METADATA_TYPE_SYMBOL, count, cms));
+                    all.add(new MetadataPathSelector(ANY_METADATA_TYPE_SYMBOL, count, cms));
                 }
             }
             count++;
         }
-        return result;
+        return all;
     }
 
     /**

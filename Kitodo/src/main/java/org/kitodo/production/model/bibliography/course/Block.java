@@ -151,9 +151,8 @@ public class Block {
     }
 
     /**
-     * Determines how many stampings of
-     * issues physically appeared without generating a list of IndividualIssue
-     * objects.
+     * Determines how many stampings of issues physically appeared without
+     * generating a list of IndividualIssue objects.
      *
      * @return the count of issues
      */
@@ -161,20 +160,19 @@ public class Block {
         if (Objects.isNull(firstAppearance) || Objects.isNull(lastAppearance)) {
             return 0;
         }
-        long result = 0;
+        long numberOfIndividualIssues = 0;
         for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
             for (Issue issue : getIssues()) {
                 if (issue.isMatch(day)) {
-                    result += 1;
+                    numberOfIndividualIssues += 1;
                 }
             }
         }
-        return result;
+        return numberOfIndividualIssues;
     }
 
     /**
-     * Returns the list of issues contained in this
-     * Block.
+     * Returns the list of issues contained in this block.
      *
      * @return the list of issues from this Block
      */
@@ -183,9 +181,8 @@ public class Block {
     }
 
     /**
-     * Generates a list of IndividualIssue
-     * objects for a given day, each of them representing a stamping of one
-     * physically appeared issue.
+     * Generates a list of {@code IndividualIssue} objects for a given day, each
+     * of them representing a stamping of one physically appeared issue.
      *
      * @param date
      *            date to generate issues for
@@ -196,13 +193,13 @@ public class Block {
         if (!isMatch(date)) {
             return Collections.emptyList();
         }
-        ArrayList<IndividualIssue> result = new ArrayList<>(issues.size());
+        ArrayList<IndividualIssue> individualIssues = new ArrayList<>(issues.size());
         for (Issue issue : getIssues()) {
             if (issue.isMatch(date)) {
-                result.add(new IndividualIssue(this, issue, date));
+                individualIssues.add(new IndividualIssue(this, issue, date));
             }
         }
-        return result;
+        return individualIssues;
     }
 
     /**
@@ -481,12 +478,12 @@ public class Block {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((firstAppearance == null) ? 0 : firstAppearance.hashCode());
-        result = prime * result + ((issues == null) ? 0 : issues.hashCode());
-        result = prime * result + ((lastAppearance == null) ? 0 : lastAppearance.hashCode());
-        result = prime * result + ((variant == null) ? 0 : variant.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((firstAppearance == null) ? 0 : firstAppearance.hashCode());
+        hashCode = prime * hashCode + ((issues == null) ? 0 : issues.hashCode());
+        hashCode = prime * hashCode + ((lastAppearance == null) ? 0 : lastAppearance.hashCode());
+        hashCode = prime * hashCode + ((variant == null) ? 0 : variant.hashCode());
+        return hashCode;
     }
 
     /**

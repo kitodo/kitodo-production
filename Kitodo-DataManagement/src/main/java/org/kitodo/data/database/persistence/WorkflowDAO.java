@@ -21,11 +21,11 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
 
     @Override
     public Workflow getById(Integer id) throws DAOException {
-        Workflow result = retrieveObject(Workflow.class, id);
-        if (result == null) {
+        Workflow workflow = retrieveObject(Workflow.class, id);
+        if (workflow == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return workflow;
     }
 
     @Override

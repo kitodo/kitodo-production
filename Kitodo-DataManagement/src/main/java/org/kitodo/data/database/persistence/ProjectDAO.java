@@ -20,11 +20,11 @@ public class ProjectDAO extends BaseDAO<Project> {
 
     @Override
     public Project getById(Integer id) throws DAOException {
-        Project result = retrieveObject(Project.class, id);
-        if (result == null) {
+        Project project = retrieveObject(Project.class, id);
+        if (project == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return project;
     }
 
     @Override

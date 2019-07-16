@@ -153,34 +153,34 @@ public class GranularityForm {
      */
     @SuppressWarnings("incomplete-switch")
     public List<SelectItem> getBatchOptions() {
-        List<SelectItem> result = new ArrayList<>();
+        List<SelectItem> batchOptions = new ArrayList<>();
         if (Objects.isNull(granularity)) {
-            result.add(new SelectItem("null", Helper.getTranslation("granularity.batches.noData")));
+            batchOptions.add(new SelectItem("null", Helper.getTranslation("granularity.batches.noData")));
         } else if (granularity == Granularity.YEARS) {
-            result.add(new SelectItem("null", Helper.getTranslation("granularity.batches.notAvailable")));
+            batchOptions.add(new SelectItem("null", Helper.getTranslation("granularity.batches.notAvailable")));
         } else {
-            result.add(new SelectItem("null", Helper.getTranslation("granularity.null")));
+            batchOptions.add(new SelectItem("null", Helper.getTranslation("granularity.null")));
             switch (granularity) {
                 case ISSUES:
-                    result.add(new SelectItem("issues", Helper.getTranslation("granularity.issues")));
+                    batchOptions.add(new SelectItem("issues", Helper.getTranslation("granularity.issues")));
                 // fall through
                 case DAYS:
-                    result.add(new SelectItem("weeks", Helper.getTranslation("granularity.weeks")));
+                    batchOptions.add(new SelectItem("weeks", Helper.getTranslation("granularity.weeks")));
                 // fall through
                 case WEEKS:
-                    result.add(new SelectItem("months", Helper.getTranslation("granularity.months")));
+                    batchOptions.add(new SelectItem("months", Helper.getTranslation("granularity.months")));
                 // fall through
                 case MONTHS:
-                    result.add(new SelectItem("quarters", Helper.getTranslation("granularity.quarters")));
+                    batchOptions.add(new SelectItem("quarters", Helper.getTranslation("granularity.quarters")));
                 // fall through
                 case QUARTERS:
-                    result.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
+                    batchOptions.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
                     break;
                 default:
                     assert false : granularity;
             }
         }
-        return result;
+        return batchOptions;
     }
 
     /**

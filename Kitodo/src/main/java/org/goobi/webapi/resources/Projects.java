@@ -56,13 +56,13 @@ public class Projects {
                     data.put(project, templates);
                 }
             }
-            List<Project> result = new ArrayList<>();
+            List<Project> projects = new ArrayList<>();
             for (Map.Entry<Project, Set<Template>> entry : data.entrySet()) {
                 Project key = entry.getKey();
                 key.template = new ArrayList<>(entry.getValue());
-                result.add(key);
+                projects.add(key);
             }
-            return new ProjectsRootNode(result);
+            return new ProjectsRootNode(projects);
         } catch (DAOException e) {
             return new ProjectsRootNode();
         }

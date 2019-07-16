@@ -396,12 +396,12 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *         vollständigem Namen
      */
     public String getTitleWithUserName(Task task) {
-        String result = task.getTitle();
+        String titleWithUserName = task.getTitle();
         User user = task.getProcessingUser();
         if (Objects.nonNull(user) && Objects.nonNull(user.getId())) {
-            result += " (" + ServiceManager.getUserService().getFullName(user) + ")";
+            titleWithUserName += " (" + ServiceManager.getUserService().getFullName(user) + ")";
         }
-        return result;
+        return titleWithUserName;
     }
 
     /**

@@ -82,15 +82,15 @@ public class MetadataLock implements Serializable {
      * Return a user who has locked metadata.
      */
     public String getLockUser(int processID) {
-        String result = "-1";
+        String lockUser = "-1";
         HashMap<String, String> temp = locks.get(processID);
         /*
          * if the process is not in the hash map, there is no user
          */
         if (temp != null) {
-            result = temp.get(USER);
+            lockUser = temp.get(USER);
         }
-        return result;
+        return lockUser;
     }
 
     /**

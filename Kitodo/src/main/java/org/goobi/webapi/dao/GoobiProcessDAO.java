@@ -44,14 +44,14 @@ public class GoobiProcessDAO {
 
     /**
      * Get process by PPN.
-     * 
+     *
      * @param ppn
      *            as IdentifierPPN
      * @return GoobiProcess
      */
     public static GoobiProcess getProcessByPPN(IdentifierPPN ppn) {
         Session session;
-        GoobiProcess result = null;
+        GoobiProcess process = null;
 
         session = HibernateUtil.getSession();
 
@@ -68,23 +68,23 @@ public class GoobiProcessDAO {
                             .add(Projections.property("ve.value"), "title"))
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
 
-            result = (GoobiProcess) criteria.uniqueResult();
+            process = (GoobiProcess) criteria.uniqueResult();
 
         } catch (HibernateException e) {
             logger.error(e.getMessage(), e);
         }
 
-        return result;
+        return process;
     }
 
     /**
      * Get all processes.
-     * 
+     *
      * @return List of GoobiProcess objects
      */
     public static List<GoobiProcess> getAllProcesses() {
         Session session = HibernateUtil.getSession();
-        List<GoobiProcess> result = new ArrayList<>();
+        List<GoobiProcess> allProcesses = new ArrayList<>();
 
         try {
             Criteria criteria = session.createCriteria(Process.class).createAlias("templates", "v")
@@ -100,24 +100,24 @@ public class GoobiProcessDAO {
             @SuppressWarnings(value = "unchecked")
             List<GoobiProcess> list = criteria.list();
             if (Objects.nonNull(list) && !list.isEmpty()) {
-                result.addAll(list);
+                allProcesses.addAll(list);
             }
         } catch (HibernateException e) {
             logger.error(e.getMessage(), e);
         }
 
-        return result;
+        return allProcesses;
     }
 
     /**
      * Get all process tasks.
-     * 
+     *
      * @param ppn
      *            as IdentifierPPN
      * @return List of GoobiProcessStep objects
      */
     public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN ppn) {
-        List<GoobiProcessStep> result = new ArrayList<>();
+        List<GoobiProcessStep> allProcessSteps = new ArrayList<>();
         Session session = HibernateUtil.getSession();
 
         try {
@@ -135,13 +135,13 @@ public class GoobiProcessDAO {
             List<GoobiProcessStep> list = criteria.list();
 
             if (Objects.nonNull(list) && !list.isEmpty()) {
-                result.addAll(list);
+                allProcessSteps.addAll(list);
             }
         } catch (HibernateException e) {
             logger.error(e.getMessage(), e);
         }
 
-        return result;
+        return allProcessSteps;
     }
 
 }

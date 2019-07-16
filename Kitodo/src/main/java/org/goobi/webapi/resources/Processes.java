@@ -71,12 +71,12 @@ public class Processes {
     @GET
     @Path("{ppnIdentifier}/steps")
     public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
-        List<GoobiProcessStep> resultList = GoobiProcessDAO.getAllProcessSteps(ippn);
+        List<GoobiProcessStep> processSteps = GoobiProcessDAO.getAllProcessSteps(ippn);
 
-        if (resultList.isEmpty()) {
+        if (processSteps.isEmpty()) {
             throw new NotFoundException("No such process.");
         }
-        return resultList;
+        return processSteps;
     }
 
 }

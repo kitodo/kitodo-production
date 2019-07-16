@@ -129,11 +129,11 @@ public class Issue {
      * @return true if the Set was changed
      */
     private boolean addDayOfWeek(int dayOfWeek) {
-        boolean result = daysOfWeek.add(dayOfWeek);
-        if (result) {
+        boolean modified = daysOfWeek.add(dayOfWeek);
+        if (modified) {
             course.clearProcesses();
         }
-        return result;
+        return modified;
     }
 
     /**
@@ -243,13 +243,13 @@ public class Issue {
      *             if lastAppearance is null
      */
     long countIndividualIssues(LocalDate firstAppearance, LocalDate lastAppearance) {
-        long result = 0;
+        long numberOfIndividualIssues = 0;
         for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
             if (isMatch(day)) {
-                result += 1;
+                numberOfIndividualIssues += 1;
             }
         }
-        return result;
+        return numberOfIndividualIssues;
     }
 
     /**
@@ -444,11 +444,11 @@ public class Issue {
      * @return true if the Set was changed
      */
     private boolean removeDayOfWeek(int dayOfWeek) {
-        boolean result = daysOfWeek.remove(dayOfWeek);
-        if (result) {
+        boolean modified = daysOfWeek.remove(dayOfWeek);
+        if (modified) {
             course.clearProcesses();
         }
-        return result;
+        return modified;
     }
 
     /**
@@ -593,12 +593,12 @@ public class Issue {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((additions == null) ? 0 : additions.hashCode());
-        result = prime * result + ((daysOfWeek == null) ? 0 : daysOfWeek.hashCode());
-        result = prime * result + ((exclusions == null) ? 0 : exclusions.hashCode());
-        result = prime * result + ((heading == null) ? 0 : heading.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((additions == null) ? 0 : additions.hashCode());
+        hashCode = prime * hashCode + ((daysOfWeek == null) ? 0 : daysOfWeek.hashCode());
+        hashCode = prime * hashCode + ((exclusions == null) ? 0 : exclusions.hashCode());
+        hashCode = prime * hashCode + ((heading == null) ? 0 : heading.hashCode());
+        return hashCode;
     }
 
     /**

@@ -21,7 +21,7 @@ public class IdentifierPPN {
 
     /**
      * Constructor.
-     * 
+     *
      * @param ppn
      *            as String
      */
@@ -34,26 +34,26 @@ public class IdentifierPPN {
 
     /**
      * Check if identifier is valid.
-     * 
+     *
      * @param identifier
      *            to check
      * @return true or false
      */
     public static boolean isValid(String identifier) {
-        boolean result;
+        boolean valid;
         int flags = Pattern.CASE_INSENSITIVE;
         Pattern pattern;
         Matcher matcher;
 
         if (Objects.isNull(identifier) || identifier.isEmpty()) {
-            result = false;
+            valid = false;
         } else {
             pattern = Pattern.compile("^[0-9]{8}[0-9LXYZ]{1}$", flags);
             matcher = pattern.matcher(identifier);
-            result = matcher.matches();
+            valid = matcher.matches();
         }
 
-        return result;
+        return valid;
     }
 
     @Override

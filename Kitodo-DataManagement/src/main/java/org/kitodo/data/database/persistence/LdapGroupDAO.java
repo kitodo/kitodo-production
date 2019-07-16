@@ -20,11 +20,11 @@ public class LdapGroupDAO extends BaseDAO<LdapGroup> {
 
     @Override
     public LdapGroup getById(Integer id) throws DAOException {
-        LdapGroup result = retrieveObject(LdapGroup.class, id);
-        if (result == null) {
+        LdapGroup ldapGroup = retrieveObject(LdapGroup.class, id);
+        if (ldapGroup == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return ldapGroup;
     }
 
     @Override

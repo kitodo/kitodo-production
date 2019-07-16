@@ -85,25 +85,25 @@ public class UniversalRule {
     private Map<String, String> filterPossibilitiesBasedOnRule(Map<String, String> possibilities,
             Function<Rule, Optional<String>> getter) {
         if (optionalRule.isPresent()) {
-            Map<String, String> result = new LinkedHashMap<>();
+            Map<String, String> filteredPossibilities = new LinkedHashMap<>();
             Rule rule = optionalRule.get();
             for (Rule permit : rule.getPermits()) {
                 Optional<String> getterResult = getter.apply(permit);
                 if (getterResult.isPresent()) {
                     String entry = getterResult.get();
                     if (possibilities.containsKey(entry)) {
-                        result.put(entry, possibilities.get(entry));
+                        filteredPossibilities.put(entry, possibilities.get(entry));
                     }
                 }
             }
             if (rule.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
                 for (Entry<String, String> entryPair : possibilities.entrySet()) {
-                    if (!result.containsKey(entryPair.getKey())) {
-                        result.put(entryPair.getKey(), entryPair.getValue());
+                    if (!filteredPossibilities.containsKey(entryPair.getKey())) {
+                        filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
                     }
                 }
             }
-            return result;
+            return filteredPossibilities;
         } else {
             return possibilities;
         }
@@ -127,16 +127,16 @@ public class UniversalRule {
      * @return the universal keys explicitly allowed
      */
     LinkedList<UniversalKey> getExplicitlyPermittedUniversalKeys(UniversalKey universalKey) {
-        LinkedList<UniversalKey> result = new LinkedList<>();
+        LinkedList<UniversalKey> explicitlyPermittedUniversalKeys = new LinkedList<>();
         if (optionalRule.isPresent()) {
             for (Rule rule : optionalRule.get().getPermits()) {
                 Optional<String> optionalKey = rule.getKey();
                 if (optionalKey.isPresent()) {
-                    result.add(universalKey.getUniversalKey(optionalKey.get()));
+                    explicitlyPermittedUniversalKeys.add(universalKey.getUniversalKey(optionalKey.get()));
                 }
             }
         }
-        return result;
+        return explicitlyPermittedUniversalKeys;
     }
 
     /**
@@ -174,15 +174,15 @@ public class UniversalRule {
      * @return permission universal rule for the key
      */
     UniversalRule getUniversalPermitRuleForKey(String keyId, boolean division) {
-        UniversalRule result = optionalRule.isPresent()
+        UniversalRule universalPermitRuleForKey = optionalRule.isPresent()
                 ? new UniversalRule(ruleset,
                         optionalRule.get().getPermits().parallelStream()
                                 .filter(rule -> keyId.equals(rule.getKey().orElse(null))).findAny())
                 : new UniversalRule(ruleset, Optional.empty());
         if (division) {
-            result.merge(ruleset.getUniversalRestrictionRuleForKey(keyId));
+            universalPermitRuleForKey.merge(ruleset.getUniversalRestrictionRuleForKey(keyId));
         }
-        return result;
+        return universalPermitRuleForKey;
     }
 
     /**

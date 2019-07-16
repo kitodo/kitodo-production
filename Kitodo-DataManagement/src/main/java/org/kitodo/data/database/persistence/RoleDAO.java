@@ -24,11 +24,11 @@ public class RoleDAO extends BaseDAO<Role> {
 
     @Override
     public Role getById(Integer id) throws DAOException {
-        Role result = retrieveObject(Role.class, id);
-        if (result == null) {
+        Role role = retrieveObject(Role.class, id);
+        if (role == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return role;
     }
 
     @Override

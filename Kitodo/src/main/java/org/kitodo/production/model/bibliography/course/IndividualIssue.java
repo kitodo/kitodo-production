@@ -163,25 +163,25 @@ public class IndividualIssue {
      * @return the generic fields for process title creation
      */
     public Map<String, String> getGenericFields() {
-        Map<String, String> result = new HashMap<>(18);
+        Map<String, String> genericFields = new HashMap<>(18);
         String heading = issue.getHeading();
         int length = heading.length();
         String upperCase = heading.toUpperCase();
         String lowerCase = heading.toLowerCase();
-        result.put("#DAY", DAY.print(date));
-        result.put("#I", length > 1 ? upperCase.substring(0, 1) : upperCase);
-        result.put("#i", length > 1 ? lowerCase.substring(0, 1) : lowerCase);
-        result.put("#IS", length > 2 ? upperCase.substring(0, 2) : upperCase);
-        result.put("#is", length > 2 ? lowerCase.substring(0, 2) : lowerCase);
-        result.put("#ISS", length > 3 ? upperCase.substring(0, 3) : upperCase);
-        result.put("#iss", length > 3 ? lowerCase.substring(0, 3) : lowerCase);
-        result.put("#ISSU", length > 4 ? upperCase.substring(0, 4) : upperCase);
-        result.put("#issu", length > 4 ? lowerCase.substring(0, 4) : lowerCase);
-        result.put("#Issue", heading);
-        result.put("#MONTH", MONTH.print(date));
-        result.put("#YEAR", YEAR4.print(date));
-        result.put("#YR", YEAR2.print(date));
-        return result;
+        genericFields.put("#DAY", DAY.print(date));
+        genericFields.put("#I", length > 1 ? upperCase.substring(0, 1) : upperCase);
+        genericFields.put("#i", length > 1 ? lowerCase.substring(0, 1) : lowerCase);
+        genericFields.put("#IS", length > 2 ? upperCase.substring(0, 2) : upperCase);
+        genericFields.put("#is", length > 2 ? lowerCase.substring(0, 2) : lowerCase);
+        genericFields.put("#ISS", length > 3 ? upperCase.substring(0, 3) : upperCase);
+        genericFields.put("#iss", length > 3 ? lowerCase.substring(0, 3) : lowerCase);
+        genericFields.put("#ISSU", length > 4 ? upperCase.substring(0, 4) : upperCase);
+        genericFields.put("#issu", length > 4 ? lowerCase.substring(0, 4) : lowerCase);
+        genericFields.put("#Issue", heading);
+        genericFields.put("#MONTH", MONTH.print(date));
+        genericFields.put("#YEAR", YEAR4.print(date));
+        genericFields.put("#YR", YEAR2.print(date));
+        return genericFields;
     }
 
     /**
@@ -244,11 +244,11 @@ public class IndividualIssue {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + ((issue == null) ? 0 : issue.hashCode());
-        result = prime * result + ((block == null) ? 0 : block.hashCode());
-        return result;
+        int hashCode = 1;
+        hashCode = prime * hashCode + ((date == null) ? 0 : date.hashCode());
+        hashCode = prime * hashCode + ((issue == null) ? 0 : issue.hashCode());
+        hashCode = prime * hashCode + ((block == null) ? 0 : block.hashCode());
+        return hashCode;
     }
 
     /**

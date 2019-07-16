@@ -22,11 +22,11 @@ public class CommentDAO extends BaseDAO<Comment> {
 
     @Override
     public Comment getById(Integer commentId) throws DAOException {
-        Comment result = retrieveObject(Comment.class, commentId);
-        if (result == null) {
+        Comment comment = retrieveObject(Comment.class, commentId);
+        if (comment == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return comment;
     }
 
     @Override

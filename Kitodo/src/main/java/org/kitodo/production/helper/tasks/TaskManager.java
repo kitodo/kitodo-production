@@ -125,15 +125,15 @@ public class TaskManager {
      * @return the index of the last task in that state
      */
     private static int lastIndexOf(TaskState state) {
-        int result = -1;
+        int lastIndex = -1;
         int pos = -1;
         for (EmptyTask task : singleton().taskList) {
             pos++;
             if (task.getTaskState().equals(state)) {
-                result = pos;
+                lastIndex = pos;
             }
         }
-        return result;
+        return lastIndex;
     }
 
     /**

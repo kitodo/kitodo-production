@@ -18,7 +18,7 @@ import java.util.List;
  * to library catalog access plug-in implementation objects as argument to
  * their find() function. The semantics of the created query is as follows, in
  * descending precedence of the operators:
- * 
+ *
  * <p>
  * <b>Double quotes</b> ({@code ""}) may be used to embrace a sequence of
  * tokens that have to appear in exactly that order in the search result (aka.
@@ -66,8 +66,7 @@ public class QueryBuilder {
     }
 
     /**
-     * Appends a list of query tokens to an initial
-     * query by means of a StringBuilder.
+     * Appends a list of query tokens to an initial query.
      *
      * @param query
      *            query to append to
@@ -83,13 +82,13 @@ public class QueryBuilder {
         for (String token : tokens) {
             capacity += token.length() + 1;
         }
-        StringBuilder result = new StringBuilder(capacity);
-        result.append(query);
+        StringBuilder completeQuery = new StringBuilder(capacity);
+        completeQuery.append(query);
         for (String token : tokens) {
-            result.append(' ');
-            result.append(token);
+            completeQuery.append(' ');
+            completeQuery.append(token);
         }
-        return result.toString();
+        return completeQuery.toString();
     }
 
     /**
@@ -103,7 +102,7 @@ public class QueryBuilder {
      * @return a query whose tokens are prefixed by the given search field
      */
     public static String restrictToField(String field, String query) {
-        StringBuilder result = new StringBuilder(2 * query.length());
+        StringBuilder restrictedQuery = new StringBuilder(2 * query.length());
         String prefix = field.concat(":");
         boolean appendField = true;
         boolean stringLiteral = false;
@@ -117,33 +116,33 @@ public class QueryBuilder {
                     if (!stringLiteral) {
                         appendField = true;
                     }
-                    result.appendCodePoint(codePoint);
+                    restrictedQuery.appendCodePoint(codePoint);
                     break;
                 case '"':
                     if (stringLiteral && appendField) {
-                        result.append(prefix);
+                        restrictedQuery.append(prefix);
                     }
                     stringLiteral = !stringLiteral;
                     appendField = stringLiteral;
-                    result.appendCodePoint(codePoint);
+                    restrictedQuery.appendCodePoint(codePoint);
                     break;
                 case '-':
-                    result.appendCodePoint(codePoint);
+                    restrictedQuery.appendCodePoint(codePoint);
                     if (appendField) {
-                        result.append(prefix);
+                        restrictedQuery.append(prefix);
                     }
                     appendField = false;
                     break;
                 default:
                     if (appendField) {
-                        result.append(prefix);
+                        restrictedQuery.append(prefix);
                     }
                     appendField = false;
-                    result.appendCodePoint(codePoint);
+                    restrictedQuery.appendCodePoint(codePoint);
                     break;
             }
 
         }
-        return result.toString();
+        return restrictedQuery.toString();
     }
 }

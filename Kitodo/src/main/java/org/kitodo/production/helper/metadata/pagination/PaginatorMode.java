@@ -128,11 +128,11 @@ public enum PaginatorMode {
      *             if this enum type has no constant with the specified code
      */
     public static PaginatorMode valueOf(int code) {
-        PaginatorMode result = codeMap.get(code);
-        if (result == null) {
+        PaginatorMode valueOf = codeMap.get(code);
+        if (valueOf == null) {
             throw new IllegalArgumentException("For int: " + code);
         }
-        return result;
+        return valueOf;
     }
 
     /**

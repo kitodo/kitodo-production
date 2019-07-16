@@ -265,18 +265,18 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      *
      * @param user
      *            The User.
-     * @return result as boolean
+     * @return whether the user already exists
      */
     public boolean isUserAlreadyExists(User user) {
         Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
             user.getLdapGroup().getLdapServer());
         DirContext ctx;
-        boolean result = false;
+        boolean userAlreadyExisting = false;
         try {
             ctx = new InitialDirContext(ldapEnvironment);
             Attributes matchAttrs = new BasicAttributes(true);
             NamingEnumeration<SearchResult> answer = ctx.search(buildUserDN(user), matchAttrs);
-            result = answer.hasMoreElements();
+            userAlreadyExisting = answer.hasMoreElements();
 
             while (answer.hasMore()) {
                 SearchResult sr = answer.next();
@@ -299,7 +299,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         } catch (NamingException e) {
             logger.error(e.getMessage(), e);
         }
-        return result;
+        return userAlreadyExisting;
     }
 
     private String getStringForAttribute(Attributes attrs, String identifier) {

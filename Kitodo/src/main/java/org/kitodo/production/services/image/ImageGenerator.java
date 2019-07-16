@@ -221,14 +221,14 @@ public class ImageGenerator implements Runnable {
      * @return the images to be generated
      */
     public List<Subfolder> determineFoldersThatNeedDerivatives(String canonical) {
-        List<Subfolder> result = new ArrayList<>(outputs.size());
+        List<Subfolder> foldersThatNeedDerivatives = new ArrayList<>(outputs.size());
         Predicate<? super Subfolder> requiresGeneration = mode.getFilter(canonical);
         for (Subfolder folder : outputs) {
             if (requiresGeneration.test(folder)) {
-                result.add(folder);
+                foldersThatNeedDerivatives.add(folder);
             }
         }
-        return result;
+        return foldersThatNeedDerivatives;
     }
 
     /**

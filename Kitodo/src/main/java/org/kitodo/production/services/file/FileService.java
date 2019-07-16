@@ -983,16 +983,16 @@ public class FileService {
      * Creates a new media unit with the given uses and URIs.
      */
     private MediaUnit createMediaUnit(Map<Subfolder, URI> data) {
-        MediaUnit result = new MediaUnit();
+        MediaUnit mediaUnit = new MediaUnit();
         if (!data.entrySet().isEmpty()) {
-            result.setType("page");
+            mediaUnit.setType("page");
         }
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
-            result.getMediaFiles().put(mediaVariant, entry.getValue());
+            mediaUnit.getMediaFiles().put(mediaVariant, entry.getValue());
         }
-        return result;
+        return mediaUnit;
     }
 
     /**

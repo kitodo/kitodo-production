@@ -83,35 +83,35 @@ public class RomanNumeral implements Fragment {
      *             if the string cannot be parsed as an integer
      */
     public static int parseInt(String value) {
-        int result = 0;
+        int parseInt = 0;
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {
                 case 'c':
-                    result += updateResult(result, NUMERAL_D, NUMERAL_C);
+                    parseInt += updateResult(parseInt, NUMERAL_D, NUMERAL_C);
                     break;
                 case 'd':
-                    result += updateResult(result, NUMERAL_M, NUMERAL_D);
+                    parseInt += updateResult(parseInt, NUMERAL_M, NUMERAL_D);
                     break;
                 case 'i':
-                    result += updateResult(result, NUMERAL_V, NUMERAL_I);
+                    parseInt += updateResult(parseInt, NUMERAL_V, NUMERAL_I);
                     break;
                 case 'l':
-                    result += updateResult(result, NUMERAL_C, NUMERAL_L);
+                    parseInt += updateResult(parseInt, NUMERAL_C, NUMERAL_L);
                     break;
                 case 'm':
-                    result += NUMERAL_M;
+                    parseInt += NUMERAL_M;
                     break;
                 case 'v':
-                    result += updateResult(result, NUMERAL_X, NUMERAL_V);
+                    parseInt += updateResult(parseInt, NUMERAL_X, NUMERAL_V);
                     break;
                 case 'x':
-                    result += updateResult(result, NUMERAL_L, NUMERAL_X);
+                    parseInt += updateResult(parseInt, NUMERAL_L, NUMERAL_X);
                     break;
                 default:
                     throw new NumberFormatException("For string: " + value);
             }
         }
-        return result;
+        return parseInt;
     }
 
     private static int updateResult(int result, int threshold, int difference) {

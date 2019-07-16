@@ -74,20 +74,20 @@ public class UniversalDivision extends UniversalKey {
         if (optionalDivision.isPresent()) {
             List<Division> subdivisions = optionalDivision.get().getDivisions();
             if (!subdivisions.isEmpty()) {
-                Map<String, String> result = new HashMap<>(2);
+                Map<String, String> allowedSubdivisions = new HashMap<>(2);
                 String divisionId = subdivisions.get(0).getId();
-                result.put(divisionId, filteredSubdivisions.get(divisionId));
-                return result;
+                allowedSubdivisions.put(divisionId, filteredSubdivisions.get(divisionId));
+                return allowedSubdivisions;
             }
         }
         for (Division division : ruleset.getDivisions()) {
             List<Division> divisions = division.getDivisions();
             for (int i = 0; i < divisions.size() - 1; i++) {
                 if (divisions.get(i).getId().equals(id)) {
-                    Map<String, String> result = new HashMap<>(2);
+                    Map<String, String> allowedSubdivisions = new HashMap<>(2);
                     String divisionId = divisions.get(i + 1).getId();
-                    result.put(divisionId, filteredSubdivisions.get(divisionId));
-                    return result;
+                    allowedSubdivisions.put(divisionId, filteredSubdivisions.get(divisionId));
+                    return allowedSubdivisions;
                 }
             }
         }

@@ -144,7 +144,7 @@ public class Settings {
                 .collect(Collectors.toMap(Setting::getKey, Function.identity()));
         Set<String> keyIds = new HashSet<>(currentSettingsMap.keySet());
         keyIds.addAll(otherSettingsMap.keySet());
-        List<Setting> result = new ArrayList<>(keyIds.size());
+        List<Setting> mergedSettings = new ArrayList<>(keyIds.size());
         for (String keyId : keyIds) {
             if (currentSettingsMap.containsKey(keyId)) {
                 Setting current = currentSettingsMap.get(keyId);
@@ -158,15 +158,15 @@ public class Settings {
                     merged.setExcluded(other.getExcluded() != null ? other.getExcluded() : current.getExcluded());
                     merged.setMultiline(other.getMultiline() != null ? other.getMultiline() : current.getMultiline());
                     merged.setSettings(merge(current.getSettings(), other.getSettings()));
-                    result.add(merged);
+                    mergedSettings.add(merged);
                 } else {
-                    result.add(current);
+                    mergedSettings.add(current);
                 }
             } else {
-                result.add(otherSettingsMap.get(keyId));
+                mergedSettings.add(otherSettingsMap.get(keyId));
             }
         }
-        return result;
+        return mergedSettings;
     }
 
 }

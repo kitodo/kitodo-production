@@ -59,7 +59,7 @@ public class ComposeFormattedRule extends DataCopyrule {
      * @return the objects for the format command
      */
     private static Object[] typecast(String format, List<String> elements) {
-        Object[] result = elements.toArray();
+        Object[] typecastedObjects = elements.toArray();
         Matcher expressions = FORMAT_CODES_SCHEME.matcher(format);
         while (expressions.find()) {
             try {
@@ -72,29 +72,29 @@ public class ComposeFormattedRule extends DataCopyrule {
                     case 'e':
                     case 'f':
                     case 'g':
-                        result[i] = Double.parseDouble(elements.get(i));
+                        typecastedObjects[i] = Double.parseDouble(elements.get(i));
                         continue;
                     case 'C':
                     case 'c':
-                        result[i] = Integer.parseInt(elements.get(i));
+                        typecastedObjects[i] = Integer.parseInt(elements.get(i));
                         continue;
                     case 'T':
                     case 't':
-                        result[i] = ISODateTimeFormat.dateElementParser().parseMillis(elements.get(i));
+                        typecastedObjects[i] = ISODateTimeFormat.dateElementParser().parseMillis(elements.get(i));
                         continue;
                     case 'X':
                     case 'd':
                     case 'o':
-                        result[i] = Long.parseLong(elements.get(i));
+                        typecastedObjects[i] = Long.parseLong(elements.get(i));
                         continue;
                     case 'x':
-                        result[i] = Long.parseLong(elements.get(i));
+                        typecastedObjects[i] = Long.parseLong(elements.get(i));
                 }
             } catch (ArrayIndexOutOfBoundsException | ClassCastException | NumberFormatException e) {
                 logger.info(e);
             }
         }
-        return result;
+        return typecastedObjects;
     }
 
     /**

@@ -23,11 +23,11 @@ public class UserDAO extends BaseDAO<User> {
 
     @Override
     public User getById(Integer id) throws DAOException {
-        User result = retrieveObject(User.class, id);
-        if (result == null) {
+        User user = retrieveObject(User.class, id);
+        if (user == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return user;
     }
 
     @Override

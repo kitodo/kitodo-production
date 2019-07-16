@@ -50,11 +50,11 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
      * @return list of select item objects
      */
     private static List<SelectItem> toItems(Map<String, String> selectItems) {
-        ArrayList<SelectItem> result = new ArrayList<>(selectItems.entrySet().size());
+        ArrayList<SelectItem> items = new ArrayList<>(selectItems.entrySet().size());
         for (Entry<String, String> entry : selectItems.entrySet()) {
-            result.add(new SelectItem(entry.getKey(), entry.getValue()));
+            items.add(new SelectItem(entry.getKey(), entry.getValue()));
         }
-        return result;
+        return items;
     }
 
     /**
@@ -108,7 +108,7 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
     @Override
     Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
         int items = selectedItems.size();
-        Collection<Metadata> result = new HashSet<>((int) Math.ceil(items / .75));
+        Collection<Metadata> metadata = new HashSet<>((int) Math.ceil(items / .75));
         String key = settings.getId();
         MdSec domain = DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION));
         for (String selectedItem : selectedItems) {
@@ -119,9 +119,9 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
             entry.setKey(key);
             entry.setDomain(domain);
             entry.setValue(selectedItem);
-            result.add(entry);
+            metadata.add(entry);
         }
-        return result;
+        return metadata;
     }
 
     /**

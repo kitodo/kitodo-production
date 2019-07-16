@@ -22,11 +22,11 @@ public class TemplateDAO extends BaseDAO<Template> {
 
     @Override
     public Template getById(Integer id) throws DAOException {
-        Template result = retrieveObject(Template.class, id);
-        if (result == null) {
+        Template template = retrieveObject(Template.class, id);
+        if (template == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return template;
     }
 
     @Override

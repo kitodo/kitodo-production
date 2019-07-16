@@ -63,13 +63,13 @@ class ResponseHandler {
      * @return SearchResult created from given HttpResponse
      */
     static SearchResult getSearchResult(HttpResponse response) {
-        SearchResult result = new SearchResult();
+        SearchResult searchResult = new SearchResult();
         Document resultDocument = transformResponseToDocument(response);
         if (Objects.nonNull(resultDocument)) {
-            result.setHits(extractHits(resultDocument));
-            result.setNumberOfRecords(extractNumberOfRecords(resultDocument));
+            searchResult.setHits(extractHits(resultDocument));
+            searchResult.setNumberOfRecords(extractNumberOfRecords(resultDocument));
         }
-        return result;
+        return searchResult;
     }
 
     /**

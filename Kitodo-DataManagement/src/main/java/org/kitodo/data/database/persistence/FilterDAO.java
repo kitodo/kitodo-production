@@ -23,11 +23,11 @@ public class FilterDAO extends BaseDAO<Filter> {
 
     @Override
     public Filter getById(Integer id) throws DAOException {
-        Filter result = retrieveObject(Filter.class, id);
-        if (result == null) {
+        Filter filter = retrieveObject(Filter.class, id);
+        if (filter == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return filter;
     }
 
     @Override

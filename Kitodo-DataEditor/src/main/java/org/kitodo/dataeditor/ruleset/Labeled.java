@@ -89,11 +89,11 @@ public class Labeled {
             String label = labeled.getLabel(priorityList);
             byLabelSorter.put(label + '\037' + key, Pair.of(key, label));
         }
-        LinkedHashMap<String, String> result = new LinkedHashMap<>((int) Math.ceil(elements.size() / 0.75));
+        LinkedHashMap<String, String> list = new LinkedHashMap<>((int) Math.ceil(elements.size() / 0.75));
         for (Pair<String, String> entry : byLabelSorter.values()) {
-            result.put(entry.getKey(), entry.getValue());
+            list.put(entry.getKey(), entry.getValue());
         }
-        return result;
+        return list;
     }
 
     /**

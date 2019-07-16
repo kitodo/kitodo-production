@@ -20,11 +20,11 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
 
     @Override
     public Ruleset getById(Integer id) throws DAOException {
-        Ruleset result = retrieveObject(Ruleset.class, id);
-        if (result == null) {
+        Ruleset ruleset = retrieveObject(Ruleset.class, id);
+        if (ruleset == null) {
             throw new DAOException("Object cannot be found in database");
         }
-        return result;
+        return ruleset;
     }
 
     @Override

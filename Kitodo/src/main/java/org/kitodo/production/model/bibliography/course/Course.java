@@ -305,11 +305,11 @@ public class Course extends ArrayList<Block> {
      * @return the count of issues
      */
     public long countIndividualIssues() {
-        long result = 0;
+        long numberOfIndividualIssues = 0;
         for (Block block : this) {
-            result += block.countIndividualIssues();
+            numberOfIndividualIssues += block.countIndividualIssues();
         }
-        return result;
+        return numberOfIndividualIssues;
     }
 
     /**
@@ -348,17 +348,17 @@ public class Course extends ArrayList<Block> {
      *         representing one physically appeared issue
      */
     public Set<IndividualIssue> getIndividualIssues() {
-        LinkedHashSet<IndividualIssue> result = new LinkedHashSet<>();
+        LinkedHashSet<IndividualIssue> individualIssues = new LinkedHashSet<>();
         LocalDate lastAppearance = getLastAppearance();
         LocalDate firstAppearance = getFirstAppearance();
         if (Objects.nonNull(firstAppearance)) {
             for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
                 for (Block block : this) {
-                    result.addAll(block.getIndividualIssues(day));
+                    individualIssues.addAll(block.getIndividualIssues(day));
                 }
             }
         }
-        return result;
+        return individualIssues;
     }
 
     /**
@@ -371,14 +371,14 @@ public class Course extends ArrayList<Block> {
         if (super.isEmpty()) {
             return null;
         }
-        LocalDate result = super.get(0).getFirstAppearance();
+        LocalDate firstAppearance = super.get(0).getFirstAppearance();
         for (int index = 1; index < super.size(); index++) {
-            LocalDate firstAppearance = super.get(index).getFirstAppearance();
-            if (firstAppearance.isBefore(result)) {
-                result = firstAppearance;
+            LocalDate otherFirstAppearance = super.get(index).getFirstAppearance();
+            if (otherFirstAppearance.isBefore(firstAppearance)) {
+                firstAppearance = otherFirstAppearance;
             }
         }
-        return result;
+        return firstAppearance;
     }
 
     /**
@@ -391,14 +391,14 @@ public class Course extends ArrayList<Block> {
         if (super.isEmpty()) {
             return null;
         }
-        LocalDate result = super.get(0).getLastAppearance();
+        LocalDate lastAppearance = super.get(0).getLastAppearance();
         for (int index = 1; index < super.size(); index++) {
-            LocalDate lastAppearance = super.get(index).getLastAppearance();
-            if (lastAppearance.isAfter(result)) {
-                result = lastAppearance;
+            LocalDate otherLastAppearance = super.get(index).getLastAppearance();
+            if (otherLastAppearance.isAfter(lastAppearance)) {
+                lastAppearance = otherLastAppearance;
             }
         }
-        return result;
+        return lastAppearance;
     }
 
     /**
@@ -421,18 +421,19 @@ public class Course extends ArrayList<Block> {
      * @return a guessed total number of pages for the full course of appearance
      */
     public long guessTotalNumberOfPages() {
-        long result = 0;
+        long totalNumberOfPages = 0;
         for (Block block : this) {
             LocalDate lastAppearance = block.getLastAppearance();
             for (LocalDate day = block.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
                 for (Issue issue : block.getIssues()) {
                     if (issue.isMatch(day)) {
-                        result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? WEEKDAY_PAGES : SUNDAY_PAGES;
+                        totalNumberOfPages += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? WEEKDAY_PAGES
+                                : SUNDAY_PAGES;
                     }
                 }
             }
         }
-        return result;
+        return totalNumberOfPages;
     }
 
     /**
@@ -539,16 +540,16 @@ public class Course extends ArrayList<Block> {
      * @return XML as String
      */
     public Document toXML() throws IOException {
-        Document result = XMLUtils.newDocument();
-        Element courseNode = result.createElement(ELEMENT_COURSE);
+        Document xml = XMLUtils.newDocument();
+        Element courseNode = xml.createElement(ELEMENT_COURSE);
 
-        Element description = result.createElement(ELEMENT_DESCRIPTION);
-        description.appendChild(result.createTextNode(StringUtils.join(CourseToGerman.asReadableText(this), "\n\n")));
+        Element description = xml.createElement(ELEMENT_DESCRIPTION);
+        description.appendChild(xml.createTextNode(StringUtils.join(CourseToGerman.asReadableText(this), "\n\n")));
         courseNode.appendChild(description);
 
-        Element processesNode = result.createElement(ELEMENT_PROCESSES);
+        Element processesNode = xml.createElement(ELEMENT_PROCESSES);
         for (List<IndividualIssue> process : processes) {
-            Element processNode = result.createElement(ELEMENT_PROCESS);
+            Element processNode = xml.createElement(ELEMENT_PROCESS);
             Element blockNode = null;
             int previous = -1;
             for (IndividualIssue issue : process) {
@@ -558,10 +559,10 @@ public class Course extends ArrayList<Block> {
                     blockNode = null;
                 }
                 if (blockNode == null) {
-                    blockNode = result.createElement(ELEMENT_BLOCK);
+                    blockNode = xml.createElement(ELEMENT_BLOCK);
                     blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
                 }
-                Element issueNode = result.createElement(ELEMENT_APPEARED);
+                Element issueNode = xml.createElement(ELEMENT_APPEARED);
                 issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
                 issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
                 blockNode.appendChild(issueNode);
@@ -574,7 +575,7 @@ public class Course extends ArrayList<Block> {
         }
         courseNode.appendChild(processesNode);
 
-        result.appendChild(courseNode);
-        return result;
+        xml.appendChild(courseNode);
+        return xml;
     }
 }

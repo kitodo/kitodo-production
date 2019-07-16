@@ -77,16 +77,16 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      * @return JSONArray
      */
     <F extends BaseBean> List addObjectRelation(List<F> objects, boolean addAdditionalProperties) {
-        List<Map<String, Object>> result = new ArrayList<>();
+        List<Map<String, Object>> jsonObjects = new ArrayList<>();
         for (F property : objects) {
             Map<String, Object> jsonObject = new HashMap<>();
             jsonObject.put(BatchTypeField.ID.getKey(), property.getId());
             if (addAdditionalProperties) {
                 getAdditionalProperties(jsonObject, property);
             }
-            result.add(jsonObject);
+            jsonObjects.add(jsonObject);
         }
-        return result;
+        return jsonObjects;
     }
 
     /**

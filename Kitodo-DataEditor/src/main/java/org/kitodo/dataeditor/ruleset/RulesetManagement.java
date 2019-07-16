@@ -58,17 +58,17 @@ public class RulesetManagement implements RulesetManagementInterface {
     @Override
     public Collection<String> getAcquisitionStages() {
         List<AcquisitionStage> acquisitionStages = ruleset.getAcquisitionStages();
-        List<String> result = new ArrayList<>(acquisitionStages.size());
+        List<String> acquisitionStageNames = new ArrayList<>(acquisitionStages.size());
         for (AcquisitionStage acquisitionStage : acquisitionStages) {
-            result.add(acquisitionStage.getName());
+            acquisitionStageNames.add(acquisitionStage.getName());
         }
-        return result;
+        return acquisitionStageNames;
     }
 
     /**
      * Returns a translated list of divisions available in the rule set. The map
      * maps from ID to label.
-     * 
+     *
      * @return the list of divisions
      */
     @Override
@@ -78,7 +78,7 @@ public class RulesetManagement implements RulesetManagementInterface {
 
     /**
      * Opens a view on a division of the rule set.
-     * 
+     *
      * @param divisionId
      *            the division in view
      * @param acquisitionStage
@@ -100,7 +100,7 @@ public class RulesetManagement implements RulesetManagementInterface {
 
     /**
      * Loads a ruleset from a file.
-     * 
+     *
      * @param rulesetFile
      *            file to load
      * @throws IOException

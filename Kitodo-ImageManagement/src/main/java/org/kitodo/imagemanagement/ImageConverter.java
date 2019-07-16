@@ -83,9 +83,9 @@ class ImageConverter {
      * @return the conversion result object to define conversion properties
      */
     FutureDerivative addResult(URI path) {
-        FutureDerivative result = new FutureDerivative(uriToPath(path));
-        results.add(result);
-        return result;
+        FutureDerivative futureDerivative = new FutureDerivative(uriToPath(path));
+        results.add(futureDerivative);
+        return futureDerivative;
     }
 
     /**
@@ -98,9 +98,9 @@ class ImageConverter {
      * @return the conversion result object to define conversion properties
      */
     FutureDerivative addResult(URI path, ImageFileFormat resultFileFormat) {
-        FutureDerivative result = new FutureDerivative(uriToPath(path), resultFileFormat);
-        results.add(result);
-        return result;
+        FutureDerivative futureDerivative = new FutureDerivative(uriToPath(path), resultFileFormat);
+        results.add(futureDerivative);
+        return futureDerivative;
     }
 
     /**

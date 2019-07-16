@@ -80,12 +80,12 @@ class MptrXmlElementAccess {
         if (div.getMptr().isEmpty()) {
             return null;
         }
-        LinkedMetsResource result = new LinkedMetsResource();
+        LinkedMetsResource linkFromDiv = new LinkedMetsResource();
         Mptr mptr = div.getMptr().get(0);
-        result.setLoctype(AllowedLoctypeValues.OTHER.toString().equals(mptr.getLOCTYPE()) ? mptr.getOTHERLOCTYPE()
+        linkFromDiv.setLoctype(AllowedLoctypeValues.OTHER.toString().equals(mptr.getLOCTYPE()) ? mptr.getOTHERLOCTYPE()
                 : mptr.getLOCTYPE());
-        result.setOrder(div.getORDER());
-        result.setUri(URI.create(mptr.getHref()));
-        return result;
+        linkFromDiv.setOrder(div.getORDER());
+        linkFromDiv.setUri(URI.create(mptr.getHref()));
+        return linkFromDiv;
     }
 }

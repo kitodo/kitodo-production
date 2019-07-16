@@ -47,7 +47,7 @@ public class ConfigProject {
 
     /**
      * Constructor for ConfigProject.
-     * 
+     *
      * @param projectTitle
      *            for which configuration is going to be read
      * @throws IOException
@@ -227,8 +227,8 @@ public class ConfigProject {
     public String getParamString(String inParameter) {
         try {
             this.config.setListDelimiter('&');
-            String result = this.config.getString(this.projectTitle + inParameter);
-            return cleanXmlFormattedString(result);
+            String paramString = this.config.getString(this.projectTitle + inParameter);
+            return cleanXmlFormattedString(paramString);
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
             return "";
@@ -245,8 +245,8 @@ public class ConfigProject {
         try {
             this.config.setListDelimiter('&');
             String myParam = this.projectTitle + parameter;
-            String result = this.config.getString(myParam, defaultIfNull);
-            return cleanXmlFormattedString(result);
+            String paramString = this.config.getString(myParam, defaultIfNull);
+            return cleanXmlFormattedString(paramString);
         } catch (RuntimeException e) {
             return defaultIfNull;
         }

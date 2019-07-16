@@ -65,7 +65,7 @@ public class MapMessageObjectReader {
      *             can be thrown by MapMessage.getObject(String)
      */
     public Set<String> getMandatorySetOfString(String key) throws JMSException {
-        Set<String> result = new HashSet<>();
+        Set<String> mandatorySetOfStrings = new HashSet<>();
 
         Object collectionObject = ticket.getObject(key);
         if (Objects.isNull(collectionObject)) {
@@ -84,9 +84,9 @@ public class MapMessageObjectReader {
                             "Incompatible types: An element of \"" + key + WRONG_TYPE + " String.");
                 }
             }
-            result.add((String) contentObject);
+            mandatorySetOfStrings.add((String) contentObject);
         }
-        return result;
+        return mandatorySetOfStrings;
     }
 
     /**
@@ -103,11 +103,11 @@ public class MapMessageObjectReader {
      *             can be thrown by MapMessage.getString(String)
      */
     public String getMandatoryString(String key) throws JMSException {
-        String result = ticket.getString(key);
-        if (Objects.isNull(result) || result.isEmpty()) {
+        String mandatoryString = ticket.getString(key);
+        if (Objects.isNull(mandatoryString) || mandatoryString.isEmpty()) {
             throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
-        return result;
+        return mandatoryString;
     }
 
     /**
@@ -161,7 +161,7 @@ public class MapMessageObjectReader {
      *             type String.
      */
     public Map<String, String> getMapOfStringToString(String key) {
-        Map<String, String> result = new HashMap<>();
+        Map<String, String> mapOfStringToString = new HashMap<>();
 
         Object mapObject = null;
         try {
@@ -187,16 +187,16 @@ public class MapMessageObjectReader {
                 throw new IllegalArgumentException(
                         "Incompatible types: A value element of \"" + key + WRONG_TYPE + "String.");
             }
-            result.put((String) keyObject, (String) valueObject);
+            mapOfStringToString.put((String) keyObject, (String) valueObject);
         }
 
-        return result;
+        return mapOfStringToString;
     }
 
     /**
      * Tests whether a field can be obtained from a MapMessage.
      *
-     * @param string
+     * @param fieldName
      *            name of the field
      * @return whether the field can be obtained
      * @throws IllegalArgumentException
@@ -204,8 +204,8 @@ public class MapMessageObjectReader {
      * @throws JMSException
      *             can be thrown by MapMessage
      */
-    public boolean hasField(String string) throws JMSException {
-        String result = ticket.getString(string);
-        return Objects.nonNull(result) && !result.isEmpty();
+    public boolean hasField(String fieldName) throws JMSException {
+        String valueOfField = ticket.getString(fieldName);
+        return Objects.nonNull(valueOfField) && !valueOfField.isEmpty();
     }
 }

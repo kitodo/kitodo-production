@@ -249,12 +249,12 @@ public abstract class UnspecificPlugin {
      */
     protected final Method getDeclaredMethod(String name, Class<?>[] parameterTypes, Class<?> resultType)
             throws NoSuchMethodException {
-        Method result = plugin.getClass().getDeclaredMethod(name, parameterTypes);
-        if (!resultType.isAssignableFrom(result.getReturnType())) {
-            throw new NoSuchMethodException("Bad return type of method " + result.toString() + " ("
+        Method declaredMethod = plugin.getClass().getDeclaredMethod(name, parameterTypes);
+        if (!resultType.isAssignableFrom(declaredMethod.getReturnType())) {
+            throw new NoSuchMethodException("Bad return type of method " + declaredMethod.toString() + " ("
                     + Arrays.toString(parameterTypes) + "), must be " + resultType.toString());
         }
-        return result;
+        return declaredMethod;
     }
 
     /**

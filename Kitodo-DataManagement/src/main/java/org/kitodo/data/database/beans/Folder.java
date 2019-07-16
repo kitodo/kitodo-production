@@ -214,9 +214,9 @@ public class Folder extends BaseBean {
      * @return the pre-defined entries for the combo box
      */
     public Collection<String> getFileGroups() {
-        Collection<String> result = new TreeSet<>(DFG_VIEWER_FILEGRPS);
-        result.add(this.fileGroup);
-        return result;
+        Collection<String> fileGroups = new TreeSet<>(DFG_VIEWER_FILEGRPS);
+        fileGroups.add(this.fileGroup);
+        return fileGroups;
     }
 
     /**

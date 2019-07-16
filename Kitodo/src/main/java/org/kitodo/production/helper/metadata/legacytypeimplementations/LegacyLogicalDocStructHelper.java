@@ -154,11 +154,11 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(metadataEntriesMappedToKeyNames,
             Collections.emptyList());
-        ArrayList<LegacyMetadataTypeHelper> result = new ArrayList<>(addableKeys.size());
+        ArrayList<LegacyMetadataTypeHelper> addableMetadataTypes = new ArrayList<>(addableKeys.size());
         for (MetadataViewInterface key : addableKeys) {
-            result.add(new LegacyMetadataTypeHelper(key));
+            addableMetadataTypes.add(new LegacyMetadataTypeHelper(key));
         }
-        return result;
+        return addableMetadataTypes;
     }
 
     @Override
@@ -174,7 +174,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
-        List<LegacyMetadataHelper> result = new LinkedList<>();
+        List<LegacyMetadataHelper> allMetadata = new LinkedList<>();
         Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
@@ -184,19 +184,19 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 MetadataViewInterface key = entryView.getMetadata().get();
                 for (Metadata value : entryView.getValues()) {
                     if (value instanceof MetadataEntry) {
-                        result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
+                        allMetadata.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
                                 ((MetadataEntry) value).getValue()));
                     }
                 }
             }
         }
-        return result;
+        return allMetadata;
     }
 
     @Override
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
-        List<LegacyMetadataHelper> result = new LinkedList<>();
+        List<LegacyMetadataHelper> allMetadata = new LinkedList<>();
         Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
@@ -207,14 +207,14 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 if (key.getId().equals(metadataType.getName())) {
                     for (Metadata value : entryView.getValues()) {
                         if (value instanceof MetadataEntry) {
-                            result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
+                            allMetadata.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
                                     ((MetadataEntry) value).getValue()));
                         }
                     }
                 }
             }
         }
-        return result;
+        return allMetadata;
     }
 
     @Override
