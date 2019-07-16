@@ -213,8 +213,7 @@ public class BatchServiceIT {
     @Test
     public void shouldCreateLabel() throws Exception {
         Batch batch = batchService.getById(1);
-        batchService.createLabel(batch);
-        String toString = batch.toString();
-        assertEquals("Created label is incorrect!", "First batch (1 processes)", toString);
+        String label = batchService.createLabel(batch);
+        assertEquals("Created label is incorrect!", "First batch (1 processes)", label);
     }
 }
