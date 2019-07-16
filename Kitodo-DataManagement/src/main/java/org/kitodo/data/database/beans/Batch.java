@@ -29,25 +29,25 @@ import javax.persistence.Transient;
 import org.kitodo.data.database.persistence.BatchDAO;
 
 /**
- * The class Batch represents a user-definable, unordered collection of
- * processes that methods can be applied on in batch processing.
- *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * A user-definable, unordered collection of processes whose batch-type tasks
+ * can be taken over and completed with a single operator action. This depicts
+ * taking over and completing tasks when the tasks of multiple processes refer
+ * to the same physical object, for example, a multi-content box or a
+ * multi-journal binding unit.
  */
 @Entity
 @Table(name = "batch")
 public class Batch extends BaseIndexedBean {
 
     /**
-     * The field title holds the batch title. Using titles for batches is
-     * optional, the field may be null. If so, the id will be shown to the user
-     * instead.
+     * The batch title. Using titles for batches is optional, the field may be
+     * {@code null}. If so, the ID will be shown to the user instead.
      */
     @Column(name = "title")
     private String title;
 
     /**
-     * The field processes holds the processes that belong to the batch.
+     * Holds the processes that belong to the batch.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "batch_x_process", joinColumns = {
@@ -55,22 +55,31 @@ public class Batch extends BaseIndexedBean {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")) })
     private List<Process> processes;
 
+    /**
+     * The display label of this batch.
+     *
+     * <p>
+     * Note: This is a strange hack that seems to be related to the lazy loading
+     * of the processes within the batch: The label, consisting of the title and
+     * the number of processes, is created manually by invoking a function at
+     * the time of loading a batch, and not when accessing {@code toString()}.
+     * TODO: Should be checked if this is still necessary.
+     */
     @Transient
     private String label = "";
 
     /**
-     * Default constructor. Creates an empty batch object.
+     * Creates an empty batch.
      */
     public Batch() {
         this.processes = new ArrayList<>();
     }
 
     /**
-     * Constructor to create an empty batch object with a given title and a
-     * type.
+     * Creates an empty batch with a given title.
      *
      * @param title
-     *            for the batch
+     *            title of the batch
      */
     public Batch(String title) {
         this.processes = new ArrayList<>();
@@ -78,23 +87,22 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Constructor to create a batch that holds the given processes.
+     * Creates a batch that holds the given processes.
      *
      * @param processes
-     *            that go into the batch
+     *            processes in the batch
      */
     public Batch(Collection<? extends Process> processes) {
         this.processes = new ArrayList<>(processes);
     }
 
     /**
-     * Constructor to create a batch with a given title that holds the given
-     * processes.
+     * Creates a batch with a given title that holds the given processes.
      *
      * @param title
-     *            for the batch
+     *            title of the batch
      * @param processes
-     *            that go into the batch
+     *            processes in the batch
      */
     public Batch(String title, Collection<? extends Process> processes) {
         this.title = title;
@@ -102,8 +110,8 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Returns the batch title. Using titles for batches
-     * is optional, the field may be null. If so, the function returns null.
+     * Returns the batch title. Using titles for batches is optional, the field
+     * may be {@code null}. If so, the function returns null.
      *
      * @return the batch title
      */
@@ -112,21 +120,19 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Can be used to set a batch title. This function is
-     * also required by Hibernate when creating objects from the database.
+     * Sets a batch title.
      *
      * @param title
-     *            for the batch
+     *            title of the batch
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
     /**
-     * Return the processes that belong to the
-     * batch.
+     * Return the processes that belong to the batch.
      *
-     * @return the processes that are in the batch
+     * @return the processes of the batch
      */
     public List<Process> getProcesses() {
         initialize(new BatchDAO(), this.processes);
@@ -138,11 +144,9 @@ public class Batch extends BaseIndexedBean {
 
     /**
      * Sets the processes that belong to the batch.
-     * This method is also required by Hibernate when creating objects from the
-     * database.
      *
      * @param processes
-     *            that belong to the batch
+     *            processes of the batch
      */
     public void setProcesses(List<Process> processes) {
         if (this.processes == null) {
@@ -154,24 +158,15 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Set label.
+     * Sets label of this batch.
      *
-     * @param label as java.lang.String
+     * @param label
+     *            label to set
      */
     public void setLabel(String label) {
         this.label = label;
     }
 
-    /**
-     * Indicates whether some other object is “equal to”
-     * this one.
-     *
-     * @param object
-     *            the reference object with which to compare
-     * @return true if this object is the same as the obj argument; false
-     *         otherwise
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -187,7 +182,7 @@ public class Batch extends BaseIndexedBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, processes);
+        return getId();
     }
 
     @Override
