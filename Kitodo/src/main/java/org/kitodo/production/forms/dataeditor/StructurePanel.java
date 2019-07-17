@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -114,9 +115,26 @@ public class StructurePanel implements Serializable {
             return;
         }
         IncludedStructuralElement parent = ancestors.getLast();
+
+        Collection<View> subViews = new ArrayList<>();
+        subViews = getAllSubViews(selectedStructure.get(), subViews);
+        parent.getViews().addAll(subViews);
+
         parent.getChildren().remove(selectedStructure.get());
+        this.dataEditor.setExpandTree(true);
         show();
+        this.dataEditor.setExpandTree(false);
         dataEditor.getGalleryPanel().updateStripes();
+    }
+
+    private Collection<View> getAllSubViews(IncludedStructuralElement selectedStructure, Collection<View> views) {
+        if (Objects.nonNull(selectedStructure.getViews())) {
+            views.addAll(selectedStructure.getViews());
+        }
+        for (IncludedStructuralElement child : selectedStructure.getChildren()) {
+            getAllSubViews(child, views);
+        }
+        return views;
     }
 
     void deleteSelectedMediaUnit() {

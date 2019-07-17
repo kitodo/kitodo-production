@@ -594,4 +594,13 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     boolean isExpandTree() {
         return this.expandTree;
     }
+
+    /**
+     * Set expandTree.
+     *
+     * @param expandTree as boolean
+     */
+    public void setExpandTree(boolean expandTree) {
+        this.expandTree = expandTree;
+    }
 }
