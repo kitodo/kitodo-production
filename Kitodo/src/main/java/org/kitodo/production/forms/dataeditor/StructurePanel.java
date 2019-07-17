@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,12 +71,22 @@ public class StructurePanel implements Serializable {
     /**
      * The logical structure tree of the edited document.
      */
-    private LinkedList<DefaultTreeNode> logicalTrees;
+    private DefaultTreeNode logicalTree = null;
 
     /**
      * The physical structure tree of the edited document.
      */
     private DefaultTreeNode physicalTree = null;
+
+    /**
+     * HashMap containing the current expansion states of all TreeNodes in the logical structure tree.
+     */
+    private HashMap<String, Boolean> previousExpansionStatesLogicalTree;
+
+    /**
+     * HashMap containing the current expansion states of all TreeNodes in the physical structure tree.
+     */
+    private HashMap<String, Boolean> previousExpansionStatesPhysicalTree;
 
     /**
      * Creates a new structure panel.
@@ -91,7 +102,7 @@ public class StructurePanel implements Serializable {
      * Clear content.
      */
     public void clear() {
-        logicalTrees = null;
+        logicalTree = null;
         physicalTree = null;
         selectedLogicalNode = null;
         selectedPhysicalNode = null;
@@ -121,9 +132,7 @@ public class StructurePanel implements Serializable {
         parent.getViews().addAll(subViews);
 
         parent.getChildren().remove(selectedStructure.get());
-        this.dataEditor.setExpandTree(true);
         show();
-        this.dataEditor.setExpandTree(false);
         dataEditor.getGalleryPanel().updateStripes();
     }
 
@@ -214,7 +223,7 @@ public class StructurePanel implements Serializable {
      * @param mediaUnit
      *          MediaUnit to be selected in physical structure tree
      */
-    public void selectMediaUnit(MediaUnit mediaUnit) {
+    void selectMediaUnit(MediaUnit mediaUnit) {
         TreeNode matchingTreeNode = getMatchingTreeNode(getPhysicalTree(), mediaUnit);
         if (Objects.nonNull(matchingTreeNode)) {
             updatePhysicalNodeSelection(matchingTreeNode);
@@ -246,21 +255,12 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Get parentTrees.
-     *
-     * @return value of parentTrees
-     */
-    public List<DefaultTreeNode> getParentTrees() {
-        return logicalTrees.subList(0, logicalTrees.size() - 1);
-    }
-
-    /**
      * Get logicalTree.
      *
      * @return value of logicalTree
      */
     public DefaultTreeNode getLogicalTree() {
-        return logicalTrees.getLast();
+        return this.logicalTree;
     }
 
     /**
@@ -283,8 +283,8 @@ public class StructurePanel implements Serializable {
      * workpiece which is stored in the root element of the structure tree.
      */
     private void preserveLogical() {
-        if (!logicalTrees.getLast().getChildren().isEmpty()) {
-            preserveLogicalRecursive(logicalTrees.getLast().getChildren().get(0));
+        if (!this.logicalTree.getChildren().isEmpty()) {
+            preserveLogicalRecursive(this.logicalTree.getChildren().get(0));
         }
     }
 
@@ -362,9 +362,16 @@ public class StructurePanel implements Serializable {
     public void show() {
         this.structure = dataEditor.getWorkpiece().getRootElement();
         Pair<LinkedList<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
-        this.logicalTrees = result.getLeft();
+
+        this.previousExpansionStatesLogicalTree = getTreeNodeExpansionStates(this.logicalTree);
+        this.logicalTree = result.getLeft().getLast();
+        updateNodeExpansionStates(this.logicalTree, this.previousExpansionStatesLogicalTree);
+
+        this.previousExpansionStatesPhysicalTree = getTreeNodeExpansionStates(this.getPhysicalTree());
         this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit());
-        this.selectedLogicalNode = logicalTrees.getLast().getChildren().get(0);
+        updateNodeExpansionStates(this.getPhysicalTree(), this.previousExpansionStatesPhysicalTree);
+
+        this.selectedLogicalNode = logicalTree.getChildren().get(0);
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
         this.previouslySelectedPhysicalNode = selectedPhysicalNode;
@@ -381,7 +388,7 @@ public class StructurePanel implements Serializable {
         LinkedList<DefaultTreeNode> result = new LinkedList<>();
 
         DefaultTreeNode main = new DefaultTreeNode();
-        if (this.dataEditor.isExpandTree()) {
+        if (nodeStateUnknown(this.previousExpansionStatesLogicalTree, main)) {
             main.setExpanded(true);
         }
         Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, main);
@@ -419,7 +426,7 @@ public class StructurePanel implements Serializable {
          * framework. So you do not have to add the result anywhere.
          */
         DefaultTreeNode parent = new DefaultTreeNode(node, result);
-        if (this.dataEditor.isExpandTree()) {
+        if (nodeStateUnknown(this.previousExpansionStatesLogicalTree, parent)) {
             parent.setExpanded(true);
         }
 
@@ -488,7 +495,9 @@ public class StructurePanel implements Serializable {
             DefaultTreeNode parent) {
         DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(this, label, undefined, linked, dataObject),
                 parent);
-        if (this.dataEditor.isExpandTree()) {
+        if (dataObject instanceof MediaUnit && nodeStateUnknown(this.previousExpansionStatesPhysicalTree, node)
+                || dataObject instanceof IncludedStructuralElement
+                && nodeStateUnknown(this.previousExpansionStatesLogicalTree, node)) {
             node.setExpanded(true);
         }
         return node;
@@ -515,7 +524,7 @@ public class StructurePanel implements Serializable {
         }
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
         DefaultTreeNode tree = new DefaultTreeNode();
-        if (this.dataEditor.isExpandTree()) {
+        if (nodeStateUnknown(this.previousExpansionStatesLogicalTree, tree)) {
             tree.setExpanded(true);
         }
         try {
@@ -605,7 +614,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode buildMediaTree(MediaUnit mediaRoot) {
         DefaultTreeNode rootTreeNode = new DefaultTreeNode();
-        if (this.dataEditor.isExpandTree()) {
+        if (nodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
             rootTreeNode.setExpanded(true);
         }
         buildMediaTreeRecursively(mediaRoot, rootTreeNode);
@@ -616,7 +625,7 @@ public class StructurePanel implements Serializable {
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 mediaUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         DefaultTreeNode treeNode = addTreeNode(divisionView.getLabel(), false, false, mediaUnit, parentTreeNode);
-        if (this.dataEditor.isExpandTree()) {
+        if (nodeStateUnknown(this.previousExpansionStatesPhysicalTree, treeNode)) {
             treeNode.setExpanded(true);
         }
         if (Objects.nonNull(mediaUnit.getChildren())) {
@@ -659,7 +668,7 @@ public class StructurePanel implements Serializable {
         this.updatePhysicalNodeSelection(galleryMediaContent);
     }
 
-    void updatePhysicalNodeSelection(TreeNode treeNode) {
+    private void updatePhysicalNodeSelection(TreeNode treeNode) {
         if (this.isSeparateMedia()) {
             if (Objects.nonNull(previouslySelectedPhysicalNode)) {
                 previouslySelectedPhysicalNode.setSelected(false);
@@ -692,13 +701,13 @@ public class StructurePanel implements Serializable {
         if (Objects.nonNull(selectedLogicalNode)) {
             selectedLogicalNode.setSelected(false);
         }
-        if (Objects.nonNull(logicalTrees)) {
+        if (Objects.nonNull(this.logicalTree)) {
             GalleryStripe matchingGalleryStripe = this.dataEditor.getGalleryPanel().getLogicalStructureOfMedia(galleryMediaContent);
             if (Objects.nonNull(matchingGalleryStripe) && Objects.nonNull(matchingGalleryStripe.getStructure())) {
                 if (this.isSeparateMedia()) {
                     TreeNode selectedLogicalTreeNode =
                             updateLogicalNodeSelectionRecursive(matchingGalleryStripe.getStructure(),
-                                logicalTrees.getLast());
+                                logicalTree);
                     if (Objects.nonNull(selectedLogicalTreeNode)) {
                         setSelectedLogicalNode(selectedLogicalTreeNode);
                     } else {
@@ -706,7 +715,7 @@ public class StructurePanel implements Serializable {
                     }
                 } else {
                     TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent,
-                        logicalTrees.getLast());
+                        logicalTree);
                     if (Objects.nonNull(selectedTreeNode)) {
                         setSelectedLogicalNode(selectedTreeNode);
                     } else {
@@ -904,5 +913,43 @@ public class StructurePanel implements Serializable {
             node.setExpanded(true);
             expandNode(node.getParent());
         }
+    }
+
+    private HashMap<String, Boolean> getTreeNodeExpansionStates(DefaultTreeNode tree) {
+        if (Objects.nonNull(tree)) {
+            return getTreeNodeExpansionStatesRecursively(tree, new HashMap<>());
+        } else {
+            return new HashMap<>();
+        }
+
+    }
+
+    private HashMap<String, Boolean> getTreeNodeExpansionStatesRecursively(TreeNode treeNode, HashMap<String, Boolean> expansionStates) {
+        if (Objects.nonNull(treeNode)) {
+            expansionStates.put(treeNode.getRowKey(), treeNode.isExpanded());
+            for (TreeNode childNode : treeNode.getChildren()) {
+                expansionStates.putAll(getTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+            }
+        }
+        return expansionStates;
+    }
+
+    private void updateNodeExpansionStates(DefaultTreeNode tree, HashMap<String, Boolean> expansionStates) {
+        if (Objects.nonNull(tree) && Objects.nonNull(expansionStates) && !expansionStates.isEmpty()) {
+            updateNodeExpansionStatesRecursively(tree, expansionStates);
+        }
+    }
+
+    private void updateNodeExpansionStatesRecursively(TreeNode treeNode, HashMap<String, Boolean> expansionStates) {
+        if (expansionStates.containsKey(treeNode.getRowKey())) {
+            treeNode.setExpanded(expansionStates.get(treeNode.getRowKey()));
+        }
+        for (TreeNode childNode : treeNode.getChildren()) {
+            updateNodeExpansionStatesRecursively(childNode, expansionStates);
+        }
+    }
+
+    private boolean nodeStateUnknown(HashMap<String, Boolean> expansionStates, TreeNode treeNode) {
+        return !Objects.nonNull(expansionStates) || !expansionStates.containsKey(treeNode.getRowKey());
     }
 }
