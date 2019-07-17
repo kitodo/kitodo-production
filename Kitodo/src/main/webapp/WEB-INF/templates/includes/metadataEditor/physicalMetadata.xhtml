@@ -184,7 +184,9 @@
                                      style="vertical-align: top; margin-left: 10px;"
                                      disabled="#{readOnly}"
                                      title="#{msgs.neueMetadatenHinzufuegen}"
-                                     onclick="PF('addMetadataDialog').show();"/>
+                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems}"
+                                     oncomplete="PF('addMetadataDialog').show();"
+                                     update="addMetadataForm"/>
                 </p:row>
             </p:panelGrid>
         </h:form>

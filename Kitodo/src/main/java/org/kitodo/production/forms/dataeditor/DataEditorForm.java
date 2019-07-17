@@ -545,7 +545,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                     }
                 } else if (structureTreeNode.getDataObject() instanceof View) {
                     // Page selected in logical tree
-                    updateGallery((View) structureTreeNode.getDataObject());
+                    View view = (View) structureTreeNode.getDataObject();
+                    metadataPanel.showPageInLogical(view.getMediaUnit());
+                    updateGallery(view);
                     // no need to update physical tree because pages can only be clicked in logical tree if physical tree is hidden!
                 }
             }

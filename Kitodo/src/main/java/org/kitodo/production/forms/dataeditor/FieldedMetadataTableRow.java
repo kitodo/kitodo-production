@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
@@ -45,6 +47,8 @@ import org.kitodo.production.helper.Helper;
  * label of the metadata panel is not used.
  */
 public class FieldedMetadataTableRow extends MetadataTableRow implements Serializable {
+
+    private static final Logger logger = LogManager.getLogger(FieldedMetadataTableRow.class);
 
     /**
      * An empty metadata group for the empty metadata panel showing. The empty
@@ -328,10 +332,13 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
         }
     }
 
-    void addAdditionallySelectedField(String additionallySelectedField)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    void addAdditionallySelectedField(String additionallySelectedField) throws NoSuchMetadataFieldException {
         additionallySelectedFields.add(additionallySelectedField);
-        preserve();
+        try {
+            preserve();
+        } catch (InvalidMetadataValueException e) {
+            logger.info(e.getLocalizedMessage(), e);
+        }
         createMetadataTable();
     }
 

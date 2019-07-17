@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -48,6 +49,7 @@ import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.TreeNode;
 
 /**
  * Backing bean for the add doc struc type dialog of the metadata editor.
@@ -245,6 +247,7 @@ public class AddDocStrucTypeDialog {
      */
     public void setSelectAddableMetadataTypesSelectedItem(String selectAddableMetadataTypesSelectedItem) {
         this.selectAddableMetadataTypesSelectedItem = selectAddableMetadataTypesSelectedItem;
+        dataEditor.getMetadataPanel().setAddMetadataKeySelectedItem(selectAddableMetadataTypesSelectedItem);
     }
 
     /**
@@ -422,20 +425,44 @@ public class AddDocStrucTypeDialog {
                 Helper.getTranslation("dataEditor.position.asParentOfCurrentElement")));
     }
 
-    private void prepareSelectAddableMetadataTypesItems() {
+    /**
+     *  Prepare the list of available Metadata that can be added to the currently selected structure element.
+     */
+    public void prepareSelectAddableMetadataTypesItems() {
         selectAddableMetadataTypesItems = new ArrayList<>();
+        setSelectAddableMetadataTypesSelectedItem("");
         Collection<MetadataViewInterface> addableMetadata = getStructuralElementView()
                 .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
         for (MetadataViewInterface keyView : addableMetadata) {
-            selectAddableMetadataTypesItems.add(new SelectItem(keyView.getId(), keyView.getLabel()));
+            if (keyView instanceof SimpleMetadataViewInterface) {
+                SimpleMetadataViewInterface simpleMetadataView = (SimpleMetadataViewInterface) keyView;
+                selectAddableMetadataTypesItems.add(new SelectItem(keyView.getId(), keyView.getLabel(),
+                        simpleMetadataView.getInputType().toString()));
+            }
         }
     }
 
     private StructuralElementViewInterface getStructuralElementView() {
-        return dataEditor.getRuleset()
-                .getStructuralElementView(
-                        dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
-                        dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            return dataEditor.getRuleset()
+                    .getStructuralElementView(
+                            dataEditor.getSelectedStructure().get().getType(),
+                            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        } else {
+            TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+            if (Objects.nonNull(selectedLogicalNode)
+                    && selectedLogicalNode.getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+                if (structureTreeNode.getDataObject() instanceof View) {
+                    View view = (View) structureTreeNode.getDataObject();
+                    if (Objects.nonNull(view.getMediaUnit())) {
+                        return dataEditor.getRuleset().getStructuralElementView(view.getMediaUnit().getType(),
+                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException();
     }
 
     private void prepareSelectPageOnAddNodeItems() {
