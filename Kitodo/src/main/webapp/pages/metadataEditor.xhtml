@@ -93,8 +93,7 @@
                         </div>
                         <p:panel id="secondColumnPanel">
                             <div id="metadataPanel" data-min-height="100" class="#{viewMetadata ? '' : 'collapsed'}">
-                                <p:accordionPanel id="metadataAccordion"
-                                                  multiple="true">
+                                <p:accordionPanel id="metadataAccordion">
                                     <p:tab title="#{DataEditorForm.structurePanel.separateMedia ? msgs.logical : ''} #{msgs.metadata}">
                                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/logicalMetadata.xhtml" />
                                     </p:tab>
