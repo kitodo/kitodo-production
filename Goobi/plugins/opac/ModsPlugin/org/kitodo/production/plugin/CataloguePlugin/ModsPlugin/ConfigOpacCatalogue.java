@@ -50,10 +50,10 @@ class ConfigOpacCatalogue {
     }
 
     String getScheme() {
-        return scheme;
+        return this.scheme;
     }
 
     String getPath() {
-        return path;
+        return this.path;
     }
 }
