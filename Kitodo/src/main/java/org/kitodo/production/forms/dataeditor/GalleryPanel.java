@@ -57,6 +57,9 @@ public class GalleryPanel {
     private static final Pattern UNSTRUCTURED_MEDIA = Pattern
             .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredMediaPanel");
 
+    private static final Pattern UNSTRUCTURED_MEDIA_AREA = Pattern
+            .compile("imagePreviewForm:unstructuredMediaList");
+
     private final DataEditorForm dataEditor;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
     private List<GalleryMediaContent> medias = Collections.emptyList();
@@ -165,11 +168,21 @@ public class GalleryPanel {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(event.getDragId());
         Matcher dragUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA.matcher(event.getDragId());
         Matcher dropStripeMatcher = DROP_STRIPE.matcher(event.getDropId());
-        if ((dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches()) && dropStripeMatcher.matches()) {
+        Matcher dropUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
+        if ((dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches())
+                && (dropStripeMatcher.matches() || dropUnstructuredMediaMatcher.matches())) {
             int fromStripeIndex;
             int fromStripeMediaIndex;
+            int toStripeIndex;
             GalleryStripe fromStripe;
-            int toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
+            if (dropStripeMatcher.matches()) {
+                toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
+            } else if (dropUnstructuredMediaMatcher.matches()) {
+                // First (0) stripe represents logical root element (unstructured media)
+                toStripeIndex = 0;
+            } else {
+                return;
+            }
             if (dragStripeImageMatcher.matches()) {
                 fromStripeIndex = Integer.parseInt(dragStripeImageMatcher.group(1));
                 if (fromStripeIndex == toStripeIndex) {
