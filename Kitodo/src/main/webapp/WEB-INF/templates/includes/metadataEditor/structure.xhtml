@@ -40,6 +40,8 @@
                     update="structureTreeForm:logicalTree,metadataAccordion:logicalMetadataWrapperPanel,galleryWrapperPanel"/>
             <p:ajax event="collapse"
                     listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
+            <p:ajax event="expand"
+                    listener="#{DataEditorForm.structurePanel.onNodeExpand}"/>
             <p:treeNode expandedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-expanded'}"
                         collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
@@ -93,6 +95,8 @@
                         update="structureTreeForm:physicalTree,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
                 <p:ajax event="collapse"
                         listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
+                <p:ajax event="expand"
+                        listener="#{DataEditorForm.structurePanel.onNodeExpand}"/>
                 <p:treeNode expandedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-expanded'}"
                             collapsedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                     <!--@elvariable id="physicalElementType" type="java.lang.String"-->

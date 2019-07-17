@@ -41,6 +41,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.NodeCollapseEvent;
+import org.primefaces.event.NodeExpandEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -801,6 +802,19 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Callback function triggered on NodeExpandEvent. Sets the 'expanded' flag of the corresponding tree node to
+     * 'true' because this is not done automatically by PrimeFaces on a NodeExpandEvent.
+     *
+     * @param event
+     *          the NodeExpandEvent triggered in the corresponding structure tree
+     */
+    public void onNodeExpand(NodeExpandEvent event) {
+        if (Objects.nonNull(event) && Objects.nonNull(event.getTreeNode())) {
+            event.getTreeNode().setExpanded(true);
+        }
+    }
+
+    /**
      * Callback function triggered on TreeDragDropEvent. Checks whether performed drag'n'drop action is allowed
      * considering ruleset restrictions on structure hierarchy. In case some ruleset rules were violated by the action
      * displays a corresponding error message to the user and reverts tree to prior state.
@@ -822,7 +836,6 @@ public class StructurePanel implements Serializable {
         }
         StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
         StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
-
 
         try {
             if (dragNode.getDataObject() instanceof IncludedStructuralElement
