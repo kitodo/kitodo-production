@@ -841,8 +841,8 @@ public class StructurePanel implements Serializable {
             } else if (dragNode.getDataObject() instanceof MediaUnit
                     && dropNode.getDataObject() instanceof MediaUnit) {
                 checkPhysicalDragDrop(dragNode, dropNode);
-            } else if (dragNode.getDataObject() instanceof  View && dropNode.getDataObject()
-                    instanceof IncludedStructuralElement) {
+            } else if (dragNode.getDataObject() instanceof View
+                     && dropNode.getDataObject() instanceof IncludedStructuralElement) {
                 movePageNode(event, dropNode, dragNode);
             } else {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(
