@@ -361,6 +361,51 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     content: "\f139";
 }
 
+.ui-treenode-icon.ui-icon {
+    background-image: none;
+    margin-right: 5px;
+    overflow: visible;
+    text-indent: 0;
+}
+
+.ui-tree-toggler.ui-icon {
+    background-image: none;
+    text-indent: 0;
+    margin-right: 3px;
+}
+
+.ui-treenode-icon.ui-icon::after,
+.ui-tree-toggler.ui-icon::after {
+    font-family: FontAwesome;
+    position: absolute;
+}
+
+.ui-icon.ui-icon-document::after {
+    content: "\f15b";
+    top: -2px;
+}
+
+.ui-icon.ui-icon-folder-expanded::after {
+    content: "\f07c";
+}
+
+.ui-icon.ui-icon-folder-collapsed::after {
+    content: "\f07b";
+}
+
+.ui-icon.ui-icon-triangle-1-e::after,
+.ui-icon.ui-icon-triangle-1-s::after {
+    color: var(--blue);
+    content: "\f107";
+    transition: .3s;
+    font-size: large;
+}
+
+.ui-icon.ui-icon-triangle-1-s::after {
+    transform: rotateX(180deg);
+    transition: .3s;
+}
+
 .ui-menu,
 .ui-menu .ui-menu-child {
     background: var(--light-gray);
