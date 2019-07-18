@@ -34,11 +34,16 @@
                     <ui:include src="/WEB-INF/templates/includes/metadataEditor/header.xhtml" />
                 </p:panel>
 
-                <p:messages id="error-messages"
-                            showIcon="false"
-                            closable="true">
-                    <p:autoUpdate/>
-                </p:messages>
+                <span id="messagesWrapper">
+                    <p:messages id="error-messages"
+                                showIcon="false">
+                        <p:autoUpdate/>
+                    </p:messages>
+                    <span id="errorMessagesClose"
+                          onclick="$('#error-messages').slideUp(400, setHeight)">
+                        <i class="fa fa-times"/>
+                    </span>
+                </span>
 
                 <!-- Content -->
                 <div id="metadataEditorWrapper">

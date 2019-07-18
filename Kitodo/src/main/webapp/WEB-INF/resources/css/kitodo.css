@@ -1134,6 +1134,33 @@ Metadata Editor
     padding: 0;
 }
 
+#messagesWrapper {
+    display: block;
+    overflow: hidden;
+    position: relative;
+}
+
+#errorMessagesClose {
+    position: absolute;
+    top: calc(var(--input-padding) + 10px);
+    right: var(--default-full-size);
+    color: white;
+}
+
+#errorMessagesClose:hover {
+    cursor: pointer;
+}
+
+#messagesWrapper #error-messages {
+    overflow: auto;
+    margin: 10px 0;
+    max-height: 300px;
+}
+
+#messagesWrapper .ui-messages-error {
+    margin: 0;
+}
+
 #metadataEditorWrapper {
     height: 700px;
     white-space: nowrap;
