@@ -56,11 +56,6 @@ import org.primefaces.PrimeFaces;
 @SessionScoped
 public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
-    /**
-     * Indicates to JSF to navigate to the web page containing the metadata
-     * editor.
-     */
-    private static final String PAGE_METADATA_EDITOR = "/pages/metadataEditor?faces-redirect=true";
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
 
     /**
@@ -169,34 +164,30 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * This method must be called to start the metadata editor. When this
-     * method is executed, the metadata editor is not yet open in the browser,
-     * but the previous page is still displayed.
+     * Open the metadata file of the process of which the task with the given ID in the metadata editor.
      *
-     * @param id
-     *            ID of the process to open
+     * @param taskID
+     *            ID of the task whose process is opened
      * @param referringView
      *            JSF page the user came from
-     *
-     * @return which page JSF should navigate to
      */
-    public String open(int id, String referringView) {
+    public void open(String taskID, String referringView) {
         try {
+            this.currentTask = ServiceManager.getTaskService().getById(Integer.parseInt(taskID));
             this.referringView = referringView;
-            Helper.getRequestParameter("referringView");
-            this.process = ServiceManager.getProcessService().getById(id);
+            this.process = this.currentTask.getProcess();
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
 
             ruleset = openRuleset(process.getRuleset());
             openMetsFile();
             init();
-            openProcesses.put(id, user);
+            openProcesses.put(process.getId(), user);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return referringView;
+            // TODO: redirect to referrer!
+            //FacesContext.getCurrentInstance().getExternalContext().redirect(referringView);
         }
-        return PAGE_METADATA_EDITOR;
     }
 
     /**
@@ -590,5 +581,36 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         if (Objects.nonNull(mediaUnit)) {
             galleryPanel.updateSelection(mediaUnit);
         }
+    }
+
+    /**
+     * Determine fallback task of process with given ID 'processID' and return the tasks ID.
+     *
+     * @param processID
+     *          ID of process for which the fallback task is determined
+     * @return ID of the fallback task for process with given ID 'processID'
+     */
+    public int getFallbackTaskID(int processID) {
+        try {
+            Process process = ServiceManager.getProcessService().getById(processID);
+            return process.getTasks().get(0).getId();
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {ObjectType.PROCESS.getTranslationSingular(),
+                processID}, logger, e);
+            return -1;
+        }
+    }
+
+    /**
+     * Create and return the navigation path to the metadata editor, containing the currentTask ID and the given
+     * referrer as view/URL parameters.
+     *
+     * @param referrer
+     *          path of referring view
+     * @return navigation path to metadata editor page including currentTasks ID and referrer as view parameters
+     */
+    public String selectCurrentTask(String referrer) {
+        return "/pages/metadataEditor?faces-redirect=true&taskId=" + this.getCurrentTask().getId()
+                + "&referrer=" + referrer;
     }
 }

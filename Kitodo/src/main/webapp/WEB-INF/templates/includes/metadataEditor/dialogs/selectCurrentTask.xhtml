@@ -33,8 +33,12 @@
                 <h:panelGroup styleClass="select-selector" layout="block">
                     <p>
                         <p:selectOneMenu id="currentTaskMenu"
+                                         required="true"
                                          converter="#{taskConverter}"
                                          value="#{DataEditorForm.currentTask}">
+                            <f:selectItem itemValue="#{null}"
+                                          itemLabel="#{msgs['dataEditor.selectMetadataTask']}"
+                                          noSelectionOption="true"/>
                             <f:selectItems value="#{DataEditorForm.getCurrentTaskOptions(DataEditorForm.process.id)}"
                                            var="task"
                                            itemLabel="#{task.title}"
@@ -44,8 +48,7 @@
                     <p:panelGrid>
                         <p:row>
                             <p:commandButton id="setCurrentTaskButton"
-                                             action="#{DataEditorForm.open(DataEditorForm.process.id, view.viewId)}"
-                                             actionListener="#{CommentForm.setProcessId(DataEditorForm.process.id)}"
+                                             action="#{DataEditorForm.selectCurrentTask(view.viewId)}"
                                              onclick="PF('selectCurrentTaskDialog').hide();"
                                              styleClass="primary right"
                                              iconPos="right"

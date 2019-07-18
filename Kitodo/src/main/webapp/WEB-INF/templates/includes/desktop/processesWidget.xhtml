@@ -55,15 +55,14 @@
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                 </p:commandLink>
                 <!-- else, open metadata editor directly -->
-                <h:commandLink id="readXML"
-                               action="#{DataEditorForm.open(process.id, 'desktop')}"
-                               title="#{msgs.metadataEdit}"
-                               actionListener="#{CommentForm.setProcessId(process.id)}"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
-                    <f:setPropertyActionListener value="#{taskOptions.size() eq 1 ? taskOptions.get(0) : null}"
-                                                 target="#{DataEditorForm.currentTask}"/>
+                <h:link id="readXML"
+                        outcome="/pages/metadataEditor?faces-redirect=true"
+                        title="#{msgs.metadataEdit}"
+                        rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                    <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
+                    <f:param name="referrer" value="#{'desktop'}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                </h:commandLink>
+                </h:link>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">

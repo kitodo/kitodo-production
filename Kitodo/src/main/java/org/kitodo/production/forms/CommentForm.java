@@ -48,8 +48,7 @@ public class CommentForm extends BaseForm {
     private boolean correctionComment = false;
     private String commentMessage;
     private String correctionTaskId;
-    private String processId;
-    private Process process;
+    private Task currentTask;
     private BatchTaskHelper batchHelper;
     private WorkflowControllerService workflowControllerService = new WorkflowControllerService();
 
@@ -60,17 +59,11 @@ public class CommentForm extends BaseForm {
      */
     public List<Comment> getAllComments() {
         try {
-            setProcess(ServiceManager.getProcessService().getById(Integer.parseInt(this.processId)));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[]{ObjectType.PROCESS.getTranslationSingular(), this.processId}, logger, e);
-        }
-        try {
-            this.process = WikiFieldHelper.transformWikiFieldToComment(this.process);
+            this.currentTask.setProcess(WikiFieldHelper.transformWikiFieldToComment(this.currentTask.getProcess()));
         } catch (DAOException | DataException | ParseException e) {
             Helper.setErrorMessage("Error in conversion of Wiki field to comments: ", logger, e);
         }
-        return ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
+        return ServiceManager.getCommentService().getAllCommentsByProcess(this.currentTask.getProcess());
     }
 
     /**
@@ -99,7 +92,7 @@ public class CommentForm extends BaseForm {
         comment.setMessage(getCommentMessage());
         comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
         comment.setCreationDate(new Date());
-        comment.setProcess(this.process);
+        comment.setProcess(this.currentTask.getProcess());
         if (isCorrectionComment()) {
             try {
                 comment.setCorrectionTask(ServiceManager.getTaskService().getById(Integer.parseInt(getCorrectionTaskId())));
@@ -110,7 +103,7 @@ public class CommentForm extends BaseForm {
             }
             comment.setType(CommentType.ERROR);
             comment.setCorrected(Boolean.FALSE);
-            comment.setCurrentTask(ServiceManager.getProcessService().getCurrentTask(this.process));
+            comment.setCurrentTask(this.currentTask);
         } else {
             comment.setType(CommentType.INFO);
         }
@@ -141,7 +134,7 @@ public class CommentForm extends BaseForm {
      */
     public String addCommentToAllBatchProcesses() {
         for (Task task : this.batchHelper.getSteps()) {
-            this.process = task.getProcess();
+            this.currentTask = task;
             addComment();
         }
         return MessageFormat.format(REDIRECT_PATH, "tasks");
@@ -150,13 +143,13 @@ public class CommentForm extends BaseForm {
     /**
      * Report the problem.
      */
-    public void reportProblem(Comment comment) {
+    private void reportProblem(Comment comment) {
         try {
             this.workflowControllerService.reportProblem(comment);
         } catch (DataException e) {
             Helper.setErrorMessage("reportingProblem", logger, e);
         }
-        refreshProcess(this.process);
+        refreshProcess(this.currentTask.getProcess());
     }
 
     /**
@@ -199,13 +192,14 @@ public class CommentForm extends BaseForm {
      * Correction message to previous Tasks.
      */
     public List<Task> getPreviousStepsForProblemReporting() {
-        refreshProcess(this.process);
-        if (Objects.isNull(ServiceManager.getProcessService().getCurrentTask(this.process))) {
+        refreshProcess(this.currentTask.getProcess());
+        if (Objects.isNull(currentTask)) {
             Helper.setErrorMessage("Invalid process state: no 'active' or 'open' task found!");
             return Collections.emptyList();
         } else {
             return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-                    ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(), this.process.getId());
+                    this.currentTask.getOrdering(),
+                    this.currentTask.getProcess().getId());
         }
     }
 
@@ -222,7 +216,7 @@ public class CommentForm extends BaseForm {
         } catch (DataException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
-        refreshProcess(this.process);
+        refreshProcess(this.currentTask.getProcess());
         return redirect();
     }
 
@@ -242,66 +236,36 @@ public class CommentForm extends BaseForm {
     }
 
     /**
-     * Get process.
-     *
-     * @return value of process
-     */
-    public Process getProcess() {
-        return process;
-    }
-
-    /**
-     * Set process.
-     *
-     * @param process as org.kitodo.data.database.beans.Process
-     */
-    public void setProcess(Process process) {
-        this.process = process;
-    }
-
-    /**
      * refresh the process in the session.
      *
      * @param process Object process to refresh
      */
-    public void refreshProcess(Process process) {
+    private void refreshProcess(Process process) {
         try {
             if (!Objects.equals(process.getId(), 0)) {
                 ServiceManager.getProcessService().refresh(process);
-                setProcess(ServiceManager.getProcessService().getById(process.getId()));
+                this.currentTask.setProcess(ServiceManager.getProcessService().getById(process.getId()));
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[]{ObjectType.PROCESS.getTranslationSingular(), this.processId}, logger, e);
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.currentTask.getProcess().getId()},
+                    logger, e);
         }
     }
 
-
     /**
-     * Get processId.
+     * Set current task by ID.
      *
-     * @return value of processId
+     * @param taskId
+     *          ID of task to set
      */
-    public String getProcessId() {
-        return processId;
-    }
-
-    /**
-     * Set processId.
-     *
-     * @param processId as java.lang.String
-     */
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    /**
-     * Get batchHelper.
-     *
-     * @return value of batchHelper
-     */
-    public BatchTaskHelper getBatchHelper() {
-        return batchHelper;
+    public void setCurrentTaskById(int taskId) {
+        try {
+            this.currentTask = ServiceManager.getTaskService().getById(taskId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                    new Object[] {ObjectType.TASK.getTranslationSingular(), taskId}, logger, e);
+        }
     }
 
     /**
@@ -311,7 +275,7 @@ public class CommentForm extends BaseForm {
      */
     public void setBatchHelper(BatchTaskHelper batchHelper) {
         this.batchHelper = batchHelper;
-        setProcess(this.batchHelper.getCurrentStep().getProcess());
+        this.currentTask = this.batchHelper.getCurrentStep();
     }
 
     /**
@@ -333,7 +297,7 @@ public class CommentForm extends BaseForm {
      * @return whether there are concurrent tasks in work or not
      */
     public boolean isConcurrentTaskInWork() {
-        return !getConcurrentTasksInWork().isEmpty();
+        return this.currentTask.getId() < 0 || !getConcurrentTasksInWork().isEmpty();
     }
 
     /**
@@ -352,19 +316,14 @@ public class CommentForm extends BaseForm {
     }
 
     private List<Task> getConcurrentTasksInWork() {
-        // FIXME: since we have parallel tasks now, "getCurrentTask" does not work correctly anymore!
-        Task currentTask = ServiceManager.getProcessService().getCurrentTask(this.process);
         int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
         if (currentTask.isConcurrent()) {
             return currentTask.getProcess().getTasks().stream()
-                    .filter(t -> !t.getId().equals(currentTask.getId())
-                            && t.isConcurrent()
-                            && t.getOrdering().equals(currentTask.getOrdering())
+                    .filter(t -> !t.getId().equals(this.currentTask.getId())
                             && TaskStatus.INWORK.equals(t.getProcessingStatus())
-                            && authenticatedUserId != currentTask.getProcessingUser().getId())
+                            && authenticatedUserId != t.getProcessingUser().getId())
                     .collect(Collectors.toList());
-        } else {
-            return new LinkedList<>();
         }
+        return new LinkedList<>();
     }
 }

@@ -84,13 +84,14 @@
                     </h:commandLink>
 
                     <!-- Metadaten-button -->
-                    <h:commandLink id="readXml"
-                                   rendered="#{task.typeMetadata and process.blockedUser == null}"
-                                   actionListener="#{DataEditorForm.setCurrentTask(task)}"
-                                   action="#{DataEditorForm.open(process.id, 'currentTasksEdit.jsf?id='.concat(task.id))}"
-                                   title="#{msgs.metadataEdit}">
+                    <h:link id="readXml"
+                            outcome="/pages/metadataEditor?faces-redirect=true"
+                            rendered="#{task.typeMetadata and process.blockedUser == null}"
+                            title="#{msgs.metadataEdit}">
+                        <f:param name="taskId" value="#{task.id}"/>
+                        <f:param name="referrer" value="#{'currentTasksEdit.jsf?id='.concat(task.id)}"/>
                         <h:outputText><i class="fa fa-file-o"/> #{msgs.metadataEdit}</h:outputText>
-                    </h:commandLink>
+                    </h:link>
 
                     <!-- Re-generate all images action link -->
                     <h:commandLink id="generateAllImages"

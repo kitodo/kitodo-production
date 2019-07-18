@@ -23,8 +23,8 @@
                                     SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
     <p:panel styleClass="content-header">
         <h3 id="headerText">
-            <h:outputText value="#{DataEditorForm.processTitle} - #{msgs.metadataEdit}"
-                          title="#{DataEditorForm.processTitle} - #{msgs.metadataEdit}"/>
+            <h:outputText value="#{DataEditorForm.processTitle} - #{msgs.metadataEdit} (Task: '#{DataEditorForm.currentTask.title}')"
+                          title="#{DataEditorForm.processTitle} - #{msgs.metadataEdit} (Task: '#{DataEditorForm.currentTask.title}')"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"

@@ -18,8 +18,10 @@
         xmlns:p="http://primefaces.org/ui">
 
     <f:metadata>
+        <!--@elvariable id="id" type="int"-->
         <f:viewParam name="id"/>
         <f:viewAction action="#{CurrentTaskForm.loadTaskById(id)}"/>
+        <f:viewAction action="#{CommentForm.setCurrentTaskById(id)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
