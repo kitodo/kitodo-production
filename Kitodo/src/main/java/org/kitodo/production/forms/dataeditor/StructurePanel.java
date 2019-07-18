@@ -936,7 +936,6 @@ public class StructurePanel implements Serializable {
     void moveViews(IncludedStructuralElement fromElement, IncludedStructuralElement toElement, List<View> views) {
         toElement.getViews().addAll(views);
         fromElement.getViews().removeAll(views);
-
     }
 
     private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
