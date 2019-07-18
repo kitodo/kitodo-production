@@ -934,7 +934,6 @@ public class StructurePanel implements Serializable {
      *          Views to be moved
      */
     void moveViews(IncludedStructuralElement fromElement, IncludedStructuralElement toElement, List<View> views) {
-
         toElement.getViews().addAll(views);
         fromElement.getViews().removeAll(views);
 
