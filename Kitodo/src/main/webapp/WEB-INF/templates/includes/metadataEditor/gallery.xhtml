@@ -25,6 +25,9 @@
                 document.getElementById("imageData").setAttribute("data-image", document.getElementById("imagePreviewForm:mediaViewData").src);
             </script>
 
+            <p:remoteCommand name="rangeSelect" update="@(.thumbnail)" action="#{DataEditorForm.galleryPanel.rangeSelect}"/>
+            <p:remoteCommand name="multiSelect" update="@(.thumbnail)" action="#{DataEditorForm.galleryPanel.multiSelect}"/>
+
             <p:panelGrid id="imageControlPanel" columns="3"
                          style="right: 47px; top: 0; position: absolute;">
                 <p:column>
@@ -82,6 +85,7 @@
                                     binding="#{structuredThumbnail}">
                             <p:panel id="structuredPagePanel">
                                 <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
+                                               onclick="metadataEditor.select.selectionType(event);"
                                                update="@this
                                                        @(.active.thumbnail)
                                                        structureTreeForm:logicalTree

@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
+import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,6 +39,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.model.Subfolder;
+import org.omnifaces.cdi.Param;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -403,5 +405,16 @@ public class GalleryPanel {
             }
         }
         return null;
+    }
+
+    @Inject @Param(name="innerHTML")
+    private String innerHTML;
+
+    public void rangeSelect() {
+        System.out.println("Range selected on " + innerHTML);
+    }
+
+    public void multiSelect() {
+        System.out.println("Multi select on " + innerHTML);
     }
 }
