@@ -44,7 +44,6 @@ class GetOpac {
     /**
      * The url part for searching in a specified key field
      */
-    private static final String SRU_VERSION = "/sru?version=1.2&";
     private static final String SEARCH_URL_BEFORE_QUERY = "operation=searchRetrieve";
     private static final String RECORD_SCHEMA_MODS = "&recordSchema=mods";
 
@@ -53,6 +52,7 @@ class GetOpac {
     private final Catalogue cat;
     private String lastQuery = "";
     private int numberOfHits = -1;
+    private String default_sru_path = "/sru?version=1.2&";
 
     // CREATION (Constructors, factory methods, static/inst init)
 
@@ -76,6 +76,9 @@ class GetOpac {
         super();
         this.opacClient = new HttpClient();
         this.cat = opac;
+
+        this.default_sru_path = this.cat.getPath();
+
     }
 
     // MANIPULATION (Manipulation - what the object does) ******************
@@ -123,7 +126,7 @@ class GetOpac {
             return this.numberOfHits;
         }
 
-        result = retrieveDataFromOPAC(SRU_VERSION + SEARCH_URL_BEFORE_QUERY + query.getQueryUrl() + RECORD_SCHEMA_MODS,
+        result = retrieveDataFromOPAC(this.default_sru_path + SEARCH_URL_BEFORE_QUERY + query.getQueryUrl() + RECORD_SCHEMA_MODS,
                 timeout);
 
         this.numberOfHits = retrieveNumberOfHitsFromOpacResponse(result);
@@ -145,7 +148,7 @@ class GetOpac {
      */
     public String retrieveModsRecord(String queryURL, long timeout) {
         try {
-            return retrieveDataFromOPAC(SRU_VERSION + SEARCH_URL_BEFORE_QUERY + queryURL + RECORD_SCHEMA_MODS, timeout);
+            return retrieveDataFromOPAC(this.default_sru_path + SEARCH_URL_BEFORE_QUERY + queryURL + RECORD_SCHEMA_MODS, timeout);
         } catch (IOException e) {
             logger.warn(e.getLocalizedMessage(), e);
             return null;
@@ -197,7 +200,7 @@ class GetOpac {
      *             If the connection failed
      */
     private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
-        String request = "http://" + cat.getServerAddress()
+        String request = cat.getScheme() + "://" + cat.getServerAddress()
                 + (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url;
 
         logger.debug("request url: " + request);

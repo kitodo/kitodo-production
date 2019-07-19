@@ -67,5 +67,6 @@
       <periodical>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)+'|'</periodical>
     </tifheader>
     <dmsImport/>
+    <fileUploadActive>false</fileUploadActive>
   </project>
 </goobiProjects>

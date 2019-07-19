@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opacCatalogues>
+    <!-- list containing translations of possible top struct types -->
     <doctypes>
         <type rulesetType="Inventory" title="inventory">
             <label language="de">Bestand</label>
             <label language="en">Inventory</label>
             <mapping>text</mapping>
         </type>
+        <type rulesetType="MultiVolumeWork" title="multivolume" isMultiVolume="true">
+            <label language="de">Mehrbändiges Werk</label>
+            <label language="en">Multivolume Work</label>
+            <mapping/>
+        </type>
+        <type rulesetType="Monograph" title="monograph">
+            <label language="de">Monographie</label>
+            <label language="en">Monograph</label>
+            <mapping/>
+        </type>
     </doctypes>
-    <structuretypes>
-        <type rulesetType="Inventory">
-            <mandatoryElement>//mods:mods/mods:typeOfResource[@collection='yes']</mandatoryElement>
-            <forbiddenElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</forbiddenElement>
-        </type>
-        <type rulesetType="Subinventory">
-            <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
-            <forbiddenElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</forbiddenElement>
-        </type>
-        <type rulesetType="Manuscript">
-            <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
-            <mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
-        </type>
-    </structuretypes>
+
     <catalogue title="Kalliope">
         <config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
         <mappingFile>kalliope2kitodo.xsl</mappingFile>
         <institutionFilterParameter value="ead.repository.isil" />
         <identifierParameter value="ead.id" />
         <identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
-        <parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" />
+        <parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" type="reference" />
         <recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
         <maximumChildRecords>50</maximumChildRecords>
         <searchFields>
@@ -54,5 +52,58 @@
             <detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" />
             <detail name="url" xpath="//goobi:metadata[@name='slub_link']" />
         </additionalDetails>
+        <structuretypes>
+            <type rulesetType="Inventory">
+                <mandatoryElement>//mods:mods/mods:typeOfResource[@collection='yes']</mandatoryElement>
+                <forbiddenElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</forbiddenElement>
+            </type>
+            <type rulesetType="Subinventory">
+                <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
+                <forbiddenElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</forbiddenElement>
+            </type>
+            <type rulesetType="Manuscript">
+                <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
+                <mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
+            </type>
+        </structuretypes>
+        <fileUpload>false</fileUpload>
+    </catalogue>
+    <catalogue title="adis">
+        <mappingFile>adis2kitodo.xsl</mappingFile>
+        <!-- aDis SRU interface not yet available! -->
+        <config scheme="https" port="443" path="/path" address="aDis.info" description="adis Katalog"/>
+
+        <identifierParameter value="SATZNR" />
+        <parentElement xpath="//mods:mods/mods:relatedItem[@type='host']" />
+        <recordElement xpath="//srw:searchRetrieveResponse/srw:record" />
+
+        <identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
+        <!-- aDis SRU interface supports only single search field (for ID, here called "Satznummer") -->
+        <searchFields>
+            <searchField label="Satznummer" value="SATZNR" />
+        </searchFields>
+        <!-- aDis SRU interface does not support institution filters -->
+        <additionalDetails>
+            <detail name="creator" xpath="//goobi:displayName" />
+            <detail name="title" xpath="//goobi:metadata[@name='TitleDocMain']" />
+            <detail name="shelfmarksource" xpath="//goobi:metadata[@name='shelfmarksource']" />
+            <detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" />
+            <detail name="url" xpath="//goobi:metadata[@name='slub_link']" />
+        </additionalDetails>
+        <fileUpload>true</fileUpload>
+        <structuretypes>
+            <type rulesetType="Monograph">
+                <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'monographic']</mandatoryElement>
+            </type>
+            <type rulesetType="Volume">
+                <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</mandatoryElement>
+                <mandatoryElement>//mods:mods/mods:relatedItem[@type='host']</mandatoryElement>
+            </type>
+            <type rulesetType="MultiVolumeWork">
+                <forbiddenElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'monographic']</forbiddenElement>
+                <forbiddenElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</forbiddenElement>
+                <forbiddenElement>//mods:mods/mods:relatedItem[@type='host']</forbiddenElement>
+            </type>
+        </structuretypes>
     </catalogue>
 </opacCatalogues>

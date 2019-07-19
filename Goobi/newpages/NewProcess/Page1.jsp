@@ -36,7 +36,7 @@
                 <htm:td valign="top" styleClass="layoutInhalt">
 
                     <%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-                    <h:form id="pageform1" onkeypress="return ignoreEnterKey(event);">
+                    <h:form id="pageform1" onkeypress="return ignoreEnterKey(event);" enctype="multipart/form-data">
                         <%-- Breadcrumb --%>
                         <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
                             <h:panelGroup>

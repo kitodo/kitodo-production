@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -36,9 +38,11 @@ import javax.naming.NamingException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
@@ -103,6 +107,12 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.UGHException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
+import org.apache.commons.configuration.SubnodeConfiguration;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.*;
+import org.xml.sax.SAXException;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ProzesskopieForm {
     private static final Logger logger = Logger.getLogger(ProzesskopieForm.class);
@@ -227,6 +237,9 @@ public class ProzesskopieForm {
     private List<String> digitalCollections;
     private String docType;
     private Integer guessedImages = 0;
+    private String source = "opac";
+    private UploadedFile uploadedFile;
+
 
     /**
      * The field hitlist holds some reference to the hitlist retrieved from a
@@ -257,6 +270,7 @@ public class ProzesskopieForm {
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
+    private List<String> configuredOpacCatalogues = new ArrayList<String>();
     private String institution = "-";
     private List<String> possibleDigitalCollection;
     private Prozess prozessVorlage = new Prozess();
@@ -267,6 +281,7 @@ public class ProzesskopieForm {
     private HashMap<String, Boolean> standardFields;
     private String tifHeader_imagedescription = "";
     private String tifHeader_documentname = "";
+    private boolean fileUploadAvailable = false;
 
     public String prepare() {
         atstsl = "";
@@ -326,8 +341,29 @@ public class ProzesskopieForm {
                 .getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
+
+        this.configuredOpacCatalogues = new ArrayList<String>();
+        for (String catalogue : cp.getParamList("createNewProcess.opac.catalogue")) {
+            this.configuredOpacCatalogues.add(catalogue);
+        }
+
+        if (!this.opacKatalog.equals("") && !this.configuredOpacCatalogues.contains(this.opacKatalog)) {
+            this.opacKatalog = "";
+            this.source = "opac";
+        }
+
         if (this.opacKatalog.equals("")) {
-            this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
+            int catalogueCount = cp.getParamList("createNewProcess.opac.catalogue").size();
+            for (int i = 0; i < catalogueCount; i++) {
+                if ("true".equals(cp.getParamString("createNewProcess.opac.catalogue(" + i + ")[@default]"))) {
+                    this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue(" + i + ")");
+                    break;
+                }
+            }
+        }
+
+        if (this.opacKatalog.equals("")) {
+            this.opacKatalog = this.configuredOpacCatalogues.get(0);
         }
 
         /*
@@ -1487,6 +1523,25 @@ public class ProzesskopieForm {
     }
 
     /**
+     * The function getConfiguredOpacCatalogues() returns a list of configured and supported catalogues
+     * @return list of configured catalogue names for given project
+     */
+    public List<String> getConfiguredOpacCatalogues() {
+
+        LinkedList<String> existingCatalogues = new LinkedList<String>();
+
+        for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+            for (String catalogue : plugin.getSupportedCatalogues()) {
+                if (!existingCatalogues.contains(catalogue) && this.configuredOpacCatalogues.contains(catalogue)) {
+                    existingCatalogues.add(catalogue);
+                }
+            }
+        }
+        checkFileUpload();
+        return existingCatalogues;
+    }
+
+    /**
      * The function getAllOpacCatalogues() returns a list of the names of all catalogues
      * supported in all plugins by compiling the results of the getSupportedCatalogues()
      * methods in all configured plugins.
@@ -1504,6 +1559,7 @@ public class ProzesskopieForm {
                     }
                 }
             }
+            checkFileUpload();
             return allCatalogueTitles;
         } catch (Throwable t) {
             logger.error("Error while reading von opac-config", t);
@@ -1619,6 +1675,10 @@ public class ProzesskopieForm {
 
     public boolean isUseOpac() {
         return this.useOpac;
+    }
+
+    public boolean isFileUploadAvailable() {
+        return this.fileUploadAvailable;
     }
 
     public boolean isUseTemplates() {
@@ -2116,5 +2176,102 @@ public class ProzesskopieForm {
      */
     public Fileformat getFileformat() {
         return myRdf;
+    }
+
+    /**
+     * Get source.
+     * @return source
+     */
+    public String getSource() {
+        return this.source;
+    }
+
+    /**
+     * Set source.
+     * @param source
+     *          new source
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * Get uploaded file.
+     * @return uploaded file
+     */
+    public UploadedFile getUploadedFile() {
+        return this.uploadedFile;
+    }
+
+    /**
+     * Set uploaded file.
+     * @param uploadedFile
+     *          new uploaded file
+     */
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+
+    /**
+     * Upload a file via file upload dialog and validate that it contains valid MODS XML.
+     */
+    public void uploadFile() {
+        String xsdPath = new Helper().getGoobiConfigDirectory() + "mods.xsd";
+        if (this.uploadedFile != null) {
+            try (InputStream inputStream = this.uploadedFile.getInputStream()) {
+                String xmlString = IOUtils.toString(inputStream);
+                SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+                File schemaLocation = new File(xsdPath);
+                try {
+                    Schema schema = factory.newSchema(schemaLocation);
+                    Validator validator = schema.newValidator();
+                    validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
+                    Helper.setMeldung("Successfully validated given XML file '" + this.uploadedFile.getName() + "'!");
+                    clearValues();
+                    readProjectConfigs();
+                    if (!pluginAvailableFor(opacKatalog)) {
+                        Helper.setFehlerMeldung("No plugin available for OPAC " + opacKatalog);
+                    } else {
+                        Helper.setMeldung("Plugin found for catalog '" + opacKatalog + "': " + importCatalogue.getTitle(Locale.ENGLISH));
+                        importHit(importCatalogue.getHit(xmlString, -1, -1));
+                    }
+
+                }
+                catch (SAXException ex) {
+                    Helper.setFehlerMeldung("ERROR: given file '" + this.uploadedFile.getName() + "' does not contain valid MODS XML! " + ex.getMessage());
+                }
+            } catch (IOException e) {
+                logger.error(e.getLocalizedMessage());
+            } catch (PreferencesException e) {
+                logger.error("Preferences error! Wrong ruleset?");
+                logger.error(e.getLocalizedMessage());
+            }
+        } else {
+            logger.error("Uploaded file is null!");
+        }
+    }
+
+    /**
+     * Checks if the file upload is available for the given catalogue configuration
+     */
+    private void checkFileUpload() {
+        try {
+            Boolean flag = false;
+            for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+                int i = 0;
+                XMLConfiguration config = plugin.getXMLConfiguration();
+                for (Object catalogue : config.getList("catalogue[@title]")) {
+                    if (catalogue.toString().equals(this.opacKatalog)) {
+                        SubnodeConfiguration pluginConfiguration = config.configurationAt("catalogue(" + i + ")");
+                        flag = Boolean.valueOf(pluginConfiguration.getString("fileUpload"));
+                    }
+                    i++;
+                }
+            }
+            this.fileUploadAvailable = flag;
+        } catch (Throwable t) {
+            logger.error("Error while reading von opac-config", t);
+            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+        }
     }
 }
