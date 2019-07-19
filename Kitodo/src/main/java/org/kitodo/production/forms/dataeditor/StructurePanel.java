@@ -82,12 +82,12 @@ public class StructurePanel implements Serializable {
     /**
      * HashMap containing the current expansion states of all TreeNodes in the logical structure tree.
      */
-    private HashMap<String, Boolean> previousExpansionStatesLogicalTree;
+    private HashMap<IncludedStructuralElement, Boolean> previousExpansionStatesLogicalTree;
 
     /**
      * HashMap containing the current expansion states of all TreeNodes in the physical structure tree.
      */
-    private HashMap<String, Boolean> previousExpansionStatesPhysicalTree;
+    private HashMap<IncludedStructuralElement, Boolean> previousExpansionStatesPhysicalTree;
 
     /**
      * Creates a new structure panel.
@@ -928,41 +928,58 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private HashMap<String, Boolean> getTreeNodeExpansionStates(DefaultTreeNode tree) {
+    private HashMap<IncludedStructuralElement, Boolean> getTreeNodeExpansionStates(DefaultTreeNode tree) {
         if (Objects.nonNull(tree)) {
-            return getTreeNodeExpansionStatesRecursively(tree, new HashMap<>());
-        } else {
-            return new HashMap<>();
+            IncludedStructuralElement structuralElement = getTreeNodeStructuralElement(tree);
+            if (Objects.nonNull(structuralElement)) {
+                return getTreeNodeExpansionStatesRecursively(tree, new HashMap<>());
+            }
         }
-
+        return new HashMap<>();
     }
 
-    private HashMap<String, Boolean> getTreeNodeExpansionStatesRecursively(TreeNode treeNode, HashMap<String, Boolean> expansionStates) {
+    private HashMap<IncludedStructuralElement, Boolean> getTreeNodeExpansionStatesRecursively(TreeNode treeNode,
+            HashMap<IncludedStructuralElement, Boolean> expansionStates) {
         if (Objects.nonNull(treeNode)) {
-            expansionStates.put(treeNode.getRowKey(), treeNode.isExpanded());
-            for (TreeNode childNode : treeNode.getChildren()) {
-                expansionStates.putAll(getTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+            IncludedStructuralElement structureData = getTreeNodeStructuralElement(treeNode);
+            if (Objects.nonNull(structureData)) {
+                expansionStates.put(structureData, treeNode.isExpanded());
+                for (TreeNode childNode : treeNode.getChildren()) {
+                    expansionStates.putAll(getTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+                }
             }
         }
         return expansionStates;
     }
 
-    private void updateNodeExpansionStates(DefaultTreeNode tree, HashMap<String, Boolean> expansionStates) {
+    private void updateNodeExpansionStates(DefaultTreeNode tree, HashMap<IncludedStructuralElement, Boolean> expansionStates) {
         if (Objects.nonNull(tree) && Objects.nonNull(expansionStates) && !expansionStates.isEmpty()) {
             updateNodeExpansionStatesRecursively(tree, expansionStates);
         }
     }
 
-    private void updateNodeExpansionStatesRecursively(TreeNode treeNode, HashMap<String, Boolean> expansionStates) {
-        if (expansionStates.containsKey(treeNode.getRowKey())) {
-            treeNode.setExpanded(expansionStates.get(treeNode.getRowKey()));
+    private void updateNodeExpansionStatesRecursively(TreeNode treeNode, HashMap<IncludedStructuralElement, Boolean> expansionStates) {
+        IncludedStructuralElement element = getTreeNodeStructuralElement(treeNode);
+        if (Objects.nonNull(element) && expansionStates.containsKey(element)) {
+            treeNode.setExpanded(expansionStates.get(element));
         }
         for (TreeNode childNode : treeNode.getChildren()) {
             updateNodeExpansionStatesRecursively(childNode, expansionStates);
         }
     }
 
-    private boolean nodeStateUnknown(HashMap<String, Boolean> expansionStates, TreeNode treeNode) {
-        return !Objects.nonNull(expansionStates) || !expansionStates.containsKey(treeNode.getRowKey());
+    private boolean nodeStateUnknown(HashMap<IncludedStructuralElement, Boolean> expansionStates, TreeNode treeNode) {
+        IncludedStructuralElement element = getTreeNodeStructuralElement(treeNode);
+        return !Objects.nonNull(expansionStates) || (Objects.nonNull(element) && !expansionStates.containsKey(element));
+    }
+
+    private IncludedStructuralElement getTreeNodeStructuralElement(TreeNode treeNode) {
+        if (treeNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+            if (structureTreeNode.getDataObject() instanceof IncludedStructuralElement) {
+                return (IncludedStructuralElement) structureTreeNode.getDataObject();
+            }
+        }
+        return null;
     }
 }
