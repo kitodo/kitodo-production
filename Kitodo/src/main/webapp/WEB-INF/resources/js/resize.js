@@ -166,6 +166,20 @@ function setSizes() {
         thirdColumn.width(wrapper.width() - firstColumn.width() - secondColumn.width() - 2 * SEPARATOR_WIDTH);
     }
 
+    setSectionHeight();
+
+    thirdColumn[0].dispatchEvent(new Event('resize'));
+    toggleResizers();
+    toggleCollapseButtons();
+}
+
+function setHeight() {
+    console.log("setting height");
+    wrapper.height(window.innerHeight - wrapper.offset().top - $('footer').height());
+    setSectionHeight();
+}
+
+function setSectionHeight() {
     if (firstSection.hasClass('collapsed')) {
         firstSectionHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2);
         secondSection.height(secondSection.height() + firstSectionHeight);
@@ -176,10 +190,6 @@ function setSizes() {
         firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
         secondSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT);
     }
-
-    thirdColumn[0].dispatchEvent(new Event('resize'));
-    toggleResizers();
-    toggleCollapseButtons();
 }
 
 function toggleResizers() {
