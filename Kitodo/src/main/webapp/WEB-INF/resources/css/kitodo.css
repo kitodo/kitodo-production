@@ -1391,10 +1391,6 @@ form#metadata div label,
     overflow: hidden;
 }
 
-#metadataPanel {
-    overflow-y: scroll;
-}
-
 #galleryPanel {
     height: 100%;
 }
@@ -1450,6 +1446,39 @@ Column content
     padding: 5px;
 }
 
+#metadataAccordion,
+#metadataAccordion\:logicalMetadataWrapperPanel,
+#metadataAccordion\:physicalMetadataWrapperPanel,
+#metadataAccordion\:logicalMetadataWrapperPanel_content,
+#metadataAccordion\:physicalMetadataWrapperPanel_content,
+#metadataAccordion\:logicalMetadataWrapperPanel_content form,
+#metadataAccordion\:physicalMetadataWrapperPanel_content form,
+#metadataAccordion\:metadata\:metadataTable,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable {
+    height: 100%;
+}
+
+#metadataAccordion\:metadata\:metadataTable,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable {
+    overflow-y: scroll;
+}
+
+#metadataAccordion\:metadata\:metadataTable .ui-datatable-tablewrapper,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable .ui-datatable-tablewrapper {
+    margin-bottom: calc(var(--input-height) + var(--default-double-size));
+}
+
+#metadataAccordion > .ui-accordion-content {
+    height: calc(100% - 2 * var(--input-height));
+}
+
+#metadataAccordion\:metadata\:addMetadataButton,
+#metadataAccordion\:physicalMetadata\:addMetadataButton {
+    bottom: var(--default-full-size);
+    box-shadow: var(--second-level-shadow);
+    position: absolute;
+}
+
 #metadata input {
     width: 100%;
 }
@@ -1474,21 +1503,34 @@ Column content
     padding: 0;
 }
 
-#metadataAccordion\:metadata\:metadataTable_data label {
+#metadataAccordion\:metadata\:metadataTable_data label,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data label {
+    display: block;
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: block;
 }
 
-#metadataAccordion\:metadata\:metadataTable_data input {
-    max-width: calc(100% - 90px);
+#metadataAccordion\:metadata\:metadataTable_data .ui-inputfield,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-inputfield,
+#metadataAccordion\:metadata\:metadataTable_data .ui-spinner,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-spinner,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectonemenu,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-selectonemenu {
+    box-sizing: border-box;
     margin-right: var(--default-half-size);
+    max-width: calc(100% - 90px);
     text-overflow: ellipsis;
+    width: 100%;
 }
 
-#metadataAccordion\:metadata\:metadataTable_data .ui-spinner-input {
-    max-width: inherit;
+#metadataAccordion\:metadata\:metadataTable_data .ui-spinner-input,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-spinner-input,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectonemenu .ui-inputfield,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-selectonemenu .ui-inputfield {
+    margin-right: 0;
+    max-width: none;
+    width: 100%;
 }
 
 .correction {
