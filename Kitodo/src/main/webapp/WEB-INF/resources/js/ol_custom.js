@@ -15,13 +15,11 @@ var kitodo = window.kitodo;
 var map;
 
 /**
- * @param {Object=} opt_options Custom control options for Kitodo in OpenLayers
+ * @param {Object=} options Custom control options for Kitodo in OpenLayers
  * @extends {ol.control.Rotate}
  * @constructor
  */
-kitodo.RotateLeftControl = function(opt_options) {
-    var options = opt_options || {};
-
+kitodo.RotateLeftControl = function(options = {}) {
     var buttonLeft = document.createElement('button');
     buttonLeft.innerHTML = "<i class='fa fa-undo'/>";
     buttonLeft.setAttribute("type", "button");
@@ -50,13 +48,11 @@ kitodo.RotateLeftControl = function(opt_options) {
 };
 
 /**
- * @param {Object=} opt_options Custom control options for Kitodo in OpenLayers
+ * @param {Object=} options Custom control options for Kitodo in OpenLayers
  * @extends {ol.control.Rotate}
  * @constructor
  */
-kitodo.RotateRightControl = function(opt_options) {
-    var options = opt_options || {};
-
+kitodo.RotateRightControl = function(options = {}) {
     var buttonRight = document.createElement('button');
     buttonRight.innerHTML = "<i class='fa fa-repeat'/>";
     buttonRight.setAttribute("type", "button");
@@ -86,13 +82,11 @@ kitodo.RotateRightControl = function(opt_options) {
 };
 
 /**
- * @param {Object=} opt_options Custom control options for Kitodo in OpenLayers
+ * @param {Object=} options Custom control options for Kitodo in OpenLayers
  * @extends {ol.control.Rotate}
  * @constructor
  */
-kitodo.ResetNorthControl = function(opt_options) {
-    var options = opt_options || {};
-
+kitodo.ResetNorthControl = function(options = {}) {
     var buttonResetNorth = document.createElement("button");
     buttonResetNorth.innerHTML = "<i class='fa fa-compass'/>";
     buttonResetNorth.setAttribute("type", "button");
