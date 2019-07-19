@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -185,8 +186,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             openProcesses.put(process.getId(), user);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            // TODO: redirect to referrer!
-            //FacesContext.getCurrentInstance().getExternalContext().redirect(referringView);
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(referringView);
+            } catch (IOException ex) {
+                logger.error("Unable to redirect to referrer '" + referringView + "'. (" + ex.getLocalizedMessage()
+                        + ")");
+            }
         }
     }
 
