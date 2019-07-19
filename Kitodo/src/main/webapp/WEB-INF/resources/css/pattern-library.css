@@ -457,6 +457,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+.ui-inputfield.ui-state-default {
+    background: var(--pure-white);
+}
+
 .ui-inputfield.ui-state-hover,
 .ui-selectonemenu.ui-state-hover {
     background: var(--pure-white);
@@ -466,9 +470,9 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .ui-inputfield.ui-state-focus,
 .ui-selectonemenu.ui-state-focus {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: var(--pure-white);
+    background: var(--pure-white);
+    border-color: var(--focused-blue);
+    color: var(--focused-blue);
 }
 
 
@@ -513,9 +517,9 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-selectcheckboxmenu.ui-state-focus .ui-selectcheckboxmenu-label,
 .ui-selectonemenu.ui-state-focus .ui-selectonemenu-label,
 .ui-selectonemenu.ui-state-focus .ui-selectonemenu-trigger {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: var(--pure-white);
+    background: var(--pure-white);
+    border-color: var(--focused-blue);
+    color: var(--focused-blue);
 }
 
 .ui-inputfield.ui-state-focus,
