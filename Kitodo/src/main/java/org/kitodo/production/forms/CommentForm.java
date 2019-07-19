@@ -297,7 +297,7 @@ public class CommentForm extends BaseForm {
      * @return whether there are concurrent tasks in work or not
      */
     public boolean isConcurrentTaskInWork() {
-        return this.currentTask.getId() < 0 || !getConcurrentTasksInWork().isEmpty();
+        return !getConcurrentTasksInWork().isEmpty();
     }
 
     /**
