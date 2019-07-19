@@ -81,12 +81,15 @@ public class GoobiScript {
         StrTokenizer tokenizer = new StrTokenizer(inScript, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
-            if (tok.indexOf(":") == -1) {
-                Helper.setFehlerMeldung("goobiScriptfield", "missing delimiter / unknown parameter: ", tok);
-            } else {
+            if (tok.contains(":")) {
                 String myKey = tok.substring(0, tok.indexOf(":"));
                 String myValue = tok.substring(tok.indexOf(":") + 1);
                 this.myParameters.put(myKey, myValue);
+            } else {
+                // action copyData has an other syntax so ignore missing colon sign(s)
+                if (this.myParameters.get("action") != null && !this.myParameters.get("action").equals("copyData")) {
+                    Helper.setFehlerMeldung("goobiScriptfield", "missing delimiter / unknown parameter: ", tok);
+                }
             }
         }
 
