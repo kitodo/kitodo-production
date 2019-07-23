@@ -11,13 +11,15 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import javax.faces.model.SelectItem;
+import org.kitodo.production.helper.metadata.pagination.PaginatorMode;
 
 /**
  * Backing bean for a JSF select item with an image.
  */
-public class IllustratedSelectItem extends SelectItem {
+public class IllustratedSelectItem {
 
+    private PaginatorMode value;
+    private String label;
     private String image;
 
     /**
@@ -31,8 +33,9 @@ public class IllustratedSelectItem extends SelectItem {
      * @param image
      *            image to display
      */
-    IllustratedSelectItem(Object value, String label, String image) {
-        super(value, label);
+    public IllustratedSelectItem(PaginatorMode value, String label, String image) {
+        this.value = value;
+        this.label = label;
         this.image = image;
     }
 
@@ -43,5 +46,23 @@ public class IllustratedSelectItem extends SelectItem {
      */
     public String getImage() {
         return image;
+    }
+
+    /**
+     * Get value.
+     *
+     * @return value of value
+     */
+    public PaginatorMode getValue() {
+        return value;
+    }
+
+    /**
+     * Get label.
+     *
+     * @return value of label
+     */
+    public String getLabel() {
+        return label;
     }
 }

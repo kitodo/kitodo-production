@@ -96,19 +96,24 @@
                             <div>
                                 <p:outputLabel value="#{msgs.counting}:"
                                                for="selectPaginationMode"/>
-                                <p:selectOneMenu value="#{DataEditorForm.paginationPanel.selectPaginationModeSelectedItem}"
-                                                 var="mode"
-                                                 id="selectPaginationMode">
+                                <p:selectOneMenu
+                                        value="#{DataEditorForm.paginationPanel.selectPaginationModeSelectedItem}"
+                                        converter="#{IllustratedSelectItemConverter}"
+                                        panelStyle="width:25%;"
+                                        var="mode"
+                                        id="selectPaginationMode">
                                     <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"
                                                    var="modeSelection"
                                                    itemValue="#{modeSelection}"
                                                    itemLabel="#{modeSelection.label}"/>
                                     <p:column style="width:10%;">
-                                        <p:graphicImage value="/pages/images/buttons/#{modeSelection.image}"/>
+                                        <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
                                     </p:column>
                                     <p:column>
-                                        <h:outputText value="#{modeSelection.label}"/>
+                                        <h:outputText value="#{mode.label}"/>
                                     </p:column>
+                                    <f:attribute name="illustratedSelectItems"
+                                                 value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"/>
                                 </p:selectOneMenu>
                             </div>
 
