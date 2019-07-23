@@ -1,11 +1,10 @@
 # Travis continuous integration for Kitodo.Production
 
-dist: trusty
+dist: xenial
 
 language: java
 
 jdk:
-  - oraclejdk8
   - openjdk8
 
 addons:
