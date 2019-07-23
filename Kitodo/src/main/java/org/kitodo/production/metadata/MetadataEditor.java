@@ -186,10 +186,18 @@ public class MetadataEditor {
             default:
                 throw new IllegalStateException("complete switch");
         }
-        for (IncludedStructuralElement structureToAddViews : structuresToAddViews) {
-            structureToAddViews.getViews().addAll(viewsToAdd);
+        if (Objects.nonNull(viewsToAdd) && !viewsToAdd.isEmpty()) {
+            deleteViewsFromIncludedStructuralElements(workpiece.getRootElement(), viewsToAdd);
+            newStructure.getViews().addAll(viewsToAdd);
         }
         return newStructure;
+    }
+
+    private static void deleteViewsFromIncludedStructuralElements(IncludedStructuralElement parent, List<View> views) {
+        parent.getViews().removeAll(views);
+        for (IncludedStructuralElement includedStructuralElement : parent.getChildren()) {
+            deleteViewsFromIncludedStructuralElements(includedStructuralElement, views);
+        }
     }
 
     /**

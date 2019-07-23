@@ -41,7 +41,7 @@
                         <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionItems}"
                                        var="positionSelection"
                                        itemValue="#{positionSelection}"
-                                       itemLabel="#{positionSelection.label}"/>
+                                       itemLabel="#{HelperForm.getTranslated(positionSelection.label)}"/>
                         <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareDocStructTypes}"
                                 update="docStructAddTypeSelection"/>
                     </p:selectOneMenu>
