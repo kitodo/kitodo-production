@@ -29,7 +29,7 @@ import org.primefaces.event.TabChangeEvent;
 
 public class BaseForm implements Serializable {
 
-    String stayOnCurrentPage = null;
+    protected String stayOnCurrentPage = null;
     protected String filter = "";
     protected User user;
     protected LazyDTOModel lazyDTOModel = null;

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.copyprocess;
 
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
@@ -59,6 +59,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -127,6 +128,8 @@ public class ProzesskopieForm extends BaseForm {
     private String opacKatalog;
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
+
+    private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
     protected String docType;
     protected Template template = new Template();
@@ -1199,6 +1202,15 @@ public class ProzesskopieForm extends BaseForm {
 
     public void setOpacSuchbegriff(String opacSuchbegriff) {
         this.opacSuchbegriff = opacSuchbegriff;
+    }
+
+    /**
+     * Returns the data object underlying the title record link tab.
+     *
+     * @return the data object underlying the title record link tab
+     */
+    public TitleRecordLinkTab getTitleRecordLinkTab() {
+        return titleRecordLinkTab;
     }
 
     /**

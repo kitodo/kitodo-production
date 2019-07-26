@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.Record;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
