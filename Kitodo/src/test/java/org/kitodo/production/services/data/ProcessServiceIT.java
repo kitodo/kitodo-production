@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,12 +36,14 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -63,9 +66,11 @@ public class ProcessServiceIT {
 
     private static final String firstProcess = "First process";
     private static final String processNotFound = "Process was not found in index!";
+    private static final File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+        ExecutionPermission.setExecutePermission(script);
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessesForHierarchyTests();
@@ -80,6 +85,7 @@ public class ProcessServiceIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         fileService.delete(URI.create("1"));
+        ExecutionPermission.setNoExecutePermission(script);
     }
 
     @Rule
@@ -208,6 +214,12 @@ public class ProcessServiceIT {
     @Test
     public void shouldNotFindByAnything() throws DataException {
         assertEquals(processNotFound, 0, processService.findByAnything("Nope").size());
+    }
+
+    @Test
+    public void shouldFindLinkableParentProcesses() throws DataException {
+        assertEquals("Processes were not found in index!", 1,
+            processService.findLinkableParentProcesses("HierarchyParent", 1, 1).size());
     }
 
     @Test
