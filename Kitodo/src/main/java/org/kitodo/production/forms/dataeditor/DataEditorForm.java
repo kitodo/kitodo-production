@@ -657,4 +657,14 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return "/pages/metadataEditor?faces-redirect=true&taskId=" + this.getCurrentTask().getId()
                 + "&referrer=" + referrer;
     }
+
+    void assignView(IncludedStructuralElement includedStructuralElement, View view) {
+        includedStructuralElement.getViews().add(view);
+        view.getMediaUnit().getIncludedStructuralElements().add(includedStructuralElement);
+    }
+
+    void unassignView(IncludedStructuralElement includedStructuralElement, View view) {
+        includedStructuralElement.getViews().remove(view);
+        view.getMediaUnit().getIncludedStructuralElements().remove(includedStructuralElement);
+    }
 }

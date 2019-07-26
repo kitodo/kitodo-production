@@ -217,17 +217,17 @@ public class MetadataEditor {
                 throw new IllegalStateException("complete switch");
         }
         if (Objects.nonNull(viewsToAdd) && !viewsToAdd.isEmpty()) {
-            deleteViewsFromIncludedStructuralElements(workpiece.getRootElement(), viewsToAdd);
+            for (View viewToAdd : viewsToAdd) {
+                List<IncludedStructuralElement> includedStructuralElements = viewToAdd.getMediaUnit().getIncludedStructuralElements();
+                for (IncludedStructuralElement elementToUnassign : includedStructuralElements) {
+                    elementToUnassign.getViews().remove(viewToAdd);
+                }
+                includedStructuralElements.clear();
+                includedStructuralElements.add(newStructure);
+            }
             newStructure.getViews().addAll(viewsToAdd);
         }
         return newStructure;
-    }
-
-    private static void deleteViewsFromIncludedStructuralElements(IncludedStructuralElement parent, List<View> views) {
-        parent.getViews().removeAll(views);
-        for (IncludedStructuralElement includedStructuralElement : parent.getChildren()) {
-            deleteViewsFromIncludedStructuralElements(includedStructuralElement, views);
-        }
     }
 
     /**

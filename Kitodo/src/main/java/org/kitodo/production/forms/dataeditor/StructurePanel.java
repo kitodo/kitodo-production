@@ -959,12 +959,8 @@ public class StructurePanel implements Serializable {
      */
     void moveViews(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
         for (Pair<View, IncludedStructuralElement> elementToBeMoved : elementsToBeMoved) {
-            elementToBeMoved.getValue().getViews().remove(elementToBeMoved.getKey());
-            toElement.getViews().add(elementToBeMoved.getKey());
-            if (Objects.nonNull(elementToBeMoved.getKey().getMediaUnit())) {
-                elementToBeMoved.getKey().getMediaUnit().getIncludedStructuralElements().remove(elementToBeMoved.getValue());
-                elementToBeMoved.getKey().getMediaUnit().getIncludedStructuralElements().add(toElement);
-            }
+            dataEditor.unassignView(elementToBeMoved.getValue(), elementToBeMoved.getKey());
+            dataEditor.assignView(toElement, elementToBeMoved.getKey());
         }
     }
 
@@ -1202,8 +1198,7 @@ public class StructurePanel implements Serializable {
             TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
             StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
             IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) structureTreeNodeSibling.getDataObject();
-            includedStructuralElement.getViews().add(view);
-            view.getMediaUnit().getIncludedStructuralElements().add(includedStructuralElement);
+            dataEditor.assignView(includedStructuralElement, view);
             severalAssignments.add(view.getMediaUnit());
             preserveLogical();
             show();
@@ -1223,8 +1218,7 @@ public class StructurePanel implements Serializable {
                 StructureTreeNode structureTreeNodeParent = (StructureTreeNode) selectedLogicalNode.getParent().getData();
                 if (structureTreeNodeParent.getDataObject() instanceof IncludedStructuralElement) {
                     IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) structureTreeNodeParent.getDataObject();
-                    includedStructuralElement.getViews().remove(view);
-                    view.getMediaUnit().getIncludedStructuralElements().remove(includedStructuralElement);
+                    dataEditor.unassignView(includedStructuralElement, view);
                     if (view.getMediaUnit().getIncludedStructuralElements().size() <= 1) {
                         severalAssignments.remove(view.getMediaUnit());
                     }
