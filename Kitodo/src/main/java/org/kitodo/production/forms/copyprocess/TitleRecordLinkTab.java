@@ -9,26 +9,41 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-/**
- * Backing bean for the title record link tab.
- */
 package org.kitodo.production.forms.copyprocess;
 
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale.LanguageRange;
+import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
+/**
+ * Backing bean for the title record link tab.
+ */
 public class TitleRecordLinkTab {
     private static final Logger logger = LogManager.getLogger(TitleRecordLinkTab.class);
 
@@ -58,9 +73,25 @@ public class TitleRecordLinkTab {
     private List<SelectItem> possibleParentProcesses = Collections.emptyList();
 
     /**
+     * Tree with the root element of the workpiece and elements indicating the
+     * possible insertion positions.
+     */
+    private TreeNode rootElement = new DefaultTreeNode();
+
+    /**
      * The user’s search for parent processes.
      */
     private String searchQuery = "";
+
+    /**
+     * The list of possible insertion positions.
+     */
+    private List<SelectItem> selectableInsertionPositions = Collections.emptyList();
+
+    /**
+     * The user-selected insertion position.
+     */
+    private String selectedInsertionPosition = null;
 
     /**
      * Process selected as parent.
@@ -70,11 +101,11 @@ public class TitleRecordLinkTab {
     /**
      * Creates a new data object underlying the title record link tab.
      *
-     * @param copyProcessForm
+     * @param prozesskopieForm
      *            process copy form containing the object
      */
-    public TitleRecordLinkTab(ProzesskopieForm copyProcessForm) {
-        this.copyProcessForm = copyProcessForm;
+    public TitleRecordLinkTab(ProzesskopieForm prozesskopieForm) {
+        this.copyProcessForm = prozesskopieForm;
     }
 
     /**
@@ -84,13 +115,107 @@ public class TitleRecordLinkTab {
     public void chooseParentProcess() {
         try {
             titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
-        } catch (DAOException e) {
+            createInsertionPositionSelectionTree();
+            possibleParentProcesses = Collections.emptyList();
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage("errorLoadingOne",
                 new Object[] {chosenParentProcess,
                               possibleParentProcesses.parallelStream()
                                       .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
                                       .orElse(new SelectItem(null, null)).getLabel() },
                 logger, e);
+        }
+    }
+
+    /**
+     * Sets up the variables for the tree for the insertion position selection.
+     *
+     * @throws IOException
+     *             if the METS file cannot be read
+     */
+    private void createInsertionPositionSelectionTree() throws DAOException, IOException {
+        URI uri = ServiceManager.getProcessService().getMetadataFileUri(titleRecordProcess);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
+
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetService()
+                .openRuleset(titleRecordProcess.getRuleset());
+        String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+        List<LanguageRange> priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+
+        selectableInsertionPositions = new LinkedList<>();
+        rootElement = new DefaultTreeNode();
+        createInsertionPositionSelectionTreeRecursive("", workpiece.getRootElement(), rootElement, ruleset,
+            priorityList);
+        rootElement.setExpanded(true);
+
+        if (selectableInsertionPositions.size() > 0) {
+            selectedInsertionPosition = (String) ((LinkedList<SelectItem>) selectableInsertionPositions).getLast()
+                    .getValue();
+        } else {
+            selectedInsertionPosition = null;
+            Helper.setMessage("prozesskopieForm.titleRecordLinkTab.noInsertionPosition");
+        }
+    }
+
+    /**
+     * Recursively builds the tree for the insertion position selection.
+     *
+     * @param positionPrefix
+     *            A string with comma-delimited specification of the levels that
+     *            have already been traversed. Initially empty.
+     * @param currentIncludedStructuralElement
+     *            Included structural element for whom the tree is being
+     *            created. Initially the root element of the workpiece.
+     * @param parentNode
+     *            Parent node of the tree structure to add to. This is
+     *            initialized with a {@link DefaultTreeNode} which is not
+     *            displayed
+     * @param ruleset
+     *            the current ruleset
+     * @param priorityList
+     *            the user’s metadata language priority list
+     */
+    private void createInsertionPositionSelectionTreeRecursive(String positionPrefix,
+            IncludedStructuralElement currentIncludedStructuralElement, TreeNode parentNode,
+            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException {
+
+        String type;
+        if (Objects.isNull(currentIncludedStructuralElement.getLink())) {
+            type = currentIncludedStructuralElement.getType();
+        } else {
+            ProcessService processService = ServiceManager.getProcessService();
+            int linkedProcessUri = processService.processIdFromUri(currentIncludedStructuralElement.getLink().getUri());
+            Process linkedProcess = processService.getById(linkedProcessUri);
+            type = processService.getBaseType(linkedProcess);
+        }
+
+        StructuralElementViewInterface currentIncludedStructuralElementView = ruleset.getStructuralElementView(type,
+            copyProcessForm.getAcquisitionStage(), priorityList);
+
+        TreeNode includedStructuralElementNode = new InsertionPositionSelectionTreeNode(parentNode,
+                currentIncludedStructuralElementView.getLabel());
+
+        boolean linkingAllowedHere = Objects.isNull(currentIncludedStructuralElement.getLink())
+                && currentIncludedStructuralElementView.getAllowedSubstructuralElements()
+                        .containsKey(ConfigOpac.getDoctypeByName(copyProcessForm.getDocType()).getRulesetType());
+
+        if (linkingAllowedHere) {
+            new InsertionPositionSelectionTreeNode(includedStructuralElementNode, selectableInsertionPositions.size());
+            selectableInsertionPositions.add(new SelectItem(positionPrefix.concat("0"), null));
+        }
+
+        List<IncludedStructuralElement> children = currentIncludedStructuralElement.getChildren();
+        for (int index = 0; index < children.size(); index++) {
+
+            createInsertionPositionSelectionTreeRecursive(
+                positionPrefix + index + 1 + MetadataEditor.INSERTION_POSITION_SEPARATOR, children.get(index),
+                includedStructuralElementNode, ruleset, priorityList);
+
+            if (linkingAllowedHere) {
+                new InsertionPositionSelectionTreeNode(includedStructuralElementNode,
+                        selectableInsertionPositions.size());
+                selectableInsertionPositions.add(new SelectItem(positionPrefix + index + 1, null));
+            }
         }
     }
 
@@ -162,6 +287,25 @@ public class TitleRecordLinkTab {
     }
 
     /**
+     * Returns the HTML identifier of the selected insertion position.
+     *
+     * @return the selected insertion position
+     */
+    public String getSelectedInsertionPosition() {
+        return selectedInsertionPosition;
+    }
+
+    /**
+     * Sets the HTML identifier of the selected insertion position.
+     *
+     * @param selectedInsertionPosition
+     *            identifier to set
+     */
+    public void setSelectedInsertionPosition(String selectedInsertionPosition) {
+        this.selectedInsertionPosition = selectedInsertionPosition;
+    }
+
+    /**
      * Returns whether the hint that there were more hits is visible.
      *
      * @return whether the hint is visible
@@ -177,6 +321,25 @@ public class TitleRecordLinkTab {
      */
     public List<SelectItem> getPossibleParentProcesses() {
         return possibleParentProcesses;
+    }
+
+    /**
+     * Returns the tree containing the root element of the selected parent
+     * process and the possible insert positions.
+     *
+     * @return the tree structure for selecting the insertion position
+     */
+    public TreeNode getRootElement() {
+        return rootElement;
+    }
+
+    /**
+     * Returns the list of selection items for selecting an insertion position.
+     *
+     * @return selection elements for selecting an insertion position
+     */
+    public List<SelectItem> getSelectableInsertionPositions() {
+        return selectableInsertionPositions;
     }
 
     /**

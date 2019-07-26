@@ -11,7 +11,9 @@
 
 package org.kitodo.production.services.data;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
@@ -211,5 +214,20 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
         query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
                 ServiceManager.getUserService().getSessionClientId(), true));
         return query;
+    }
+
+    /**
+     * Acquires a ruleset Management and loads a ruleset into it.
+     *
+     * @param ruleset
+     *            database object that references the ruleset
+     * @return a Ruleset Management in which the ruleset has been loaded
+     */
+    public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
+        String rulesetPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), ruleset.getFile())
+                .toString();
+        RulesetManagementInterface openRuleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        openRuleset.load(new File(rulesetPath));
+        return openRuleset;
     }
 }

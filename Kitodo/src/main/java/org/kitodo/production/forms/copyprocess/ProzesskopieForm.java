@@ -93,6 +93,13 @@ public class ProzesskopieForm extends BaseForm {
 
     private static final String DIRECTORY_SUFFIX = ConfigCore
             .getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
+
+    /**
+     * A filter on the rule set depending on the workflow step. So far this is
+     * not configurable anywhere and is therefore on “create”.
+     */
+    private String acquisitionStage = "create";
+
     private String atstsl = "";
     private Integer guessedImages = 0;
     private Process processForChoice;
@@ -915,6 +922,10 @@ public class ProzesskopieForm extends BaseForm {
                 }
             }
         }
+    }
+
+    public String getAcquisitionStage() {
+        return acquisitionStage;
     }
 
     public String getDocType() {

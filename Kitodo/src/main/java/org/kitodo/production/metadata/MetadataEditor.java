@@ -37,6 +37,11 @@ import org.kitodo.production.services.ServiceManager;
  */
 public class MetadataEditor {
     /**
+     * Separator for specifying an insertion position.
+     */
+    public static final String INSERTION_POSITION_SEPARATOR = ",";
+
+    /**
      * LOCTYPE used for internal links.
      */
     public static final String INTERNAL_LOCTYPE = "Kitodo.Production";

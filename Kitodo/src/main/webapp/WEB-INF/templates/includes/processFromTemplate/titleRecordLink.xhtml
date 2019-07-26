@@ -19,7 +19,7 @@
 
         <!-- Search function -->
 
-        <h:panelGroup>
+        <h:panelGroup rendered="#{ProzesskopieForm.titleRecordLinkTab.titleRecordProcess eq null}">
         
             <!-- Search slot -->
         
@@ -45,6 +45,29 @@
                 <p:ajax listener="#{ProzesskopieForm.titleRecordLinkTab.chooseParentProcess}"
                     update="editForm:processFromTemplateTabView:titleRecordLinkTabContent"/>
             </p:selectOneMenu>
+        </h:panelGroup>
+
+        <!-- Insertion position selection tree -->
+
+        <h:panelGroup rendered="#{ProzesskopieForm.titleRecordLinkTab.titleRecordProcess ne null}">
+        
+            <!-- The following element does not produce anything visible on the web page. It creates the
+                administrative structures needed for the 'p:radioButton's below to work. -->
+            <p:selectOneRadio id="allRadioButtons" layout="custom"
+                value="#{ProzesskopieForm.titleRecordLinkTab.selectedInsertionPosition}">
+                <f:selectItems value="#{ProzesskopieForm.titleRecordLinkTab.selectableInsertionPositions}"/>
+            </p:selectOneRadio>
+
+            <p:tree value="#{ProzesskopieForm.titleRecordLinkTab.rootElement}" var="node">
+                <p:treeNode>
+                    <p:radioButton id="insertionPositionRadioButton" itemIndex="#{node.itemIndex}"
+                        for="editForm:processFromTemplateTabView:allRadioButtons"
+                        rendered="#{node.possibleInsertionPosition}"/>
+                    <h:outputLabel for="insertionPositionRadioButton" value="#{msgs.insertHere}"
+                        rendered="#{node.possibleInsertionPosition}"/>
+                    <h:outputText value="#{node.label}" rendered="#{not node.possibleInsertionPosition}"/>
+                </p:treeNode>
+            </p:tree>
         </h:panelGroup>
 
     </h:panelGroup>
