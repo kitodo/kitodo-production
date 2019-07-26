@@ -1172,6 +1172,10 @@ public class ProzesskopieForm extends BaseForm {
         this.tifHeaderImageDescription = tifHeaderImageDescription;
     }
 
+    public Project getProject() {
+        return this.project;
+    }
+
     public Process getProzessKopie() {
         return this.prozessKopie;
     }

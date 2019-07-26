@@ -660,7 +660,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @throws DataException
      *             if the search engine fails
      */
-    public List<ProcessDTO> findLinkableProcesses(String searchInput, int rulesetId,
+    public List<ProcessDTO> findLinkableChildProcesses(String searchInput, int rulesetId,
             Collection<String> allowedStructuralElementTypes) throws DataException, IOException, DAOException {
 
         BoolQueryBuilder query = new BoolQueryBuilder()
@@ -676,6 +676,36 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
         return linkableProcesses;
+    }
+
+    /**
+     * Searches for linkable processes based on user input. A process can be
+     * linked if it has the same rule set, belongs to the same client, and the
+     * topmost element of the logical outline below the selected parent element
+     * is an allowed child. For the latter, the data file must be read at the
+     * moment. This will be aborted after a timeout so that the user gets an
+     * answer (which may be incomplete) in finite time.
+     *
+     * @param searchInput
+     *            user input
+     * @param projectId
+     *            the id of the allowed project
+     * @param rulesetId
+     *            the id of the allowed ruleset
+     * @return found processes
+     * @throws DataException
+     *             if the search engine fails
+     */
+    public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
+            throws DataException {
+
+        BoolQueryBuilder query = new BoolQueryBuilder()
+                .must(new BoolQueryBuilder().should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput))
+                        .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput)))
+                .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
+                .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
+        List<ProcessDTO> linkableParentProcesses = findByQuery(query, false);
+        return linkableParentProcesses;
     }
 
     /**
