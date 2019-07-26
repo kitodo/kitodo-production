@@ -16,10 +16,12 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -103,6 +105,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private final MetadataPanel metadataPanel;
 
     /**
+     * Currently open processes of all users.
+     */
+    private static Map<Integer, User> openProcesses = new HashMap<>();
+
+    /**
      * Backing bean for the pagination panel.
      */
     private final PaginationPanel paginationPanel;
@@ -184,6 +191,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             ruleset = openRuleset(process.getRuleset());
             openMetsFile();
             init();
+            openProcesses.put(id, user);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
@@ -243,6 +251,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         mainFileUri = null;
         ruleset = null;
         currentChildren.clear();
+        openProcesses.remove(process.getId());
         process = null;
         user = null;
         this.setCurrentTask(null);
@@ -453,6 +462,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public void setCurrentTask(Task task) {
         this.currentTask = task;
+    }
+
+    public static User getUserOpened(Integer identificationNumber) {
+        return openProcesses.get(identificationNumber);
     }
 
     @Override

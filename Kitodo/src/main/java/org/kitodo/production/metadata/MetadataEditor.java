@@ -11,14 +11,17 @@
 
 package org.kitodo.production.metadata;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.MetadataEntry;
@@ -28,6 +31,7 @@ import org.kitodo.api.dataformat.Parent;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.services.ServiceManager;
@@ -78,6 +82,46 @@ public class MetadataEditor {
         int position = getPositionForOrder(children, order);
 
         children.add(position, includedStructuralElement);
+    }
+
+    /**
+     * Connects two processes by means of a link. The link is sorted as a linked
+     * included structural element in a included structural element of the
+     * parent process. The order is based on the order number specified by the
+     * user. This method does not create a link between the two processes in the
+     * database, this must and can only happen when saving.
+     *
+     * @param process
+     *            the parent process in which the link is to be added
+     * @param insertionPosition
+     *            at which point the link is to be inserted
+     * @param childProcessId
+     *            Database ID of the child process to be linked
+     * @throws IOException
+     *             if the METS file cannot be read or written
+     */
+    public static void addLink(Process process, String insertionPosition, int childProcessId) throws IOException {
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        List<String> indices = Arrays.asList(insertionPosition.split(Pattern.quote(INSERTION_POSITION_SEPARATOR)));
+        IncludedStructuralElement includedStructuralElement = workpiece.getRootElement();
+        for (int index = 0; index < indices.size(); index++) {
+            if (index < indices.size() - 1) {
+                includedStructuralElement = includedStructuralElement.getChildren()
+                        .get(Integer.valueOf(indices.get(index)));
+            } else {
+                LinkedMetsResource link = new LinkedMetsResource();
+                link.setLoctype(INTERNAL_LOCTYPE);
+                URI childProcessUri = ServiceManager.getProcessService().getProcessURI(childProcessId);
+                link.setUri(childProcessUri);
+                IncludedStructuralElement includedStructuralElementToAdd = new IncludedStructuralElement();
+                includedStructuralElementToAdd.setLink(link);
+                includedStructuralElement.getChildren().add(Integer.valueOf(indices.get(index)),
+                    includedStructuralElementToAdd);
+            }
+        }
+        ServiceManager.getFileService().createBackupFile(process);
+        ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFileUri);
     }
 
     private static int getPositionForOrder(List<IncludedStructuralElement> children, BigInteger order) {
