@@ -15,13 +15,11 @@ var kitodo = window.kitodo;
 var map;
 
 /**
- * @param {Object=} opt_options Custom control options for Kitodo in OpenLayers
+ * @param {Object=} options Custom control options for Kitodo in OpenLayers
  * @extends {ol.control.Rotate}
  * @constructor
  */
-kitodo.RotateLeftControl = function(opt_options) {
-    var options = opt_options || {};
-
+kitodo.RotateLeftControl = function(options = {}) {
     var buttonLeft = document.createElement('button');
     buttonLeft.innerHTML = "<i class='fa fa-undo'/>";
     buttonLeft.setAttribute("type", "button");
@@ -50,13 +48,11 @@ kitodo.RotateLeftControl = function(opt_options) {
 };
 
 /**
- * @param {Object=} opt_options Custom control options for Kitodo in OpenLayers
+ * @param {Object=} options Custom control options for Kitodo in OpenLayers
  * @extends {ol.control.Rotate}
  * @constructor
  */
-kitodo.RotateRightControl = function(opt_options) {
-    var options = opt_options || {};
-
+kitodo.RotateRightControl = function(options = {}) {
     var buttonRight = document.createElement('button');
     buttonRight.innerHTML = "<i class='fa fa-repeat'/>";
     buttonRight.setAttribute("type", "button");
@@ -85,8 +81,43 @@ kitodo.RotateRightControl = function(opt_options) {
     });
 };
 
+/**
+ * @param {Object=} options Custom control options for Kitodo in OpenLayers
+ * @extends {ol.control.Rotate}
+ * @constructor
+ */
+kitodo.ResetNorthControl = function(options = {}) {
+    var buttonResetNorth = document.createElement("button");
+    buttonResetNorth.innerHTML = "<i class='fa fa-compass'/>";
+    buttonResetNorth.setAttribute("type", "button");
+    buttonResetNorth.setAttribute("title", "Reset orientation");
+
+    var this_ = this;
+
+    var handleResetNorth = function() {
+        var view = this_.getMap().getView();
+        view.animate({
+            rotation: 0,
+            duration: 100
+        });
+    };
+
+    buttonResetNorth.addEventListener("click", handleResetNorth, false);
+
+    var elementResetNorth = document.createElement("div");
+    elementResetNorth.className = "ol-rotate ol-unselectable ol-control"; /*ol-rotate-reset*/
+    elementResetNorth.appendChild(buttonResetNorth);
+
+    ol.control.Control.call(this, {
+        element: elementResetNorth,
+        target: options.target,
+        duration: 250
+    });
+};
+
 ol.inherits(kitodo.RotateLeftControl, ol.control.Rotate);
 ol.inherits(kitodo.RotateRightControl, ol.control.Rotate);
+ol.inherits(kitodo.ResetNorthControl, ol.control.Rotate);
 
 function random(length) {
     var text = "";
@@ -122,11 +153,12 @@ function initializeMap(imageDimensions) {
         controls: ol.control.defaults({
             attributionOptions: {
                 collapsible: false
-            }
+            },
+            rotate: false
         }).extend([
-            new kitodo.RotateRightControl()
-        ]).extend([
-            new kitodo.RotateLeftControl()
+            new kitodo.RotateRightControl(),
+            new kitodo.RotateLeftControl(),
+            new kitodo.ResetNorthControl()
         ]),
         layers: [
             new ol.layer.Image({
