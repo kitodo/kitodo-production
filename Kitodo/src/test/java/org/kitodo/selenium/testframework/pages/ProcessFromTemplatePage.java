@@ -15,6 +15,7 @@ import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
+import org.awaitility.core.ConditionTimeoutException;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -39,6 +40,14 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement guessImagesInput;
 
     @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":rootElement")
+    private WebElement rootElementTree;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":docType")
+    private WebElement docTypeSelect;
+
+    @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW + ":fieldList:2:additionalInputField")
     private WebElement titleInput;
 
@@ -59,8 +68,20 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement catalogSelect;
 
     @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":chooseParent")
+    private WebElement chooseParentSelect;
+
+    @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW + ":fieldSelectMenu")
     private WebElement fieldSelect;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":searchForParent")
+    private WebElement searchForParentInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":searchParent")
+    private WebElement searchParentButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW + ":searchTerm")
@@ -102,6 +123,78 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         String generatedTitle = processTitleInput.getAttribute("value");
         save();
         return generatedTitle;
+    }
+
+    /**
+     * Creates a process as child.
+     *
+     * @param parentProcessTitle
+     *            parent process title
+     * @return generated title
+     */
+    public String createProcessAsChild(String parentProcessTitle) throws Exception {
+        switchToTabByIndex(2);
+        titleInput.sendKeys("TestProcessChild");
+        titleSortInput.sendKeys("TestProcessChild");
+        ppnAnalogInput.sendKeys("123456");
+        ppnDigitalInput.sendKeys("123456");
+
+        switchToTabByIndex(1);
+        generateTitleButton.click();
+        await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
+        final String generatedTitle = processTitleInput.getAttribute("value");
+
+        switchToTabByIndex(4);
+        searchForParentInput.sendKeys(parentProcessTitle);
+        searchParentButton.click();
+        await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isDisplayed.matches(chooseParentSelect));
+        clickElement(chooseParentSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(chooseParentSelect.getAttribute("id") + "_1")));
+        await("Wait for tree shows").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> isDisplayed.matches(rootElementTree));
+        save();
+        return generatedTitle;
+    }
+
+    /**
+     * Tries to create a process as child which is not possible.
+     *
+     * @return whether an error message is showing
+     */
+    public boolean createProcessAsChildNotPossible() throws Exception {
+        switchToTabByIndex(1);
+        clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_3")));
+        await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isDisplayed.matches(processFromTemplateTabView));
+
+        switchToTabByIndex(2);
+        titleInput.sendKeys("TestProcessChildNotPossible");
+        titleSortInput.sendKeys("TestProcessChildNotPossible");
+        ppnAnalogInput.sendKeys("1234567");
+        ppnDigitalInput.sendKeys("1234567");
+
+        switchToTabByIndex(1);
+        generateTitleButton.click();
+        await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
+
+        switchToTabByIndex(4);
+        searchForParentInput.sendKeys("Second");
+        searchParentButton.click();
+        await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isDisplayed.matches(chooseParentSelect));
+        clickElement(chooseParentSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(chooseParentSelect.getAttribute("id") + "_1")));
+        try {
+            await("Wait for error message").pollDelay(100, TimeUnit.MILLISECONDS).atMost(4, TimeUnit.SECONDS)
+                    .ignoreExceptions().until(() -> isDisplayed.matches(errorMessages));
+            return true;
+        } catch (ConditionTimeoutException e) {
+            return false;
+        }
     }
 
     public String createProcessFromCatalog() throws Exception {

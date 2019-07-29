@@ -33,8 +33,8 @@
             <div>
                 <!-- DocType -->
                 <p:outputLabel value="DocType" rendered="#{ProzesskopieForm.standardFields.doctype}"/>
-                <p:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.standardFields.doctype}"
-                                 styleClass="prozessKopieFeldbreite">
+                <p:selectOneMenu id="docType" value="#{ProzesskopieForm.docType}"
+                                  rendered="#{ProzesskopieForm.standardFields.doctype}" styleClass="prozessKopieFeldbreite">
                     <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
                                    itemValue="#{step.title}"/>
                     <f:ajax event="change" render="@form"/>

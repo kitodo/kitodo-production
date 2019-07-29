@@ -23,9 +23,9 @@
         
             <!-- Search slot -->
         
-            <p:inputText value="#{ProzesskopieForm.titleRecordLinkTab.searchQuery}"/>
+            <p:inputText id="searchForParent" value="#{ProzesskopieForm.titleRecordLinkTab.searchQuery}"/>
 
-            <p:commandButton icon="fa fa-search" title="#{msgs.search}"
+            <p:commandButton id="searchParent" icon="fa fa-search" title="#{msgs.search}"
                 action="#{ProzesskopieForm.titleRecordLinkTab.searchForParentProcesses}"
                 update="editForm:processFromTemplateTabView:titleRecordLinkTabContent"/>
             
@@ -38,7 +38,8 @@
                 </h:panelGroup>
             </div>
 
-            <p:selectOneMenu value="#{ProzesskopieForm.titleRecordLinkTab.chosenParentProcess}"
+            <p:selectOneMenu id="chooseParent"
+                value="#{ProzesskopieForm.titleRecordLinkTab.chosenParentProcess}"
                 rendered="#{not empty ProzesskopieForm.titleRecordLinkTab.possibleParentProcesses}">
                 <f:selectItem itemLabel="#{msgs.selectPlease}" noSelectionOption="true" />
                 <f:selectItems value="#{ProzesskopieForm.titleRecordLinkTab.possibleParentProcesses}" />
@@ -58,7 +59,7 @@
                 <f:selectItems value="#{ProzesskopieForm.titleRecordLinkTab.selectableInsertionPositions}"/>
             </p:selectOneRadio>
 
-            <p:tree value="#{ProzesskopieForm.titleRecordLinkTab.rootElement}" var="node">
+            <p:tree id="rootElement" value="#{ProzesskopieForm.titleRecordLinkTab.rootElement}" var="node">
                 <p:treeNode>
                     <p:radioButton id="insertionPositionRadioButton" itemIndex="#{node.itemIndex}"
                         for="editForm:processFromTemplateTabView:allRadioButtons"

@@ -31,6 +31,10 @@ abstract class EditPage<T> extends Page<T> {
     @FindBy(id = EDIT_FORM + ":save")
     WebElement saveButton;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = EDIT_FORM + ":error-messages")
+    WebElement errorMessages;
+
     EditPage(String URL) {
         super(URL);
     }
