@@ -1008,9 +1008,9 @@ public class FileService {
     /**
      * Renumbers the order of the media units.
      */
-    private void renumberMediaUnits(Workpiece workpiece) {
+    public void renumberMediaUnits(Workpiece workpiece) {
         int minimum = 1;
-        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
             if (mediaUnit.getOrder() > minimum) {
                 minimum = mediaUnit.getOrder() + 1;
             } else {
@@ -1026,7 +1026,7 @@ public class FileService {
      * intermediate places are marked uncounted.
      */
     private void repaginateMediaUnits(Workpiece workpiece) {
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        List<MediaUnit> mediaUnits = workpiece.getAllMediaUnits();
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {

@@ -12,6 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,10 @@ import java.util.stream.Collectors;
  * a Production workflow.
  */
 public class Workpiece {
+
+    // TODO: we probably need a way to configure MediaUnit types to be considered for renumbering/pagination!
+    private static final String PAGE = "page";
+
     /**
      * The time this file was first created.
      */
@@ -177,29 +182,19 @@ public class Workpiece {
     }
 
     /**
-     * Convenience function to return all media units of type 'page'.
+     * Recursively search for all media units with type "page".
      *
-     * @return list of all media units with type 'page'.
+     * @return list of all media units with type "page", sorted by their "ORDER" attribute.
      */
     public List<MediaUnit> getAllMediaUnits() {
-        return getAllMediaUnits("page");
-    }
-
-    /**
-     * Recursively search for all media units with given type.
-     *
-     * @param type
-     *          type of media units to be returned.
-     * @return list of all media units with given type
-     */
-    public List<MediaUnit> getAllMediaUnits(String type) {
         List<MediaUnit> mediaUnits = new LinkedList<>(mediaUnit.getChildren());
         for (MediaUnit mediaUnit : mediaUnit.getChildren()) {
             if (Objects.nonNull(mediaUnit)) {
                 mediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
             }
         }
-        return mediaUnits.stream().filter(m -> m.getType().equals(type)).collect(Collectors.toList());
+        mediaUnits.sort(Comparator.comparing(MediaUnit::getOrder));
+        return mediaUnits.stream().filter(m -> m.getType().equals(PAGE)).collect(Collectors.toList());
     }
 
     private List<MediaUnit> getAllMediaUnitsRecursive(MediaUnit parent, List<MediaUnit> mediaUnits) {

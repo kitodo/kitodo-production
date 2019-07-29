@@ -191,7 +191,7 @@ public class GalleryPanel {
                 fromStripeMediaIndex = Integer.parseInt(dragStripeImageMatcher.group(2));
                 fromStripe = stripes.get(fromStripeIndex);
             } else if (dragUnstructuredMediaMatcher.matches()) {
-                // First (0) stripe represents logical root element (unstructured media)
+                // First (0) stripe represents logical root element (e.g. "Unstructured Media")
                 fromStripe = stripes.get(0);
                 fromStripeMediaIndex = Integer.parseInt(dragUnstructuredMediaMatcher.group(1));
             } else {
@@ -203,8 +203,9 @@ public class GalleryPanel {
 
             // move view
             View view = mediaContent.getView();
-            fromStripe.getStructure().getViews().remove(view);
-            toStripe.getStructure().getViews().add(view);
+            // TODO: rework GalleryPanel to allow dropping page thumbnails between other thumbnails!
+            dataEditor.getStructurePanel().moveViews(fromStripe.getStructure(), toStripe.getStructure(),
+                    Collections.singletonList(view));
 
             // update stripes
             fromStripe.getMedias().clear();
@@ -218,7 +219,6 @@ public class GalleryPanel {
             dataEditor.getStructurePanel().show();
             return;
         }
-
         logger.debug("Unsupported drag'n'drop event from {} to {}", event.getDragId(), event.getDropId());
     }
 
