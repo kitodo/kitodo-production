@@ -1513,6 +1513,12 @@ Column content
     position: absolute;
 }
 
+/* This fixes duplicate scrollbars in Firefox */
+#metadataAccordion\:metadata\:addMetadataButton + table,
+#metadataAccordion\:physicalMetadata\:addMetadataButton + table {
+    margin-top: 0 !important;
+}
+
 #metadata input {
     width: 100%;
 }
