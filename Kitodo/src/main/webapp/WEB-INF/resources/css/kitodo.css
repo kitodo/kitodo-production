@@ -1224,7 +1224,6 @@ form#metadata div label,
 
 #newCommentForm\:newCommentTextArea {
     width: 100%;
-    background-color: var(--trans-blue);
     margin-bottom: 32px;
     height: calc(var(--default-double-size) * 3);
 }
@@ -1487,7 +1486,15 @@ Column content
 
 #metadataAccordion\:metadata\:metadataTable,
 #metadataAccordion\:physicalMetadata\:physicalMetadataTable {
+    background: var(--trans-blue);
     overflow-y: scroll;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data,
+#metadataAccordion\:metadata\:metadataTable_data tr,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data tr {
+    background: inherit;
 }
 
 #metadataAccordion\:metadata\:metadataTable .ui-datatable-tablewrapper,
@@ -1544,6 +1551,7 @@ Column content
 #metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-spinner,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectonemenu,
 #metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-selectonemenu {
+    background: inherit;
     box-sizing: border-box;
     margin-right: var(--default-half-size);
     max-width: calc(100% - 90px);
