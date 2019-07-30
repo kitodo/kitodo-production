@@ -540,6 +540,8 @@ public class MockDatabase {
 
     public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
         Process fourthProcess = new Process();
+        fourthProcess.setProject(ServiceManager.getProjectService().getById(1));
+        fourthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         fourthProcess.setTitle("HierarchyParent");
         ServiceManager.getProcessService().save(fourthProcess);
 

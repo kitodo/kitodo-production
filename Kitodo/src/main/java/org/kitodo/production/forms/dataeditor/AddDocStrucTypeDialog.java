@@ -512,7 +512,7 @@ public class AddDocStrucTypeDialog {
         try {
             Set<String> allowedSubstructuralElements = getStructuralElementView().getAllowedSubstructuralElements()
                     .keySet();
-            processes = ServiceManager.getProcessService().findLinkableProcesses(processNumber,
+            processes = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
                 dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements);
             if (processes.isEmpty()) {
                 alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.noHits"));

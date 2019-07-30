@@ -11,17 +11,17 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -40,9 +40,8 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -104,6 +103,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * Backing bean for the metadata panel.
      */
     private final MetadataPanel metadataPanel;
+
+    /**
+     * Currently open processes of all users.
+     */
+    private static Map<Integer, User> openProcesses = new HashMap<>();
 
     /**
      * Backing bean for the pagination panel.
@@ -184,9 +188,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
 
-            ruleset = openRulesetFile(process.getRuleset().getFile());
+            ruleset = openRuleset(process.getRuleset());
             openMetsFile();
             init();
+            openProcesses.put(id, user);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
@@ -206,16 +211,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
-    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
+    private RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
         final long begin = System.nanoTime();
         String metadataLanguage = user.getMetadataLanguage();
         priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+        RulesetManagementInterface openRuleset = ServiceManager.getRulesetService().openRuleset(ruleset);
         if (logger.isTraceEnabled()) {
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
-        return ruleset;
+        return openRuleset;
     }
 
     private void init() {
@@ -247,6 +251,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         mainFileUri = null;
         ruleset = null;
         currentChildren.clear();
+        openProcesses.remove(process.getId());
         process = null;
         user = null;
         this.setCurrentTask(null);
@@ -457,6 +462,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public void setCurrentTask(Task task) {
         this.currentTask = task;
+    }
+
+    public static User getUserOpened(Integer identificationNumber) {
+        return openProcesses.get(identificationNumber);
     }
 
     @Override

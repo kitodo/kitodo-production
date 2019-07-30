@@ -547,8 +547,13 @@ public class FileService {
         }
     }
 
-    // backup of meta.xml
-    void createBackupFile(Process process) throws IOException {
+    /**
+     * Creates a backup of {@code meta.xml}.
+     *
+     * @param process
+     *            process whose {@code meta.xml} shall be created a backup of.
+     */
+    public void createBackupFile(Process process) throws IOException {
         int numberOfBackups;
 
         numberOfBackups = ConfigCore.getIntParameter(ParameterCore.NUMBER_OF_META_BACKUPS);

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.copyprocess;
 
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
@@ -53,12 +53,15 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -67,6 +70,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.process.ProcessGenerator;
@@ -92,6 +96,13 @@ public class ProzesskopieForm extends BaseForm {
 
     private static final String DIRECTORY_SUFFIX = ConfigCore
             .getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
+
+    /**
+     * A filter on the rule set depending on the workflow step. So far this is
+     * not configurable anywhere and is therefore on “create”.
+     */
+    private String acquisitionStage = "create";
+
     private String atstsl = "";
     private Integer guessedImages = 0;
     private Process processForChoice;
@@ -127,6 +138,8 @@ public class ProzesskopieForm extends BaseForm {
     private String opacKatalog;
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
+
+    private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
     protected String docType;
     protected Template template = new Template();
@@ -498,7 +511,32 @@ public class ProzesskopieForm extends BaseForm {
      * Create the process and save the metadata.
      */
     public String createNewProcess() {
+        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+            if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())) {
+                Helper.setErrorMessage("prozesskopieForm.createNewProcess.noInsertionPositionSelected");
+                return stayOnCurrentPage;
+            } else {
+                User titleRecordOpenUser = DataEditorForm
+                        .getUserOpened(titleRecordLinkTab.getTitleRecordProcess().getId());
+                if (Objects.nonNull(titleRecordOpenUser)) {
+                    Helper.setErrorMessage("prozesskopieForm.createNewProcess.titleRecordOpen",
+                        titleRecordOpenUser.getFullName());
+                    return stayOnCurrentPage;
+                }
+            }
+        }
         if (createProcess()) {
+            if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+                ServiceManager.getProcessService().refresh(prozessKopie);
+                try {
+                    MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
+                        titleRecordLinkTab.getSelectedInsertionPosition(), prozessKopie.getId());
+
+                } catch (IOException exception) {
+                    Helper.setErrorMessage("errorSaving", titleRecordLinkTab.getTitleRecordProcess().getTitle(), logger,
+                        exception);
+                }
+            }
             return processListPath;
         }
 
@@ -532,6 +570,11 @@ public class ProzesskopieForm extends BaseForm {
         }
 
         processRdfConfiguration();
+
+        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+            prozessKopie.setParent(titleRecordLinkTab.getTitleRecordProcess());
+            titleRecordLinkTab.getTitleRecordProcess().getChildren().add(prozessKopie);
+        }
 
         try {
             ServiceManager.getProcessService().save(this.prozessKopie);
@@ -914,6 +957,10 @@ public class ProzesskopieForm extends BaseForm {
         }
     }
 
+    public String getAcquisitionStage() {
+        return acquisitionStage;
+    }
+
     public String getDocType() {
         return this.docType;
     }
@@ -1169,6 +1216,10 @@ public class ProzesskopieForm extends BaseForm {
         this.tifHeaderImageDescription = tifHeaderImageDescription;
     }
 
+    public Project getProject() {
+        return this.project;
+    }
+
     public Process getProzessKopie() {
         return this.prozessKopie;
     }
@@ -1199,6 +1250,15 @@ public class ProzesskopieForm extends BaseForm {
 
     public void setOpacSuchbegriff(String opacSuchbegriff) {
         this.opacSuchbegriff = opacSuchbegriff;
+    }
+
+    /**
+     * Returns the data object underlying the title record link tab.
+     *
+     * @return the data object underlying the title record link tab
+     */
+    public TitleRecordLinkTab getTitleRecordLinkTab() {
+        return titleRecordLinkTab;
     }
 
     /**

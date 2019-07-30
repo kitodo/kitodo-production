@@ -28,12 +28,15 @@ import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -42,10 +45,9 @@ import org.kitodo.selenium.testframework.generators.ProjectGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
-import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.RoleEditPage;
+import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
-import org.kitodo.production.services.ServiceManager;
 
 public class AddingST extends BaseTestSelenium {
 
@@ -111,12 +113,8 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Template was not listed at templates table!", templateAvailable);
     }
 
-    //TODO: Fix for travis
-    @Ignore
     @Test
-    public void addProcessTest() throws Exception {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
-
+    public void addProcessesTest() throws Exception {
         projectsPage.createNewProcess();
         assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
             Pages.getProcessFromTemplatePage().getHeaderText());
@@ -124,6 +122,36 @@ public class AddingST extends BaseTestSelenium {
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
         boolean processAvailable = processesPage.getProcessTitles().contains(generatedTitle);
         assertTrue("Created Process was not listed at processes table!", processAvailable);
+
+        ProcessService processService = ServiceManager.getProcessService();
+        // TODO: make processService.findByTitle(generatedTitle) work
+        int recordNumber = 1;
+        Process generatedProcess;
+        do {
+            generatedProcess = processService.getById(recordNumber++);
+        } while (!generatedTitle.equals(generatedProcess.getTitle()));
+        assertEquals("Created Process unexpectedly got a parent!", null, generatedProcess.getParent());
+
+        projectsPage.createNewProcess();
+        String generatedChildTitle = Pages.getProcessFromTemplatePage()
+                .createProcessAsChild(generatedProcess.getTitle());
+
+        boolean childProcessAvailable = processesPage.getProcessTitles().contains(generatedChildTitle);
+        assertTrue("Created Process was not listed at processes table!", childProcessAvailable);
+
+        // TODO: make processService.findByTitle(generatedChildTitle) work
+        Process generatedChildProcess;
+        do {
+            generatedChildProcess = processService.getById(recordNumber++);
+        } while (!generatedChildTitle.equals(generatedChildProcess.getTitle()));
+        assertEquals("Created Process has a wrong parent!", generatedProcess, generatedChildProcess.getParent());
+    }
+
+    @Test
+    public void addProcessAsChildNotPossible() throws Exception {
+        projectsPage.createNewProcess();
+        boolean errorMessageShowing = Pages.getProcessFromTemplatePage().createProcessAsChildNotPossible();
+        assertTrue("There was no errer!", errorMessageShowing);
     }
 
     @Ignore

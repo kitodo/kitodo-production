@@ -15,6 +15,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../../../../Kitodo-DataEditor/src/main/resources/ruleset.xsd">
     <declaration>
+        <division id="Monograph">
+            <label>Monograph</label>
+        </division>
         <division id="something">
             <label>Outline element</label>
         </division>

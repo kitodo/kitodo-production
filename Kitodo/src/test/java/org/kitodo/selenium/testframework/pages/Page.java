@@ -235,6 +235,10 @@ public abstract class Page<T> {
         return file.exists();
     };
 
+    Predicate<WebElement> isDisplayed = (webElement) -> {
+        return webElement.isDisplayed();
+    };
+
     void deleteElement(String objectType, int removableID, int tabIndex, WebElement tabView) throws Exception {
         if (!isAt()) {
             goTo();
