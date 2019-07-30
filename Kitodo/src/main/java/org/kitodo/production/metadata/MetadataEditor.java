@@ -12,7 +12,6 @@
 package org.kitodo.production.metadata;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,40 +56,6 @@ public class MetadataEditor {
      * user. This method does not create a link between the two processes in the
      * database, this must and can only happen when saving.
      *
-     * @param parentIncludedStructuralElement
-     *            document included structural element of the parent process in
-     *            which the link is to be added
-     * @param order
-     *            at which point the link is to be ordered. The value is
-     *            interpreted relative to the order values of other links in the
-     *            included structural element.
-     * @param childProcessId
-     *            Database ID of the child process to be linked
-     */
-    public static void addLink(IncludedStructuralElement parentIncludedStructuralElement, BigInteger order,
-            int childProcessId) {
-
-        LinkedMetsResource link = new LinkedMetsResource();
-        link.setLoctype(INTERNAL_LOCTYPE);
-        link.setOrder(order);
-        URI uri = ServiceManager.getProcessService().getProcessURI(childProcessId);
-        link.setUri(uri);
-        IncludedStructuralElement includedStructuralElement = new IncludedStructuralElement();
-        includedStructuralElement.setLink(link);
-
-        List<IncludedStructuralElement> children = parentIncludedStructuralElement.getChildren();
-        int position = getPositionForOrder(children, order);
-
-        children.add(position, includedStructuralElement);
-    }
-
-    /**
-     * Connects two processes by means of a link. The link is sorted as a linked
-     * included structural element in a included structural element of the
-     * parent process. The order is based on the order number specified by the
-     * user. This method does not create a link between the two processes in the
-     * database, this must and can only happen when saving.
-     *
      * @param process
      *            the parent process in which the link is to be added
      * @param insertionPosition
@@ -110,29 +75,45 @@ public class MetadataEditor {
                 includedStructuralElement = includedStructuralElement.getChildren()
                         .get(Integer.valueOf(indices.get(index)));
             } else {
-                LinkedMetsResource link = new LinkedMetsResource();
-                link.setLoctype(INTERNAL_LOCTYPE);
-                URI childProcessUri = ServiceManager.getProcessService().getProcessURI(childProcessId);
-                link.setUri(childProcessUri);
-                IncludedStructuralElement includedStructuralElementToAdd = new IncludedStructuralElement();
-                includedStructuralElementToAdd.setLink(link);
-                includedStructuralElement.getChildren().add(Integer.valueOf(indices.get(index)),
-                    includedStructuralElementToAdd);
+                addLink(includedStructuralElement, Integer.valueOf(indices.get(index)), childProcessId);
             }
         }
         ServiceManager.getFileService().createBackupFile(process);
         ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFileUri);
     }
 
-    private static int getPositionForOrder(List<IncludedStructuralElement> children, BigInteger order) {
-        for (int i = 0; i < children.size(); i++) {
-            LinkedMetsResource otherLink = children.get(i).getLink();
-            if (Objects.nonNull(otherLink) && Objects.nonNull(otherLink.getOrder())
-                    && (Objects.isNull(order) || otherLink.getOrder().compareTo(order) > 0)) {
-                return i;
-            }
+    /**
+     * Connects two processes by means of a link. The link is sorted as a linked
+     * included structural element in a included structural element of the
+     * parent process. The order is based on the order number specified by the
+     * user. This method does not create a link between the two processes in the
+     * database, this must and can only happen when saving.
+     *
+     * @param parentIncludedStructuralElement
+     *            document included structural element of the parent process in
+     *            which the link is to be added
+     * @param childProcessId
+     *            Database ID of the child process to be linked
+     */
+    public static void addLink(IncludedStructuralElement parentIncludedStructuralElement, int childProcessId) {
+        addLink(parentIncludedStructuralElement, -1, childProcessId);
+    }
+
+    private static void addLink(IncludedStructuralElement parentIncludedStructuralElement, int index,
+            int childProcessId) {
+
+        LinkedMetsResource link = new LinkedMetsResource();
+        link.setLoctype(INTERNAL_LOCTYPE);
+        URI uri = ServiceManager.getProcessService().getProcessURI(childProcessId);
+        link.setUri(uri);
+        IncludedStructuralElement includedStructuralElement = new IncludedStructuralElement();
+        includedStructuralElement.setLink(link);
+        List<IncludedStructuralElement> children = parentIncludedStructuralElement.getChildren();
+        if (index < 0) {
+            children.add(includedStructuralElement);
+        } else {
+            children.add(index, includedStructuralElement);
         }
-        return children.size();
     }
 
     /**
