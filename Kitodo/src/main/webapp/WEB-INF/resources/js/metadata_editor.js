@@ -14,13 +14,30 @@ var metadataEditor = {};
 metadataEditor.select = {
 
     selectionType: function(event) {
-        console.log(event);
         if (event.metaKey || event.ctrlKey) {
-            multiSelect({'innerHTML': event.target.innerHTML});
+            select([{name: 'page', value: event.currentTarget.dataset.order},{name: 'selectionType', value: 'multi'}]);
         } else if (event.shiftKey) {
-            rangeSelect({'innerHTML': event.target.innerHTML});
+            select([{name: 'page', value: event.currentTarget.dataset.order},{name: 'selectionType', value: 'range'}]);
         } else {
-            console.log("No modifier key detected: default select!");
+            select([{name: 'page', value: event.currentTarget.dataset.order},{name: 'selectionType', value: 'default'}]);
+        }
+    }
+};
+
+metadataEditor.dragdrop = {
+    addDragAmountIcon: function(event) {
+        var dragAmount = document.querySelectorAll(".thumbnail.active").length;
+        if (dragAmount > 1) {
+            var element = document.createElement("div");
+            element.id = "dragAmount";
+            element.innerHTML = dragAmount;
+            event.currentTarget.appendChild(element);
+        }
+    },
+    removeDragAmountIcon: function(event) {
+        var element = document.getElementById("dragAmount");
+        if (element !== null) {
+            element.parentNode.removeChild(element);
         }
     }
 };

@@ -1757,7 +1757,8 @@ Column content
     background: linear-gradient(var(--carbon-blue), var(--focused-blue));
 }
 
-#imagePreviewForm\:structuredPages .ui-panel .ui-panel-content {
+#imagePreviewForm\:structuredPages .ui-panel .ui-panel-content,
+#imagePreviewForm\:unstructuredMedia .ui-panel .ui-panel-content {
     padding: 0;
 }
 
@@ -1779,7 +1780,8 @@ Column content
     list-style-type: none;
 }
 
-#imagePreviewForm\:structuredPages ul li {
+#imagePreviewForm\:structuredPages ul li,
+#imagePreviewForm\:unstructuredMedia ul li {
     display: inline-block;
 }
 
@@ -1798,8 +1800,18 @@ Column content
     color: var(--pure-white);
 }
 
-#imagePreviewForm\:unstructuredMedia .ui-datalist-item {
-    display: inline;
+#dragAmount {
+    background: var(--orange);
+    border-radius: 1em;
+    color: var(--pure-white);
+    display: inline-block;
+    min-width: .9em;
+    opacity: .9;
+    padding: 3px 7px;
+    position: absolute;
+    right: -5px;
+    text-align: center;
+    top: -5px;
 }
 
 /*----------------------------------------------------------------------
