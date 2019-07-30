@@ -12,6 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -52,7 +53,8 @@ public class Workpiece {
     /**
      * The logical included structural element.
      */
-    private IncludedStructuralElement rootElement = new IncludedStructuralElement();
+    private List<IncludedStructuralElement> rootElements = new ArrayList<>(
+            Arrays.asList(new IncludedStructuralElement()));
 
     /**
      * Returns the creation date of the workpiece.
@@ -122,12 +124,23 @@ public class Workpiece {
     }
 
     /**
-     * Returns the root element of the included structural element.
+     * Returns the first root element of the workpiece.
      *
-     * @return root element of the included structural element
+     * @return the first root element of the workpiece
+     * @deprecated Use {@code getRootElements().get(0)}.
      */
+    @Deprecated
     public IncludedStructuralElement getRootElement() {
-        return rootElement;
+        return rootElements.get(0);
+    }
+
+    /**
+     * Returns the root elements of the workpiece.
+     *
+     * @return the root elements of the workpiece
+     */
+    public List<IncludedStructuralElement> getRootElements() {
+        return rootElements;
     }
 
     /**
@@ -141,18 +154,20 @@ public class Workpiece {
     }
 
     /**
-     * Sets the included structural element of the workpiece.
+     * Sets the first included structural element of the workpiece.
      *
      * @param rootElement
      *            included structural element to set
+     * @deprecated Use {@code getRootElements().set(0, rootElement)}.
      */
+    @Deprecated
     public void setRootElement(IncludedStructuralElement rootElement) {
-        this.rootElement = rootElement;
+        rootElements.set(0, rootElement);
     }
 
     @Override
     public String toString() {
-        return id + ", " + rootElement;
+        return id + ", " + rootElements;
     }
 
     @Override

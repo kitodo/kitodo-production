@@ -36,6 +36,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
@@ -58,7 +59,7 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * The administrative structure of the product of an element that passes through
  * a Production workflow. The file format for this management structure is METS
  * XML after the ZVDD DFG Viewer Application Profile.
- * 
+ *
  * <p>
  * A {@code Workpiece} has two essential characteristics: {@link FileXmlElementAccess}s and
  * an outline {@link DivXmlElementAccess}. {@code MediaUnit}s are the types of every
@@ -66,7 +67,7 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * a book. Each {@code MediaUnit} can be in different {@link UseXmlAttributeAccess}s (for
  * example, in different resolutions or file formats). Each {@code MediaVariant}
  * of a {@code MediaUnit} resides in a {@link FLocatXmlElementAccess} in the data store.
- * 
+ *
  * <p>
  * The {@code IncludedStructuralElement} is a tree structure that can be finely
  * subdivided, e.g. a book, in which the chapters, in it individual elements
@@ -76,7 +77,7 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * here a simple expandability is provided, so that in a future version excerpts
  * from {@code MediaUnit}s can be described. Each outline level can be described
  * with any {@link MetadataXmlElementsAccess}.
- * 
+ *
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
 public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
@@ -98,7 +99,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * API, this can only be done by calling {@link #read(InputStream)} and then
      * replacing the content of the current editor, but at least the
      * implementation is clean.
-     * 
+     *
      * @param mets
      *            METS XML structure to read
      */
@@ -139,13 +140,15 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
             if (smLinkOrSmLinkGrp instanceof SmLink) {
                 SmLink smLink = (SmLink) smLinkOrSmLinkGrp;
-                mediaUnitsMap.computeIfAbsent(smLink.getFrom(), any -> new HashSet<FileXmlElementAccess>());
+                mediaUnitsMap.computeIfAbsent(smLink.getFrom(), any -> new HashSet<>());
                 mediaUnitsMap.get(smLink.getFrom()).add(divIDsToMediaUnits.get(smLink.getTo()));
             }
         }
-        workpiece.setRootElement(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
-                .iterator().next());
+        workpiece.getRootElements().clear();
+        workpiece.getRootElements()
+                .addAll(getStructMapsStreamByType(mets, "LOGICAL")
+                        .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap))
+                        .collect(Collectors.toList()));
     }
 
     private void readMeadiaUnitsTreeRecursive(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess,
@@ -166,7 +169,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
 
     /**
      * The method helps to read {@code <structMap>}s from METS.
-     * 
+     *
      * @param mets
      *            METS that can be read from
      * @param type
@@ -179,7 +182,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
 
     /**
      * Reads METS from an InputStream. JAXB is used to parse the XML.
-     * 
+     *
      * @param in
      *            InputStream to read from
      */
@@ -202,7 +205,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     /**
      * Writes the contents of this workpiece as a METS file into an output
      * stream.
-     * 
+     *
      * @param out
      *            writable output stream
      * @throws IOException
@@ -227,7 +230,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     /**
      * Generates a METS XML structure from this workpiece in the form of Java
      * objects in the main memory.
-     * 
+     *
      * @return a METS XML structure from this workpiece
      */
     private Mets toMets() {
@@ -241,10 +244,12 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, mediaUnitIDs, mets));
 
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
-        StructMapType logical = new StructMapType();
-        logical.setTYPE("LOGICAL");
-        logical.setDiv(new DivXmlElementAccess(workpiece.getRootElement()).toDiv(mediaUnitIDs, smLinkData, mets));
-        mets.getStructMap().add(logical);
+        for (IncludedStructuralElement rootElement : workpiece.getRootElements()) {
+            StructMapType logical = new StructMapType();
+            logical.setTYPE("LOGICAL");
+            logical.setDiv(new DivXmlElementAccess(rootElement).toDiv(mediaUnitIDs, smLinkData, mets));
+            mets.getStructMap().add(logical);
+        }
 
         mets.setStructLink(createStructLink(smLinkData));
         return mets;
@@ -253,7 +258,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     /**
      * Creates the header of the METS file. The header area stores the time
      * stamp, the ID and the processing notes.
-     * 
+     *
      * @return the header of the METS file
      */
     private MetsHdr generateMetsHdr() {
@@ -275,7 +280,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * Creates an object of class XMLGregorianCalendar. Creating this
      * JAXB-specific class is quite complicated and has therefore been
      * outsourced to a separate method.
-     * 
+     *
      * @param gregorianCalendar
      *            value of the calendar
      * @return an object of class XMLGregorianCalendar
@@ -299,7 +304,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * file groups, each file group accommodating the files of a media variant.
      * Therefore, the media units are first resolved according to their media
      * variants, then the corresponding XML elements are generated.
-     * 
+     *
      * @param mediaFilesToIDFiles
      *            In this map, for each media unit, the corresponding XML file
      *            element is added, so that it can be used for linking later.
@@ -349,7 +354,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     /**
      * Creates the physical struct map. In the physical struct map, the
      * individual files with their variants are enumerated and labeled.
-     * 
+     *
      * @param mediaFilesToIDFiles
      *            A map of the media files to the XML file elements used to
      *            declare them in the file section. To output a link to the ID,
@@ -384,7 +389,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * Creates the struct link section. The struct link section stores which
      * files are attached to which nodes and leaves of the description
      * structure.
-     * 
+     *
      * @param smLinkData
      *            The list of related IDs
      * @return the struct link section
