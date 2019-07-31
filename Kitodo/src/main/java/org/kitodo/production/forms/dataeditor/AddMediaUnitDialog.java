@@ -30,7 +30,7 @@ public class AddMediaUnitDialog {
     private final DataEditorForm dataEditor;
     private List<SelectItem> possiblePositions;
     private List<SelectItem> possibleTypes;
-    private InsertionPosition selectedPosition;
+    private InsertionPosition selectedPosition = InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
     private String selectedType;
 
 
@@ -81,9 +81,9 @@ public class AddMediaUnitDialog {
                     dataEditor.getWorkpiece().getMediaUnit());
             if (parents.size() > 0) {
                 possiblePositions.add(new SelectItem(InsertionPosition.BEFORE_CURRENT_ELEMENT,
-                        Helper.getTranslation("dataEditor.metadata.position.beforeCurrentElement")));
+                        Helper.getTranslation("dataEditor.position.beforeCurrentElement")));
                 possiblePositions.add(new SelectItem(InsertionPosition.AFTER_CURRENT_ELEMENT,
-                        Helper.getTranslation("dataEditor.metadata.position.afterCurrentElement")));
+                        Helper.getTranslation("dataEditor.position.afterCurrentElement")));
             }
         }
     }
