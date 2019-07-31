@@ -159,16 +159,6 @@ public class GalleryMediaContent {
     }
 
     /**
-     * Return the preview URI.
-     *
-     * @return URI
-     *          the preview URI
-     */
-    URI getPreviewUri() {
-        return previewUri;
-    }
-
-    /**
      * Indicates if there is a media preview for this media. Production is able
      * to work with media files for which there is currently no adequate display
      * capability in web browsers. In this case, a placeholder is displayed.
@@ -217,7 +207,7 @@ public class GalleryMediaContent {
         }
     }
 
-    View getView() {
+    public View getView() {
         return view;
     }
 }

@@ -285,28 +285,15 @@ public class GalleryPanel {
 
     void updateSelection(MediaUnit mediaUnit) {
         if (mediaUnit.getMediaFiles().size() > 0) {
-            Map<MediaVariant, URI> mediaVariants = mediaUnit.getMediaFiles();
 
             // Update structured view
             if (this.galleryViewMode.equals(GalleryViewMode.LIST)) {
-                boolean stripeUpdated = false;
                 for (GalleryStripe galleryStripe : getStripes()) {
                     for (GalleryMediaContent galleryMediaContent : galleryStripe.getMedias()) {
-                        if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
+                        if (Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit())) {
                             selectedMedia = new LinkedList<>(Arrays.asList(galleryMediaContent));
                             lastSelection = galleryMediaContent;
-                            setSelectedStripe(galleryStripe);
-                            stripeUpdated = true;
-                            break;
-                        }
-                    }
-                }
-                // if no stripe was updated, we need to update the medias not assigned to any stripe!
-                if (!stripeUpdated) {
-                    for (GalleryMediaContent galleryMediaContent : getMedias()) {
-                        if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
-                            selectedMedia = new LinkedList<>(Arrays.asList(galleryMediaContent));
-                            lastSelection = galleryMediaContent;
+                            setSelectedStripeForMediaUnit(mediaUnit);
                             break;
                         }
                     }
@@ -315,7 +302,7 @@ public class GalleryPanel {
             // Update unstructured view
             else {
                 for (GalleryMediaContent galleryMediaContent : getMedias()) {
-                    if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
+                    if (Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit())) {
                         selectedMedia = new LinkedList<>(Arrays.asList(galleryMediaContent));
                         lastSelection = galleryMediaContent;
                         break;

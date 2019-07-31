@@ -567,7 +567,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             galleryPanel.updateSelection(selectedMediaUnit.get());
             // update logical tree
             for (GalleryMediaContent galleryMediaContent : galleryPanel.getMedias()) {
-                if (selectedMediaUnit.get().getMediaFiles().values().contains(galleryMediaContent.getPreviewUri())) {
+                if (Objects.nonNull(galleryMediaContent.getView())
+                        && Objects.equals(selectedMediaUnit.get(), galleryMediaContent.getView().getMediaUnit())) {
                     structurePanel.updateLogicalNodeSelection(galleryMediaContent);
                     break;
                 }
