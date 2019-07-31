@@ -12,12 +12,14 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.Helper;
@@ -283,6 +285,33 @@ public class PaginationPanel {
         }
     }
 
+    private void preparePaginationSelectionSelectedItem() {
+        MediaUnit selectedMediaUnit = null;
+        if (Boolean.FALSE.equals(dataEditor.getStructurePanel().isSeparateMedia())) {
+            if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())) {
+                StructureTreeNode structureTreeNode =
+                        (StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData();
+                if (structureTreeNode.getDataObject() instanceof View) {
+                    View view = (View) structureTreeNode.getDataObject();
+                    selectedMediaUnit = view.getMediaUnit();
+                }
+            }
+        } else if (Objects.nonNull(dataEditor.getSelectedMediaUnit())
+                && "page".equals(dataEditor.getSelectedMediaUnit().get().getType())) {
+            selectedMediaUnit = dataEditor.getSelectedMediaUnit().get();
+        }
+        if (Objects.nonNull(selectedMediaUnit)) {
+            List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnits();
+            for (int i = 0; i < mediaUnits.size(); i++) {
+                MediaUnit mediaUnit = mediaUnits.get(i);
+                if (mediaUnit.equals(selectedMediaUnit)) {
+                    setPaginationSelectionSelectedItems(Collections.singletonList(i));
+                    break;
+                }
+            }
+        }
+    }
+
     private void preparePaginationTypeSelectItems() {
         paginationTypeSelectItems = new ArrayList<>(5);
         paginationTypeSelectItems.add(new SelectItem(PaginatorType.ARABIC, Helper.getTranslation("arabic")));
@@ -347,6 +376,13 @@ public class PaginationPanel {
      * Show.
      */
     public void show() {
+        paginationSelectionSelectedItems = new ArrayList<>();
+        paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
+        selectPaginationModeSelectedItem = null;
+        paginationStartValue = "1";
+        fictitiousCheckboxChecked = false;
+        selectPaginationScopeSelectedItem = Boolean.TRUE;
         preparePaginationSelectionItems();
+        preparePaginationSelectionSelectedItem();
     }
 }

@@ -162,14 +162,13 @@
                                              value="#{msgs.save}">
                             </p:commandButton>
 
-                            <p:commandButton id="cancel"
-                                             value="#{msgs.cancel}"
-                                             styleClass="secondary right"
-                                             onclick="PF('paginationDialog').hide();"
-                                             icon="fa fa-times fa-lg"
-                                             iconPos="right"
-                                             update="structureTreeForm"
-                                             immediate="true"/>
+                            <p:button id="cancel"
+                                      value="#{msgs.cancel}"
+                                      styleClass="secondary right"
+                                      onclick="PF('paginationDialog').hide(); return false;"
+                                      icon="fa fa-times fa-lg"
+                                      iconPos="right"
+                                      update="structureTreeForm"/>
                         </h:panelGroup>
                     </p:row>
                 </p:panelGrid>
