@@ -226,6 +226,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         final long begin = System.nanoTime();
 
         structurePanel.show();
+        structurePanel.getSelectedLogicalNode().setSelected(true);
+        structurePanel.getSelectedPhysicalNode().setSelected(true);
         metadataPanel.showLogical(getSelectedStructure());
         metadataPanel.showPhysical(getSelectedMediaUnit());
         galleryPanel.show();

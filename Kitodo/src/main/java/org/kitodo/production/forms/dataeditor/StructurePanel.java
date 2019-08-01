@@ -732,7 +732,13 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private TreeNode updateLogicalNodeSelectionRecursive(IncludedStructuralElement structure, TreeNode treeNode) {
+    /**
+     * Update the node selection in logical tree.
+     * @param structure the IncludedStructuralElement to be selected as a TreeNode
+     * @param treeNode the logical structure tree
+     * @return the TreeNode that will be selected
+     */
+    public TreeNode updateLogicalNodeSelectionRecursive(IncludedStructuralElement structure, TreeNode treeNode) {
         TreeNode matchingTreeNode = null;
         for (TreeNode currentTreeNode : treeNode.getChildren()) {
             if (treeNodeMatchesStructure(structure, currentTreeNode)) {
