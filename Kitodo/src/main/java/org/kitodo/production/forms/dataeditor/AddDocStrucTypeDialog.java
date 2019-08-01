@@ -18,7 +18,6 @@ import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CUR
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -76,7 +75,6 @@ public class AddDocStrucTypeDialog {
     private String processNumber = "";
     private Process selectedProcess;
     private List<ProcessDTO> processes = Collections.emptyList();
-    private BigInteger orderSpinnerValue;
 
     /**
      * Backing bean for the add doc struc type dialog of the metadata editor.
@@ -563,26 +561,6 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     * Returns the value of the order spinner. The order has an influence on the
-     * order when adding links.
-     *
-     * @return the value of the order spinner
-     */
-    public BigInteger getOrderSpinnerValue() {
-        return orderSpinnerValue;
-    }
-
-    /**
-     * Sets the value of the order spinner if the user has entered a value here.
-     *
-     * @param orderSpinnerValue
-     *            value to set
-     */
-    public void setOrderSpinnerValue(BigInteger orderSpinnerValue) {
-        this.orderSpinnerValue = orderSpinnerValue;
-    }
-
-    /**
      * Adds the link when the user clicks OK.
      */
     public void addLinkButtonClick() {
@@ -599,13 +577,12 @@ public class AddDocStrucTypeDialog {
         }
         dataEditor.getCurrentChildren().add(selectedProcess);
         MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
-            orderSpinnerValue, selectedProcess.getId());
+            selectedProcess.getId());
         dataEditor.getStructurePanel().show(true);
         if (processNumber.trim().equals(Integer.toString(selectedProcess.getId()))) {
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.hint"));
         }
         processNumber = "";
         processes = Collections.emptyList();
-        orderSpinnerValue = null;
     }
 }

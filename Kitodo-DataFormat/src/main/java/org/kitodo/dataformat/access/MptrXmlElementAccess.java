@@ -57,7 +57,6 @@ class MptrXmlElementAccess {
      *            {@code <mets:div>} to which the information is added
      */
     static void addMptrToDiv(LinkedMetsResource link, DivType div) {
-        div.setORDER(link.getOrder());
         Mptr mptr = new Mptr();
         if (AllowedLoctypeValues.contains(link.getLoctype())) {
             mptr.setLOCTYPE(link.getLoctype());
@@ -84,7 +83,6 @@ class MptrXmlElementAccess {
         Mptr mptr = div.getMptr().get(0);
         linkFromDiv.setLoctype(AllowedLoctypeValues.OTHER.toString().equals(mptr.getLOCTYPE()) ? mptr.getOTHERLOCTYPE()
                 : mptr.getLOCTYPE());
-        linkFromDiv.setOrder(div.getORDER());
         linkFromDiv.setUri(URI.create(mptr.getHref()));
         return linkFromDiv;
     }

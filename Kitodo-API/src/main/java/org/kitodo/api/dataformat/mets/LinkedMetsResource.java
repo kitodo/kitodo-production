@@ -11,7 +11,6 @@
 
 package org.kitodo.api.dataformat.mets;
 
-import java.math.BigInteger;
 import java.net.URI;
 
 /**
@@ -22,11 +21,6 @@ public class LinkedMetsResource {
      * The loctype of the linked METS resource.
      */
     private String loctype;
-
-    /**
-     * The order of the linked METS resource.
-     */
-    private BigInteger order;
 
     /**
      * The URI of the linked METS resource.
@@ -50,25 +44,6 @@ public class LinkedMetsResource {
      */
     public void setLoctype(String loctype) {
         this.loctype = loctype;
-    }
-
-    /**
-     * Returns the order of the linked METS resource.
-     *
-     * @return the order
-     */
-    public BigInteger getOrder() {
-        return order;
-    }
-
-    /**
-     * Sets the order of the linked METS resource.
-     *
-     * @param order
-     *            order to set
-     */
-    public void setOrder(BigInteger order) {
-        this.order = order;
     }
 
     /**
