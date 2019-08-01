@@ -40,7 +40,7 @@
                                              value="#{DataEditorForm.addMediaUnitDialog.selectedPosition}">
                                 <f:selectItems value="#{DataEditorForm.addMediaUnitDialog.possiblePositions}"/>
                                 <p:ajax listener="#{DataEditorForm.addMediaUnitDialog.preparePossibleTypes}"
-                                        update="physicalType"/>
+                                        update="physicalType addMediaUnitBtn"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
@@ -56,6 +56,7 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="addMediaUnitBtn"
                                          value="#{msgs.apply}"
+                                         disabled="#{DataEditorForm.addMediaUnitDialog.possibleTypes.size() lt 1}"
                                          action="#{DataEditorForm.addMediaUnitDialog.addMediaUnit}"
                                          icon="fa fa-check fa-lg"
                                          iconPos="right"

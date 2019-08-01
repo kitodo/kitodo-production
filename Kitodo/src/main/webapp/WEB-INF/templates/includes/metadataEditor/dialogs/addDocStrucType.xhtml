@@ -43,7 +43,7 @@
                                        itemValue="#{positionSelection}"
                                        itemLabel="#{HelperForm.getTranslated(positionSelection.label)}"/>
                         <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareDocStructTypes}"
-                                update="docStructAddTypeSelection"/>
+                                update="docStructAddTypeSelection, addSingleDocStrucSubmitBtn"/>
                     </p:selectOneMenu>
 
                     <h:outputLabel value="#{msgs.typ}:"
@@ -103,6 +103,7 @@
                             <p:commandButton id="addSingleDocStrucSubmitBtn"
                                              value="#{msgs.apply}"
                                              action="#{DataEditorForm.addDocStrucTypeDialog.addSingleDocStruc}"
+                                             disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1}"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"
