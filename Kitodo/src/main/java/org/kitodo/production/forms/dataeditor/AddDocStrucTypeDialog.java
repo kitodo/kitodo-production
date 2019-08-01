@@ -105,9 +105,16 @@ public class AddDocStrucTypeDialog {
      */
     public void addSingleDocStruc() {
         if (dataEditor.getSelectedStructure().isPresent()) {
-            MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem, dataEditor.getWorkpiece(),
-                dataEditor.getSelectedStructure().get(), docStructPositionSelectionSelectedItem, getViewsToAdd());
+            IncludedStructuralElement newStructure = MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem,
+                    dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
+                    docStructPositionSelectionSelectedItem, getViewsToAdd());
             dataEditor.refreshStructurePanel();
+            TreeNode selectedLogicalTreeNode = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
+                    this.dataEditor.getStructurePanel().getLogicalTree());
+            if (Objects.nonNull(selectedLogicalTreeNode)) {
+                this.dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalTreeNode);
+                this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
+            }
         }
     }
 
