@@ -598,7 +598,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     public int getFallbackTaskID(int processID) {
         try {
             Process process = ServiceManager.getProcessService().getById(processID);
-            return process.getTasks().get(0).getId();
+            if (!process.getTasks().isEmpty()) {
+                return process.getTasks().get(0).getId();
+            }
+            return -1;
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {ObjectType.PROCESS.getTranslationSingular(),
                 processID}, logger, e);
