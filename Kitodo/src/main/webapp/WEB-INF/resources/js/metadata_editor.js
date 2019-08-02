@@ -13,28 +13,28 @@ var metadataEditor = {};
 
 metadataEditor.select = {
 
-    selectionType: function(event) {
+    selectionType(event) {
         if (event.metaKey || event.ctrlKey) {
-            select([{name: 'page', value: event.currentTarget.dataset.order},{name: 'selectionType', value: 'multi'}]);
+            select([{name: "page", value: event.currentTarget.dataset.order},{name: "selectionType", value: "multi"}]);
         } else if (event.shiftKey) {
-            select([{name: 'page', value: event.currentTarget.dataset.order},{name: 'selectionType', value: 'range'}]);
+            select([{name: "page", value: event.currentTarget.dataset.order},{name: "selectionType", value: "range"}]);
         } else {
-            select([{name: 'page', value: event.currentTarget.dataset.order},{name: 'selectionType', value: 'default'}]);
+            select([{name: "page", value: event.currentTarget.dataset.order},{name: "selectionType", value: "default"}]);
         }
     }
 };
 
 metadataEditor.dragdrop = {
-    addDragAmountIcon: function(event) {
+    addDragAmountIcon(event) {
         var dragAmount = document.querySelectorAll(".thumbnail.active").length;
         if (dragAmount > 1) {
             var element = document.createElement("div");
             element.id = "dragAmount";
-            element.innerHTML = dragAmount;
+            element.innerText = dragAmount;
             event.currentTarget.appendChild(element);
         }
     },
-    removeDragAmountIcon: function(event) {
+    removeDragAmountIcon() {
         var element = document.getElementById("dragAmount");
         if (element !== null) {
             element.parentNode.removeChild(element);
