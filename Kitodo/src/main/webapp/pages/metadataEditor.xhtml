@@ -160,7 +160,7 @@
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
                                     <h:outputText styleClass="columnHeading"
-                                                  value="#{msgs.page} #{DataEditorForm.galleryPanel.lastSelection ne null ? DataEditorForm.galleryPanel.lastSelection.order : ''}"/>
+                                                  value="#{msgs.page} #{DataEditorForm.galleryPanel.lastSelection ne null ? DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).order : ''}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>
