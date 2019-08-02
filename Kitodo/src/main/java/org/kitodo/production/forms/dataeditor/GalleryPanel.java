@@ -183,9 +183,7 @@ public class GalleryPanel {
         Matcher dropUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
         if ((dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches())
                 && (dropStripeMatcher.matches() || dropUnstructuredMediaMatcher.matches())) {
-            int fromStripeIndex;
             int toStripeIndex;
-            GalleryStripe fromStripe;
             if (dropStripeMatcher.matches()) {
                 toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
             } else if (dropUnstructuredMediaMatcher.matches()) {
@@ -194,37 +192,30 @@ public class GalleryPanel {
             } else {
                 return;
             }
-            if (dragStripeImageMatcher.matches()) {
-                fromStripeIndex = Integer.parseInt(dragStripeImageMatcher.group(1));
-                if (fromStripeIndex == toStripeIndex) {
-                    return;
-                }
-                fromStripe = stripes.get(fromStripeIndex);
-            } else if (dragUnstructuredMediaMatcher.matches()) {
-                // First (0) stripe represents logical root element (e.g. "Unstructured Media")
-                fromStripe = stripes.get(0);
-            } else {
-                return;
-            }
 
             GalleryStripe toStripe = stripes.get(toStripeIndex);
 
             // move views
-            List<View> viewsToBeMoved = new ArrayList<>();
+            List<Pair<View, IncludedStructuralElement>> viewsToBeMoved = new ArrayList<>();
             for (Pair<MediaUnit, IncludedStructuralElement> selectedElememt : dataEditor.getSelectedMedia()) {
-                for (GalleryMediaContent galleryMediaContent : fromStripe.getMedias()) {
-                    if (Objects.equals(galleryMediaContent.getView().getMediaUnit(), selectedElememt.getKey())) {
-                        viewsToBeMoved.add(galleryMediaContent.getView());
+                for (View view : selectedElememt.getValue().getViews()) {
+                    if (Objects.equals(view.getMediaUnit(), selectedElememt.getKey())) {
+                        viewsToBeMoved.add(new ImmutablePair<>(view, selectedElememt.getValue()));
                     }
                 }
             }
             // TODO: rework GalleryPanel to allow dropping page thumbnails between other thumbnails!
-            dataEditor.getStructurePanel().moveViews(fromStripe.getStructure(), toStripe.getStructure(), viewsToBeMoved);
+            dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved);
 
             // update stripes
-            fromStripe.getMedias().clear();
-            for (View fromStripeView : fromStripe.getStructure().getViews()) {
-                fromStripe.getMedias().add(createGalleryMediaContent(fromStripeView));
+            for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
+                GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
+                if (Objects.nonNull(fromStripe)) {
+                    fromStripe.getMedias().clear();
+                    for (View remainingView : fromStripe.getStructure().getViews()) {
+                        fromStripe.getMedias().add(createGalleryMediaContent(remainingView));
+                    }
+                }
             }
             toStripe.getMedias().clear();
             for (View toStripeView : toStripe.getStructure().getViews()) {
@@ -234,6 +225,15 @@ public class GalleryPanel {
             return;
         }
         logger.debug("Unsupported drag'n'drop event from {} to {}", event.getDragId(), event.getDropId());
+    }
+
+    private GalleryStripe getGalleryStripe(IncludedStructuralElement structuralElement) {
+        for (GalleryStripe galleryStripe : stripes) {
+            if (Objects.equals(galleryStripe.getStructure(), structuralElement)) {
+                return galleryStripe;
+            }
+        }
+        return null;
     }
 
     /**
@@ -378,7 +378,7 @@ public class GalleryPanel {
     GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
         for (GalleryStripe galleryStripe : stripes) {
             for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
-                if (Objects.equals(mediaContent, galleryMediaContent)) {
+                if (galleryMediaContent.getId().equals(mediaContent.getId())) {
                     return galleryStripe;
                 }
             }
