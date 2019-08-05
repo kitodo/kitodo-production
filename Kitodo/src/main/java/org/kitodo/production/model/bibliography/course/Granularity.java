@@ -18,7 +18,7 @@ import org.kitodo.exceptions.NotImplementedException;
 /**
  * The Granularity indicates one out of six options how a course of appearance
  * of a newspaper can be broken into processes. These are as follows:
- * 
+ *
  * <dl>
  * <dt>ISSUES</dt>
  * <dd>Each issue is scanned in an individual process.</dd>
@@ -45,12 +45,15 @@ public enum Granularity {
     YEARS;
 
     /**
-     * Converts a given LocalDate to a String
-     * representation of the date in the given granularity. For the 1st January
-     * 2000 it will return:
-     * <p/>
-     * • for DAYS: 2000-01-01 • for WEEKS: 1999-W52 • for MONTHS: 2000-01 • for
-     * QUARTERS: 2000/Q1 • for YEARS: 2000
+     * Converts a given LocalDate to a String representation of the date in the
+     * given granularity. For the 1st January 2000 it will return:
+     * <ul>
+     * <li>for DAYS: 2000-01-01
+     * <li>for WEEKS: 1999-W52
+     * <li>for MONTHS: 2000-01
+     * <li>for QUARTERS: 2000/Q1
+     * <li>for YEARS: 2000
+     * </ul>
      *
      * <p>
      * The remaining cases are undefined and will throw NotImplementedException.
