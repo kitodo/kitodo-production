@@ -81,7 +81,7 @@ public class IndividualIssue {
     protected final Block block;
 
     /**
-     * Constructor to create an IndividualIssue
+     * Constructor to create an IndividualIssue.
      *
      * @param block
      *            Block block this issue is in
@@ -153,9 +153,9 @@ public class IndividualIssue {
     }
 
     /**
-     * Returns a map with generic fields that
-     * can be configured for process title creation in kitodo_projects.xml. It
-     * provides the issue information in the following fields:
+     * Returns a map with generic fields that can be configured for process
+     * title creation in kitodo_projects.xml. It provides the issue information
+     * in the following fields:
      *
      * <dl>
      * <dt>{@code #DAY}</dt>
@@ -166,8 +166,8 @@ public class IndividualIssue {
      * <dd>two-digit month of year</dd>
      * <dt>{@code #YEAR}</dt>
      * <dd>four-digit year</dd>
-     *
      * </dl>
+     *
      * <p>
      * In addition, the following abbreviated fields are provided:
      *

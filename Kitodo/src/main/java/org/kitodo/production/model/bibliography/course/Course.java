@@ -833,42 +833,7 @@ public class Course extends ArrayList<Block> {
                 issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
                 issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
 
-                Pair<LocalDate, Issue> issueId = Pair.of(issue.getDate(), issue.getIssue());
-                Map<String, CountableMetadata> metadata = new HashMap<>();
-                for (Block block : this) {
-                    for (CountableMetadata metaDatum : block.getMetadata(issueId, false)) {
-                        metadata.put(metaDatum.getMetadataType(), metaDatum);
-                    }
-                }
-                for (Block block : this) {
-                    for (CountableMetadata metaDatum : block.getMetadata(issueId, true)) {
-                        metadata.put(metaDatum.getMetadataType(), metaDatum);
-                    }
-                }
-                for (Entry<String, CountableMetadata> entry : metadata.entrySet()) {
-                    Element metadataNode = xml.createElement(ELEMENT_METADATA);
-                    metadataNode.setAttribute(ATTRIBUTE_METADATA_TYPE, entry.getKey());
-                    CountableMetadata metaDatum = entry.getValue();
-                    if (metaDatum.matches(metaDatum.getMetadataType(), issueId, false)) {
-                        metadataNode.setAttribute(ATTRIBUTE_VALUE, "");
-                    } else {
-                        metadataNode.setAttribute(ATTRIBUTE_VALUE, metaDatum.getStartValue());
-                        if (metaDatum.getStepSize() != null) {
-                            metadataNode.setAttribute(ATTRIBUTE_INCREMENT,
-                                metaDatum.getStepSize().toString().toLowerCase());
-                        }
-                    }
-                    issueNode.appendChild(metadataNode);
-                }
-
-                Pair<Integer, String> afterDeclaration = Pair.of(index, issue.getHeading());
-                if (!afterDeclarations.contains(afterDeclaration)) {
-                    List<String> issuesBefore = issue.getIssuesBefore();
-                    if (!issuesBefore.isEmpty()) {
-                        issueNode.setAttribute(ATTRIBUTE_AFTER, joinQuoting(issuesBefore));
-                    }
-                    afterDeclarations.add(afterDeclaration);
-                }
+                moreOfIssueToXml(xml, afterDeclarations, issue, index, issueNode);
                 blockNode.appendChild(issueNode);
                 previous = index;
             }
@@ -881,6 +846,46 @@ public class Course extends ArrayList<Block> {
 
         xml.appendChild(courseNode);
         return xml;
+    }
+
+    private void moreOfIssueToXml(Document xml, Set<Pair<Integer, String>> afterDeclarations, IndividualIssue issue,
+            int index, Element issueNode) {
+        Pair<LocalDate, Issue> issueId = Pair.of(issue.getDate(), issue.getIssue());
+        Map<String, CountableMetadata> metadata = new HashMap<>();
+        for (Block block : this) {
+            for (CountableMetadata metaDatum : block.getMetadata(issueId, false)) {
+                metadata.put(metaDatum.getMetadataType(), metaDatum);
+            }
+        }
+        for (Block block : this) {
+            for (CountableMetadata metaDatum : block.getMetadata(issueId, true)) {
+                metadata.put(metaDatum.getMetadataType(), metaDatum);
+            }
+        }
+        for (Entry<String, CountableMetadata> entry : metadata.entrySet()) {
+            Element metadataNode = xml.createElement(ELEMENT_METADATA);
+            metadataNode.setAttribute(ATTRIBUTE_METADATA_TYPE, entry.getKey());
+            CountableMetadata metaDatum = entry.getValue();
+            if (metaDatum.matches(metaDatum.getMetadataType(), issueId, false)) {
+                metadataNode.setAttribute(ATTRIBUTE_VALUE, "");
+            } else {
+                metadataNode.setAttribute(ATTRIBUTE_VALUE, metaDatum.getStartValue());
+                if (metaDatum.getStepSize() != null) {
+                    metadataNode.setAttribute(ATTRIBUTE_INCREMENT,
+                        metaDatum.getStepSize().toString().toLowerCase());
+                }
+            }
+            issueNode.appendChild(metadataNode);
+        }
+
+        Pair<Integer, String> afterDeclaration = Pair.of(index, issue.getHeading());
+        if (!afterDeclarations.contains(afterDeclaration)) {
+            List<String> issuesBefore = issue.getIssuesBefore();
+            if (!issuesBefore.isEmpty()) {
+                issueNode.setAttribute(ATTRIBUTE_AFTER, joinQuoting(issuesBefore));
+            }
+            afterDeclarations.add(afterDeclaration);
+        }
     }
 
     /**
