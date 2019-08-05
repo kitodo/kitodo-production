@@ -84,7 +84,7 @@
             <p:menuitem value="#{msgs.assignToNextElement}"
                         icon="fa fa-link fa-sm"
                         styleClass="plain"
-                        rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes}"
+                        rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not DataEditorForm.structurePanel.assignedSeveralTimes}"
                         action="#{DataEditorForm.structurePanel.assign}"
                         oncomplete="$('#loadingScreen').hide()"
                         update="structureTreeForm:logicalTree
