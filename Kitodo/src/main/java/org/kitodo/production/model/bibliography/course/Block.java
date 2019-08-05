@@ -12,12 +12,15 @@
 package org.kitodo.production.model.bibliography.course;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
+import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 
 /**
  * The class Block is a bean class that represents an interval of time in the
@@ -67,6 +70,11 @@ public class Block {
     private List<Issue> issues;
 
     /**
+     * Metadata associated with this block.
+     */
+    private List<CountableMetadata> metadata = new ArrayList<>();
+
+    /**
      * Default constructor. Creates a Block object without any data.
      *
      * @param course
@@ -107,6 +115,28 @@ public class Block {
     public boolean addIssue(Issue issue) {
         clearProcessesIfNecessary(issue);
         return issues.add(issue);
+    }
+
+    /**
+     * Adds a metadata entry to this block.
+     *
+     * @param countableMetadata
+     *            metadata to add
+     */
+    public void addMetadata(CountableMetadata countableMetadata) {
+        metadata.add(countableMetadata);
+    }
+
+    /**
+     * Adds a metadata entry to this block.
+     *
+     * @param index
+     *            insert position
+     * @param countableMetadata
+     *            metadata to add
+     */
+    public void addMetadata(CountableMetadata index, CountableMetadata countableMetadata) {
+        metadata.add(metadata.indexOf(index) + 1, countableMetadata);
     }
 
     /**
@@ -172,6 +202,16 @@ public class Block {
     }
 
     /**
+     * Deletes a metadata entry from this block.
+     *
+     * @param metadata
+     *            entry to remove
+     */
+    public void deleteMetadata(CountableMetadata metadata) {
+        this.metadata.remove(metadata);
+    }
+
+    /**
      * Returns the list of issues contained in this block.
      *
      * @return the list of issues from this Block
@@ -193,13 +233,19 @@ public class Block {
         if (!isMatch(date)) {
             return Collections.emptyList();
         }
-        ArrayList<IndividualIssue> individualIssues = new ArrayList<>(issues.size());
+        ArrayList<IndividualIssue> result = new ArrayList<>(issues.size());
+
+        List<Issue> issues = new ArrayList<>();
         for (Issue issue : getIssues()) {
             if (issue.isMatch(date)) {
-                individualIssues.add(new IndividualIssue(this, issue, date));
+                issues.add(issue);
             }
         }
-        return individualIssues;
+        Integer sorting = issues.size() > 1 ? 1 : null;
+        for (Issue issue : issues) {
+            result.add(new IndividualIssue(this, issue, date, Objects.isNull(sorting) ? null : sorting++));
+        }
+        return result;
     }
 
     /**
@@ -230,8 +276,18 @@ public class Block {
     }
 
     /**
-     * Returns the date the regularity of this
-     * block ends with.
+     * Returns the index of the issue.
+     *
+     * @param issue
+     *            issue whose index is to be returned
+     * @return the index of the issue
+     */
+    public int getIssueIndex(Issue issue) {
+        return issues.indexOf(issue);
+    }
+
+    /**
+     * Returns the date the regularity of this block ends with.
      *
      * @return the date of last appearance
      */
@@ -240,8 +296,57 @@ public class Block {
     }
 
     /**
-     * Returns whether the block is in an empty state or
-     * not.
+     * Returns the metadata assigned to this block.
+     *
+     * @return the metadata
+     */
+    public Collection<CountableMetadata> getMetadata() {
+        return metadata;
+    }
+
+    /**
+     * Returns all metadata counters from this block for the given metadataType
+     * that starts on the given day.
+     *
+     * @param metadataType
+     *            metadataType to compare
+     * @param issue
+     *            creation point to compare
+     * @param create
+     *            if the metadata was created (else deleted)
+     * @return true, if there is such a counter
+     */
+    public CountableMetadata getMetadata(String metadataType, Pair<LocalDate, Issue> issue, boolean create) {
+        for (CountableMetadata metaDatum : metadata) {
+            if (metaDatum.matches(metadataType, issue, create)) {
+                return metaDatum;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns true, if there is a counter in this block for the given
+     * metadataType that starts on the given day.
+     *
+     * @param issue
+     *            creation point to compare
+     * @param create
+     *            if the metadata was created (else deleted)
+     * @return true, if there is such a counter
+     */
+    public Iterable<CountableMetadata> getMetadata(Pair<LocalDate, Issue> issue, Boolean create) {
+        List<CountableMetadata> result = new ArrayList<>();
+        for (CountableMetadata metaDatum : metadata) {
+            if (metaDatum.matches(null, issue, create)) {
+                result.add(metaDatum);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns whether the block is in an empty state or not.
      *
      * @return whether the block is dataless
      */
