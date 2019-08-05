@@ -27,6 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.media.jai.Interpolation;
+import javax.media.jai.RenderedOp;
+import javax.media.jai.operator.ScaleDescriptor;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -406,6 +412,53 @@ public class MetadatenImagesHelper {
             logger.trace("write");
         }
         logger.trace("end scaleFile");
+    }
+
+    /**
+     * Resize image file by given factor.
+     *
+     * @param inFilename filename of file to resize
+     * @param outFilename save resized file under this filename
+     * @param scalePercent resize image by this factor in percent
+     */
+    public void createImageThumbnail(String inFilename, String outFilename, int scalePercent) throws IOException {
+
+        // Read image
+        RenderedImage image = ImageIO.read(new File(inFilename));
+
+        // Calculate new size (factor = scale / 100; factor = factor / 3;)
+        float scaleFactor = (float)scalePercent / 300f;
+
+        // Resize image
+        Interpolation interpolation = Interpolation.getInstance(Interpolation.INTERP_NEAREST);
+        RenderedOp renderedOp = ScaleDescriptor.create(
+            image, scaleFactor, scaleFactor, 0.0f, 0.0f, interpolation, null);
+        RenderedImage resizedImage = renderedOp.createInstance();
+
+        // Load ImageWriter instance, try JPG first and PNG as fallback
+        String[] formats = new String[]{"jpg", "png"};
+        ImageWriter imageWriter = null;
+        for (String format : formats) {
+            Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersBySuffix(format);
+            if (imageWriters.hasNext()) {
+                imageWriter = imageWriters.next();
+                break;
+            }
+        }
+        if (imageWriter == null) {
+            throw new RuntimeException("No ImageWriter class for JPG or PNG found.");
+        }
+
+        // Save thumbnail image file
+        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(new File(outFilename));
+        imageWriter.setOutput(imageOutputStream);
+        try {
+            imageWriter.write(resizedImage);
+        } finally {
+            imageWriter.dispose();
+            imageOutputStream.flush();
+            imageOutputStream.close();
+        }
     }
 
     // Add a method to validate the image files

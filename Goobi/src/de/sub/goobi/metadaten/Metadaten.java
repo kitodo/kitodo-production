@@ -1694,8 +1694,12 @@ public class Metadaten {
                                 Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild + " does not exist in folder "
                                         + this.currentTifFolder + ", using image from " + new SafeFile(this.myProzess.getImagesTifDirectory(true)).getName());
                             }
-                            this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse, this.myImageRotation);
-                            logger.trace("scaleFile");
+
+                            // scaleFile() uses contentserver which uses an old TIFF library with a bug reading some big TIFF metadata tags
+                            //this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse, this.myImageRotation);
+                            //logger.trace("scaleFile");
+                            // ...instead use createImageThumbnail() without external dependencies
+                            this.imagehelper.createImageThumbnail(tiffconverterpfad, myPfad + mySession, this.myBildGroesse);
                         } catch (Exception e) {
                             Helper.setFehlerMeldung("could not find image folder", e);
                             logger.error(e);
