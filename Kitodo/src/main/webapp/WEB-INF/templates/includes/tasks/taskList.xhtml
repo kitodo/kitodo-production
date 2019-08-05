@@ -89,7 +89,6 @@
             <p:column headerText="#{msgs.actions}">
                 <!-- assign task -->
                 <h:commandLink id="take"
-                               actionListener="#{CommentForm.setProcessId(item.process.id)}"
                                action="#{CurrentTaskForm.takeOverTask}"
                                rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
@@ -98,7 +97,6 @@
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
                 <h:commandLink id="editOwnTask" action="#{CurrentTaskForm.editTask}"
-                               actionListener="#{CommentForm.setProcessId(item.process.id)}"
                                rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
                     <i class="fa fa-bell"/>
@@ -106,7 +104,6 @@
                 </h:commandLink>
                 <!-- already assigned task (different user) -->
                 <h:commandLink id="editOtherTask" action="#{CurrentTaskForm.editTask}"
-                               actionListener="#{CommentForm.setProcessId(item.process.id)}"
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and (!item.batchStep || !item.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                     <i class="fa fa-bell-slash"/>
@@ -115,7 +112,6 @@
 
                 <!-- take over batch -->
                 <h:commandLink id="batch" action="#{CurrentTaskForm.takeOverBatchTasks}"
-                               actionListener="#{CommentForm.setProcessId(item.process.id)}"
                                rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
@@ -124,7 +120,6 @@
 
                 <!-- edit batch step (this user) -->
                 <h:commandLink id="batchInWork" action="#{CurrentTaskForm.editBatchTasks}"
-                               actionListener="#{CommentForm.setProcessId(item.process.id)}"
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
@@ -133,7 +128,6 @@
 
                 <!-- edit batch step (different user) -->
                 <h:commandLink id="batchInWorkOther" action="#{CurrentTaskForm.editBatchTasks}"
-                               actionListener="#{CommentForm.setProcessId(item.process.id)}"
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                     <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>

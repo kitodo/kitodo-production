@@ -39,6 +39,7 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
@@ -1010,9 +1011,33 @@ public class StructurePanel implements Serializable {
         show();
     }
 
+    /**
+     * Check and return whether the metadata of a process should be displayed in separate logical and physical
+     * structure trees or in one unified structure tree.
+     * Returns true if the current task in the metadata editor is
+     * - non null
+     * - assigned to the current user
+     * - type metadata
+     * - separate structure flag = true
+     *
+     * @return
+     *          whether metadata structure should be displayed in separate structure trees or not
+     */
     public boolean isSeparateMedia() {
-        return Objects.nonNull(this.dataEditor.getCurrentTask())
-                && this.dataEditor.getCurrentTask().isSeparateStructure();
+        if (Objects.nonNull(this.dataEditor.getCurrentTask())
+                && this.dataEditor.getCurrentTask().isTypeMetadata()
+                && this.dataEditor.getCurrentTask().isSeparateStructure()) {
+            SecurityUserDetails authenticatedUser = ServiceManager.getUserService().getAuthenticatedUser();
+            if (Objects.nonNull(authenticatedUser)) {
+                int userID = authenticatedUser.getId();
+                return Objects.nonNull(this.dataEditor.getCurrentTask().getProcessingUser())
+                        && Objects.equals(this.dataEditor.getCurrentTask().getProcessingUser().getId(), userID);
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
 
     private void expandNode(TreeNode node) {
