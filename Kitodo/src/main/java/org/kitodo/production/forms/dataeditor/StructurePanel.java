@@ -43,6 +43,7 @@ import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
+import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -404,9 +405,9 @@ public class StructurePanel implements Serializable {
         if (Objects.isNull(structure.getLink())) {
             StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-            node = new StructureTreeNode(this, divisionView.getLabel(), divisionView.isUndefined(), false, structure);
+            node = new StructureTreeNode(divisionView.getLabel(), divisionView.isUndefined(), false, structure);
         } else {
-            node = new StructureTreeNode(this, structure.getLink().getUri().toString(), true, true, structure);
+            node = new StructureTreeNode(structure.getLink().getUri().toString(), true, true, structure);
             for (Process child : dataEditor.getCurrentChildren()) {
                 try {
                     String type = ServiceManager.getProcessService().getBaseType(child);
@@ -414,11 +415,11 @@ public class StructurePanel implements Serializable {
                             .processIdFromUri(structure.getLink().getUri())) {
                         StructuralElementViewInterface view = dataEditor.getRuleset().getStructuralElementView(
                             type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                        node = new StructureTreeNode(this, view.getLabel(), view.isUndefined(), true, structure);
+                        node = new StructureTreeNode(view.getLabel(), view.isUndefined(), true, structure);
                     }
                 } catch (IOException e) {
                     Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-                    node = new StructureTreeNode(this, child.getTitle(), true, true, child);
+                    node = new StructureTreeNode(child.getTitle(), true, true, child);
                 }
             }
         }
@@ -498,7 +499,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode addTreeNode(String label, boolean undefined, boolean linked, Object dataObject,
             DefaultTreeNode parent) {
-        DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(this, label, undefined, linked, dataObject),
+        DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(label, undefined, linked, dataObject),
                 parent);
         if (dataObject instanceof MediaUnit && nodeStateUnknown(this.previousExpansionStatesPhysicalTree, node)
                 || dataObject instanceof IncludedStructuralElement
@@ -642,13 +643,19 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    void treeLogicalSelect(Object treeNodeData) {
+    /**
+     * Callback function triggered when a node is selected in the logical structure tree.
+     *
+     * @param event
+     *            NodeSelectEvent triggered by logical node being selected
+     */
+    public void treeLogicalSelect(NodeSelectEvent event) {
         /*
          * The newly selected element has already been set in 'selectedLogicalNode' by
          * JSF at this point.
          */
         try {
-            dataEditor.switchStructure(treeNodeData);
+            dataEditor.switchStructure(event.getTreeNode().getData());
             previouslySelectedLogicalNode = selectedLogicalNode;
         } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -656,7 +663,13 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    void treePhysicalSelect() {
+    /**
+     * Callback function triggered when a node is selected in the physical structure tree.
+     *
+     * @param event
+     *            NodeSelectEvent triggered by logical node being selected
+     */
+    public void treePhysicalSelect(NodeSelectEvent event) {
         /*
          * The newly selected element has already been set in 'selectedPhysicalNode' by
          * JSF at this point.

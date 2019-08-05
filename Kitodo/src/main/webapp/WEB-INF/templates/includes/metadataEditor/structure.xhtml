@@ -33,7 +33,7 @@
                 droppable="true"
                 dragdropScope="logicalTree">
             <p:ajax event="select"
-                    listener="#{logicalNode.treeLogicalSelect}"
+                    listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     update="@(.thumbnail)
                             structureTreeForm:physicalTree
                             metadataAccordion:logicalMetadataWrapperPanel
@@ -96,7 +96,7 @@
                     droppable="true"
                     dragdropScope="physicalTree">
                 <p:ajax event="select"
-                        listener="#{physicalNode.treePhysicalSelect}"
+                        listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
                         update="@(.thumbnail)
                                 structureTreeForm:logicalTree
                                 metadataAccordion:physicalMetadataWrapperPanel
