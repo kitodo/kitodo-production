@@ -813,6 +813,12 @@ public class Course extends ArrayList<Block> {
         description.appendChild(xml.createTextNode(StringUtils.join(CourseToGerman.asReadableText(this), "\n\n")));
         courseNode.appendChild(description);
 
+        courseNode.appendChild(processesToXml(xml));
+        xml.appendChild(courseNode);
+        return xml;
+    }
+
+    private Element processesToXml(Document xml) {
         Element processesNode = xml.createElement(ELEMENT_PROCESSES);
         Set<Pair<Integer, String>> afterDeclarations = new HashSet<>();
         for (List<IndividualIssue> process : processes) {
@@ -820,36 +826,45 @@ public class Course extends ArrayList<Block> {
             Element blockNode = null;
             int previous = -1;
             for (IndividualIssue issue : process) {
-                int index = issue.indexIn(this);
-                if (index != previous && blockNode != null) {
-                    processNode.appendChild(blockNode);
-                    blockNode = null;
-                }
-                if (blockNode == null) {
-                    blockNode = xml.createElement(ELEMENT_BLOCK);
-                    blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
-                }
-                Element issueNode = xml.createElement(ELEMENT_APPEARED);
-                issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
-                issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
-
-                moreOfIssueToXml(xml, afterDeclarations, issue, index, issueNode);
-                blockNode.appendChild(issueNode);
-                previous = index;
+                blockNode = issueToXml(xml, afterDeclarations, processNode, blockNode, previous, issue);
             }
             if (blockNode != null) {
                 processNode.appendChild(blockNode);
             }
             processesNode.appendChild(processNode);
         }
-        courseNode.appendChild(processesNode);
-
-        xml.appendChild(courseNode);
-        return xml;
+        return processesNode;
     }
 
-    private void moreOfIssueToXml(Document xml, Set<Pair<Integer, String>> afterDeclarations, IndividualIssue issue,
-            int index, Element issueNode) {
+    private Element issueToXml(Document xml, Set<Pair<Integer, String>> afterDeclarations, Element processNode,
+            Element blockNode, int previous, IndividualIssue issue) {
+        int index = issue.indexIn(this);
+        if (index != previous && blockNode != null) {
+            processNode.appendChild(blockNode);
+            blockNode = null;
+        }
+        if (blockNode == null) {
+            blockNode = xml.createElement(ELEMENT_BLOCK);
+            blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
+        }
+        Element issueNode = xml.createElement(ELEMENT_APPEARED);
+        issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
+        issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
+        addMetadataToIssue(xml, issue, issueNode);
+        Pair<Integer, String> afterDeclaration = Pair.of(index, issue.getHeading());
+        if (!afterDeclarations.contains(afterDeclaration)) {
+            List<String> issuesBefore = issue.getIssuesBefore();
+            if (!issuesBefore.isEmpty()) {
+                issueNode.setAttribute(ATTRIBUTE_AFTER, joinQuoting(issuesBefore));
+            }
+            afterDeclarations.add(afterDeclaration);
+        }
+        blockNode.appendChild(issueNode);
+        previous = index;
+        return blockNode;
+    }
+
+    private void addMetadataToIssue(Document xml, IndividualIssue issue, Element issueNode) {
         Pair<LocalDate, Issue> issueId = Pair.of(issue.getDate(), issue.getIssue());
         Map<String, CountableMetadata> metadata = new HashMap<>();
         for (Block block : this) {
@@ -871,20 +886,10 @@ public class Course extends ArrayList<Block> {
             } else {
                 metadataNode.setAttribute(ATTRIBUTE_VALUE, metaDatum.getStartValue());
                 if (metaDatum.getStepSize() != null) {
-                    metadataNode.setAttribute(ATTRIBUTE_INCREMENT,
-                        metaDatum.getStepSize().toString().toLowerCase());
+                    metadataNode.setAttribute(ATTRIBUTE_INCREMENT, metaDatum.getStepSize().toString().toLowerCase());
                 }
             }
             issueNode.appendChild(metadataNode);
-        }
-
-        Pair<Integer, String> afterDeclaration = Pair.of(index, issue.getHeading());
-        if (!afterDeclarations.contains(afterDeclaration)) {
-            List<String> issuesBefore = issue.getIssuesBefore();
-            if (!issuesBefore.isEmpty()) {
-                issueNode.setAttribute(ATTRIBUTE_AFTER, joinQuoting(issuesBefore));
-            }
-            afterDeclarations.add(afterDeclaration);
         }
     }
 
