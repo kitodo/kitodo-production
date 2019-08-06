@@ -1096,6 +1096,39 @@ Popup dialogs
     color: var(--blue);
 }
 
+#loadingScreen > div {
+    display: inline-block;
+    height: 108px;
+    left: 50%;
+    margin-left: calc(309px / -2);
+    margin-top: calc(108px / -2);
+    position: fixed;
+    top: 50%;
+    width: 309px;
+}
+
+#loadingScreen > div > img {
+    position: absolute;
+    left: 0;
+}
+
+#loadingScreen #kitodo-logo-key-animatable {
+    overflow: visible;
+    animation: rotate-vertically 2s infinite ease;
+    z-index: 99;
+}
+
+@keyframes rotate-vertically {
+    from {
+        transform-origin: 0 25%;
+        transform: rotateX(0deg);
+    }
+    to {
+        transform-origin: 0 25%;
+        transform: rotateX(720deg);
+    }
+}
+
 .ui-tabs.ui-widget-content,
 .ui-tabmenu.ui-widget-content {
     border: 0;

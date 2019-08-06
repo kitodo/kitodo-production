@@ -36,7 +36,10 @@
                <p:ajax event="click" onclick="PF('sticky-notifications').renderMessage({'summary':'The elastic search server is not running.','detail':'Elastic Search','severity':'info'});"/>
             </h:panelGroup>
             <div id="loadingScreen">
-                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"/>
+                <div>
+                    <h:graphicImage name="images/kitodo-logo-animatable.svg" alt="Kitodo.Production" height="108" width="309" id="kitodo-logo-animatable"/>
+                    <h:graphicImage name="images/kitodo-logo-key-animatable.svg" alt="Kitodo.Production" height="108" width="309" id="kitodo-logo-key-animatable"/>
+                </div>
                 <span class="sr-only">Loading...</span>
             </div>
             <div class="flex-container">

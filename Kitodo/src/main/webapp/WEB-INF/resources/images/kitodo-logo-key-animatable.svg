@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="113.386px" height="39.685px" viewBox="0 0 113.386 39.685" enable-background="new 0 0 113.386 39.685"
+	 xml:space="preserve">
+    <path fill="#0071bc" d="M99.15,13.295l0.715,0.717l2.307-2.308l2.305,2.308l0.719-0.717l-2.012-2.009h2.012v-1.014H64.271C64.05,4.782,60.025,0,53.89,0
+	c-6.312,0-10.421,5.062-10.421,10.75v0.059c0,5.687,4.08,10.75,10.392,10.75c6.135,0,10.188-4.783,10.41-10.272h36.889L99.15,13.295
+	z M63.238,10.839c0,5.271-3.781,9.795-9.318,9.795c-5.566,0-9.409-4.583-9.409-9.854V10.72c0-5.271,3.782-9.795,9.351-9.795
+	c5.537,0,9.377,4.583,9.377,9.855V10.839z"/>
+</svg>
