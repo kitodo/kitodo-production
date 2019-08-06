@@ -15,19 +15,16 @@ import java.io.Serializable;
 
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.primefaces.event.NodeSelectEvent;
 
 public class StructureTreeNode implements Serializable {
 
     private final Object dataObject;
     private final String label;
     private final boolean linked;
-    private final StructurePanel structurePanel;
     private final boolean undefined;
 
-    StructureTreeNode(StructurePanel structurePanel, String label, boolean undefined, boolean linked,
+    StructureTreeNode(String label, boolean undefined, boolean linked,
             Object dataObject) {
-        this.structurePanel = structurePanel;
         this.label = label;
         this.undefined = undefined;
         this.linked = linked;
@@ -85,25 +82,4 @@ public class StructureTreeNode implements Serializable {
             return "";
         }
     }
-
-    /**
-     * Callback function triggered when a node is selected in the logical structure tree.
-     *
-     * @param event
-     *            NodeSelectEvent triggered by logical node being selected
-     */
-    public void treeLogicalSelect(NodeSelectEvent event) {
-        structurePanel.treeLogicalSelect(event.getTreeNode().getData());
-    }
-
-    /**
-     * Callback function triggered when a node is selected in the physical structure tree.
-     *
-     * @param event
-     *            NodeSelectEvent triggered by logical node being selected
-     */
-    public void treePhysicalSelect(NodeSelectEvent event) {
-        structurePanel.treePhysicalSelect();
-    }
-
 }
