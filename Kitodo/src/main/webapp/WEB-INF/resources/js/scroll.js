@@ -11,21 +11,35 @@
 
 const SCROLL_SPEED = 40;
 var interval;
-var scrollUp = function () {
-    var scrollableContent = $('#thumbnailStripeScrollableContent');
-    scrollableContent.animate({
-        scrollTop: scrollableContent.scrollTop() - SCROLL_SPEED
-    }, 90, null, checkScrollPosition())
-};
-var scrollDown = function () {
-    var scrollableContent = $('#thumbnailStripeScrollableContent');
-    scrollableContent.animate({
-        scrollTop: scrollableContent.scrollTop() + SCROLL_SPEED
-    }, 90, null, checkScrollPosition())
+var structureInterval;
+
+var scrollUp = function (elementID, triggerCompleteFunction) {
+    var scrollableContent = $(elementID);
+    if (triggerCompleteFunction) {
+        scrollableContent.animate({
+            scrollTop: scrollableContent.scrollTop() - SCROLL_SPEED
+        }, 90, null, checkScrollPosition(scrollableContent))
+    } else {
+        scrollableContent.animate({
+            scrollTop: scrollableContent.scrollTop() - SCROLL_SPEED
+        }, 90, null, null)
+    }
 };
 
-function checkScrollPosition() {
-    var scrollableContent = $('#thumbnailStripeScrollableContent');
+var scrollDown = function (elementID, triggerCompleteFunction) {
+    var scrollableContent = $(elementID);
+    if (triggerCompleteFunction) {
+        scrollableContent.animate({
+            scrollTop: scrollableContent.scrollTop() + SCROLL_SPEED
+        }, 90, null, checkScrollPosition(scrollableContent))
+    } else {
+        scrollableContent.animate({
+            scrollTop: scrollableContent.scrollTop() + SCROLL_SPEED
+        }, 90, null, null)
+    }
+};
+
+function checkScrollPosition(scrollableContent) {
     if (atTop(scrollableContent) && atBottom(scrollableContent)) {
         disableUpButton();
         disableDownButton();
@@ -70,17 +84,52 @@ function enableDownButton() {
 }
 
 function initialize() {
-    checkScrollPosition();
+    checkScrollPosition($('#thumbnailStripeScrollableContent'));
 
     $(document).on('mouseenter.scrollGallery', '.scroll-button', function (e) {
         if (e.target.id === "imagePreviewForm:scroll-up") {
-            interval = window.setInterval(scrollUp, 100);
+            interval = window.setInterval(function() {
+                scrollUp('#thumbnailStripeScrollableContent', true);
+            }, 100);
         } else {
-            interval = window.setInterval(scrollDown, 100);
+            interval = window.setInterval(function() {
+                scrollDown('#thumbnailStripeScrollableContent', true)
+            }, 100);
         }
     });
     $(document).on('mouseleave.scrollGallery', '.scroll-button', function () {
         window.clearInterval(interval);
+    });
+}
+
+function initializeStructureTreeScrolling() {
+
+    $(document).on('mouseenter.scrollUpArea', '#scrollUpArea', function (e) {
+        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
+            structureInterval = window.setInterval(function() {
+                scrollUp('#structureTreeForm\\:structurePanel', false);
+            }, 100);
+            $(this).css("opacity", ".2");
+        }
+    });
+
+    $(document).on('mouseenter.scrollDownArea', '#scrollDownArea', function (e) {
+        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
+            structureInterval = window.setInterval(function() {
+                scrollDown('#structureTreeForm\\:structurePanel', false);
+            }, 100);
+            $(this).css("opacity", ".2");
+        }
+    });
+
+    $(document).on('mouseleave.scrollUpArea', '#scrollUpArea', function () {
+        window.clearInterval(structureInterval);
+        $(this).css("opacity", "0");
+    });
+
+    $(document).on('mouseleave.scrollDownArea', '#scrollDownArea', function () {
+        window.clearInterval(structureInterval);
+        $(this).css("opacity", "0");
     });
 }
 
@@ -92,5 +141,8 @@ function destruct() {
 $(document).ready(function () {
     if ($('#thumbnailStripeScrollableContent')[0] != null) {
         initialize();
+    }
+    if ($("#structureTreeForm\\:structurePanel").length) {
+        initializeStructureTreeScrolling();
     }
 });

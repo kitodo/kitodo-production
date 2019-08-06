@@ -1444,8 +1444,24 @@ Column content
 
 #structureTreeForm\:structurePanel {
     overflow-y: scroll;
-    height: calc(100% - 140px);
+    height: calc(100% - 100px);
     box-sizing: border-box;
+    padding: 0;
+}
+
+#scrollUpArea,
+#scrollDownArea {
+    content: "";
+    z-index: 1;
+    height: 50px;
+    position: absolute;
+    width: 100%;
+    background-color: var(--cloudy-gray);
+    opacity: 0;
+}
+
+#scrollDownArea {
+    bottom: 64px;
 }
 
 #structureTreeForm\:paginationPanel {
@@ -1454,6 +1470,10 @@ Column content
     box-sizing: border-box;
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+.ui-tree-draghelper.ui-draggable-dragging {
+    pointer-events: none;
 }
 
 #structureTreeForm button.secondary {
