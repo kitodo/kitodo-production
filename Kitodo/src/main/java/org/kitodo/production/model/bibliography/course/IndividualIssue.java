@@ -219,6 +219,22 @@ public class IndividualIssue {
     /**
      * Returns the metadata for this individual issue.
      *
+     * @param monthOfYear
+     *            the month of the year start—relevant to correctly calculate
+     *            the counter value
+     * @param dayOfMonth
+     *            the day of the year start—relevant to correctly calculate the
+     *            counter value
+     * @return a list of pairs, each consisting of the metadata type name and
+     *         the value
+     */
+    public Iterable<Pair<String, String>> getMetadata(int monthOfYear, int dayOfMonth) {
+        return getMetadata(new MonthDay(monthOfYear, dayOfMonth));
+    }
+
+    /**
+     * Returns the metadata for this individual issue.
+     *
      * @param yearStart
      *            the day of the year start—relevant to correctly calculate the
      *            counter value

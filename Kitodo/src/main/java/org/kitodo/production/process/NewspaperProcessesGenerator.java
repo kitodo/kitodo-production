@@ -16,6 +16,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,12 +30,21 @@ import java.util.stream.Collectors;
 
 import javax.naming.ConfigurationException;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -44,30 +54,98 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.data.RulesetService;
+import org.kitodo.production.services.dataformat.MetsService;
+import org.kitodo.production.services.file.FileService;
 
+/**
+ * A generator for newspaper processes.
+ */
 public class NewspaperProcessesGenerator extends ProcessGenerator {
     private static final Logger logger = LogManager.getLogger(NewspaperProcessesGenerator.class);
 
     /**
-     * Language for the ruleset. Since we are headless here, always English is
-     * used.
+     * Language for the ruleset. Since we run headless here, English only.
      */
     private static final List<LanguageRange> ENGLISH = LanguageRange.parse("en");
+
+    /**
+     * Number of steps the long-running task has to go through for
+     * initialization.
+     */
     private static final int NUMBER_OF_INIT_STEPS = 1;
+
+    /**
+     * Number of steps the long-running task must complete to complete.
+     */
     private static final int NUMBER_OF_COMPLETION_STEPS = 1;
 
-    protected final Process overallProcess;
+    /**
+     * This class requires service for files.
+     */
+    private final FileService fileService = ServiceManager.getFileService();
+
+    /**
+     * This class requires service for METS.
+     */
+    private final MetsService metsService = ServiceManager.getMetsService();
+
+    /**
+     * This class requires service for process.
+     */
+    private final ProcessService processService = ServiceManager.getProcessService();
+
+    /**
+     * This class requires service for rule definitions.
+     */
+    private final RulesetService rulesetService = ServiceManager.getRulesetService();
+
+    /**
+     * This is the supreme process of the newspaper.
+     */
+    private final Process overallProcess;
 
     /**
      * The appearance history for which operations are to be created.
      */
-    protected final Course course;
+    private final Course course;
 
     /**
      * The current step. This class operates step by step and the long running
      * task can always be paused between two steps in Task Manager.
      */
-    protected int currentStep = 0;
+    private int currentStep = 0;
+
+    /**
+     * Specifies which year is currently being processed.
+     */
+    private String currentYear;
+
+    /**
+     * An interface view for simple metadata that maps the date of the day.
+     */
+    private DatesSimpleMetadataViewInterface daySimpleMetadataView;
+
+    /**
+     * Which included structural element type are the days.
+     */
+    private String dayType;
+
+    /**
+     * Which included structural element type are the issues.
+     */
+    private String issueType;
+
+    /**
+     * An interface view for simple metadata that maps the date of the month.
+     */
+    private DatesSimpleMetadataViewInterface monthSimpleMetadataView;
+
+    /**
+     * Which included structural element type are the months.
+     */
+    private String monthType;
 
     /**
      * Uniform resource identifier of the location of the serialization of the
@@ -96,6 +174,32 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * The title generator is used to create the process titles.
      */
     private TitleGenerator titleGenerator;
+
+    /**
+     * Uniform resource identifier of the location of the serialization of the
+     * annual media presentation description.
+     */
+    private URI yearMetadataFileUri;
+
+    /**
+     * This is the annual process which is currently being processed.
+     */
+    private Process yearProcess;
+
+    /**
+     * An interface view for simple metadata that maps the date of the year.
+     */
+    private DatesSimpleMetadataViewInterface yearSimpleMetadataView;
+
+    /**
+     * Which included structural element type are the years.
+     */
+    private String yearType;
+
+    /**
+     * Object model of the year media presentation description.
+     */
+    private Workpiece yearWorkpiece;
 
     /**
      * Creates a new newspaper process generator.
@@ -136,16 +240,40 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
+    /**
+     * Returns the progress of the newspaper processes generator.
+     *
+     * @return the progress
+     */
     public int getProgress() {
         return currentStep;
     }
 
+    /**
+     * Returns the number of steps of the newspaper processes generator.
+     *
+     * @return the number of steps
+     */
     public int getNumberOfSteps() {
         return NUMBER_OF_INIT_STEPS + processesToCreate.size() + NUMBER_OF_COMPLETION_STEPS;
     }
 
     /**
      * Works the next step of the long-running task.
+     *
+     * @throws ConfigurationException
+     *             if the configuration is wrong
+     * @throws DAOException
+     *             if an error occurs while saving in the database
+     * @throws DataException
+     *             if an error occurs while saving in the database
+     * @throws IOException
+     *             if something goes wrong when reading or writing one of the
+     *             affected files
+     * @throws ProcessGenerationException
+     *             if there is an item “Volume number” or “Bandnummer” in the
+     *             projects configuration, but its value cannot be evaluated to
+     *             an integer
      */
     public void nextStep()
             throws ConfigurationException, DAOException, DataException, IOException, ProcessGenerationException {
@@ -159,11 +287,22 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    protected void initialize() throws ConfigurationException, IOException {
+    /**
+     * Initializes the newspaper process generator.
+     *
+     * @throws ConfigurationException
+     *             if the configuration is wrong
+     * @throws IOException
+     *             if something goes wrong when reading or writing one of the
+     *             affected files
+     */
+    private void initialize() throws ConfigurationException, IOException {
         final long begin = System.nanoTime();
 
-        overallMetadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(overallProcess);
-        overallWorkpiece = ServiceManager.getMetsService().loadWorkpiece(overallMetadataFileUri);
+        overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
+        overallWorkpiece = metsService.loadWorkpiece(overallMetadataFileUri);
+
+        initializeRulesetFields(overallWorkpiece.getRootElement().getType());
 
         ConfigProject configProject = new ConfigProject(overallProcess.getProject().getTitle());
         titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece);
@@ -174,6 +313,41 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         if (logger.isTraceEnabled()) {
             logger.trace("Initialization took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+    }
+
+    /**
+     * Initializes the class fields related that hold information to be obtained
+     * from the ruleset.
+     *
+     * @param newspaperType
+     *            ruleset type of the overall newspaper process
+     * @throws ConfigurationException
+     *             if the configuration is wrong
+     * @throws IOException
+     *             if something goes wrong when reading or writing one of the
+     *             affected files
+     */
+    private void initializeRulesetFields(String newspaperType) throws ConfigurationException, IOException {
+        RulesetManagementInterface ruleset = rulesetService.openRuleset(overallProcess.getRuleset());
+        StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, "", ENGLISH);
+        StructuralElementViewInterface yearDivisionView = nextSubView(ruleset, newspaperView);
+        yearSimpleMetadataView = yearDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
+        yearType = yearDivisionView.getId();
+        StructuralElementViewInterface monthDivisionView = nextSubView(ruleset, yearDivisionView);
+        monthSimpleMetadataView = monthDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
+        monthType = monthDivisionView.getId();
+        StructuralElementViewInterface dayDivisionView = nextSubView(ruleset, monthDivisionView);
+        daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
+        monthType = monthDivisionView.getId();
+        issueType = nextSubView(ruleset, dayDivisionView).getId();
+    }
+
+    private static StructuralElementViewInterface nextSubView(RulesetManagementInterface ruleset,
+            StructuralElementViewInterface superiorView) {
+
+        Map<String, String> allowedSubstructuralElements = superiorView.getAllowedSubstructuralElements();
+        String subType = allowedSubstructuralElements.entrySet().iterator().next().getKey();
+        return ruleset.getStructuralElementView(subType, "", ENGLISH);
     }
 
     /**
@@ -267,16 +441,254 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return metadataEntries;
     }
 
-    protected void createProcess(int index)
-            throws DAOException, DataException, IOException, ProcessGenerationException {
+    private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException {
+        final long begin = System.nanoTime();
 
-        // TODO
+        List<IndividualIssue> individualIssuesForProcess = processesToCreate.get(index);
+        if (individualIssuesForProcess.isEmpty()) {
+            return;
+        }
 
+        IndividualIssue firstIssue = individualIssuesForProcess.get(0);
+        prepareTheAppropriateYearProcess(dateMark(yearSimpleMetadataView.getScheme(), firstIssue.getDate()));
+
+        generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
+        String title = titleGenerator.generateTitle(titleDefinition, firstIssue.getGenericFields());
+        getGeneratedProcess().setTitle(title);
+        processService.save(getGeneratedProcess());
+        processService.refresh(getGeneratedProcess());
+
+        getGeneratedProcess().setParent(yearProcess);
+        yearProcess.getChildren().add(getGeneratedProcess());
+        processService.save(getGeneratedProcess());
+        processService.refresh(getGeneratedProcess());
+
+        createMetadataFileForProcess(individualIssuesForProcess);
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("Creating newspaper process {} took {} ms", title,
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
     }
 
-    protected void finish() throws DataException, IOException {
+    private void createMetadataFileForProcess(List<IndividualIssue> individualIssues) throws IOException {
 
-        // TODO
+        IncludedStructuralElement rootElement = new IncludedStructuralElement();
+        rootElement.setType(monthType);
+        MetadataEntry dateMetadataEntry = new MetadataEntry();
+        dateMetadataEntry.setKey(monthSimpleMetadataView.getId());
+        dateMetadataEntry.setValue(dateMark(monthSimpleMetadataView.getScheme(), individualIssues.get(0).getDate()));
+        rootElement.getMetadata().add(dateMetadataEntry);
 
+        for (IndividualIssue individualIssue : individualIssues) {
+            String monthMark = dateMark(monthSimpleMetadataView.getScheme(), individualIssue.getDate());
+            IncludedStructuralElement yearMonth = getOrCreateIncludedStructuralElement(yearWorkpiece.getRootElement(),
+                monthType, monthSimpleMetadataView, monthMark);
+            String dayMark = dateMark(daySimpleMetadataView.getScheme(), individualIssue.getDate());
+            IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, dayType,
+                daySimpleMetadataView, dayMark);
+            final IncludedStructuralElement yearDay = getOrCreateIncludedStructuralElement(yearMonth, dayType,
+                daySimpleMetadataView, dayMark);
+            IncludedStructuralElement processIssue = new IncludedStructuralElement();
+            processIssue.setType(issueType);
+            for (Pair<String, String> metadata : individualIssue.getMetadata(
+                yearSimpleMetadataView.getYearBegin().getMonthValue(),
+                yearSimpleMetadataView.getYearBegin().getDayOfMonth())) {
+                MetadataEntry metadataEntry = new MetadataEntry();
+                metadataEntry.setKey(metadata.getKey());
+                metadataEntry.setValue(metadata.getValue());
+                processIssue.getMetadata().add(metadataEntry);
+            }
+            processDay.getChildren().add(processIssue);
+
+            if (Objects.isNull(yearDay.getLink())) {
+                LinkedMetsResource linkToProcess = new LinkedMetsResource();
+                linkToProcess.setLoctype("Kitodo.Production");
+                linkToProcess.setUri(processService.getProcessURI(getGeneratedProcess()));
+                yearDay.setLink(linkToProcess);
+            }
+        }
+
+        Workpiece workpiece = new Workpiece();
+        workpiece.setRootElement(rootElement);
+        fileService.createProcessLocation(getGeneratedProcess());
+        final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
+        metsService.saveWorkpiece(workpiece, metadataFileUri);
+    }
+
+    /**
+     * Creates a date indicator according to the specified schema for the given
+     * date. Normally, the date indicator is generated with the date formatter.
+     * Exception is the indication of a double year. In this case, the
+     * information depends on the beginning of the year and must first be
+     * determined.
+     *
+     * @param scheme
+     *            scheme for the date indicator
+     * @param date
+     *            date for the date mark
+     * @return the formatted date indicator
+     */
+    private String dateMark(String scheme, LocalDate date) {
+        if (scheme.equals("yyyy/yyyy")) {
+            int firstYear = date.getYear();
+            MonthDay yearBegin = yearSimpleMetadataView.getYearBegin();
+            LocalDate yearStartThisYear = new LocalDate(firstYear, yearBegin.getMonthValue(),
+                    yearBegin.getDayOfMonth());
+            if (date.isBefore(yearStartThisYear)) {
+                firstYear--;
+            }
+            return String.format("%04d/%04d", firstYear, firstYear + 1);
+        } else {
+            DateTimeFormatter yearFormatter = DateTimeFormat.forPattern(scheme);
+            return yearFormatter.print(date);
+        }
+    }
+
+    private void prepareTheAppropriateYearProcess(String yearMark)
+            throws DAOException, DataException, ProcessGenerationException, IOException {
+
+        if (yearMark.equals(currentYear)) {
+            return;
+        } else if (Objects.nonNull(currentYear)) {
+            saveAndCloseCurrentYearProcess();
+        }
+        if (!openExistingYearProcess(yearMark)) {
+            createNewYearProcess(yearMark);
+        }
+    }
+
+    private void saveAndCloseCurrentYearProcess() throws DataException, IOException {
+        final long begin = System.nanoTime();
+
+        processService.save(yearProcess);
+        metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
+
+        this.yearProcess = null;
+        this.yearWorkpiece = null;
+        this.yearMetadataFileUri = null;
+        String year = currentYear;
+        this.currentYear = null;
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("Saving year process for {} took {} ms", year,
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+    }
+
+    private boolean openExistingYearProcess(String yearMark)
+            throws DAOException, DataException, ProcessGenerationException, IOException {
+        final long begin = System.nanoTime();
+
+        boolean couldOpenExistingProcess = false;
+        for (IncludedStructuralElement firstLevelChild : overallWorkpiece.getRootElement().getChildren()) {
+            LinkedMetsResource firstLevelChildLink = firstLevelChild.getLink();
+            if (Objects.isNull(firstLevelChildLink)) {
+                continue;
+            }
+            Process linkedProcess = processService
+                    .getById(processService.processIdFromUri(firstLevelChildLink.getUri()));
+            URI metadataFileUri = processService.getMetadataFileUri(linkedProcess);
+            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri);
+            MetadataEntry yearMetadataEntry = null;
+            for (Metadata metadata : workpiece.getRootElement().getMetadata()) {
+                if (metadata.getKey().equals(yearSimpleMetadataView.getId()) && metadata instanceof MetadataEntry) {
+                    yearMetadataEntry = (MetadataEntry) metadata;
+                    break;
+                }
+            }
+            if (Objects.isNull(yearMetadataEntry)) {
+                continue;
+            }
+            couldOpenExistingProcess = yearMetadataEntry.getValue().equals(yearMark);
+            if (couldOpenExistingProcess) {
+                this.yearProcess = linkedProcess;
+                this.yearWorkpiece = workpiece;
+                this.yearMetadataFileUri = metadataFileUri;
+                this.currentYear = yearMark;
+                break;
+            }
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Searching year process for {} took {} ms", yearMark,
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+        return couldOpenExistingProcess;
+    }
+
+    private void createNewYearProcess(String yearMark) throws ProcessGenerationException, DataException, IOException {
+        final long begin = System.nanoTime();
+
+        generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
+        getGeneratedProcess().setTitle(overallProcess.getTitle() + '_' + yearMark.replace('/', '-'));
+        processService.save(getGeneratedProcess());
+        processService.refresh(getGeneratedProcess());
+
+        getGeneratedProcess().setParent(overallProcess);
+        yearProcess.getChildren().add(getGeneratedProcess());
+        processService.save(getGeneratedProcess());
+        processService.refresh(getGeneratedProcess());
+
+        fileService.createProcessLocation(getGeneratedProcess());
+        final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
+
+        IncludedStructuralElement newYearChild = new IncludedStructuralElement();
+        LinkedMetsResource link = new LinkedMetsResource();
+        link.setLoctype("Kitodo.Production");
+        link.setUri(processService.getProcessURI(getGeneratedProcess()));
+        newYearChild.setLink(link);
+        overallWorkpiece.getRootElement().getChildren().add(newYearChild);
+
+        IncludedStructuralElement rootElement = new IncludedStructuralElement();
+        rootElement.setType(yearType);
+        MetadataEntry dateMetadataEntry = new MetadataEntry();
+        dateMetadataEntry.setKey(yearSimpleMetadataView.getId());
+        dateMetadataEntry.setValue(yearMark);
+        rootElement.getMetadata().add(dateMetadataEntry);
+        Workpiece workpiece = new Workpiece();
+        workpiece.setRootElement(rootElement);
+
+        this.yearProcess = getGeneratedProcess();
+        this.yearWorkpiece = workpiece;
+        this.yearMetadataFileUri = metadataFileUri;
+        this.currentYear = yearMark;
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("Creating year process for {} took {} ms", yearMark,
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+    }
+
+    private IncludedStructuralElement getOrCreateIncludedStructuralElement(
+            IncludedStructuralElement includedStructuralElement, String type,
+            SimpleMetadataViewInterface simpleMetadataView, String value) {
+
+        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
+            for (Metadata metadata : child.getMetadata()) {
+                if (metadata.getKey().equals(simpleMetadataView.getId()) && metadata instanceof MetadataEntry
+                        && value.equals(((MetadataEntry) metadata).getValue())) {
+                    return child;
+                }
+            }
+        }
+
+        IncludedStructuralElement included = new IncludedStructuralElement();
+        included.setType(type);
+        MetadataEntry metadataEntry = new MetadataEntry();
+        metadataEntry.setKey(simpleMetadataView.getId());
+        included.getMetadata().add(metadataEntry);
+        return included;
+    }
+
+    private void finish() throws DataException, IOException {
+        final long begin = System.nanoTime();
+
+        saveAndCloseCurrentYearProcess();
+        metsService.saveWorkpiece(overallWorkpiece, overallMetadataFileUri);
+        processService.save(overallProcess);
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("Finish took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
     }
 }
