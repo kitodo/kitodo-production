@@ -1061,10 +1061,11 @@ public class StructurePanel implements Serializable {
     }
 
     private HashMap<IncludedStructuralElement, Boolean> getTreeNodeExpansionStates(DefaultTreeNode tree) {
-        if (Objects.nonNull(tree)) {
-            IncludedStructuralElement structuralElement = getTreeNodeStructuralElement(tree);
+        if (Objects.nonNull(tree) && tree.getChildCount() == 1) {
+            TreeNode treeRoot = tree.getChildren().get(0);
+            IncludedStructuralElement structuralElement = getTreeNodeStructuralElement(treeRoot);
             if (Objects.nonNull(structuralElement)) {
-                return getTreeNodeExpansionStatesRecursively(tree, new HashMap<>());
+                return getTreeNodeExpansionStatesRecursively(treeRoot, new HashMap<>());
             }
         }
         return new HashMap<>();
