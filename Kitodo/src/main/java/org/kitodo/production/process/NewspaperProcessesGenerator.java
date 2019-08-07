@@ -82,6 +82,14 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private static final int NUMBER_OF_COMPLETION_STEPS = 1;
 
     /**
+     * Date format pattern indicating a double year. A double year is a time
+     * span with the length of one year, starting on a day different from
+     * January 1ˢᵗ and spanning two complementary parts of two subsequent
+     * calendar years.
+     */
+    private static final String PATTERN_DOUBLE_YEAR = "yyyy/yyyy";
+
+    /**
      * This class requires service for files.
      */
     private final FileService fileService = ServiceManager.getFileService();
@@ -530,7 +538,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * @return the formatted date indicator
      */
     private String dateMark(String scheme, LocalDate date) {
-        if (scheme.equals("yyyy/yyyy")) {
+        if (PATTERN_DOUBLE_YEAR.equals(scheme)) {
             int firstYear = date.getYear();
             MonthDay yearBegin = yearSimpleMetadataView.getYearBegin();
             LocalDate yearStartThisYear = new LocalDate(firstYear, yearBegin.getMonthValue(),
