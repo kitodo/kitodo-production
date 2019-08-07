@@ -1458,6 +1458,7 @@ Column content
     width: 100%;
     background-color: var(--cloudy-gray);
     opacity: 0;
+    display: none;
 }
 
 #scrollDownArea {
