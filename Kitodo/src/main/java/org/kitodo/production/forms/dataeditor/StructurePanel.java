@@ -795,9 +795,8 @@ public class StructurePanel implements Serializable {
                 View view = (View) structureTreeNode.getDataObject();
                 mediaUnit = view.getMediaUnit();
             }
-            if (Objects.nonNull(mediaUnit) && mediaUnit.getMediaFiles().size() > 0) {
-                Map<MediaVariant, URI> mediaVariants = mediaUnit.getMediaFiles();
-                return mediaVariants.values().contains(galleryMediaContent.getPreviewUri());
+            if (Objects.nonNull(mediaUnit) && Objects.nonNull(galleryMediaContent.getView())) {
+                return Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit());
             }
         }
         return false;

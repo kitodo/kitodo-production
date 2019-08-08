@@ -32,6 +32,8 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -151,6 +153,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private Task currentTask;
 
     /**
+     * This List of Pairs stores all selected physical elements and the logical elements in which the physical element was selected.
+     * It is necessary to store the logical elements as well, because a physical element can be assigned to multiple logical elements.
+     */
+    private List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia;
+
+    /**
      * Public constructor.
      */
     public DataEditorForm() {
@@ -182,6 +190,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
             ruleset = openRuleset(process.getRuleset());
             openMetsFile();
+            selectedMedia = new LinkedList<>();
             init();
             openProcesses.put(process.getId(), user);
         } catch (IOException | DAOException e) {
@@ -245,10 +254,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     public String close() {
         metadataPanel.clear();
         structurePanel.clear();
+        galleryPanel.clear();
         workpiece = null;
         mainFileUri = null;
         ruleset = null;
         currentChildren.clear();
+        selectedMedia.clear();
         openProcesses.remove(process.getId());
         process = null;
         user = null;
@@ -515,6 +526,30 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
     }
 
+    /**
+     * Get selectedMedia.
+     *
+     * @return value of selectedMedia
+     */
+    List<Pair<MediaUnit, IncludedStructuralElement>> getSelectedMedia() {
+        return selectedMedia;
+    }
+
+    /**
+     * Check if the passed MediaUnit is selected.
+     * @param mediaUnit MediaUnit object to check for selection
+     * @param includedStructuralElement object to check whether the MediaUnit is selected as a child of this IncludedStructuralElement.
+     *                                  A MediaUnit can be assigned to multiple IncludedStructuralElements but can be selected
+     *                                  in one of these IncludedStructuralElements.
+     * @return boolean whether the MediaUnit is selected at the specified position
+     */
+    public boolean isSelected(MediaUnit mediaUnit, IncludedStructuralElement includedStructuralElement) {
+        if (Objects.nonNull(mediaUnit) && Objects.nonNull(includedStructuralElement)) {
+            return selectedMedia.contains(new ImmutablePair<>(mediaUnit, includedStructuralElement));
+        }
+        return false;
+    }
+
     void switchStructure(Object treeNodeData) throws NoSuchMetadataFieldException {
         try {
             metadataPanel.preserveLogical();
@@ -566,7 +601,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             galleryPanel.updateSelection(selectedMediaUnit.get());
             // update logical tree
             for (GalleryMediaContent galleryMediaContent : galleryPanel.getMedias()) {
-                if (selectedMediaUnit.get().getMediaFiles().values().contains(galleryMediaContent.getPreviewUri())) {
+                if (Objects.nonNull(galleryMediaContent.getView())
+                        && Objects.equals(selectedMediaUnit.get(), galleryMediaContent.getView().getMediaUnit())) {
                     structurePanel.updateLogicalNodeSelection(galleryMediaContent);
                     break;
                 }

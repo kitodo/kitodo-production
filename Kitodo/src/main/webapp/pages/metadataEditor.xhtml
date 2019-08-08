@@ -159,7 +159,8 @@
                                     <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
-                                    <h:outputText styleClass="columnHeading" value="#{msgs.page} #{DataEditorForm.galleryPanel.selectedMedia.order}"/>
+                                    <h:outputText styleClass="columnHeading"
+                                                  value="#{msgs.page} #{DataEditorForm.galleryPanel.lastSelection ne null ? DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).order : ''}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>
@@ -195,6 +196,7 @@
     <ui:define name="page-scripts">
         <h:outputScript name="js/resize.js" target="body"/>
         <h:outputScript name="js/scroll.js" target="body"/>
+        <h:outputScript name="js/metadata_editor.js" target="body"/>
     </ui:define>
 
 </ui:composition>

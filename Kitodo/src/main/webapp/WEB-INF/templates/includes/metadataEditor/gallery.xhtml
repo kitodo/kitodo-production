@@ -15,15 +15,18 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
     <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
 
         <h:form id="imagePreviewForm" style="height: 100%;">
-            <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.selectedMedia.mediaViewData}" style="display: none;"/>
-            <span id="imageData" data-image="#{DataEditorForm.galleryPanel.selectedMedia.mediaViewData}"/>
+            <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
+            <span id="imageData" data-image="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"/>
             <script>
                 document.getElementById("imageData").setAttribute("data-image", document.getElementById("imagePreviewForm:mediaViewData").src);
             </script>
+
+            <p:remoteCommand name="select" action="#{DataEditorForm.galleryPanel.setSelectionType}"/>
 
             <p:panelGrid id="imageControlPanel" columns="3"
                          style="right: 47px; top: 0; position: absolute;">
@@ -80,17 +83,21 @@
                                     emptyMessage="#{msgs['noMedia']}"
                                     value="#{stripe.medias}"
                                     binding="#{structuredThumbnail}">
-                            <p:panel id="structuredPagePanel">
-                                <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
+                            <p:panel id="structuredPagePanel"
+                                     a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
+                                     a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
+                                <p:commandLink action="#{DataEditorForm.galleryPanel.select(media, stripe)}"
+                                               onclick="metadataEditor.select.selectionType(event);"
+                                               a:data-order="#{media.order}"
                                                update="@this
-                                                       @(.active.thumbnail)
+                                                       @(.thumbnail)
                                                        structureTreeForm:logicalTree
                                                        structureTreeForm:physicalTree
                                                        metadataAccordion:logicalMetadataWrapperPanel
                                                        imagePreviewForm:olWrapper">
                                     <h:panelGroup class="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                        class="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
+                                                        class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'active' : ''}"
                                                         rendered="#{media.showingInPreview}">
                                             <f:param name="id" value="#{media.id}" />
                                         </p:graphicImage>
@@ -98,8 +105,6 @@
                                             #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
                                         </h:panelGroup>
                                     </h:panelGroup>
-                                    <f:setPropertyActionListener value="#{media}" target="#{DataEditorForm.galleryPanel.selectedMedia}"/>
-                                    <f:setPropertyActionListener value="#{stripe}" target="#{DataEditorForm.galleryPanel.selectedStripe}"/>
                                 </p:commandLink>
                             </p:panel>
                             <p:draggable id="structuredPagesDraggable"
@@ -133,11 +138,15 @@
                                     binding="#{currentMedia}"
                                     emptyMessage="#{msgs['noMedia']}"
                                     var="media">
-                            <h:panelGroup id="unstructuredMediaPanel">
+                            <p:panel id="unstructuredMediaPanel"
+                                     a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
+                                     a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
                                 <p:commandLink id="updateSelectedUnstructuredMediaLink"
-                                               action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
+                                               action="#{DataEditorForm.galleryPanel.select(media, DataEditorForm.galleryPanel.stripes.get(0))}"
+                                               onclick="metadataEditor.select.selectionType(event);"
+                                               a:data-order="#{media.order}"
                                                update="@this
-                                                       @(.active.thumbnail)
+                                                       @(.thumbnail)
                                                        structureTreeForm:logicalTree
                                                        structureTreeForm:physicalTree
                                                        metadataAccordion:logicalMetadataWrapperPanel
@@ -148,7 +157,7 @@
                                                        deferredMode="visible">
                                             <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                            styleClass="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
+                                                            styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'active' : ''}"
                                                             rendered="#{media.showingInPreview}">
                                                 <f:param name="id"
                                                          value="#{media.id}"/>
@@ -158,9 +167,8 @@
                                             </h:panelGroup>
                                         </p:outputPanel>
                                     </h:panelGroup>
-                                    <f:setPropertyActionListener value="#{media}" target="#{DataEditorForm.galleryPanel.selectedMedia}"/>
                                 </p:commandLink>
-                            </h:panelGroup>
+                            </p:panel>
                             <p:draggable id="unstructuredMediaDraggable"
                                          for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredMediaPanel"
                                          containment="#imagePreviewForm\:structuredPagesField"
@@ -185,16 +193,17 @@
                 <div class="thumbnailWrapper">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
-                        <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
+                        <p:commandLink action="#{DataEditorForm.galleryPanel.select(media, null)}"
                                        update="@this
                                                @(.active.thumbnail)
+                                               structureTreeForm:logicalTree
                                                structureTreeForm:physicalTree
                                                imagePreviewForm:olWrapper">
                             <h:panelGroup layout="block" styleClass="thumbnail-container">
                                 <p:outputPanel deferred="true"
                                                deferredMode="visible">
                                     <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                    class="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
+                                                    class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''}"
                                                     rendered="#{media.showingInPreview}">
                                         <f:param name="id"
                                                  value="#{media.id}"/>
@@ -204,7 +213,6 @@
                                     #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
                                 </h:panelGroup>
                             </h:panelGroup>
-                            <f:setPropertyActionListener value="#{media}" target="#{DataEditorForm.galleryPanel.selectedMedia}"/>
                         </p:commandLink>
                     </ui:repeat>
                 </div>
@@ -223,14 +231,15 @@
                                 <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                            var="media">
                                     <h:panelGroup layout="block">
-                                        <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
+                                        <p:commandLink action="#{DataEditorForm.galleryPanel.select(media, null)}"
                                                        update="imagePreviewForm
                                                                galleryHeadingWrapper
+                                                               structureTreeForm:logicalTree
                                                                structureTreeForm:physicalTree"
                                                        oncomplete="checkScrollPosition()">
                                             <h:panelGroup layout="block" styleClass="thumbnail-container">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                              class="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
+                                                                              class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''}"
                                                                               rendered="#{media.showingInPreview}">
                                                     <f:param name="id" value="#{media.id}" />
                                                 </p:graphicImage></h:outputText>
@@ -238,7 +247,6 @@
                                                     #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
                                                 </h:panelGroup>
                                             </h:panelGroup>
-                                            <f:setPropertyActionListener value="#{media}" target="#{DataEditorForm.galleryPanel.selectedMedia}"/>
                                         </p:commandLink>
                                     </h:panelGroup>
                                 </ui:repeat>
@@ -246,7 +254,7 @@
                         </div>
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </div>
-                    <ui:fragment rendered="#{DataEditorForm.galleryPanel.selectedMedia.showingInMediaView}">
+                    <ui:fragment rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).showingInMediaView}">
                         <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
                         <h:outputScript name="js/ol_custom.js"/>
                         <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;"></div>
