@@ -26,7 +26,8 @@ body {
     font-weight: 400;
     font-size: 16px;
     line-height: 18px;
-    background: url("#{resource['/images/background-top.svg']}") no-repeat var(--light-gray) center top fixed;
+    background: url("#{resource['/images/background-top.svg']}") no-repeat center top fixed;
+    background-color: var(--light-gray);
     background-size: auto 300px;
 }
 
