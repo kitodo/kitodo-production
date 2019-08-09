@@ -820,10 +820,13 @@ tbody.ui-widget-content {
 .ui-datatable .ui-corner-bottom,
 .ui-treetable .ui-corner-top,
 .ui-treetable .ui-corner-bottom,
-.ui-tabs-nav .ui-corner-top,
-.ui-tabmenu .ui-corner-all,
 .ui-datatable-tablewrapper {
     border-radius: 0 0 var(--default-border-radius) var(--default-border-radius);
+}
+
+.ui-tabs-nav .ui-corner-top,
+.ui-tabmenu .ui-corner-all {
+    border-radius: 0;
 }
 
 .ui-datatable-odd,
@@ -1158,10 +1161,10 @@ Popup dialogs
     padding: 0;
 }
 
-.ui-tabs.ui-tabs-top > .ui-tabs-nav li,
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
-    top: 0px;
-    margin-right: .7em;
+    border-right: solid var(--default-border-width) var(--medium-gray);
+    top: 0;
 }
 
 .ui-tabs .ui-tabs-nav,
@@ -1172,7 +1175,7 @@ Popup dialogs
 
 .ui-tabs .ui-tabs-nav li,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
-    margin: calc(var(--contrast-border-width) * -1) .2em 1px 0;
+    margin: calc(var(--contrast-border-width) * -1) 0 1px 0;
 }
 
 .ui-tabs .ui-tabs-nav li a,
