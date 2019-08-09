@@ -877,9 +877,10 @@ tr.ui-widget-content,
 }
 
 .ui-datatable .ui-paginator {
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
     height: 36px;
     line-height: 36px;
-    padding: 1em var(--default-full-size);
+    padding: var(--input-padding) var(--default-full-size);
     text-align: right;
 }
 
