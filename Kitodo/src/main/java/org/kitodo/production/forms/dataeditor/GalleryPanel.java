@@ -411,45 +411,51 @@ public class GalleryPanel {
         return null;
     }
 
-
-
     private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaWithinRange(Pair<MediaUnit, IncludedStructuralElement> first,
                                                           Pair<MediaUnit, IncludedStructuralElement> last) {
-        int firstStripeIndex = 0;
-        int lastStripeIndex = 0;
-        int firstMediaIndex = 0;
-        int lastMediaIndex = 0;
-        for (GalleryStripe galleryStripe : stripes) {
-            if (Objects.equals(galleryStripe.getStructure(), first.getValue())) {
-                firstStripeIndex = stripes.indexOf(galleryStripe);
-                for (GalleryMediaContent media : galleryStripe.getMedias()) {
-                    if (Objects.equals(media.getView().getMediaUnit(), first.getKey())) {
-                        firstMediaIndex = galleryStripe.getMedias().indexOf(media);
-                    }
-                }
+        // Pairs of stripe index and media index
+        Pair<Integer, Integer> firstIndices = getIndices(first.getKey(), first.getValue());
+        Pair<Integer, Integer> lastIndices = getIndices(last.getKey(), last.getValue());
+        Pair<Integer, Integer> minIndices;
+        Pair<Integer, Integer> maxIndices;
+
+        if (!Objects.nonNull(firstIndices) || !Objects.nonNull(lastIndices)) {
+            return null;
+        }
+
+        /* Stripe with index 0 represents "unstructured media".
+           This stripe is displayed last, but is actually the root element (first stripe). */
+        if (!Objects.equals(firstIndices.getKey(), lastIndices.getKey())
+                && ((lastIndices.getKey() == 0) || ((firstIndices.getKey() < lastIndices.getKey()) && (firstIndices.getKey() != 0)))) {
+            minIndices = firstIndices;
+            maxIndices = lastIndices;
+        } else if (Objects.equals(firstIndices.getKey(), lastIndices.getKey())) {
+            if (firstIndices.getValue() < lastIndices.getValue()) {
+                minIndices = firstIndices;
+                maxIndices = new ImmutablePair<>(firstIndices.getKey(), lastIndices.getValue());
+            } else {
+                minIndices = new ImmutablePair<>(firstIndices.getKey(), lastIndices.getValue());
+                maxIndices = firstIndices;
             }
-            if (Objects.equals(galleryStripe.getStructure(), last.getValue())) {
-                lastStripeIndex = stripes.indexOf(galleryStripe);
-                for (GalleryMediaContent media : galleryStripe.getMedias()) {
-                    if (Objects.equals(media.getView().getMediaUnit(), last.getKey())) {
-                        lastMediaIndex = galleryStripe.getMedias().indexOf(media);
-                    }
-                }
-            }
+        } else {
+            minIndices = lastIndices;
+            maxIndices = firstIndices;
         }
 
         List<GalleryStripe> stripesWithinRange = new LinkedList<>();
-        if (firstStripeIndex < lastStripeIndex) {
-            for (int i = firstStripeIndex; i <= lastStripeIndex; i++) {
+        if (maxIndices.getKey() == 0 && minIndices.getKey() != 0) {
+            for (int i = minIndices.getKey(); i <= stripes.size() - 1; i++) {
                 stripesWithinRange.add(stripes.get(i));
             }
-            return getMediaWithinRange(firstMediaIndex, lastMediaIndex, stripesWithinRange);
+            if (!stripesWithinRange.contains(stripes.get(0))) {
+                stripesWithinRange.add(stripes.get(0));
+            }
         } else {
-            for (int i = lastStripeIndex; i <= firstStripeIndex; i++) {
+            for (int i = minIndices.getKey(); i <= maxIndices.getKey(); i++) {
                 stripesWithinRange.add(stripes.get(i));
             }
-            return getMediaWithinRange(lastMediaIndex, firstMediaIndex, stripesWithinRange);
         }
+        return getMediaWithinRange(minIndices.getValue(), maxIndices.getValue(), stripesWithinRange);
     }
 
     private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaWithinRange(int firstMediaIndex, int lastMediaIndex,
@@ -476,16 +482,24 @@ public class GalleryPanel {
             }
         } else if (galleryStripes.size() == 1) {
             GalleryStripe stripe = galleryStripes.get(0);
-            if (firstMediaIndex > lastMediaIndex) {
-                int temp = firstMediaIndex;
-                firstMediaIndex = lastMediaIndex;
-                lastMediaIndex = temp;
-            }
             for (int i = firstMediaIndex; i <= lastMediaIndex; i++) {
                 mediaWithinRange.add(new ImmutablePair<>(stripe.getMedias().get(i).getView().getMediaUnit(), stripe.getStructure()));
             }
         }
         return mediaWithinRange;
+    }
+
+    private Pair<Integer, Integer> getIndices(MediaUnit mediaUnit, IncludedStructuralElement structuralElement) {
+        for (GalleryStripe galleryStripe : stripes) {
+            if (Objects.equals(galleryStripe.getStructure(), structuralElement)) {
+                for (GalleryMediaContent media : galleryStripe.getMedias()) {
+                    if (Objects.equals(media.getView().getMediaUnit(), mediaUnit)) {
+                        return new ImmutablePair<>(stripes.indexOf(galleryStripe), galleryStripe.getMedias().indexOf(media));
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
