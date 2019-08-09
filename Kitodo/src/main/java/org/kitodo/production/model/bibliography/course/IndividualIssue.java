@@ -11,14 +11,19 @@
 
 package org.kitodo.production.model.bibliography.course;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
+import org.joda.time.MonthDay;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 
 /**
  * Represents a stamping of an Issue, that is one distinguishable physically
@@ -51,6 +56,11 @@ public class IndividualIssue {
     private static final DateTimeFormatter YEAR4 = DateTimeFormat.forPattern("YYYY");
 
     /**
+     * Metadata key to store the sorting number.
+     */
+    public static final String RULESET_ORDER_NAME = "CurrentNoSorting";
+
+    /**
      * Date of this issue.
      */
     protected final LocalDate date;
@@ -59,6 +69,11 @@ public class IndividualIssue {
      * The issue this is an issue from.
      */
     protected final Issue issue;
+
+    /**
+     * The sorting number of the issue.
+     */
+    private Integer sortingNumber;
 
     /**
      * Block that the issue this is an issue from is in.
@@ -74,24 +89,29 @@ public class IndividualIssue {
      *            Issue type that this issue is of
      * @param date
      *            Date of appearance
+     * @param sortingNumber
+     *            sorting number
      */
-    IndividualIssue(Block block, Issue issue, LocalDate date) {
+    IndividualIssue(Block block, Issue issue, LocalDate date, Integer sortingNumber) {
         this.block = block;
         this.issue = issue;
         this.date = date;
+        this.sortingNumber = sortingNumber;
     }
 
     /**
      * Returns an integer which, for a given Granularity, shall indicate for two
-     * neighbouring individual issues whether they form the same process (break
+     * neighboring individual issues whether they form the same process (break
      * mark is equal) or to different processes (break mark differs).
      *
      * @param mode
      *            how the course shall be broken into processes
-     * @return an int which differs if two neighbouring individual issues belong
+     * @param yearStart
+     *            the first day of the business year
+     * @return an int which differs if two neighboring individual issues belong
      *         to different processes
      */
-    public int getBreakMark(Granularity mode) {
+    public int getBreakMark(Granularity mode, MonthDay yearStart) {
         final int prime = 31;
         switch (mode) {
             case ISSUES:
@@ -99,16 +119,28 @@ public class IndividualIssue {
             case DAYS:
                 return date.hashCode();
             case WEEKS:
-                return prime * date.getYear() + date.getWeekOfWeekyear();
+                return prime * getFirstYear(yearStart) + date.getWeekOfWeekyear();
             case MONTHS:
-                return prime * date.getYear() + date.getMonthOfYear();
+                return prime * getFirstYear(yearStart) + date.getMonthOfYear();
             case QUARTERS:
-                return prime * date.getYear() + (date.getMonthOfYear() - 1) / 3;
+                return prime * getFirstYear(yearStart) + (date.getMonthOfYear() - 1) / 3;
             case YEARS:
-                return date.getYear();
+                return getFirstYear(yearStart);
             default:
                 throw new UnreachableCodeException("default case in complete switch statement");
         }
+    }
+
+    /**
+     * Returns the first calendar year of the year range this issue is on.
+     *
+     * @param yearStart
+     *            the day the new year starts
+     * @return the first calendar year of the year range this issue is on
+     */
+    private int getFirstYear(MonthDay yearStart) {
+        int year = date.getYear();
+        return date.compareTo(yearStart.toLocalDate(year)) < 0 ? year - 1 : year;
     }
 
     /**
@@ -121,9 +153,9 @@ public class IndividualIssue {
     }
 
     /**
-     * Returns a map with generic fields that
-     * can be configured for process title creation in kitodo_projects.xml. It
-     * provides the issue information in the following fields:
+     * Returns a map with generic fields that can be configured for process
+     * title creation in kitodo_projects.xml. It provides the issue information
+     * in the following fields:
      *
      * <dl>
      * <dt>{@code #DAY}</dt>
@@ -134,8 +166,8 @@ public class IndividualIssue {
      * <dd>two-digit month of year</dd>
      * <dt>{@code #YEAR}</dt>
      * <dd>four-digit year</dd>
-     *
      * </dl>
+     *
      * <p>
      * In addition, the following abbreviated fields are provided:
      *
@@ -185,8 +217,26 @@ public class IndividualIssue {
     }
 
     /**
-     * Returns the name of the issue this is an issue
-     * from.
+     * Returns the metadata for this individual issue.
+     *
+     * @param yearStart
+     *            the day of the year start—relevant to correctly calculate the
+     *            counter value
+     * @return a list of pairs, each consisting of the metadata type name and
+     *         the value
+     */
+    public Iterable<Pair<String, String>> getMetadata(MonthDay yearStart) {
+        List<Pair<String, String>> result = new ArrayList<>();
+        Pair<LocalDate, Issue> selectedIssue = Pair.of(date, issue);
+        for (CountableMetadata counter : block.getMetadata(selectedIssue, null)) {
+            String value = counter.getValue(selectedIssue, yearStart);
+            result.add(Pair.of(counter.getMetadataType(), value));
+        }
+        return result;
+    }
+
+    /**
+     * Returns the name of the issue this is an issue from.
      *
      * @return the issue’s name
      */
@@ -195,9 +245,43 @@ public class IndividualIssue {
     }
 
     /**
-     * Returns the index of the first occurrence of the
-     * block of this issue in the given course, or -1 if the course does not
-     * contain the element.
+     * The function getIssue() returns the issue this is an issue from.
+     *
+     * @return the issue
+     */
+    public Issue getIssue() {
+        return issue;
+    }
+
+    /**
+     * Returns the list of issues before this issue.
+     *
+     * @return the list of issues before this
+     */
+    public List<String> getIssuesBefore() {
+        List<String> result = new ArrayList<>();
+        for (Issue issue : block.getIssues()) {
+            String heading = issue.getHeading();
+            if (heading.equals(this.issue.getHeading())) {
+                break;
+            }
+            result.add(heading);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the sorting number of the issue.
+     *
+     * @return the sorting number
+     */
+    public Integer getSortingNumber() {
+        return sortingNumber;
+    }
+
+    /**
+     * Returns the index of the first occurrence of the block of this issue in
+     * the given course, or -1 if the course does not contain the element.
      *
      * @param course
      *            course to find the block in
@@ -209,9 +293,18 @@ public class IndividualIssue {
     }
 
     /**
-     * Provides returns a string that contains a concise
-     * but informative representation of this issue that is easy for a person to
-     * read.
+     * Sets the sorting number of the issue.
+     *
+     * @param sortingNumber
+     *            the sorting number to set
+     */
+    public void setSortingNumber(Integer sortingNumber) {
+        this.sortingNumber = sortingNumber;
+    }
+
+    /**
+     * Provides returns a string that contains a concise but informative
+     * representation of this issue that is easy for a person to read.
      *
      * @return a string representation of the issue
      * @see java.lang.Object#toString()

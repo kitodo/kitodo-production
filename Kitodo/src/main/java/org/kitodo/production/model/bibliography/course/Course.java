@@ -13,18 +13,30 @@ package org.kitodo.production.model.bibliography.course;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.MonthDay;
+import org.joda.time.format.DateTimeFormat;
 import org.kitodo.production.helper.XMLUtils;
+import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
+import org.kitodo.production.model.bibliography.course.metadata.RecoveredMetadata;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,14 +51,89 @@ import org.w3c.dom.Node;
 public class Course extends ArrayList<Block> {
 
     /**
-     * Attribute {@code date="…"} used in the XML representation of a
-     * course of appearance.
+     * Attribute {@code after="…"} used in the XML representation of a course of
+     * appearance.
+     *
+     * <p>
+     * Newspapers, especially bigger ones, can have several issues that, e.g.,
+     * may differ in time of publication (morning issue, evening issue, …) or
+     * geographic distribution (Edinburgh issue, London issue, …). Normally,
+     * when parsing the XML file, the issues are created in their order of first
+     * appearance. However, if you want to enforce a different order, you can
+     * define it here.
+     *
+     * <p>
+     * The attribute {@code after="…"} holds the names of issues that shall be
+     * ordered before this issue. Several issues are to be separated by white
+     * space. Issue names containing white space must be enclosed in double
+     * replaced by two subsequent apostrophes ("{@code ''}", 2× U+0027).
+     *
+     * <p>
+     * Not-yet-mentioned issues are created before, though maybe empty.
+     */
+    private static final String ATTRIBUTE_AFTER = "after";
+
+    /**
+     * Attribute {@code date="…"} used in the XML representation of a course of
+     * appearance.
      */
     private static final String ATTRIBUTE_DATE = "date";
 
     /**
-     * Attribute {@code index="…"} used in the XML representation of a
+     * Attribute {@code increment="…"} used in the XML representation of a
      * course of appearance.
+     *
+     * <p>
+     * The attribute {@code increment="…"} can have as value one of the
+     * {@link Granularity} values, in lower case. It indicates when the counter
+     * shall be incremented.
+     */
+    private static final String ATTRIBUTE_INCREMENT = "increment";
+
+    /**
+     * Attribute {@code issue="…"} used in the XML representation of a course of
+     * appearance.
+     *
+     * <p>
+     * The attribute {@code issue="…"} holds the name of the issue. Newspapers,
+     * especially bigger ones, can have several issues that, e.g., may differ in
+     * time of publication (morning issue, evening issue, …) or geographic
+     * distribution (Edinburgh issue, London issue, …).
+     */
+    private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
+
+    /**
+     * Attribute {@code metadataType="…"} used in the XML representation of a
+     * course of appearance.
+     *
+     * <p>
+     * The attribute {@code metadataType="…"} holds the name of the metadata
+     * type that this counter will be written to.
+     */
+    private static final String ATTRIBUTE_METADATA_TYPE = "metadataType";
+
+    /**
+     * Attribute {@code value="…"} used in the XML representation of a course of
+     * appearance.
+     *
+     * <p>
+     * The attribute {@code value="…"} holds the counter start value.
+     */
+    private static final String ATTRIBUTE_VALUE = "value";
+
+    /**
+     * Attribute {@code index="…"} used in the XML representation of a course of
+     * appearance.
+     *
+     * <p>
+     * The attribute {@code index="…"} is optional. It may be used to
+     * distinguish different blocks if needed and can be omitted if only one
+     * block is used.
+     */
+
+    /**
+     * Attribute {@code index="…"} used in the XML representation of a course of
+     * appearance.
      *
      * <p>
      * The attribute {@code index="…"} is optional. It may be used to
@@ -56,16 +143,27 @@ public class Course extends ArrayList<Block> {
     private static final String ATTRIBUTE_VARIANT = "index";
 
     /**
-     * Attribute {@code issue="…"} used in the XML representation of a
+     * Attribute {@code yearBegin="…"} used in the XML representation of a
      * course of appearance.
      *
      * <p>
-     * The attribute {@code issue="…"} holds the name of the issue.
-     * Newspapers, especially bigger ones, can have several issues that, e.g.,
-     * may differ in time of publication (morning issue, evening issue, …) or
-     * geographic distribution (Edinburgh issue, London issue, …).
+     * The attribute {@code yearBegin="…"} is optional. It may be used to
+     * indicate a year begin different from the first of January, as it may be
+     * used for school years, business years, or seasons.
      */
-    private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
+    private static final String ATTRIBUTE_YEAR_BEGIN = "yearBegin";
+
+    /**
+     * Attribute {@code yearTerm="…"} used in the XML representation of a course
+     * of appearance.
+     *
+     * <p>
+     * The attribute {@code yearTerm="…"} is optional. It may be used to
+     * indicate the type of year that begins with a date different from the
+     * first of January, values maybe like “business year”, “season”, or “school
+     * year”.
+     */
+    private static final String ATTRIBUTE_YEAR_TERM = "yearTerm";
 
     /**
      * Element {@code <appeared>} used in the XML representation of a
@@ -103,13 +201,24 @@ public class Course extends ArrayList<Block> {
     private static final String ELEMENT_DESCRIPTION = "description";
 
     /**
-     * Element {@code <process>} used in the XML representation of a
-     * course of appearance.
+     * Element {@code <metadata>} used in the XML representation of a course of
+     * appearance.
      *
      * <p>
-     * Each {@code <process>} element represents one process to be
-     * generated in Production. It can hold {@code <title>}
-     * elements (of any quantity).
+     * {@code <metadata>} declares an auto-counting metadata value assigned to
+     * the issue it is used in. The counter will start counting until it is
+     * replaced by another counter. A counter value of {@code ""} disables the
+     * counter.
+     */
+    private static final String ELEMENT_METADATA = "metadata";
+
+    /**
+     * Element {@code <process>} used in the XML representation of a course of
+     * appearance.
+     *
+     * <p>
+     * Each {@code <process>} element represents one process to be generated in
+     * Production. It can hold {@code <title>} elements (of any quantity).
      */
     private static final String ELEMENT_PROCESS = "process";
 
@@ -139,6 +248,11 @@ public class Course extends ArrayList<Block> {
      */
     private static final String ELEMENT_BLOCK = "title";
 
+    /**
+     * January the 1ˢᵗ.
+     */
+    public static final MonthDay FIRST_OF_JANUARY = new MonthDay(1, 1);
+
     private static final int WEEKDAY_PAGES = 40;
     private static final int SUNDAY_PAGES = 240;
 
@@ -151,6 +265,17 @@ public class Course extends ArrayList<Block> {
     private boolean processesAreVolatile = true;
 
     /**
+     * The name of the year, such as “business year”, “fiscal year”, or
+     * “season”.
+     */
+    private String yearName = "";
+
+    /**
+     * The first day of the year.
+     */
+    private MonthDay yearStart = new MonthDay(1, 1);
+
+    /**
      * Default constructor, creates an empty course. Must be made explicit since
      * we offer other constructors, too.
      */
@@ -159,7 +284,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * Constructor to create a course from an xml source.
+     * Constructor to create a course from an XML source.
      *
      * @param xml
      *            XML document data structure
@@ -174,49 +299,108 @@ public class Course extends ArrayList<Block> {
         super();
         processesAreVolatile = false;
         Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);
+        String yearBegin = rootNode.getAttribute(ATTRIBUTE_YEAR_BEGIN);
+        if (!yearBegin.isEmpty()) {
+            LocalDate dateTime = DateTimeFormat.forPattern("--MM-dd").parseLocalDate(yearBegin);
+            yearStart = new MonthDay(dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+        }
+        yearName = rootNode.getAttribute(ATTRIBUTE_YEAR_TERM);
         Element processesNode = XMLUtils.getFirstChildWithTagName(rootNode, ELEMENT_PROCESSES);
         int initialCapacity = 10;
+        Map<LocalDate, IndividualIssue> lastIssueForDate = new HashMap<>();
+        List<RecoveredMetadata> recoveredMetadata = new LinkedList<>();
         for (Node processNode = processesNode.getFirstChild(); processNode != null; processNode = processNode
                 .getNextSibling()) {
             if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS)) {
                 continue;
             }
-            List<IndividualIssue> process =  prepareIndividualIssues(processNode, initialCapacity);
+            List<IndividualIssue> process = new ArrayList<>(initialCapacity);
+            for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
+                    .getNextSibling()) {
+                if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
+                    continue;
+                }
+                String variant = ((Element) blockNode).getAttribute(ATTRIBUTE_VARIANT);
+                for (Node issueNode = blockNode.getFirstChild(); issueNode != null; issueNode = issueNode
+                        .getNextSibling()) {
+                    if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
+                        continue;
+                    }
+                    String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
+                    String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
+                    if (date == null) {
+                        throw new NullPointerException(ATTRIBUTE_DATE);
+                    }
+                    String after = ((Element) issueNode).getAttribute(ATTRIBUTE_AFTER);
+                    List<String> before = Objects.isNull(after) ? Collections.<String>emptyList()
+                            : splitAtSpaces(after);
+                    LocalDate localDate = LocalDate.parse(date);
+                    IndividualIssue individualIssue = addAddition(variant, before, issue, localDate);
+                    IndividualIssue previousIssue = lastIssueForDate.get(localDate);
+                    if (previousIssue != null) {
+                        Integer sortingNumber = previousIssue.getSortingNumber();
+                        if (sortingNumber == null) {
+                            sortingNumber = 1;
+                            previousIssue.setSortingNumber(sortingNumber);
+                        }
+                        individualIssue.setSortingNumber(sortingNumber + 1);
+                    }
+                    lastIssueForDate.put(localDate, individualIssue);
+                    process.add(individualIssue);
+                    for (Node metadataNode = issueNode
+                            .getFirstChild(); metadataNode != null; metadataNode = metadataNode.getNextSibling()) {
+                        if (!(metadataNode instanceof Element)
+                                || !metadataNode.getNodeName().equals(ELEMENT_METADATA)) {
+                            continue;
+                        }
+                        RecoveredMetadata recovered = new RecoveredMetadata(LocalDate.parse(date), issue);
+                        recovered.setMetadataType(((Element) metadataNode).getAttribute(ATTRIBUTE_METADATA_TYPE));
+                        if (recovered.getMetadataType() == null) {
+                            throw new NullPointerException(ATTRIBUTE_METADATA_TYPE);
+                        }
+                        recovered.setValue(((Element) metadataNode).getAttribute(ATTRIBUTE_VALUE));
+                        if (recovered.getValue() == null) {
+                            throw new NullPointerException(ATTRIBUTE_VALUE);
+                        }
+                        String increment = ((Element) metadataNode).getAttribute(ATTRIBUTE_INCREMENT);
+                        try {
+                            recovered.setStepSize(Granularity.valueOf(increment.toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            recovered.setStepSize(null);
+                        }
+                        recoveredMetadata.add(recovered);
+                    }
+                }
+            }
             processes.add(process);
             initialCapacity = (int) Math.round(1.1 * process.size());
         }
+        Map<Pair<Block, String>, CountableMetadata> last = new HashMap<>();
+        for (RecoveredMetadata metaDatum : recoveredMetadata) {
+            Block foundBlock = null;
+            Issue foundIssue = null;
+            BLOCK: for (Block block : this) {
+                for (IndividualIssue individualIssue : block.getIndividualIssues(metaDatum.getDate())) {
+                    if (individualIssue.getHeading().equals(metaDatum.getIssue())) {
+                        foundBlock = block;
+                        foundIssue = individualIssue.getIssue();
+                        break BLOCK;
+                    }
+                }
+            }
+            CountableMetadata previousMetadata = last.get(Pair.of(foundBlock, metaDatum.getMetadataType()));
+            if (previousMetadata != null) {
+                previousMetadata.setDelete(Pair.of(metaDatum.getDate(), foundIssue));
+            }
+            CountableMetadata metadata = new CountableMetadata(foundBlock, Pair.of(metaDatum.getDate(), foundIssue));
+            metadata.setMetadataType(metaDatum.getMetadataType());
+            metadata.setStartValue(metaDatum.getValue());
+            metadata.setStepSize(metaDatum.getStepSize());
+            foundBlock.addMetadata(metadata);
+            last.put(Pair.of(foundBlock, metaDatum.getMetadataType()), metadata);
+        }
         recalculateRegularityOfIssues();
         processesAreVolatile = true;
-    }
-
-    private List<IndividualIssue> prepareIndividualIssues(Node processNode, int initialCapacity) {
-        List<IndividualIssue> process = new ArrayList<>(initialCapacity);
-        for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
-                .getNextSibling()) {
-            if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
-                continue;
-            }
-            String variant = ((Element) blockNode).getAttribute(ATTRIBUTE_VARIANT);
-            for (Node issueNode = blockNode.getFirstChild(); issueNode != null; issueNode = issueNode
-                    .getNextSibling()) {
-                if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
-                    continue;
-                }
-
-                IndividualIssue individualIssue = prepareIndividualIssue((Element) issueNode, variant);
-                process.add(individualIssue);
-            }
-        }
-        return process;
-    }
-
-    private IndividualIssue prepareIndividualIssue(Element issueNode, String variant) {
-        String issue = issueNode.getAttribute(ATTRIBUTE_ISSUE_HEADING);
-        String date = issueNode.getAttribute(ATTRIBUTE_DATE);
-        if (date == null) {
-            throw new NullPointerException(ATTRIBUTE_DATE);
-        }
-        return addAddition(variant, issue, LocalDate.parse(date));
     }
 
     /**
@@ -248,6 +432,8 @@ public class Course extends ArrayList<Block> {
      *
      * @param variant
      *            block identifier (may be null)
+     * @param beforeIssues
+     *            issues to be existing before this one
      * @param issueHeading
      *            heading of the issue this issue is of
      * @param date
@@ -257,7 +443,9 @@ public class Course extends ArrayList<Block> {
      *             if the date would cause the block to overlap with another
      *             block
      */
-    private IndividualIssue addAddition(String variant, String issueHeading, LocalDate date) {
+    private IndividualIssue addAddition(String variant, List<String> beforeIssues, String issueHeading,
+            LocalDate date) {
+
         Block block = get(variant);
         if (block == null) {
             block = new Block(this, variant);
@@ -276,13 +464,20 @@ public class Course extends ArrayList<Block> {
                 block.setLastAppearance(date);
             }
         }
+        for (String issueBefore : beforeIssues) {
+            Issue issue = block.getIssue(issueBefore);
+            if (issue == null) {
+                issue = new Issue(this, issueBefore);
+                block.addIssue(issue);
+            }
+        }
         Issue issue = block.getIssue(issueHeading);
         if (issue == null) {
             issue = new Issue(this, issueHeading);
             block.addIssue(issue);
         }
         issue.addAddition(date);
-        return new IndividualIssue(block, issue, date);
+        return new IndividualIssue(block, issue, date, null);
     }
 
     /**
@@ -412,11 +607,31 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * Calculates a guessed number of
-     * pages for a course of appearance of a newspaper, presuming each issue
-     * having 40 pages and Sunday issues having six times that size because most
-     * people buy the Sunday issue most often and therefore advertisers buy the
-     * most space on that day.
+     * Returns the name of the year. The name of the year is optional and maybe
+     * empty. Typical values are “Business year”, “Fiscal year”, or “Season”.
+     *
+     * @return the name of the year
+     */
+    public String getYearName() {
+        return yearName;
+    }
+
+    /**
+     * Returns the beginning of the year. Typically, this is the 1ˢᵗ of January,
+     * but it can be changed here to other days as well. The beginning of the
+     * year must parse and must not not be empty.
+     *
+     * @return the beginning of the year
+     */
+    public MonthDay getYearStart() {
+        return yearStart;
+    }
+
+    /**
+     * Calculates a guessed number of pages for a course of appearance of a
+     * newspaper, presuming each issue having 40 pages and Sunday issues having
+     * six times that size because most people buy the Sunday issue most often
+     * and therefore advertisers buy the most space on that day.
      *
      * @return a guessed total number of pages for the full course of appearance
      */
@@ -466,11 +681,40 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * Recalculates for all blocks of
-     * this Course for each Issue the daysOfWeek of its regular appearance
-     * within the interval of time of the block. This is especially sensible to
-     * detect the underlying regularity after lots of issues whose existence is
-     * known have been added one by one as additions to the underlying issue(s).
+     * Joins a list of strings to a string of whitespace-separated tokens,
+     * surrounding tokens containing spaces with quotes.
+     *
+     * @param input
+     *            string to tokenize
+     * @return list of split strings
+     */
+    private static final String joinQuoting(Collection<String> input) {
+        StringBuilder result = new StringBuilder(16 * input.size());
+        boolean first = true;
+        for (String item : input) {
+            if (first) {
+                first = false;
+            } else {
+                result.append(' ');
+            }
+            boolean hasSpace = item.indexOf(' ') > -1;
+            if (hasSpace) {
+                result.append('"');
+            }
+            result.append(item.replaceAll("\"", "''"));
+            if (hasSpace) {
+                result.append('"');
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * Recalculates for all blocks of this Course for each Issue the daysOfWeek
+     * of its regular appearance within the interval of time of the block. This
+     * is especially sensible to detect the underlying regularity after lots of
+     * issues whose existence is known have been added one by one as additions
+     * to the underlying issue(s).
      */
     public void recalculateRegularityOfIssues() {
         for (Block block : this) {
@@ -503,8 +747,24 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * Calculates the processes depending on the given
-     * BreakMode.
+     * Splits a string of whitespace-separated tokens, considering tokens
+     * surrounded by quotes as one.
+     *
+     * @param input
+     *            string to tokenize
+     * @return list of split strings
+     */
+    private static final List<String> splitAtSpaces(String input) {
+        List<String> result = new ArrayList<>();
+        Matcher matcher = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
+        while (matcher.find()) {
+            result.add(matcher.group(1).replaceFirst("^\"(.*)\"$", "$1").replaceAll("''", "\""));
+        }
+        return result;
+    }
+
+    /**
+     * Calculates the processes depending on the given BreakMode.
      *
      * @param mode
      *            how the course shall be broken into issues
@@ -517,7 +777,7 @@ public class Course extends ArrayList<Block> {
 
         processes.clear();
         for (IndividualIssue issue : getIndividualIssues()) {
-            Integer mark = issue.getBreakMark(mode);
+            Integer mark = issue.getBreakMark(mode, yearStart);
             if (!mark.equals(lastMark) && process != null) {
                 initialCapacity = (int) Math.round(1.1 * process.size());
                 processes.add(process);
@@ -542,40 +802,114 @@ public class Course extends ArrayList<Block> {
     public Document toXML() throws IOException {
         Document xml = XMLUtils.newDocument();
         Element courseNode = xml.createElement(ELEMENT_COURSE);
+        if (!yearStart.equals(FIRST_OF_JANUARY)) {
+            courseNode.setAttribute(ATTRIBUTE_YEAR_BEGIN, yearStart.toString());
+        }
+        if (!yearName.isEmpty()) {
+            courseNode.setAttribute(ATTRIBUTE_YEAR_TERM, yearName);
+        }
 
         Element description = xml.createElement(ELEMENT_DESCRIPTION);
         description.appendChild(xml.createTextNode(StringUtils.join(CourseToGerman.asReadableText(this), "\n\n")));
         courseNode.appendChild(description);
 
+        courseNode.appendChild(processesToXml(xml));
+        xml.appendChild(courseNode);
+        return xml;
+    }
+
+    private Element processesToXml(Document xml) {
         Element processesNode = xml.createElement(ELEMENT_PROCESSES);
+        Set<Pair<Integer, String>> afterDeclarations = new HashSet<>();
         for (List<IndividualIssue> process : processes) {
             Element processNode = xml.createElement(ELEMENT_PROCESS);
             Element blockNode = null;
             int previous = -1;
             for (IndividualIssue issue : process) {
-                int index = issue.indexIn(this);
-                if (index != previous && blockNode != null) {
-                    processNode.appendChild(blockNode);
-                    blockNode = null;
-                }
-                if (blockNode == null) {
-                    blockNode = xml.createElement(ELEMENT_BLOCK);
-                    blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
-                }
-                Element issueNode = xml.createElement(ELEMENT_APPEARED);
-                issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
-                issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
-                blockNode.appendChild(issueNode);
-                previous = index;
+                blockNode = issueToXml(xml, afterDeclarations, processNode, blockNode, previous, issue);
             }
             if (blockNode != null) {
                 processNode.appendChild(blockNode);
             }
             processesNode.appendChild(processNode);
         }
-        courseNode.appendChild(processesNode);
+        return processesNode;
+    }
 
-        xml.appendChild(courseNode);
-        return xml;
+    private Element issueToXml(Document xml, Set<Pair<Integer, String>> afterDeclarations, Element processNode,
+            Element blockNode, int previous, IndividualIssue issue) {
+        int index = issue.indexIn(this);
+        if (index != previous && blockNode != null) {
+            processNode.appendChild(blockNode);
+            blockNode = null;
+        }
+        if (blockNode == null) {
+            blockNode = xml.createElement(ELEMENT_BLOCK);
+            blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
+        }
+        Element issueNode = xml.createElement(ELEMENT_APPEARED);
+        issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
+        issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
+        addMetadataToIssue(xml, issue, issueNode);
+        Pair<Integer, String> afterDeclaration = Pair.of(index, issue.getHeading());
+        if (!afterDeclarations.contains(afterDeclaration)) {
+            List<String> issuesBefore = issue.getIssuesBefore();
+            if (!issuesBefore.isEmpty()) {
+                issueNode.setAttribute(ATTRIBUTE_AFTER, joinQuoting(issuesBefore));
+            }
+            afterDeclarations.add(afterDeclaration);
+        }
+        blockNode.appendChild(issueNode);
+        previous = index;
+        return blockNode;
+    }
+
+    private void addMetadataToIssue(Document xml, IndividualIssue issue, Element issueNode) {
+        Pair<LocalDate, Issue> issueId = Pair.of(issue.getDate(), issue.getIssue());
+        Map<String, CountableMetadata> metadata = new HashMap<>();
+        for (Block block : this) {
+            for (CountableMetadata metaDatum : block.getMetadata(issueId, false)) {
+                metadata.put(metaDatum.getMetadataType(), metaDatum);
+            }
+        }
+        for (Block block : this) {
+            for (CountableMetadata metaDatum : block.getMetadata(issueId, true)) {
+                metadata.put(metaDatum.getMetadataType(), metaDatum);
+            }
+        }
+        for (Entry<String, CountableMetadata> entry : metadata.entrySet()) {
+            Element metadataNode = xml.createElement(ELEMENT_METADATA);
+            metadataNode.setAttribute(ATTRIBUTE_METADATA_TYPE, entry.getKey());
+            CountableMetadata metaDatum = entry.getValue();
+            if (metaDatum.matches(metaDatum.getMetadataType(), issueId, false)) {
+                metadataNode.setAttribute(ATTRIBUTE_VALUE, "");
+            } else {
+                metadataNode.setAttribute(ATTRIBUTE_VALUE, metaDatum.getStartValue());
+                if (metaDatum.getStepSize() != null) {
+                    metadataNode.setAttribute(ATTRIBUTE_INCREMENT, metaDatum.getStepSize().toString().toLowerCase());
+                }
+            }
+            issueNode.appendChild(metadataNode);
+        }
+    }
+
+    /**
+     * Sets the year name of the course.
+     *
+     * @param yearName
+     *            the yearName to set
+     */
+    public void setYearName(String yearName) {
+        this.yearName = yearName;
+    }
+
+    /**
+     * Sets the year start of the course.
+     *
+     * @param yearStart
+     *            the yearStart to set
+     */
+    public void setYearStart(MonthDay yearStart) {
+        this.yearStart = yearStart;
     }
 }
