@@ -904,10 +904,6 @@ main i.fa {
     width: 90px;
 }
 
-.progressColumn {
-    width: 120px;
-}
-
 .statusColumn,
 .statusColumn div,
 .statusColumn .ui-panel-content {
@@ -1927,17 +1923,31 @@ footer {
     margin-right: 10px;
 }
 
+.ui-datatable tr td.actionsColumn > a:last-child,
+.ui-datatable tr td.actionsColumn > form > a:last-child {
+    margin-right: 0;
+}
+
 .ui-datatable tr th.checkboxListColumn {
-    padding-left: 7px;
     height: 35px;
-    padding-top: 3px;
     margin-top: -5px;
     vertical-align: inherit;
 }
 
 .ui-datatable tr th.checkboxListColumn,
 .ui-datatable tr td.checkboxListColumn {
-    width: 35px;
+    width: 18px;
+}
+
+.ui-datatable tr th.checkboxListColumn .ui-chkbox,
+.ui-datatable tr th.checkboxListColumn .ui-chkbox-box,
+.ui-datatable tr td.checkboxListColumn .ui-chkbox {
+    margin: 0;
+    vertical-align: top;
+}
+
+.ui-datatable tr td.checkboxListColumn .ui-chkbox-box {
+    vertical-align: middle;
 }
 
 .ui-datatable tr th.checkboxColumn,
@@ -1947,7 +1957,6 @@ footer {
 
 .ui-datatable tr td span.process-progress {
     display: block;
-    width: 110px;
     height: 16px;
     border-radius: var(--default-border-radius);
 }
