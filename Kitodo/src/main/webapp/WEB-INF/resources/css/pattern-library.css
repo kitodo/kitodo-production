@@ -457,6 +457,11 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+.select-box {
+    border: solid var(--default-border-width) var(--blue);
+    border-radius: var(--default-border-radius);
+}
+
 .ui-inputfield.ui-state-default {
     background: var(--pure-white);
 }

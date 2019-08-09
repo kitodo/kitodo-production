@@ -72,7 +72,9 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="processesTabView" activeIndex="#{ProcessForm.activeTabIndex}">
+        <p:tabView id="processesTabView"
+                   dynamic="true"
+                   activeIndex="#{ProcessForm.activeTabIndex}">
             <p:ajax event="tabChange" listener="#{ProcessForm.onTabChange}"/>
             <p:tab title="#{msgs.processList}" id="processTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}">

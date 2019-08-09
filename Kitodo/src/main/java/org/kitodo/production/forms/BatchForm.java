@@ -14,12 +14,13 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +46,7 @@ import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("BatchForm")
-@SessionScoped
+@ViewScoped
 public class BatchForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(BatchForm.class);
@@ -152,9 +153,13 @@ public class BatchForm extends BaseForm {
         } catch (DAOException e) {
             logger.error(e);
         }
-        for (Batch batch : batches) {
-            if (ServiceManager.getBatchService().contains(batch, batchfilter)) {
-                currentBatches.add(batch);
+        if (Objects.nonNull(batchfilter) && batchfilter.isEmpty()) {
+            currentBatches.addAll(batches);
+        } else {
+            for (Batch batch : batches) {
+                if (ServiceManager.getBatchService().contains(batch, batchfilter)) {
+                    currentBatches.add(batch);
+                }
             }
         }
     }
@@ -476,6 +481,11 @@ public class BatchForm extends BaseForm {
         } else {
             this.selectedBatchId = 0;
         }
+        List<Process> processes = new LinkedList<>();
+        for (Batch batch : this.selectedBatches) {
+            processes.addAll(batch.getProcesses());
+        }
+        setSelectedProcesses(processes);
     }
 
     /**
