@@ -1985,6 +1985,11 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
     padding: var(--contrast-border-width) 0 0 0;
 }
 
+.ui-tabs .ui-tabs-panel > .ui-panelgrid {
+    padding-left: var(--default-half-size);
+    padding-right: var(--default-half-size);
+}
+
 .ui-panelgrid-cell > div {
     margin-bottom: 1.3em;
 }
