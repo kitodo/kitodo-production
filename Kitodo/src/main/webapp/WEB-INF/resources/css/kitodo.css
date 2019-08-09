@@ -2091,10 +2091,15 @@ min 700px
 
     #search-form\:search-field {
         display: table-cell;
+        vertical-align: top;
     }
 
     #search-form\:search-field-short {
         display: none;
+    }
+
+    #search-form\:search .ui-icon {
+        margin-top: -9px;
     }
 
     #portal-header #portal-nav {
