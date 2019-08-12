@@ -602,7 +602,7 @@ public class GalleryPanel {
         }
     }
 
-    /*
+    /**
      * Get the index of this GalleryMediaContent's MediaUnit out of all MediaUnits
      * which are assigned to more than one IncludedStructuralElement.
      *

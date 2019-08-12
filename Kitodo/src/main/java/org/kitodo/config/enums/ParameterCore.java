@@ -203,6 +203,7 @@ public enum ParameterCore implements ParameterInterface {
 
     /**
      * Sorting of images.
+     * 
      * <p>
      * Numeric sorting of images. 1 is lesser then 002, compares the number of
      * image names, characters other than digits are not supported.

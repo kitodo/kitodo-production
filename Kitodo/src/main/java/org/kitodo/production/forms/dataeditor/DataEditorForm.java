@@ -325,12 +325,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     private void initSeveralAssignments(MediaUnit mediaUnit, List<MediaUnit> severalAssignments) {
-       if (mediaUnit.getIncludedStructuralElements().size() > 1) {
-           severalAssignments.add(mediaUnit);
-       }
-       for (MediaUnit child : mediaUnit.getChildren()) {
-           initSeveralAssignments(child, severalAssignments);
-       }
+        if (mediaUnit.getIncludedStructuralElements().size() > 1) {
+            severalAssignments.add(mediaUnit);
+        }
+        for (MediaUnit child : mediaUnit.getChildren()) {
+            initSeveralAssignments(child, severalAssignments);
+        }
     }
 
     /**

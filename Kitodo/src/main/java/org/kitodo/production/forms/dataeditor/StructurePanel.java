@@ -1174,7 +1174,8 @@ public class StructurePanel implements Serializable {
                 int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
                 List<TreeNode> viewSiblbings = selectedLogicalNode.getParent().getChildren();
                 // check for selected node's positions and siblings after selected node's parent
-                if (viewSiblbings.indexOf(selectedLogicalNode) == viewSiblbings.size() - 1 && logicalNodeSiblings.size() > logicalNodeIndex + 1) {
+                if (viewSiblbings.indexOf(selectedLogicalNode) == viewSiblbings.size() - 1
+                        && logicalNodeSiblings.size() > logicalNodeIndex + 1) {
                     TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
                     if (nextSibling.getData() instanceof StructureTreeNode) {
                         StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
@@ -1217,7 +1218,8 @@ public class StructurePanel implements Serializable {
             if (selectedLogicalNode.getParent().getData() instanceof StructureTreeNode) {
                 StructureTreeNode structureTreeNodeParent = (StructureTreeNode) selectedLogicalNode.getParent().getData();
                 if (structureTreeNodeParent.getDataObject() instanceof IncludedStructuralElement) {
-                    IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) structureTreeNodeParent.getDataObject();
+                    IncludedStructuralElement includedStructuralElement =
+                            (IncludedStructuralElement) structureTreeNodeParent.getDataObject();
                     dataEditor.unassignView(includedStructuralElement, view);
                     if (view.getMediaUnit().getIncludedStructuralElements().size() <= 1) {
                         severalAssignments.remove(view.getMediaUnit());
