@@ -1138,7 +1138,7 @@ public class StructurePanel implements Serializable {
      * @return index of the StructureTreeNode's MediaUnit if present in the List of several assignments, or -1 if not present in the list.
      */
     public int getMultipleAssignmentsIndex(StructureTreeNode treeNode) {
-        if (Objects.nonNull(treeNode.getDataObject()) && treeNode.getDataObject() instanceof View
+        if (treeNode.getDataObject() instanceof View
                 && Objects.nonNull(((View) treeNode.getDataObject()).getMediaUnit())) {
             return severalAssignments.indexOf(((View) treeNode.getDataObject()).getMediaUnit());
         }
@@ -1153,7 +1153,7 @@ public class StructurePanel implements Serializable {
     public boolean isAssignedSeveralTimes() {
         if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof  StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-            if (Objects.nonNull(structureTreeNode.getDataObject()) && structureTreeNode.getDataObject() instanceof View) {
+            if (structureTreeNode.getDataObject() instanceof View) {
                 View view = (View) structureTreeNode.getDataObject();
                 return view.getMediaUnit().getIncludedStructuralElements().size() > 1;
             }
@@ -1168,8 +1168,7 @@ public class StructurePanel implements Serializable {
     public boolean isAssignableSeveralTimes() {
         if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof  StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-            if (Objects.nonNull(structureTreeNode.getDataObject())
-                    && structureTreeNode.getDataObject() instanceof View) {
+            if (structureTreeNode.getDataObject() instanceof View) {
                 List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
                 int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
                 List<TreeNode> viewSiblbings = selectedLogicalNode.getParent().getChildren();
