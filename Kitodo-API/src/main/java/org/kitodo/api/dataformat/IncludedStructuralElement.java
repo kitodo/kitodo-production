@@ -78,13 +78,13 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
      * To reorder this list, you must change the order property of the media
      * units.
      */
-    private final Collection<View> views;
+    private final List<View> views;
 
     /**
      * Creates a new included structural element.
      */
     public IncludedStructuralElement() {
-        views = new SortedList<>(view -> view.getMediaUnit().getOrder());
+        views = new LinkedList<>();
     }
 
     /**
