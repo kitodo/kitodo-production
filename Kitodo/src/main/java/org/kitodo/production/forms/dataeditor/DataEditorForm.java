@@ -230,6 +230,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void init() {
         final long begin = System.nanoTime();
 
+        List<MediaUnit> severalAssignments = new LinkedList<>();
+        initSeveralAssignments(workpiece.getMediaUnit(), severalAssignments);
+        structurePanel.getSeveralAssignments().addAll(severalAssignments);
+
         structurePanel.show();
         structurePanel.getSelectedLogicalNode().setSelected(true);
         structurePanel.getSelectedPhysicalNode().setSelected(true);
@@ -318,6 +322,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
         PrimeFaces.current().ajax().update("notifications");
         return null;
+    }
+
+    private void initSeveralAssignments(MediaUnit mediaUnit, List<MediaUnit> severalAssignments) {
+        if (mediaUnit.getIncludedStructuralElements().size() > 1) {
+            severalAssignments.add(mediaUnit);
+        }
+        for (MediaUnit child : mediaUnit.getChildren()) {
+            initSeveralAssignments(child, severalAssignments);
+        }
     }
 
     /**
@@ -656,5 +669,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     public String selectCurrentTask(String referrer) {
         return "/pages/metadataEditor?faces-redirect=true&taskId=" + this.getCurrentTask().getId()
                 + "&referrer=" + referrer;
+    }
+
+    void assignView(IncludedStructuralElement includedStructuralElement, View view) {
+        includedStructuralElement.getViews().add(view);
+        view.getMediaUnit().getIncludedStructuralElements().add(includedStructuralElement);
+    }
+
+    void unassignView(IncludedStructuralElement includedStructuralElement, View view) {
+        includedStructuralElement.getViews().remove(view);
+        view.getMediaUnit().getIncludedStructuralElements().remove(includedStructuralElement);
     }
 }

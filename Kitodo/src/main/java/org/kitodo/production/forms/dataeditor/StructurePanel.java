@@ -91,6 +91,11 @@ public class StructurePanel implements Serializable {
     private HashMap<IncludedStructuralElement, Boolean> previousExpansionStatesPhysicalTree;
 
     /**
+     * List of all mediaUnits assigned to multiple IncludedStructuralElements.
+     */
+    private List<MediaUnit> severalAssignments = new LinkedList<>();
+
+    /**
      * Creates a new structure panel.
      *
      * @param dataEditor
@@ -111,6 +116,7 @@ public class StructurePanel implements Serializable {
         previouslySelectedLogicalNode = null;
         previouslySelectedPhysicalNode = null;
         structure = null;
+        severalAssignments = new LinkedList<>();
     }
 
     void deleteSelectedStructure() {
@@ -953,8 +959,8 @@ public class StructurePanel implements Serializable {
      */
     void moveViews(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
         for (Pair<View, IncludedStructuralElement> elementToBeMoved : elementsToBeMoved) {
-            toElement.getViews().add(elementToBeMoved.getKey());
-            elementToBeMoved.getValue().getViews().remove(elementToBeMoved.getKey());
+            dataEditor.unassignView(elementToBeMoved.getValue(), elementToBeMoved.getKey());
+            dataEditor.assignView(toElement, elementToBeMoved.getKey());
         }
     }
 
@@ -1112,5 +1118,116 @@ public class StructurePanel implements Serializable {
             }
         }
         return null;
+    }
+
+    /**
+     * Get List of MediaUnits assigned to multiple IncludedStructuralElements.
+     *
+     * @return value of severalAssignments
+     */
+    List<MediaUnit> getSeveralAssignments() {
+        return severalAssignments;
+    }
+
+
+    /**
+     * Get the index of this StructureTreeNode's MediaUnit out of all MediaUnits
+     * which are assigned to more than one IncludedStructuralElement.
+     *
+     * @param treeNode object to find the index for
+     * @return index of the StructureTreeNode's MediaUnit if present in the List of several assignments, or -1 if not present in the list.
+     */
+    public int getMultipleAssignmentsIndex(StructureTreeNode treeNode) {
+        if (treeNode.getDataObject() instanceof View
+                && Objects.nonNull(((View) treeNode.getDataObject()).getMediaUnit())) {
+            return severalAssignments.indexOf(((View) treeNode.getDataObject()).getMediaUnit());
+        }
+        return -1;
+    }
+
+    /**
+     * Check if the selected Node's MediaUnit is assigned to several IncludedStructuralElements.
+     *
+     * @return {@code true} when the MediaUnit is assigned to more than one logical element
+     */
+    public boolean isAssignedSeveralTimes() {
+        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof  StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                View view = (View) structureTreeNode.getDataObject();
+                return view.getMediaUnit().getIncludedStructuralElements().size() > 1;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if the selected Node's MediaUnit can be assigned to the next logical element in addition to the current assignment.
+     * @return {@code true} if the MediaUnit can be assigned to the next IncludedStructuralElement
+     */
+    public boolean isAssignableSeveralTimes() {
+        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof  StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
+                int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
+                List<TreeNode> viewSiblbings = selectedLogicalNode.getParent().getChildren();
+                // check for selected node's positions and siblings after selected node's parent
+                if (viewSiblbings.indexOf(selectedLogicalNode) == viewSiblbings.size() - 1
+                        && logicalNodeSiblings.size() > logicalNodeIndex + 1) {
+                    TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
+                    if (nextSibling.getData() instanceof StructureTreeNode) {
+                        StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
+                        return structureTreeNodeSibling.getDataObject() instanceof IncludedStructuralElement;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Assign selected Node's MediaUnit to the next IncludedStructuralElement.
+     */
+    public void assign() {
+        if (isAssignableSeveralTimes()) {
+            View view = (View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject();
+            List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
+            int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
+            TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
+            StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
+            IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) structureTreeNodeSibling.getDataObject();
+            dataEditor.assignView(includedStructuralElement, view);
+            severalAssignments.add(view.getMediaUnit());
+            preserveLogical();
+            show();
+            dataEditor.getGalleryPanel().updateStripes();
+        }
+    }
+
+    /**
+     * Unassign the selected Node's MediaUnit from the IncludedStructuralElement parent at the selected position.
+     * This does not remove it from other IncludedStructuralElements.
+     */
+    public void unassign() {
+        if (isAssignedSeveralTimes()) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            View view = (View) structureTreeNode.getDataObject();
+            if (selectedLogicalNode.getParent().getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureTreeNodeParent = (StructureTreeNode) selectedLogicalNode.getParent().getData();
+                if (structureTreeNodeParent.getDataObject() instanceof IncludedStructuralElement) {
+                    IncludedStructuralElement includedStructuralElement =
+                            (IncludedStructuralElement) structureTreeNodeParent.getDataObject();
+                    dataEditor.unassignView(includedStructuralElement, view);
+                    if (view.getMediaUnit().getIncludedStructuralElements().size() <= 1) {
+                        severalAssignments.remove(view.getMediaUnit());
+                    }
+                    preserveLogical();
+                    show();
+                    dataEditor.getGalleryPanel().updateStripes();
+                }
+            }
+        }
     }
 }

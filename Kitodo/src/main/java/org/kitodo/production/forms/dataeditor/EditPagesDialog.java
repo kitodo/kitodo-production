@@ -82,7 +82,9 @@ public class EditPagesDialog {
      */
     public void addPage() {
         if (dataEditor.getSelectedStructure().isPresent()) {
-            dataEditor.getSelectedStructure().get().getViews().addAll(getViewsToAdd(paginationSelectionSelectedItems));
+            for (View viewToAdd : getViewsToAdd(paginationSelectionSelectedItems)) {
+                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd);
+            }
             dataEditor.refreshStructurePanel();
             prepare();
         }
@@ -210,8 +212,9 @@ public class EditPagesDialog {
      */
     public void setPageStartAndEnd() {
         if (dataEditor.getSelectedStructure().isPresent()) {
-            dataEditor.getSelectedStructure().get().getViews()
-                    .addAll(getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem));
+            for (View viewToAdd : getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem)) {
+                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd);
+            }
             dataEditor.refreshStructurePanel();
             prepare();
         }
@@ -258,8 +261,9 @@ public class EditPagesDialog {
      */
     public void removePage() {
         if (dataEditor.getSelectedStructure().isPresent()) {
-            dataEditor.getSelectedStructure().get().getViews()
-                    .removeAll(getViewsToAdd(paginationSubSelectionSelectedItems));
+            for (View viewToRemove : getViewsToAdd(paginationSubSelectionSelectedItems)) {
+                dataEditor.unassignView(dataEditor.getSelectedStructure().get(), viewToRemove);
+            }
             dataEditor.refreshStructurePanel();
             prepare();
         }

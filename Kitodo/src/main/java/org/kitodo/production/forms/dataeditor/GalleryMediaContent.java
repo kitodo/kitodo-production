@@ -210,4 +210,16 @@ public class GalleryMediaContent {
     public View getView() {
         return view;
     }
+
+    /**
+     * Check if the GalleryMediaContent's MediaUnit is assigned to several IncludedStructuralElements.
+     *
+     * @return {@code true} when the MediaUnit is assigned to more than one logical element
+     */
+    public boolean isAssignedSeveralTimes() {
+        if (Objects.nonNull(view) && Objects.nonNull(view.getMediaUnit())) {
+            return view.getMediaUnit().getIncludedStructuralElements().size() > 1;
+        }
+        return false;
+    }
 }

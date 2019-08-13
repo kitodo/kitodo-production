@@ -118,6 +118,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
                 if (Objects.nonNull(fileXmlElementAccess)
                     && !fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), mediaUnitsMap)) {
                     super.getViews().add(new AreaXmlElementAccess(fileXmlElementAccess).getView());
+                    fileXmlElementAccess.getMediaUnit().getIncludedStructuralElements().add(this);
                 }
             }
         }

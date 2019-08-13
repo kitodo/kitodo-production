@@ -127,6 +127,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
         view.setMediaUnit(target.getMediaUnit());
         includedStructuralElement.getViews().add(view);
+        view.getMediaUnit().getIncludedStructuralElements().add(includedStructuralElement);
         return new LegacyReferenceHelper(target);
     }
 
