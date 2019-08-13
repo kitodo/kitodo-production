@@ -96,17 +96,20 @@
                                                        metadataAccordion:logicalMetadataWrapperPanel
                                                        imagePreviewForm:olWrapper">
                                     <h:panelGroup class="thumbnail-container">
-                                        <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                        class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'active' : ''}"
-                                                        rendered="#{media.showingInPreview}">
-                                            <f:param name="id" value="#{media.id}" />
-                                        </p:graphicImage>
-                                        <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                                                      rendered="#{media.assignedSeveralTimes}"
-                                                      styleClass="assigned-several-times"/>
-                                        <h:panelGroup class="thumbnail-overlay">
-                                            #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                        </h:panelGroup>
+                                        <p:outputPanel deferred="true"
+                                                       deferredMode="visible">
+                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                            class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'active' : ''}"
+                                                            rendered="#{media.showingInPreview}">
+                                                <f:param name="id" value="#{media.id}" />
+                                            </p:graphicImage>
+                                            <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                                                          rendered="#{media.assignedSeveralTimes}"
+                                                          styleClass="assigned-several-times"/>
+                                            <h:panelGroup class="thumbnail-overlay">
+                                                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                            </h:panelGroup>
+                                        </p:outputPanel>
                                     </h:panelGroup>
                                 </p:commandLink>
                             </p:panel>
@@ -241,14 +244,17 @@
                                                                structureTreeForm:physicalTree"
                                                        oncomplete="checkScrollPosition()">
                                             <h:panelGroup layout="block" styleClass="thumbnail-container">
-                                                <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                              class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''}"
-                                                                              rendered="#{media.showingInPreview}">
-                                                    <f:param name="id" value="#{media.id}" />
-                                                </p:graphicImage></h:outputText>
-                                                <h:panelGroup layout="block" styleClass="thumbnail-overlay">
-                                                    #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                                </h:panelGroup>
+                                                <p:outputPanel deferred="true"
+                                                               deferredMode="visible">
+                                                    <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                                                  class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''}"
+                                                                                  rendered="#{media.showingInPreview}">
+                                                        <f:param name="id" value="#{media.id}" />
+                                                    </p:graphicImage></h:outputText>
+                                                    <h:panelGroup layout="block" styleClass="thumbnail-overlay">
+                                                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                                    </h:panelGroup>
+                                                </p:outputPanel>
                                             </h:panelGroup>
                                         </p:commandLink>
                                     </h:panelGroup>
