@@ -205,7 +205,7 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
      *
      * @return the views
      */
-    public Collection<View> getViews() {
+    public List<View> getViews() {
         return views;
     }
 

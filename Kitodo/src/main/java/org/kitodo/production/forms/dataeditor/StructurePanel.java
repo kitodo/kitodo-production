@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -927,7 +928,8 @@ public class StructurePanel implements Serializable {
                 }
                 if (Objects.nonNull(previousParent)) {
                     IncludedStructuralElement element = (IncludedStructuralElement) dropNode.getDataObject();
-                    moveViews(element, Collections.singletonList(new ImmutablePair<>(view, previousParent)));
+                    // TODO once PrimeFaces' tree drop index bug is fixed pass index where the pages should be inserted
+                    moveViews(element, Collections.singletonList(new ImmutablePair<>(view, previousParent)), -1);
                     expandNode(event.getDropNode());
                     this.dataEditor.getGalleryPanel().updateStripes();
                     return;
@@ -956,11 +958,23 @@ public class StructurePanel implements Serializable {
      *          IncludedStructuralElement to which View is moved
      * @param elementsToBeMoved
      *          List of elements to be moved as Pairs of View and IncludedStructuralElement they are attached to
+     * @param insertionIndex
+     *          Index where views will be inserted into toElement's views
      */
-    void moveViews(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
+    void moveViews(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved, int insertionIndex) {
+        List<View> views = elementsToBeMoved.stream()
+                .map(Pair::getKey)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (insertionIndex < 0) {
+            toElement.getViews().addAll(views);
+        } else {
+            toElement.getViews().addAll(insertionIndex, views);
+        }
+
         for (Pair<View, IncludedStructuralElement> elementToBeMoved : elementsToBeMoved) {
             dataEditor.unassignView(elementToBeMoved.getValue(), elementToBeMoved.getKey());
-            dataEditor.assignView(toElement, elementToBeMoved.getKey());
+            elementToBeMoved.getKey().getMediaUnit().getIncludedStructuralElements().add(toElement);
         }
     }
 

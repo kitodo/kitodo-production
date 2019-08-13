@@ -58,11 +58,14 @@ public class GalleryPanel {
     private static final Pattern DROP_STRIPE = Pattern
             .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList");
 
+    private static final Pattern DROP_MEDIA_AREA = Pattern
+            .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPageDropArea");
+
+    private static final Pattern DROP_UNSTRUCTURED_MEDIA_AREA = Pattern
+            .compile("imagePreviewForm:structuredPages:(\\d+):unstructuredMediaPanel:(\\d+):structuredPageDropArea");
+
     private static final Pattern UNSTRUCTURED_MEDIA = Pattern
             .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredMediaPanel");
-
-    private static final Pattern UNSTRUCTURED_MEDIA_AREA = Pattern
-            .compile("imagePreviewForm:unstructuredMediaList");
 
     private final DataEditorForm dataEditor;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
@@ -177,54 +180,74 @@ public class GalleryPanel {
      *            JSF drag'n'drop event description object
      */
     public void onPageDrop(DragDropEvent event) {
-        Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(event.getDragId());
-        Matcher dragUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA.matcher(event.getDragId());
-        Matcher dropStripeMatcher = DROP_STRIPE.matcher(event.getDropId());
-        Matcher dropUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
-        if ((dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches())
-                && (dropStripeMatcher.matches() || dropUnstructuredMediaMatcher.matches())) {
-            int toStripeIndex;
-            if (dropStripeMatcher.matches()) {
-                toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
-            } else if (dropUnstructuredMediaMatcher.matches()) {
-                // First (0) stripe represents logical root element (unstructured media)
-                toStripeIndex = 0;
-            } else {
-                return;
-            }
+        int toStripeIndex = getDropStripeIndex(event);
+        int toMediaIndex = getMediaIndex(event);
 
-            GalleryStripe toStripe = stripes.get(toStripeIndex);
-
-            // move views
-            List<Pair<View, IncludedStructuralElement>> viewsToBeMoved = new ArrayList<>();
-            for (Pair<MediaUnit, IncludedStructuralElement> selectedElememt : dataEditor.getSelectedMedia()) {
-                for (View view : selectedElememt.getValue().getViews()) {
-                    if (Objects.equals(view.getMediaUnit(), selectedElememt.getKey())) {
-                        viewsToBeMoved.add(new ImmutablePair<>(view, selectedElememt.getValue()));
-                    }
-                }
-            }
-            // TODO: rework GalleryPanel to allow dropping page thumbnails between other thumbnails!
-            dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved);
-
-            // update stripes
-            for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
-                GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
-                if (Objects.nonNull(fromStripe)) {
-                    fromStripe.getMedias().clear();
-                    for (View remainingView : fromStripe.getStructure().getViews()) {
-                        fromStripe.getMedias().add(createGalleryMediaContent(remainingView));
-                    }
-                }
-            }
-            toStripe.getMedias().clear();
-            for (View toStripeView : toStripe.getStructure().getViews()) {
-                toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
-            }
-            dataEditor.getStructurePanel().show();
+        if (toStripeIndex == -1 || !dragStripeIndexMatches(event)) {
+            logger.error("Unsupported drag'n'drop event from {} to {}", event.getDragId(), event.getDropId());
             return;
         }
-        logger.debug("Unsupported drag'n'drop event from {} to {}", event.getDragId(), event.getDropId());
+
+        GalleryStripe toStripe = stripes.get(toStripeIndex);
+
+        // move views
+        List<Pair<View, IncludedStructuralElement>> viewsToBeMoved = new ArrayList<>();
+        for (Pair<MediaUnit, IncludedStructuralElement> selectedElememt : dataEditor.getSelectedMedia()) {
+            for (View view : selectedElememt.getValue().getViews()) {
+                if (Objects.equals(view.getMediaUnit(), selectedElememt.getKey())) {
+                    viewsToBeMoved.add(new ImmutablePair<>(view, selectedElememt.getValue()));
+                }
+            }
+        }
+        dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
+
+        // update stripes
+        for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
+            GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
+            if (Objects.nonNull(fromStripe)) {
+                fromStripe.getMedias().clear();
+                for (View remainingView : fromStripe.getStructure().getViews()) {
+                    fromStripe.getMedias().add(createGalleryMediaContent(remainingView));
+                }
+            }
+        }
+        toStripe.getMedias().clear();
+        for (View toStripeView : toStripe.getStructure().getViews()) {
+            toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
+        }
+        dataEditor.getStructurePanel().show();
+    }
+
+    private boolean dragStripeIndexMatches(DragDropEvent event) {
+        Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(event.getDragId());
+        Matcher dragUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA.matcher(event.getDragId());
+        return dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches();
+    }
+
+    private int getDropStripeIndex(DragDropEvent event) {
+        Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(event.getDropId());
+        Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
+        if (dropMediaAreaMatcher.matches()) {
+            return Integer.parseInt(dropMediaAreaMatcher.group(1));
+        } else if (dropUnstructuredMediaAreaMatcher.matches()) {
+            // First (0) stripe represents logical root element (unstructured media)
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+    private int getMediaIndex(DragDropEvent event) {
+        Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(event.getDropId());
+        Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
+        if (dropMediaAreaMatcher.matches()) {
+            return Integer.parseInt(dropMediaAreaMatcher.group(2));
+        } else if (dropUnstructuredMediaAreaMatcher.matches()) {
+            // First (0) stripe represents logical root element (unstructured media)
+            return Integer.parseInt(dropUnstructuredMediaAreaMatcher.group(1));
+        } else {
+            return -1;
+        }
     }
 
     private GalleryStripe getGalleryStripe(IncludedStructuralElement structuralElement) {
