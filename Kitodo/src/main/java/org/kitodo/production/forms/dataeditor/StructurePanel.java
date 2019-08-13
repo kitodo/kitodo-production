@@ -22,11 +22,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +34,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
@@ -922,7 +921,7 @@ public class StructurePanel implements Serializable {
                 }
                 if (Objects.nonNull(previousParent)) {
                     IncludedStructuralElement element = (IncludedStructuralElement) dropNode.getDataObject();
-                    moveViews(previousParent, element, Collections.singletonList(view));
+                    moveViews(element, Collections.singletonList(new ImmutablePair<>(view, previousParent)));
                     expandNode(event.getDropNode());
                     this.dataEditor.getGalleryPanel().updateStripes();
                     return;
@@ -942,21 +941,21 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Move List of View elements 'views' from IncludedStructuralElement 'fromElement' to IncludedStructuralElement
+     * Move List of elements 'elementsToBeMoved' from IncludedStructuralElement in each Pair to IncludedStructuralElement
      * 'toElement'.
-     * TODO: this should incorporate the index where views are to be inserted in the "toElement" once the corresponding
+     * TODO: this should incorporate the index where elementsToBeMoved are to be inserted in the "toElement" once the corresponding
      *       bug in the PrimeFaces tree implementation are fixed (https://github.com/primefaces/primefaces/issues/3543)!
      *
-     * @param fromElement
-     *          IncludedStructuralElement from which View is moved
      * @param toElement
      *          IncludedStructuralElement to which View is moved
-     * @param views
-     *          Views to be moved
+     * @param elementsToBeMoved
+     *          List of elements to be moved as Pairs of View and IncludedStructuralElement they are attached to
      */
-    void moveViews(IncludedStructuralElement fromElement, IncludedStructuralElement toElement, List<View> views) {
-        toElement.getViews().addAll(views);
-        fromElement.getViews().removeAll(views);
+    void moveViews(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
+        for (Pair<View, IncludedStructuralElement> elementToBeMoved : elementsToBeMoved) {
+            toElement.getViews().add(elementToBeMoved.getKey());
+            elementToBeMoved.getValue().getViews().remove(elementToBeMoved.getKey());
+        }
     }
 
     private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
