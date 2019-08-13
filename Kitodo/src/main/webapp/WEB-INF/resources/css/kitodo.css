@@ -507,106 +507,78 @@ Breadcrumb menu
     padding: 0;
 }
 
-.breadcrumb-menu li:first-child a.ui-menuitem-link {
-    background-image: none;
-}
-
-.breadcrumb-menu li:first-child a.ui-menuitem-link span:hover {
-    color: var(--carbon-blue);
-    background-color: var(--pure-white);
-    transition: color .5s, background-color .5s;
-}
-
-.breadcrumb-menu li:first-child a.ui-menuitem-link span:after {
-    content: '\f015';
-    font-family: 'FontAwesome';
-    text-indent: 0;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    transition: color .5s, background-color .5s;
-}
-
-.breadcrumb-menu a.ui-menuitem-link {
-    background-color: var(--focused-blue);
-    border-radius: var(--default-border-radius);
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
-    display: inline-block;
-    text-align: center;
-}
-
-.breadcrumb-menu li[role=menuitem] {
-    overflow: visible;
-}
-
-.breadcrumb-menu li:not(:first-child) a.ui-menuitem-link {
-    margin-top: 0;
-    color: var(--pure-white);
-    background-color: var(--focused-blue);
-    width: 36px;
-    transition: color .5s, background-color .5s, width .5s;
-}
-
-.breadcrumb-menu li:not(:first-child):hover a.ui-menuitem-link {
-    color: var(--carbon-blue);
-    background-color: var(--pure-white);
-    width: unset;
-}
-
-.breadcrumb-menu ul li a.ui-menuitem-link {
-    color: var(--pure-white);
-    font-size: small;
-    margin-top: 0;
-    text-decoration: none;
-    transition: color .5s, background-color .5s;
-}
-
-.breadcrumb-menu a.ui-menuitem-link:first-child:hover {
-    color: var(--carbon-blue);
-    background-color: var(--pure-white);
-}
-
-.breadcrumb-menu span.ui-menuitem-text {
-    height: 100%;
-    padding-left: 8px;
-    text-overflow: ellipsis;
-}
-
-.breadcrumb-menu span.ui-menuitem-text:hover {
-    padding-right: 8px;
-}
-
-.breadcrumb-menu li.ui-breadcrumb-chevron {
+.breadcrumb-menu ul li.ui-breadcrumb-chevron {
     display: none;
 }
 
-.breadcrumb-menu ul li[role=menuitem]:not(:first-child) {
-    margin-left: var(--default-half-size);
+.breadcrumb-menu ul li {
+    overflow: visible;
 }
 
-.breadcrumb-menu ul li[role=menuitem]:not(:first-child)::after {
-    content: " ";
+.breadcrumb-menu ul li .ui-menuitem-link {
     background-color: var(--focused-blue);
-    transform: rotate(-45deg);
     background-image: none;
-    border-width: 3px 0 0 3px;
-    border-style: solid;
-    border-color: var(--blue);
-    top: 11px;
-    left: -10px;
+    border-radius: var(--default-border-radius);
+    color: var(--pure-white);
     display: inline-block;
-    position: absolute;
-    height: 12px;
-    width: 12px;
-    z-index: 1;
-    transition: background-color .5s;
+    font-size: small;
+    height: var(--input-height);
+    line-height: var(--input-height);
+    margin-top: 0;
+    text-align: center;
+    text-decoration: none;
+    width: var(--input-height);
 }
 
-.breadcrumb-menu li[role=menuitem]:not(:first-child):hover::after {
-    background-color: var(--pure-white);
-    transition: background-color .5s;
+.breadcrumb-menu ul li .ui-menuitem-text {
+    padding: 0 4px;
+    text-overflow: ellipsis;
+}
+
+.breadcrumb-menu ul li:not(:first-child) {
+    margin-left: 6px;
+}
+
+.breadcrumb-menu ul li:not(:first-child)::before {
+    background-color: var(--focused-blue);
+    border: solid var(--blue);
+    border-width: 3px 0 0 3px;
+    content: "";
+    height: 12px;
+    left: -8px;
+    position: absolute;
+    top: 11px;
+    transform: translateZ(1px) rotate(-45deg);
+    width: 12px;
+}
+
+.breadcrumb-menu ul li:first-child .ui-menuitem-text::after {
+    content: '\f015';
+    font-family: 'FontAwesome';
+    left: 0;
+    position: absolute;
+    text-indent: 0;
+    width: 100%;
+}
+
+.breadcrumb-menu ul li:hover .ui-menuitem-link,
+.breadcrumb-menu ul li:hover .ui-menuitem-text::after,
+.breadcrumb-menu ul li:hover::before {
+    background: var(--pure-white);
+    color: var(--carbon-blue);
+}
+
+.breadcrumb-menu ul li:not(:first-child):hover .ui-menuitem-link {
+    width: auto;
+}
+
+.breadcrumb-menu ul li:not(:first-child):hover .ui-menuitem-text {
+    padding: 0 var(--default-half-size);
+}
+
+.breadcrumb-menu ul li .ui-menuitem-text,
+.breadcrumb-menu ul li:hover .ui-menuitem-text {
+    transition: .3s;
 }
 
 /*----------------------------------------------------------------------
@@ -905,10 +877,6 @@ main i.fa {
     width: 90px;
 }
 
-.progressColumn {
-    width: 120px;
-}
-
 .statusColumn,
 .statusColumn div,
 .statusColumn .ui-panel-content {
@@ -1109,7 +1077,7 @@ h3#headerText {
 
 #processesTabView\:processesForm\:actionsButton {
     float: left;
-    margin-top: calc((var(--input-height) + var(--default-full-size)) * -1);
+    margin-top: calc((var(--input-height) + var(--input-padding)) * -1);
     margin-left: var(--default-full-size);
 }
 
@@ -1961,17 +1929,31 @@ footer {
     margin-right: 10px;
 }
 
+.ui-datatable tr td.actionsColumn > a:last-child,
+.ui-datatable tr td.actionsColumn > form > a:last-child {
+    margin-right: 0;
+}
+
 .ui-datatable tr th.checkboxListColumn {
-    padding-left: 7px;
     height: 35px;
-    padding-top: 3px;
     margin-top: -5px;
     vertical-align: inherit;
 }
 
 .ui-datatable tr th.checkboxListColumn,
 .ui-datatable tr td.checkboxListColumn {
-    width: 35px;
+    width: 18px;
+}
+
+.ui-datatable tr th.checkboxListColumn .ui-chkbox,
+.ui-datatable tr th.checkboxListColumn .ui-chkbox-box,
+.ui-datatable tr td.checkboxListColumn .ui-chkbox {
+    margin: 0;
+    vertical-align: top;
+}
+
+.ui-datatable tr td.checkboxListColumn .ui-chkbox-box {
+    vertical-align: middle;
 }
 
 .ui-datatable tr th.checkboxColumn,
@@ -1981,7 +1963,6 @@ footer {
 
 .ui-datatable tr td span.process-progress {
     display: block;
-    width: 110px;
     height: 16px;
     border-radius: var(--default-border-radius);
 }
@@ -2008,6 +1989,11 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
     background: var(--pure-white);
     min-height: calc(100% - var(--contrast-border-width));
     padding: var(--contrast-border-width) 0 0 0;
+}
+
+.ui-tabs .ui-tabs-panel > .ui-panelgrid {
+    padding-left: var(--default-half-size);
+    padding-right: var(--default-half-size);
 }
 
 .ui-panelgrid-cell > div {
@@ -2125,10 +2111,15 @@ min 700px
 
     #search-form\:search-field {
         display: table-cell;
+        vertical-align: top;
     }
 
     #search-form\:search-field-short {
         display: none;
+    }
+
+    #search-form\:search .ui-icon {
+        margin-top: -9px;
     }
 
     #portal-header #portal-nav {
