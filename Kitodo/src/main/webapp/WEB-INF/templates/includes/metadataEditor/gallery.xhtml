@@ -122,7 +122,8 @@
                                      for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
                                      hoverStyleClass="media-stripe-hover">
                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                    update="imagePreviewForm
+                                    update="@(#imagePreviewForm .ui-datalist)
+                                            imagePreviewForm:unstructuredMedia
                                             structureTreeForm:logicalTree"/>
                         </p:droppable>
                     </p:dataList>
@@ -184,7 +185,9 @@
                                      for="imagePreviewForm:unstructuredMediaList"
                                      hoverStyleClass="media-stripe-hover">
                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                    update="imagePreviewForm, structureTreeForm:structureWrapperPanel"/>
+                                    update="@(#imagePreviewForm .ui-datalist)
+                                            imagePreviewForm:unstructuredMedia
+                                            structureTreeForm:logicalTree"/>
                         </p:droppable>
                     </h:panelGroup>
 
