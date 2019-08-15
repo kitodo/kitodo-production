@@ -22,8 +22,9 @@
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
         <!-- Logical Tree -->
-        <h:panelGroup layout="block" style="background-color: var(--cloudy-gray);"
-                      styleClass="ui-widget-content columnHeadingWrapper">#{DataEditorForm.structurePanel.separateMedia ? msgs.logical : ''} #{msgs.structure}</h:panelGroup>
+        <h:panelGroup layout="block"
+                      style="background-color: var(--cloudy-gray); display: #{DataEditorForm.structurePanel.separateMedia ? 'block' : 'none'}"
+                      styleClass="ui-widget-content columnHeadingWrapper">#{msgs.logical} #{msgs.structure}</h:panelGroup>
         <p:tree id="logicalTree"
                 value="#{DataEditorForm.structurePanel.logicalTree}"
                 disabled="#{readOnly}"
