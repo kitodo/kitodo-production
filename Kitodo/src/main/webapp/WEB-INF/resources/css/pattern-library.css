@@ -1123,11 +1123,14 @@ Popup dialogs
 }
 
 #loadingScreen > div {
+    animation: insert-delayed 1s forwards;
+    animation-delay: .75s;
     display: inline-block;
     height: 108px;
     left: 50%;
     margin-left: calc(309px / -2);
     margin-top: calc(108px / -2);
+    opacity: 0;
     position: fixed;
     top: 50%;
     width: 309px;
@@ -1139,9 +1142,19 @@ Popup dialogs
 }
 
 #loadingScreen #kitodo-logo-key-animatable {
-    overflow: visible;
     animation: rotate-vertically 2s infinite ease;
+    animation-delay: 1s;
+    overflow: visible;
     z-index: 99;
+}
+
+@keyframes insert-delayed {
+    from{
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes rotate-vertically {
