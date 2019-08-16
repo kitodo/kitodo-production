@@ -1575,7 +1575,7 @@ Column content
     background: inherit;
     box-sizing: border-box;
     margin-right: var(--default-half-size);
-    max-width: calc(100% - 90px);
+    max-width: calc(100% - 93px);
     text-overflow: ellipsis;
     width: 100%;
 }
@@ -1587,6 +1587,11 @@ Column content
     margin-right: 0;
     max-width: none;
     width: 100%;
+}
+
+#metadataAccordion\:metadata\:metadataTable .ui-button:not(:last-child),
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable .ui-button:not(:last-child) {
+    margin-right: var(--default-half-size);
 }
 
 .correction {
