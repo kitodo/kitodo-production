@@ -1842,6 +1842,11 @@ Column content
     display: inline-block;
 }
 
+.stripe-drop-area {
+    width: 100%;
+}
+
+.media-stripe-hover,
 .media-stripe-hover::after {
     background-color: var(--light-blue) !important;
 }

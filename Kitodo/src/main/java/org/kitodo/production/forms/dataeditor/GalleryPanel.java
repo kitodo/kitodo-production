@@ -52,6 +52,7 @@ import org.primefaces.model.StreamedContent;
 public class GalleryPanel {
     private static final Logger logger = LogManager.getLogger(GalleryPanel.class);
 
+    // Structured media
     private static final Pattern DRAG_STRIPE_IMAGE = Pattern
             .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPagePanel");
 
@@ -61,11 +62,21 @@ public class GalleryPanel {
     private static final Pattern DROP_MEDIA_AREA = Pattern
             .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPageDropArea");
 
-    private static final Pattern DROP_UNSTRUCTURED_MEDIA_AREA = Pattern
-            .compile("imagePreviewForm:structuredPages:(\\d+):unstructuredMediaPanel:(\\d+):structuredPageDropArea");
+    private static final Pattern DROP_MEDIA_LAST_AREA = Pattern
+            .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPageLastDropArea");
 
-    private static final Pattern UNSTRUCTURED_MEDIA = Pattern
+    // Unstructured media
+    private static final Pattern DRAG_UNSTRUCTURED_MEDIA = Pattern
             .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredMediaPanel");
+
+    private static final Pattern DROP_UNSTRUCTURED_STRIPE = Pattern
+            .compile("imagePreviewForm:unstructuredMediaList");
+
+    private static final Pattern DROP_UNSTRUCTURED_MEDIA_AREA = Pattern
+            .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageDropArea");
+
+    private static final Pattern DROP_UNSTRUCTURED_MEDIA_LAST_AREA = Pattern
+            .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageLastDropArea");
 
     private final DataEditorForm dataEditor;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
@@ -220,16 +231,32 @@ public class GalleryPanel {
 
     private boolean dragStripeIndexMatches(DragDropEvent event) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(event.getDragId());
-        Matcher dragUnstructuredMediaMatcher = UNSTRUCTURED_MEDIA.matcher(event.getDragId());
+        Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(event.getDragId());
         return dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches();
     }
 
     private int getDropStripeIndex(DragDropEvent event) {
+        // empty stripe of structure element
+        Matcher dropStripeMatcher = DROP_STRIPE.matcher(event.getDropId());
+        // between two pages of structure element
         Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(event.getDropId());
+        // after last page of structure element
+        Matcher dropMediaLastAreaMatcher = DROP_MEDIA_LAST_AREA.matcher(event.getDropId());
+        // empty unstructured media stripe
+        Matcher dropUnstructuredMediaStripeMatcher = DROP_UNSTRUCTURED_STRIPE.matcher(event.getDropId());
+        // between two pages of unstructured media stripe
         Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
-        if (dropMediaAreaMatcher.matches()) {
+        // after last page of unstructured media stripe
+        Matcher dropUnstructuredMediaLastAreaMatcher = DROP_UNSTRUCTURED_MEDIA_LAST_AREA.matcher(event.getDropId());
+        if (dropStripeMatcher.matches()) {
+            return Integer.parseInt(dropStripeMatcher.group(1));
+        } else if (dropMediaAreaMatcher.matches()) {
             return Integer.parseInt(dropMediaAreaMatcher.group(1));
-        } else if (dropUnstructuredMediaAreaMatcher.matches()) {
+        } else if (dropMediaLastAreaMatcher.matches()) {
+            return Integer.parseInt(dropMediaLastAreaMatcher.group(1));
+        } else if (dropUnstructuredMediaStripeMatcher.matches()
+                || dropUnstructuredMediaLastAreaMatcher.matches()
+                || dropUnstructuredMediaAreaMatcher.matches()) {
             // First (0) stripe represents logical root element (unstructured media)
             return 0;
         } else {
@@ -239,12 +266,17 @@ public class GalleryPanel {
 
     private int getMediaIndex(DragDropEvent event) {
         Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(event.getDropId());
+        Matcher dropMediaLastAreaMatcher = DROP_MEDIA_LAST_AREA.matcher(event.getDropId());
         Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
+        Matcher dropUnstructuredMediaLastAreaMatcher = DROP_UNSTRUCTURED_MEDIA_LAST_AREA.matcher(event.getDropId());
         if (dropMediaAreaMatcher.matches()) {
             return Integer.parseInt(dropMediaAreaMatcher.group(2));
+        } else if (dropMediaLastAreaMatcher.matches()) {
+            return Integer.parseInt(dropMediaLastAreaMatcher.group(2)) + 1;
         } else if (dropUnstructuredMediaAreaMatcher.matches()) {
-            // First (0) stripe represents logical root element (unstructured media)
             return Integer.parseInt(dropUnstructuredMediaAreaMatcher.group(1));
+        } else if (dropUnstructuredMediaLastAreaMatcher.matches()) {
+            return Integer.parseInt(dropUnstructuredMediaLastAreaMatcher.group(1)) + 1;
         } else {
             return -1;
         }

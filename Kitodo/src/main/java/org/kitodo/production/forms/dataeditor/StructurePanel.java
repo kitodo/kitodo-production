@@ -966,7 +966,7 @@ public class StructurePanel implements Serializable {
                 .map(Pair::getKey)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        if (insertionIndex < 0) {
+        if (insertionIndex < 0 || insertionIndex == toElement.getViews().size()) {
             toElement.getViews().addAll(views);
         } else {
             toElement.getViews().addAll(insertionIndex, views);
