@@ -1820,16 +1820,18 @@ Column content
 #imagePreviewForm\:structuredPages ul li > .ui-panel,
 #imagePreviewForm\:unstructuredMedia ul li > .ui-panel {
     display: inline-block;
+    position: relative;
 }
 
 .page-drop-area {
-    position: absolute;
     display: inline-block;
     width: 20px;
     height: 80px;
     margin: -5px -10px;
     padding: 0;
+    position: absolute;
     text-align: center;
+    top: 7px;
     z-index: -1;
 }
 
