@@ -125,7 +125,8 @@
                                          activeStyleClass="media-stripe-hover"
                                          hoverStyleClass="media-stripe-index-hover">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="imagePreviewForm
+                                        update="@(#imagePreviewForm .ui-datalist)
+                                                imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
                         </p:dataList>
@@ -199,7 +200,8 @@
                                          activeStyleClass="media-stripe-hover"
                                          hoverStyleClass="media-stripe-index-hover">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="imagePreviewForm
+                                        update="@(#imagePreviewForm .ui-datalist)
+                                                imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
                         </p:dataList>
