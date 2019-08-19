@@ -80,15 +80,15 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement actionsButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":createBatch")
+    @FindBy(id = BATCH_FORM + ":createBatchSelection")
     private WebElement createBatchLink;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":renameBatch")
+    @FindBy(id = BATCH_FORM + ":renameBatchSelection")
     private WebElement renameBatchLink;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":deleteBatch")
+    @FindBy(id = BATCH_FORM + ":deleteBatchSelection")
     private WebElement deleteBatchLink;
 
     @SuppressWarnings("unused")
@@ -96,7 +96,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement addProcessesToBatchLink;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":removeProcessesFromBatch")
+    @FindBy(id = BATCH_FORM + ":removeProcessesFromBatchSelection")
     private WebElement removeProcessesFromBatchLink;
 
     @SuppressWarnings("unused")
@@ -118,6 +118,12 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "renameBatchForm:save")
     private WebElement renameBatchSaveButton;
+
+    @FindBy(id = "processesTabView:batchForm:batchActionsButton")
+    private WebElement batchActionsButton;
+
+    @FindBy(id = "processesTabView:batchForm:processActionsButton")
+    private WebElement processActionsButton;
 
     public ProcessesPage() {
         super("pages/processes.jsf");
@@ -181,26 +187,58 @@ public class ProcessesPage extends Page<ProcessesPage> {
         Select processSelect = new Select(processesSelect);
         processSelect.selectByIndex(0);
         processSelect.selectByIndex(1);
+        processActionsButton.click();
+
+        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .until(() -> createBatchLink.isDisplayed());
         createBatchLink.click();
 
         createBatchTitleInput.sendKeys("SeleniumBatch");
         createBatchSaveButton.click();
     }
 
-    public void editBatch() throws Exception {
+    public void renameBatch() throws Exception {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
+        batchesSelect = Browser.getDriver()
+                .findElementById(BATCH_FORM + ":selectBatches");
+
+        await("Wait for batch tab to open").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .until(() -> batchesSelect.isDisplayed());
+        Select batchSelect = new Select(batchesSelect);
+        batchSelect.selectByVisibleText("First batch (1 Vorgänge)");
+
+        processActionsButton = Browser.getDriver()
+                .findElementById("processesTabView:batchForm:processActionsButton");
+
+        await("Wait for process actions button to become clickable").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .until(() -> processActionsButton.isDisplayed());
+        processActionsButton.click();
+
+        renameBatchLink = Browser.getDriver().findElementById(BATCH_FORM + ":renameBatchSelection");
+        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .until(() -> renameBatchLink.isDisplayed());
+        renameBatchLink.click();
+
+        renameBatchTitleInput.sendKeys("SeleniumBatch");
+        renameBatchSaveButton.click();
+    }
+
+    public void removeProcessFromBatch() throws Exception {
+
+        switchToTabByIndex(TabIndex.BATCHES.getIndex());
         Select batchSelect = new Select(batchesSelect);
         batchSelect.selectByVisibleText("Third batch (2 Vorgänge)");
 
         Select processSelect = new Select(processesSelect);
         processSelect.selectByVisibleText("First process");
 
+        processActionsButton.click();
         removeProcessesFromBatchLink.click();
-
-        renameBatchLink.click();
-        renameBatchTitleInput.sendKeys("SeleniumBatch");
-        renameBatchSaveButton.click();
     }
 
     public void deleteBatch() throws Exception {
@@ -209,6 +247,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         Select batchSelect = new Select(batchesSelect);
         batchSelect.selectByVisibleText("Third batch (2 Vorgänge)");
 
+        batchActionsButton.click();
         deleteBatchLink.click();
     }
 
