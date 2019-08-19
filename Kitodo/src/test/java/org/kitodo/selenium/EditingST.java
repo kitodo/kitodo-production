@@ -81,17 +81,13 @@ public class EditingST extends BaseTestSelenium {
     }
 
     @Test
-    public void removeProcessFromBatchTest() throws Exception {
-        processesPage.removeProcessFromBatch();
-        assertEquals("Process was not removed from batch", 1, ServiceManager.getBatchService()
-                .getByQuery("FROM Batch WHERE title = 'Third batch (2 Vorgänge)'").get(0).getProcesses().size());
-    }
-
-    @Test
-    public void renameBatchTest() throws Exception {
-        processesPage.renameBatch();
+    public void editBatchTest() throws Exception {
+        processesPage.editBatch();
         await().untilAsserted(() -> assertEquals("Batch was not renamed!", 1,
                 ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+
+        assertEquals("Process was not removed from batch", 1, ServiceManager.getBatchService()
+                .getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size());
     }
 
     @Test

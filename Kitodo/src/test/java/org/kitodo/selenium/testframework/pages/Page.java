@@ -168,6 +168,8 @@ public abstract class Page<T> {
     private void clickTab(int index, WebElement tabView) {
         List<WebElement> listTabs = tabView.findElements(By.tagName("li"));
         WebElement tab = listTabs.get(index);
+        await("Wait for tab to be visible").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> tab.isDisplayed());
         tab.click();
     }
 
