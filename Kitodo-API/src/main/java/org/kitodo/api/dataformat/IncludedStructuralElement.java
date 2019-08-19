@@ -73,12 +73,9 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
 
     /**
      * The views on {@link MediaUnit}s that this included structural element
-     * level comprises. The list ensures the enforcement of the order of the
-     * media units which is encoded by the media units’ {@code order} property.
-     * To reorder this list, you must change the order property of the media
-     * units.
+     * level comprises.
      */
-    private final List<View> views;
+    private final LinkedList<View> views;
 
     /**
      * Creates a new included structural element.
@@ -205,7 +202,7 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
      *
      * @return the views
      */
-    public List<View> getViews() {
+    public LinkedList<View> getViews() {
         return views;
     }
 

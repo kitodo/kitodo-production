@@ -951,8 +951,6 @@ public class StructurePanel implements Serializable {
     /**
      * Move List of elements 'elementsToBeMoved' from IncludedStructuralElement in each Pair to IncludedStructuralElement
      * 'toElement'.
-     * TODO: this should incorporate the index where elementsToBeMoved are to be inserted in the "toElement" once the corresponding
-     *       bug in the PrimeFaces tree implementation are fixed (https://github.com/primefaces/primefaces/issues/3543)!
      *
      * @param toElement
      *          IncludedStructuralElement to which View is moved
@@ -961,7 +959,9 @@ public class StructurePanel implements Serializable {
      * @param insertionIndex
      *          Index where views will be inserted into toElement's views
      */
-    void moveViews(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved, int insertionIndex) {
+    void moveViews(IncludedStructuralElement toElement,
+                   List<Pair<View, IncludedStructuralElement>> elementsToBeMoved,
+                   int insertionIndex) {
         List<View> views = elementsToBeMoved.stream()
                 .map(Pair::getKey)
                 .filter(Objects::nonNull)
@@ -973,7 +973,9 @@ public class StructurePanel implements Serializable {
         }
 
         for (Pair<View, IncludedStructuralElement> elementToBeMoved : elementsToBeMoved) {
-            dataEditor.unassignView(elementToBeMoved.getValue(), elementToBeMoved.getKey());
+            boolean removeLastOccurrenceOfView = toElement.equals(elementToBeMoved.getValue())
+                    && insertionIndex < elementToBeMoved.getValue().getViews().lastIndexOf(elementToBeMoved.getKey());
+            dataEditor.unassignView(elementToBeMoved.getValue(), elementToBeMoved.getKey(), removeLastOccurrenceOfView);
             elementToBeMoved.getKey().getMediaUnit().getIncludedStructuralElements().add(toElement);
         }
     }
@@ -1233,7 +1235,7 @@ public class StructurePanel implements Serializable {
                 if (structureTreeNodeParent.getDataObject() instanceof IncludedStructuralElement) {
                     IncludedStructuralElement includedStructuralElement =
                             (IncludedStructuralElement) structureTreeNodeParent.getDataObject();
-                    dataEditor.unassignView(includedStructuralElement, view);
+                    dataEditor.unassignView(includedStructuralElement, view, false);
                     if (view.getMediaUnit().getIncludedStructuralElements().size() <= 1) {
                         severalAssignments.remove(view.getMediaUnit());
                     }

@@ -676,8 +676,13 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         view.getMediaUnit().getIncludedStructuralElements().add(includedStructuralElement);
     }
 
-    void unassignView(IncludedStructuralElement includedStructuralElement, View view) {
-        includedStructuralElement.getViews().remove(view);
+    void unassignView(IncludedStructuralElement includedStructuralElement, View view, boolean removeLast) {
+        // if View was moved within one element, we need to distinguish two possible directions it could have been moved
+        if (removeLast) {
+            includedStructuralElement.getViews().removeLastOccurrence(view);
+        } else {
+            includedStructuralElement.getViews().removeFirstOccurrence(view);
+        }
         view.getMediaUnit().getIncludedStructuralElements().remove(includedStructuralElement);
     }
 }
