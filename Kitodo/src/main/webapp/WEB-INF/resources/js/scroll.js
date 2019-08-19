@@ -104,9 +104,11 @@ function initialize() {
 
 function initializeStructureTreeScrolling() {
 
-    $(document).on("mousedown", function() {
-        $("#scrollUpArea").css("display", "block");
-        $("#scrollDownArea").css("display", "block");
+    $(document).on("mousemove.structureTreeForm", "#structureTreeForm", function(e) {
+        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
+            $("#scrollUpArea").css("display", "block");
+            $("#scrollDownArea").css("display", "block");
+        }
     });
 
     $(document).on("mouseup", function() {
