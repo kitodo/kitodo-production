@@ -42,16 +42,18 @@ function enableDownButton() {
 }
 
 function checkScrollPosition(scrollableContent) {
-    if (atTop(scrollableContent)) {
-        disableUpButton();
-    } else {
-        enableUpButton();
-    }
+    if (scrollableContent) {
+        if (atTop(scrollableContent)) {
+            disableUpButton();
+        } else {
+            enableUpButton();
+        }
 
-    if (atBottom(scrollableContent)) {
-        disableDownButton();
-    } else {
-        enableDownButton();
+        if (atBottom(scrollableContent)) {
+            disableDownButton();
+        } else {
+            enableDownButton();
+        }
     }
 }
 
