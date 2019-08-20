@@ -1846,13 +1846,13 @@ Column content
     width: 100%;
 }
 
-.media-stripe-hover,
-.media-stripe-hover::after {
-    background-color: var(--light-blue) !important;
+#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover,
+#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover::after {
+    background-color: var(--light-blue);
 }
 
-.media-stripe-index-hover::after {
-    background-color: indianred !important;
+#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-index-hover::after {
+    background-color: indianred;
 }
 
 #imagePreviewForm\:structuredPagesField {
