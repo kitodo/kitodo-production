@@ -36,6 +36,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
     private static final String PROCESS_TITLE = "Second process";
+    private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -189,7 +190,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         processSelect.selectByIndex(1);
         processActionsButton.click();
 
-        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS)
                 .until(() -> createBatchLink.isDisplayed());
         createBatchLink.click();
@@ -219,7 +220,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         processActionsButton.click();
 
         renameBatchLink = Browser.getDriver().findElementById(BATCH_FORM + ":renameBatchSelection");
-        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS)
                 .until(() -> renameBatchLink.isDisplayed());
         renameBatchLink.click();
@@ -290,7 +291,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     public void downloadSearchResultAsExcel() {
         actionsButton.click();
-        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS)
                 .until(() -> downloadSearchResultAsExcel.isDisplayed());
         downloadSearchResultAsExcel.click();
@@ -302,7 +303,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     public void downloadSearchResultAsPdf() {
         actionsButton.click();
-        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .until(() -> downloadSearchResultAsPdf.isDisplayed());
