@@ -1816,12 +1816,43 @@ Column content
 }
 
 #imagePreviewForm\:structuredPages ul li,
-#imagePreviewForm\:unstructuredMedia ul li {
+#imagePreviewForm\:unstructuredMedia ul li,
+#imagePreviewForm\:structuredPages ul li > .ui-panel,
+#imagePreviewForm\:unstructuredMedia ul li > .ui-panel {
+    display: inline-block;
+    position: relative;
+}
+
+.page-drop-area {
+    display: inline-block;
+    width: 20px;
+    height: 80px;
+    margin: -5px -10px;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    top: 7px;
+    z-index: -1;
+}
+
+.page-drop-area::after {
+    content: "";
+    width: 50%;
+    height: 100%;
     display: inline-block;
 }
 
-.media-stripe-hover {
+.stripe-drop-area {
+    width: 100%;
+}
+
+#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover,
+#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover::after {
     background-color: var(--light-blue);
+}
+
+#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-index-hover::after {
+    background-color: indianred;
 }
 
 #imagePreviewForm\:structuredPagesField {

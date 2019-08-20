@@ -83,6 +83,8 @@
                                     emptyMessage="#{msgs['noMedia']}"
                                     value="#{stripe.medias}"
                                     binding="#{structuredThumbnail}">
+                            <p:panel id="structuredPageDropArea"
+                                     styleClass="page-drop-area"/>
                             <p:panel id="structuredPagePanel"
                                      a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
                                      a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
@@ -116,19 +118,43 @@
                             <p:draggable id="structuredPagesDraggable"
                                          scope="assignedPagesDroppable"
                                          for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
-                                         containment="#imagePreviewForm\:structuredPagesField"
                                          revert="true"
                                          stack=".ui-panel"/>
+                            <p:droppable for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPageDropArea"
+                                         scope="assignedPagesDroppable"
+                                         activeStyleClass="media-stripe-hover"
+                                         hoverStyleClass="media-stripe-index-hover">
+                                <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
+                                        update="@(#imagePreviewForm .ui-datalist)
+                                                imagePreviewForm:unstructuredMedia
+                                                structureTreeForm:logicalTree"/>
+                            </p:droppable>
+                            <!-- add one last drop area after the last page in a stripe -->
+                            <ui:fragment rendered="#{stripe.medias.size() ne 0 and  stripe.medias.size() - 1 eq structuredThumbnail.rowIndex}">
+                                <p:panel id="structuredPageLastDropArea"
+                                         styleClass="page-drop-area"/>
+                                <p:droppable for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPageLastDropArea"
+                                             scope="assignedPagesDroppable"
+                                             activeStyleClass="media-stripe-hover"
+                                             hoverStyleClass="media-stripe-index-hover">
+                                    <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
+                                            update="@(#imagePreviewForm .ui-datalist)
+                                                    imagePreviewForm:unstructuredMedia
+                                                    structureTreeForm:logicalTree"/>
+                                </p:droppable>
+                            </ui:fragment>
                         </p:dataList>
-                        <p:droppable id="structuredPagesDroppable"
-                                     scope="assignedPagesDroppable"
-                                     for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
-                                     hoverStyleClass="media-stripe-hover">
-                            <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                    update="@(#imagePreviewForm .ui-datalist)
-                                            imagePreviewForm:unstructuredMedia
-                                            structureTreeForm:logicalTree"/>
-                        </p:droppable>
+                        <ui:fragment rendered="#{stripe.medias.size() eq 0}">
+                            <p:droppable id="structuredPagesDroppable"
+                                         scope="assignedPagesDroppable"
+                                         for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
+                                         hoverStyleClass="media-stripe-hover">
+                                <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
+                                        update="@(#imagePreviewForm .ui-datalist)
+                                                imagePreviewForm:unstructuredMedia
+                                                structureTreeForm:logicalTree"/>
+                            </p:droppable>
+                        </ui:fragment>
                     </p:dataList>
 
                     <!-- Unstructured media-->
@@ -145,6 +171,8 @@
                                     binding="#{currentMedia}"
                                     emptyMessage="#{msgs['noMedia']}"
                                     var="media">
+                            <p:panel id="unstructuredPageDropArea"
+                                     styleClass="page-drop-area"/>
                             <p:panel id="unstructuredMediaPanel"
                                      a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
                                      a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
@@ -178,20 +206,44 @@
                             </p:panel>
                             <p:draggable id="unstructuredMediaDraggable"
                                          for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredMediaPanel"
-                                         containment="#imagePreviewForm\:structuredPagesField"
                                          revert="true"
                                          scope="assignedPagesDroppable"
                                          stack=".ui-panel"/>
+                            <p:droppable for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredPageDropArea"
+                                         scope="assignedPagesDroppable"
+                                         activeStyleClass="media-stripe-hover"
+                                         hoverStyleClass="media-stripe-index-hover">
+                                <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
+                                        update="@(#imagePreviewForm .ui-datalist)
+                                                imagePreviewForm:unstructuredMedia
+                                                structureTreeForm:logicalTree"/>
+                            </p:droppable>
+                            <!-- add one last drop area after the last page in a stripe -->
+                            <ui:fragment rendered="#{DataEditorForm.galleryPanel.stripes.get(0).medias.size() ne 0 and DataEditorForm.galleryPanel.stripes.get(0).medias.size() - 1 eq currentMedia.rowIndex}">
+                                <p:panel id="unstructuredPageLastDropArea"
+                                         styleClass="page-drop-area"/>
+                                <p:droppable for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredPageLastDropArea"
+                                             scope="assignedPagesDroppable"
+                                             activeStyleClass="media-stripe-hover"
+                                             hoverStyleClass="media-stripe-index-hover">
+                                    <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
+                                            update="@(#imagePreviewForm .ui-datalist)
+                                                    imagePreviewForm:unstructuredMedia
+                                                    structureTreeForm:logicalTree"/>
+                                </p:droppable>
+                            </ui:fragment>
                         </p:dataList>
-                        <p:droppable id="unstructuredPagesDroppable"
-                                     scope="assignedPagesDroppable"
-                                     for="imagePreviewForm:unstructuredMediaList"
-                                     hoverStyleClass="media-stripe-hover">
-                            <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                    update="@(#imagePreviewForm .ui-datalist)
-                                            imagePreviewForm:unstructuredMedia
-                                            structureTreeForm:logicalTree"/>
-                        </p:droppable>
+                        <ui:fragment rendered="#{DataEditorForm.galleryPanel.stripes.get(0).medias.size() eq 0}">
+                            <p:droppable id="unstructuredPagesDroppable"
+                                         scope="assignedPagesDroppable"
+                                         for="imagePreviewForm:unstructuredMediaList"
+                                         hoverStyleClass="media-stripe-hover">
+                                <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
+                                        update="@(#imagePreviewForm .ui-datalist)
+                                                imagePreviewForm:unstructuredMedia
+                                                structureTreeForm:logicalTree"/>
+                            </p:droppable>
+                        </ui:fragment>
                     </h:panelGroup>
 
                 </p:fieldset>

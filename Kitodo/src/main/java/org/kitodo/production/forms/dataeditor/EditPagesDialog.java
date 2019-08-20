@@ -262,7 +262,7 @@ public class EditPagesDialog {
     public void removePage() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             for (View viewToRemove : getViewsToAdd(paginationSubSelectionSelectedItems)) {
-                dataEditor.unassignView(dataEditor.getSelectedStructure().get(), viewToRemove);
+                dataEditor.unassignView(dataEditor.getSelectedStructure().get(), viewToRemove, false);
             }
             dataEditor.refreshStructurePanel();
             prepare();

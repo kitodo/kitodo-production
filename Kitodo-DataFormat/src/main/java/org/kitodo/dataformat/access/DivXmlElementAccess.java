@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -48,8 +47,7 @@ import org.kitodo.dataformat.metskitodo.Mets;
 
 /**
  * The tree-like outline structure for digital representation. This structuring
- * structure can be subdivided into arbitrary finely granular
- * {@link #substructures}. It can be described by {@link #metadata}.
+ * structure can be subdivided into arbitrary finely granular.
  */
 public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
@@ -97,7 +95,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      *            From this map, the media units are read, which must be
      *            referenced here by their ID.
      */
-    DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap) {
+    DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> mediaUnitsMap) {
         super();
         super.setLabel(div.getLABEL());
         for (Object mdSecType : div.getDMDID()) {
@@ -112,7 +110,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
             super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap));
         }
         super.setType(div.getTYPE());
-        Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
+        List<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
         if (Objects.nonNull(fileXmlElementAccesses)) {
             for (FileXmlElementAccess fileXmlElementAccess : fileXmlElementAccesses) {
                 if (Objects.nonNull(fileXmlElementAccess)
@@ -127,13 +125,13 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
 
     private boolean fileXmlElementAccessIsLinkedToChildren(FileXmlElementAccess fileXmlElementAccess,
                                                            List<DivType> divs,
-                                                           Map<String, Set<FileXmlElementAccess>> mediaUnitsMap) {
+                                                           Map<String, List<FileXmlElementAccess>> mediaUnitsMap) {
         if (divs.size() == 0) {
             return false;
         }
         boolean test = false;
         for (DivType div : divs) {
-            Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
+            List<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
             if (Objects.nonNull(fileXmlElementAccesses) && fileXmlElementAccesses.contains(fileXmlElementAccess)) {
                 return true;
             }
