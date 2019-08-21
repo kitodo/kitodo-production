@@ -145,6 +145,22 @@ function initializeStructureTreeScrolling() {
     });
 }
 
+function scrollToSelectedThumbnail() {
+    var scrollableContent = $("#thumbnailStripeScrollableContent");
+    if (scrollableContent.length) {
+        var selectedThumbnail = scrollableContent.find(".active.thumbnail");
+        if (selectedThumbnail.length === 1) {
+            var thumbnailHeight = selectedThumbnail.parent().height();
+            var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
+            if (selectedIndex >= 0) {
+                scrollableContent.animate({
+                    scrollTop: selectedIndex * thumbnailHeight - (scrollableContent.height()/2 - thumbnailHeight/2)
+                }, 180, null, null);
+            }
+        }
+    }
+}
+
 function destruct() {
     $(document).off("mouseenter.scrollGallery");
     $(document).off("mouseleave.scrollGallery");

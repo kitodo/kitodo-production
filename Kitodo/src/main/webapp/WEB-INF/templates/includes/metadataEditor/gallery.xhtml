@@ -54,7 +54,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
-                                     oncomplete="initialize()"
+                                     oncomplete="initialize(); scrollToSelectedThumbnail();"
                                      title="Detail View"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
@@ -96,7 +96,7 @@
                                                        structureTreeForm:logicalTree
                                                        structureTreeForm:physicalTree
                                                        metadataAccordion:logicalMetadataWrapperPanel
-                                                       imagePreviewForm:olWrapper">
+                                                       imagePreviewForm:mapWrapper">
                                     <h:panelGroup class="thumbnail-container">
                                         <p:outputPanel deferred="true"
                                                        deferredMode="visible">
@@ -185,7 +185,7 @@
                                                        structureTreeForm:logicalTree
                                                        structureTreeForm:physicalTree
                                                        metadataAccordion:logicalMetadataWrapperPanel
-                                                       imagePreviewForm:olWrapper">
+                                                       imagePreviewForm:mapWrapper">
                                     <h:panelGroup layout="block"
                                                   styleClass="thumbnail-container">
                                         <p:outputPanel deferred="true"
@@ -259,7 +259,7 @@
                                                @(.active.thumbnail)
                                                structureTreeForm:logicalTree
                                                structureTreeForm:physicalTree
-                                               imagePreviewForm:olWrapper">
+                                               imagePreviewForm:mapWrapper">
                             <h:panelGroup layout="block" styleClass="thumbnail-container">
                                 <p:outputPanel deferred="true"
                                                deferredMode="visible">
@@ -293,7 +293,8 @@
                                            var="media">
                                     <h:panelGroup layout="block">
                                         <p:commandLink action="#{DataEditorForm.galleryPanel.select(media, null)}"
-                                                       update="imagePreviewForm
+                                                       update="@(.thumbnail)
+                                                               imagePreviewForm:mapWrapper
                                                                galleryHeadingWrapper
                                                                structureTreeForm:logicalTree
                                                                structureTreeForm:physicalTree"
@@ -319,9 +320,11 @@
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </div>
                     <ui:fragment rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).showingInMediaView}">
-                        <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
-                        <h:outputScript name="js/ol_custom.js"/>
-                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;"></div>
+                        <h:panelGroup id="mapWrapper">
+                            <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
+                            <h:outputScript name="js/ol_custom.js"/>
+                            <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;"></div>
+                        </h:panelGroup>
                     </ui:fragment>
                 </h:panelGroup>
             </ui:fragment>
