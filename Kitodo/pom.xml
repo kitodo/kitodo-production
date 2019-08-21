@@ -484,21 +484,6 @@
 
         <!-- Libraries from Slub-Nexus repository -->
         <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_codec</artifactId>
-            <version>1.1.2_01</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_core</artifactId>
-            <version>1.1.2_01</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_imageio</artifactId>
-            <version>1.0_01</version>
-        </dependency>
-        <dependency>
             <groupId>net.xeoh</groupId>
             <artifactId>plugins-base</artifactId>
             <version>1.0.0</version>
@@ -514,39 +499,14 @@
             <version>${saxon.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.medialib.codec</groupId>
-            <artifactId>clibwrapper_jiio</artifactId>
-            <version>1.2-daily</version>
-        </dependency>
-        <dependency>
             <groupId>net.sf.j2ep</groupId>
             <artifactId>j2ep</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.marc4j</groupId>
-            <artifactId>marc4j</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>gov.loc.mets</groupId>
-            <artifactId>mets</artifactId>
-            <version>1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>gov.loc.mods</groupId>
-            <artifactId>mods</artifactId>
-            <version>3.3</version>
-        </dependency>
-        <dependency>
             <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
             <artifactId>classloader-leak-prevention-servlet3</artifactId>
             <version>2.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>xmlbeans</groupId>
-            <artifactId>xbean_xpath</artifactId>
-            <version>2.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
