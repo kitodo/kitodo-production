@@ -12,7 +12,9 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -36,6 +38,18 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     @FindBy(xpath = "//div[@id='"+WORKFLOW_TAB_VIEW +":status_panel']/div/ul/li[text()='Aktiv']" )
     private WebElement activeOption;
 
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//html/body/div[3]/main/div/div/form/div[3]/div/div/div[2]/div/div/div[3]/div/div/svg/g/g[1]/g[3]/g/g" )
+    private WebElement taskBox;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//div[@id='js-properties-panel']/div/div/div[2]/ul/li[2]" )
+    private WebElement roleTab;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "camunda-permittedUserRole_3")
+    private WebElement firstRole;
+
     @Override
     public WorkflowEditPage goTo() {
         return null;
@@ -45,8 +59,14 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
         super("pages/workflowEdit.jsf");
     }
 
-    public WorkflowEditPage insertWorkflowData(Workflow workflow) {
+    public WorkflowEditPage insertWorkflowData(Workflow workflow) throws InterruptedException {
         fileInput.sendKeys(workflow.getTitle());
+        taskBox = Browser.getDriver().findElementByXPath("/html/body/div[3]/main/div/div/form/div[3]/div/div/div[2]/div/div/div[3]/div/div/svg/g/g[1]/g[3]/g/g");
+        Thread.sleep(2000);
+        taskBox.click();
+        roleTab.click();
+        firstRole.click();
+
         return this;
     }
 
