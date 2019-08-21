@@ -13,6 +13,7 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
@@ -130,7 +131,7 @@ public class AddingST extends BaseTestSelenium {
         do {
             generatedProcess = processService.getById(recordNumber++);
         } while (!generatedTitle.equals(generatedProcess.getTitle()));
-        assertEquals("Created Process unexpectedly got a parent!", null, generatedProcess.getParent());
+        assertNull("Created Process unexpectedly got a parent!", generatedProcess.getParent());
 
         projectsPage.createNewProcess();
         String generatedChildTitle = Pages.getProcessFromTemplatePage()

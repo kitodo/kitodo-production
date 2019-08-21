@@ -36,6 +36,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
     private static final String PROCESS_TITLE = "Second process";
+    private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
+    private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -80,15 +82,23 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement actionsButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":createBatch")
+    @FindBy(id = BATCH_FORM + ":batchActionsButton")
+    private WebElement possibleBatchActionsButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":processActionsButton")
+    private WebElement possibleProcessActionsButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":createBatchSelection")
     private WebElement createBatchLink;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":renameBatch")
+    @FindBy(id = BATCH_FORM + ":renameBatchSelection")
     private WebElement renameBatchLink;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":deleteBatch")
+    @FindBy(id = BATCH_FORM + ":deleteBatchSelection")
     private WebElement deleteBatchLink;
 
     @SuppressWarnings("unused")
@@ -96,7 +106,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement addProcessesToBatchLink;
 
     @SuppressWarnings("unused")
-    @FindBy(id = BATCH_FORM + ":removeProcessesFromBatch")
+    @FindBy(id = BATCH_FORM + ":removeProcessesFromBatchSelection")
     private WebElement removeProcessesFromBatchLink;
 
     @SuppressWarnings("unused")
@@ -181,6 +191,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
         Select processSelect = new Select(processesSelect);
         processSelect.selectByIndex(0);
         processSelect.selectByIndex(1);
+
+        possibleProcessActionsButton.click();
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> createBatchLink.isDisplayed());
         createBatchLink.click();
 
         createBatchTitleInput.sendKeys("SeleniumBatch");
@@ -193,11 +207,24 @@ public class ProcessesPage extends Page<ProcessesPage> {
         Select batchSelect = new Select(batchesSelect);
         batchSelect.selectByVisibleText("Third batch (2 Vorgänge)");
 
+        await("Wait for select list to be visible").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> processesSelect.isDisplayed());
         Select processSelect = new Select(processesSelect);
+        processSelect.deselectAll();
         processSelect.selectByVisibleText("First process");
 
+        await(WAIT_FOR_ACTIONS_BUTTON).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> possibleProcessActionsButton.isDisplayed());
+        possibleProcessActionsButton.click();
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> removeProcessesFromBatchLink.isDisplayed());
         removeProcessesFromBatchLink.click();
 
+        await(WAIT_FOR_ACTIONS_BUTTON).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> possibleProcessActionsButton.isDisplayed());
+        possibleProcessActionsButton.click();
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> renameBatchLink.isDisplayed());
         renameBatchLink.click();
         renameBatchTitleInput.sendKeys("SeleniumBatch");
         renameBatchSaveButton.click();
@@ -209,6 +236,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
         Select batchSelect = new Select(batchesSelect);
         batchSelect.selectByVisibleText("Third batch (2 Vorgänge)");
 
+        await(WAIT_FOR_ACTIONS_BUTTON).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> possibleBatchActionsButton.isDisplayed());
+        possibleBatchActionsButton.click();
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> deleteBatchLink.isDisplayed());
         deleteBatchLink.click();
     }
 
@@ -251,7 +283,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     public void downloadSearchResultAsExcel() {
         actionsButton.click();
-        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS)
                 .until(() -> downloadSearchResultAsExcel.isDisplayed());
         downloadSearchResultAsExcel.click();
@@ -263,7 +295,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     public void downloadSearchResultAsPdf() {
         actionsButton.click();
-        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+        await(WAIT_FOR_ACTIONS_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .until(() -> downloadSearchResultAsPdf.isDisplayed());

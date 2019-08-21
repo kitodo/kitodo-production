@@ -84,7 +84,7 @@ public class EditingST extends BaseTestSelenium {
     public void editBatchTest() throws Exception {
         processesPage.editBatch();
         await().untilAsserted(() -> assertEquals("Batch was not renamed!", 1,
-            ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+                ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
 
         assertEquals("Process was not removed from batch", 1, ServiceManager.getBatchService()
                 .getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size());
