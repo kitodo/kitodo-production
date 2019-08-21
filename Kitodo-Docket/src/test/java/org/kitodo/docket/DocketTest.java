@@ -75,7 +75,6 @@ public class DocketTest {
     }
 
     @Test
-    @Ignore("compared files are different as newly created has now more lines - supposedly barcode")
     public void testExportMultipleDockets() throws IOException {
         String expectedFileStrings = getPDFText(new File("src/test/resources/docket_multipage.pdf"));
 
