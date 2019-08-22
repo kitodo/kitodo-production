@@ -37,6 +37,7 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.security.SecurityUserDetails;

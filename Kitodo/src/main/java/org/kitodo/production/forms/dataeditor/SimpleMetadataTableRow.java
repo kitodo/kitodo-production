@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 /**
  * Provides functions that are common to all input elements.

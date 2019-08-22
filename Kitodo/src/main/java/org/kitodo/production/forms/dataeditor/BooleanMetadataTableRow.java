@@ -31,6 +31,8 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 
 /**
