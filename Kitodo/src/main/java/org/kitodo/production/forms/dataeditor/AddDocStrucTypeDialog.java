@@ -439,11 +439,11 @@ public class AddDocStrucTypeDialog {
         Collection<MetadataViewInterface> addableMetadata = getStructuralElementView()
                 .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
         for (MetadataViewInterface keyView : addableMetadata) {
-            if (keyView instanceof SimpleMetadataViewInterface) {
-                SimpleMetadataViewInterface simpleMetadataView = (SimpleMetadataViewInterface) keyView;
-                selectAddableMetadataTypesItems.add(new SelectItem(keyView.getId(), keyView.getLabel(),
-                        simpleMetadataView.getInputType().toString()));
-            }
+            selectAddableMetadataTypesItems.add(
+                    new SelectItem(keyView.getId(), keyView.getLabel(),
+                            keyView instanceof SimpleMetadataViewInterface
+                                    ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
+                                    : "dataTable"));
         }
     }
 
