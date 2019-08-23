@@ -16,6 +16,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
 public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
@@ -39,15 +40,15 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     private WebElement activeOption;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//html/body/div[3]/main/div/div/form/div[3]/div/div/div[2]/div/div/div[3]/div/div/svg/g/g[1]/g[3]/g/g" )
+    @FindBy(css = "#js-canvas > div > div > svg > g > g.layer-base > g:nth-child(3) > g > g" )
     private WebElement taskBox;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//div[@id='js-properties-panel']/div/div/div[2]/ul/li[2]" )
+    @FindBy(css = "#js-properties-panel > div > div > div.bpp-properties-tab-bar.scroll-tabs-overflow > ul > li:nth-child(2)" )
     private WebElement roleTab;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "camunda-permittedUserRole_3")
+    @FindBy(css = "#camunda-permittedUserRole_1")
     private WebElement firstRole;
 
     @Override
@@ -59,13 +60,17 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
         super("pages/workflowEdit.jsf");
     }
 
-    public WorkflowEditPage insertWorkflowData(Workflow workflow) throws InterruptedException {
+    public WorkflowEditPage insertWorkflowData(Workflow workflow) {
         fileInput.sendKeys(workflow.getTitle());
-        taskBox = Browser.getDriver().findElementByXPath("/html/body/div[3]/main/div/div/form/div[3]/div/div/div[2]/div/div/div[3]/div/div/svg/g/g[1]/g[3]/g/g");
-        Thread.sleep(2000);
-        taskBox.click();
-        roleTab.click();
-        firstRole.click();
+        taskBox = Browser.getDriver().findElementByCssSelector("#js-canvas > div > div > svg > g > g.layer-base > g:nth-child(3) > g > g");
+        Actions builder = new Actions(Browser.getDriver());
+        builder.click(taskBox).build().perform();
+
+        roleTab = Browser.getDriver().findElementByCssSelector("#js-properties-panel > div > div > div.bpp-properties-tab-bar.scroll-tabs-overflow > ul > li:nth-child(2)");
+        builder.click(roleTab).build().perform();
+
+        firstRole = Browser.getDriver().findElementByCssSelector("#camunda-permittedUserRole_1");
+        builder.click(firstRole).build().perform();
 
         return this;
     }
