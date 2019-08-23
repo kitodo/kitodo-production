@@ -161,7 +161,6 @@ public class EditingST extends BaseTestSelenium {
             Pages.getRulesetEditPage().getHeaderText());
     }
 
-    @Ignore("user page is there, link is there, not clicking - find out why")
     @Test
     public void editUserTest() throws Exception {
         usersPage.editUser();
