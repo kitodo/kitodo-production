@@ -1846,6 +1846,7 @@ Column content
     width: 100%;
 }
 
+.media-stripe-hover.ui-droppable-active,
 #imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover,
 #imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover::after {
     background-color: var(--light-blue);
