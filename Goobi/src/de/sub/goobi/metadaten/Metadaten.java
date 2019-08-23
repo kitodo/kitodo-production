@@ -1529,7 +1529,7 @@ public class Metadaten {
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        return ConfigMain.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
+        return ConfigMain.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".jpg";
     }
 
     public List<String> getAllTifFolders() {
@@ -1680,7 +1680,7 @@ public class Metadaten {
                         /* Session ermitteln */
                         FacesContext context = FacesContext.getCurrentInstance();
                         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-                        String mySession = session.getId() + "_" + this.myBildCounter + ".png";
+                        String mySession = session.getId() + "_" + this.myBildCounter + ".jpg";
                         logger.trace("facescontext");
 
                         /* das neue Bild zuweisen */
