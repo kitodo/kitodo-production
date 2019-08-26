@@ -213,7 +213,7 @@ public class LoginForm {
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(".png");
+                return name.endsWith(".jpg");
             }
         };
         File dir = new File(myPfad);
