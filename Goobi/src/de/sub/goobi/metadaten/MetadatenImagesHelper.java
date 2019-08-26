@@ -336,7 +336,7 @@ public class MetadatenImagesHelper {
     }
 
     /**
-     * scale given image file to png using internal embedded content server
+     * scale given image file using internal embedded content server in jpg format
      *
      * @throws ImageManagerException
      * @throws IOException
