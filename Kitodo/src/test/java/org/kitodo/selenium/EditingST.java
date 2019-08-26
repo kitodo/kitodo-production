@@ -63,7 +63,6 @@ public class EditingST extends BaseTestSelenium {
         }
     }
 
-    @Ignore("Save of process is pending in -saving-")
     @Test
     public void editProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
@@ -162,7 +161,6 @@ public class EditingST extends BaseTestSelenium {
             Pages.getRulesetEditPage().getHeaderText());
     }
 
-    @Ignore("user page is there, link is there, not clicking - find out why")
     @Test
     public void editUserTest() throws Exception {
         usersPage.editUser();

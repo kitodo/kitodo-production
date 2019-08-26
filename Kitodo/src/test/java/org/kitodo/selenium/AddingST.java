@@ -19,6 +19,7 @@ import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
@@ -168,8 +169,7 @@ public class AddingST extends BaseTestSelenium {
         boolean processAvailable = processesPage.getProcessTitles().contains(generatedTitle);
         assertTrue("Created Process was not listed at processes table!", processAvailable);
     }
-
-    @Ignore("selenium test can't assign role to the tasks")
+    
     @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();
@@ -179,9 +179,12 @@ public class AddingST extends BaseTestSelenium {
             Pages.getWorkflowEditPage().getHeaderText());
 
         Pages.getWorkflowEditPage().insertWorkflowData(workflow).save();
-        assertTrue("Redirection after save was not successful", projectsPage.isAt());
 
-        List<String> workflowTitles = projectsPage.getWorkflowTitles();
+        assertTrue("Redirection after save was not successful", AddingST.projectsPage.isAt());
+        await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .untilAsserted(() -> assertEquals("There should be no processes found", 3,
+                    AddingST.projectsPage.getWorkflowTitles().size()));
+        List<String> workflowTitles = AddingST.projectsPage.getWorkflowTitles();
         boolean workflowAvailable = workflowTitles.contains("testWorkflow");
         assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
 

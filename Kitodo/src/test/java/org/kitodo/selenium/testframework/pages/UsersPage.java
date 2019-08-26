@@ -77,7 +77,7 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement newLdapGroupButton;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/userEdit.jsf?id=1']")
+    @FindBy(id = "usersTabView:usersTable:0:actionForm:editUser")
     private WebElement editUserLink;
 
     @SuppressWarnings("unused")
