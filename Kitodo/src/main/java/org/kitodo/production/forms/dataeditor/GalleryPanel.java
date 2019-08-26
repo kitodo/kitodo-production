@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -223,8 +224,18 @@ public class GalleryPanel {
             }
         }
         toStripe.getMedias().clear();
+
+        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
+
+        dataEditor.getSelectedMedia().clear();
+
         for (View toStripeView : toStripe.getStructure().getViews()) {
-            toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
+            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(toStripeView);
+            toStripe.getMedias().add(galleryMediaContent);
+            if (movedViews.contains(toStripeView)) {
+                selectionType = "multi";
+                select(galleryMediaContent, toStripe);
+            }
         }
         dataEditor.getStructurePanel().show();
     }
@@ -644,7 +655,7 @@ public class GalleryPanel {
         Pair<MediaUnit, IncludedStructuralElement> selectedMediaPair = new ImmutablePair<>(
                 currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
 
-        if (!Objects.nonNull(lastSelection)) {
+        if (Objects.isNull(lastSelection)) {
             lastSelection = selectedMediaPair;
         }
 
