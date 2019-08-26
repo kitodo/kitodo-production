@@ -14,7 +14,6 @@ package org.kitodo.selenium.testframework.pages;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
@@ -39,18 +38,6 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     @FindBy(xpath = "//div[@id='"+WORKFLOW_TAB_VIEW +":status_panel']/div/ul/li[text()='Aktiv']" )
     private WebElement activeOption;
 
-    @SuppressWarnings("unused")
-    @FindBy(css = "#js-canvas > div > div > svg > g > g.layer-base > g:nth-child(3) > g > g" )
-    private WebElement taskBox;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = "#js-properties-panel > div > div > div.bpp-properties-tab-bar.scroll-tabs-overflow > ul > li:nth-child(2)" )
-    private WebElement roleTab;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = "#camunda-permittedUserRole_1")
-    private WebElement firstRole;
-
     @Override
     public WorkflowEditPage goTo() {
         return null;
@@ -62,14 +49,16 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
 
     public WorkflowEditPage insertWorkflowData(Workflow workflow) {
         fileInput.sendKeys(workflow.getTitle());
-        taskBox = Browser.getDriver().findElementByCssSelector("#js-canvas > div > div > svg > g > g.layer-base > g:nth-child(3) > g > g");
+        WebElement taskBox = Browser.getDriver()
+                .findElementByCssSelector("#js-canvas > div > div > svg > g > g.layer-base > g:nth-child(3) > g > g");
         Actions builder = new Actions(Browser.getDriver());
         builder.click(taskBox).build().perform();
 
-        roleTab = Browser.getDriver().findElementByCssSelector("#js-properties-panel > div > div > div.bpp-properties-tab-bar.scroll-tabs-overflow > ul > li:nth-child(2)");
+        WebElement roleTab = Browser.getDriver().findElementByCssSelector(
+            "#js-properties-panel > div > div > div.bpp-properties-tab-bar.scroll-tabs-overflow > ul > li:nth-child(2)");
         builder.click(roleTab).build().perform();
 
-        firstRole = Browser.getDriver().findElementByCssSelector("#camunda-permittedUserRole_1");
+        WebElement firstRole = Browser.getDriver().findElementByCssSelector("#camunda-permittedUserRole_1");
         builder.click(firstRole).build().perform();
 
         return this;

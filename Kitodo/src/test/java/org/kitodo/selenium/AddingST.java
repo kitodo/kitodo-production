@@ -50,9 +50,6 @@ import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.RoleEditPage;
 import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AddingST extends BaseTestSelenium {
 
@@ -184,8 +181,9 @@ public class AddingST extends BaseTestSelenium {
         Pages.getWorkflowEditPage().insertWorkflowData(workflow).save();
 
         assertTrue("Redirection after save was not successful", AddingST.projectsPage.isAt());
-        await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-                () -> assertEquals("There should be no processes found", 3, AddingST.projectsPage.getWorkflowTitles().size()));
+        await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .untilAsserted(() -> assertEquals("There should be no processes found", 3,
+                    AddingST.projectsPage.getWorkflowTitles().size()));
         List<String> workflowTitles = AddingST.projectsPage.getWorkflowTitles();
         boolean workflowAvailable = workflowTitles.contains("testWorkflow");
         assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
