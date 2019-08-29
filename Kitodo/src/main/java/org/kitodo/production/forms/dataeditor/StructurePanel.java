@@ -662,7 +662,7 @@ public class StructurePanel implements Serializable {
          * JSF at this point.
          */
         try {
-            dataEditor.switchStructure(event.getTreeNode().getData());
+            dataEditor.switchStructure(event.getTreeNode().getData(), true);
             previouslySelectedLogicalNode = selectedLogicalNode;
         } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -731,23 +731,22 @@ public class StructurePanel implements Serializable {
         if (Objects.nonNull(this.logicalTree)) {
             GalleryStripe matchingGalleryStripe = this.dataEditor.getGalleryPanel().getLogicalStructureOfMedia(galleryMediaContent);
             if (Objects.nonNull(matchingGalleryStripe) && Objects.nonNull(matchingGalleryStripe.getStructure())) {
+                TreeNode selectedTreeNode;
                 if (this.isSeparateMedia()) {
-                    TreeNode selectedLogicalTreeNode =
-                            updateLogicalNodeSelectionRecursive(matchingGalleryStripe.getStructure(),
-                                logicalTree);
-                    if (Objects.nonNull(selectedLogicalTreeNode)) {
-                        setSelectedLogicalNode(selectedLogicalTreeNode);
-                    } else {
-                        Helper.setErrorMessage("Unable to update node selection in logical structure!");
+                    selectedTreeNode = updateLogicalNodeSelectionRecursive(matchingGalleryStripe.getStructure(),
+                            logicalTree);
+                } else {
+                    selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, logicalTree);
+                }
+                if (Objects.nonNull(selectedTreeNode)) {
+                    setSelectedLogicalNode(selectedTreeNode);
+                    try {
+                        dataEditor.switchStructure(selectedTreeNode.getData(), false);
+                    } catch (NoSuchMetadataFieldException e) {
+                        logger.error(e.getLocalizedMessage());
                     }
                 } else {
-                    TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent,
-                        logicalTree);
-                    if (Objects.nonNull(selectedTreeNode)) {
-                        setSelectedLogicalNode(selectedTreeNode);
-                    } else {
-                        Helper.setErrorMessage("Unable to update node selection in logical structure!");
-                    }
+                    Helper.setErrorMessage("Unable to update node selection in logical structure!");
                 }
             }
         }

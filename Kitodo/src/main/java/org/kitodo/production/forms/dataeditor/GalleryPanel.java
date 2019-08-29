@@ -212,7 +212,7 @@ public class GalleryPanel {
             }
         }
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
-
+        dataEditor.getStructurePanel().show();
         // update stripes
         for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
             GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
@@ -237,7 +237,6 @@ public class GalleryPanel {
                 select(galleryMediaContent, toStripe);
             }
         }
-        dataEditor.getStructurePanel().show();
     }
 
     private boolean dragStripeIndexMatches(DragDropEvent event) {
