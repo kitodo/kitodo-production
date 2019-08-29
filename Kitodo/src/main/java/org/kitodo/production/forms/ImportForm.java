@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -28,9 +29,14 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.forms.copyprocess.AdditionalDetailsTableRow;
+import org.kitodo.production.forms.copyprocess.BooleanMetadataTableRow;
+import org.kitodo.production.forms.copyprocess.FieldedAdditionalDetailsTableRow;
 import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
+import org.kitodo.production.forms.copyprocess.SelectMetadataTableRow;
+import org.kitodo.production.forms.copyprocess.TextMetadataTableRow;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
@@ -50,6 +56,7 @@ public class ImportForm implements Serializable {
     private String selectedField;
     private String searchTerm;
     private SearchResult searchResult;
+    private List<String> filledMetadataGroups = new ArrayList<>();
     private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
 
     /**
@@ -207,6 +214,12 @@ public class ImportForm implements Serializable {
      */
     public void getSelectedRecord() {
         String recordId = Helper.getRequestParameter("ID");
+        getRecordById(this.selectedCatalog, recordId);
+        Ajax.update("editForm");
+        this.prozesskopieForm.setEditActiveTabIndex(2);
+    }
+
+    private void getRecordById(String catalog, String recordId) {
         Document record;
         try {
             record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
@@ -216,45 +229,60 @@ public class ImportForm implements Serializable {
             return;
         }
 
-        List<AdditionalField> actualFields = this.prozesskopieForm.getAdditionalFields();
+        List<AdditionalDetailsTableRow> additionalDetailsTableRows =
+                this.prozesskopieForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows();
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
 
         // TODO: iterating over multiple kitodo nodes will overwrite existing
-        // 'additionalField' values from the last kitodo node!
         for (int i = 0; i < kitodoNodes.getLength(); i++) {
             Node kitodoNode = kitodoNodes.item(i);
-            actualFields = insertFieldValues(actualFields, kitodoNode.getChildNodes());
+            setAdditionalDetailsTable(additionalDetailsTableRows, kitodoNode.getChildNodes());
         }
-
-        this.prozesskopieForm.setAdditionalFields(actualFields);
-
-        Ajax.update("editForm");
-        this.prozesskopieForm.setEditActiveTabIndex(2);
+        this.prozesskopieForm.setOpacKatalog(catalog);
     }
 
-    private List<AdditionalField> insertFieldValues(List<AdditionalField> additionalFields, NodeList nodes) {
+    private void setAdditionalDetailsTable(List<AdditionalDetailsTableRow> rows, NodeList nodes) {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getLocalName().equals("metadataGroup")) {
-                additionalFields = insertFieldValues(additionalFields, node.getChildNodes());
-            } else if (node.getLocalName().equals("metadata")) {
-                Element element = (Element) node;
-                for (AdditionalField additionalField : additionalFields) {
-                    if (Objects.nonNull(additionalField.getMetadata())
-                            && additionalField.getMetadata().equals(element.getAttribute("name"))) {
-                        // Append author to list of existing authors
-                        if (additionalField.getMetadata().equals("ListOfCreators")) {
-                            additionalField
-                                    .setValue(Objects.isNull(additionalField.getValue()) ? element.getTextContent()
-                                            : additionalField.getValue() + ", " + element.getTextContent());
+            Element element = (Element) node;
+            String nodeName = element.getAttribute("name");
+            for (AdditionalDetailsTableRow tableRow : rows) {
+                if (Objects.nonNull(tableRow.getMetadataID()) && tableRow.getMetadataID().equals(nodeName)) {
+                    if (node.getLocalName().equals("metadataGroup")
+                            && tableRow instanceof FieldedAdditionalDetailsTableRow) {
+                        FieldedAdditionalDetailsTableRow fieldedRow;
+                        if (filledMetadataGroups.contains(nodeName)) {
+                            try {
+                                fieldedRow = this.prozesskopieForm.getAdditionalDetailsTab().addMetadataGroupRow(nodeName);
+                                this.prozesskopieForm.getAdditionalDetailsTab().getAdditionalDetailsTable().getRows().add(fieldedRow);
+                                setAdditionalDetailsTable(fieldedRow.getRows(), element.getChildNodes());
+                            } catch (NoSuchMetadataFieldException e) {
+                                logger.error(e.getLocalizedMessage());
+                            }
                         } else {
-                            additionalField.setValue(element.getTextContent());
+                            fieldedRow = (FieldedAdditionalDetailsTableRow) tableRow;
+                            filledMetadataGroups.add(nodeName);
+                            setAdditionalDetailsTable(fieldedRow.getRows(), element.getChildNodes());
                         }
+                    } else if (node.getLocalName().equals("metadata")) {
+                        setAdditionalDetailsRow(tableRow, element);
                     }
+                    break;
                 }
             }
         }
-        return additionalFields;
+    }
+
+    private void setAdditionalDetailsRow(AdditionalDetailsTableRow row, Element element) {
+        if (row instanceof TextMetadataTableRow) {
+            ((TextMetadataTableRow) row).setValue(element.getTextContent());
+
+        } else if (row instanceof BooleanMetadataTableRow) {
+            ((BooleanMetadataTableRow) row).setActive(Boolean.valueOf(element.getTextContent()));
+
+        } else if (row instanceof SelectMetadataTableRow) {
+            ((SelectMetadataTableRow) row).setSelectedItem(element.getTextContent());
+        }
     }
 }
