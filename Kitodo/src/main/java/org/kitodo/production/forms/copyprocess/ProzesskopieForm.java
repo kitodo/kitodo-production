@@ -14,17 +14,23 @@ package org.kitodo.production.forms.copyprocess;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
@@ -86,7 +92,7 @@ import org.primefaces.PrimeFaces;
 
 @Named("ProzesskopieForm")
 @SessionScoped
-public class ProzesskopieForm extends BaseForm {
+public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface, Serializable {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private static final String OPAC_CONFIG = "configurationOPAC";
     private static final String PHYS_SEQUENCE = "physSequence";
@@ -102,6 +108,24 @@ public class ProzesskopieForm extends BaseForm {
      * not configurable anywhere and is therefore on “create”.
      */
     private String acquisitionStage = "create";
+
+    /**
+     * Backing bean for the metadata panel.
+     */
+    private AdditionalDetailsTab additionalDetailsTab;
+    /**
+     * The ruleset that the file is based on.
+     */
+    private RulesetManagementInterface ruleset;
+    /**
+     * The language preference list of the editing user for displaying the
+     * metadata labels. We cache this because it’s used thousands of times and
+     * otherwise the access would always go through the search engine, which
+     * would delay page creation.
+     */
+    private List<Locale.LanguageRange> priorityList;
+
+    private Workpiece workpiece;
 
     private String atstsl = "";
     private Integer guessedImages = 0;
@@ -217,13 +241,17 @@ public class ProzesskopieForm extends BaseForm {
 
                 clearValues();
                 readProjectConfigs();
+                this.ruleset = openRulesetFile(this.prozessKopie.getRuleset().getFile());
+                additionalDetailsTab = new AdditionalDetailsTab(this, docType);
+                this.workpiece = new Workpiece();
+                additionalDetailsTab.show(workpiece.getRootElement());
                 this.rdf = null;
                 this.digitalCollections = new ArrayList<>();
                 initializePossibleDigitalCollections();
 
                 return true;
             }
-        } catch (ProcessGenerationException e) {
+        } catch (ProcessGenerationException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
@@ -612,6 +640,14 @@ public class ProzesskopieForm extends BaseForm {
             createNewFileformat();
         }
 
+        if (Objects.nonNull(workpiece)) {
+            additionalDetailsTab.preserve();
+            try (OutputStream out = ServiceManager.getFileService().write(ServiceManager.getProcessService().getMetadataFileUri(prozessKopie))) {
+                ServiceManager.getMetsService().save(workpiece, out);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
         try {
             if (Objects.nonNull(this.rdf)) {
 
@@ -882,7 +918,6 @@ public class ProzesskopieForm extends BaseForm {
         RulesetManagementInterface ruleset = ServiceManager.getRulesetService()
                 .getPreferences(this.prozessKopie.getRuleset()).getRuleset();
         try {
-            Workpiece workpiece = new Workpiece();
             IncludedStructuralElement includedStructuralElement = workpiece.getRootElement();
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
             if (Objects.nonNull(configOpacDoctype)) {
@@ -957,12 +992,52 @@ public class ProzesskopieForm extends BaseForm {
         }
     }
 
+    @Override
+    public RulesetManagementInterface getRuleset() {
+        return ruleset;
+    }
+
     public String getAcquisitionStage() {
         return acquisitionStage;
     }
 
+    @Override
+    public List<Locale.LanguageRange> getPriorityList() {
+        return priorityList;
+    }
+
     public String getDocType() {
         return this.docType;
+    }
+
+    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
+        final long begin = System.nanoTime();
+        String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+        priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+        if (logger.isTraceEnabled()) {
+            logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+        return ruleset;
+    }
+
+    /**
+     * Get additionalDetailsTab.
+     *
+     * @return value of additionalDetailsTab
+     */
+    public AdditionalDetailsTab getAdditionalDetailsTab() {
+        return additionalDetailsTab;
+    }
+
+    /**
+     * Set additionalDetailsTab.
+     *
+     * @param additionalDetailsTab as org.kitodo.production.forms.copyprocess.AdditionalDetailsTab
+     */
+    public void setAdditionalDetailsTab(AdditionalDetailsTab additionalDetailsTab) {
+        this.additionalDetailsTab = additionalDetailsTab;
     }
 
     /**
@@ -974,6 +1049,7 @@ public class ProzesskopieForm extends BaseForm {
     public void setDocType(String docType) {
         if (!this.docType.equals(docType)) {
             this.docType = docType;
+            additionalDetailsTab.setDocType(docType);
             if (Objects.nonNull(rdf)) {
                 LegacyMetsModsDigitalDocumentHelper tmp = rdf;
 
