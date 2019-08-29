@@ -641,7 +641,7 @@ public class GalleryPanel {
             return;
         }
 
-        if (!Objects.nonNull(lastSelection)) {
+        if (Objects.isNull(lastSelection)) {
             lastSelection = new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
         }
 
