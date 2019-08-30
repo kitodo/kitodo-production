@@ -498,7 +498,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         for (ProcessProperty prop : processPropertyList) {
-            if (prop.getCurrentStepAccessCondition().equals(AccessCondition.WRITEREQUIRED) && (prop.getValue() == null || prop.getValue().equals(""))) {
+            if (AccessCondition.WRITEREQUIRED.equals(prop.getCurrentStepAccessCondition()) && (prop.getValue() == null || prop.getValue().equals(""))) {
                 Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " " + Helper.getTranslation("requiredValue"));
                 return "";
             } else if (!prop.isValid()) {
