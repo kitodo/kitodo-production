@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -498,7 +499,8 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         for (ProcessProperty prop : processPropertyList) {
-            if (AccessCondition.WRITEREQUIRED.equals(prop.getCurrentStepAccessCondition()) && (prop.getValue() == null || prop.getValue().equals(""))) {
+            if (AccessCondition.WRITEREQUIRED.equals(prop.getCurrentStepAccessCondition())
+                    && !isEmptyString(prop.getValue()) && !getOccupiedProperties().contains(prop.getName())) {
                 Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " " + Helper.getTranslation("requiredValue"));
                 return "";
             } else if (!prop.isValid()) {
@@ -1288,11 +1290,27 @@ public class AktuelleSchritteForm extends BasisForm {
     public List<ProcessProperty> getContainerlessProperties() {
         List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
         for (ProcessProperty pp : this.processPropertyList) {
-            if (pp.getContainer() == 0) {
+            if (pp.getContainer() == 0 && (isEmptyString(pp.getValue())
+                    || !getOccupiedProperties().contains(pp.getName()))) {
                 answer.add(pp);
             }
         }
         return answer;
+    }
+
+    private Set<String> getOccupiedProperties() {
+        Set<String> propertiesMitWerten = new HashSet<>();
+        for (ProcessProperty pp : processPropertyList)
+            if (isEmptyString(pp.getValue())) propertiesMitWerten.add(pp.getName());
+        return propertiesMitWerten;
+    }
+
+    /**
+     * @param theString the string
+     * @return true or false
+     */
+    private boolean isEmptyString(String theString) {
+        return theString != null && !theString.isEmpty();
     }
 
     public Integer getContainer() {
