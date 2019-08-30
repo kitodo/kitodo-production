@@ -30,6 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -498,14 +499,16 @@ public class AktuelleSchritteForm extends BasisForm {
             }
         }
 
-        for (ProcessProperty prop : processPropertyList) {
-            if (AccessCondition.WRITEREQUIRED.equals(prop.getCurrentStepAccessCondition())
-                    && !isEmptyString(prop.getValue()) && !getOccupiedProperties().contains(prop.getName())) {
-                Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " " + Helper.getTranslation("requiredValue"));
+        for (ProcessProperty processProperty : processPropertyList) {
+            if (AccessCondition.WRITEREQUIRED.equals(processProperty.getCurrentStepAccessCondition())
+                    && StringUtils.isBlank(processProperty.getValue())
+                    && !getOccupiedProperties().contains(processProperty.getName())) {
+                Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + processProperty.getName() + " "
+                        + Helper.getTranslation("requiredValue"));
                 return "";
-            } else if (!prop.isValid()) {
+            } else if (!processProperty.isValid()) {
                 List<String> parameter = new ArrayList<String>();
-                parameter.add(prop.getName());
+                parameter.add(processProperty.getName());
                 Helper.setFehlerMeldung(Helper.getTranslation("PropertyValidation", parameter));
                 return "";
             }
@@ -1290,8 +1293,8 @@ public class AktuelleSchritteForm extends BasisForm {
     public List<ProcessProperty> getContainerlessProperties() {
         List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
         for (ProcessProperty pp : this.processPropertyList) {
-            if (pp.getContainer() == 0 && (isEmptyString(pp.getValue())
-                    || !getOccupiedProperties().contains(pp.getName()))) {
+            if (pp.getContainer() == 0
+                    && (StringUtils.isNotBlank(pp.getValue()) || !getOccupiedProperties().contains(pp.getName()))) {
                 answer.add(pp);
             }
         }
@@ -1299,18 +1302,13 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     private Set<String> getOccupiedProperties() {
-        Set<String> propertiesMitWerten = new HashSet<>();
-        for (ProcessProperty pp : processPropertyList)
-            if (isEmptyString(pp.getValue())) propertiesMitWerten.add(pp.getName());
-        return propertiesMitWerten;
-    }
-
-    /**
-     * @param theString the string
-     * @return true or false
-     */
-    private boolean isEmptyString(String theString) {
-        return theString != null && !theString.isEmpty();
+        Set<String> occupiedProperties = new HashSet<>();
+        for (ProcessProperty processProperty : processPropertyList) {
+            if (StringUtils.isNotBlank(processProperty.getValue())) {
+                occupiedProperties.add(processProperty.getName());
+            }
+        }
+        return occupiedProperties;
     }
 
     public Integer getContainer() {
