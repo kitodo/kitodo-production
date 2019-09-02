@@ -12,16 +12,21 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.dataeditor.handlers.MetsKitodoHeaderHandler;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
  * Provides methods to convert mets-mods-goobi xml files to the current used mets-kitodo format.
@@ -69,6 +74,18 @@ public class MetsKitodoConverter {
         Mets mets = MetsKitodoReader.readStringToMets(convertedData);
         mets = MetsKitodoHeaderHandler
             .addNoteToMetsHeader("Converted by " + VersionProvider.getModuleVersionInfo(), mets);
+        saveToFile(mets,xmlFile);
+
         return mets;
+    }
+
+    private static void saveToFile(Mets mets, URI xmlFile) throws JAXBException, IOException {
+        FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+                FileManagementInterface.class).loadModule();
+        OutputStream out = fileManagementModule.write(fileManagementModule.getFile(xmlFile).toURI());
+        JAXBContext context = JAXBContext.newInstance(Mets.class);
+        Marshaller marshal = context.createMarshaller();
+        marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshal.marshal(mets, out);
     }
 }
