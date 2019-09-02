@@ -70,6 +70,7 @@
                                 var="stripe"
                                 value="#{DataEditorForm.galleryPanel.stripes}"
                                 type="definition"
+                                styleClass="pageList"
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
                         <h:outputText value="#{stripe.label}"
@@ -124,7 +125,7 @@
                                          activeStyleClass="media-stripe-hover"
                                          hoverStyleClass="media-stripe-index-hover">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(.structureElementDataList)
+                                        update="@(.pageList)
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
                             <!-- add one last drop area after the last page in a stripe -->
@@ -136,7 +137,7 @@
                                              activeStyleClass="media-stripe-hover"
                                              hoverStyleClass="media-stripe-index-hover">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                            update="@(.structureElementDataList)
+                                            update="@(.pageList)
                                                     imagePreviewForm:unstructuredMedia
                                                     structureTreeForm:logicalTree"/>
                                 </p:droppable>
@@ -148,7 +149,7 @@
                                          for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
                                          hoverStyleClass="media-stripe-hover">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(.structureElementDataList)
+                                        update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
@@ -164,7 +165,7 @@
                         <!-- Index 0 of stripes is used to retrieve the logical root element. -->
                         <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                         <p:dataList id="unstructuredMediaList"
-                                    styleClass="structureElementDataList"
+                                    styleClass="pageList"
                                     value="#{DataEditorForm.galleryPanel.stripes.get(0).medias}"
                                     binding="#{currentMedia}"
                                     emptyMessage="#{msgs['noMedia']}"
@@ -212,7 +213,7 @@
                                          activeStyleClass="media-stripe-hover"
                                          hoverStyleClass="media-stripe-index-hover">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(.structureElementDataList)
+                                        update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
@@ -225,7 +226,7 @@
                                              activeStyleClass="media-stripe-hover"
                                              hoverStyleClass="media-stripe-index-hover">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                            update="@(.structureElementDataList)
+                                            update="@(.pageList)
                                                     imagePreviewForm:unstructuredMedia
                                                     structureTreeForm:logicalTree"/>
                                 </p:droppable>
@@ -237,7 +238,7 @@
                                          for="imagePreviewForm:unstructuredMediaList"
                                          hoverStyleClass="media-stripe-hover">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(.structureElementDataList)
+                                        update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
