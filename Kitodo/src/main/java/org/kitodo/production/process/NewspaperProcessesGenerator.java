@@ -50,6 +50,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.process.field.AdditionalField;
@@ -223,32 +224,6 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     /**
-     * Runs the newspaper process generator. To create newspaper processes, call
-     * this method.
-     *
-     * @throws ConfigurationException
-     *             if the configuration is wrong
-     * @throws DAOException
-     *             if an error occurs while saving in the database
-     * @throws DataException
-     *             if an error occurs while saving in the database
-     * @throws IOException
-     *             if something goes wrong when reading or writing one of the
-     *             affected files
-     * @throws ProcessGenerationException
-     *             if there is an item “Volume number” or “Bandnummer” in the
-     *             projects configuration, but its value cannot be evaluated to
-     *             an integer
-     */
-    public void run()
-            throws ConfigurationException, DAOException, DataException, IOException, ProcessGenerationException {
-
-        while (getProgress() < getNumberOfSteps()) {
-            nextStep();
-        }
-    }
-
-    /**
      * Returns the progress of the newspaper processes generator.
      *
      * @return the progress
@@ -258,12 +233,15 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     /**
-     * Returns the number of steps of the newspaper processes generator.
+     * Returns the number of steps of the newspaper processes generator. Note
+     * that the number of steps may change in the future and needs to be
+     * updated.
      *
      * @return the number of steps
      */
     public int getNumberOfSteps() {
-        return NUMBER_OF_INIT_STEPS + processesToCreate.size() + NUMBER_OF_COMPLETION_STEPS;
+        return NUMBER_OF_INIT_STEPS + (Objects.isNull(processesToCreate) ? 0 : processesToCreate.size())
+                + NUMBER_OF_COMPLETION_STEPS;
     }
 
     /**
@@ -293,6 +271,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         } else {
             finish();
         }
+        currentStep++;
     }
 
     /**
@@ -346,7 +325,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         monthType = monthDivisionView.getId();
         StructuralElementViewInterface dayDivisionView = nextSubView(ruleset, monthDivisionView);
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
-        monthType = monthDivisionView.getId();
+        dayType = dayDivisionView.getId();
         issueType = nextSubView(ruleset, dayDivisionView).getId();
     }
 
@@ -465,13 +444,10 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         getGeneratedProcess().setTitle(title);
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
-
         getGeneratedProcess().setParent(yearProcess);
         yearProcess.getChildren().add(getGeneratedProcess());
-        processService.save(getGeneratedProcess());
-        processService.refresh(getGeneratedProcess());
-
         createMetadataFileForProcess(individualIssuesForProcess);
+        processService.save(getGeneratedProcess());
 
         if (logger.isTraceEnabled()) {
             logger.trace("Creating newspaper process {} took {} ms", title,
@@ -482,21 +458,22 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private void createMetadataFileForProcess(List<IndividualIssue> individualIssues) throws IOException {
 
         IncludedStructuralElement rootElement = new IncludedStructuralElement();
-        rootElement.setType(monthType);
         MetadataEntry dateMetadataEntry = new MetadataEntry();
         dateMetadataEntry.setKey(monthSimpleMetadataView.getId());
         dateMetadataEntry.setValue(dateMark(monthSimpleMetadataView.getScheme(), individualIssues.get(0).getDate()));
         rootElement.getMetadata().add(dateMetadataEntry);
 
         for (IndividualIssue individualIssue : individualIssues) {
+
             String monthMark = dateMark(monthSimpleMetadataView.getScheme(), individualIssue.getDate());
             IncludedStructuralElement yearMonth = getOrCreateIncludedStructuralElement(yearWorkpiece.getRootElement(),
                 monthType, monthSimpleMetadataView, monthMark);
             String dayMark = dateMark(daySimpleMetadataView.getScheme(), individualIssue.getDate());
-            IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, dayType,
+            IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, null,
                 daySimpleMetadataView, dayMark);
             final IncludedStructuralElement yearDay = getOrCreateIncludedStructuralElement(yearMonth, dayType,
                 daySimpleMetadataView, dayMark);
+
             IncludedStructuralElement processIssue = new IncludedStructuralElement();
             processIssue.setType(issueType);
             for (Pair<String, String> metadata : individualIssue.getMetadata(
@@ -509,12 +486,12 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             }
             processDay.getChildren().add(processIssue);
 
-            if (Objects.isNull(yearDay.getLink())) {
-                LinkedMetsResource linkToProcess = new LinkedMetsResource();
-                linkToProcess.setLoctype("Kitodo.Production");
-                linkToProcess.setUri(processService.getProcessURI(getGeneratedProcess()));
-                yearDay.setLink(linkToProcess);
-            }
+            IncludedStructuralElement yearIssue = new IncludedStructuralElement();
+            LinkedMetsResource linkToProcess = new LinkedMetsResource();
+            linkToProcess.setLoctype("Kitodo.Production");
+            linkToProcess.setUri(processService.getProcessURI(getGeneratedProcess()));
+            yearIssue.setLink(linkToProcess);
+            yearDay.getChildren().add(yearIssue);
         }
 
         Workpiece workpiece = new Workpiece();
@@ -569,8 +546,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private void saveAndCloseCurrentYearProcess() throws DataException, IOException {
         final long begin = System.nanoTime();
 
-        processService.save(yearProcess);
         metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
+        processService.save(yearProcess);
 
         this.yearProcess = null;
         this.yearWorkpiece = null;
@@ -633,9 +610,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         processService.refresh(getGeneratedProcess());
 
         getGeneratedProcess().setParent(overallProcess);
-        yearProcess.getChildren().add(getGeneratedProcess());
+        overallProcess.getChildren().add(getGeneratedProcess());
         processService.save(getGeneratedProcess());
-        processService.refresh(getGeneratedProcess());
 
         fileService.createProcessLocation(getGeneratedProcess());
         final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
@@ -668,24 +644,21 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private IncludedStructuralElement getOrCreateIncludedStructuralElement(
-            IncludedStructuralElement includedStructuralElement, String type,
-            SimpleMetadataViewInterface simpleMetadataView, String value) {
+            IncludedStructuralElement includedStructuralElement, String childType,
+            SimpleMetadataViewInterface identifierMetadata,
+            String identifierMetadataValue) {
 
         for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
-            for (Metadata metadata : child.getMetadata()) {
-                if (metadata.getKey().equals(simpleMetadataView.getId()) && metadata instanceof MetadataEntry
-                        && value.equals(((MetadataEntry) metadata).getValue())) {
-                    return child;
-                }
+            if (MetadataEditor.readSimpleMetadataValues(child, identifierMetadata).contains(identifierMetadataValue)) {
+                return child;
             }
         }
 
-        IncludedStructuralElement included = new IncludedStructuralElement();
-        included.setType(type);
-        MetadataEntry metadataEntry = new MetadataEntry();
-        metadataEntry.setKey(simpleMetadataView.getId());
-        included.getMetadata().add(metadataEntry);
-        return included;
+        IncludedStructuralElement createdChild = new IncludedStructuralElement();
+        createdChild.setType(childType);
+        MetadataEditor.writeMetadataEntry(createdChild, identifierMetadata, identifierMetadataValue);
+        includedStructuralElement.getChildren().add(createdChild);
+        return createdChild;
     }
 
     private void finish() throws DataException, IOException {

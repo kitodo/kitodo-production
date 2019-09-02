@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../../../../Kitodo-DataEditor/src/test/resources/ruleset.xsd">
+    <declaration>
+        <division id="Newspaper">
+            <label>Newspaper ‹complete edition›</label>
+            <label lang="de">Zeitung ‹Gesamtausgabe›</label>
+            <subdivisionByDate>
+                <division id="NewspaperYear" dates="ORDERLABEL" scheme="yyyy">
+                    <label>Year’s issues ‹newspaper›</label>
+                    <label lang="de">Jahrgang ‹Zeitung›</label>
+                </division>
+                <division id="NewspaperMonth" dates="ORDERLABEL" scheme="M">
+                    <label>Month’s issues ‹newspaper›</label>
+                    <label lang="de">Monat ‹Zeitung›</label>
+                </division>
+                <division id="NewspaperDay" dates="ORDERLABEL" scheme="d">
+                    <label>Day’s issues ‹newspaper›</label>
+                    <label lang="de">Tag ‹Zeitung›</label>
+                </division>
+            </subdivisionByDate>
+        </division>
+        <division id="NewspaperIssue">
+            <label>Issue ‹newspaper›</label>
+            <label lang="de">Ausgabe ‹Zeitung›</label>
+        </division>
+        <key id="ORDERLABEL" domain="mets:div">
+            <label>METS order label</label>
+            <label lang="de">METS Reihenfolge-Etikett</label>
+        </key>
+        <key id="ShelfMark" domain="source">
+            <label>Shelf mark</label>
+            <label lang="de">Signatur</label>
+        </key>
+    </declaration>
+</ruleset>

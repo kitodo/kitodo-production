@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
@@ -39,6 +38,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.production.metadata.MetadataEditor;
 
 /**
  * Connects a legacy doc struct from the logical map to an included structural
@@ -115,7 +115,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
             }
         } else if (metadata.getBinding() != null) {
             metadata.getBinding().setKey(metadata.getMetadataType().getName());
-            metadata.getBinding().setDomain(domainToMdSec(metadata.getDomain()));
+            metadata.getBinding().setDomain(MetadataEditor.domainToMdSec(metadata.getDomain()));
             metadata.getBinding().setValue(metadata.getValue());
         }
     }
@@ -128,23 +128,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         view.setMediaUnit(target.getMediaUnit());
         includedStructuralElement.getViews().add(view);
         return new LegacyReferenceHelper(target);
-    }
-
-    private MdSec domainToMdSec(Domain domain) {
-        switch (domain) {
-            case DESCRIPTION:
-                return MdSec.DMD_SEC;
-            case DIGITAL_PROVENANCE:
-                return MdSec.DIGIPROV_MD;
-            case RIGHTS:
-                return MdSec.RIGHTS_MD;
-            case SOURCE:
-                return MdSec.SOURCE_MD;
-            case TECHNICAL:
-                return MdSec.TECH_MD;
-            default:
-                throw new IllegalArgumentException(domain.name());
-        }
     }
 
     @Override
