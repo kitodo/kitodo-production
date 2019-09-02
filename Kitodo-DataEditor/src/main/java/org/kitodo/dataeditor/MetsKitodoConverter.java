@@ -34,6 +34,8 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class MetsKitodoConverter {
 
     private static final Logger logger = LogManager.getLogger(MetsKitodoConverter.class);
+    private static FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+            FileManagementInterface.class).loadModule();
 
     /**
      * Private constructor to hide the implicit public one.
@@ -80,12 +82,12 @@ public class MetsKitodoConverter {
     }
 
     private static void saveToFile(Mets mets, URI xmlFile) throws JAXBException, IOException {
-        FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
-                FileManagementInterface.class).loadModule();
-        OutputStream out = fileManagementModule.write(fileManagementModule.getFile(xmlFile).toURI());
-        JAXBContext context = JAXBContext.newInstance(Mets.class);
-        Marshaller marshal = context.createMarshaller();
-        marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshal.marshal(mets, out);
+        URI metsFileUri = fileManagementModule.getFile(xmlFile).toURI();
+        try (OutputStream outputStream = fileManagementModule.write(metsFileUri)) {
+            JAXBContext context = JAXBContext.newInstance(Mets.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(mets, outputStream);
+        }
     }
 }

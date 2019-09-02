@@ -27,8 +27,11 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,6 +52,19 @@ public class MetsKitodoWrapperTest {
     private URI xmlfile = Paths.get("./src/test/resources/testmeta.xml").toUri();
     private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
+    private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
+    private static byte[] testMetaOldFormat;
+
+    @Before
+    public void saveFile() throws IOException {
+        File file = new File("src/test/resources/testmetaOldFormat.xml");
+        testMetaOldFormat = IOUtils.toByteArray(file.toURI());
+    }
+
+    @After
+    public void revertFile() throws IOException {
+        IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
+    }
 
     @BeforeClass
     public static void setUp() throws IOException {

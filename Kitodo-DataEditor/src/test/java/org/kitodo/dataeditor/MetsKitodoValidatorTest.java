@@ -11,16 +11,34 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.dataformat.metskitodo.Mets;
 
 public class MetsKitodoValidatorTest {
+    private static byte[] testMetaOldFormat;
+    private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
+
+    @Before
+    public void saveFile() throws IOException {
+        File file = new File("src/test/resources/testmetaOldFormat.xml");
+        testMetaOldFormat = IOUtils.toByteArray(file.toURI());
+    }
+
+    @After
+    public void revertFile() throws IOException {
+        IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
+    }
 
     @Test
     public void shouldCheckValidMetsObject() throws JAXBException, IOException {
