@@ -88,7 +88,7 @@
                             <p:panel id="structuredPagePanel"
                                      a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
                                      a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
-                                <h:panelGroup onclick="metadataEditor.select.selectionType(event);"
+                                <h:panelGroup onmouseup="metadataEditor.select.selectionType(event);"
                                               a:data-order="#{media.order}">
                                     <h:panelGroup class="thumbnail-container">
                                         <p:outputPanel deferred="true"
@@ -106,7 +106,7 @@
                                             </h:panelGroup>
                                         </p:outputPanel>
                                     </h:panelGroup>
-                                    <p:ajax event="mouseup"
+                                    <p:ajax event="click"
                                             listener="#{DataEditorForm.galleryPanel.select(media, stripe)}"
                                             update="@(.thumbnail)
                                                    structureTreeForm:logicalTree
@@ -175,7 +175,7 @@
                                      a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
                                      a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
                                 <h:panelGroup id="updateSelectedUnstructuredMediaLink"
-                                              onclick="metadataEditor.select.selectionType(event);"
+                                              onmouseup="metadataEditor.select.selectionType(event);"
                                               a:data-order="#{media.order}">
                                     <h:panelGroup layout="block"
                                                   styleClass="thumbnail-container">
@@ -193,7 +193,7 @@
                                             </h:panelGroup>
                                         </p:outputPanel>
                                     </h:panelGroup>
-                                    <p:ajax event="mouseup"
+                                    <p:ajax event="click"
                                             listener="#{DataEditorForm.galleryPanel.select(media, DataEditorForm.galleryPanel.stripes.get(0))}"
                                             update="@this
                                                     @(.thumbnail)
