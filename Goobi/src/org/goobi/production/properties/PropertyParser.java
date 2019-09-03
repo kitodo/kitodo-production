@@ -143,6 +143,12 @@ public class PropertyParser {
                             pnew.setProzesseigenschaft(pe);
                             pnew.setValue(pe.getWert());
                             pnew.setContainer(pe.getContainer());
+                            for (ShowStepCondition ssc : pnew.getShowStepConditions()) {
+                                if (ssc.getName().equals(stepTitle)) {
+                                    pnew.setCurrentStepAccessCondition(ssc.getAccessCondition());
+                                    break;
+                                }
+                            }
                             properties.add(pnew);
                         }
                     }
