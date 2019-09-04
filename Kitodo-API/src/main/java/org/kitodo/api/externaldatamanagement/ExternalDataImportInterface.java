@@ -29,11 +29,11 @@ public interface ExternalDataImportInterface {
      *
      * @param catalogId
      *            The ID of the catalog that will be queried.
-     * @param id
+     * @param identifier
      *            The ID of the record that will be imported.
      * @return The queried record as Record object.
      */
-    DataRecord getFullRecordById(String catalogId, String id);
+    DataRecord getFullRecordById(String catalogId, String identifier);
 
     /**
      * Perform search in catalog with given ID 'catalogId' with given search fields
@@ -61,5 +61,5 @@ public interface ExternalDataImportInterface {
      *            ID of the catalog that will be queried.
      * @return A list of result data.
      */
-    Collection<Hit> getMultipleEntriesById(Collection<String> ids, String catalogId);
+    Collection<SingleHit> getMultipleEntriesById(Collection<String> ids, String catalogId);
 }

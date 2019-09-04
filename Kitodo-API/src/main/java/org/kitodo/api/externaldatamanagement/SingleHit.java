@@ -18,20 +18,20 @@ package org.kitodo.api.externaldatamanagement;
  * specific hit to be imported when the user clicks on one hit
  * in the hitlist.
  */
-public class Hit {
+public class SingleHit {
 
     private String title;
 
-    private String id;
+    private String identifier;
 
     /**
-     * Standard constructor setting title and id of hit.
+     * Standard constructor setting title and identifier of hit.
      * @param title title of hit
-     * @param id id of hit
+     * @param identifier id of hit
      */
-    public Hit(String title, String id) {
+    public SingleHit(String title, String identifier) {
         this.title = title;
-        this.id = id;
+        this.identifier = identifier;
     }
 
     /**
@@ -59,18 +59,18 @@ public class Hit {
      * @return
      *      ID of this hit.
      */
-    public String getId() {
-        return id;
+    public String getIdentifier() {
+        return identifier;
     }
 
     /**
      * Set ID of hit.
      *
-     * @param id
+     * @param identifier
      *            value of ID to set.
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
 }

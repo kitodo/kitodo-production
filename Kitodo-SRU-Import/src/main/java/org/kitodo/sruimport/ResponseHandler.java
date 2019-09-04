@@ -24,8 +24,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.kitodo.api.externaldatamanagement.Hit;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.ConfigException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -108,12 +108,12 @@ class ResponseHandler {
         return 0;
     }
 
-    private static LinkedList<Hit> extractHits(Document document) {
-        LinkedList<Hit> hits = new LinkedList<>();
+    private static LinkedList<SingleHit> extractHits(Document document) {
+        LinkedList<SingleHit> hits = new LinkedList<>();
         NodeList records = document.getElementsByTagNameNS(SRW_NAMESPACE, SRW_RECORD_TAG);
         for (int i = 0; i < records.getLength(); i++) {
             Element recordElement = (Element) records.item(i);
-            hits.add(new Hit(getRecordTitle(recordElement), getRecordID(recordElement)));
+            hits.add(new SingleHit(getRecordTitle(recordElement), getRecordID(recordElement)));
         }
         return hits;
     }

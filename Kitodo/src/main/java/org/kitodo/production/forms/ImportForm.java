@@ -23,8 +23,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.externaldatamanagement.Hit;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.field.AdditionalField;
@@ -175,7 +175,7 @@ public class ImportForm implements Serializable {
      *
      * @return hits
      */
-    public List<Hit> getHits() {
+    public List<SingleHit> getHits() {
         if (Objects.nonNull(this.searchResult)) {
             return this.searchResult.getHits();
         } else {
@@ -208,7 +208,7 @@ public class ImportForm implements Serializable {
         try {
             record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
         } catch (IOException | SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return;
         }
 

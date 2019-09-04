@@ -38,8 +38,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
-import org.kitodo.api.externaldatamanagement.Hit;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -73,12 +73,12 @@ public class SRUImport implements ExternalDataImportInterface {
     private static HttpClient sruClient = HttpClientBuilder.create().build();
 
     @Override
-    public DataRecord getFullRecordById(String catalogId, String id) {
+    public DataRecord getFullRecordById(String catalogId, String identifier) {
         loadOPACConfiguration(catalogId);
         LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
         try {
             URI queryURL = createQueryURI(queryParameters);
-            return performQueryToRecord(queryURL.toString(), id);
+            return performQueryToRecord(queryURL.toString(), identifier);
         } catch (URISyntaxException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
@@ -120,7 +120,7 @@ public class SRUImport implements ExternalDataImportInterface {
     }
 
     @Override
-    public Collection<Hit> getMultipleEntriesById(Collection<String> ids, String catalogId) {
+    public Collection<SingleHit> getMultipleEntriesById(Collection<String> ids, String catalogId) {
         return Collections.emptyList();
     }
 
@@ -136,8 +136,8 @@ public class SRUImport implements ExternalDataImportInterface {
         return new SearchResult();
     }
 
-    private DataRecord performQueryToRecord(String queryURL, String id) {
-        String fullUrl = queryURL + "&maximumRecords=1&query=" + idParameter + equalsOperand + id;
+    private DataRecord performQueryToRecord(String queryURL, String identifier) {
+        String fullUrl = queryURL + "&maximumRecords=1&query=" + idParameter + equalsOperand + identifier;
         try {
             HttpResponse response = sruClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
@@ -148,7 +148,7 @@ public class SRUImport implements ExternalDataImportInterface {
                     record.setOriginalData(response.getEntity().getContent());
                     return record;
                 }
-                throw new NotFoundException("No record with ID '" + id + "' found!");
+                throw new NotFoundException("No record with ID '" + identifier + "' found!");
             }
             throw new ConfigException("SRU Request Failed");
         } catch (IOException e) {

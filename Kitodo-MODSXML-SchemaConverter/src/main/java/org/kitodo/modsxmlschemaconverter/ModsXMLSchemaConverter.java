@@ -86,7 +86,7 @@ public class ModsXMLSchemaConverter implements SchemaConverterInterface {
                 resultRecord.setMetadataFormat(targetMetadataFormat);
                 return resultRecord;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
         return null;

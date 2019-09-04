@@ -130,18 +130,18 @@ public class ImportService {
      * Get the full record with the given ID from the catalog.
      *
      * @param opac The ID of the catalog that will be queried.
-     * @param id   The ID of the record that will be imported.
+     * @param identifier   The ID of the record that will be imported.
      * @return The queried record transformed into Kitodo internal format.
      */
-    public Document getSelectedRecord(String opac, String id) throws IOException, NotFoundException, SAXException,
-            ParserConfigurationException {
+    public Document getSelectedRecord(String opac, String identifier) throws IOException, NotFoundException,
+            SAXException, ParserConfigurationException {
 
         // ################ IMPORT #################
         importModule = initializeImportModule();
-        DataRecord dataRecord = importModule.getFullRecordById(opac, id);
+        DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);
 
         if (Objects.isNull(dataRecord)) {
-            throw new NotFoundException("Record with ID '" + id + "' not found in OPAC '" + opac + "'!");
+            throw new NotFoundException("Record with ID '" + identifier + "' not found in OPAC '" + opac + "'!");
         }
 
         // ################# CONVERT ################

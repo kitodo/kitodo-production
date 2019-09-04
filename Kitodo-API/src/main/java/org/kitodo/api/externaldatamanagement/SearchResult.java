@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class SearchResult {
 
-    private List<Hit> hits;
+    private List<SingleHit> hits;
 
     private int numberOfHits;
 
@@ -47,7 +47,7 @@ public class SearchResult {
      *
      * @return list of hits.
      */
-    public List<Hit> getHits() {
+    public List<SingleHit> getHits() {
         return hits;
     }
 
@@ -57,7 +57,7 @@ public class SearchResult {
      * @param hits
      *            list of hits.
      */
-    public void setHits(List<Hit> hits) {
+    public void setHits(List<SingleHit> hits) {
         this.hits = hits;
     }
 }
