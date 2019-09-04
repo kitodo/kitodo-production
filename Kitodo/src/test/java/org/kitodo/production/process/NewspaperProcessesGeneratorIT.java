@@ -19,9 +19,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SystemUtils;
+import org.awaitility.Awaitility;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,9 +73,7 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.setUpAwaitility();
         fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        while (Objects.isNull(processService.findByTitle(firstProcess))) {
-            Thread.sleep(256);
-        }
+        Awaitility.await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
     }
 
     /**
@@ -98,6 +99,8 @@ public class NewspaperProcessesGeneratorIT {
         while (underTest.getProgress() < underTest.getNumberOfSteps()) {
             underTest.nextStep();
         }
+        Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
+            underTest.getProgress());
         cleanUp();
     }
 
