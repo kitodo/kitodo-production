@@ -11,7 +11,9 @@
 
 package org.kitodo;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -249,5 +251,14 @@ public class FileLoader {
         content.add("</bpmn:process>");
         content.add("</bpmn:definitions>");
         return content;
+    }
+
+    public static byte[] readFileToByteArray(File file) throws IOException {
+        InputStream fileInputStream;
+        byte[] byteArray = new byte[(int) file.length()];
+        fileInputStream = Files.newInputStream(file.toPath());
+        fileInputStream.read(byteArray);
+        fileInputStream.close();
+        return byteArray;
     }
 }
