@@ -35,6 +35,10 @@ public class OPACConfig {
     private OPACConfig() {
     }
 
+    public static String getConfigValue(String catalogName, String parameter) {
+        return getCatalog(catalogName).getString(parameter);
+    }
+
     /**
      * Retrieve the "config" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by title
@@ -134,5 +138,9 @@ public class OPACConfig {
         config.setListDelimiter('&');
         config.setReloadingStrategy(new FileChangedReloadingStrategy());
         return config;
+    }
+
+    public static String getParentElementXPath(String catalogName) {
+        return getCatalog(catalogName).getString("parentElement[@xpath]");
     }
 }

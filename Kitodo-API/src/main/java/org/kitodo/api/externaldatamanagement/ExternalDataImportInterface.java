@@ -15,7 +15,7 @@ import java.util.Collection;
 
 import javax.swing.event.EventListenerList;
 
-import org.w3c.dom.Document;
+import org.kitodo.api.schemaconverter.DataRecord;
 
 /**
  * Manages the import of data from an external source.
@@ -31,9 +31,9 @@ public interface ExternalDataImportInterface {
      *            The ID of the catalog that will be queried.
      * @param id
      *            The ID of the record that will be imported.
-     * @return The queried record transformed into Kitodo internal format.
+     * @return The queried record as Record object.
      */
-    Document getFullRecordById(String catalogId, String id);
+    DataRecord getFullRecordById(String catalogId, String id);
 
     /**
      * Perform search in catalog with given ID 'catalogId' with given search fields
@@ -61,5 +61,5 @@ public interface ExternalDataImportInterface {
      *            ID of the catalog that will be queried.
      * @return A list of result data.
      */
-    Collection<Document> getMultipleEntriesById(Collection<String> ids, String catalogId);
+    Collection<Hit> getMultipleEntriesById(Collection<String> ids, String catalogId);
 }
