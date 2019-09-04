@@ -12,16 +12,21 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.dataeditor.handlers.MetsKitodoHeaderHandler;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
  * Provides methods to convert mets-mods-goobi xml files to the current used mets-kitodo format.
@@ -29,6 +34,8 @@ import org.kitodo.dataformat.metskitodo.Mets;
 public class MetsKitodoConverter {
 
     private static final Logger logger = LogManager.getLogger(MetsKitodoConverter.class);
+    private static FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+            FileManagementInterface.class).loadModule();
 
     /**
      * Private constructor to hide the implicit public one.
@@ -69,6 +76,18 @@ public class MetsKitodoConverter {
         Mets mets = MetsKitodoReader.readStringToMets(convertedData);
         mets = MetsKitodoHeaderHandler
             .addNoteToMetsHeader("Converted by " + VersionProvider.getModuleVersionInfo(), mets);
+        saveToFile(mets,xmlFile);
+
         return mets;
+    }
+
+    private static void saveToFile(Mets mets, URI xmlFile) throws JAXBException, IOException {
+        URI metsFileUri = fileManagementModule.getFile(xmlFile).toURI();
+        try (OutputStream outputStream = fileManagementModule.write(metsFileUri)) {
+            JAXBContext context = JAXBContext.newInstance(Mets.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(mets, outputStream);
+        }
     }
 }

@@ -11,15 +11,20 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;
@@ -29,6 +34,19 @@ import org.kitodo.dataformat.metskitodo.Mets;
 public class MetsKitodoConverterTest {
     private URI xmlfile = Paths.get("src/test/resources/testmetaOldFormat.xml").toUri();
     private URI xsltFile = Paths.get("src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
+    private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
+    private static byte[] testMetaOldFormat;
+
+    @Before
+    public void saveFile() throws IOException {
+        File file = new File("src/test/resources/testmetaOldFormat.xml");
+        testMetaOldFormat = IOUtils.toByteArray(file.toURI());
+    }
+
+    @After
+    public void revertFile() throws IOException {
+        IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
+    }
 
     @Test
     public void shouldReadKitodoMetadataFormOldFormatFile() throws JAXBException, TransformerException, IOException {
