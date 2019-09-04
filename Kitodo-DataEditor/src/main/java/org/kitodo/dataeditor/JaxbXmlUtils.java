@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
@@ -29,8 +30,10 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.joda.time.DateTime;
+import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
  * Provides methods for handling jaxb generated java objects and xml files.
@@ -53,13 +56,14 @@ public class JaxbXmlUtils {
      * @return The Result of the transformation as String object.
      */
     static String transformXmlByXslt(URI xmlFile, URI xslFile) throws TransformerException, IOException {
-        StreamSource source = new StreamSource(xmlFile.getPath());
-        StreamSource styleSource = new StreamSource(xslFile.getPath());
-
+        FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+                FileManagementInterface.class).loadModule();
         TransformerFactory factory = TransformerFactory.newInstance();
+        StreamSource styleSource = new StreamSource(xslFile.getPath());
         Transformer transformer = factory.newTransformer(styleSource);
-
-        try (StringWriter stringWriter = new StringWriter()) {
+        try (InputStream inputStream = fileManagementModule.read(xmlFile);
+                StringWriter stringWriter = new StringWriter()) {
+            StreamSource source = new StreamSource(inputStream);
             StreamResult result = new StreamResult(stringWriter);
             transformer.transform(source, result);
             return stringWriter.toString();

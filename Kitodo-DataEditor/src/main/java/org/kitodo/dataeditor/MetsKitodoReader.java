@@ -12,9 +12,9 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
-import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -23,7 +23,9 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.xml.sax.InputSource;
 
 /**
@@ -64,10 +66,14 @@ class MetsKitodoReader {
      * @return The Mets object in mets-kitodo format.
      */
     static Mets readUriToMets(URI xmlFile) throws JAXBException, IOException {
-        if (Paths.get(xmlFile).toFile().exists()) {
+        FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+                FileManagementInterface.class).loadModule();
+        if (fileManagementModule.fileExist(xmlFile)) {
             JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
             Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
-            return (Mets) jaxbUnmarshaller.unmarshal(xmlFile.toURL());
+            try (InputStream inputStream = fileManagementModule.read(xmlFile)) {
+                return (Mets) jaxbUnmarshaller.unmarshal(inputStream);
+            }
         } else {
             throw new IOException("File was not found: " + xmlFile.getPath());
         }

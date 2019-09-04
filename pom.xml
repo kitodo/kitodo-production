@@ -123,14 +123,14 @@
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-API</module>
         <module>Kitodo-SRU-Import</module>
+        <module>Kitodo-Command</module>
+        <module>Kitodo-FileManagement</module>
         <module>Kitodo-DataEditor</module>
         <module>Kitodo-DataFormat</module>
         <module>Kitodo-ImageManagement</module>
         <module>Kitodo-LongTermPreservationValidation</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>
-        <module>Kitodo-Command</module>
-        <module>Kitodo-FileManagement</module>
         <module>Kitodo-SchemaConverter</module>
         <module>Kitodo-Validation</module>
         <module>Kitodo</module>
