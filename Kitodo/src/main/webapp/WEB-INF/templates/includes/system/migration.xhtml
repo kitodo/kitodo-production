@@ -21,9 +21,18 @@
         <p:commandButton value="migrate"
                          id="migrateMetadata"
                          action="#{MigrationForm.migrateMetadata()}"
-                         styleClass="primary right"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"/>
+                         styleClass="primary"/>
+        <p:commandButton value="#{msgs.migrateWorkflow}"
+                         id="migrateWorkflows"
+                         update="systemTabView:migrationForm"
+                         styleClass="primary"
+                         action="#{MigrationForm.showPossibleProjects()}"
+                         immediate="true"/>
+
+        <p:selectManyCheckbox rendered="#{MigrationForm.isProjectListShown()}" var="project" value="#{MigrationForm.allProjects}">
+            <f:selectItems value="#{MigrationForm.selectedProjects}" var="project" itemLabel="#{project.title}"
+                           itemValue="#{project}"/>
+        </p:selectManyCheckbox>
     </h:form>
 
 </ui:composition>
