@@ -393,6 +393,18 @@ public class MetadataEditor {
         return new LinkedList<>();
     }
 
+    /**
+     * Reads the simple metadata from an included structural element defined by
+     * the simple metadata view interface, including {@code mets:div} metadata.
+     *
+     * @param division
+     *            included structural element from which the metadata should be
+     *            read
+     * @param simpleMetadataView
+     *            simple metadata view interface which formally describes the
+     *            methadata to be read
+     * @return metadata which corresponds to the formal description
+     */
     public static List<String> readSimpleMetadataValues(IncludedStructuralElement division,
             SimpleMetadataViewInterface simpleMetadataView) {
         Domain domain = simpleMetadataView.getDomain().orElse(Domain.DESCRIPTION);
