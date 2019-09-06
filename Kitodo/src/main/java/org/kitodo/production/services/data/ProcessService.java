@@ -2217,7 +2217,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     private Map<String, Object> iterateOverJsonObject(JSONObject xmlJSONObject) {
         Iterator<String> keys = xmlJSONObject.keys();
-
         Map<String, Object> json = new HashMap<>();
         while (keys.hasNext()) {
             String key = keys.next();
@@ -2229,13 +2228,23 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 Map<String, Object> map = iterateOverJsonObject(jsonObject);
                 json.put(prepareKey(key), map);
             } else if (value instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) value;
-                List<Map<String, Object>> arrayMap = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    Map<String, Object> map = iterateOverJsonObject(jsonArray.getJSONObject(i));
-                    arrayMap.add(map);
-                }
-                json.put(prepareKey(key), arrayMap);
+                json.put(prepareKey(key), iterateOverJsonArray((JSONArray) value));
+            }
+        }
+        return json;
+    }
+
+    private Object iterateOverJsonArray(JSONArray jsonArray) {
+        int jsonArraySize = jsonArray.length();
+        List<Object> json = new ArrayList<>(jsonArraySize);
+        for (int i = 0; i < jsonArraySize; i++) {
+            Object value = jsonArray.get(i);
+            if (value instanceof JSONObject) {
+                json.add(iterateOverJsonObject((JSONObject) value));
+            } else if (value instanceof String) {
+                json.add(value);
+            } else if (value instanceof JSONArray) {
+                json.add(iterateOverJsonArray((JSONArray) value));
             }
         }
         return json;
