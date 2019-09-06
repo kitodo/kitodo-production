@@ -14,21 +14,19 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.xml.ws.Service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 
 @Named("MigrationForm")
@@ -36,9 +34,9 @@ import org.kitodo.production.services.file.FileService;
 public class MigrationForm implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(MigrationForm.class);
-    private List<Project> allProjects;
-    private List<Project> selectedProjects;
-    private List<Process> processList;
+    private List<Project> allProjects = new ArrayList<>();
+    private List<Project> selectedProjects = new ArrayList<>();
+    private List<Process> processList = new ArrayList<>();
     private boolean projectListShown;
 
     public void migrateMetadata() throws DAOException {
@@ -64,14 +62,9 @@ public class MigrationForm implements Serializable {
         }
     }
 
-    public void showProcessesForProjects(){
-        ProcessService processService = ServiceManager.getProcessService();
+    public void showProcessesForProjects() {
         for (Project project : selectedProjects) {
-//            try {
-//                //processList.add(processService.getByQuery("SELECT "));
-//            } catch (DataException e) {
-//                Helper.setErrorMessage("Error during search");
-//            }
+            processList.addAll(project.getProcesses());
         }
 
     }

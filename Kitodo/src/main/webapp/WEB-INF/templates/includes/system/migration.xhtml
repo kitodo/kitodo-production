@@ -28,11 +28,19 @@
                          styleClass="primary"
                          action="#{MigrationForm.showPossibleProjects()}"
                          immediate="true"/>
-
-        <p:selectManyCheckbox rendered="#{MigrationForm.isProjectListShown()}" var="project" value="#{MigrationForm.allProjects}">
-            <f:selectItems value="#{MigrationForm.selectedProjects}" var="project" itemLabel="#{project.title}"
-                           itemValue="#{project}"/>
-        </p:selectManyCheckbox>
+        <h:panelGroup rendered="#{MigrationForm.isProjectListShown()}">
+            <h:outputText value="#{msgs.projectsForMigration}"/>
+            <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}">
+                <f:selectItems value="#{MigrationForm.allProjects}" var="project" itemLabel="#{project.title}"
+                               itemValue="#{project}"/>
+            </p:selectManyCheckbox>
+            <p:commandButton value="#{msgs.migrateProjects}"
+                             id="migrateProject"
+                             update="systemTabView:migrationForm"
+                             styleClass="primary"
+                             action="#{MigrationForm.showProcessesForProjects()}"
+                             immediate="true"/>
+        </h:panelGroup>
     </h:form>
 
 </ui:composition>
