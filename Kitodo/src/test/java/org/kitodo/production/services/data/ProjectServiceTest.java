@@ -66,7 +66,6 @@ public class ProjectServiceTest {
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().createNewFile();
         Assert.assertTrue("Project should be complete", projectService.isProjectComplete(project));
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
-
     }
 
 }

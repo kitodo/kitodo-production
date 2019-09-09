@@ -78,6 +78,174 @@ public class FileLoader {
         Files.write(Paths.get(configProjectsPath), content);
     }
 
+    /**
+     * Writes a project configuration file as needed for the newspaper processes
+     * generator tests.
+     */
+    public static void createConfigProjectsFileForCalendarHierarchyTests() throws IOException {
+        List<String> content = new ArrayList<>();
+        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        content.add("<kitodoProjects>");
+        addContentToConfigProjectsFileForCalendarHierarchyTests(content);
+        addOtherContentToConfigProjectsFileForCalendarHierarchyTests(content);
+        addRemainingContentToConfigProjectsFileForCalendarHierarchyTests(content);
+        content.add("  </project>");
+        content.add("</kitodoProjects>");
+        Files.write(Paths.get(configProjectsPath), content);
+    }
+
+    private static void addRemainingContentToConfigProjectsFileForCalendarHierarchyTests(List<String> content) {
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"periodical|multivolume|inventory\" ughbinding=\"true\" docstruct=\"firstchild\" me"
+                    + "tadata=\"PublicationYear\"> Erscheinungsjahr </item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"inventory\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"slub_link\"> Li"
+                    + "nk </item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume|periodical\" ughbinding=\"true\" docstruct=\"firstchild\" metadata=\"P"
+                    + "ublisherName\"> Verlag </item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"monograph\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"PublisherName\""
+                    + "> Verlag </item>");
+        content.add(
+            "        <item from=\"vorlage\" ughbinding=\"true\" docstruct=\"physSequence\" metadata=\"ShelfMark\"> Signatur </item>");
+        content.add(
+            "        <processtitle isdoctype=\"multivolume\">ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)</processtitle>");
+        content.add("        <processtitle isdoctype=\"monograph\">ATS+TSL+'_'+PPN digital a-Satz</processtitle>");
+        content.add(
+            "        <processtitle isdoctype=\"periodical\">TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)</processtitle>");
+        content.add(
+            "        <!-- <processtitle isnotdoctype=\"multivolume\">ATS+TSL+'_'+PPN digital c/a-Aufnahmel+'_'+Bandnummer</processtitle> -"
+                    + "->");
+        content.add(
+            "        <processtitle isdoctype=\"newspaper\">Signatur+'_'+#YEAR+#MONTH+#DAY+#ISSU</processtitle>");
+        content.add("        <hide/>");
+        content.add("      </itemlist>");
+        content.add("      <opac use=\"true\">");
+        content.add("        <catalogue>GBV</catalogue>");
+        content.add("      </opac>");
+        content.add("      <templates use=\"true\"/>");
+        content.add("      <defaultdoctype>newspaper</defaultdoctype>");
+        content.add("      <metadatageneration use=\"true\"/>");
+        content.add("    </createNewProcess>");
+        content.add("    <tifheader>");
+        content.add(
+            "      <monograph>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungs"
+                    + "jahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN digital a-Satz+'|'</monograph>");
+        content.add(
+            "      <multivolume>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinun"
+                    + "gsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)+'"
+                    + "|'</multivolume>");
+        content.add(
+            "      <periodical>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinung"
+                    + "sjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)+'|"
+                    + "'</periodical>");
+        content.add("    </tifheader>");
+        content.add("    <dmsImport/>");
+        content.add("    <fileUploadActive>false</fileUploadActive>");
+    }
+
+    private static void addOtherContentToConfigProjectsFileForCalendarHierarchyTests(List<String> content) {
+
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"periodical\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadat"
+                    + "a=\"CatalogIDSource\"> PPN analog b-Satz </item>");
+        content.add(
+            "        <item from=\"werk\" isdoctype=\"periodical\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata="
+                    + "\"CatalogIDDigital\"> PPN digital b-Satz</item>");
+        content.add(
+            "        <item from=\"werk\" isdoctype=\"periodical\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata="
+                    + "\"ISSN\"> ISSN </item>");
+        content.add(
+            "        <item from=\"vorlage\" required=\"true\" isdoctype=\"periodical\" ughbinding=\"true\" docstruct=\"firstchild\" metada"
+                    + "ta=\"CatalogIDSource\"> PPN analog Band </item>");
+        content.add(
+            "        <item from=\"werk\" required=\"true\" isdoctype=\"periodical\" ughbinding=\"true\" docstruct=\"firstchild\" metadata="
+                    + "\"CatalogIDDigital\"> PPN digital Band </item>");
+        content.add("        <!--title, number and authors for multivolumes and periodicals -->");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume|periodical\" required=\"true\" ughbinding=\"true\" docstruct=\"firstch"
+                    + "ild\" metadata=\"TitleDocMain\"> Titel (Band)</item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume|periodical\" required=\"true\" ughbinding=\"true\" docstruct=\"firstch"
+                    + "ild\" metadata=\"TitleDocMainShort\"> Titel (Band) (Sortierung)</item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume\" ughbinding=\"true\" docstruct=\"firstchild\" metadata=\"ListOfCreato"
+                    + "rs\"> Autoren (Band)</item>");
+        content.add(
+            "        <item from=\"vorlage\" isnotdoctype=\"monograph\" ughbinding=\"true\" docstruct=\"firstchild\" metadata=\"CurrentNo\""
+                    + "> Bandnummer </item>");
+        content.add(
+            "        <item from=\"vorlage\" isnotdoctype=\"monograph\" ughbinding=\"true\" docstruct=\"firstchild\" metadata=\"CurrentNoSo"
+                    + "rting\"> Nummer (Sortierung) </item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume|periodical\" required=\"true\"> Nummer (Benennung) </item>");
+        content.add(
+            "        <item from=\"vorlage\" required=\"true\" isdoctype=\"multivolume\" ughbinding=\"true\" docstruct=\"firstchild\" metad"
+                    + "ata=\"CatalogIDSource\"> PPN analog f-Satz </item>");
+        content.add(
+            "        <item from=\"werk\" required=\"true\" isdoctype=\"multivolume\" ughbinding=\"true\" docstruct=\"firstchild\" metadata"
+                    + "=\"CatalogIDDigital\"> PPN digital f-Satz </item>");
+        content.add("        <!-- other metadata for all -->");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"monograph|multivolume|periodical|inventory\" ughbinding=\"true\" docstruct=\"topst"
+                    + "ruct\" metadata=\"PlaceOfPublication\"> Erscheinungsort </item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"monograph|inventory\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"Publi"
+                    + "cationYear\"> Erscheinungsjahr </item>");
+    }
+
+    private static void addContentToConfigProjectsFileForCalendarHierarchyTests(List<String> content) {
+        content.add("  <project name=\"First project\">");
+        content.add("    <createNewProcess>");
+        content.add("      <itemlist>");
+        content.add("        <item from=\"werk\"> Artist");
+        content.add("              <select label=\"CHANGEME\"> CHANGEME BIBLIOTHEKSLABEL </select>");
+        content.add("        </item>");
+        content.add("        <item from=\"werk\"> Schrifttyp");
+        content.add("            <select label=\"Antiqua\">Antiqua</select>");
+        content.add("            <select label=\"Fraktur\">Fraktur</select>");
+        content.add("            <select label=\"anderes\">anderes</select>");
+        content.add("        </item>");
+        content.add("        <!-- title for monograph and periodical -->");
+        content.add(
+            "        <item from=\"vorlage\" isnotdoctype=\"multivolume\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" met"
+                    + "adata=\"TitleDocMain\"> Titel </item>");
+        content.add(
+            "        <item from=\"vorlage\" isnotdoctype=\"multivolume\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" met"
+                    + "adata=\"TitleDocMainShort\"> Titel (Sortierung)</item>");
+        content.add("        <!-- title  just for the multivolume -->");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metada"
+                    + "ta=\"TitleDocMain\"> Titel </item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metada"
+                    + "ta=\"TitleDocMainShort\"> Titel (Sortierung)</item>");
+        content.add("        <!-- authors and creators-->");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"monograph|multivolume|periodical\" ughbinding=\"true\" docstruct=\"topstruct\" met"
+                    + "adata=\"ListOfCreators\"> Autoren </item>");
+        content.add("        <!-- identifer -->");
+        content.add(
+            "        <item from=\"werk\" isnotdoctype=\"periodical\" ughbinding=\"true\" metadata=\"TSL_ATS\" docstruct=\"topstruct\">ATS<"
+                    + "/item>");
+        content.add(
+            "        <item from=\"werk\" isdoctype=\"periodical\" ughbinding=\"true\" metadata=\"TSL_ATS\" docstruct=\"topstruct\">TSL</it"
+                    + "em>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"multivolume\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metada"
+                    + "ta=\"CatalogIDSource\"> PPN analog c-Satz </item>");
+        content.add(
+            "        <item from=\"werk\" isdoctype=\"multivolume\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata="
+                    + "\"CatalogIDDigital\"> PPN digital c-Satz</item>");
+        content.add(
+            "        <item from=\"vorlage\" isdoctype=\"monograph\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata"
+                    + "=\"CatalogIDSource\"> PPN analog a-Satz </item>");
+        content.add(
+            "        <item from=\"werk\" isdoctype=\"monograph\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\""
+                    + "CatalogIDDigital\"> PPN digital a-Satz</item>");
+    }
+
     public static void createDiagramBaseFile() throws IOException {
         Files.write(Paths.get(diagramBasePath), prepareDiagram());
     }

@@ -23,7 +23,10 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Parent;
@@ -307,6 +310,35 @@ public class MetadataEditor {
     }
 
     /**
+     * Transforms a {@code Domain} specifying object from the ruleset into an
+     * {@code MdSec} specifier for metadata in internal data format. Note that
+     * there is no {@code MdSec} for {@code Domain.METS_DIV}; that has to be
+     * treated differently.
+     *
+     * @param domain
+     *            domain to transform
+     * @return {@code MdSec} is returned
+     * @throws IllegalArgumentException
+     *             if the {@code Domain} is {@code mets:div}
+     */
+    public static MdSec domainToMdSec(Domain domain) {
+        switch (domain) {
+            case DESCRIPTION:
+                return MdSec.DMD_SEC;
+            case DIGITAL_PROVENANCE:
+                return MdSec.DIGIPROV_MD;
+            case RIGHTS:
+                return MdSec.RIGHTS_MD;
+            case SOURCE:
+                return MdSec.SOURCE_MD;
+            case TECHNICAL:
+                return MdSec.TECH_MD;
+            default:
+                throw new IllegalArgumentException(domain.name());
+        }
+    }
+
+    /**
      * Determines the ancestors of a tree node.
      *
      * @param searched
@@ -359,5 +391,88 @@ public class MetadataEditor {
             }
         }
         return new LinkedList<>();
+    }
+
+    /**
+     * Reads the simple metadata from an included structural element defined by
+     * the simple metadata view interface, including {@code mets:div} metadata.
+     *
+     * @param division
+     *            included structural element from which the metadata should be
+     *            read
+     * @param simpleMetadataView
+     *            simple metadata view interface which formally describes the
+     *            methadata to be read
+     * @return metadata which corresponds to the formal description
+     */
+    public static List<String> readSimpleMetadataValues(IncludedStructuralElement division,
+            SimpleMetadataViewInterface simpleMetadataView) {
+        Domain domain = simpleMetadataView.getDomain().orElse(Domain.DESCRIPTION);
+        if (domain.equals(Domain.METS_DIV)) {
+            switch (simpleMetadataView.getId().toLowerCase()) {
+                case "label":
+                    return Arrays.asList(division.getLabel());
+                case "orderlabel":
+                    return Arrays.asList(division.getOrderlabel());
+                case "type":
+                    return Arrays.asList(division.getType());
+                default:
+                    throw new IllegalArgumentException(division.getClass().getSimpleName() + " has no field '"
+                            + simpleMetadataView.getId() + "'.");
+            }
+        } else {
+            List<String> simpleMetadataValues = division.getMetadata().parallelStream()
+                    .filter(metadata -> metadata.getKey().equals(simpleMetadataView.getId()))
+                    .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast).map(MetadataEntry::getValue)
+                    .collect(Collectors.toList());
+            return simpleMetadataValues;
+        }
+    }
+
+    /**
+     * Writes a metadata entry as defined by the ruleset. The ruleset allows the
+     * domain {@code mets:div}. If a metadata entry must be written with the
+     * {@code mets:div} domain, this must set the internal value on the object
+     * model. Otherwise, however, a metadata entry is written in metadata area.
+     *
+     * @param division
+     *            included structural element at which the metadata entry is to
+     *            be written
+     * @param simpleMetadataView
+     *            properties of the metadata entry as defined in the ruleset
+     * @param value
+     *            worth writing
+     * @throws IllegalArgumentException
+     *             when trying to write a value to the structure, there is no
+     *             field for it. This is when the domain is {@code mets:div},
+     *             and the value is different from either {@code label} or
+     *             {@code orderlabel}.
+     */
+    public static void writeMetadataEntry(IncludedStructuralElement division,
+            SimpleMetadataViewInterface simpleMetadataView, String value) {
+
+        Domain domain = simpleMetadataView.getDomain().orElse(Domain.DESCRIPTION);
+        if (domain.equals(Domain.METS_DIV)) {
+            switch (simpleMetadataView.getId().toLowerCase()) {
+                case "label":
+                    division.setLabel(value);
+                    break;
+                case "orderlabel":
+                    division.setOrderlabel(value);
+                    break;
+                case "type":
+                    throw new IllegalArgumentException(
+                            "'" + simpleMetadataView.getId() + "' is reserved for the key ID.");
+                default:
+                    throw new IllegalArgumentException(division.getClass().getSimpleName() + " has no field '"
+                            + simpleMetadataView.getId() + "'.");
+            }
+        } else {
+            MetadataEntry metadata = new MetadataEntry();
+            metadata.setKey(simpleMetadataView.getId());
+            metadata.setDomain(domainToMdSec(domain));
+            metadata.setValue(value);
+            division.getMetadata().add(metadata);
+        }
     }
 }

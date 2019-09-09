@@ -273,7 +273,7 @@ public class MockDatabase {
         authorities.add(new Authority("viewIndex" + GLOBAL_ASSIGNABLE));
         authorities.add(new Authority("editIndex" + GLOBAL_ASSIGNABLE));
 
-        //Role
+        // Role
         authorities.add(new Authority("viewAllRoles" + GLOBAL_ASSIGNABLE));
         authorities.add(new Authority("viewRole" + GLOBAL_ASSIGNABLE));
         authorities.add(new Authority("addRole" + GLOBAL_ASSIGNABLE));
@@ -560,6 +560,33 @@ public class MockDatabase {
         Process seventhProcess = new Process();
         seventhProcess.setTitle("HierarchChildToAdd");
         ServiceManager.getProcessService().save(seventhProcess);
+    }
+
+    public static void insertProcessForCalendarHierarchyTests() throws DAOException, DataException {
+        Ruleset fivthRuleset = new Ruleset();
+        fivthRuleset.setTitle("Newspaper");
+        fivthRuleset.setFile("newspaper.xml");
+        fivthRuleset.setOrderMetadataByRuleset(false);
+        fivthRuleset.setClient(ServiceManager.getClientService().getById(1));
+        ServiceManager.getRulesetService().save(fivthRuleset);
+
+        /*
+         * The folders up to and including number 9 in the metadata folder are
+         * already in use, so here we insert placeholder processes so that the
+         * newspaper’s overall process gets the number 10.
+         */
+        for (int processNumber = 4; processNumber <= 9; processNumber++) {
+            Process nthProcess = new Process();
+            nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
+            ServiceManager.getProcessService().save(nthProcess);
+        }
+
+        Process tenthProcess = new Process();
+        tenthProcess.setProject(ServiceManager.getProjectService().getById(1));
+        tenthProcess.setTemplate(ServiceManager.getTemplateService().getById(1));
+        tenthProcess.setRuleset(ServiceManager.getRulesetService().getById(5));
+        tenthProcess.setTitle("NewspaperOverallProcess");
+        ServiceManager.getProcessService().save(tenthProcess);
     }
 
     private static void insertTemplates() throws DAOException, DataException {
