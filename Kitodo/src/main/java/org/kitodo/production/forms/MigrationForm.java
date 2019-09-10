@@ -40,6 +40,10 @@ public class MigrationForm implements Serializable {
     private boolean projectListShown;
     private boolean processListShown;
 
+    /**
+     * Migrates the meta.xml for all processes in the database (if it's in the old format).
+     * @throws DAOException if database access fails
+     */
     public void migrateMetadata() throws DAOException {
         List<Process> processes = ServiceManager.getProcessService().getAll();
         FileService fileService = ServiceManager.getFileService();
@@ -54,6 +58,9 @@ public class MigrationForm implements Serializable {
         }
     }
 
+    /**
+     * Shows all projects for migration.
+     */
     public void showPossibleProjects() {
         try {
             allProjects = ServiceManager.getProjectService().getAll();
@@ -63,6 +70,9 @@ public class MigrationForm implements Serializable {
         }
     }
 
+    /**
+     * Shows all processes related to the selected projects.
+     */
     public void showProcessesForProjects() {
         processList.clear();
         for (Project project : selectedProjects) {
@@ -81,10 +91,20 @@ public class MigrationForm implements Serializable {
         return allProjects;
     }
 
+    /**
+     * Set selectedProjects.
+     *
+     * @param selectedProjects as List of Project
+     */
     public void setSelectedProjects(List<Project> selectedProjects) {
         this.selectedProjects = selectedProjects;
     }
 
+    /**
+     * Get projectListShown.
+     *
+     * @return value of projectListShown
+     */
     public boolean isProjectListShown() {
         return projectListShown;
     }
