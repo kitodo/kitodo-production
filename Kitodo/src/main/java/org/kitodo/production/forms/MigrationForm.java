@@ -38,6 +38,7 @@ public class MigrationForm implements Serializable {
     private List<Project> selectedProjects = new ArrayList<>();
     private List<Process> processList = new ArrayList<>();
     private boolean projectListShown;
+    private boolean processListShown;
 
     public void migrateMetadata() throws DAOException {
         List<Process> processes = ServiceManager.getProcessService().getAll();
@@ -63,9 +64,11 @@ public class MigrationForm implements Serializable {
     }
 
     public void showProcessesForProjects() {
+        processList.clear();
         for (Project project : selectedProjects) {
             processList.addAll(project.getProcesses());
         }
+        processListShown = true;
 
     }
 
@@ -103,4 +106,14 @@ public class MigrationForm implements Serializable {
     public List<Process> getProcessList() {
         return processList;
     }
+
+    /**
+     * Get processListShown.
+     *
+     * @return value of processListShown
+     */
+    public boolean isProcessListShown() {
+        return processListShown;
+    }
+
 }

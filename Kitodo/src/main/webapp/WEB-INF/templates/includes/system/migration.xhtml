@@ -38,8 +38,15 @@
                              id="migrateProject"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
-                             action="#{MigrationForm.showProcessesForProjects()}"
-                             immediate="true"/>
+                             action="#{MigrationForm.showProcessesForProjects()}"/>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{MigrationForm.processListShown}">
+            <p:dataTable var="process" value="#{MigrationForm.processList}">
+                <p:column style="width: 100%;">
+                    <h:outputText value="id: #{process.id} title: #{process.title} "
+                                  style="width:100%;"/>
+                </p:column>
+            </p:dataTable>
         </h:panelGroup>
     </h:form>
 
