@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
+package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;

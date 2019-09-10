@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.field.AdditionalField;
 
@@ -40,7 +41,7 @@ public class TiffHeaderGenerator extends Generator {
      * @param additionalFields
      *            fields used for tiff header generation
      */
-    public TiffHeaderGenerator(String atstsl, List<AdditionalField> additionalFields) {
+    public TiffHeaderGenerator(String atstsl, List<AdditionalDetailsTableRow> additionalFields) {
         super(atstsl, additionalFields);
     }
 
@@ -77,31 +78,32 @@ public class TiffHeaderGenerator extends Generator {
     }
 
     private String evaluateAdditionalFields(String token) throws ProcessGenerationException {
-        StringBuilder newTiffHeader = new StringBuilder();
-
-        for (AdditionalField additionalField : this.additionalFields) {
-            String title = additionalField.getTitle();
-            String value = additionalField.getValue();
-            boolean showDependingOnDoctype = additionalField.showDependingOnDoctype();
-
-            if ("Titel".equals(title) || "Title".equals(title) && !StringUtils.isEmpty(value)) {
-                this.tiffHeader = value;
-            }
-            /*
-             * if it is the ATS or TSL field, then use the calculated atstsl if it does not
-             * already exist
-             */
-            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype && StringUtils.isEmpty(value)) {
-                additionalField.setValue(this.atstsl);
-            }
-
-            // add the content to the tiff header
-            if (title.equals(token) && showDependingOnDoctype && Objects.nonNull(value)) {
-                newTiffHeader.append(calculateProcessTitleCheck(title, value));
-            }
-        }
-
-        return newTiffHeader.toString();
+//        StringBuilder newTiffHeader = new StringBuilder();
+//
+//        for (AdditionalField additionalField : this.additionalDetailsTableRows) {
+//            String title = additionalField.getTitle();
+//            String value = additionalField.getValue();
+//            boolean showDependingOnDoctype = additionalField.showDependingOnDoctype();
+//
+//            if ("Titel".equals(title) || "Title".equals(title) && !StringUtils.isEmpty(value)) {
+//                this.tiffHeader = value;
+//            }
+//            /*
+//             * if it is the ATS or TSL field, then use the calculated atstsl if it does not
+//             * already exist
+//             */
+//            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype && StringUtils.isEmpty(value)) {
+//                additionalField.setValue(this.atstsl);
+//            }
+//
+//            // add the content to the tiff header
+//            if (title.equals(token) && showDependingOnDoctype && Objects.nonNull(value)) {
+//                newTiffHeader.append(calculateProcessTitleCheck(title, value));
+//            }
+//        }
+//
+//        return newTiffHeader.toString();
+        return "";
     }
 
     /**

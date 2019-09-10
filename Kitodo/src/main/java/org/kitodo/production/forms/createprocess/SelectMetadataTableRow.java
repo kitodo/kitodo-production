@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
+package org.kitodo.production.forms.createprocess;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
@@ -101,7 +101,7 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
     }
 
     @Override
-    Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
         int items = selectedItems.size();
         Collection<Metadata> metadata = new HashSet<>((int) Math.ceil(items / .75));
         String key = settings.getId();

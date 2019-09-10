@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
+package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -91,7 +91,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      * Creates an empty metadata group. This constructor is used to create the
      * {@link #EMPTY} constant above.
      */
-    private FieldedAdditionalDetailsTableRow() {
+    FieldedAdditionalDetailsTableRow() {
         super(null, null, null);
         this.rows = Collections.emptyList();
         this.metadata = Collections.emptyList();
@@ -364,7 +364,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      *             if some value is invalid
      */
     @Override
-    Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
         assert structure == null;
         MetadataGroup result = new MetadataGroup();
         result.setKey(metadataView.getId());

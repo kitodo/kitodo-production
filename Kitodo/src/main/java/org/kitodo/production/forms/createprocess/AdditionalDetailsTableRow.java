@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
+package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -102,7 +102,7 @@ public abstract class AdditionalDetailsTableRow implements Serializable {
      * @throws InvalidMetadataValueException
      *             if the metadata form contains syntactically wrong input
      */
-    abstract Collection<Metadata> getMetadata() throws InvalidMetadataValueException;
+    public abstract Collection<Metadata> getMetadata() throws InvalidMetadataValueException;
 
     /**
      * If the metadata entry addresses a property of the structure, returns a

@@ -21,17 +21,17 @@
     <h:outputScript name="js/opacImport.js" target="body"/>
     <p:panelGrid layout="grid" columns="2" cellpadding="10">
         <!-- choose from existing processes  -->
-        <p:row rendered="#{ProzesskopieForm.useTemplates}">
+        <p:row rendered="#{CreateProcessForm.useTemplates}">
             <div>
                 <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
-                <p:selectOneMenu id="processSelect" value="#{ProzesskopieForm.processForChoice}"
+                <p:selectOneMenu id="processSelect" value="#{CreateProcessForm.searchTab.templateProcess}"
                                  converter="#{processConverter}">
-                    <f:selectItems value="#{ProzesskopieForm.processesForChoiceList}"/>
+                    <f:selectItems value="#{CreateProcessForm.searchTab.processesForChoiceList}"/>
                 </p:selectOneMenu>
             </div>
             <div>
                 <p:commandButton id="copyProcessData"
-                                 action="#{ProzesskopieForm.evaluateTemplateSelection}"
+                                 action="#{CreateProcessForm.searchTab.evaluateTemplateSelection}"
                                  value="#{msgs.apply}"
                                  title="#{msgs.selectFromExistingProcesses}"
                                  update="editForm"

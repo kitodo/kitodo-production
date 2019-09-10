@@ -98,7 +98,7 @@
                                 <h:outputText value="#{project.title} "/>
 
                                 <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                    <h:commandLink action="#{ProzesskopieForm.prepare(item.id,project.id)}" id="createProcess"
+                                    <h:commandLink action="#{CreateProcessForm.prepare(item.id,project.id)}" id="createProcess"
                                                    title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
                                         <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
                                     </h:commandLink>

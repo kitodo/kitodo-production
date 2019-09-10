@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.field.AdditionalField;
 
@@ -24,21 +25,21 @@ public abstract class Generator {
     private static final String INCOMPLETE_DATA = "errorDataIncomplete";
 
     protected String atstsl = "";
-    protected List<AdditionalField> additionalFields;
+    protected List<AdditionalDetailsTableRow> additionalDetailsTableRows;
 
     /**
      * Constructor for abstract Generator.
      *
      * @param atstsl
      *            field used for generation
-     * @param additionalFields
+     * @param additionalDetailsTableRows
      *            fields used for generation
      */
-    public Generator(String atstsl, List<AdditionalField> additionalFields) {
+    public Generator(String atstsl, List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
         if (Objects.nonNull(atstsl)) {
             this.atstsl = atstsl;
         }
-        this.additionalFields = additionalFields;
+        this.additionalDetailsTableRows = additionalDetailsTableRows;
     }
 
     /**
@@ -65,18 +66,18 @@ public abstract class Generator {
      *
      * @return value of additionalFields
      */
-    public List<AdditionalField> getAdditionalFields() {
-        return additionalFields;
+    public List<AdditionalDetailsTableRow> getAdditionalFields() {
+        return additionalDetailsTableRows;
     }
 
     /**
      * Set additional fields.
      *
-     * @param additionalFields
+     * @param additionalDetailsTableRows
      *            as List of AdditionalField objects
      */
-    public void setAdditionalFields(List<AdditionalField> additionalFields) {
-        this.additionalFields = additionalFields;
+    public void setAdditionalFields(List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
+        this.additionalDetailsTableRows = additionalDetailsTableRows;
     }
 
     protected String calculateProcessTitleCheck(String fieldName, String fieldValue) throws ProcessGenerationException {

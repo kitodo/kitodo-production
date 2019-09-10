@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
+package org.kitodo.production.forms.createprocess;
 
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
@@ -34,6 +34,8 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.forms.CreateProcessForm;
+import org.kitodo.production.forms.copyprocess.InsertionPositionSelectionTreeNode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
@@ -52,10 +54,7 @@ public class TitleRecordLinkTab {
      */
     private static final int MAXIMUM_NUMBER_OF_HITS = 10;
 
-    /**
-     * Process creation dialog to which this tab belongs.
-     */
-    private final ProzesskopieForm copyProcessForm;
+    private final CreateProcessForm createProcessForm;
 
     /**
      * The user-selected parent process.
@@ -101,11 +100,11 @@ public class TitleRecordLinkTab {
     /**
      * Creates a new data object underlying the title record link tab.
      *
-     * @param prozesskopieForm
-     *            process copy form containing the object
+     * @param createProcessForm
+     *            CreateProcessForm containing the object
      */
-    public TitleRecordLinkTab(ProzesskopieForm prozesskopieForm) {
-        this.copyProcessForm = prozesskopieForm;
+    public TitleRecordLinkTab(CreateProcessForm createProcessForm) {
+        this.createProcessForm = createProcessForm;
     }
 
     /**
@@ -190,14 +189,14 @@ public class TitleRecordLinkTab {
         }
 
         StructuralElementViewInterface currentIncludedStructuralElementView = ruleset.getStructuralElementView(type,
-            copyProcessForm.getAcquisitionStage(), priorityList);
+            createProcessForm.getAcquisitionStage(), priorityList);
 
         TreeNode includedStructuralElementNode = new InsertionPositionSelectionTreeNode(parentNode,
                 currentIncludedStructuralElementView.getLabel());
 
         boolean linkingAllowedHere = Objects.isNull(currentIncludedStructuralElement.getLink())
                 && currentIncludedStructuralElementView.getAllowedSubstructuralElements()
-                        .containsKey(ConfigOpac.getDoctypeByName(copyProcessForm.getDocType()).getRulesetType());
+                        .containsKey(ConfigOpac.getDoctypeByName(createProcessForm.getProcessDataTab().getDocType()).getRulesetType());
 
         if (linkingAllowedHere) {
             new InsertionPositionSelectionTreeNode(includedStructuralElementNode, selectableInsertionPositions.size());
@@ -250,7 +249,7 @@ public class TitleRecordLinkTab {
         }
         try {
             List<ProcessDTO> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
-                copyProcessForm.getProject().getId(), copyProcessForm.getTemplate().getRuleset().getId());
+                createProcessForm.getProject().getId(), createProcessForm.getTemplate().getRuleset().getId());
             if (processes.isEmpty()) {
                 Helper.setMessage("prozesskopieForm.titleRecordLinkTab.searchButtonClick.noHits");
             }

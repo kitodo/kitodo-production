@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
+package org.kitodo.production.forms.createprocess;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -67,7 +67,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
     }
 
     @Override
-    Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
        /* if (!settings.isValid(value)) {
             throw new InvalidMetadataValueException(label, value);
         }*/

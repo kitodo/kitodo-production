@@ -9,18 +9,15 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,13 +26,7 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.production.forms.copyprocess.AdditionalDetailsTableRow;
-import org.kitodo.production.forms.copyprocess.BooleanMetadataTableRow;
-import org.kitodo.production.forms.copyprocess.FieldedAdditionalDetailsTableRow;
-import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
-import org.kitodo.production.forms.copyprocess.SelectMetadataTableRow;
-import org.kitodo.production.forms.copyprocess.TextMetadataTableRow;
+import org.kitodo.production.forms.CreateProcessForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
@@ -46,18 +37,33 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-@Named("ImportForm")
-@ViewScoped
-public class ImportForm implements Serializable {
-    private static final Logger logger = LogManager.getLogger(ImportForm.class);
+public class ImportTab implements Serializable {
+    private static final Logger logger = LogManager.getLogger(ImportTab.class);
 
-    private ProzesskopieForm prozesskopieForm;
+    private CreateProcessForm createProcessForm;
     private String selectedCatalog;
     private String selectedField;
     private String searchTerm;
     private SearchResult searchResult;
-    private List<String> filledMetadataGroups = new ArrayList<>();
     private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
+
+    /**
+     * Standard constructor.
+     *
+     * @param createProcessForm CreateProcessForm instance to which this ImportTab is assigned.
+     */
+    public ImportTab(CreateProcessForm createProcessForm) {
+        this.createProcessForm = createProcessForm;
+    }
+
+    /**
+     * Get createProcessForm.
+     *
+     * @return value of createProcessForm
+     */
+    public CreateProcessForm getCreateProcessForm() {
+        return createProcessForm;
+    }
 
     /**
      * Getter for selectedCatalog.
@@ -116,24 +122,6 @@ public class ImportForm implements Serializable {
         this.selectedField = field;
     }
 
-    /**
-     * Get prozesskopieForm.
-     *
-     * @return value of prozesskopieForm
-     */
-    public ProzesskopieForm getProzesskopieForm() {
-        return prozesskopieForm;
-    }
-
-    /**
-     * Set prozesskopieForm.
-     *
-     * @param prozesskopieForm
-     *            as org.kitodo.forms.ProzesskopieForm
-     */
-    public void setProzesskopieForm(ProzesskopieForm prozesskopieForm) {
-        this.prozesskopieForm = prozesskopieForm;
-    }
 
     /**
      * Get list of catalogs.
@@ -216,13 +204,13 @@ public class ImportForm implements Serializable {
         String recordId = Helper.getRequestParameter("ID");
         getRecordById(this.selectedCatalog, recordId);
         Ajax.update("editForm");
-        this.prozesskopieForm.setEditActiveTabIndex(2);
+        this.createProcessForm.setEditActiveTabIndex(2);
     }
 
     private void getRecordById(String catalog, String recordId) {
         Document record;
         try {
-            record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
+            record = ServiceManager.getImportService().getSelectedRecord(catalog, recordId);
         } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException
                 | NoRecordFoundException | UnsupportedFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -230,59 +218,15 @@ public class ImportForm implements Serializable {
         }
 
         List<AdditionalDetailsTableRow> additionalDetailsTableRows =
-                this.prozesskopieForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows();
+                this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows();
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
 
         // TODO: iterating over multiple kitodo nodes will overwrite existing
         for (int i = 0; i < kitodoNodes.getLength(); i++) {
             Node kitodoNode = kitodoNodes.item(i);
-            setAdditionalDetailsTable(additionalDetailsTableRows, kitodoNode.getChildNodes());
-        }
-        this.prozesskopieForm.setOpacKatalog(catalog);
-    }
-
-    private void setAdditionalDetailsTable(List<AdditionalDetailsTableRow> rows, NodeList nodes) {
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            Element element = (Element) node;
-            String nodeName = element.getAttribute("name");
-            for (AdditionalDetailsTableRow tableRow : rows) {
-                if (Objects.nonNull(tableRow.getMetadataID()) && tableRow.getMetadataID().equals(nodeName)) {
-                    if (node.getLocalName().equals("metadataGroup")
-                            && tableRow instanceof FieldedAdditionalDetailsTableRow) {
-                        FieldedAdditionalDetailsTableRow fieldedRow;
-                        if (filledMetadataGroups.contains(nodeName)) {
-                            try {
-                                fieldedRow = this.prozesskopieForm.getAdditionalDetailsTab().addMetadataGroupRow(nodeName);
-                                this.prozesskopieForm.getAdditionalDetailsTab().getAdditionalDetailsTable().getRows().add(fieldedRow);
-                                setAdditionalDetailsTable(fieldedRow.getRows(), element.getChildNodes());
-                            } catch (NoSuchMetadataFieldException e) {
-                                logger.error(e.getLocalizedMessage());
-                            }
-                        } else {
-                            fieldedRow = (FieldedAdditionalDetailsTableRow) tableRow;
-                            filledMetadataGroups.add(nodeName);
-                            setAdditionalDetailsTable(fieldedRow.getRows(), element.getChildNodes());
-                        }
-                    } else if (node.getLocalName().equals("metadata")) {
-                        setAdditionalDetailsRow(tableRow, element);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    private void setAdditionalDetailsRow(AdditionalDetailsTableRow row, Element element) {
-        if (row instanceof TextMetadataTableRow) {
-            ((TextMetadataTableRow) row).setValue(element.getTextContent());
-
-        } else if (row instanceof BooleanMetadataTableRow) {
-            ((BooleanMetadataTableRow) row).setActive(Boolean.valueOf(element.getTextContent()));
-
-        } else if (row instanceof SelectMetadataTableRow) {
-            ((SelectMetadataTableRow) row).setSelectedItem(element.getTextContent());
+            this.createProcessForm.getAdditionalDetailsTab().setAdditionalDetailsTable(additionalDetailsTableRows,
+                    kitodoNode.getChildNodes());
         }
     }
 }

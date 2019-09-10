@@ -19,47 +19,47 @@
 
         <!-- Search function -->
 
-        <h:panelGroup rendered="#{ProzesskopieForm.titleRecordLinkTab.titleRecordProcess eq null}">
-        
+        <h:panelGroup rendered="#{CreateProcessForm.titleRecordLinkTab.titleRecordProcess eq null}">
+
             <!-- Search slot -->
-        
-            <p:inputText id="searchForParent" value="#{ProzesskopieForm.titleRecordLinkTab.searchQuery}"/>
+
+            <p:inputText id="searchForParent" value="#{CreateProcessForm.titleRecordLinkTab.searchQuery}"/>
 
             <p:commandButton id="searchParent" icon="fa fa-search" title="#{msgs.search}"
-                action="#{ProzesskopieForm.titleRecordLinkTab.searchForParentProcesses}"
+                action="#{CreateProcessForm.titleRecordLinkTab.searchForParentProcesses}"
                 update="editForm:processFromTemplateTabView:titleRecordLinkTabContent"/>
-            
+
             <!-- Hit selection -->
-        
+
             <div style="margin: 15px 0">
                 <h:panelGroup layout="block"
-                    rendered="#{ProzesskopieForm.titleRecordLinkTab.indicationOfMoreHitsVisible}">
+                    rendered="#{CreateProcessForm.titleRecordLinkTab.indicationOfMoreHitsVisible}">
                     <h1><h:outputText value="#{msgs.thereWereMoreHits}"/></h1>
                 </h:panelGroup>
             </div>
 
             <p:selectOneMenu id="chooseParent"
-                value="#{ProzesskopieForm.titleRecordLinkTab.chosenParentProcess}"
-                rendered="#{not empty ProzesskopieForm.titleRecordLinkTab.possibleParentProcesses}">
+                value="#{CreateProcessForm.titleRecordLinkTab.chosenParentProcess}"
+                rendered="#{not empty CreateProcessForm.titleRecordLinkTab.possibleParentProcesses}">
                 <f:selectItem itemLabel="#{msgs.selectPlease}" noSelectionOption="true" />
-                <f:selectItems value="#{ProzesskopieForm.titleRecordLinkTab.possibleParentProcesses}" />
-                <p:ajax listener="#{ProzesskopieForm.titleRecordLinkTab.chooseParentProcess}"
+                <f:selectItems value="#{CreateProcessForm.titleRecordLinkTab.possibleParentProcesses}" />
+                <p:ajax listener="#{CreateProcessForm.titleRecordLinkTab.chooseParentProcess}"
                     update="editForm:processFromTemplateTabView:titleRecordLinkTabContent"/>
             </p:selectOneMenu>
         </h:panelGroup>
 
         <!-- Insertion position selection tree -->
 
-        <h:panelGroup rendered="#{ProzesskopieForm.titleRecordLinkTab.titleRecordProcess ne null}">
-        
+        <h:panelGroup rendered="#{CreateProcessForm.titleRecordLinkTab.titleRecordProcess ne null}">
+
             <!-- The following element does not produce anything visible on the web page. It creates the
                 administrative structures needed for the 'p:radioButton's below to work. -->
             <p:selectOneRadio id="allRadioButtons" layout="custom"
-                value="#{ProzesskopieForm.titleRecordLinkTab.selectedInsertionPosition}">
-                <f:selectItems value="#{ProzesskopieForm.titleRecordLinkTab.selectableInsertionPositions}"/>
+                value="#{CreateProcessForm.titleRecordLinkTab.selectedInsertionPosition}">
+                <f:selectItems value="#{CreateProcessForm.titleRecordLinkTab.selectableInsertionPositions}"/>
             </p:selectOneRadio>
 
-            <p:tree id="rootElement" value="#{ProzesskopieForm.titleRecordLinkTab.rootElement}" var="node">
+            <p:tree id="rootElement" value="#{CreateProcessForm.titleRecordLinkTab.rootElement}" var="node">
                 <p:treeNode>
                     <p:radioButton id="insertionPositionRadioButton" itemIndex="#{node.itemIndex}"
                         for="editForm:processFromTemplateTabView:allRadioButtons"

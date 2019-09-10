@@ -9,12 +9,12 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
-
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+package org.kitodo.production.interfaces;
 
 import java.util.List;
 import java.util.Locale.LanguageRange;
+
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 
 /**
  * An interface that a form needs to implement to include a metadata panel.

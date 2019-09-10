@@ -67,6 +67,8 @@ import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
+import org.kitodo.production.forms.createprocess.TitleRecordLinkTab;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
@@ -76,6 +78,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
@@ -163,7 +166,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
-    private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
+    private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(null);
 
     protected String docType;
     protected Template template = new Template();
@@ -242,7 +245,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
                 clearValues();
                 readProjectConfigs();
                 this.ruleset = openRulesetFile(this.prozessKopie.getRuleset().getFile());
-                additionalDetailsTab = new AdditionalDetailsTab(this, docType);
+                additionalDetailsTab = new AdditionalDetailsTab(null);
                 this.workpiece = new Workpiece();
                 additionalDetailsTab.show(workpiece.getRootElement());
                 this.rdf = null;
@@ -1034,7 +1037,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
     /**
      * Set additionalDetailsTab.
      *
-     * @param additionalDetailsTab as org.kitodo.production.forms.copyprocess.AdditionalDetailsTab
+     * @param additionalDetailsTab as org.kitodo.production.forms.createprocess.AdditionalDetailsTab
      */
     public void setAdditionalDetailsTab(AdditionalDetailsTab additionalDetailsTab) {
         this.additionalDetailsTab = additionalDetailsTab;
@@ -1049,7 +1052,8 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
     public void setDocType(String docType) {
         if (!this.docType.equals(docType)) {
             this.docType = docType;
-            additionalDetailsTab.setDocType(docType);
+            // This is now done in "ProcessDataTab"!
+            //additionalDetailsTab.setDocType(docType);
             if (Objects.nonNull(rdf)) {
                 LegacyMetsModsDigitalDocumentHelper tmp = rdf;
 
@@ -1341,7 +1345,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
      * Generate process titles and other details.
      */
     public void calculateProcessTitle() {
-        TitleGenerator titleGenerator = new TitleGenerator(this.atstsl, this.additionalFields);
+        TitleGenerator titleGenerator = new TitleGenerator(this.atstsl, null);
         try {
             String newTitle = titleGenerator.generateTitle(this.titleDefinition, null);
             this.prozessKopie.setTitle(newTitle);
@@ -1364,7 +1368,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
         // document name is generally equal to process title
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
 
-        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl, this.additionalFields);
+        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl, null);
         try {
             this.tifHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tifDefinition, this.docType);
         } catch (ProcessGenerationException e) {
