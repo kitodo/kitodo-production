@@ -63,7 +63,13 @@ public class MigrationFormIT {
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showProcessesForProjects();
 
-        Assert.assertEquals("Processes should be found", 5, migrationForm.getProcessList().size());
+        Assert.assertEquals("Processes should be found", 3, migrationForm.getProcessList().size());
+
+        selectedProjects.remove(1);
+        migrationForm.setSelectedProjects(selectedProjects);
+        migrationForm.showProcessesForProjects();
+
+        Assert.assertEquals("Processes should be found", 2, migrationForm.getProcessList().size());
     }
 
 }
