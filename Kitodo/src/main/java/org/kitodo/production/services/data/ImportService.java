@@ -146,15 +146,10 @@ public class ImportService {
 
         // ################# CONVERT ################
         // depending on metadata and return form, call corresponding schema converter module!
-        List<SchemaConverterInterface> converters = getSchemaConverters(dataRecord);
-
-        if (converters.isEmpty()) {
-            throw new UnsupportedFormatException("No SchemaConverter found that supports '"
-                    + dataRecord.getMetadataFormat() + "' and '" + dataRecord.getFileFormat() + "'!");
-        }
+        SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
-        DataRecord resultRecord = converters.get(0).convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML);
+        DataRecord resultRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML);
 
         if (resultRecord.getOriginalData() instanceof String) {
             return XMLUtils.parseXMLString((String) resultRecord.getOriginalData());
@@ -165,23 +160,30 @@ public class ImportService {
 
     /**
      * Iterate over "SchemaConverterInterface" implementations using KitodoServiceLoader and return
-     * first implementation that supports the given ImportMetadataFormat.
+     * first implementation that supports the Metadata and File formats of the given DataRecord object
+     * as source formats and the Kitodo internal format and XML as target formats, respectively.
      *
      * @param record
      *      Record whose metadata and return formats are used to filter the SchemaConverterInterface implementations
      *
      * @return List of SchemaConverterInterface implementations that support the metadata and return formats of the
      *      given Record.
+     *
+     * @throws UnsupportedFormatException when no SchemaConverter module with matching formats could be found
      */
-    private List<SchemaConverterInterface> getSchemaConverters(DataRecord record) {
+    private SchemaConverterInterface getSchemaConverter(DataRecord record) throws UnsupportedFormatException {
         KitodoServiceLoader<SchemaConverterInterface> loader =
                 new KitodoServiceLoader<>(SchemaConverterInterface.class);
-        List<SchemaConverterInterface> converterModules = loader.loadModules();
-        return converterModules.stream()
+        List<SchemaConverterInterface> converterModules = loader.loadModules().stream()
                 .filter(c -> c.supportsSourceMetadataFormat(record.getMetadataFormat())
                         && c.supportsSourceFileFormat(record.getFileFormat())
                         && c.supportsTargetMetadataFormat(MetadataFormat.KITODO)
                         && c.supportsTargetFileFormat(FileFormat.XML))
                 .collect(Collectors.toList());
+        if (converterModules.isEmpty()) {
+            throw new UnsupportedFormatException("No SchemaConverter found that supports '"
+                    + record.getMetadataFormat() + "' and '" + record.getFileFormat() + "'!");
+        }
+        return converterModules.get(0);
     }
 }
