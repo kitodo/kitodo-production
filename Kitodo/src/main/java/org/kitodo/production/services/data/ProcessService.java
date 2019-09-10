@@ -566,8 +566,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            as String
      * @return QueryBuilder object
      */
-    public QueryBuilder getQueryProjectId(Integer id) {
-        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), id.toString(), true, Operator.AND);
+    public QueryBuilder getQueryProjectId(Integer projectId) {
+        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), projectId.toString(), true, Operator.AND);
     }
 
     /**
