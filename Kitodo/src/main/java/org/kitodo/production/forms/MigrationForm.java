@@ -30,6 +30,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.migration.TaskMigrationList;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -97,11 +98,22 @@ public class MigrationForm implements Serializable {
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
         for (String tasks : aggregatedProcesses.keySet()) {
             if (checkForTitle(tasks, process.getTasks())) {
+                if (tasksAreEqual(aggregatedProcesses.get(tasks).get(0).getTasks(), process.getTasks())) {
                     aggregatedProcesses.get(tasks).add(process);
                     return;
+                }
             }
         }
         aggregatedProcesses.put(createTaskString(process.getTasks()), new ArrayList<>(Arrays.asList(process)));
+    }
+
+    boolean tasksAreEqual(List<Task> firstProcessTasks, List<Task> secondProcessTasks) {
+        TaskMigrationList firstProcessTasksList = new TaskMigrationList();
+        firstProcessTasksList.addAll(firstProcessTasks);
+        TaskMigrationList secondProcessTasksList = new TaskMigrationList();
+        secondProcessTasksList.addAll(secondProcessTasks);
+
+        return firstProcessTasksList.equals(secondProcessTasksList);
     }
 
     private boolean checkForTitle(String aggregatedTasks, List<Task> processTasks) {
@@ -111,9 +123,9 @@ public class MigrationForm implements Serializable {
     private String createTaskString(List<Task> processTasks) {
         String taskString = "";
         for (Task processTask : processTasks) {
-            taskString = taskString.concat(processTask.getTitle());
+            taskString = taskString.concat(processTask.getTitle()+ " -> ");
         }
-        return taskString;
+        return taskString.contains("->") ?  taskString.substring(0, taskString.length() - 4) : taskString;
     }
 
     /**
@@ -189,10 +201,20 @@ public class MigrationForm implements Serializable {
         this.aggregatedProcesses = aggregatedProcesses;
     }
 
+    /**
+     * Get aggregatedTasks.
+     *
+     * @return keyset of aggregatedProcesses
+     */
     public List<String> getAggregatedTasks() {
         return new ArrayList<>(aggregatedProcesses.keySet());
     }
-
+    
+    /**
+     * Get numberOfProcesses.
+     *
+     * @return size of aggregatedProcesses
+     */
     public int getNumberOfProcesses(String tasks) {
         return aggregatedProcesses.get(tasks).size();
     }
