@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +30,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
 @Named("MigrationForm")
-@SessionScoped
+@ViewScoped
 public class MigrationForm implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(MigrationForm.class);
