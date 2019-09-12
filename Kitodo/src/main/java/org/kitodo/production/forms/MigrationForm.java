@@ -12,8 +12,8 @@
 package org.kitodo.production.forms;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,15 +29,20 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.migration.TaskComparator;
+import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
 @Named("MigrationForm")
 @ViewScoped
-public class MigrationForm implements Serializable {
+public class MigrationForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(MigrationForm.class);
     private List<Project> allProjects = new ArrayList<>();
@@ -129,9 +134,9 @@ public class MigrationForm implements Serializable {
     private String createTaskString(List<Task> processTasks) {
         String taskString = "";
         for (Task processTask : processTasks) {
-            taskString = taskString.concat(processTask.getTitle() + " -> ");
+            taskString = taskString.concat(processTask.getTitle());
         }
-        return taskString.contains("->") ? taskString.substring(0, taskString.length() - 4) : taskString;
+        return taskString.replaceAll("\\s","");
     }
 
     /**
@@ -224,5 +229,32 @@ public class MigrationForm implements Serializable {
      */
     public int getNumberOfProcesses(String tasks) {
         return aggregatedProcesses.get(tasks).size();
+    }
+
+    public String convertTasksToWorkflow(String tasks) {
+
+        Process blueprintProcess = aggregatedProcesses.get(tasks).get(0);
+
+        TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
+        try {
+            templateConverter.convertTasksToWorkflowFile(tasks, blueprintProcess.getTasks());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+
+        Workflow workflow = new Workflow(tasks);
+        workflow.setClient(blueprintProcess.getProject().getClient());
+        workflow.setStatus(WorkflowStatus.DRAFT);
+        workflow.getTemplates().add(null);
+
+        try {
+            ServiceManager.getWorkflowService().save(workflow);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger,
+                    e);
+            return this.stayOnCurrentPage;
+        }
+
+        return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflow.getId();
     }
 }
