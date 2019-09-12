@@ -82,6 +82,7 @@
             <param name="host" value="localhost" />
             <param name="scheme" value="http" />
             <param name="path" value="/sru" />
+            <param name="port" value="8888" />
         </config>
         <identifierParameter value="ead.id" />
         <urlParameters>

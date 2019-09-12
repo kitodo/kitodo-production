@@ -49,10 +49,11 @@ public class SRUImportTest {
     private static final String OPAC_NAME = "Kalliope";
     private static final String RECORD_ID = "1";
     private static final String RECORD_IDENTIFIER_VALUE = "12345";
+    private static final int PORT = 8888;
 
     @BeforeClass
     public static void setup() throws IOException {
-        server = new StubServer(80).run();
+        server = new StubServer(PORT).run();
         try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_FILE_PATH))) {
             setupServer(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
         }

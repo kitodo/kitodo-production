@@ -58,6 +58,7 @@ public class SRUImport implements ExternalDataImportInterface {
     private static final String HOST_CONFIG = "host";
     private static final String SCHEME_CONFIG = "scheme";
     private static final String PATH_CONFIG = "path";
+    private static final String PORT_CONFIG = "port";
     private static final String PARAM_TAG = "param";
     private static final String SEARCHFIELD_TAG = "searchField";
     private static final String RETURN_FORMAT_TAG = "returnFormat";
@@ -66,6 +67,7 @@ public class SRUImport implements ExternalDataImportInterface {
     private static String protocol;
     private static String host;
     private static String path;
+    private static int port = -1;
     private static String idParameter;
     private static String fileFormat;
     private static String metadataFormat;
@@ -159,7 +161,7 @@ public class SRUImport implements ExternalDataImportInterface {
     }
 
     private URI createQueryURI(LinkedHashMap<String, String> searchFields) throws URISyntaxException {
-        return new URI(protocol, null, host, -1, path, createQueryParameterString(searchFields), null);
+        return new URI(protocol, null, host, port, path, createQueryParameterString(searchFields), null);
     }
 
     private String createQueryParameterString(LinkedHashMap<String, String> searchFields) {
@@ -191,6 +193,9 @@ public class SRUImport implements ExternalDataImportInterface {
                         break;
                     case PATH_CONFIG:
                         path = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                        break;
+                    case PORT_CONFIG:
+                        port = queryConfigParam.getInt(VALUE_ATTRIBUTE);
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + queryConfigParam.getString(NAME_ATTRIBUTE));
