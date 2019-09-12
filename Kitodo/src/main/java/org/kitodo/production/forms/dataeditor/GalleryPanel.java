@@ -93,6 +93,8 @@ public class GalleryPanel {
 
     private Subfolder previewFolder;
 
+    private boolean isDragged = false;
+
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
@@ -237,6 +239,7 @@ public class GalleryPanel {
                 select(galleryMediaContent, toStripe);
             }
         }
+        isDragged = true;
     }
 
     private boolean dragStripeIndexMatches(DragDropEvent event) {
@@ -592,6 +595,10 @@ public class GalleryPanel {
      * @param currentSelection the GalleryMediaContent that was clicked
      */
     public void select(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
+        if (isDragged) {
+            isDragged = false;
+            return;
+        }
         IncludedStructuralElement structureElement;
         if (Objects.nonNull(parentStripe)) {
             structureElement = parentStripe.getStructure();
