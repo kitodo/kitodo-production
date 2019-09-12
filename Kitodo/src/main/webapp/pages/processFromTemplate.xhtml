@@ -19,7 +19,11 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewParam name="id"/>
+        <f:viewParam name="templateId"/>
+        <f:viewParam name="projectId"/>
+        <f:viewParam name="referrer"/>
         <f:viewAction action="#{ProcessForm.load(id)}" />
+        <f:viewAction action="#{CreateProcessForm.prepare(templateId, projectId, referrer)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

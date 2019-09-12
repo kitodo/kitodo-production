@@ -114,10 +114,14 @@
                                 <h:outputText value="#{template.title} "/>
 
                                 <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                    <h:commandLink action="#{CreateProcessForm.prepare(template.id,item.id)}" id="createProcess"
-                                                   title="#{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                    <h:link id="createProcess"
+                                            outcome="/pages/processFromTemplate?faces-redirect=true"
+                                            title="#{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                        <f:param name="templateId" value="#{template.id}"/>
+                                        <f:param name="projectId" value="#{item.id}"/>
+                                        <f:param name="referrer" value="#{'projects'}"/>
                                         <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
-                                    </h:commandLink>
+                                    </h:link>
 
                                     <h:commandLink action="#{MassImportForm.prepare(template.id,item.id)}" id="createMassProcess"
                                                    title="#{msgs.massImport}: #{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">

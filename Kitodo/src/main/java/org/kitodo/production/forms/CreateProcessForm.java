@@ -33,9 +33,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.jdom.JDOMException;
-
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
@@ -88,7 +86,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private boolean useTemplates;
     private LinkedList<Process> processes = new LinkedList<>(Collections.singletonList(new Process()));
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
-    private final String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
     /**
      * Returns the ruleset management to access the ruleset.
@@ -295,14 +292,16 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      *            id of template to query from database
      * @param projectId
      *            id of project to query from database
+     * @param referringView
+     *            JSF page the user came from
      *
      * @return path to page with form
      */
-    public String prepare(int templateId, int projectId) {
+    public String prepare(int templateId, int projectId, String referringView) {
         if (prepareProcess(templateId, projectId)) {
-            return processFromTemplatePath;
+            return stayOnCurrentPage;
         }
-        return this.stayOnCurrentPage;
+        return MessageFormat.format(REDIRECT_PATH, referringView);
     }
 
     /**
@@ -383,6 +382,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         // TODO: check if this is still required!
         //processRdfConfiguration();
         if (Objects.nonNull(workpiece)) {
+            workpiece.getRootElement().setType(processDataTab.getDocType());
             additionalDetailsTab.preserve();
             try (OutputStream out = ServiceManager.getFileService().write(ServiceManager.getProcessService().getMetadataFileUri(getMainProcess()))) {
                 ServiceManager.getMetsService().save(workpiece, out);
