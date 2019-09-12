@@ -17,7 +17,6 @@ import static com.xebialabs.restito.semantics.Action.ok;
 import static com.xebialabs.restito.semantics.Action.stringContent;
 import static com.xebialabs.restito.semantics.Condition.get;
 import static com.xebialabs.restito.semantics.Condition.parameter;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 import com.xebialabs.restito.server.StubServer;
