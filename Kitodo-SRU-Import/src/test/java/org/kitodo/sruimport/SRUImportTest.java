@@ -11,8 +11,6 @@
 
 package org.kitodo.sruimport;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.contentType;
 import static com.xebialabs.restito.semantics.Action.ok;
@@ -20,10 +18,16 @@ import static com.xebialabs.restito.semantics.Action.stringContent;
 import static com.xebialabs.restito.semantics.Condition.get;
 import static com.xebialabs.restito.semantics.Condition.parameter;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import com.xebialabs.restito.server.StubServer;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,8 +54,7 @@ public class SRUImportTest {
     @BeforeClass
     public static void setup() throws IOException {
         server = new StubServer(80).run();
-        File testFile = new File(TEST_FILE_PATH);
-        try (FileInputStream inputStream = new FileInputStream(testFile)) {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_FILE_PATH))) {
             setupServer(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
         }
     }
@@ -62,9 +65,8 @@ public class SRUImportTest {
         DataRecord importRecord = sruImport.getFullRecordById(OPAC_NAME, RECORD_ID);
         Assert.assertNotNull(importRecord);
         Assert.assertThat("Original data of data record has wrong class!",
-                importRecord.getOriginalData(), instanceOf(InputStream.class));
-        Document xmlDocument = parseInputStreamToDocument(IOUtils.toString((InputStream) importRecord.getOriginalData(),
-                StandardCharsets.UTF_8));
+                importRecord.getOriginalData(), instanceOf(String.class));
+        Document xmlDocument = parseInputStreamToDocument((String) importRecord.getOriginalData());
         NodeList recordIdentifierNodeList = xmlDocument.getElementsByTagName("recordIdentifier");
         Assert.assertEquals("Wrong number of record identifiers found!", 1,
                 recordIdentifierNodeList.getLength());

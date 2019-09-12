@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -141,14 +143,14 @@ public class SRUImport implements ExternalDataImportInterface {
         try {
             HttpResponse response = sruClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
-                if (Objects.nonNull(response.getEntity())) {
-                    DataRecord record = new DataRecord();
-                    record.setMetadataFormat(MetadataFormat.getMetadataFormat(metadataFormat));
-                    record.setFileFormat(FileFormat.getFileFormat(fileFormat));
-                    record.setOriginalData(response.getEntity().getContent());
-                    return record;
+                if (Objects.isNull(response.getEntity())) {
+                    throw new NotFoundException("No record with ID '" + identifier + "' found!");
                 }
-                throw new NotFoundException("No record with ID '" + identifier + "' found!");
+                DataRecord record = new DataRecord();
+                record.setMetadataFormat(MetadataFormat.getMetadataFormat(metadataFormat));
+                record.setFileFormat(FileFormat.getFileFormat(fileFormat));
+                record.setOriginalData(IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset()));
+                return record;
             }
             throw new ConfigException("SRU Request Failed");
         } catch (IOException e) {

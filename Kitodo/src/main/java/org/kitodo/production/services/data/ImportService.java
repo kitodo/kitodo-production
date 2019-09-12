@@ -11,9 +11,9 @@
 
 package org.kitodo.production.services.data;
 
-import com.sun.jersey.api.NotFoundException;
-
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +35,9 @@ import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.production.helper.XMLUtils;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.springframework.security.acls.model.NotFoundException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -134,7 +136,7 @@ public class ImportService {
      * @return The queried record transformed into Kitodo internal format.
      */
     public Document getSelectedRecord(String opac, String identifier) throws IOException, NotFoundException,
-            SAXException, ParserConfigurationException {
+            SAXException, ParserConfigurationException, URISyntaxException {
 
         // ################ IMPORT #################
         importModule = initializeImportModule();
@@ -149,7 +151,8 @@ public class ImportService {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
-        DataRecord resultRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML);
+        DataRecord resultRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML,
+                ServiceManager.getFileService().getFile(new URI(OPACConfig.getXsltMappingFile(opac))));
 
         if (resultRecord.getOriginalData() instanceof String) {
             return XMLUtils.parseXMLString((String) resultRecord.getOriginalData());

@@ -14,14 +14,16 @@ package org.kitodo.modsxmlschemaconverter;
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.api.schemaconverter.DataRecord;
@@ -36,6 +38,7 @@ import org.xml.sax.SAXException;
 public class ModsXmlSchemaConverterTest {
 
     private static ModsXMLSchemaConverter converter = new ModsXMLSchemaConverter();
+    private static final String TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
 
     @Test
     public void shouldConvertToInternalFormat() throws IOException, ParserConfigurationException, SAXException {
@@ -43,13 +46,12 @@ public class ModsXmlSchemaConverterTest {
         DataRecord testRecord = new DataRecord();
         testRecord.setMetadataFormat(MetadataFormat.MODS);
         testRecord.setFileFormat(FileFormat.XML);
-        File testFile = new File("src/test/resources/modsXmlTestRecord.xml");
 
         DataRecord internalFormatRecord;
 
-        try (InputStream inputStream = new FileInputStream(testFile)) {
-            testRecord.setOriginalData(inputStream);
-            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML);
+        try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_FILE_PATH))) {
+            testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
+            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, null);
         }
 
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
@@ -60,7 +62,7 @@ public class ModsXmlSchemaConverterTest {
         Assert.assertThat("Wrong class of original data object!",
                 internalFormatRecord.getOriginalData(), instanceOf(String.class));
         Document resultDocument = parseInputStreamToDocument((String) internalFormatRecord.getOriginalData());
-        NodeList metadataNodes = resultDocument.getElementsByTagName ("kitodo:metadata");
+        NodeList metadataNodes = resultDocument.getElementsByTagName("kitodo:metadata");
 
         String title = "";
         String catalogId = "";
@@ -76,6 +78,9 @@ public class ModsXmlSchemaConverterTest {
                     break;
                 case "PublicationYear":
                     year = element.getTextContent();
+                    break;
+                default:
+                    // ignore other elements
                     break;
             }
         }

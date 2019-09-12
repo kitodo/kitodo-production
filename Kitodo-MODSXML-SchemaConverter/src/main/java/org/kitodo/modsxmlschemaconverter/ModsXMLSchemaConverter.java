@@ -11,11 +11,13 @@
 
 package org.kitodo.modsxmlschemaconverter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidClassException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 
@@ -33,9 +35,6 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -44,8 +43,6 @@ import org.kitodo.exceptions.ConfigException;
 import org.xml.sax.InputSource;
 
 public class ModsXMLSchemaConverter implements SchemaConverterInterface {
-
-    private static final Logger logger = LogManager.getLogger(ModsXMLSchemaConverter.class);
 
     private static final String XSLT_FILEPATH = "/xslt/mods2kitodo.xsl";
 
@@ -60,10 +57,12 @@ public class ModsXMLSchemaConverter implements SchemaConverterInterface {
      * @param record DataRecord to be converted
      * @param targetMetadataFormat MetadataFormat to which the given DataRecord is converted
      * @param targetFileFormat FileFormat to which the given DataRecord is converted
+     * @param mappingFile mapping file; if null, the schema converter module uses a default mapping
      * @return The result of the conversion as a DataRecord.
      */
     @Override
-    public DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat) {
+    public DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat,
+                              File mappingFile) throws IOException {
         if (!(supportsSourceMetadataFormat(record.getMetadataFormat())
                 && supportsSourceFileFormat(record.getFileFormat())
                 && supportsTargetMetadataFormat(targetMetadataFormat)
@@ -72,24 +71,29 @@ public class ModsXMLSchemaConverter implements SchemaConverterInterface {
                     + record.getFileFormat() + " to " + targetMetadataFormat + "/" + targetFileFormat + "!");
         }
 
-        if (record.getOriginalData() instanceof InputStream) {
-            try (InputStream inputStream = (InputStream)record.getOriginalData();
-                 InputStream fileStream = getClass().getResourceAsStream(XSLT_FILEPATH)) {
-                if (Objects.isNull(fileStream)) {
-                    logger.error("Unable to load XSL transformation file!");
-                    throw new IOException("Unable to load XSL transformation file!");
+        if (record.getOriginalData() instanceof String) {
+            String xmlString = (String)record.getOriginalData();
+            String conversionResult;
+
+            if (Objects.nonNull(mappingFile)) {
+                try (InputStream fileStream = Files.newInputStream(mappingFile.toPath())) {
+                    conversionResult = transformXmlByXslt(xmlString, fileStream);
                 }
-                String xmlString = IOUtils.toString(inputStream, Charset.defaultCharset());
-                DataRecord resultRecord = new DataRecord();
-                resultRecord.setOriginalData(transformXmlByXslt(xmlString, fileStream));
-                resultRecord.setFileFormat(targetFileFormat);
-                resultRecord.setMetadataFormat(targetMetadataFormat);
-                return resultRecord;
-            } catch (IOException e) {
-                logger.error(e.getMessage());
+            } else {
+                try (InputStream fileStream = getClass().getResourceAsStream(XSLT_FILEPATH)) {
+                    conversionResult = transformXmlByXslt(xmlString, fileStream);
+                }
             }
+
+            DataRecord resultRecord = new DataRecord();
+            resultRecord.setOriginalData(conversionResult);
+            resultRecord.setFileFormat(targetFileFormat);
+            resultRecord.setMetadataFormat(targetMetadataFormat);
+            return resultRecord;
+        } else {
+            throw new InvalidClassException("OriginalData of DataRecord should be instance of class 'String', is '"
+                    + record.getOriginalData().getClass().getName() + "' instead!");
         }
-        return null;
     }
 
     @Override

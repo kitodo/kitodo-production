@@ -89,7 +89,6 @@ public class KitodoConfig extends Config {
         try {
             return getConfig().getString(key);
         } catch (NoSuchElementException e) {
-            e.printStackTrace();
             throw new NoSuchElementException("No configuration found in " + CONFIG_FILE + " for key " + key + "!");
         }
     }

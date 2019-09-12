@@ -11,6 +11,9 @@
 
 package org.kitodo.api.schemaconverter;
 
+import java.io.File;
+import java.io.IOException;
+
 /** Enables the conversion of a DataRecord from one format to another. */
 public interface SchemaConverterInterface {
 
@@ -20,9 +23,11 @@ public interface SchemaConverterInterface {
      * @param record DataRecord to be converted
      * @param targetMetadataFormat MetadataFormat to which the given DataRecord is converted
      * @param targetFileFormat FileFormat to which the given DataRecord is converted
+     * @param mappingFile mapping file; if null, the schema converter module uses a default mapping
      * @return The result of the conversion as a DataRecord.
      */
-    DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat);
+    DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat,
+                       File mappingFile) throws IOException;
 
     /**
      * Check and return whether the current SchemaConverter supports the given MetadataFormat as a target format or not.

@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -207,7 +208,7 @@ public class ImportForm implements Serializable {
         Document record;
         try {
             record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
-        } catch (IOException | SAXException | ParserConfigurationException e) {
+        } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException e) {
             logger.error(e.getMessage());
             return;
         }
