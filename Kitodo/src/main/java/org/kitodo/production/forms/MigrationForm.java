@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.migration.TaskMigrationList;
+import org.kitodo.production.migration.TaskComparator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -97,23 +98,28 @@ public class MigrationForm implements Serializable {
 
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
         for (String tasks : aggregatedProcesses.keySet()) {
-            if (checkForTitle(tasks, process.getTasks())) {
-                if (tasksAreEqual(aggregatedProcesses.get(tasks).get(0).getTasks(), process.getTasks())) {
-                    aggregatedProcesses.get(tasks).add(process);
-                    return;
-                }
+            if (checkForTitle(tasks, process.getTasks())
+                    && tasksAreEqual(aggregatedProcesses.get(tasks).get(0).getTasks(), process.getTasks())) {
+                aggregatedProcesses.get(tasks).add(process);
+                return;
             }
         }
         aggregatedProcesses.put(createTaskString(process.getTasks()), new ArrayList<>(Arrays.asList(process)));
     }
 
     boolean tasksAreEqual(List<Task> firstProcessTasks, List<Task> secondProcessTasks) {
-        TaskMigrationList firstProcessTasksList = new TaskMigrationList();
-        firstProcessTasksList.addAll(firstProcessTasks);
-        TaskMigrationList secondProcessTasksList = new TaskMigrationList();
-        secondProcessTasksList.addAll(secondProcessTasks);
+        TaskComparator taskComparator = new TaskComparator();
 
-        return firstProcessTasksList.equals(secondProcessTasksList);
+        Iterator<Task> firstTaskIterator = firstProcessTasks.iterator();
+        Iterator<Task> secondTaskIterator = secondProcessTasks.iterator();
+        while (firstTaskIterator.hasNext()) {
+            Task firstTask = firstTaskIterator.next();
+            Task secondTask = secondTaskIterator.next();
+            if (taskComparator.compare(firstTask, secondTask) != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean checkForTitle(String aggregatedTasks, List<Task> processTasks) {
@@ -123,9 +129,9 @@ public class MigrationForm implements Serializable {
     private String createTaskString(List<Task> processTasks) {
         String taskString = "";
         for (Task processTask : processTasks) {
-            taskString = taskString.concat(processTask.getTitle()+ " -> ");
+            taskString = taskString.concat(processTask.getTitle() + " -> ");
         }
-        return taskString.contains("->") ?  taskString.substring(0, taskString.length() - 4) : taskString;
+        return taskString.contains("->") ? taskString.substring(0, taskString.length() - 4) : taskString;
     }
 
     /**
@@ -195,7 +201,8 @@ public class MigrationForm implements Serializable {
     /**
      * Set aggregatedProcesses.
      *
-     * @param aggregatedProcesses as java.util.Map
+     * @param aggregatedProcesses
+     *            as java.util.Map
      */
     public void setAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses) {
         this.aggregatedProcesses = aggregatedProcesses;
@@ -209,7 +216,7 @@ public class MigrationForm implements Serializable {
     public List<String> getAggregatedTasks() {
         return new ArrayList<>(aggregatedProcesses.keySet());
     }
-    
+
     /**
      * Get numberOfProcesses.
      *

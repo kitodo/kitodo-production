@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.production.services.ServiceManager;
 
 public class TasksToWorkflowConverter {
@@ -93,7 +92,7 @@ public class TasksToWorkflowConverter {
         URI xmlDiagramURI = new File(ConfigCore.getKitodoDiagramDirectory() + title + ".bpmn20.xml").toURI();
 
         try (OutputStream outputStream = ServiceManager.getFileService().write(xmlDiagramURI);
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(fileContent);
         }
     }

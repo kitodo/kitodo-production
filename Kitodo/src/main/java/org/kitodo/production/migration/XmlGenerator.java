@@ -131,7 +131,8 @@ class XmlGenerator {
         }
     }
 
-    private static void generateTemplateTaskProperty(StringBuilder taskBuilder, String propertyName, Object propertyValue) {
+    private static void generateTemplateTaskProperty(StringBuilder taskBuilder, String propertyName,
+            Object propertyValue) {
         taskBuilder.append("template:");
         taskBuilder.append(propertyName);
         taskBuilder.append("=\"");
@@ -148,7 +149,8 @@ class XmlGenerator {
         taskBuilder.append("</bpmn2:outgoing>\n");
     }
 
-    private static void generateSequenceFlow(StringBuilder taskBuilder, Integer ordering, String sourceReference, String targetReference) {
+    private static void generateSequenceFlow(StringBuilder taskBuilder, Integer ordering, String sourceReference,
+            String targetReference) {
         taskBuilder.append("        <bpmn2:sequenceFlow id=\"SequenceFlow_");
         taskBuilder.append(ordering);
         taskBuilder.append("\" sourceRef=\"");
