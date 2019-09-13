@@ -1832,12 +1832,11 @@ Column content
     position: absolute;
     text-align: center;
     top: 7px;
-    z-index: -1;
 }
 
 .page-drop-area::after {
     content: "";
-    width: 50%;
+    width: 30%;
     height: 100%;
     display: inline-block;
 }
@@ -1846,14 +1845,15 @@ Column content
     width: 100%;
 }
 
-.media-stripe-hover.ui-droppable-active,
-#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover,
-#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-hover::after {
+.media-stripe-active,
+.media-stripe-index-active::after {
     background-color: var(--light-blue);
+    opacity: .3;
 }
 
-#imagePreviewForm div.ui-panel.ui-corner-all.media-stripe-index-hover::after {
-    background-color: indianred;
+.media-stripe-active.ui-droppable-hover,
+.media-stripe-index-active.ui-droppable-hover::after {
+    opacity: .8;
 }
 
 #imagePreviewForm\:structuredPagesField {

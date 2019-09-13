@@ -122,8 +122,7 @@
                                          stack=".ui-panel"/>
                             <p:droppable for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPageDropArea"
                                          scope="assignedPagesDroppable"
-                                         activeStyleClass="media-stripe-hover"
-                                         hoverStyleClass="media-stripe-index-hover">
+                                         activeStyleClass="media-stripe-index-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                         update="@(.pageList)
                                                 structureTreeForm:logicalTree"/>
@@ -134,8 +133,7 @@
                                          styleClass="page-drop-area"/>
                                 <p:droppable for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPageLastDropArea"
                                              scope="assignedPagesDroppable"
-                                             activeStyleClass="media-stripe-hover"
-                                             hoverStyleClass="media-stripe-index-hover">
+                                             activeStyleClass="media-stripe-index-active">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                             update="@(.pageList)
                                                     imagePreviewForm:unstructuredMedia
@@ -147,7 +145,7 @@
                             <p:droppable id="structuredPagesDroppable"
                                          scope="assignedPagesDroppable"
                                          for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
-                                         hoverStyleClass="media-stripe-hover">
+                                         activeStyleClass="media-stripe-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                         update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
@@ -210,8 +208,7 @@
                                          stack=".ui-panel"/>
                             <p:droppable for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredPageDropArea"
                                          scope="assignedPagesDroppable"
-                                         activeStyleClass="media-stripe-hover"
-                                         hoverStyleClass="media-stripe-index-hover">
+                                         activeStyleClass="media-stripe-index-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                         update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
@@ -223,8 +220,7 @@
                                          styleClass="page-drop-area"/>
                                 <p:droppable for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredPageLastDropArea"
                                              scope="assignedPagesDroppable"
-                                             activeStyleClass="media-stripe-hover"
-                                             hoverStyleClass="media-stripe-index-hover">
+                                             activeStyleClass="media-stripe-index-active">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                             update="@(.pageList)
                                                     imagePreviewForm:unstructuredMedia
@@ -236,7 +232,7 @@
                             <p:droppable id="unstructuredPagesDroppable"
                                          scope="assignedPagesDroppable"
                                          for="imagePreviewForm:unstructuredMediaList"
-                                         hoverStyleClass="media-stripe-hover">
+                                         activeStyleClass="media-stripe-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                         update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
