@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.coobird.thumbnailator.tasks.UnsupportedFormatException;
-
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +33,7 @@ import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -135,8 +134,8 @@ public class ImportService {
      * @param identifier   The ID of the record that will be imported.
      * @return The queried record transformed into Kitodo internal format.
      */
-    public Document getSelectedRecord(String opac, String identifier) throws IOException,
-            SAXException, ParserConfigurationException, URISyntaxException, NoRecordFoundException {
+    public Document getSelectedRecord(String opac, String identifier) throws IOException, SAXException,
+            ParserConfigurationException, URISyntaxException, NoRecordFoundException, UnsupportedFormatException {
 
         // ################ IMPORT #################
         importModule = initializeImportModule();
