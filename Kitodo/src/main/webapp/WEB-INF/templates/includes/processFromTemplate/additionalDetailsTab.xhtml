@@ -26,6 +26,7 @@
 
                     <p:inputText value="#{item.value}"
                                  disabled="#{not item.editable }"
+                                 required="#{item.required and not empty param['editForm:save']}"
                                  styleClass="#{not item.editable ? 'disabled' : ''}"
                                  style="width:100%;"
                                  rendered="#{item.input eq 'inputText'}">
@@ -35,6 +36,7 @@
                     <p:inputTextarea value="#{item.value}"
                                      rows="2"
                                      disabled="#{not item.editable}"
+                                     required="#{item.required and not empty param['editForm:save']}"
                                      styleClass="#{not item.editable ? 'disabled' : ''}"
                                      style="width:100%;"
                                      rendered="#{item.input eq 'inputTextarea'}">
@@ -43,14 +45,17 @@
                     <p:spinner value="#{item.value}"
                                style="width:100%;"
                                disabled="#{not item.editable}"
+                               required="#{item.required and not empty param['editForm:save']}"
+                               styleClass="#{not item.editable ? 'disabled' : ''}"
                                rendered="#{item.input eq 'spinner'}">
                         <p:ajax event="blur"/>
                     </p:spinner>
 
                     <p:calendar value="#{item.date}"
                                 pattern="yyyy-mm-dd"
-                                styleClass="input-with-button"
+                                styleClass="input-with-button #{not item.editable ? 'disabled' : ''}"
                                 showOn="button"
+                                required="#{item.required and not empty param['editForm:save']}"
                                 disabled="#{not item.editable}"
                                 rendered="#{item.input eq 'calendar'}">
                         <p:ajax event="dateSelect"/>
@@ -64,6 +69,7 @@
                             <p:outputLabel value="#{entry.label}:" />
                             <p:inputText value="#{entry.value}"
                                          disabled="#{not entry.editable}"
+                                         required="#{entry.required and not empty param['editForm:save']}"
                                          styleClass="#{not entry.editable ? 'disabled' : ''}"
                                          style="width:90%;"
                                          rendered="#{entry.input eq 'inputText'}">
@@ -72,6 +78,7 @@
                             <p:inputTextarea value="#{entry.value}"
                                              rows="2"
                                              disabled="#{not entry.editable}"
+                                             required="#{entry.required and not empty param['editForm:save']}"
                                              styleClass="#{not entry.editable ? 'disabled' : ''}"
                                              style="width:90%;"
                                              rendered="#{entry.input eq 'inputTextarea'}">
@@ -79,6 +86,7 @@
                             </p:inputTextarea>
                             <p:spinner value="#{entry.value}"
                                        style="width:90%;"
+                                       required="#{entry.required and not empty param['editForm:save']}"
                                        disabled="#{not entry.editable}"
                                        rendered="#{entry.input eq 'spinner'}">
                                 <p:ajax event="blur"/>
@@ -86,14 +94,16 @@
 
                             <p:calendar value="#{entry.date}"
                                         pattern="yyyy-mm-dd"
-                                        styleClass="input-with-button"
+                                        styleClass="input-with-button #{not entry.editable ? 'disabled' : ''}"
                                         showOn="button"
                                         disabled="#{not entry.editable}"
+                                        required="#{entry.required and not empty param['editForm:save']}"
                                         rendered="#{entry.input eq 'calendar'}">
                                 <p:ajax event="dateSelect"/>
                             </p:calendar>
                             <p:selectOneMenu value="#{entry.selectedItem}"
                                              style="width:90%"
+                                             styleClass="#{not entry.editable ? 'disabled' : ''}"
                                              readonly="#{not entry.editable}"
                                              rendered="#{entry.input eq 'oneMenu'}">
                                 <f:selectItems value="#{entry.items}"/>
@@ -102,17 +112,21 @@
                             <p:selectManyMenu value="#{entry.selectedItems}"
                                               readonly="#{not entry.editable}"
                                               style="width:90%;"
+                                              styleClass="#{not entry.editable ? 'disabled' : ''}"
                                               rendered="#{entry.input eq 'manyMenu'}">
                                 <f:selectItems value="#{entry.items}"/>
                                 <p:ajax event="blur"/>
                             </p:selectManyMenu>
                             <p:selectOneRadio value="#{entry.selectedItem}"
                                               readonly="#{not entry.editable}"
+                                              styleClass="#{not entry.editable ? 'disabled' : ''}"
                                               rendered="#{entry.input eq 'oneRadio'}">
                                 <f:selectItems value="#{entry.items}"/>
                                 <p:ajax event="blur"/>
                             </p:selectOneRadio>
                             <p:selectBooleanCheckbox value="#{entry.active}"
+                                                     disabled="#{not entry.editable}"
+                                                     styleClass="#{not entry.editable ? 'disabled' : ''}"
                                                      rendered="#{entry.input eq 'toggleSwitch'}">
                                 <p:ajax event="blur"/>
                             </p:selectBooleanCheckbox>
@@ -121,11 +135,13 @@
                     </p:panelGrid>
                     <p:selectManyMenu value="#{item.selectedItems}"
                                       readonly="#{not item.editable}"
+                                      styleClass="#{not entry.editable ? 'disabled' : ''}"
                                       rendered="#{item.input eq 'manyMenu'}">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="blur"/>
                     </p:selectManyMenu>
                     <p:selectOneMenu value="#{item.selectedItem}"
+                                     styleClass="#{not entry.editable ? 'disabled' : ''}"
                                      readonly="#{not item.editable}"
                                      rendered="#{item.input eq 'oneMenu'}">
                         <f:selectItems value="#{item.items}"/>
@@ -133,11 +149,14 @@
                     </p:selectOneMenu>
                     <p:selectOneRadio value="#{item.selectedItem}"
                                       readonly="#{not item.editable}"
+                                      styleClass="#{not entry.editable ? 'disabled' : ''}"
                                       rendered="#{item.input eq 'oneRadio'}">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="blur"/>
                     </p:selectOneRadio>
                     <p:selectBooleanCheckbox value="#{item.active}"
+                                             disabled="#{not item.editable}"
+                                             styleClass="#{not item.editable ? 'disabled' : ''}"
                                              rendered="#{item.input eq 'toggleSwitch'}">
                         <p:ajax event="blur"/>
                     </p:selectBooleanCheckbox>

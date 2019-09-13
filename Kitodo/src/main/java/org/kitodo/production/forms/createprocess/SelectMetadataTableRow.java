@@ -150,6 +150,16 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
         }
     }
 
+    @Override
+    public boolean isValid() {
+        for (String selectedItem : selectedItems) {
+            if (!settings.isValid(selectedItem)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Setter to set the selected elements in multi-select scenario.
      *

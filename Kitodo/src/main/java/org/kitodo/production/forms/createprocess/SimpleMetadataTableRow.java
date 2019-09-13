@@ -71,4 +71,8 @@ abstract class SimpleMetadataTableRow extends AdditionalDetailsTableRow implemen
         return settings.isUndefined();
     }
 
+    public boolean isRequired() {
+        return settings.getMinOccurs() > 0;
+    }
+
 }

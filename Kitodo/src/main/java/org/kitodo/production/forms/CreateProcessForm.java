@@ -63,6 +63,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
+import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("CreateProcessForm")
@@ -81,7 +82,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private List<Locale.LanguageRange> priorityList;
     private String acquisitionStage = "create";
     private Project project;
-    private Workpiece workpiece;
+    private Workpiece workpiece = new Workpiece();
     private Template template;
     private boolean useTemplates;
     private LinkedList<Process> processes = new LinkedList<>(Collections.singletonList(new Process()));
@@ -200,6 +201,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         this.processes = processes;
     }
 
+    /**
+     * Get the main Process that want to be created.
+     *
+     * @return value of first element in newProcesses
+     */
     public Process getMainProcess() {
         if (this.processes.isEmpty()) {
             throw new NotFoundException("Process list is empty!");
@@ -232,6 +238,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public Project getProject() {
         return project;
+    }
+
+    /**
+     * Get workpiece.
+     *
+     * @return value of workpiece
+     */
+    public Workpiece getWorkpiece() {
+        return workpiece;
     }
 
     /**
@@ -316,33 +331,25 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public boolean prepareProcess(int templateId, int projectId) {
         //atstsl = "";
-
         ProcessGenerator processGenerator = new ProcessGenerator();
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);
-
             if (generated) {
                 this.processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
                 this.project = processGenerator.getProject();
                 this.template = processGenerator.getTemplate();
-
                 resetForm();
-                readProjectConfigs();
                 this.rulesetManagementInterface = openRulesetFile(this.getMainProcess().getRuleset().getFile());
-                additionalDetailsTab = new AdditionalDetailsTab(this);
-                this.workpiece = new Workpiece();
-                additionalDetailsTab.show(workpiece.getRootElement());
-                // TODO: do we really still need this?
-                //this.rdf = null;
+                readProjectConfigs();
                 this.processDataTab.setDigitalCollections(new ArrayList<>());
                 initializePossibleDigitalCollections();
-
+                // TODO: do we really still need this?
+                //this.rdf = null;
                 return true;
             }
         } catch (ProcessGenerationException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-
         return false;
     }
 
@@ -362,7 +369,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
         addProperties();
         updateTasks(mainProcess);
-
         try {
             mainProcess.setSortHelperImages(this.processDataTab.getGuessedImages());
             ServiceManager.getProcessService().save(mainProcess);
@@ -371,7 +377,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                     e);
             return false;
         }
-
         if (!createProcessLocation()) {
             return false;
         }
@@ -381,7 +386,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         if (Objects.nonNull(workpiece)) {
             workpiece.getRootElement().setType(processDataTab.getDocType());
             additionalDetailsTab.preserve();
-            try (OutputStream out = ServiceManager.getFileService().write(ServiceManager.getProcessService().getMetadataFileUri(getMainProcess()))) {
+            try (OutputStream out = ServiceManager.getFileService()
+                    .write(ServiceManager.getProcessService().getMetadataFileUri(getMainProcess()))) {
                 ServiceManager.getMetsService().save(workpiece, out);
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

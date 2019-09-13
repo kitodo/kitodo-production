@@ -14,11 +14,13 @@ package org.kitodo.production.forms.createprocess;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
+import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +44,25 @@ public class ProcessDataTab {
     private int guessedImages = 0;
 
     private static final String OPAC_CONFIG = "configurationOPAC";
+
+    /**
+     * Set docType.
+     *
+     * @param docType as java.lang.String
+     */
+    public void setDocType(String docType) {
+        if (Objects.isNull(this.docType) || !this.docType.equals(docType)) {
+            this.docType = docType;
+            try {
+                this.createProcessForm.getWorkpiece().getRootElement()
+                        .setType(ConfigOpac.getDoctypeByName(docType).getRulesetType());
+            } catch (FileNotFoundException e) {
+                logger.error(e.getLocalizedMessage());
+            }
+            this.createProcessForm.getAdditionalDetailsTab().show(this.createProcessForm.getWorkpiece().getRootElement());
+        }
+    }
+
     private static final String ERROR_READING = "errorReading";
 
     public ProcessDataTab(CreateProcessForm createProcessForm) {
@@ -55,15 +76,6 @@ public class ProcessDataTab {
      */
     public String getDocType() {
         return docType;
-    }
-
-    /**
-     * Set docType.
-     *
-     * @param docType as java.lang.String
-     */
-    public void setDocType(String docType) {
-        this.docType = docType;
     }
 
     /**

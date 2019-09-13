@@ -122,7 +122,8 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
         return active;
     }
 
-    private boolean isValid() {
+    @Override
+    public boolean isValid() {
         Optional<String> value = settings.convertBoolean(active);
         return !value.isPresent() || settings.isValid(value.get());
     }

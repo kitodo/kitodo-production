@@ -11,6 +11,9 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,11 +57,15 @@ public class AdditionalDetailsTab {
      *          which its Metadaten are wanted to be shown
      */
     public void show(IncludedStructuralElement structure) {
-        StructuralElementViewInterface divisionView = this.createProcessForm.getRuleset().getStructuralElementView(
-                this.createProcessForm.getProcessDataTab().getDocType(),
-                this.createProcessForm.getAcquisitionStage(),
-                this.createProcessForm.getPriorityList());
-        additionalDetailsTable = new FieldedAdditionalDetailsTableRow(this, structure, divisionView);
+        try {
+            StructuralElementViewInterface divisionView = this.createProcessForm.getRuleset().getStructuralElementView(
+                    ConfigOpac.getDoctypeByName(createProcessForm.getProcessDataTab().getDocType()).getRulesetType(),
+                    this.createProcessForm.getAcquisitionStage(),
+                    this.createProcessForm.getPriorityList());
+            additionalDetailsTable = new FieldedAdditionalDetailsTableRow(this, structure, divisionView);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -140,18 +147,33 @@ public class AdditionalDetailsTab {
         }
     }
 
-    public static AdditionalDetailsTableRow setAdditionalDetailsRow(AdditionalDetailsTableRow row, String elementText) {
+    /**
+     * Set the value of a specific row in the additionalDetailsTab.
+     * @param row the row that its value want to be modified
+     *      as AdditionalDetailsTableRow
+     * @param value
+     *       as a java.lang.String
+     * @return the modified row
+     *      as a AdditionalDetailsTableRow
+     */
+    public static AdditionalDetailsTableRow setAdditionalDetailsRow(AdditionalDetailsTableRow row, String value) {
         if (row instanceof TextMetadataTableRow) {
             // TODO: incorporate "initstart" and "initend" values from kitodo_projects.xml like AddtionalField!
-            ((TextMetadataTableRow) row).setValue(elementText);
+            ((TextMetadataTableRow) row).setValue(value);
         } else if (row instanceof BooleanMetadataTableRow) {
-            ((BooleanMetadataTableRow) row).setActive(Boolean.parseBoolean(elementText));
+            ((BooleanMetadataTableRow) row).setActive(Boolean.parseBoolean(value));
         } else if (row instanceof SelectMetadataTableRow) {
-            ((SelectMetadataTableRow) row).setSelectedItem(elementText);
+            ((SelectMetadataTableRow) row).setSelectedItem(value);
         }
         return row;
     }
 
+    /**
+     *  Get the value of a specific row in the additionalDetailsTab.
+     * @param row
+     *      as AdditionalDetailsTableRow
+     * @return the value as a java.lang.String
+     */
     public static String getMetadataValue(AdditionalDetailsTableRow row) {
         if (row instanceof TextMetadataTableRow) {
             return ((TextMetadataTableRow) row).getValue();

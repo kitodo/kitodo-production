@@ -90,6 +90,14 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
         }
     }
 
+    @Override
+    public boolean isValid() {
+        if(value.isEmpty()) {
+            return false;
+        }
+        return settings.isValid(value);
+    }
+
     /**
      * Returns the contents of the text input field of this metadata table row.
      *

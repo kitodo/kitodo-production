@@ -109,7 +109,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      * @param divisionView
      *            information about that structure from the rule set
      */
-    FieldedAdditionalDetailsTableRow(AdditionalDetailsTab tab, IncludedStructuralElement structure,
+    public FieldedAdditionalDetailsTableRow(AdditionalDetailsTab tab, IncludedStructuralElement structure,
                                      StructuralElementViewInterface divisionView) {
         this(tab, null, structure, divisionView, structure.getMetadata());
     }
@@ -400,6 +400,19 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
     @Override
     public boolean isUndefined() {
         return metadataView.isUndefined();
+    }
+
+    @Override
+    public boolean isRequired() {
+        return metadataView.getMinOccurs() > 0;
+    }
+
+    @Override
+    public boolean isValid() {
+        for (AdditionalDetailsTableRow row : getRows()) {
+            if (!row.isValid()) return false;
+        }
+        return true;
     }
 
     /**

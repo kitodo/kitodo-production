@@ -126,4 +126,17 @@ public abstract class AdditionalDetailsTableRow implements Serializable {
      * @return if the field is not defined by the rule set
      */
     public abstract boolean isUndefined();
+
+    /**
+     * Returns if the field is required in the rule set.
+     *
+     * @return if the field is required in the rule set
+     */
+    public abstract boolean isRequired();
+
+    /**
+     * Returns if the field is valid.
+     * @return if the field is valid
+     */
+    public abstract boolean isValid();
 }
