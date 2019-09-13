@@ -12,10 +12,14 @@
 package org.kitodo.production.forms;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -24,14 +28,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.migration.TaskComparator;
+import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
 @Named("MigrationForm")
 @ViewScoped
-public class MigrationForm implements Serializable {
+public class MigrationForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(MigrationForm.class);
     private List<Project> allProjects = new ArrayList<>();
@@ -39,10 +50,14 @@ public class MigrationForm implements Serializable {
     private List<Process> processList = new ArrayList<>();
     private boolean projectListShown;
     private boolean processListShown;
+    Map<String, List<Process>> aggregatedProcesses = new HashMap<>();
 
     /**
-     * Migrates the meta.xml for all processes in the database (if it's in the old format).
-     * @throws DAOException if database access fails
+     * Migrates the meta.xml for all processes in the database (if it's in the
+     * old format).
+     *
+     * @throws DAOException
+     *             if database access fails
      */
     public void migrateMetadata() throws DAOException {
         List<Process> processes = ServiceManager.getProcessService().getAll();
@@ -73,13 +88,54 @@ public class MigrationForm implements Serializable {
     /**
      * Shows all processes related to the selected projects.
      */
-    public void showProcessesForProjects() {
+    public void showAggregatedProcesses() {
         processList.clear();
+        aggregatedProcesses.clear();
         for (Project project : selectedProjects) {
             processList.addAll(project.getProcesses());
         }
+        for (Process process : processList) {
+            addToAggregatedProcesses(aggregatedProcesses, process);
+        }
         processListShown = true;
+    }
 
+    private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
+        for (String tasks : aggregatedProcesses.keySet()) {
+            if (checkForTitle(tasks, process.getTasks())
+                    && tasksAreEqual(aggregatedProcesses.get(tasks).get(0).getTasks(), process.getTasks())) {
+                aggregatedProcesses.get(tasks).add(process);
+                return;
+            }
+        }
+        aggregatedProcesses.put(createTaskString(process.getTasks()), new ArrayList<>(Arrays.asList(process)));
+    }
+
+    boolean tasksAreEqual(List<Task> firstProcessTasks, List<Task> secondProcessTasks) {
+        TaskComparator taskComparator = new TaskComparator();
+
+        Iterator<Task> firstTaskIterator = firstProcessTasks.iterator();
+        Iterator<Task> secondTaskIterator = secondProcessTasks.iterator();
+        while (firstTaskIterator.hasNext()) {
+            Task firstTask = firstTaskIterator.next();
+            Task secondTask = secondTaskIterator.next();
+            if (taskComparator.compare(firstTask, secondTask) != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkForTitle(String aggregatedTasks, List<Task> processTasks) {
+        return aggregatedTasks.equals(createTaskString(processTasks));
+    }
+
+    private String createTaskString(List<Task> processTasks) {
+        String taskString = "";
+        for (Task processTask : processTasks) {
+            taskString = taskString.concat(processTask.getTitle());
+        }
+        return taskString.replaceAll("\\s","");
     }
 
     /**
@@ -94,7 +150,8 @@ public class MigrationForm implements Serializable {
     /**
      * Set selectedProjects.
      *
-     * @param selectedProjects as List of Project
+     * @param selectedProjects
+     *            as List of Project
      */
     public void setSelectedProjects(List<Project> selectedProjects) {
         this.selectedProjects = selectedProjects;
@@ -136,4 +193,67 @@ public class MigrationForm implements Serializable {
         return processListShown;
     }
 
+    /**
+     * Get aggregatedProcesses.
+     *
+     * @return value of aggregatedProcesses
+     */
+    public Map<String, List<Process>> getAggregatedProcesses() {
+        return aggregatedProcesses;
+    }
+
+    /**
+     * Set aggregatedProcesses.
+     *
+     * @param aggregatedProcesses
+     *            as java.util.Map
+     */
+    public void setAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses) {
+        this.aggregatedProcesses = aggregatedProcesses;
+    }
+
+    /**
+     * Get aggregatedTasks.
+     *
+     * @return keyset of aggregatedProcesses
+     */
+    public List<String> getAggregatedTasks() {
+        return new ArrayList<>(aggregatedProcesses.keySet());
+    }
+
+    /**
+     * Get numberOfProcesses.
+     *
+     * @return size of aggregatedProcesses
+     */
+    public int getNumberOfProcesses(String tasks) {
+        return aggregatedProcesses.get(tasks).size();
+    }
+
+    public String convertTasksToWorkflow(String tasks) {
+
+        Process blueprintProcess = aggregatedProcesses.get(tasks).get(0);
+
+        TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
+        try {
+            templateConverter.convertTasksToWorkflowFile(tasks, blueprintProcess.getTasks());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+
+        Workflow workflow = new Workflow(tasks);
+        workflow.setClient(blueprintProcess.getProject().getClient());
+        workflow.setStatus(WorkflowStatus.DRAFT);
+        workflow.getTemplates().add(null);
+
+        try {
+            ServiceManager.getWorkflowService().save(workflow);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger,
+                    e);
+            return this.stayOnCurrentPage;
+        }
+
+        return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflow.getId();
+    }
 }

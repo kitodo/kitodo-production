@@ -38,13 +38,23 @@
                              id="migrateProject"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
-                             action="#{MigrationForm.showProcessesForProjects()}"/>
+                             action="#{MigrationForm.showAggregatedProcesses()}"/>
         </h:panelGroup>
         <h:panelGroup rendered="#{MigrationForm.processListShown}">
-            <p:dataTable var="process" value="#{MigrationForm.processList}">
+            <p:dataTable var="tasks" value="#{MigrationForm.aggregatedTasks}">
                 <p:column style="width: 100%;">
-                    <h:outputText value="id: #{process.id} title: #{process.title} "
+                    <h:outputText value="#{tasks}"
                                   style="width:100%;"/>
+                </p:column>
+                <p:column style="width: 100%;">
+                    <h:outputText value="#{MigrationForm.getNumberOfProcesses(tasks)}"
+                                  style="width:100%;"/>
+                </p:column>
+                <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+                    <h:commandLink action="#{MigrationForm.convertTasksToWorkflow(tasks)}" immediate="true"
+                                   title="#{msgs.createNewWorkflow}">
+                        <h:outputText><i class="fa fa-random fa-lg"/></h:outputText>
+                    </h:commandLink>
                 </p:column>
             </p:dataTable>
         </h:panelGroup>
