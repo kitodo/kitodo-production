@@ -23,8 +23,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 
 public final class ProcessValidator {
@@ -43,7 +43,7 @@ public final class ProcessValidator {
      * 
      * @param title
      *            of process for validation
-     * @param additionalFields
+     * @param additionalDetailsTableRows
      *            for process validation
      * @param digitalCollections
      *            as List of Strings
@@ -53,7 +53,7 @@ public final class ProcessValidator {
      *            true or false
      * @return true or false
      */
-    public static boolean isContentValid(String title, List<AdditionalField> additionalFields,
+    public static boolean isContentValid(String title, List<AdditionalDetailsTableRow> additionalDetailsTableRows,
             List<String> digitalCollections, Map<String, Boolean> standardFields, boolean criticiseEmptyTitle) {
         boolean valid = true;
 
@@ -70,9 +70,8 @@ public final class ProcessValidator {
         }
 
         // check the additional inputs that must be specified
-        for (AdditionalField field : additionalFields) {
-            String value = field.getValue();
-            if (StringUtils.isBlank(value) && field.isRequired() && field.showDependingOnDoctype()) {
+        for (AdditionalDetailsTableRow row : additionalDetailsTableRows) {
+            if (row.isRequired() && !row.isValid()) {
                 valid = false;
                 Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorFieldIsEmpty");
             }

@@ -353,8 +353,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public boolean createProcess() {
         Process mainProcess = this.getMainProcess();
-        // FIXME: validate additionalDetailsTableRows!
-        /*
         if (!ProcessValidator.isContentValid(mainProcess.getTitle(),
                 this.additionalDetailsTab.getAdditionalDetailsTableRows(),
                 this.processDataTab.getDigitalCollections(),
@@ -362,7 +360,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 true)) {
             return false;
         }
-        */
         addProperties();
         updateTasks(mainProcess);
 
@@ -497,7 +494,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
-
         this.processDataTab.setDocType(cp.getDocType());
         //this.useOpac = cp.isUseOpac();
         this.useTemplates = cp.isUseTemplates();

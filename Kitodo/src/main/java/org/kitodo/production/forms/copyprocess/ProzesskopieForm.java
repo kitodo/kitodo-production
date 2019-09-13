@@ -580,10 +580,10 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
      * @return true if process was created, otherwise false
      */
     public boolean createProcess() {
-        if (!ProcessValidator.isContentValid(this.prozessKopie.getTitle(), this.additionalFields,
+        /*if (!ProcessValidator.isContentValid(this.prozessKopie.getTitle(), this.additionalFields,
             this.getDigitalCollections(), this.standardFields, true)) {
             return false;
-        }
+        }*/
         addProperties();
         updateTasks(this.prozessKopie);
 
