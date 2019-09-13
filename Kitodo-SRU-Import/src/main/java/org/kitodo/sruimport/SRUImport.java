@@ -47,7 +47,7 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.exceptions.ConfigException;
-import org.springframework.security.acls.model.NotFoundException;
+import org.kitodo.exceptions.NoRecordFoundException;
 
 public class SRUImport implements ExternalDataImportInterface {
 
@@ -77,7 +77,7 @@ public class SRUImport implements ExternalDataImportInterface {
     private static HttpClient sruClient = HttpClientBuilder.create().build();
 
     @Override
-    public DataRecord getFullRecordById(String catalogId, String identifier) {
+    public DataRecord getFullRecordById(String catalogId, String identifier) throws NoRecordFoundException {
         loadOPACConfiguration(catalogId);
         LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
         try {
@@ -140,13 +140,13 @@ public class SRUImport implements ExternalDataImportInterface {
         return new SearchResult();
     }
 
-    private DataRecord performQueryToRecord(String queryURL, String identifier) {
+    private DataRecord  performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
         String fullUrl = queryURL + "&maximumRecords=1&query=" + idParameter + equalsOperand + identifier;
         try {
             HttpResponse response = sruClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
                 if (Objects.isNull(response.getEntity())) {
-                    throw new NotFoundException("No record with ID '" + identifier + "' found!");
+                    throw new NoRecordFoundException("No record with ID '" + identifier + "' found!");
                 }
                 DataRecord record = new DataRecord();
                 record.setMetadataFormat(MetadataFormat.getMetadataFormat(metadataFormat));

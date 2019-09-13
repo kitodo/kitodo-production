@@ -34,10 +34,10 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.OPACConfig;
+import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
-import org.springframework.security.acls.model.NotFoundException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -135,16 +135,12 @@ public class ImportService {
      * @param identifier   The ID of the record that will be imported.
      * @return The queried record transformed into Kitodo internal format.
      */
-    public Document getSelectedRecord(String opac, String identifier) throws IOException, NotFoundException,
-            SAXException, ParserConfigurationException, URISyntaxException {
+    public Document getSelectedRecord(String opac, String identifier) throws IOException,
+            SAXException, ParserConfigurationException, URISyntaxException, NoRecordFoundException {
 
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);
-
-        if (Objects.isNull(dataRecord)) {
-            throw new NotFoundException("Record with ID '" + identifier + "' not found in OPAC '" + opac + "'!");
-        }
 
         // ################# CONVERT ################
         // depending on metadata and return form, call corresponding schema converter module!

@@ -37,6 +37,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.schemaconverter.DataRecord;
+import org.kitodo.exceptions.NoRecordFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -60,7 +61,8 @@ public class SRUImportTest {
     }
 
     @Test
-    public void shouldGetFullRecordById() throws IOException, SAXException, ParserConfigurationException {
+    public void shouldGetFullRecordById() throws IOException, SAXException, ParserConfigurationException,
+            NoRecordFoundException {
         SRUImport sruImport = new SRUImport();
         DataRecord importRecord = sruImport.getFullRecordById(OPAC_NAME, RECORD_ID);
         Assert.assertNotNull(importRecord);

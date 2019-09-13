@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.field.AdditionalField;
@@ -208,7 +209,8 @@ public class ImportForm implements Serializable {
         Document record;
         try {
             record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
-        } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException e) {
+        } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException
+                | NoRecordFoundException e) {
             logger.error(e.getMessage());
             return;
         }
