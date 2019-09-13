@@ -560,6 +560,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
+     * Get query for find process by project id.
+     *
+     * @param projectId
+     *            as String
+     * @return QueryBuilder object
+     */
+    public QueryBuilder getQueryProjectId(Integer projectId) {
+        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), projectId.toString(), true, Operator.AND);
+    }
+
+    /**
      * Find processes by docket id.
      *
      * @param docketId
