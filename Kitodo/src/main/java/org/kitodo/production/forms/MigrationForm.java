@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -232,6 +233,16 @@ public class MigrationForm extends BaseForm {
 
     public String convertTasksToWorkflow(String tasks) {
 
+        try {
+            if (workflowAlreadyExist(tasks)) {
+                //show popup
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
+                e);
+            return this.stayOnCurrentPage;
+        }
+
         Process blueprintProcess = aggregatedProcesses.get(tasks).get(0);
 
         TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
@@ -255,5 +266,17 @@ public class MigrationForm extends BaseForm {
         }
 
         return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflow.getId();
+    }
+
+    private boolean workflowAlreadyExist(String tasks) throws DAOException {
+        List<Task> processTasks = aggregatedProcesses.get(tasks).get(0).getTasks();
+        List<Template> allTemplates = ServiceManager.getTemplateService().getAll();
+        for (Template template : allTemplates) {
+            if (tasksAreEqual(template.getTasks(),processTasks)){
+                return true;
+            }
+        }
+        return false;
+
     }
 }
