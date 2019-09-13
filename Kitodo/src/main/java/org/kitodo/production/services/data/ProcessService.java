@@ -563,7 +563,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Get query for find process by project id.
      *
      * @param projectId
-     *            as String
+     *            as Integer
      * @return QueryBuilder object
      */
     public QueryBuilder getQueryProjectId(Integer projectId) {

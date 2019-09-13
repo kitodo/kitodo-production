@@ -172,24 +172,24 @@ class XmlGenerator {
     static String generateTaskShape(Integer taskOrdering, int xAxe) {
         StringBuilder taskBuilder = new StringBuilder();
 
-        final int yAxe = 218;
+        final int diagramHeight = 218;
 
         taskBuilder.append("            <bpmndi:BPMNShape id=\"Task_");
         taskBuilder.append(taskOrdering);
         taskBuilder.append("_di\" bpmnElement=\"Task_");
         taskBuilder.append(taskOrdering);
         taskBuilder.append(END_LINE);
-        generateBounds(taskBuilder, xAxe, yAxe, 100, 80);
+        generateBounds(taskBuilder, xAxe, diagramHeight, 100, 80);
         taskBuilder.append(CLOSE_SHAPE);
         taskBuilder.append("            <bpmndi:BPMNEdge id=\"SequenceFlow_");
         taskBuilder.append(taskOrdering + 1);
         taskBuilder.append("_di\" bpmnElement=\"SequenceFlow_");
         taskBuilder.append(taskOrdering + 1);
         taskBuilder.append(END_LINE);
-        generateWayPoint(taskBuilder, xAxe + 100, yAxe + 40);
-        generateWayPoint(taskBuilder, xAxe + 150, yAxe + 40);
+        generateWayPoint(taskBuilder, xAxe + 100, diagramHeight + 40);
+        generateWayPoint(taskBuilder, xAxe + 150, diagramHeight + 40);
         taskBuilder.append(OPEN_LABEL);
-        generateBounds(taskBuilder, xAxe + 125, yAxe + 29, 0, 12);
+        generateBounds(taskBuilder, xAxe + 125, diagramHeight + 29, 0, 12);
         taskBuilder.append(CLOSE_LABEL);
         taskBuilder.append("            </bpmndi:BPMNEdge>\n");
 

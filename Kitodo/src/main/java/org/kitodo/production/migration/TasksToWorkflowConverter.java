@@ -26,6 +26,8 @@ import org.kitodo.production.services.ServiceManager;
 
 public class TasksToWorkflowConverter {
 
+    private static final int BOX_DISTANCE = 150;
+
     /**
      * Convert given tasks to workflow file.
      *
@@ -78,14 +80,14 @@ public class TasksToWorkflowConverter {
     }
 
     private void convertTasksToWorkflowCoordinates(StringBuilder diagram, List<Task> tasks) {
-        int xAxe = 498;
+        int diagramStart = 498;
 
         for (Task task : tasks) {
-            diagram.append(XmlGenerator.generateTaskShape(task.getOrdering(), xAxe));
-            xAxe = xAxe + 150;
+            diagram.append(XmlGenerator.generateTaskShape(task.getOrdering(), diagramStart));
+            diagramStart = diagramStart + BOX_DISTANCE;
         }
 
-        XmlGenerator.generateBpmnEndEvent(diagram, xAxe);
+        XmlGenerator.generateBpmnEndEvent(diagram, diagramStart);
     }
 
     private void saveFile(String title, String fileContent) throws IOException {

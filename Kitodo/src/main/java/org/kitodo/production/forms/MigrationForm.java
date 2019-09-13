@@ -98,7 +98,6 @@ public class MigrationForm extends BaseForm {
             addToAggregatedProcesses(aggregatedProcesses, process);
         }
         processListShown = true;
-
     }
 
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
