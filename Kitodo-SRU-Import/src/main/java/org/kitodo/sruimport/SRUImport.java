@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -39,9 +41,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.api.schemaconverter.DataRecord;
+import org.kitodo.api.schemaconverter.FileFormat;
+import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.exceptions.ConfigException;
-import org.w3c.dom.Document;
+import org.kitodo.exceptions.NoRecordFoundException;
 
 public class SRUImport implements ExternalDataImportInterface {
 
@@ -52,37 +58,34 @@ public class SRUImport implements ExternalDataImportInterface {
     private static final String HOST_CONFIG = "host";
     private static final String SCHEME_CONFIG = "scheme";
     private static final String PATH_CONFIG = "path";
+    private static final String PORT_CONFIG = "port";
     private static final String PARAM_TAG = "param";
     private static final String SEARCHFIELD_TAG = "searchField";
+    private static final String RETURN_FORMAT_TAG = "returnFormat";
+    private static final String METADATA_FORMAT_TAG = "metadataFormat";
 
     private static String protocol;
     private static String host;
     private static String path;
+    private static int port = -1;
     private static String idParameter;
+    private static String fileFormat;
+    private static String metadataFormat;
     private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private static HashMap<String, String> searchFieldMapping = new HashMap<>();
     private static String equalsOperand = "=";
     private static HttpClient sruClient = HttpClientBuilder.create().build();
 
-    /**
-     * Standard constructor.
-     */
-    public SRUImport() {
-        // TODO: implement SchemaConverter and instantiate here
-    }
-
     @Override
-    public Document getFullRecordById(String catalogId, String id) {
+    public DataRecord getFullRecordById(String catalogId, String identifier) throws NoRecordFoundException {
         loadOPACConfiguration(catalogId);
         LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
         try {
             URI queryURL = createQueryURI(queryParameters);
-            return performQueryToDocument(queryURL.toString()
-                    + "&maximumRecords=1&query=" + idParameter + equalsOperand + id);
+            return performQueryToRecord(queryURL.toString(), identifier);
         } catch (URISyntaxException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
-        // TODO: transform hit to Kitodo internal format using SchemaConverter!
     }
 
     @Override
@@ -121,7 +124,7 @@ public class SRUImport implements ExternalDataImportInterface {
     }
 
     @Override
-    public Collection<Document> getMultipleEntriesById(Collection<String> ids, String catalogId) {
+    public Collection<SingleHit> getMultipleEntriesById(Collection<String> ids, String catalogId) {
         return Collections.emptyList();
     }
 
@@ -137,11 +140,19 @@ public class SRUImport implements ExternalDataImportInterface {
         return new SearchResult();
     }
 
-    private Document performQueryToDocument(String queryURL) {
+    private DataRecord  performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
+        String fullUrl = queryURL + "&maximumRecords=1&query=" + idParameter + equalsOperand + identifier;
         try {
-            HttpResponse response = sruClient.execute(new HttpGet(queryURL));
+            HttpResponse response = sruClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
-                return ResponseHandler.transformResponseToDocument(response);
+                if (Objects.isNull(response.getEntity())) {
+                    throw new NoRecordFoundException("No record with ID '" + identifier + "' found!");
+                }
+                DataRecord record = new DataRecord();
+                record.setMetadataFormat(MetadataFormat.getMetadataFormat(metadataFormat));
+                record.setFileFormat(FileFormat.getFileFormat(fileFormat));
+                record.setOriginalData(IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset()));
+                return record;
             }
             throw new ConfigException("SRU Request Failed");
         } catch (IOException e) {
@@ -150,7 +161,7 @@ public class SRUImport implements ExternalDataImportInterface {
     }
 
     private URI createQueryURI(LinkedHashMap<String, String> searchFields) throws URISyntaxException {
-        return new URI(protocol, null, host, -1, path, createQueryParameterString(searchFields), null);
+        return new URI(protocol, null, host, port, path, createQueryParameterString(searchFields), null);
     }
 
     private String createQueryParameterString(LinkedHashMap<String, String> searchFields) {
@@ -173,16 +184,27 @@ public class SRUImport implements ExternalDataImportInterface {
             HierarchicalConfiguration opacConfig = OPACConfig.getOPACConfiguration(opacName);
 
             for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
-                if (queryConfigParam.getString(NAME_ATTRIBUTE).equals(SCHEME_CONFIG)) {
-                    protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals(HOST_CONFIG)) {
-                    host = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals(PATH_CONFIG)) {
-                    path = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                switch (queryConfigParam.getString(NAME_ATTRIBUTE)) {
+                    case SCHEME_CONFIG:
+                        protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                        break;
+                    case HOST_CONFIG:
+                        host = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                        break;
+                    case PATH_CONFIG:
+                        path = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                        break;
+                    case PORT_CONFIG:
+                        port = queryConfigParam.getInt(VALUE_ATTRIBUTE);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + queryConfigParam.getString(NAME_ATTRIBUTE));
                 }
             }
 
             idParameter = OPACConfig.getIdentifierParameter(opacName);
+            fileFormat = OPACConfig.getConfigValue(opacName, RETURN_FORMAT_TAG);
+            metadataFormat = OPACConfig.getConfigValue(opacName, METADATA_FORMAT_TAG);
 
             HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opacName);
 

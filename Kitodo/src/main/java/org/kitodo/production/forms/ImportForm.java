@@ -11,18 +11,23 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.externaldatamanagement.Record;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.field.AdditionalField;
@@ -33,6 +38,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 @Named("ImportForm")
 @ViewScoped
@@ -172,7 +178,7 @@ public class ImportForm implements Serializable {
      *
      * @return hits
      */
-    public List<Record> getHits() {
+    public List<SingleHit> getHits() {
         if (Objects.nonNull(this.searchResult)) {
             return this.searchResult.getHits();
         } else {
@@ -189,7 +195,7 @@ public class ImportForm implements Serializable {
      */
     public int getNumberOfHits() {
         if (Objects.nonNull(this.searchResult)) {
-            return this.searchResult.getNumberOfRecords();
+            return this.searchResult.getNumberOfHits();
         } else {
             return 0;
         }
@@ -201,7 +207,14 @@ public class ImportForm implements Serializable {
      */
     public void getSelectedRecord() {
         String recordId = Helper.getRequestParameter("ID");
-        Document record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
+        Document record;
+        try {
+            record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
+        } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException
+                | NoRecordFoundException | UnsupportedFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return;
+        }
 
         List<AdditionalField> actualFields = this.prozesskopieForm.getAdditionalFields();
         Element root = record.getDocumentElement();

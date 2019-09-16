@@ -11,13 +11,16 @@
 
 package org.kitodo.production.helper;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -30,6 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -140,6 +144,23 @@ public class XMLUtils {
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Parse given String 'xmlString' and create Document from it.
+     *
+     * @param xmlString the String that will be parsed and converted to a Document
+     * @return Document
+     *          the Document created from the given String 'xmlString'
+     * @throws ParserConfigurationException thrown when DocumentBuilder cannot be created
+     * @throws IOException thrown when input stream cannot be parsed
+     * @throws SAXException thrown when input stream cannot be parsed
+     */
+    public static Document parseXMLString(String xmlString) throws IOException, ParserConfigurationException,
+            SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
     }
 
 }

@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.jar.JarEntry;
@@ -77,22 +79,34 @@ public class KitodoServiceLoader<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private ServiceLoader<T> getClassLoader() {
+        loadModulesIntoClasspath();
+        loadBeans();
+        loadFrontendFilesIntoCore();
+        return ServiceLoader.load(clazz);
+    }
+
     /**
      * Loads a module from the classpath which implements the constructed clazz.
      * Frontend files of all modules will be loaded into the core module.
      *
      * @return A module with type T.
      */
-    @SuppressWarnings("unchecked")
     public T loadModule() {
-
-        loadModulesIntoClasspath();
-        loadBeans();
-        loadFrontendFilesIntoCore();
-
-        ServiceLoader<T> loader = ServiceLoader.load(clazz);
-
+        ServiceLoader<T> loader = getClassLoader();
         return loader.iterator().next();
+    }
+
+    /**
+     * Loads and returns all modules from the classpath which implement the constructed clazz.
+     * @return List of modules with type T
+     */
+    public List<T> loadModules() {
+        ServiceLoader<T> loader = getClassLoader();
+        LinkedList<T> modules = new LinkedList<>();
+        loader.iterator().forEachRemaining(modules::add);
+        return modules;
     }
 
     /**

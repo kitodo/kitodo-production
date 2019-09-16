@@ -13,39 +13,39 @@ package org.kitodo.api.externaldatamanagement;
 
 /**
  * This class represents one element of a hitlist that is created
- * by a search query. Each Record contains a title that will be
+ * by a search query. Each 'Hit' contains a title that will be
  * displayed as a link in the hitlist and an ID to identify the
- * specific record to be imported when the user clicks on one record
+ * specific hit to be imported when the user clicks on one hit
  * in the hitlist.
  */
-public class Record {
+public class SingleHit {
 
     private String title;
 
-    private String id;
+    private String identifier;
 
     /**
-     * Standard constructor setting title and id of record.
-     * @param title title of record
-     * @param id id of record
+     * Standard constructor setting title and identifier of hit.
+     * @param title title of hit
+     * @param identifier id of hit
      */
-    public Record(String title, String id) {
+    public SingleHit(String title, String identifier) {
         this.title = title;
-        this.id = id;
+        this.identifier = identifier;
     }
 
     /**
-     * Return title of record.
+     * Return title of hit.
      *
      * @return
-     *      title of this record.
+     *      title of this hit.
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * Set title of the record.
+     * Set title of the hit.
      *
      * @param title value of title
      */
@@ -54,23 +54,23 @@ public class Record {
     }
 
     /**
-     * Return ID of this record.
+     * Return ID of this hit.
      *
      * @return
-     *      ID of this record.
+     *      ID of this hit.
      */
-    public String getId() {
-        return id;
+    public String getIdentifier() {
+        return identifier;
     }
 
     /**
-     * Set ID of record.
+     * Set ID of hit.
      *
-     * @param id
+     * @param identifier
      *            value of ID to set.
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
 }

@@ -19,27 +19,27 @@ import java.util.List;
  */
 public class SearchResult {
 
-    private List<Record> hits;
+    private List<SingleHit> hits;
 
-    private int numberOfRecords;
+    private int numberOfHits;
 
     /**
-     * Get number of records.
+     * Get number of hits.
      *
-     * @return number of records
+     * @return number of hits
      */
-    public int getNumberOfRecords() {
-        return numberOfRecords;
+    public int getNumberOfHits() {
+        return numberOfHits;
     }
 
     /**
-     * Set number of records.
+     * Set number of hits.
      *
-     * @param numberOfRecords
-     *            number of records
+     * @param numberOfHits
+     *            number of hits
      */
-    public void setNumberOfRecords(int numberOfRecords) {
-        this.numberOfRecords = numberOfRecords;
+    public void setNumberOfHits(int numberOfHits) {
+        this.numberOfHits = numberOfHits;
     }
 
     /**
@@ -47,7 +47,7 @@ public class SearchResult {
      *
      * @return list of hits.
      */
-    public List<Record> getHits() {
+    public List<SingleHit> getHits() {
         return hits;
     }
 
@@ -57,7 +57,7 @@ public class SearchResult {
      * @param hits
      *            list of hits.
      */
-    public void setHits(List<Record> hits) {
+    public void setHits(List<SingleHit> hits) {
         this.hits = hits;
     }
 }

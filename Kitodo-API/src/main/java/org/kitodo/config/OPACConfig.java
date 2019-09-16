@@ -36,6 +36,18 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve and return value of configuration parameter with name 'parameter'
+     * from configuration of OPAC with name 'catalogName'.
+     *
+     * @param catalogName String identifying the catalog by title
+     * @param parameter String identifying the parameter by name
+     * @return value of parameter
+     */
+    public static String getConfigValue(String catalogName, String parameter) {
+        return getCatalog(catalogName).getString(parameter);
+    }
+
+    /**
      * Retrieve the "config" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by title
      * @return HierarchicalConfiguration for catalog's "config"
