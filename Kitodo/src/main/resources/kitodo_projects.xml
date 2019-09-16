@@ -115,11 +115,11 @@
                       metadata="PublisherName">Verlag
                 </item>
                 <item from="vorlage" ughbinding="true" docstruct="physSequence" metadata="shelfmarksource">Signatur</item>
-                <processtitle isdoctype="multivolume">ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)
+                <processtitle isdoctype="multivolume">TSL/ATS+'_'+PPN (digital)+'_'+Nummer (Benennung)
                 </processtitle>
-                <processtitle isdoctype="monograph">ATS+TSL+'_'+PPN digital a-Satz</processtitle>
-                <processtitle isdoctype="periodical">TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)</processtitle>
-                <!-- <processtitle isnotdoctype="multivolume">ATS+TSL+'_'+PPN digital c/a-Aufnahmel+'_'+Bandnummer</processtitle> -->
+                <processtitle isdoctype="monograph">TSL/ATS+'_'+PPN (digital)</processtitle>
+                <processtitle isdoctype="periodical">TSL/ATS+'_'+PPN (digital)+'_'+Nummer (Benennung)</processtitle>
+                <!-- <processtitle isnotdoctype="multivolume">TSL/ATS+'_'+PPN (digital)+'_'+BandNr-Sortierung</processtitle> -->
                 <hide/>
             </itemlist>
             <opac use="true">
@@ -131,16 +131,13 @@
         </createNewProcess>
         <tifheader>
             <monograph>
-                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN
-                digital a-Satz+'|'
+                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TLS/ATS+'_'+PPN (digital)+'|'
             </monograph>
             <multivolume>
-                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN
-                digital f-Satz+'_'+Nummer (Benennung)+'|'
+                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TLS/ATS+'_'+PPN (digital)+'_'+Nummer (Benennung)+'|'
             </multivolume>
             <periodical>
-                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL+'_'+PPN
-                digital b-Satz+'_'+Nummer (Benennung)+'|'
+                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TLS/ATS+'_'+PPN (digital) +'_'+Nummer (Benennung)+'|'
             </periodical>
         </tifheader>
         <dmsImport/>

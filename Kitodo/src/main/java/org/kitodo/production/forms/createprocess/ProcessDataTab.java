@@ -15,18 +15,20 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.CreateProcessForm;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.TiffHeaderGenerator;
+import org.kitodo.production.process.TitleGenerator;
+import org.omnifaces.util.Ajax;
 
 public class ProcessDataTab {
 
@@ -44,6 +46,7 @@ public class ProcessDataTab {
     private int guessedImages = 0;
 
     private static final String OPAC_CONFIG = "configurationOPAC";
+    private String tifDefinition;
 
     /**
      * Set docType.
@@ -191,24 +194,40 @@ public class ProcessDataTab {
         try {
             return ConfigOpac.getAllDoctypes();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
             return new ArrayList<>();
         }
     }
 
-    // TODO: improve upon process title generation!
-    public String generateProcessTitle() {
-        byte[] processTitle = new byte[7];
-        new Random().nextBytes(processTitle);
-        return new String(processTitle, StandardCharsets.UTF_8);
+    /**
+     * Set titleDefinition.
+     *
+     * @param titleDefinition as java.lang.String
+     */
+    public void setTitleDefinition(String titleDefinition) {
+        this.titleDefinition = titleDefinition;
     }
 
+    /**
+     * Set tifDefinition.
+     *
+     * @param tifDefinition as java.lang.String
+     */
+    public void setTifDefinition(String tifDefinition) {
+        this.tifDefinition = tifDefinition;
+    }
 
     /**
      * Generate process titles and other details.
      */
-    /*
-    public void calculateProcessTitle() {
+    public void generateProcessTitleAndTiffHeader() {
+        generateProcessTitle();
+        generateTiffHeader();
+        Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
+                "editForm:processFromTemplateTabView:additionalFields");
+    }
+
+    private void generateProcessTitle() {
         TitleGenerator titleGenerator = new TitleGenerator(this.atstsl,
                 this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows());
         try {
@@ -218,29 +237,22 @@ public class ProcessDataTab {
             this.atstsl = titleGenerator.getAtstsl();
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
         }
-
-        calculateTiffHeader();
-
-        Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid");
     }
-     */
 
     /**
      * Calculate tiff header.
      */
-    /*
-    private void calculateTiffHeader() {
+    private void generateTiffHeader() {
         // document name is generally equal to process title
         this.tifHeaderDocumentName = this.createProcessForm.getMainProcess().getTitle();
 
-        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl, this.additionalFields);
+        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl,
+                this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows());
         try {
             this.tifHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tifDefinition, this.docType);
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
-     */
 }

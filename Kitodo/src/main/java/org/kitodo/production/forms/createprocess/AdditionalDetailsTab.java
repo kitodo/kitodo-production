@@ -37,6 +37,12 @@ import org.w3c.dom.NodeList;
 
 public class AdditionalDetailsTab {
     private static final Logger logger = LogManager.getLogger(AdditionalDetailsTab.class);
+    private static final String PERSON = "Person";
+    private static final String ROLE = "Role";
+    private static final String AUTHOR = "Author";
+    private static final String FIRST_NAME = "FirstName";
+    private static final String LAST_NAME = "LastName";
+
 
     private CreateProcessForm createProcessForm;
 
@@ -185,5 +191,34 @@ public class AdditionalDetailsTab {
             // TODO: extract value of FieldedMetadataTableRow!
             return "";
         }
+    }
+
+    public static String getListOfCreators(List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
+        String listofAuthors = "";
+        for (AdditionalDetailsTableRow row : additionalDetailsTableRows) {
+            if (row instanceof FieldedAdditionalDetailsTableRow
+                    && PERSON.equals(row.getMetadataID())) {
+                FieldedAdditionalDetailsTableRow tableRow = (FieldedAdditionalDetailsTableRow) row;
+                for (AdditionalDetailsTableRow detailsTableRow : tableRow.getRows()) {
+                    if(ROLE.equals(detailsTableRow.getMetadataID())
+                            && AUTHOR.equals(AdditionalDetailsTab.getMetadataValue(detailsTableRow))) {
+                        listofAuthors = listofAuthors.concat(getCreator(tableRow.getRows()));
+                        break;
+                    }
+                }
+            }
+        }
+        return listofAuthors;
+    }
+
+    private static String getCreator(List<AdditionalDetailsTableRow> rows) {
+        String author = "";
+        for (AdditionalDetailsTableRow row : rows) {
+            if (FIRST_NAME.equals(row.getMetadataID())
+                    || LAST_NAME.equals(row.getMetadataID())) {
+                author = author.concat(AdditionalDetailsTab.getMetadataValue(row));
+            }
+        }
+        return author;
     }
 }

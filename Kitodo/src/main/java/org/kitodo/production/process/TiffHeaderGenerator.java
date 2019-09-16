@@ -20,11 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
 import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.process.field.AdditionalField;
 
 public class TiffHeaderGenerator extends Generator {
 
@@ -38,11 +37,11 @@ public class TiffHeaderGenerator extends Generator {
      *
      * @param atstsl
      *            field used for tiff header generation
-     * @param additionalFields
+     * @param additionalDetailsTableRows
      *            fields used for tiff header generation
      */
-    public TiffHeaderGenerator(String atstsl, List<AdditionalDetailsTableRow> additionalFields) {
-        super(atstsl, additionalFields);
+    public TiffHeaderGenerator(String atstsl, List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
+        super(atstsl, additionalDetailsTableRows);
     }
 
     /**
@@ -70,40 +69,39 @@ public class TiffHeaderGenerator extends Generator {
                 tiffHeaderImageDescriptionBuilder.append(getTifHeaderType(docType));
             } else {
                 // otherwise, evaluate the token as a field name
-                tiffHeaderImageDescriptionBuilder.append(evaluateAdditionalFields(token));
-
+                tiffHeaderImageDescriptionBuilder.append(evaluateAdditionalDetailsRows(token));
             }
         }
         return reduceLengthOfTifHeaderImageDescription(tiffHeaderImageDescriptionBuilder.toString());
     }
 
-    private String evaluateAdditionalFields(String token) throws ProcessGenerationException {
-//        StringBuilder newTiffHeader = new StringBuilder();
-//
-//        for (AdditionalField additionalField : this.additionalDetailsTableRows) {
-//            String title = additionalField.getTitle();
-//            String value = additionalField.getValue();
-//            boolean showDependingOnDoctype = additionalField.showDependingOnDoctype();
-//
-//            if ("Titel".equals(title) || "Title".equals(title) && !StringUtils.isEmpty(value)) {
-//                this.tiffHeader = value;
-//            }
-//            /*
-//             * if it is the ATS or TSL field, then use the calculated atstsl if it does not
-//             * already exist
-//             */
-//            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype && StringUtils.isEmpty(value)) {
-//                additionalField.setValue(this.atstsl);
-//            }
-//
-//            // add the content to the tiff header
-//            if (title.equals(token) && showDependingOnDoctype && Objects.nonNull(value)) {
-//                newTiffHeader.append(calculateProcessTitleCheck(title, value));
-//            }
-//        }
-//
-//        return newTiffHeader.toString();
-        return "";
+    private String evaluateAdditionalDetailsRows(String token) throws ProcessGenerationException {
+        StringBuilder newTiffHeader = new StringBuilder();
+        if ("Autoren".equals(token)) {
+            newTiffHeader.append(calculateProcessTitleCheck("Autoren",
+                    AdditionalDetailsTab.getListOfCreators(this.additionalDetailsTableRows)));
+        } else {
+            for (AdditionalDetailsTableRow additionalField : this.additionalDetailsTableRows) {
+                String title = additionalField.getLabel();
+                String value = AdditionalDetailsTab.getMetadataValue(additionalField);
+
+                if ("HauptTitel".equals(title) && !value.isEmpty()) {
+                    this.tiffHeader = value;
+                }
+                /*
+                 * if it is the ATS or TSL field, then use the calculated atstsl if it does not
+                 * already exist
+                 */
+                if ("TSL/ATS".equals(title) && value.isEmpty()) {
+                    AdditionalDetailsTab.setAdditionalDetailsRow(additionalField, this.atstsl);
+                }
+                // add the content to the tiff header
+                if (title.equals(token) && !value.isEmpty()) {
+                    newTiffHeader.append(calculateProcessTitleCheck(title, value));
+                }
+            }
+        }
+        return newTiffHeader.toString();
     }
 
     /**

@@ -504,8 +504,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         //this.useOpac = cp.isUseOpac();
         this.useTemplates = cp.isUseTemplates();
 
-        //this.tifDefinition = cp.getTifDefinition();
-        //this.titleDefinition = cp.getTitleDefinition();
+        this.processDataTab.setTifDefinition(cp.getTifDefinition());
+        this.processDataTab.setTitleDefinition(cp.getTitleDefinition());
 
         this.processDataTab.getStandardFields().putAll(cp.getHiddenFields());
     }
