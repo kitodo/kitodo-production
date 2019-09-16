@@ -49,7 +49,7 @@
                         <p:ajax event="blur"/>
                     </p:inputTextarea>
                     <p:spinner value="#{item.value}"
-                               style="width:100%;"
+                               styleClass="full-width"
                                disabled="#{not item.editable or readOnly}"
                                rendered="#{item.input eq 'spinner'}">
                         <p:ajax event="blur"/>
@@ -176,7 +176,7 @@
                 </p:column>
             </p:dataTable>
 
-            <p:panelGrid style="width:100%; margin-top:10px;" styleClass="ui-noborder">
+            <p:panelGrid style="margin-top:10px;" styleClass="ui-noborder full-width">
                 <p:row>
                     <p:commandButton id="addMetadataButton"
                                      icon="fa fa-plus"

@@ -44,11 +44,11 @@
             <p:dataTable var="tasks" value="#{MigrationForm.aggregatedTasks}">
                 <p:column style="width: 100%;">
                     <h:outputText value="#{tasks}"
-                                  style="width:100%;"/>
+                                  styleClass="full-width"/>
                 </p:column>
                 <p:column style="width: 100%;">
                     <h:outputText value="#{MigrationForm.getNumberOfProcesses(tasks)}"
-                                  style="width:100%;"/>
+                                  styleClass="full-width"/>
                 </p:column>
                 <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
                     <h:commandLink action="#{MigrationForm.convertTasksToWorkflow(tasks)}" immediate="true"

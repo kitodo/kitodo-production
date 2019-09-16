@@ -17,7 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <table cellpadding="3" cellspacing="0" style="width:100%">
+    <table cellpadding="3" cellspacing="0" class="full-width">
         <tr style="vertical-align:top">
             <td>
                 <h:form>
@@ -144,7 +144,7 @@
                                 <p:column style="width: 100%;">
                                     <h:outputText value="#{item.author.name} #{item.author.surname}: #{item.message}"
                                                   escape="false"
-                                                  style="width:100%;"/>
+                                                  styleClass="full-width"/>
                                 </p:column>
                             </p:dataTable>
                         </td>

@@ -48,6 +48,10 @@ body {
     color: var(--carbon-blue);
 }
 
+.full-width {
+    width: 100%;
+}
+
 a,
 .ui-widget-content a {
     color: var(--blue);
