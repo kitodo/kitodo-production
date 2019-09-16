@@ -47,7 +47,7 @@
                     update="structureTreeForm:logicalTree
                             structureTreeForm:contextMenuLogicalTree
                             metadataAccordion:logicalMetadataWrapperPanel
-                            galleryWrapperPanel"/>
+                            @(.pageList)"/>
             <p:ajax event="collapse"
                     listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
             <p:ajax event="expand"
@@ -92,7 +92,7 @@
                         update="structureTreeForm:logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
-                                galleryWrapperPanel"/>
+                                @(.structureElementDataList)"/>
             <p:menuitem value="#{msgs.unassign}"
                         icon="fa fa-chain-broken fa-sm"
                         styleClass="plain"
@@ -102,7 +102,7 @@
                         update="structureTreeForm:logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
-                                galleryWrapperPanel"/>
+                                @(.structureElementDataList)"/>
         </p:contextMenu>
 
         <!-- Physical Tree -->
@@ -132,8 +132,7 @@
                 <p:ajax event="dragdrop"
                         listener="#{DataEditorForm.structurePanel.onDragDrop}"
                         update="structureTreeForm:physicalTree
-                                metadataAccordion:physicalMetadataWrapperPanel
-                                galleryWrapperPanel"/>
+                                metadataAccordion:physicalMetadataWrapperPanel"/>
                 <p:ajax event="collapse"
                         listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
                 <p:ajax event="expand"

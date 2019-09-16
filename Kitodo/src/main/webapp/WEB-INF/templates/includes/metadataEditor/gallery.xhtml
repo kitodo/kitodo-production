@@ -70,6 +70,7 @@
                                 var="stripe"
                                 value="#{DataEditorForm.galleryPanel.stripes}"
                                 type="definition"
+                                styleClass="pageList"
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
                         <h:outputText value="#{stripe.label}"
@@ -88,15 +89,8 @@
                             <p:panel id="structuredPagePanel"
                                      a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
                                      a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
-                                <p:commandLink action="#{DataEditorForm.galleryPanel.select(media, stripe)}"
-                                               onclick="metadataEditor.select.selectionType(event);"
-                                               a:data-order="#{media.order}"
-                                               update="@this
-                                                       @(.thumbnail)
-                                                       structureTreeForm:logicalTree
-                                                       structureTreeForm:physicalTree
-                                                       metadataAccordion:logicalMetadataWrapperPanel
-                                                       imagePreviewForm:mapWrapper">
+                                <h:panelGroup onmouseup="metadataEditor.select.selectionType(event);"
+                                              a:data-order="#{media.order}">
                                     <h:panelGroup class="thumbnail-container">
                                         <p:outputPanel deferred="true"
                                                        deferredMode="visible">
@@ -113,7 +107,13 @@
                                             </h:panelGroup>
                                         </p:outputPanel>
                                     </h:panelGroup>
-                                </p:commandLink>
+                                    <p:ajax event="click"
+                                            listener="#{DataEditorForm.galleryPanel.select(media, stripe)}"
+                                            update="@(.thumbnail)
+                                                   structureTreeForm:logicalTree
+                                                   structureTreeForm:physicalTree
+                                                   metadataAccordion:logicalMetadataWrapperPanel"/>
+                                </h:panelGroup>
                             </p:panel>
                             <p:draggable id="structuredPagesDraggable"
                                          scope="assignedPagesDroppable"
@@ -122,11 +122,9 @@
                                          stack=".ui-panel"/>
                             <p:droppable for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPageDropArea"
                                          scope="assignedPagesDroppable"
-                                         activeStyleClass="media-stripe-hover"
-                                         hoverStyleClass="media-stripe-index-hover">
+                                         activeStyleClass="media-stripe-index-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(#imagePreviewForm .ui-datalist)
-                                                imagePreviewForm:unstructuredMedia
+                                        update="@(.pageList)
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
                             <!-- add one last drop area after the last page in a stripe -->
@@ -135,10 +133,9 @@
                                          styleClass="page-drop-area"/>
                                 <p:droppable for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPageLastDropArea"
                                              scope="assignedPagesDroppable"
-                                             activeStyleClass="media-stripe-hover"
-                                             hoverStyleClass="media-stripe-index-hover">
+                                             activeStyleClass="media-stripe-index-active">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                            update="@(#imagePreviewForm .ui-datalist)
+                                            update="@(.pageList)
                                                     imagePreviewForm:unstructuredMedia
                                                     structureTreeForm:logicalTree"/>
                                 </p:droppable>
@@ -148,9 +145,9 @@
                             <p:droppable id="structuredPagesDroppable"
                                          scope="assignedPagesDroppable"
                                          for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
-                                         hoverStyleClass="media-stripe-hover">
+                                         activeStyleClass="media-stripe-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(#imagePreviewForm .ui-datalist)
+                                        update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
@@ -166,7 +163,7 @@
                         <!-- Index 0 of stripes is used to retrieve the logical root element. -->
                         <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                         <p:dataList id="unstructuredMediaList"
-                                    styleClass="structureElementDataList"
+                                    styleClass="pageList"
                                     value="#{DataEditorForm.galleryPanel.stripes.get(0).medias}"
                                     binding="#{currentMedia}"
                                     emptyMessage="#{msgs['noMedia']}"
@@ -176,16 +173,9 @@
                             <p:panel id="unstructuredMediaPanel"
                                      a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
                                      a:onmouseup="metadataEditor.dragdrop.removeDragAmountIcon(event);">
-                                <p:commandLink id="updateSelectedUnstructuredMediaLink"
-                                               action="#{DataEditorForm.galleryPanel.select(media, DataEditorForm.galleryPanel.stripes.get(0))}"
-                                               onclick="metadataEditor.select.selectionType(event);"
-                                               a:data-order="#{media.order}"
-                                               update="@this
-                                                       @(.thumbnail)
-                                                       structureTreeForm:logicalTree
-                                                       structureTreeForm:physicalTree
-                                                       metadataAccordion:logicalMetadataWrapperPanel
-                                                       imagePreviewForm:mapWrapper">
+                                <h:panelGroup id="updateSelectedUnstructuredMediaLink"
+                                              onmouseup="metadataEditor.select.selectionType(event);"
+                                              a:data-order="#{media.order}">
                                     <h:panelGroup layout="block"
                                                   styleClass="thumbnail-container">
                                         <p:outputPanel deferred="true"
@@ -202,7 +192,14 @@
                                             </h:panelGroup>
                                         </p:outputPanel>
                                     </h:panelGroup>
-                                </p:commandLink>
+                                    <p:ajax event="click"
+                                            listener="#{DataEditorForm.galleryPanel.select(media, DataEditorForm.galleryPanel.stripes.get(0))}"
+                                            update="@this
+                                                    @(.thumbnail)
+                                                    structureTreeForm:logicalTree
+                                                    structureTreeForm:physicalTree
+                                                    metadataAccordion:logicalMetadataWrapperPanel"/>
+                                </h:panelGroup>
                             </p:panel>
                             <p:draggable id="unstructuredMediaDraggable"
                                          for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredMediaPanel"
@@ -211,10 +208,9 @@
                                          stack=".ui-panel"/>
                             <p:droppable for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredPageDropArea"
                                          scope="assignedPagesDroppable"
-                                         activeStyleClass="media-stripe-hover"
-                                         hoverStyleClass="media-stripe-index-hover">
+                                         activeStyleClass="media-stripe-index-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(#imagePreviewForm .ui-datalist)
+                                        update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>
@@ -224,10 +220,9 @@
                                          styleClass="page-drop-area"/>
                                 <p:droppable for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredPageLastDropArea"
                                              scope="assignedPagesDroppable"
-                                             activeStyleClass="media-stripe-hover"
-                                             hoverStyleClass="media-stripe-index-hover">
+                                             activeStyleClass="media-stripe-index-active">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                            update="@(#imagePreviewForm .ui-datalist)
+                                            update="@(.pageList)
                                                     imagePreviewForm:unstructuredMedia
                                                     structureTreeForm:logicalTree"/>
                                 </p:droppable>
@@ -237,9 +232,9 @@
                             <p:droppable id="unstructuredPagesDroppable"
                                          scope="assignedPagesDroppable"
                                          for="imagePreviewForm:unstructuredMediaList"
-                                         hoverStyleClass="media-stripe-hover">
+                                         activeStyleClass="media-stripe-active">
                                 <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                                        update="@(#imagePreviewForm .ui-datalist)
+                                        update="@(.pageList)
                                                 imagePreviewForm:unstructuredMedia
                                                 structureTreeForm:logicalTree"/>
                             </p:droppable>

@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -91,6 +92,8 @@ public class GalleryPanel {
     private List<GalleryStripe> stripes;
 
     private Subfolder previewFolder;
+
+    private boolean isDragged = false;
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -211,7 +214,7 @@ public class GalleryPanel {
             }
         }
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
-
+        dataEditor.getStructurePanel().show();
         // update stripes
         for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
             GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
@@ -223,10 +226,20 @@ public class GalleryPanel {
             }
         }
         toStripe.getMedias().clear();
+
+        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
+
+        dataEditor.getSelectedMedia().clear();
+
         for (View toStripeView : toStripe.getStructure().getViews()) {
-            toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
+            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(toStripeView);
+            toStripe.getMedias().add(galleryMediaContent);
+            if (movedViews.contains(toStripeView)) {
+                selectionType = "multi";
+                select(galleryMediaContent, toStripe);
+            }
         }
-        dataEditor.getStructurePanel().show();
+        isDragged = true;
     }
 
     private boolean dragStripeIndexMatches(DragDropEvent event) {
@@ -582,6 +595,10 @@ public class GalleryPanel {
      * @param currentSelection the GalleryMediaContent that was clicked
      */
     public void select(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
+        if (isDragged) {
+            isDragged = false;
+            return;
+        }
         IncludedStructuralElement structureElement;
         if (Objects.nonNull(parentStripe)) {
             structureElement = parentStripe.getStructure();
@@ -630,7 +647,7 @@ public class GalleryPanel {
             return;
         }
 
-        if (!Objects.nonNull(lastSelection)) {
+        if (Objects.isNull(lastSelection)) {
             lastSelection = new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
         }
 
@@ -644,7 +661,7 @@ public class GalleryPanel {
         Pair<MediaUnit, IncludedStructuralElement> selectedMediaPair = new ImmutablePair<>(
                 currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
 
-        if (!Objects.nonNull(lastSelection)) {
+        if (Objects.isNull(lastSelection)) {
             lastSelection = selectedMediaPair;
         }
 
