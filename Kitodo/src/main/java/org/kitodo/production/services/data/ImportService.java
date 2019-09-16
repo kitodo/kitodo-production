@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,9 @@ import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.OPACConfig;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.XMLUtils;
@@ -146,8 +149,10 @@ public class ImportService {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
+        URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
+                .resolve(new URI(OPACConfig.getXsltMappingFile(opac)));
         DataRecord resultRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML,
-                ServiceManager.getFileService().getFile(new URI(OPACConfig.getXsltMappingFile(opac))));
+                ServiceManager.getFileService().getFile(xsltFile));
 
         if (resultRecord.getOriginalData() instanceof String) {
             return XMLUtils.parseXMLString((String) resultRecord.getOriginalData());

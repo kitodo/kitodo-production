@@ -212,7 +212,7 @@ public class ImportForm implements Serializable {
             record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
         } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException
                 | NoRecordFoundException | UnsupportedFormatException e) {
-            logger.error(e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 

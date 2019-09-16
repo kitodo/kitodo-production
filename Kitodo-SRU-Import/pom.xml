@@ -50,6 +50,7 @@
             <groupId>com.xebialabs.restito</groupId>
             <artifactId>restito</artifactId>
             <version>0.9.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
