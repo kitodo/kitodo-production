@@ -26,7 +26,8 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="systemTabView" dynamic="true">
+        <p:tabView activeIndex="#{MigrationForm.activeTabIndex}" id="systemTabView" widgetVar="systemTabView">
+            <p:ajax event="tabChange" listener="#{MigrationForm.onTabChange}"/>
             <p:tab id="taskManagerTab" title="#{msgs.taskManager}">
                 <ui:include src="/WEB-INF/templates/includes/system/taskmanager.xhtml" />
             </p:tab>
@@ -45,6 +46,9 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.system}"/>
+    </ui:define>
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/system/confirmWorkflowPopup.xhtml"/>
     </ui:define>
 
 </ui:composition>
