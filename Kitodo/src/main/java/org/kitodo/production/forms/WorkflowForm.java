@@ -71,6 +71,7 @@ public class WorkflowForm extends BaseForm {
     private final String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private final String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
     private Integer roleId;
+    private boolean migration;
 
     /**
      * Constructor.
@@ -445,5 +446,23 @@ public class WorkflowForm extends BaseForm {
      */
     void setSvgDiagram(String svgDiagram) {
         this.svgDiagram = svgDiagram;
+    }
+
+    /**
+     * Get migration.
+     *
+     * @return value of migration
+     */
+    public boolean isMigration() {
+        return migration;
+    }
+
+    /**
+     * Set migration.
+     *
+     * @param migration as boolean
+     */
+    public void setMigration(boolean migration) {
+        this.migration = migration;
     }
 }

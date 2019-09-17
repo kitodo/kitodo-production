@@ -282,6 +282,6 @@ public class MigrationForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
 
-        return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflowToUse.getId();
+        return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflowToUse.getId() + "&migration=true";
     }
 }
