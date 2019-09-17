@@ -40,7 +40,9 @@ public class ImageHelper {
         if (fileService.fileExist(folder)) {
             List<URI> files = fileService.getSubUris(dataFilter, folder);
             if (files.isEmpty()) {
-                Helper.setErrorMessage("[" + title + "] No objects found");
+                Helper.setErrorMessage("[" + title + "] No objects found. "
+                        + "Either no objects present, wrong file format or file name does not match your naming "
+                        + "convention. (" + ParameterCore.IMAGE_PREFIX + ")");
                 return false;
             }
 
