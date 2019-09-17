@@ -110,12 +110,14 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
@@ -127,6 +129,8 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
+import org.kitodo.production.process.TiffHeaderGenerator;
+import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.FileService;
@@ -2367,5 +2371,26 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processesLinkedInIncludedStructuralElement.addAll(getProcessesLinkedInIncludedStructuralElement(child));
         }
         return processesLinkedInIncludedStructuralElement;
+    }
+
+    /**
+     * Generate process title.
+     */
+    public static String generateProcessTitle(String atstsl, List<ProcessDetail> processDetails, String titleDefinition,
+                                              Process process) throws ProcessGenerationException {
+        TitleGenerator titleGenerator = new TitleGenerator(atstsl, processDetails);
+        String newTitle = titleGenerator.generateTitle(titleDefinition, null);
+        process.setTitle(newTitle);
+        // atstsl is created in title generator and next used in tiff header generator
+        return titleGenerator.getAtstsl();
+    }
+
+    /**
+     * Calculate tiff header.
+     */
+    public static String generateTiffHeader(List<ProcessDetail> processDetails, String atstsl,
+                                            String tiffDefinition, String docType) throws ProcessGenerationException {
+        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(atstsl, processDetails);
+        return tiffHeaderGenerator.generateTiffHeader(tiffDefinition, docType);
     }
 }

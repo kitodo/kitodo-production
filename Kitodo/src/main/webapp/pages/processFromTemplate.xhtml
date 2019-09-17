@@ -59,7 +59,7 @@
 
     <ui:define name="pageTabView">
         <p:tabView id="processFromTemplateTabView" activeIndex="#{CreateProcessForm.editActiveTabIndex}">
-            <p:tab id="importTab" title="#{msgs.queryOPAC}">
+            <p:tab id="importTab" title="#{msgs['newProcess.catalogueSearch.heading']}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/import.xhtml" />
             </p:tab>
             <p:tab id="processDataTab" title="#{msgs.processData}">

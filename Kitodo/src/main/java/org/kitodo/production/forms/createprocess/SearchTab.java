@@ -24,6 +24,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 
 public class SearchTab {
 
@@ -32,7 +33,7 @@ public class SearchTab {
     private CreateProcessForm createProcessForm;
     private Process originalProcess;
 
-    public SearchTab(CreateProcessForm createProcessForm) {
+    SearchTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 
@@ -85,8 +86,7 @@ public class SearchTab {
         for (Property workpieceProperty : this.originalProcess.getWorkpieces()) {
             for (ProcessDetail detail : this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements()) {
                 if (detail.getLabel().equals(workpieceProperty.getTitle())) {
-                    this.createProcessForm.getProcessMetadataTab().setProcessDetailValue(detail,
-                            workpieceProperty.getValue());
+                    ImportService.setProcessDetailValue(detail, workpieceProperty.getValue());
                 }
                 if (workpieceProperty.getTitle().equals("DocType")) {
                     this.createProcessForm.getProcessDataTab().setDocType(workpieceProperty.getValue());
@@ -99,8 +99,7 @@ public class SearchTab {
         for (Property templateProperty : this.originalProcess.getTemplates()) {
             for (ProcessDetail processDetail : this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements()) {
                 if (processDetail.getLabel().equals(templateProperty.getTitle())) {
-                    this.createProcessForm.getProcessMetadataTab().setProcessDetailValue(processDetail,
-                            templateProperty.getValue());
+                    ImportService.setProcessDetailValue(processDetail, templateProperty.getValue());
                 }
             }
         }

@@ -32,8 +32,8 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
-import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 
 public class ProcessValidatorIT {
 
@@ -114,29 +114,29 @@ public class ProcessValidatorIT {
         rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
         StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
                 "Monograph", "", Locale.LanguageRange.parse("en"));
-        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(null, workpiece.getRootElement(), monograph);
+        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(workpiece.getRootElement(), monograph);
         for (ProcessDetail detail : processDetails.getRows()) {
             switch (detail.getMetadataID()) {
                 case "TitleDocMain":
                 case "TitleDocMainShort":
-                    ProcessMetadataTab.setProcessDetailValue(detail, "Test");
+                    ImportService.setProcessDetailValue(detail, "Test");
                     break;
                 case "TSL_ATS":
-                    ProcessMetadataTab.setProcessDetailValue(detail, " ");
+                    ImportService.setProcessDetailValue(detail, " ");
                     break;
                 case "CatalogIDSource":
                 case "CatalogIDDigital":
-                    ProcessMetadataTab.setProcessDetailValue(detail, "123");
+                    ImportService.setProcessDetailValue(detail, "123");
                     break;
                 case "Person":
                     for (ProcessDetail personMetadataRow : ((ProcessFieldedMetadata) detail).getRows()) {
                         switch (personMetadataRow.getMetadataID()) {
                             case "Role":
                             case "LastName":
-                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Author");
+                                ImportService.setProcessDetailValue(personMetadataRow, "Author");
                                 break;
                             case "FirstName":
-                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Test");
+                                ImportService.setProcessDetailValue(personMetadataRow, "Test");
                                 break;
                             default:
                                 break;

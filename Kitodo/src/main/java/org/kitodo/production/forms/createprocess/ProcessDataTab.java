@@ -14,17 +14,16 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigProject;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.process.TiffHeaderGenerator;
-import org.kitodo.production.process.TitleGenerator;
+import org.kitodo.production.services.data.ProcessService;
 import org.omnifaces.util.Ajax;
 
 public class ProcessDataTab {
@@ -42,7 +41,7 @@ public class ProcessDataTab {
     private boolean usingTemplates;
     private int guessedImages = 0;
 
-    public ProcessDataTab(CreateProcessForm createProcessForm) {
+    ProcessDataTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 
@@ -61,12 +60,15 @@ public class ProcessDataTab {
             this.docType = (String) allDocTypes.get(0).getValue();
             Helper.setErrorMessage("docTypeNotFound", new Object[] {docType});
         }
-        this.createProcessForm.getWorkpiece().getRootElement().setType(this.docType);
-        if (this.docType.isEmpty()) {
-            this.createProcessForm.getProcessMetadataTab().setProcessDetails(new ProcessFieldedMetadata());
-        } else {
-            this.createProcessForm.getProcessMetadataTab()
-                    .initializeProcessDetails(this.createProcessForm.getWorkpiece().getRootElement());
+        if (!this.createProcessForm.getProcesses().isEmpty()) {
+            this.createProcessForm.getProcesses().get(0).getWorkpiece().getRootElement().setType(this.docType);
+            if (this.docType.isEmpty()) {
+                this.createProcessForm.getProcessMetadataTab().setProcessDetails(new ProcessFieldedMetadata());
+            } else {
+                ProcessFieldedMetadata metadata = this.createProcessForm.getProcessMetadataTab()
+                        .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getRootElement());
+                this.createProcessForm.getProcessMetadataTab().setProcessDetails(metadata);
+            }
         }
     }
 
@@ -172,9 +174,9 @@ public class ProcessDataTab {
     /**
      * Set allDocTypes.
      *
-     * @param allDocTypes as java.util.List<javax.faces.model.SelectItem>
+     * @param allDocTypes as java.util.List
      */
-    public void setAllDocTypes(List<SelectItem> allDocTypes) {
+    void setAllDocTypes(List<SelectItem> allDocTypes) {
         this.allDocTypes = allDocTypes;
         if (allDocTypes.isEmpty()) {
             setDocType("");
@@ -184,30 +186,12 @@ public class ProcessDataTab {
     }
 
     /**
-     * Set titleDefinition.
-     *
-     * @param titleDefinition as java.lang.String
-     */
-    public void setTitleDefinition(String titleDefinition) {
-        this.titleDefinition = titleDefinition;
-    }
-
-    /**
      * Get titleDefinition.
      *
      * @return value of titleDefinition
      */
-    public String getTitleDefinition() {
+    String getTitleDefinition() {
         return titleDefinition;
-    }
-
-    /**
-     * Set tiffDefinition.
-     *
-     * @param tiffDefinition as java.lang.String
-     */
-    public void setTiffDefinition(String tiffDefinition) {
-        this.tiffDefinition = tiffDefinition;
     }
 
     /**
@@ -215,7 +199,7 @@ public class ProcessDataTab {
      *
      * @return value of tifDefinition
      */
-    public String getTiffDefinition() {
+    String getTiffDefinition() {
         return tiffDefinition;
     }
 
@@ -223,39 +207,19 @@ public class ProcessDataTab {
      * Generate process titles and other details.
      */
     public void generateProcessTitleAndTiffHeader() {
-        generateProcessTitle();
-        generateTiffHeader();
+        List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
+        Process process = this.createProcessForm.getMainProcess();
+        try {
+            this.atstsl = ProcessService.generateProcessTitle(this.atstsl, processDetails, this.titleDefinition, process);
+            // document name is generally equal to process title
+            this.tiffHeaderDocumentName = process.getTitle();
+            this.tiffHeaderImageDescription = ProcessService.generateTiffHeader(
+                    processDetails, this.atstsl, this.tiffDefinition, this.docType);
+        } catch (ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
         Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
                 "editForm:processFromTemplateTabView:processMetadata");
-    }
-
-    private void generateProcessTitle() {
-        TitleGenerator titleGenerator = new TitleGenerator(this.atstsl,
-                this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
-        try {
-            String newTitle = titleGenerator.generateTitle(this.titleDefinition, null);
-            this.createProcessForm.getMainProcess().setTitle(newTitle);
-            // atstsl is created in title generator and next used in tiff header generator
-            this.atstsl = titleGenerator.getAtstsl();
-        } catch (ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Calculate tiff header.
-     */
-    private void generateTiffHeader() {
-        // document name is generally equal to process title
-        this.tiffHeaderDocumentName = this.createProcessForm.getMainProcess().getTitle();
-
-        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl,
-                this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
-        try {
-            this.tiffHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tiffDefinition, this.docType);
-        } catch (ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
     }
 
     /**

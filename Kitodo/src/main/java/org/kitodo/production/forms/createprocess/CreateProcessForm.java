@@ -49,16 +49,20 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
+import org.kitodo.production.services.data.ProcessService;
 
 @Named("CreateProcessForm")
 @ViewScoped
@@ -76,9 +80,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private List<Locale.LanguageRange> priorityList;
     private String acquisitionStage = "create";
     private Project project;
-    private Workpiece workpiece = new Workpiece();
     private Template template;
-    private LinkedList<Process> processes = new LinkedList<>(Collections.singletonList(new Process()));
+    private LinkedList<TempProcess> processes = new LinkedList<>();
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String referringView = "";
 
@@ -192,7 +195,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      *
      * @return value of newProcesses
      */
-    public List<Process> getProcesses() {
+    public List<TempProcess> getProcesses() {
         return processes;
     }
 
@@ -201,7 +204,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      *
      * @param processes as java.util.List of Process
      */
-    public void setProcesses(LinkedList<Process> processes) {
+    public void setProcesses(LinkedList<TempProcess> processes) {
         this.processes = processes;
     }
 
@@ -214,7 +217,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         if (processes.isEmpty()) {
             throw new NotFoundException("Process list is empty!");
         }
-        return processes.get(0);
+        return processes.get(0).getProcess();
     }
 
     /**
@@ -245,15 +248,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     }
 
     /**
-     * Get workpiece.
-     *
-     * @return value of workpiece
-     */
-    public Workpiece getWorkpiece() {
-        return workpiece;
-    }
-
-    /**
      * Set project.
      *
      * @param project as org.kitodo.data.database.beans.Project
@@ -270,20 +264,20 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
                     || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
                 FacesContext.getCurrentInstance().validationFailed();
-                Helper.setErrorMessage("prozesskopieForm.createNewProcess.noInsertionPositionSelected");
+                Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
                 return stayOnCurrentPage;
             } else {
                 User titleRecordOpenUser = DataEditorForm
                         .getUserOpened(titleRecordLinkTab.getTitleRecordProcess().getId());
                 if (Objects.nonNull(titleRecordOpenUser)) {
                     FacesContext.getCurrentInstance().validationFailed();
-                    Helper.setErrorMessage("prozesskopieForm.createNewProcess.titleRecordOpen",
+                    Helper.setErrorMessage("createProcessForm.createNewProcess.titleRecordOpen",
                             titleRecordOpenUser.getFullName());
                     return stayOnCurrentPage;
                 }
             }
         }
-        if (createProcess()) {
+        if (createProcessHierarchy()) {
             Process mainProcess = getMainProcess();
             if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
                 ServiceManager.getProcessService().refresh(mainProcess);
@@ -331,7 +325,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);
             if (generated) {
-                processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
+                processes = new LinkedList<>(Collections.singletonList(new TempProcess(
+                        (processGenerator.getGeneratedProcess()), new Workpiece())));
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset().getFile());
@@ -343,41 +338,49 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     }
 
     /**
-     * Create process.
+     * Create process hierarchy.
      *
-     * @return true if process was created, otherwise false
+     * @return true if process hierarchy was created, false otherwise
      */
-    public boolean createProcess() {
+    private boolean createProcessHierarchy() {
+
+        // first: process process hierarchy
+        processProcessHierarchy();
+
+        // second: process main process
         Process mainProcess = getMainProcess();
         if (!ProcessValidator.isContentValid(mainProcess.getTitle(),
                 processMetadataTab.getProcessDetailsElements(),
                 true)) {
             return false;
         }
-        addProperties();
+
+        addProperties(mainProcess, processMetadataTab.getProcessDetailsElements(), processDataTab.getDocType(),
+                processDataTab.getTiffHeaderImageDescription());
         updateTasks(mainProcess);
         try {
             mainProcess.setSortHelperImages(processDataTab.getGuessedImages());
             ServiceManager.getProcessService().save(mainProcess);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             return false;
         }
-        if (!createProcessLocation()) {
+        if (!createProcessesLocation()) {
             return false;
         }
 
-        if (Objects.nonNull(workpiece)) {
-            workpiece.getRootElement().setType(processDataTab.getDocType());
-            processMetadataTab.preserve();
-            try (OutputStream out = ServiceManager.getFileService()
-                    .write(ServiceManager.getProcessService().getMetadataFileUri(getMainProcess()))) {
-                ServiceManager.getMetsService().save(workpiece, out);
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        if (ensureNonEmptyTitles()) {
+            try {
+                ServiceManager.getProcessService().save(getMainProcess());
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular()},
+                        logger, e);
+                return false;
             }
         }
+
+        preserveProcessHierarchyMetadata();
 
         if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
             getMainProcess().setParent(titleRecordLinkTab.getTitleRecordProcess());
@@ -387,24 +390,76 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         try {
             ServiceManager.getProcessService().save(mainProcess);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             return false;
         }
         return true;
     }
 
-    private void addProperties() {
-        Process mainProcess = getMainProcess();
-        addMetadataProperties(processMetadataTab.getProcessDetailsElements(), mainProcess);
-        ProcessGenerator.addPropertyForWorkpiece(mainProcess, "DocType", processDataTab.getDocType());
-        ProcessGenerator.addPropertyForWorkpiece(mainProcess, "TifHeaderImagedescription",
-                processDataTab.getTiffHeaderImageDescription());
-        ProcessGenerator.addPropertyForWorkpiece(mainProcess, "TifHeaderDocumentname",
-                processDataTab.getTiffHeaderDocumentName());
+    private void processProcessHierarchy() {
+        for (TempProcess tempProcess : this.processes) {
+            if (this.processes.indexOf(tempProcess) == 0) {
+                // skip "mainProcess" as it is processed later
+                continue;
+            }
+            ProcessFieldedMetadata metadata = this.getProcessMetadataTab().initializeProcessDetails(
+                    tempProcess.getWorkpiece().getRootElement());
+            String docType = tempProcess.getWorkpiece().getRootElement().getType();
+            ImportService.fillProcessDetails(metadata, tempProcess.getMetadataNodes(),
+                    this.rulesetManagementInterface, docType , this.acquisitionStage,  this.priorityList);
+            try {
+                metadata.preserve();
+            } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+            try {
+                String atstsl = ProcessService.generateProcessTitle("", metadata.getRows(),
+                        this.processDataTab.getTitleDefinition(), tempProcess.getProcess());
+                String tiffHeader = ProcessService.generateTiffHeader(metadata.getRows(), atstsl,
+                        this.processDataTab.getTiffDefinition(), docType);
+                addProperties(tempProcess.getProcess(), metadata.getRows(), docType, tiffHeader);
+                updateTasks(tempProcess.getProcess());
+            } catch (ProcessGenerationException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
+
+    private void preserveProcessHierarchyMetadata() {
+        for (TempProcess tempProcess : this.processes) {
+            if (this.processes.indexOf(tempProcess) == 0) {
+                processMetadataTab.preserve();
+            }
+            try (OutputStream out = ServiceManager.getFileService()
+                    .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()))) {
+                ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
+
+    private boolean ensureNonEmptyTitles() {
+        boolean changedTitle = false;
+        for (TempProcess tempProcess : this.processes) {
+            if (Objects.nonNull(tempProcess.getProcess()) && tempProcess.getProcess().getTitle().isEmpty()) {
+                Process process = tempProcess.getProcess();
+                process.setTitle("[" + Helper.getTranslation("process") + " " + process.getId() + "]");
+                changedTitle = true;
+            }
+        }
+        return changedTitle;
+    }
+
+    private void addProperties(Process process, List<ProcessDetail> processDetails, String docType, String imageDescription) {
+        addMetadataProperties(processDetails, process);
+        ProcessGenerator.addPropertyForWorkpiece(process, "DocType", docType);
+        ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderImagedescription", imageDescription);
+        ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderDocumentname", process.getTitle());
         if (Objects.nonNull(template)) {
-            ProcessGenerator.addPropertyForProcess(mainProcess, "Template", template.getTitle());
-            ProcessGenerator.addPropertyForProcess(mainProcess, "TemplateID", String.valueOf(template.getId()));
+            ProcessGenerator.addPropertyForProcess(process, "Template", template.getTitle());
+            ProcessGenerator.addPropertyForProcess(process, "TemplateID", String.valueOf(template.getId()));
         }
     }
 
@@ -412,7 +467,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         try {
             for (ProcessDetail processDetail : processDetailList) {
                 if (!processDetail.getMetadata().isEmpty() && processDetail.getMetadata().toArray()[0] instanceof Metadata) {
-                    String metadataValue = ProcessMetadataTab.getProcessDetailValue(processDetail);
+                    String metadataValue = ImportService.getProcessDetailValue(processDetail);
                     Metadata metadata = (Metadata) processDetail.getMetadata().toArray()[0];
                     switch (metadata.getDomain()) {
                         case DMD_SEC:
@@ -449,21 +504,22 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
     }
 
-    private boolean createProcessLocation() {
-        Process mainProcess = getMainProcess();
-        try {
-            URI processBaseUri = ServiceManager.getFileService().createProcessLocation(mainProcess);
-            mainProcess.setProcessBaseUri(processBaseUri);
-            return true;
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+    private boolean createProcessesLocation() {
+        for (TempProcess tempProcess : this.processes) {
             try {
-                ServiceManager.getProcessService().remove(mainProcess);
-            } catch (DataException ex) {
+                URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
+                tempProcess.getProcess().setProcessBaseUri(processBaseUri);
+            } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                try {
+                    ServiceManager.getProcessService().remove(tempProcess.getProcess());
+                } catch (DataException ex) {
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                }
+                return false;
             }
-            return false;
         }
+        return true;
     }
 
     private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
@@ -485,10 +541,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         try {
             ProcessGenerator processGenerator = new ProcessGenerator();
             processGenerator.generateProcess(template.getId(), project.getId());
-            this.processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
+            this.processes = new LinkedList<>(Collections.singletonList(
+                    new TempProcess(processGenerator.getGeneratedProcess(), new Workpiece())));
+            this.processMetadataTab.initializeProcessDetails(getProcesses().get(0).getWorkpiece().getRootElement());
         } catch (ProcessGenerationException e) {
             logger.error(e.getLocalizedMessage());
         }
-        this.processMetadataTab.initializeProcessDetails(workpiece.getRootElement());
     }
 }

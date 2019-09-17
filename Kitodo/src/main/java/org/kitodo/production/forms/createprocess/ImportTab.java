@@ -14,28 +14,29 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.model.LazyHitModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ImportTab implements Serializable {
@@ -43,12 +44,14 @@ public class ImportTab implements Serializable {
     private LazyHitModel hitModel = new LazyHitModel();
 
     private CreateProcessForm createProcessForm;
-    private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
     private static final int ADDITIONAL_FIELDS_TAB_INDEX = 2;
     private static final String ID_PARAMETER_NAME = "ID";
     private static final String FORM_CLIENTID = "editForm";
-    private static final String KITODO_STRING = "kitodo";
     private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
+    private static final String GROWL_MESSAGE =
+            "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
+
+    private int importDepth = 2;
 
     /**
      * Standard constructor.
@@ -121,31 +124,34 @@ public class ImportTab implements Serializable {
      * Get the full record with the given ID from the catalog.
      */
     public void getSelectedRecord() {
-        String recordId = Helper.getRequestParameter(ID_PARAMETER_NAME);
-        getRecordById(this.hitModel.getSelectedCatalog(), recordId);
+        getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
         Ajax.update(FORM_CLIENTID);
         this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
     }
 
-    private void getRecordById(String catalog, String recordId) {
-        Document record;
+    private void getRecordById(String recordId) {
         try {
-            record = ServiceManager.getImportService().getSelectedRecord(catalog, recordId);
-        } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException
-                | NoRecordFoundException | UnsupportedFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
-        }
+            LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(recordId,
+                    this.createProcessForm, this.importDepth);
+            this.createProcessForm.setProcesses(processes);
 
-        createProcessForm.getProcessDataTab().setDocType(ServiceManager.getImportService().getRecordDocType(record));
-        List<ProcessDetail> processDetailsList =
-                this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
-        Element root = record.getDocumentElement();
-        NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO_STRING);
-        for (int i = 0; i < kitodoNodes.getLength(); i++) {
-            Node kitodoNode = kitodoNodes.item(i);
-            this.createProcessForm.getProcessMetadataTab().fillProcessDetailsElements(processDetailsList,
-                    kitodoNode.getChildNodes(), false);
+            // Fill metadata fields in metadata tab on successful import
+            if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
+                TempProcess firstProcess = processes.getFirst();
+                this.createProcessForm.getProcessDataTab().setDocType(firstProcess.getWorkpiece().getRootElement().getType());
+                ProcessFieldedMetadata processDetails =
+                        createProcessForm.getProcessMetadataTab().getProcessDetails();
+                ImportService.fillProcessDetails(processDetails,
+                        firstProcess.getMetadataNodes(), this.createProcessForm.getRuleset(),
+                        this.createProcessForm.getProcessDataTab().getDocType(),
+                        this.createProcessForm.getAcquisitionStage(),
+                        this.createProcessForm.getPriorityList());
+            }
+
+            showGrowlMessage(processes, this.hitModel.getSelectedCatalog());
+        } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
+                | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException e) {
+            Helper.setErrorMessage(e);
         }
     }
 
@@ -156,5 +162,32 @@ public class ImportTab implements Serializable {
      */
     public LazyHitModel getHitModel() {
         return this.hitModel;
+    }
+
+    private void showGrowlMessage(LinkedList<TempProcess> processes, String opac) {
+        String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
+        String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
+                Arrays.asList(String.valueOf(processes.size()), opac));
+        String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
+                .replace("SEVERITY", "info");
+        PrimeFaces.current().executeScript(script);
+    }
+
+    /**
+     * Get import depth.
+     *
+     * @return import depth
+     */
+    public int getImportDepth() {
+        return importDepth;
+    }
+
+    /**
+     * Set import depth.
+     *
+     * @param depth import depth
+     */
+    public void setImportDepth(int depth) {
+        importDepth = depth;
     }
 }

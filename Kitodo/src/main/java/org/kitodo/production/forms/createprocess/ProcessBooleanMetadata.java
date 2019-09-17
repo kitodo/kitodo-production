@@ -39,18 +39,13 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
     /**
      * Creates a new metadata panel row with an on/off switch.
      *
-     * @param tab
-     *            MetadataPanel instance
-     * @param container
-     *            containing metadata group
      * @param settings
      *            configuration settings from the rule set
      * @param data
      *            data to display
      */
-    ProcessBooleanMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
-                           SimpleMetadataViewInterface settings, MetadataEntry data) {
-        super(tab, container, settings);
+    ProcessBooleanMetadata(SimpleMetadataViewInterface settings, MetadataEntry data) {
+        super(settings);
         this.active = Objects.nonNull(data);
     }
 

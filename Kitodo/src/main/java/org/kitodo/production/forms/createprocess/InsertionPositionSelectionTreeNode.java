@@ -31,7 +31,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
      * @param itemIndex
      *            index of the radio button
      */
-    public InsertionPositionSelectionTreeNode(TreeNode parent, int itemIndex) {
+    InsertionPositionSelectionTreeNode(TreeNode parent, int itemIndex) {
         super(null, parent);
         this.itemIndex = itemIndex;
         this.possibleInsertionPosition = true;
@@ -46,7 +46,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
      * @param label
      *            label for the included structural element
      */
-    public InsertionPositionSelectionTreeNode(TreeNode parent, String label) {
+    InsertionPositionSelectionTreeNode(TreeNode parent, String label) {
         super(null, parent);
         this.label = label;
         this.possibleInsertionPosition = false;

@@ -11,11 +11,20 @@
 
 package org.kitodo.production.services.dataformat;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Objects;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +32,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.w3c.dom.Document;
 
 public class MetsService {
     private static final Logger logger = LogManager.getLogger(MetsService.class);
@@ -83,6 +93,25 @@ public class MetsService {
             logger.info("Reading {}", uri.toString());
             return metsXmlElementAccess.read(inputStream);
         }
+    }
+
+    /**
+     * Create and return Workpiece from given Document 'document'.
+     *
+     * @param document Document from which a Workpiece is created
+     * @return Workpiece created from given Document
+     * @throws TransformerException
+     *          thrown when XML transformation fails
+     * @throws IOException
+     *          thrown when unable to read inputStream
+     */
+    public Workpiece loadWorkpiece(Document document) throws TransformerException, IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Source xmlSource = new DOMSource(document);
+        Result outputTarget = new StreamResult(outputStream);
+        TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        return metsXmlElementAccess.read(inputStream);
     }
 
     /**

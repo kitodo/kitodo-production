@@ -733,10 +733,6 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     padding-right: var(--input-padding);
 }
 
-.ui-spinner .ui-spinner-input.ui-state-focus ~ .ui-spinner-button::after {
-    color: var(--pure-white);
-}
-
 .ui-spinner .ui-spinner-up::after {
     content: "\f0d8";
 }

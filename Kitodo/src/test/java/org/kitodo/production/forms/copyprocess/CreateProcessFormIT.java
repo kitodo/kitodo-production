@@ -29,10 +29,12 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
+import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -84,7 +86,7 @@ public class CreateProcessFormIT {
     public void shouldCreateNewProcess() throws Exception {
         CreateProcessForm underTest = new CreateProcessForm();
         underTest.getProcessDataTab().setDocType("Monograph");
-        underTest.setProcesses(new LinkedList<>(Collections.singletonList(new Process())));
+        underTest.setProcesses(new LinkedList<>(Collections.singletonList(new TempProcess(new Process(), new Workpiece()))));
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");

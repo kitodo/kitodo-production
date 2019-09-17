@@ -46,22 +46,12 @@ public abstract class ProcessDetail implements Serializable {
     protected final String label;
 
     /**
-     * Metadata panel on which this row is showing.
-     */
-    protected final ProcessMetadataTab tab;
-
-    /**
      * Creates a new metadata panel row.
      *
-     * @param tab
-     *            additional details tab on which this row is showing
-     * @param container
-     *            parental metadata group
      * @param label
      *            the label of this row
      */
-    ProcessDetail(ProcessMetadataTab tab, ProcessFieldedMetadata container, String label) {
-        this.tab = tab;
+    ProcessDetail(String label) {
         this.label = label;
     }
 

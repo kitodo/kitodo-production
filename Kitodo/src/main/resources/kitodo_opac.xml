@@ -51,6 +51,7 @@
         <returnFormat>xml</returnFormat>
         <metadataFormat>MODS</metadataFormat>
         <mappingFile>mods2kitodo.xsl</mappingFile>
+        <parentElement trimMode="parenthesis"/>
         <config>
             <param name="host" value="sru.gbv.de" />
             <param name="scheme" value="http" />
