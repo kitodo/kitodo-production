@@ -56,13 +56,12 @@ public class ProcessDataTab {
     public void setDocType(String docType) {
         if (Objects.isNull(this.docType) || !this.docType.equals(docType)) {
             this.docType = docType;
-            try {
-                this.createProcessForm.getWorkpiece().getRootElement()
-                        .setType(ConfigOpac.getDoctypeByName(docType).getRulesetType());
-            } catch (FileNotFoundException e) {
-                logger.error(e.getLocalizedMessage());
+            this.createProcessForm.getWorkpiece().getRootElement().setType(getRulesetType());
+            if (this.docType.isEmpty()) {
+                this.createProcessForm.getAdditionalDetailsTab().resetAddtionalDetailsTable();
+            } else {
+                this.createProcessForm.getAdditionalDetailsTab().show(this.createProcessForm.getWorkpiece().getRootElement());
             }
-            this.createProcessForm.getAdditionalDetailsTab().show(this.createProcessForm.getWorkpiece().getRootElement());
         }
     }
 
@@ -79,6 +78,25 @@ public class ProcessDataTab {
      */
     public String getDocType() {
         return docType;
+    }
+
+    /**
+     * Get rulesetType of docType.
+     *
+     * @return value of rulesetType
+     */
+    public String getRulesetType() {
+        if (Objects.nonNull(docType) && !docType.isEmpty()) {
+            try {
+                ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(docType);
+                if (Objects.nonNull(configOpacDoctype)) {
+                    return configOpacDoctype.getRulesetType();
+                }
+            } catch (FileNotFoundException e) {
+                logger.error(e.getLocalizedMessage());
+            }
+        }
+        return "";
     }
 
     /**
@@ -254,5 +272,14 @@ public class ProcessDataTab {
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    /**
+     * Set standardFields.
+     *
+     * @param standardFields as java.util.Map<java.lang.String,java.lang.Boolean>
+     */
+    public void setStandardFields(Map<String, Boolean> standardFields) {
+        this.standardFields = standardFields;
     }
 }

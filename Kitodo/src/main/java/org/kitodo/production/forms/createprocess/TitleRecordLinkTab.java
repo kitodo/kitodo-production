@@ -196,7 +196,7 @@ public class TitleRecordLinkTab {
 
         boolean linkingAllowedHere = Objects.isNull(currentIncludedStructuralElement.getLink())
                 && currentIncludedStructuralElementView.getAllowedSubstructuralElements()
-                        .containsKey(ConfigOpac.getDoctypeByName(createProcessForm.getProcessDataTab().getDocType()).getRulesetType());
+                        .containsKey(createProcessForm.getProcessDataTab().getRulesetType());
 
         if (linkingAllowedHere) {
             new InsertionPositionSelectionTreeNode(includedStructuralElementNode, selectableInsertionPositions.size());

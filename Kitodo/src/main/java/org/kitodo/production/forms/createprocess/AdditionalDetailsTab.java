@@ -11,9 +11,6 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,15 +60,11 @@ public class AdditionalDetailsTab {
      *          which its Metadaten are wanted to be shown
      */
     public void show(IncludedStructuralElement structure) {
-        try {
-            StructuralElementViewInterface divisionView = this.createProcessForm.getRuleset().getStructuralElementView(
-                    ConfigOpac.getDoctypeByName(createProcessForm.getProcessDataTab().getDocType()).getRulesetType(),
-                    this.createProcessForm.getAcquisitionStage(),
-                    this.createProcessForm.getPriorityList());
-            additionalDetailsTable = new FieldedAdditionalDetailsTableRow(this, structure, divisionView);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        StructuralElementViewInterface divisionView = this.createProcessForm.getRuleset().getStructuralElementView(
+                createProcessForm.getProcessDataTab().getRulesetType(),
+                this.createProcessForm.getAcquisitionStage(),
+                this.createProcessForm.getPriorityList());
+        additionalDetailsTable = new FieldedAdditionalDetailsTableRow(this, structure, divisionView);
     }
 
     /**
@@ -105,7 +98,7 @@ public class AdditionalDetailsTab {
      */
     private FieldedAdditionalDetailsTableRow addMetadataGroupRow(String metadataId) throws NoSuchMetadataFieldException {
         Collection<MetadataViewInterface> docTypeAddableDivisions = this.createProcessForm.getRuleset().getStructuralElementView(
-               this.createProcessForm.getProcessDataTab().getDocType(),
+               this.createProcessForm.getProcessDataTab().getRulesetType(),
                 this.createProcessForm.getAcquisitionStage(),
                 this.createProcessForm.getPriorityList()).getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
 

@@ -384,7 +384,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         // TODO: check if this is still required!
         //processRdfConfiguration();
         if (Objects.nonNull(workpiece)) {
-            workpiece.getRootElement().setType(processDataTab.getDocType());
+            workpiece.getRootElement().setType(processDataTab.getRulesetType());
             additionalDetailsTab.preserve();
             try (OutputStream out = ServiceManager.getFileService()
                     .write(ServiceManager.getProcessService().getMetadataFileUri(getMainProcess()))) {
@@ -422,8 +422,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 this.getProcessDataTab().getTifHeaderImageDescription());
         ProcessGenerator.addPropertyForWorkpiece(mainProcess, "TifHeaderDocumentname",
                 this.getProcessDataTab().getTifHeaderDocumentName());
-        ProcessGenerator.addPropertyForProcess(mainProcess, "Template", this.template.getTitle());
-        ProcessGenerator.addPropertyForProcess(mainProcess, "TemplateID", String.valueOf(this.template.getId()));
+        if (Objects.nonNull(this.template)) {
+            ProcessGenerator.addPropertyForProcess(mainProcess, "Template", this.template.getTitle());
+            ProcessGenerator.addPropertyForProcess(mainProcess, "TemplateID", String.valueOf(this.template.getId()));
+        }
     }
 
     private void addMetadataProperties(List<AdditionalDetailsTableRow> additionalRows, Process process) {
