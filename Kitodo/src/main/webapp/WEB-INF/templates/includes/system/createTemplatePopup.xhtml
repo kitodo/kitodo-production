@@ -1,0 +1,69 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <!-- edit dialog -->
+    <p:dialog id="createTemplatePopup"
+              widgetVar="createTemplatePopup"
+              header="#{msgs.editTemplate}"
+              width="400px"
+              modal="true"
+              dynamic="true">
+        <h:form id="createTemplateForm">
+            <p:dataTable id="createTemplatesTable" value="#{MigrationForm.getTemplatesToCreate()}" var="template">
+                <!--@elvariable id="existingTemplate" type="Template"-->
+                <ui:param name="existingTemplate" value="#{MigrationForm.getMatchingTemplate(template)}"/>
+                <p:column headerText="#{msgs.template}">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="#{msgs.title}"/>
+                        <h:inputText value="#{template.title}" required="true"/>
+                        <h:outputText value="#{msgs.docket}"/>
+                        <h:outputText value="#{template.docket.title}"/>
+                        <h:outputText value="#{msgs.ruleset}"/>
+                        <h:outputText value="#{template.ruleset.title}"/>
+                        <h:outputText value="#{msgs.workflow}"/>
+                        <h:outputText value="#{template.workflow.title}"/>
+                    </p:panelGrid>
+                    <p:commandButton action="#{MigrationForm.createNewTemplate(template)}"
+                                     value="#{msgs.addNewTemplate}"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     update="createTemplateForm"
+                                     styleClass="button-filled-blue"/>
+                </p:column>
+                <p:column headerText="#{msgs.existingTemplate}"
+                          styleClass="actionsColumn">
+                    <p:panelGrid render="#{existingTemplate ne null}" columns="2">
+                        <h:outputText value="#{msgs.title}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.title}"/>
+                        <h:outputText value="#{msgs.docket}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.docket.title}"/>
+                        <h:outputText value="#{msgs.ruleset}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.ruleset.title}"/>
+                        <h:outputText value="#{msgs.workflow}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.workflow.title}"/>
+                        <p:commandButton action="#{MigrationForm.useExistingTemplate(template,existingTemplate)}"
+                                         value="#{msgs.useExistingTemplate}"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         iconPos="right"
+                                         update="createTemplateForm"
+                                         styleClass="button-filled-blue"/>
+                    </p:panelGrid>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+    </p:dialog>
+</ui:composition>

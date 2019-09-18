@@ -19,6 +19,9 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewAction action="#{indexingForm.updateView()}"/>
+        <!--@elvariable id="workflowId" type="int"-->
+        <f:viewParam name="workflowId"/>
+        <f:viewAction action="#{MigrationForm.setRedirectFromWorkflow(workflowId)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -49,6 +52,7 @@
     </ui:define>
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/system/confirmWorkflowPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/system/createTemplatePopup.xhtml"/>
     </ui:define>
 
 </ui:composition>

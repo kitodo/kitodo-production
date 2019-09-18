@@ -22,16 +22,15 @@
                   modal="true"
                   dynamic="true">
             <h:form id="confirmWokflowForm">
-                <p:panelGrid id="passwordGrid" columns="1" layout="grid">
+                <p:panelGrid columns="1" layout="grid">
                     <p:row>
 
                         <div>
                             <p:commandButton id="useExistingWorkflow"
-                                             value="#{msgs.cancel}"
+                                             value="#{msgs.useExistingWorkflow}"
                                              action="#{MigrationForm.useExistingWorkflow()}"
                                              icon="fa fa-floppy-o fa-lg"
                                              iconPos="right"
-                                             validateClient="true"
                                              styleClass="button-filled-blue"
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
@@ -42,7 +41,6 @@
                                              action="#{MigrationForm.createNewWorkflow()}"
                                              icon="fa fa-floppy-o fa-lg"
                                              iconPos="right"
-                                             validateClient="true"
                                              styleClass="button-filled-blue"
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>

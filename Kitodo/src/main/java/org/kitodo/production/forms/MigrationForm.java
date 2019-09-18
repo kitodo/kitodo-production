@@ -20,8 +20,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,23 +40,25 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.migration.TaskComparator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
+import org.kitodo.production.migration.TemplateComparator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
 
 @Named("MigrationForm")
-@ViewScoped
+@ApplicationScoped
 public class MigrationForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(MigrationForm.class);
     private List<Project> allProjects = new ArrayList<>();
     private List<Project> selectedProjects = new ArrayList<>();
-    private List<Process> processList = new ArrayList<>();
     private boolean projectListShown;
     private boolean processListShown;
     private Map<String, List<Process>> aggregatedProcesses = new HashMap<>();
     private Workflow workflowToUse;
     private String currentTasks;
+    private Map<Template, List<Process>> templatesToCreate = new HashMap<>();
+    private Map<Template, Template> matchingTemplates = new HashMap<>();
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -93,7 +97,7 @@ public class MigrationForm extends BaseForm {
      * Shows all processes related to the selected projects.
      */
     public void showAggregatedProcesses() {
-        processList.clear();
+        List<Process> processList = new ArrayList<>();
         aggregatedProcesses.clear();
         for (Project project : selectedProjects) {
             processList.addAll(project.getProcesses());
@@ -180,15 +184,6 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Get processList.
-     *
-     * @return value of processList
-     */
-    public List<Process> getProcessList() {
-        return processList;
-    }
-
-    /**
      * Get processListShown.
      *
      * @return value of processListShown
@@ -216,9 +211,9 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Checks if Workflow already exists. If not, creating a new one. If so, it opens a dialog to inform the user.
-     * @param tasks the series of tasks in the processes
-     * @return a redirect url
+     * Uses the aggregatet processes to create a new Workflow.
+     * @param tasks the list of tasks found in the projects
+     * @return a navigation path
      */
     public String convertTasksToWorkflow(String tasks) {
         currentTasks = tasks;
@@ -250,14 +245,16 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Continues migration with the existing workflow.
-     * @return a redirect url
+     * Use an existing Workflow instead of creating a new one.
      */
-    public String useExistingWorkflow() {
-        //TODO: implement in next PR
-        return null;
+    public void useExistingWorkflow() {
+        setRedirectFromWorkflow(workflowToUse.getId());
     }
 
+    /**
+     * Creates a new Workflow from the aggregated processes.
+     * @return a navigation path.
+     */
     public String createNewWorkflow() {
 
         Process blueprintProcess = aggregatedProcesses.get(currentTasks).get(0);
@@ -284,4 +281,134 @@ public class MigrationForm extends BaseForm {
 
         return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflowToUse.getId() + "&migration=true";
     }
+
+    /**
+     * When the navigation to the migration form is coming from a workflow creation the URL contains an WorkflowId.
+     * @param workflowId the id of the created Workflow
+     */
+    public void setRedirectFromWorkflow(Integer workflowId) {
+        if (Objects.nonNull(workflowId)) {
+            // showPopup for Template
+            try {
+                createTemplates();
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                    logger, e);
+            }
+        }
+    }
+
+    private void createTemplates() throws DAOException {
+        templatesToCreate = createTemplatesForProcesses();
+        matchingTemplates = getMatchingTemplates(templatesToCreate.keySet());
+        PrimeFaces.current().executeScript("PF('createTemplatePopup').show();");
+    }
+
+    private Map<Template, List<Process>> createTemplatesForProcesses() {
+        List<Process> processesToMigrate = aggregatedProcesses.get(currentTasks);
+        Map<Template, List<Process>> newTemplates = new HashMap<>();
+        for (Process process : processesToMigrate) {
+            if (!templateListContainsTemplate(newTemplates, process)) {
+                Template template = new Template();
+                template.setDocket(process.getDocket());
+                template.setRuleset(process.getRuleset());
+                template.setWorkflow(workflowToUse);
+                template.setClient(process.getProject().getClient());
+                newTemplates.put(template, new ArrayList<>(Arrays.asList(process)));
+            }
+        }
+        return newTemplates;
+    }
+
+    private boolean templateListContainsTemplate(Map<Template, List<Process>> newTemplates, Process process) {
+        for (Template template : newTemplates.keySet()) {
+            if (template.getRuleset().equals(process.getRuleset()) && template.getDocket().equals(process.getDocket())
+                    && template.getWorkflow().equals(workflowToUse)) {
+                newTemplates.get(template).add(process);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Map<Template, Template> getMatchingTemplates(Set<Template> templatesToCreate) throws DAOException {
+        TemplateComparator templateComparator = new TemplateComparator();
+        matchingTemplates.clear();
+        List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
+
+        for (Template templateToCreate : templatesToCreate) {
+            for (Template existingTemplate : existingTemplates) {
+                if (templateComparator.compare(templateToCreate, existingTemplate) == 0) {
+                    matchingTemplates.put(templateToCreate, existingTemplate);
+                }
+            }
+        }
+        return matchingTemplates;
+    }
+
+    /**
+     * Get templatesToCreate.
+     *
+     * @return value of templatesToCreate
+     */
+    public Set<Template> getTemplatesToCreate() {
+        return templatesToCreate.keySet();
+    }
+
+    /**
+     * Gets a matching template from matchingTemplates.
+     *
+     * @param template
+     *            the template to match.
+     * @return the matching template
+     */
+    public Template getMatchingTemplate(Template template) {
+        return matchingTemplates.get(template);
+    }
+
+    /**
+     * Uses the existing template to add processes to.
+     * @param template The template to which's matching template the processes should be added
+     * @param existingTemplate the template to add the processes to
+     */
+    public void useExistingTemplate(Template template, Template existingTemplate) {
+        List<Process> processesToAddToTemplate = templatesToCreate.get(template);
+        try {
+            addProcessesToTemplate(existingTemplate, processesToAddToTemplate);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
+        templatesToCreate.remove(template);
+    }
+
+    /**
+     * Creates a new template.
+     * @param template The template to create.
+     */
+    public void createNewTemplate(Template template) {
+        List<Process> processesToAddToTemplate = templatesToCreate.get(template);
+        try {
+            ServiceManager.getTemplateService().save(template);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
+                    e);
+        }
+        try {
+            addProcessesToTemplate(template, processesToAddToTemplate);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
+        templatesToCreate.remove(template);
+    }
+
+    private void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
+        for (Process process : processesToAddToTemplate) {
+            process.setTemplate(template);
+            ServiceManager.getProcessService().save(process);
+        }
+    }
+
 }

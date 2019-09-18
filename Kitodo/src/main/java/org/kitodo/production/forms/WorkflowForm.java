@@ -72,6 +72,7 @@ public class WorkflowForm extends BaseForm {
     private final String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
     private Integer roleId;
     private boolean migration;
+    private static final String MIGRATION_FORM_PATH = MessageFormat.format(REDIRECT_PATH,"system");
 
     /**
      * Constructor.
@@ -138,6 +139,9 @@ public class WorkflowForm extends BaseForm {
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
+                if (migration) {
+                    return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
+                }
                 return workflowListPath;
             } else {
                 return this.stayOnCurrentPage;
