@@ -56,7 +56,7 @@
         <jersey.version>1.19.3</jersey.version>
         <jhove.version>1.20.1</jhove.version>
         <joda-time.version>2.10</joda-time.version>
-        <myfaces.version>2.2.12</myfaces.version>
+        <myfaces.version>2.3.4</myfaces.version>
         <mysql.version>5.1.38</mysql.version>
         <poi.version>3.6</poi.version>
         <primefaces.version>7.0</primefaces.version>
