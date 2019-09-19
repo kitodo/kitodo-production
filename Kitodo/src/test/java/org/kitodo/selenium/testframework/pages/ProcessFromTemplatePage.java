@@ -119,7 +119,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
         String generatedTitle = processTitleInput.getAttribute("value");
         save();
         return generatedTitle;
@@ -142,18 +142,18 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         switchToTabByIndex(1);
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
         final String generatedTitle = processTitleInput.getAttribute("value");
 
         switchToTabByIndex(4);
         searchForParentInput.sendKeys(parentProcessTitle);
         searchParentButton.click();
         await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isDisplayed.matches(chooseParentSelect));
+                .until(() -> isDisplayed.test(chooseParentSelect));
         clickElement(chooseParentSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(chooseParentSelect.getAttribute("id") + "_1")));
         await("Wait for tree shows").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isDisplayed.matches(rootElementTree));
+                .ignoreExceptions().until(() -> isDisplayed.test(rootElementTree));
         save();
         return generatedTitle;
     }
@@ -168,7 +168,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_3")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isDisplayed.matches(processFromTemplateTabView));
+                .until(() -> isDisplayed.test(processFromTemplateTabView));
 
         switchToTabByIndex(2);
         titleInput.sendKeys("TestProcessChildNotPossible");
@@ -179,18 +179,18 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         switchToTabByIndex(1);
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
 
         switchToTabByIndex(4);
         searchForParentInput.sendKeys("Second");
         searchParentButton.click();
         await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isDisplayed.matches(chooseParentSelect));
+                .until(() -> isDisplayed.test(chooseParentSelect));
         clickElement(chooseParentSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(chooseParentSelect.getAttribute("id") + "_1")));
         try {
             await("Wait for error message").pollDelay(100, TimeUnit.MILLISECONDS).atMost(4, TimeUnit.SECONDS)
-                    .ignoreExceptions().until(() -> isDisplayed.matches(errorMessages));
+                    .ignoreExceptions().until(() -> isDisplayed.test(errorMessages));
             return true;
         } catch (ConditionTimeoutException e) {
             return false;
@@ -216,7 +216,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
         String generatedTitle = processTitleInput.getAttribute("value");
         save();
         return generatedTitle;

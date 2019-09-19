@@ -15,9 +15,9 @@ import static org.awaitility.Awaitility.with;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
-import org.awaitility.Duration;
-import org.awaitility.core.Predicate;
+import org.awaitility.Durations;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,8 +52,8 @@ public class IndexingST extends BaseTestSelenium {
         with().conditionEvaluationListener(
             condition -> System.out.printf("%s (elapsed time %dms, remaining time %dms)\n", condition.getDescription(),
                 condition.getElapsedTimeInMS(), condition.getRemainingTimeInMS())).await("Wait for reindexing")
-                .pollDelay(3, TimeUnit.SECONDS).atMost(70, TimeUnit.SECONDS).pollInterval(Duration.ONE_SECOND)
+                .pollDelay(3, TimeUnit.SECONDS).atMost(70, TimeUnit.SECONDS).pollInterval(Durations.ONE_SECOND)
                 .ignoreExceptions()
-                .until(() -> isIndexingFinished.matches(Pages.getSystemPage().getIndexingProgress()));
+                .until(() -> isIndexingFinished.test(Pages.getSystemPage().getIndexingProgress()));
     }
 }

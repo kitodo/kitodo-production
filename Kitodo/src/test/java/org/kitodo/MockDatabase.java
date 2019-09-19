@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +38,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
-import org.awaitility.Duration;
+import org.awaitility.Durations;
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.InternalSettingsPreparer;
@@ -144,7 +145,7 @@ public class MockDatabase {
     public static void setUpAwaitility() {
         Awaitility.setDefaultPollInterval(10, TimeUnit.MILLISECONDS);
         Awaitility.setDefaultPollDelay(Duration.ZERO);
-        Awaitility.setDefaultTimeout(Duration.TWO_SECONDS);
+        Awaitility.setDefaultTimeout(Durations.TWO_SECONDS);
     }
 
     public static void insertProcessesFull() throws Exception {

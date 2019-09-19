@@ -17,10 +17,10 @@ import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -188,7 +188,7 @@ public abstract class Page<T> {
         for (int attempt = 1; attempt < 4; attempt++) {
             try {
                 await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
-                        .ignoreExceptions().until(() -> isButtonClicked.matches(button));
+                        .ignoreExceptions().until(() -> isButtonClicked.test(button));
                 webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
             } catch (TimeoutException e) {
@@ -201,7 +201,7 @@ public abstract class Page<T> {
 
     protected void clickElement(WebElement element) {
         await("Wait for element clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(element));
+                .ignoreExceptions().until(() -> isButtonClicked.test(element));
     }
 
     /**
