@@ -1625,6 +1625,14 @@ Column content
     color: var(--blue);
 }
 
+#map > i {
+    color: var(--pure-white);
+    left: 50%;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+}
+
 #map .ol-overlaycontainer-stopevent {
     left: 16px;
     position: absolute;

@@ -10,9 +10,8 @@
  */
 
 // Kitodo namespace
-window.kitodo = {};
-var kitodo = window.kitodo;
-var map;
+var kitodo = {};
+kitodo.map = null;
 
 /**
  * @param {Object=} options Custom control options for Kitodo in OpenLayers
@@ -130,26 +129,46 @@ function random(length) {
     return text;
 }
 
-// load image to get correct dimensions
-var image = new Image();
-var imagePath = document.getElementById("imageData").dataset.image + "&uuid=" + random(8);
-var imageDimensions;
-image.onload = function () {
-    imageDimensions = [image.width, image.height];
-    initializeMap(imageDimensions);
-};
-image.src = imagePath;
-
-function initializeMap(imageDimensions) {
-    // Map image coordinates to map coordinates to be able to use image extent in pixels.
-    var extent = [0, 0, imageDimensions[0], imageDimensions[1]];
-    var projection = new ol.proj.Projection({
+function createProjection(extent) {
+    return new ol.proj.Projection({
         code: 'kitodo-image',
         units: 'pixels',
         extent: extent
     });
+}
 
-    map = new ol.Map({
+function createSource(extent, imagePath, projection) {
+    return new ol.source.ImageStatic({
+        url: imagePath,
+        projection: projection,
+        imageExtent: extent
+    });
+}
+
+function hideCanvas() {
+    let map = document.querySelector("#map canvas");
+    let loadingIcon = document.querySelector("#map > .fa-spinner");
+    if (map) {
+        map.style.opacity = 0;
+        loadingIcon.style.opacity = 1;
+    }
+}
+
+function showCanvas() {
+    let map = document.querySelector("#map canvas");
+    let loadingIcon = document.querySelector("#map > .fa-spinner");
+    if (map) {
+        map.style.opacity = 1;
+        loadingIcon.style.opacity = 0;
+    }
+}
+
+function initializeMap(imageDimensions, imagePath) {
+    // Map image coordinates to map coordinates to be able to use image extent in pixels.
+    let extent = [0, 0, imageDimensions[0], imageDimensions[1]];
+    let projection = createProjection(extent);
+
+    kitodo.map = new ol.Map({
         controls: ol.control.defaults({
             attributionOptions: {
                 collapsible: false
@@ -162,11 +181,7 @@ function initializeMap(imageDimensions) {
         ]),
         layers: [
             new ol.layer.Image({
-                source: new ol.source.ImageStatic({
-                    url: imagePath,
-                    projection: projection,
-                    imageExtent: extent
-                })
+                source: createSource(extent, imagePath, projection)
             })
         ],
         target: 'map',
@@ -177,9 +192,55 @@ function initializeMap(imageDimensions) {
             maxZoom: 8
         })
     });
+    kitodo.map.on("rendercomplete", function () {
+        showCanvas();
+    });
+}
+
+function updateMap(imageDimensions, imagePath) {
+    // Map image coordinates to map coordinates to be able to use image extent in pixels.
+    let extent = [0, 0, imageDimensions[0], imageDimensions[1]];
+    let projection = createProjection(extent);
+
+    kitodo.map.getLayers().getArray()[0].setSource(createSource(extent, imagePath, projection));
+    kitodo.map.getView().setCenter(ol.extent.getCenter(extent));
+    kitodo.map.getView().getProjection().setExtent(extent);
+
+}
+
+function addListener(element) {
+    element.on("load", function () {
+        if (kitodo.map) {
+            updateMap([element.width(), element.height()], element[0].src);
+        } else {
+            initializeMap([element.width(), element.height()], element[0].src);
+        }
+    });
+}
+
+function initializeImage() {
+    hideCanvas();
+    let image = $("#imagePreviewForm\\:mediaViewData");
+    addListener(image);
+    image[0].src = image[0].src.replace(/&uuid=[a-z0-9]+/i, "") + "&uuid=" + random(8);
+}
+
+function changeToMapView() {
+    initializeImage();
+    showCanvas();
+    if (kitodo.map) {
+        kitodo.map.handleTargetChanged_();
+    }
 }
 
 // reload map if container was resized
 $('#thirdColumnWrapper').on('resize', function () {
-    map.updateSize();
+    if (kitodo.map) {
+        // FIXME: This causes lags. It should only be executed *once* after resize.
+        kitodo.map.updateSize();
+    }
+});
+
+$(document).ready(function () {
+    initializeImage();
 });

@@ -36,12 +36,12 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
-                    oncomplete="scrollToSelectedThumbnail();"
+                    oncomplete="scrollToSelectedThumbnail();initializeImage()"
                     update="@(.thumbnail)
+                            galleryHeadingWrapper
                             structureTreeForm:contextMenuLogicalTree
                             structureTreeForm:physicalTree
-                            metadataAccordion:logicalMetadataWrapperPanel
-                            imagePreviewForm:mapWrapper"/>
+                            metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:ajax event="dragdrop"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="structureTreeForm:logicalTree
@@ -125,10 +125,11 @@
                     dragdropScope="physicalTree">
                 <p:ajax event="select"
                         listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
+                        oncomplete="initializeImage()"
                         update="@(.thumbnail)
+                                galleryHeadingWrapper
                                 structureTreeForm:logicalTree
-                                metadataAccordion:physicalMetadataWrapperPanel
-                                imagePreviewForm:mapWrapper"/>
+                                metadataAccordion:physicalMetadataWrapperPanel"/>
                 <p:ajax event="dragdrop"
                         listener="#{DataEditorForm.structurePanel.onDragDrop}"
                         update="structureTreeForm:physicalTree
