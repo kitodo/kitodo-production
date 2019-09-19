@@ -41,7 +41,7 @@
         <maxAllowedViolations>1</maxAllowedViolations>
         <tomcat.baseversion>7</tomcat.baseversion>
         <tomcat.version>7.0.81</tomcat.version>
-        <awaitility.version>3.1.0</awaitility.version>
+        <awaitility.version>3.1.6</awaitility.version>
         <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
         <commons-codec.version>1.11</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
