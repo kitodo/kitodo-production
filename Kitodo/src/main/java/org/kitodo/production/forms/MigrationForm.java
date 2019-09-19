@@ -332,7 +332,7 @@ public class MigrationForm extends BaseForm {
         return false;
     }
 
-    private Map<Template, Template> getMatchingTemplates(Set<Template> templatesToCreate) throws DAOException {
+    Map<Template, Template> getMatchingTemplates(Set<Template> templatesToCreate) throws DAOException {
         TemplateComparator templateComparator = new TemplateComparator();
         matchingTemplates.clear();
         List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
@@ -404,11 +404,13 @@ public class MigrationForm extends BaseForm {
         templatesToCreate.remove(template);
     }
 
-    private void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
+    void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
         for (Process process : processesToAddToTemplate) {
             process.setTemplate(template);
             ServiceManager.getProcessService().save(process);
         }
+        template.getProcesses().addAll(processesToAddToTemplate);
+        ServiceManager.getTemplateService().save(template);
     }
 
 }

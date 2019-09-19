@@ -12,17 +12,24 @@
 package org.kitodo.production.forms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 
@@ -79,6 +86,13 @@ public class MigrationFormIT {
 
         Assert.assertEquals("Processes should be found", 3, migrationForm.getAggregatedTasks().size());
 
+        selectedProjects.add(ServiceManager.getProjectService().getById(2));
+        migrationForm.setSelectedProjects(selectedProjects);
+        migrationForm.showAggregatedProcesses();
+
+        Assert.assertEquals("Processes should be found", 3, migrationForm.getAggregatedTasks().size());
+
+        selectedProjects.remove(2);
         selectedProjects.remove(1);
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
@@ -206,6 +220,44 @@ public class MigrationFormIT {
 
         Assert.assertFalse("batchStep should be different", migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
+    }
+
+    @Test
+    public void getMatchingTemplatesTest() throws DAOException {
+        Template template = new Template();
+        template.setDocket(ServiceManager.getDocketService().getById(2));
+        template.setRuleset(ServiceManager.getRulesetService().getById(1));
+        template.setClient(ServiceManager.getClientService().getById(1));
+
+        List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
+
+        HashSet newTemplates =  new HashSet<>();
+        newTemplates.add(template);
+        Map matchingTemplates = migrationForm.getMatchingTemplates(newTemplates);
+
+        Assert.assertNotNull(matchingTemplates.get(template));
+        Assert.assertEquals(existingTemplates.get(0),matchingTemplates.get(template));
+
+        template.setDocket(null);
+
+        Assert.assertNull(matchingTemplates.get(template));
+        Assert.assertNotEquals(existingTemplates.get(0),matchingTemplates.get(template));
+    }
+
+    @Test
+    public void addProcessesToTemplateTest() throws DAOException, DataException {
+        Template firstTemplate = ServiceManager.getTemplateService().getById(1);
+        Template secondTemplate = ServiceManager.getTemplateService().getById(2);
+
+        List<Process> firstTemplateProcesses = firstTemplate.getProcesses();
+        Assert.assertEquals(2, firstTemplateProcesses.size());
+        Assert.assertEquals(0, secondTemplate.getProcesses().size());
+        Assert.assertEquals(1,(long) firstTemplateProcesses.get(0).getTemplate().getId());
+        migrationForm.addProcessesToTemplate(secondTemplate, firstTemplateProcesses);
+
+        Assert.assertEquals(2, firstTemplateProcesses.size());
+        Assert.assertEquals(2, secondTemplate.getProcesses().size());
+        Assert.assertEquals(2,(long) firstTemplateProcesses.get(0).getTemplate().getId());
     }
 
 }
