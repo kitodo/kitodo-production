@@ -1,0 +1,54 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+        <!-- edit dialog -->
+        <p:dialog id="confirmWorkflowPopup"
+                  widgetVar="confirmWorkflowPopup"
+                  header="#{msgs.workflowExisting}"
+                  width="400px"
+                  modal="true"
+                  dynamic="true">
+            <h:form id="confirmWokflowForm">
+                <p:panelGrid id="passwordGrid" columns="1" layout="grid">
+                    <p:row>
+
+                        <div>
+                            <p:commandButton id="useExistingWorkflow"
+                                             value="#{msgs.cancel}"
+                                             action="#{MigrationForm.useExistingWorkflow()}"
+                                             icon="fa fa-floppy-o fa-lg"
+                                             iconPos="right"
+                                             validateClient="true"
+                                             styleClass="button-filled-blue"
+                                             oncomplete="PF('confirmWorkflowPopup').hide();">
+                            </p:commandButton>
+                        </div>
+                        <div>
+                            <p:commandButton id="createNewWorkflow"
+                                             value="#{msgs.createNewWorkflow}"
+                                             action="#{MigrationForm.createNewWorkflow()}"
+                                             icon="fa fa-floppy-o fa-lg"
+                                             iconPos="right"
+                                             validateClient="true"
+                                             styleClass="button-filled-blue"
+                                             oncomplete="PF('confirmWorkflowPopup').hide();">
+                            </p:commandButton>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+</ui:composition>

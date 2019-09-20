@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -39,6 +40,7 @@ import org.kitodo.production.migration.TaskComparator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.primefaces.PrimeFaces;
 
 @Named("MigrationForm")
 @ViewScoped
@@ -50,7 +52,9 @@ public class MigrationForm extends BaseForm {
     private List<Process> processList = new ArrayList<>();
     private boolean projectListShown;
     private boolean processListShown;
-    Map<String, List<Process>> aggregatedProcesses = new HashMap<>();
+    private Map<String, List<Process>> aggregatedProcesses = new HashMap<>();
+    private Workflow workflowToUse;
+    private String currentTasks;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -135,7 +139,7 @@ public class MigrationForm extends BaseForm {
         for (Task processTask : processTasks) {
             taskString = taskString.concat(processTask.getTitle());
         }
-        return taskString.replaceAll("\\s","");
+        return taskString.replaceAll("\\s", "");
     }
 
     /**
@@ -194,25 +198,6 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Get aggregatedProcesses.
-     *
-     * @return value of aggregatedProcesses
-     */
-    public Map<String, List<Process>> getAggregatedProcesses() {
-        return aggregatedProcesses;
-    }
-
-    /**
-     * Set aggregatedProcesses.
-     *
-     * @param aggregatedProcesses
-     *            as java.util.Map
-     */
-    public void setAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses) {
-        this.aggregatedProcesses = aggregatedProcesses;
-    }
-
-    /**
      * Get aggregatedTasks.
      *
      * @return keyset of aggregatedProcesses
@@ -230,30 +215,73 @@ public class MigrationForm extends BaseForm {
         return aggregatedProcesses.get(tasks).size();
     }
 
+    /**
+     * Checks if Workflow already exists. If not, creating a new one. If so, it opens a dialog to inform the user.
+     * @param tasks the series of tasks in the processes
+     * @return a redirect url
+     */
     public String convertTasksToWorkflow(String tasks) {
+        currentTasks = tasks;
 
-        Process blueprintProcess = aggregatedProcesses.get(tasks).get(0);
+        try {
+            if (workflowAlreadyExist()) {
+                PrimeFaces.current().executeScript("PF('confirmWorkflowPopup').show();");
+                return this.stayOnCurrentPage;
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
+                e);
+            return this.stayOnCurrentPage;
+        }
+        return createNewWorkflow();
+    }
+
+    private boolean workflowAlreadyExist() throws DAOException {
+        List<Task> processTasks = aggregatedProcesses.get(currentTasks).get(0).getTasks();
+        List<Template> allTemplates = ServiceManager.getTemplateService().getAll();
+        for (Template template : allTemplates) {
+            if (tasksAreEqual(template.getTasks(), processTasks)) {
+                workflowToUse = template.getWorkflow();
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    /**
+     * Continues migration with the existing workflow.
+     * @return a redirect url
+     */
+    public String useExistingWorkflow() {
+        //TODO: implement in next PR
+        return null;
+    }
+
+    public String createNewWorkflow() {
+
+        Process blueprintProcess = aggregatedProcesses.get(currentTasks).get(0);
 
         TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
         try {
-            templateConverter.convertTasksToWorkflowFile(tasks, blueprintProcess.getTasks());
+            templateConverter.convertTasksToWorkflowFile(currentTasks, blueprintProcess.getTasks());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
-        Workflow workflow = new Workflow(tasks);
-        workflow.setClient(blueprintProcess.getProject().getClient());
-        workflow.setStatus(WorkflowStatus.DRAFT);
-        workflow.getTemplates().add(null);
+        workflowToUse = new Workflow(currentTasks);
+        workflowToUse.setClient(blueprintProcess.getProject().getClient());
+        workflowToUse.setStatus(WorkflowStatus.DRAFT);
+        workflowToUse.getTemplates().add(null);
 
         try {
-            ServiceManager.getWorkflowService().save(workflow);
+            ServiceManager.getWorkflowService().save(workflowToUse);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger,
-                    e);
+                e);
             return this.stayOnCurrentPage;
         }
 
-        return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflow.getId();
+        return MessageFormat.format(REDIRECT_PATH, "workflowEdit") + "&id=" + workflowToUse.getId();
     }
 }
