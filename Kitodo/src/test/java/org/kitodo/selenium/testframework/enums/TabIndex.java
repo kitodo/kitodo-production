@@ -53,6 +53,7 @@ public enum TabIndex {
     // system page
     TASKMANAGER(0),
     INDEXING(2),
+    MIGRATION(3),
 
     // user configuration
     SETTINGS(0),

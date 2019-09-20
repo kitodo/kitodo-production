@@ -28,7 +28,7 @@
                 <p:column headerText="#{msgs.template}">
                     <p:panelGrid columns="2">
                         <h:outputText value="#{msgs.title}"/>
-                        <h:inputText value="#{template.title}" required="true"/>
+                        <h:inputText id="templateTitle" value="#{template.title}" required="true"/>
                         <h:outputText value="#{msgs.docket}"/>
                         <h:outputText value="#{template.docket.title}"/>
                         <h:outputText value="#{msgs.ruleset}"/>
@@ -36,7 +36,7 @@
                         <h:outputText value="#{msgs.workflow}"/>
                         <h:outputText value="#{template.workflow.title}"/>
                     </p:panelGrid>
-                    <p:commandButton action="#{MigrationForm.createNewTemplate(template)}"
+                    <p:commandButton id="createNewTemplate" action="#{MigrationForm.createNewTemplate(template)}"
                                      value="#{msgs.addNewTemplate}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
@@ -62,8 +62,16 @@
                                          styleClass="button-filled-blue"/>
                     </p:panelGrid>
                 </p:column>
-
             </p:dataTable>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="close"
+                                 onclick="PF('createTemplatePopup').hide();"
+                                 value="#{msgs.close}"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary right close"/>
+            </h:panelGroup>
         </h:form>
     </p:dialog>
 </ui:composition>

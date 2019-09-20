@@ -124,7 +124,7 @@ public class MigrationForm extends BaseForm {
 
         Iterator<Task> firstTaskIterator = firstProcessTasks.iterator();
         Iterator<Task> secondTaskIterator = secondProcessTasks.iterator();
-        while (firstTaskIterator.hasNext()) {
+        while (firstTaskIterator.hasNext() && secondTaskIterator.hasNext()) {
             Task firstTask = firstTaskIterator.next();
             Task secondTask = secondTaskIterator.next();
             if (taskComparator.compare(firstTask, secondTask) != 0) {
@@ -287,7 +287,7 @@ public class MigrationForm extends BaseForm {
      * @param workflowId the id of the created Workflow
      */
     public void setRedirectFromWorkflow(Integer workflowId) {
-        if (Objects.nonNull(workflowId)) {
+        if (Objects.nonNull(workflowId) && workflowId!=0) {
             // showPopup for Template
             try {
                 createTemplates();
