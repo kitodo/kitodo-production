@@ -13,8 +13,8 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
-import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
@@ -71,7 +71,7 @@ public class SystemPage extends Page<SystemPage> {
     private void deleteIndex() throws Exception {
         switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         await("Wait for delete index button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isButtonClicked.matches(deleteIndexButton));
+                .until(() -> isButtonClicked.test(deleteIndexButton));
 
         Predicate<WebDriver> isAlertPresent = (d) -> {
             d.switchTo().alert();
@@ -79,7 +79,7 @@ public class SystemPage extends Page<SystemPage> {
         };
 
         await("Wait for alert").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isAlertPresent.matches(Browser.getDriver()));
+                .until(() -> isAlertPresent.test(Browser.getDriver()));
 
         Browser.getDriver().switchTo().alert().accept();
         Thread.sleep(Browser.getDelayIndexing());
@@ -91,7 +91,7 @@ public class SystemPage extends Page<SystemPage> {
     private void createMapping() throws Exception {
         switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         await("Wait for create mapping button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isButtonClicked.matches(createMappingButton));
+                .until(() -> isButtonClicked.test(createMappingButton));
         Thread.sleep(Browser.getDelayIndexing());
     }
 
@@ -101,7 +101,7 @@ public class SystemPage extends Page<SystemPage> {
     private void startIndexingAll() throws Exception {
         switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         await("Wait for start indexing button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isButtonClicked.matches(startIndexingAllButton));
+                .until(() -> isButtonClicked.test(startIndexingAllButton));
         Thread.sleep(Browser.getDelayIndexing());
     }
 

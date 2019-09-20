@@ -254,7 +254,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));
+                .until(() -> isFileDownloaded.test(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));
     }
 
     public void downloadDocket() {
@@ -262,7 +262,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         downloadDocketLink.click();
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isFileDownloaded.matches(
+                .ignoreExceptions().until(() -> isFileDownloaded.test(
                     new File(Browser.DOWNLOAD_DIR + Helper.getNormalizedTitle(PROCESS_TITLE) + ".pdf")));
     }
 
@@ -272,7 +272,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for log file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .until(() -> isFileDownloaded.matches(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS)
+                .until(() -> isFileDownloaded.test(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS)
                         + "kowal/" + Helper.getNormalizedTitle(PROCESS_TITLE) + "_log.xml")));
     }
 
@@ -290,7 +290,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for search result excel file download").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + "search.xls")));
+                .until(() -> isFileDownloaded.test(new File(Browser.DOWNLOAD_DIR + "search.xls")));
     }
 
     public void downloadSearchResultAsPdf() {
@@ -303,7 +303,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for search result pdf file download").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + "search.pdf")));
+                .until(() -> isFileDownloaded.test(new File(Browser.DOWNLOAD_DIR + "search.pdf")));
     }
 
     private void setDownloadDocketLink() {

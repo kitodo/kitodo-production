@@ -12,14 +12,16 @@
 package org.kitodo.data.elasticsearch;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+
 import org.awaitility.Awaitility;
-import org.awaitility.Duration;
+import org.awaitility.Durations;
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
@@ -76,7 +78,7 @@ public class MockEntity {
     public static void setUpAwaitility() {
         Awaitility.setDefaultPollInterval(10, TimeUnit.MILLISECONDS);
         Awaitility.setDefaultPollDelay(Duration.ZERO);
-        Awaitility.setDefaultTimeout(Duration.TWO_SECONDS);
+        Awaitility.setDefaultTimeout(Durations.TWO_SECONDS);
     }
 
     public static HashMap<Integer, Map<String, Object>> createEntities() {
