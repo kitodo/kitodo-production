@@ -108,6 +108,7 @@
  * }
  * </pre>
  *
+ * <p>
  * But of course the ruleset is much more powerful. You can specify a domain for
  * the keys. This is passed on to the outside and then determines in which
  * container they are stored in the file, of which there are six different ones.
@@ -129,6 +130,7 @@
  * }
  * </pre>
  *
+ * <p>
  * For divisions, that was it, but there are many more options for keys. For
  * keys, the codomain can be specified, that is, from what data type they are a
  * sub-interface. Currently the values {@code anyURI}, {@code boolean},
@@ -150,6 +152,7 @@
  * }
  * </pre>
  *
+ * <p>
  * With the element {@code <option>}, enumeration types can be defined. Options
  * can have labels, also multilingual. Without a label, the value itself is
  * displayed. This can be used, for example, to implement digital collections:
@@ -186,6 +189,7 @@
  * &lt;/key>
  * </pre>
  *
+ * <p>
  * With {@code <preset>}, you can specify a value that is pre-filled when
  * creating an entry with this metadata key.
  *
@@ -202,6 +206,7 @@
  * }
  * </pre>
  *
+ * <p>
  * Keys can be grouped. Here is an example of a natural person as contributor
  * with an indication of the role in relation to the work:
  *

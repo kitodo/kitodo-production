@@ -30,7 +30,8 @@ public class ListColumn extends BaseBean {
     /**
      * Empty standard constructor.
      */
-    public ListColumn() {}
+    public ListColumn() {
+    }
 
     /**
      * Constructor.
