@@ -8,6 +8,8 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+/* globals ol */
+// jshint unused:false
 
 // Kitodo namespace
 var kitodo = {};
