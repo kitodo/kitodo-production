@@ -21,10 +21,6 @@
 
         <h:form id="imagePreviewForm" style="height: 100%;">
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
-            <span id="imageData" data-image="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"/>
-            <script>
-                document.getElementById("imageData").setAttribute("data-image", document.getElementById("imagePreviewForm:mediaViewData").src);
-            </script>
 
             <p:remoteCommand name="select" action="#{DataEditorForm.galleryPanel.setSelectionType}"/>
 
@@ -54,7 +50,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
-                                     oncomplete="initialize(); scrollToSelectedThumbnail();"
+                                     oncomplete="initialize();scrollToSelectedThumbnail();changeToMapView()"
                                      title="Detail View"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
@@ -283,11 +279,11 @@
                                     <h:panelGroup layout="block">
                                         <p:commandLink action="#{DataEditorForm.galleryPanel.select(media, null)}"
                                                        update="@(.thumbnail)
-                                                               imagePreviewForm:mapWrapper
                                                                galleryHeadingWrapper
+                                                               imagePreviewForm:mediaViewData
                                                                structureTreeForm:logicalTree
                                                                structureTreeForm:physicalTree"
-                                                       oncomplete="checkScrollPosition()">
+                                                       oncomplete="checkScrollPosition();initializeImage()">
                                             <h:panelGroup layout="block" styleClass="thumbnail-container">
                                                 <p:outputPanel deferred="true"
                                                                deferredMode="visible">
@@ -308,16 +304,17 @@
                         </div>
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </div>
-                    <ui:fragment rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).showingInMediaView}">
-                        <h:panelGroup id="mapWrapper">
-                            <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
-                            <h:outputScript name="js/ol_custom.js"/>
-                            <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;"></div>
-                        </h:panelGroup>
-                    </ui:fragment>
+                    <h:panelGroup id="mapWrapper">
+                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;">
+                            <i class="fa fa-spinner fa-spin"/>
+                        </div>
+                    </h:panelGroup>
                 </h:panelGroup>
             </ui:fragment>
 
         </h:form>
+        <h:outputStylesheet name="webjars/openlayers/5.2.0/ol.css"/>
+        <h:outputScript library="webjars" name="openlayers/5.2.0/ol.js" />
+        <h:outputScript name="js/ol_custom.js"/>
     </p:panel>
 </ui:composition>
