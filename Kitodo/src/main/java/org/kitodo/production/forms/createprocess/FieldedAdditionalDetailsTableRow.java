@@ -91,9 +91,9 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      * Creates an empty metadata group. This constructor is used to create the
      * {@link #EMPTY} constant above.
      */
-    FieldedAdditionalDetailsTableRow() {
+    public FieldedAdditionalDetailsTableRow() {
         super(null, null, null);
-        this.rows = Collections.emptyList();
+        this.rows = new ArrayList<>();
         this.metadata = Collections.emptyList();
         this.hiddenMetadata = Collections.emptyList();
     }
@@ -272,7 +272,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      *            the value(s) to be displayed
      * @return a backing bean for the row
      */
-    private AdditionalDetailsTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
+    public AdditionalDetailsTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
                                                      Collection<Metadata> values) {
         switch (simpleMetadataView.getInputType()) {
             case MULTIPLE_SELECTION:
