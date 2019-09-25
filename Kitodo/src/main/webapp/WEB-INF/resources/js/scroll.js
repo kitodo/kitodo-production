@@ -8,6 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+// jshint unused:false
 
 const SCROLL_SPEED = 40;
 var interval;
@@ -158,6 +159,16 @@ function scrollToSelectedThumbnail() {
                 }, 180, null, null);
             }
         }
+    }
+}
+
+function scrollToSelectedTreeNode() {
+    let selectedTreeNode = $(".ui-treenode-selected");
+    let structureTree = $("#structureTreeForm\\:structurePanel");
+    if (selectedTreeNode.length === 1 && structureTree.length) {
+        structureTree.animate({
+            scrollTop: selectedTreeNode.position().top - structureTree.height()/2
+        }, 180, null, null);
     }
 }
 
