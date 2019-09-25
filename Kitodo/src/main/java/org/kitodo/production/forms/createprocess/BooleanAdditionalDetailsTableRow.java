@@ -28,11 +28,10 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-
 /**
  * A row on the metadata panel that contains an on/off switch.
  */
-public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
+public class BooleanAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableRow implements Serializable {
 
     /**
      * Whether the switch is on or off.
@@ -56,8 +55,8 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
      * @param data
      *            data to display
      */
-    BooleanMetadataTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
-            SimpleMetadataViewInterface settings, MetadataEntry data) {
+    BooleanAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
+                                     SimpleMetadataViewInterface settings, MetadataEntry data) {
 
         super(tab, container, settings);
         this.active = Objects.nonNull(data);
@@ -90,15 +89,6 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
         } else {
             return Collections.emptyList();
         }
-    }
-
-    /**
-     * Returns an additional text that may be shown next to the switch.
-     *
-     * @return some text
-     */
-    public String getOptionLabel() {
-        return optionLabel;
     }
 
     @Override

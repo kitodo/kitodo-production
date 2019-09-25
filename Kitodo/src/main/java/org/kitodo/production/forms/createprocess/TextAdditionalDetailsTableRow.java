@@ -11,6 +11,15 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Objects;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,24 +30,14 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Objects;
-
-public class TextMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
-    private static final Logger logger = LogManager.getLogger(TextMetadataTableRow.class);
+public class TextAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableRow implements Serializable {
+    private static final Logger logger = LogManager.getLogger(TextAdditionalDetailsTableRow.class);
 
     private String value;
     private Date date;
 
-    TextMetadataTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
-                         SimpleMetadataViewInterface settings, MetadataEntry value) {
+    TextAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
+                                  SimpleMetadataViewInterface settings, MetadataEntry value) {
         super(tab, container, settings);
         if (Objects.nonNull(value)) {
             this.value = value.getValue();
@@ -68,7 +67,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
 
     @Override
     public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
-       /* if (!settings.isValid(value)) {
+        /* if (!settings.isValid(value)) {
             throw new InvalidMetadataValueException(label, value);
         }*/
         MetadataEntry entry = new MetadataEntry();
@@ -92,7 +91,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
 
     @Override
     public boolean isValid() {
-        if(value.isEmpty()) {
+        if (value.isEmpty()) {
             return false;
         }
         return settings.isValid(value);

@@ -11,8 +11,6 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;

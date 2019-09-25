@@ -11,16 +11,6 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.kitodo.api.MdSec;
-import org.kitodo.api.Metadata;
-import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
-import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
-import org.kitodo.exceptions.InvalidMetadataValueException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
-
-import javax.faces.model.SelectItem;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,10 +21,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * The metadata input is some kind of select input.
- */
-public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
+import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
+
+public class SelectAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableRow implements Serializable {
 
     /**
      * Converts the select items map to the select items type required by JSF to
@@ -62,8 +60,8 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
      */
     private List<String> selectedItems = new ArrayList<>();
 
-    SelectMetadataTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container, SimpleMetadataViewInterface settings,
-            Collection<MetadataEntry> selected) {
+    SelectAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container, SimpleMetadataViewInterface settings,
+                                    Collection<MetadataEntry> selected) {
         super(tab, container, settings);
         this.items = toItems(settings.getSelectItems());
         for (MetadataEntry entry : selected) {

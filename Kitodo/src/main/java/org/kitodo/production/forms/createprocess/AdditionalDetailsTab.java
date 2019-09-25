@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 public class AdditionalDetailsTab {
     private static final Logger logger = LogManager.getLogger(AdditionalDetailsTab.class);
     private static final String PERSON = "Person";
@@ -156,13 +155,13 @@ public class AdditionalDetailsTab {
      *      as a AdditionalDetailsTableRow
      */
     public static AdditionalDetailsTableRow setAdditionalDetailsRow(AdditionalDetailsTableRow row, String value) {
-        if (row instanceof TextMetadataTableRow) {
+        if (row instanceof TextAdditionalDetailsTableRow) {
             // TODO: incorporate "initstart" and "initend" values from kitodo_projects.xml like AddtionalField!
-            ((TextMetadataTableRow) row).setValue(value);
-        } else if (row instanceof BooleanMetadataTableRow) {
-            ((BooleanMetadataTableRow) row).setActive(Boolean.parseBoolean(value));
-        } else if (row instanceof SelectMetadataTableRow) {
-            ((SelectMetadataTableRow) row).setSelectedItem(value);
+            ((TextAdditionalDetailsTableRow) row).setValue(value);
+        } else if (row instanceof BooleanAdditionalDetailsTableRow) {
+            ((BooleanAdditionalDetailsTableRow) row).setActive(Boolean.parseBoolean(value));
+        } else if (row instanceof SelectAdditionalDetailsTableRow) {
+            ((SelectAdditionalDetailsTableRow) row).setSelectedItem(value);
         }
         return row;
     }
@@ -174,18 +173,24 @@ public class AdditionalDetailsTab {
      * @return the value as a java.lang.String
      */
     public static String getMetadataValue(AdditionalDetailsTableRow row) {
-        if (row instanceof TextMetadataTableRow) {
-            return ((TextMetadataTableRow) row).getValue();
-        } else if (row instanceof BooleanMetadataTableRow) {
-            return String.valueOf(((BooleanMetadataTableRow) row).isActive());
-        } else if (row instanceof SelectMetadataTableRow) {
-            return ((SelectMetadataTableRow) row).getSelectedItem();
+        if (row instanceof TextAdditionalDetailsTableRow) {
+            return ((TextAdditionalDetailsTableRow) row).getValue();
+        } else if (row instanceof BooleanAdditionalDetailsTableRow) {
+            return String.valueOf(((BooleanAdditionalDetailsTableRow) row).isActive());
+        } else if (row instanceof SelectAdditionalDetailsTableRow) {
+            return ((SelectAdditionalDetailsTableRow) row).getSelectedItem();
         } else {
             // TODO: extract value of FieldedMetadataTableRow!
             return "";
         }
     }
 
+    /**
+     * get all creators names .
+     * @param additionalDetailsTableRows
+     *              additionalDetailsTableRows
+     * @return all creators names as a String
+     */
     public static String getListOfCreators(List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
         String listofAuthors = "";
         for (AdditionalDetailsTableRow row : additionalDetailsTableRows) {
@@ -193,7 +198,7 @@ public class AdditionalDetailsTab {
                     && PERSON.equals(row.getMetadataID())) {
                 FieldedAdditionalDetailsTableRow tableRow = (FieldedAdditionalDetailsTableRow) row;
                 for (AdditionalDetailsTableRow detailsTableRow : tableRow.getRows()) {
-                    if(ROLE.equals(detailsTableRow.getMetadataID())
+                    if (ROLE.equals(detailsTableRow.getMetadataID())
                             && AUTHOR.equals(AdditionalDetailsTab.getMetadataValue(detailsTableRow))) {
                         listofAuthors = listofAuthors.concat(getCreator(tableRow.getRows()));
                         break;

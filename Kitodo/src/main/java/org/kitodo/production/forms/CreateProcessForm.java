@@ -195,7 +195,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     /**
      * Set newProcesses.
      *
-     * @param processes as java.util.List<org.kitodo.data.database.beans.Process>
+     * @param processes as java.util.List of Process
      */
     public void setProcesses(LinkedList<Process> processes) {
         this.processes = processes;

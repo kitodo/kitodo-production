@@ -57,15 +57,6 @@ public class ImportTab implements Serializable {
     }
 
     /**
-     * Get createProcessForm.
-     *
-     * @return value of createProcessForm
-     */
-    public CreateProcessForm getCreateProcessForm() {
-        return createProcessForm;
-    }
-
-    /**
      * Getter for selectedCatalog.
      *
      * @return value of selectedCatalog

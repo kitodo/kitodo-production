@@ -111,7 +111,7 @@ public class ProcessDataTab {
     /**
      * Set digitalCollections.
      *
-     * @param digitalCollections as java.util.List<java.lang.String>
+     * @param digitalCollections as java.util.List of String
      */
     public void setDigitalCollections(List<String> digitalCollections) {
         this.digitalCollections = digitalCollections;
@@ -129,7 +129,7 @@ public class ProcessDataTab {
     /**
      * Set availableDigitalCollections.
      *
-     * @param availableDigitalCollections as java.util.List<java.lang.String>
+     * @param availableDigitalCollections as java.util.List of String
      */
     public void setAvailableDigitalCollections(List<String> availableDigitalCollections) {
         this.availableDigitalCollections = availableDigitalCollections;
@@ -189,6 +189,9 @@ public class ProcessDataTab {
         this.guessedImages = guessedImages;
     }
 
+    /**
+     * reset all process data.
+     */
     public void resetProcessData() {
         this.standardFields = new HashMap<>();
         this.standardFields.put("collections", true);
@@ -277,7 +280,7 @@ public class ProcessDataTab {
     /**
      * Set standardFields.
      *
-     * @param standardFields as java.util.Map<java.lang.String,java.lang.Boolean>
+     * @param standardFields as java.util.Map
      */
     public void setStandardFields(Map<String, Boolean> standardFields) {
         this.standardFields = standardFields;

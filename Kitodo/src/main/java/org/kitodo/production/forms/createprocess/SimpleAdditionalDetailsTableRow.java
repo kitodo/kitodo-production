@@ -11,18 +11,15 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-
-/**
- * Provides functions that are common to all input elements.
- */
-abstract class SimpleMetadataTableRow extends AdditionalDetailsTableRow implements Serializable {
+abstract class SimpleAdditionalDetailsTableRow extends AdditionalDetailsTableRow implements Serializable {
 
     /**
      * Container to store the ruleset settings.
@@ -39,8 +36,8 @@ abstract class SimpleMetadataTableRow extends AdditionalDetailsTableRow implemen
      * @param settings
      *            the ruleset settings for this field.
      */
-    protected SimpleMetadataTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
-            SimpleMetadataViewInterface settings) {
+    protected SimpleAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
+                                              SimpleMetadataViewInterface settings) {
         super(tab, container, settings.getLabel());
         this.settings = settings;
     }

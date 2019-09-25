@@ -115,21 +115,6 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
     }
 
     /**
-     * Creates a new root metadata group representing the metadata table
-     * content in the metadata panel.
-     *
-     * @param tab
-     *            metadata panel on which this row is showing
-     * @param metadata
-     *            content for the metadata table
-     * @param divisionView
-     *            information about that structure from the rule set
-     */
-    FieldedAdditionalDetailsTableRow(AdditionalDetailsTab tab, Collection<Metadata> metadata, StructuralElementViewInterface divisionView) {
-        this(tab, null, null, divisionView, metadata);
-    }
-
-    /**
      * Creates a sub-panel for a metadata group.
      *
      * @param panel
@@ -278,14 +263,14 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
             case MULTIPLE_SELECTION:
             case MULTI_LINE_SINGLE_SELECTION:
             case ONE_LINE_SINGLE_SELECTION:
-                return new SelectMetadataTableRow(tab, this, simpleMetadataView, simpleValues(values));
+                return new SelectAdditionalDetailsTableRow(tab, this, simpleMetadataView, simpleValues(values));
             case BOOLEAN:
-                return new BooleanMetadataTableRow(tab, this, simpleMetadataView, oneSimpleValue(values));
+                return new BooleanAdditionalDetailsTableRow(tab, this, simpleMetadataView, oneSimpleValue(values));
             case DATE:
             case INTEGER:
             case MULTI_LINE_TEXT:
             case ONE_LINE_TEXT:
-                return new TextMetadataTableRow(tab, this, simpleMetadataView, oneSimpleValue(values));
+                return new TextAdditionalDetailsTableRow(tab, this, simpleMetadataView, oneSimpleValue(values));
             default:
                 throw new IllegalStateException("complete switch");
         }
@@ -335,17 +320,6 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
         }
     }
 
-   public void addAdditionallySelectedField(String additionallySelectedField) throws NoSuchMetadataFieldException {
-        additionallySelectedFields.add(additionallySelectedField);
-        try {
-            preserve();
-        } catch (InvalidMetadataValueException e) {
-            logger.info(e.getLocalizedMessage(), e);
-        }
-        createMetadataTable();
-    }
-
-
     @Override
     public String getMetadataID() {
         return metadataView.getId();
@@ -372,11 +346,6 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
         try {
             this.preserve();
         } catch (NoSuchMetadataFieldException e) {
-            /*
-             * The domain attribute is not evaluated on members of metadata
-             * groups, so writing to fields can never happen here and thus
-             * cannot cause the exception.
-             */
             throw new IllegalStateException("never happening exception");
         }
         result.setGroup(metadata instanceof List ? (List<Metadata>) metadata : new ArrayList<>(metadata));
@@ -410,7 +379,9 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
     @Override
     public boolean isValid() {
         for (AdditionalDetailsTableRow row : getRows()) {
-            if (!row.isValid()) return false;
+            if (!row.isValid()) {
+                return false;
+            }
         }
         return true;
     }

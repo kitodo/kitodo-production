@@ -115,8 +115,7 @@ public class SearchTab {
         }
     }
 
-    // TODO:
-    //  check whether we only need digital collections as "metadata" in the future
+    // TODO: check whether we only need digital collections as "metadata" in the future
     //  in that case: refactor this method to work like "readTemplateTemplates" and "readTemplateWorkpieces"!
     private void readTemplateProperties(List<String> digitalCollections, Process processForChoice) {
         for (Property processProperty : processForChoice.getProperties()) {

@@ -24,7 +24,6 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-
 public abstract class AdditionalDetailsTableRow implements Serializable {
 
     /**
@@ -52,11 +51,6 @@ public abstract class AdditionalDetailsTableRow implements Serializable {
     protected final AdditionalDetailsTab tab;
 
     /**
-     * Parental metadata group.
-     */
-    private FieldedAdditionalDetailsTableRow container;
-
-    /**
      * Creates a new metadata panel row.
      *
      * @param tab
@@ -68,7 +62,6 @@ public abstract class AdditionalDetailsTableRow implements Serializable {
      */
     AdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container, String label) {
         this.tab = tab;
-        this.container = container;
         this.label = label;
     }
 
