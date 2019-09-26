@@ -31,7 +31,7 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-list"
                                      oncomplete="destruct()"
-                                     title="Structured View"
+                                     title="#{msgs['dataEditor.galleryStructuredView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
@@ -41,7 +41,7 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-th-large"
                                      oncomplete="destruct()"
-                                     title="Unstructured View"
+                                     title="#{msgs['dataEditor.galleryUnstructuredView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="grid" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
@@ -51,7 +51,7 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
                                      oncomplete="initialize();scrollToSelectedThumbnail();changeToMapView()"
-                                     title="Detail View"
+                                     title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
