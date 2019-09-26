@@ -1625,6 +1625,12 @@ Column content
     color: var(--blue);
 }
 
+#imagePreviewForm > .thumbnailWrapper {
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 #map > i {
     color: var(--pure-white);
     left: 50%;
@@ -1696,6 +1702,10 @@ Column content
 
 .thumbnailWrapper {
     margin-left: 5px;
+}
+
+.thumbnailWrapper > .ui-outputpanel {
+    display: inline-block;
 }
 
 #galleryWrapperPanel,
