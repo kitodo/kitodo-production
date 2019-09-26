@@ -1756,8 +1756,13 @@ Column content
 }
 
 .thumbnail {
-    height: 60px;
+    background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
+    box-sizing: border-box;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    width: 100%;
 }
 
 .thumbnail.active {
@@ -1765,8 +1770,10 @@ Column content
 }
 
 .thumbnail-container {
-    position: relative;
     display: inline-block;
+    height: 80px;
+    position: relative;
+    width: 65px;
 }
 
 .thumbnail-container .assigned-several-times {
