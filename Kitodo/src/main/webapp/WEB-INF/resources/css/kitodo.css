@@ -1625,6 +1625,12 @@ Column content
     color: var(--blue);
 }
 
+#imagePreviewForm > .thumbnailWrapper {
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 #map > i {
     color: var(--pure-white);
     left: 50%;
@@ -1698,6 +1704,10 @@ Column content
     margin-left: 5px;
 }
 
+.thumbnailWrapper > .ui-outputpanel {
+    display: inline-block;
+}
+
 #galleryWrapperPanel,
 #galleryWrapperPanel_content {
     height: 100%;
@@ -1746,8 +1756,13 @@ Column content
 }
 
 .thumbnail {
-    height: 60px;
+    background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
+    box-sizing: border-box;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    width: 100%;
 }
 
 .thumbnail.active {
@@ -1755,8 +1770,10 @@ Column content
 }
 
 .thumbnail-container {
-    position: relative;
     display: inline-block;
+    height: 80px;
+    position: relative;
+    width: 65px;
 }
 
 .thumbnail-container .assigned-several-times {
