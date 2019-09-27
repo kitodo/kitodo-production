@@ -19,8 +19,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <name>Kitodo - MODS XML SchemaConverter</name>
-    <artifactId>kitodo-modsxml-schemaconverter</artifactId>
+    <name>Kitodo - XML SchemaConverter</name>
+    <artifactId>kitodo-xml-schemaconverter</artifactId>
 
     <dependencies>
         <dependency>

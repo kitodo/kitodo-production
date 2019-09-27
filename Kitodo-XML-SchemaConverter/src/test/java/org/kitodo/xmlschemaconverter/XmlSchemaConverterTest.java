@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.modsxmlschemaconverter;
+package org.kitodo.xmlschemaconverter;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 
@@ -35,9 +35,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 
-public class ModsXmlSchemaConverterTest {
+public class XmlSchemaConverterTest {
 
-    private static ModsXMLSchemaConverter converter = new ModsXMLSchemaConverter();
+    private static XMLSchemaConverter converter = new XMLSchemaConverter();
     private static final String TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
 
     @Test

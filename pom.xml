@@ -131,7 +131,7 @@
         <module>Kitodo-LongTermPreservationValidation</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>
-        <module>Kitodo-MODSXML-SchemaConverter</module>
+        <module>Kitodo-XML-SchemaConverter</module>
         <module>Kitodo-Validation</module>
         <module>Kitodo</module>
     </modules>
