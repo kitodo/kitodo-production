@@ -1168,11 +1168,11 @@ Popup dialogs
 
 @keyframes rotate-vertically {
     from {
-        transform-origin: 0 25%;
+        transform-origin: 0 27%;
         transform: rotateX(0deg);
     }
     to {
-        transform-origin: 0 25%;
+        transform-origin: 0 27%;
         transform: rotateX(720deg);
     }
 }
