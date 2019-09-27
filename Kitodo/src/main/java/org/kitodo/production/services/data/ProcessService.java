@@ -1132,12 +1132,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return null;
     }
 
-    private List<Task> getOpenTasks(Process process) {
+    private List<TaskDTO> getOpenTasks(ProcessDTO process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.OPEN.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
-    private List<Task> getTasksInWork(Process process) {
+    private List<TaskDTO> getTasksInWork(ProcessDTO process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
@@ -1150,14 +1150,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *          process for which the tooltop is created
      * @return String containing the progress tooltip for the given process
      */
-    public String createProgressTooltip(ProcessDTO processDTO) throws DAOException {
-        Process processObject = ServiceManager.getProcessService().getById(processDTO.getId());
-        String openTasks = getOpenTasks(processObject).stream()
+    public String createProgressTooltip(ProcessDTO processDTO) {
+        String openTasks = getOpenTasks(processDTO).stream()
                 .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!openTasks.isEmpty()) {
             openTasks = Helper.getTranslation(TaskStatus.OPEN.getTitle()) + ":" + NEW_LINE_ENTITY + openTasks;
         }
-        String tasksInWork = getTasksInWork(processObject).stream()
+        String tasksInWork = getTasksInWork(processDTO).stream()
                 .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!tasksInWork.isEmpty()) {
             tasksInWork = Helper.getTranslation(TaskStatus.INWORK.getTitle()) + ":" + NEW_LINE_ENTITY + tasksInWork;
