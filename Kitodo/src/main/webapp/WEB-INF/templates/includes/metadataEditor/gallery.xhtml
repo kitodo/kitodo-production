@@ -19,8 +19,8 @@
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
     <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
 
-        <!--@elvariable id="mayWrite" type="boolean"-->
-        <ui:param name="mayWrite" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
+        <!--@elvariable id="editImages" type="boolean"-->
+        <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
 
         <h:form id="imagePreviewForm" style="height: 100%;">
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
@@ -86,7 +86,7 @@
                                         value="#{stripe.medias}"
                                         binding="#{structuredThumbnail}">
                                 <p:panel id="structuredPageDropArea"
-                                         rendered="#{not mayWrite}"
+                                         rendered="#{not editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel"
                                          a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
@@ -115,7 +115,7 @@
                                                 oncomplete="scrollToSelectedTreeNode();"/>
                                     </h:panelGroup>
                                 </p:panel>
-                                <ui:fragment rendered="#{not mayWrite}">
+                                <ui:fragment rendered="#{not editImages}">
                                     <p:draggable id="structuredPagesDraggable"
                                                  scope="assignedPagesDroppable"
                                                  for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
@@ -130,7 +130,7 @@
                                     </p:droppable>
                                 </ui:fragment>
                                 <!-- add one last drop area after the last page in a stripe -->
-                                <ui:fragment rendered="#{mayWrite and stripe.medias.size() ne 0 and  stripe.medias.size() - 1 eq structuredThumbnail.rowIndex}">
+                                <ui:fragment rendered="#{editImages and stripe.medias.size() ne 0 and  stripe.medias.size() - 1 eq structuredThumbnail.rowIndex}">
                                     <p:panel id="structuredPageLastDropArea"
                                              styleClass="page-drop-area"/>
                                     <p:droppable for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPageLastDropArea"
@@ -142,7 +142,7 @@
                                     </p:droppable>
                                 </ui:fragment>
                             </p:dataList>
-                            <ui:fragment rendered="#{mayWrite and stripe.medias.size() eq 0}">
+                            <ui:fragment rendered="#{editImages and stripe.medias.size() eq 0}">
                                 <p:droppable id="structuredPagesDroppable"
                                              scope="assignedPagesDroppable"
                                              for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
@@ -172,7 +172,7 @@
                                         emptyMessage="#{msgs['noMedia']}"
                                         var="media">
                                 <p:panel id="unstructuredPageDropArea"
-                                         rendered="#{mayWrite}"
+                                         rendered="#{editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="unstructuredMediaPanel"
                                          a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
@@ -202,7 +202,7 @@
                                                 oncomplete="scrollToSelectedTreeNode();"/>
                                     </h:panelGroup>
                                 </p:panel>
-                                <ui:fragment rendered="#{mayWrite}">
+                                <ui:fragment rendered="#{editImages}">
                                     <p:draggable id="unstructuredMediaDraggable"
                                                  for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredMediaPanel"
                                                  revert="true"
@@ -217,7 +217,7 @@
                                     </p:droppable>
                                 </ui:fragment>
                                 <!-- add one last drop area after the last page in a stripe -->
-                                <ui:fragment rendered="#{mayWrite and DataEditorForm.galleryPanel.stripes.get(0).medias.size() ne 0 and DataEditorForm.galleryPanel.stripes.get(0).medias.size() - 1 eq currentMedia.rowIndex}">
+                                <ui:fragment rendered="#{editImages and DataEditorForm.galleryPanel.stripes.get(0).medias.size() ne 0 and DataEditorForm.galleryPanel.stripes.get(0).medias.size() - 1 eq currentMedia.rowIndex}">
                                     <p:panel id="unstructuredPageLastDropArea"
                                              styleClass="page-drop-area"/>
                                     <p:droppable for="imagePreviewForm:unstructuredMediaList:#{currentMedia.rowIndex}:unstructuredPageLastDropArea"
@@ -229,7 +229,7 @@
                                     </p:droppable>
                                 </ui:fragment>
                             </p:dataList>
-                            <ui:fragment rendered="#{mayWrite and DataEditorForm.galleryPanel.stripes.get(0).medias.size() eq 0}">
+                            <ui:fragment rendered="#{editImages and DataEditorForm.galleryPanel.stripes.get(0).medias.size() eq 0}">
                                 <p:droppable id="unstructuredPagesDroppable"
                                              scope="assignedPagesDroppable"
                                              for="imagePreviewForm:unstructuredMediaList"
