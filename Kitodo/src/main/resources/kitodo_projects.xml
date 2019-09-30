@@ -131,13 +131,13 @@
         </createNewProcess>
         <tifheader>
             <monograph>
-                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TLS/ATS+'_'+PPN (digital)+'|'
+                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL/ATS+'_'+PPN (digital)+'|'
             </monograph>
             <multivolume>
-                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TLS/ATS+'_'+PPN (digital)+'_'+Nummer (Benennung)+'|'
+                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL/ATS+'_'+PPN (digital)+'_'+Nummer (Benennung)+'|'
             </multivolume>
             <periodical>
-                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TLS/ATS+'_'+PPN (digital) +'_'+Nummer (Benennung)+'|'
+                '|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL/ATS+'_'+PPN (digital) +'_'+Nummer (Benennung)+'|'
             </periodical>
         </tifheader>
         <dmsImport/>

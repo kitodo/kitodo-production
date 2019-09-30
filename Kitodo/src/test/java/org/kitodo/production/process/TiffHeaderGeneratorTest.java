@@ -13,52 +13,77 @@ package org.kitodo.production.process;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.kitodo.production.process.field.AdditionalField;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
+import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
+import org.kitodo.production.forms.createprocess.FieldedAdditionalDetailsTableRow;
+import org.kitodo.production.services.ServiceManager;
 
 public class TiffHeaderGeneratorTest {
 
     @Test
-    @Ignore
     // TODO: add more test cases
     public void shouldGenerateTiffHeader() throws Exception {
-        List<AdditionalField> additionalFields = createAdditionalFields();
-
-        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator("TestTest", null);
+        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator("TestTest", createAdditionalDetailsRows());
         String created = tiffHeaderGenerator.generateTiffHeader(
-            "'|<DOC_TYPE>'+$Doctype+'|<HAUPTTITEL>'+Titel+'|<AUTOREN/HERAUSGEBER>'+Autoren+'|"
-                    + "<JAHR>'+Erscheinungsjahr+'|<ERSCHEINUNGSORT>'+Erscheinungsort+'|<VERZ_STRCT>'+ATS+'_'+PPN digital a-Satz+'|'",
+            "'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+" +
+                    "'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+" +
+                    "TSL/ATS+'_'+PPN (digital)+'|'",
             "monograph");
         assertEquals("Created hash doesn't match the precomputed one!",
-            "|<DOC_TYPE>Monographie|<HAUPTTITEL>Test|<AUTOREN/HERAUSGEBER>Test Author|<JAHR>|<ERSCHEINUNGSORT>|"
+            "|<DOC_TYPE>Monographie|<HAUPTTITEL>Test|<AUTOREN/HERAUSGEBER>TestAuthor|<JAHR>|<ERSCHEINUNGSORT>|"
                     + "<VERZ_STRCT>TestTest_123|",
             created);
     }
 
-    private List<AdditionalField> createAdditionalFields() {
-        List<AdditionalField> additionalFields = new ArrayList<>();
-        additionalFields.add(createAdditionalField("Artist", "", ""));
-        additionalFields.add(createAdditionalField("Schrifttyp", "", ""));
-        additionalFields.add(createAdditionalField("Titel", "Test", "TitleDocMain"));
-        additionalFields.add(createAdditionalField("Titel (Sortierung)", "Test", "TitleDocMainShort"));
-        additionalFields.add(createAdditionalField("Autoren", "Test Author", "ListOfCreators"));
-        additionalFields.add(createAdditionalField("ATS", "", "TSL_ATS"));
-        additionalFields.add(createAdditionalField("TSL", "", "TSL_ATS"));
-        additionalFields.add(createAdditionalField("PPN analog a-Satz", "123", "CatalogIDSource"));
-        additionalFields.add(createAdditionalField("PPN digital a-Satz", "123", "CatalogIDDigital"));
-        return additionalFields;
-    }
-
-    private AdditionalField createAdditionalField(String title, String value, String metadata) {
-        AdditionalField additionalField = new AdditionalField("monograph");
-        additionalField.setTitle(title);
-        additionalField.setValue(value);
-        additionalField.setMetadata(metadata);
-        additionalField.setIsDocType("monograph");
-        return additionalField;
+    private List<AdditionalDetailsTableRow> createAdditionalDetailsRows() throws IOException {
+        Workpiece workpiece = new Workpiece();
+        workpiece.getRootElement().setType("Monograph");
+        RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
+        StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
+                "Monograph", "", Locale.LanguageRange.parse("en"));
+        FieldedAdditionalDetailsTableRow additionalDetailsTable = new FieldedAdditionalDetailsTableRow(
+                null, workpiece.getRootElement(), monograph);
+        for (AdditionalDetailsTableRow row : additionalDetailsTable.getRows()) {
+            switch (row.getMetadataID()) {
+                case "TitleDocMain":
+                case "TitleDocMainShort":
+                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "Test");
+                    break;
+                case "TSL_ATS":
+                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "");
+                    break;
+                case "CatalogIDSource":
+                case "CatalogIDDigital":
+                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "123");
+                    break;
+                case "Person":
+                    for (AdditionalDetailsTableRow personMetadataRow : ((FieldedAdditionalDetailsTableRow) row).getRows()) {
+                        switch (personMetadataRow.getMetadataID()) {
+                            case "Role":
+                            case "LastName":
+                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Author");
+                                break;
+                            case "FirstName":
+                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Test");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                default:
+                    break;
+            }
+        }
+        return additionalDetailsTable.getRows();
     }
 }

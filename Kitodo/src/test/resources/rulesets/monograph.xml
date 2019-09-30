@@ -14,36 +14,58 @@
 <ruleset xmlns="http://names.kitodo.org/ruleset/v2">
     <declaration>
         <division id="Monograph">
-            <label>monograph</label>
-            <label lang="de">Monographie</label>
+            <label>Monographie</label>
         </division>
         <key id="TitleDocMain" domain="source">
-            <label>maint title</label>
-            <label lang="de">HauptTitel</label>
+            <label>HauptTitel</label>
         </key>
         <key id="TitleDocMainShort" domain="technical">
-            <label>main title (sorting)</label>
-            <label lang="de">Haupttitel (Sortierung)</label>
+            <label>Haupttitel (Sortierung)</label>
         </key>
         <key id="TSL_ATS">
             <label>TSL/ATS</label>
         </key>
         <key id="CatalogIDDigital">
-            <label>PPN</label>
-            <label lang="de">PPN (digital)</label>
+            <label>PPN (digital)</label>
         </key>
         <key id="CatalogIDSource" domain="source">
-            <label>PPN (of source)</label>
-            <label lang="de">PPN (Vorlage)</label>
+            <label>PPN (Vorlage)</label>
+        </key>
+        <key id="Person">
+            <label>Person</label>
+            <key id="Role">
+                <label>Rolle</label>
+                <option value="Author">
+                    <label>Author</label>
+                    <label>Autor</label>
+                </option>
+            </key>
+            <key id="FirstName">
+                <label>Vorname</label>
+            </key>
+            <key id="LastName">
+                <label>Nachname</label>
+            </key>
         </key>
     </declaration>
     <correlation>
+        <restriction key="Person">
+            <permit key="Role" minOccurs="1" maxOccurs="1"/>
+            <permit key="FirstName" minOccurs="1" maxOccurs="1"/>
+            <permit key="LastName" minOccurs="1" maxOccurs="1"/>
+        </restriction>
+
         <restriction division="Monograph" unspecified="forbidden">
             <permit key="TitleDocMain" minOccurs="1"/>
             <permit key="TitleDocMainShort" minOccurs="1"/>
             <permit key="TSL_ATS" minOccurs="1"/>
             <permit key="CatalogIDDigital" minOccurs="1"/>
             <permit key="CatalogIDSource" minOccurs="1"/>
+            <permit key="Person" minOccurs="1">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
         </restriction>
     </correlation>
 </ruleset>
