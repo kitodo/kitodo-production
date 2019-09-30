@@ -261,6 +261,11 @@
                                 <artifactId>mysql-connector-java</artifactId>
                                 <version>${mysql.version}</version>
                             </dependency>
+                            <dependency>
+                                <groupId>org.mariadb.jdbc</groupId>
+                                <artifactId>mariadb-java-client</artifactId>
+                                <version>${mariadb-java-client.version}</version>
+                            </dependency>
                         </dependencies>
                         <executions>
                             <execution>
