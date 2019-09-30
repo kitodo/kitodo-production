@@ -252,8 +252,8 @@
                         <version>${flyway-maven-plugin.version}</version>
                         <configuration>
                             <!-- local configuration file -->
-                            <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
+                            <!--<configFiles>${parent.basedir}/config-local/flyway.properties</configFiles>-->
+                            <configFiles>src/main/resources/db/config/flyway.properties</configFiles>
                         </configuration>
                         <dependencies>
                             <dependency>
