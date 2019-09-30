@@ -15,7 +15,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ import org.omnifaces.util.Ajax;
 
 public class ProcessDataTab {
 
-    private static Logger logger = LogManager.getLogger(ProcessDataTab.class);
+    private static final Logger logger = LogManager.getLogger(ProcessDataTab.class);
 
     private CreateProcessForm createProcessForm;
     private String docType;
@@ -44,8 +43,6 @@ public class ProcessDataTab {
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
     private int guessedImages = 0;
-
-    private static final String OPAC_CONFIG = "configurationOPAC";
     private String tifDefinition;
 
     /**
@@ -64,8 +61,6 @@ public class ProcessDataTab {
             }
         }
     }
-
-    private static final String ERROR_READING = "errorReading";
 
     public ProcessDataTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
@@ -212,12 +207,7 @@ public class ProcessDataTab {
      * @return list of ConfigOpacDoctype objects
      */
     public List<ConfigOpacDoctype> getAllDoctypes() {
-        try {
-            return ConfigOpac.getAllDoctypes();
-        } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
-            return new ArrayList<>();
-        }
+        return ConfigOpac.getAllDoctypes();
     }
 
     /**

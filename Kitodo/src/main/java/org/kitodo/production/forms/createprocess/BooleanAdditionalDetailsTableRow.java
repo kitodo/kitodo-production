@@ -15,8 +15,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,11 +37,6 @@ public class BooleanAdditionalDetailsTableRow extends SimpleAdditionalDetailsTab
     private boolean active;
 
     /**
-     * An additional description text to be printed with the switch.
-     */
-    private final String optionLabel;
-
-    /**
      * Creates a new metadata panel row with an on/off switch.
      *
      * @param tab
@@ -57,11 +50,8 @@ public class BooleanAdditionalDetailsTableRow extends SimpleAdditionalDetailsTab
      */
     BooleanAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
                                      SimpleMetadataViewInterface settings, MetadataEntry data) {
-
         super(tab, container, settings);
         this.active = Objects.nonNull(data);
-        Iterator<Entry<String, String>> selectItems = settings.getSelectItems().entrySet().iterator();
-        this.optionLabel = selectItems.hasNext() ? selectItems.next().getValue() : "";
     }
 
     @Override

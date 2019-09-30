@@ -70,7 +70,7 @@ import org.kitodo.production.services.ServiceManager;
 @ViewScoped
 public class CreateProcessForm extends BaseForm implements RulesetSetupInterface {
 
-    private static Logger logger = LogManager.getLogger(CreateProcessForm.class);
+    private static final Logger logger = LogManager.getLogger(CreateProcessForm.class);
 
     private final ImportTab importTab = new ImportTab(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
@@ -296,7 +296,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             }
             return processListPath;
         }
-
         return this.stayOnCurrentPage;
     }
 
@@ -452,7 +451,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 }
             }
         } catch (InvalidMetadataValueException e) {
-            e.printStackTrace();
+            logger.error(e.getLocalizedMessage());
         }
     }
 
@@ -495,21 +494,21 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * Read project configs for display in GUI.
      */
     protected void readProjectConfigs() {
-        ConfigProject cp;
+        ConfigProject configProject;
         try {
-            cp = new ConfigProject(this.project.getTitle());
+            configProject = new ConfigProject(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
-        this.processDataTab.setDocType(cp.getDocType());
+        this.processDataTab.setDocType(configProject.getDocType());
         //this.useOpac = cp.isUseOpac();
-        this.useTemplates = cp.isUseTemplates();
+        this.useTemplates = configProject.isUseTemplates();
 
-        this.processDataTab.setTifDefinition(cp.getTifDefinition());
-        this.processDataTab.setTitleDefinition(cp.getTitleDefinition());
+        this.processDataTab.setTifDefinition(configProject.getTifDefinition());
+        this.processDataTab.setTitleDefinition(configProject.getTitleDefinition());
 
-        this.processDataTab.getStandardFields().putAll(cp.getHiddenFields());
+        this.processDataTab.getStandardFields().putAll(configProject.getHiddenFields());
     }
 
     private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {

@@ -26,8 +26,8 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.interfaces.RulesetSetupInterface;
 
 /**
  * Backing bean for the metadata panel of the metadata editor.

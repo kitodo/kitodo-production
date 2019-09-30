@@ -34,9 +34,9 @@ public class TiffHeaderGeneratorTest {
     public void shouldGenerateTiffHeader() throws Exception {
         TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator("TestTest", createAdditionalDetailsRows());
         String created = tiffHeaderGenerator.generateTiffHeader(
-            "'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+" +
-                    "'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+" +
-                    "TSL/ATS+'_'+PPN (digital)+'|'",
+            "'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+HauptTitel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+"
+                    + "'|[[JAHR]]'+Erscheinungsjahr Band+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+"
+                    + "TSL/ATS+'_'+PPN (digital)+'|'",
             "monograph");
         assertEquals("Created hash doesn't match the precomputed one!",
             "|<DOC_TYPE>Monographie|<HAUPTTITEL>Test|<AUTOREN/HERAUSGEBER>TestAuthor|<JAHR>|<ERSCHEINUNGSORT>|"
@@ -80,6 +80,7 @@ public class TiffHeaderGeneratorTest {
                                 break;
                         }
                     }
+                    break;
                 default:
                     break;
             }

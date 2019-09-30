@@ -27,17 +27,17 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.MockDatabase;
 import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
 import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
 import org.kitodo.production.forms.createprocess.FieldedAdditionalDetailsTableRow;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.SecurityTestUtils;
 
 public class ProcessValidatorIT {
 
@@ -126,8 +126,10 @@ public class ProcessValidatorIT {
         workpiece.getRootElement().setType("Monograph");
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService().getRulesetManagement();
         rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
-        StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView("Monograph", "", Locale.LanguageRange.parse("en"));
-        FieldedAdditionalDetailsTableRow additionalDetailsTable = new FieldedAdditionalDetailsTableRow(null, workpiece.getRootElement(), monograph);
+        StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
+                "Monograph", "", Locale.LanguageRange.parse("en"));
+        FieldedAdditionalDetailsTableRow additionalDetailsTable = new FieldedAdditionalDetailsTableRow(
+                null, workpiece.getRootElement(), monograph);
         for (AdditionalDetailsTableRow row : additionalDetailsTable.getRows()) {
             switch (row.getMetadataID()) {
                 case "TitleDocMain":
@@ -140,6 +142,8 @@ public class ProcessValidatorIT {
                 case "CatalogIDSource":
                 case "CatalogIDDigital":
                     AdditionalDetailsTab.setAdditionalDetailsRow(row, "123");
+                    break;
+                default:
                     break;
             }
         }

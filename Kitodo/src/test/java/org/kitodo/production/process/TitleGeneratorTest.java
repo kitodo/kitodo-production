@@ -135,6 +135,7 @@ public class TitleGeneratorTest {
                                 break;
                         }
                     }
+                    break;
                 default:
                     break;
             }

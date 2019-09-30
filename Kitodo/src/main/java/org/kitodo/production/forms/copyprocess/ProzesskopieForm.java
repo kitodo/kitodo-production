@@ -83,7 +83,6 @@ import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.process.ProcessGenerator;
-import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.process.field.AdditionalField;
@@ -645,7 +644,8 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
 
         if (Objects.nonNull(workpiece)) {
             additionalDetailsTab.preserve();
-            try (OutputStream out = ServiceManager.getFileService().write(ServiceManager.getProcessService().getMetadataFileUri(prozessKopie))) {
+            try (OutputStream out = ServiceManager.getFileService().write(
+                    ServiceManager.getProcessService().getMetadataFileUri(prozessKopie))) {
                 ServiceManager.getMetsService().save(workpiece, out);
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

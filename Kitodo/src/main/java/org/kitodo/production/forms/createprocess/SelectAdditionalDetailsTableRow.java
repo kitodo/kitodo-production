@@ -60,8 +60,8 @@ public class SelectAdditionalDetailsTableRow extends SimpleAdditionalDetailsTabl
      */
     private List<String> selectedItems = new ArrayList<>();
 
-    SelectAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container, SimpleMetadataViewInterface settings,
-                                    Collection<MetadataEntry> selected) {
+    SelectAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
+                                    SimpleMetadataViewInterface settings, Collection<MetadataEntry> selected) {
         super(tab, container, settings);
         this.items = toItems(settings.getSelectItems());
         for (MetadataEntry entry : selected) {

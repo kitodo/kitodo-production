@@ -29,7 +29,7 @@ import org.kitodo.production.services.ServiceManager;
 
 public class SearchTab {
 
-    private static Logger logger = LogManager.getLogger(SearchTab.class);
+    private static final Logger logger = LogManager.getLogger(SearchTab.class);
 
     private CreateProcessForm createProcessForm;
     private Process templateProcess;
@@ -75,7 +75,7 @@ public class SearchTab {
         try {
             URI uri = ServiceManager.getProcessService().getMetadataFileUri(templateProcess);
             this.templateProcessWorkpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException e) {
             Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {"template-metadata" }, logger, e);
         }
         return null;
