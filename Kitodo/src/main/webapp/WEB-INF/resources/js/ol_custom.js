@@ -194,6 +194,7 @@ function initializeMap(imageDimensions, imagePath) {
             maxZoom: 8
         })
     });
+    kitodo.map.getView().fit(extent, {});
     kitodo.map.on("rendercomplete", function () {
         showCanvas();
     });
@@ -207,7 +208,7 @@ function updateMap(imageDimensions, imagePath) {
     kitodo.map.getLayers().getArray()[0].setSource(createSource(extent, imagePath, projection));
     kitodo.map.getView().setCenter(ol.extent.getCenter(extent));
     kitodo.map.getView().getProjection().setExtent(extent);
-
+    kitodo.map.getView().fit(extent, {});
 }
 
 function addListener(element) {
