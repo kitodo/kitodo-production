@@ -159,6 +159,7 @@ public class XMLUtils {
     public static Document parseXMLString(String xmlString) throws IOException, ParserConfigurationException,
             SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         return builder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
     }

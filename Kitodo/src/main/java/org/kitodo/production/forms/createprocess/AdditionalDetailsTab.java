@@ -11,7 +11,6 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
@@ -43,7 +43,6 @@ public class AdditionalDetailsTab {
     private CreateProcessForm createProcessForm;
 
     private FieldedAdditionalDetailsTableRow additionalDetailsTable = FieldedAdditionalDetailsTableRow.EMPTY;
-    private List<String> filledMetadataGroups = new ArrayList<>();
 
     public AdditionalDetailsTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
@@ -95,7 +94,7 @@ public class AdditionalDetailsTab {
      * @throws NoSuchMetadataFieldException
      *          if the metadataId is not allowed as a Metadata for the doctype.
      */
-    private FieldedAdditionalDetailsTableRow addMetadataGroupRow(String metadataId) throws NoSuchMetadataFieldException {
+    private AdditionalDetailsTableRow addAdditionalDetailRow(String metadataId) throws NoSuchMetadataFieldException {
         Collection<MetadataViewInterface> docTypeAddableDivisions = this.createProcessForm.getRuleset().getStructuralElementView(
                this.createProcessForm.getProcessDataTab().getRulesetType(),
                 this.createProcessForm.getAcquisitionStage(),
@@ -107,39 +106,50 @@ public class AdditionalDetailsTab {
                .collect(Collectors.toList());
 
         if (!filteredViews.isEmpty()) {
-            return additionalDetailsTable.createMetadataGroupPanel((ComplexMetadataViewInterface) filteredViews.get(0),
-                    Collections.emptyList());
+            if (filteredViews.get(0).isComplex()) {
+                return additionalDetailsTable.createMetadataGroupPanel((ComplexMetadataViewInterface) filteredViews.get(0),
+                        Collections.emptyList());
+            } else {
+                return additionalDetailsTable.createMetadataEntryEdit((SimpleMetadataViewInterface) filteredViews.get(0),
+                        Collections.emptyList());
+
+            }
         }
         throw new NoSuchMetadataFieldException(metadataId, "");
     }
 
-    void setAdditionalDetailsTable(List<AdditionalDetailsTableRow> rows, NodeList nodes) {
+    void setAdditionalDetailsTable(List<AdditionalDetailsTableRow> rows, NodeList nodes, boolean childRows) {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             Element element = (Element) node;
             String nodeName = element.getAttribute("name");
+            boolean filled = false;
             for (AdditionalDetailsTableRow tableRow : rows) {
                 if (Objects.nonNull(tableRow.getMetadataID()) && tableRow.getMetadataID().equals(nodeName)) {
-                    if (node.getLocalName().equals("metadataGroup")
-                            && tableRow instanceof FieldedAdditionalDetailsTableRow) {
-                        FieldedAdditionalDetailsTableRow fieldedRow;
-                        if (filledMetadataGroups.contains(nodeName)) {
-                            try {
-                                fieldedRow = addMetadataGroupRow(nodeName);
-                                this.additionalDetailsTable.getRows().add(fieldedRow);
-                                setAdditionalDetailsTable(fieldedRow.getRows(), element.getChildNodes());
-                            } catch (NoSuchMetadataFieldException e) {
-                                logger.error(e.getLocalizedMessage());
-                            }
-                        } else {
-                            fieldedRow = (FieldedAdditionalDetailsTableRow) tableRow;
-                            filledMetadataGroups.add(nodeName);
-                            setAdditionalDetailsTable(fieldedRow.getRows(), element.getChildNodes());
+                    if (childRows || getMetadataValue(tableRow).isEmpty()) {
+                        filled = true;
+                        if (node.getLocalName().equals("metadataGroup")
+                                && tableRow instanceof FieldedAdditionalDetailsTableRow) {
+                            setAdditionalDetailsTable(((FieldedAdditionalDetailsTableRow) tableRow).getRows(),
+                                    element.getChildNodes(), true);
+                        } else if (node.getLocalName().equals("metadata")) {
+                            setAdditionalDetailsRow(tableRow, element.getTextContent());
                         }
-                    } else if (node.getLocalName().equals("metadata")) {
-                        setAdditionalDetailsRow(tableRow, element.getTextContent());
                     }
                     break;
+                }
+            }
+            if (!filled) {
+                try {
+                    AdditionalDetailsTableRow newRow = addAdditionalDetailRow(nodeName);
+                    this.additionalDetailsTable.getRows().add(newRow);
+                    if (newRow instanceof FieldedAdditionalDetailsTableRow) {
+                        setAdditionalDetailsTable(((FieldedAdditionalDetailsTableRow) newRow).getRows(), element.getChildNodes(), true);
+                    } else {
+                        setAdditionalDetailsRow(newRow, element.getTextContent());
+                    }
+                } catch (NoSuchMetadataFieldException e) {
+                    logger.error(e.getMessage());
                 }
             }
         }
@@ -173,16 +183,17 @@ public class AdditionalDetailsTab {
      * @return the value as a java.lang.String
      */
     public static String getMetadataValue(AdditionalDetailsTableRow row) {
+        String value = "";
         if (row instanceof TextAdditionalDetailsTableRow) {
             return ((TextAdditionalDetailsTableRow) row).getValue();
         } else if (row instanceof BooleanAdditionalDetailsTableRow) {
             return String.valueOf(((BooleanAdditionalDetailsTableRow) row).isActive());
         } else if (row instanceof SelectAdditionalDetailsTableRow) {
             return ((SelectAdditionalDetailsTableRow) row).getSelectedItem();
-        } else {
-            // TODO: extract value of FieldedMetadataTableRow!
-            return "";
+        } else if (row instanceof FieldedAdditionalDetailsTableRow && row.getMetadataID().equals(PERSON)) {
+            value = getCreator(((FieldedAdditionalDetailsTableRow) row).getRows());
         }
+        return value;
     }
 
     /**
