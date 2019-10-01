@@ -1328,12 +1328,6 @@ public class ProcessForm extends TemplateBaseForm {
      * @return String containing titles of current tasks of given process
      */
     public String getCurrentTaskTitles(ProcessDTO processDTO) {
-        try {
-            return ServiceManager.getProcessService().createProgressTooltip(processDTO);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                    processDTO.getId()});
-            return "";
-        }
+        return ServiceManager.getProcessService().createProgressTooltip(processDTO);
     }
 }
