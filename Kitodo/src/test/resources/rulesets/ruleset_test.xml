@@ -21,5 +21,73 @@
         <division id="something">
             <label>Outline element</label>
         </division>
+        <division id="ContainedWork">
+            <label>Beigefügtes Werk</label>
+        </division>
+        <key id="TitleDocMain" domain="source">
+            <label>HauptTitel</label>
+        </key>
+        <key id="TitleDocMainShort" domain="technical">
+            <label>Haupttitel (Sortierung)</label>
+        </key>
+        <key id="TSL_ATS">
+            <label>TSL/ATS</label>
+        </key>
+        <key id="CatalogIDDigital">
+            <label>PPN (digital)</label>
+        </key>
+        <key id="CatalogIDSource" domain="source">
+            <label>PPN (Vorlage)</label>
+        </key>
+        <key id="Person">
+            <label>Person</label>
+            <key id="Role">
+                <label>Rolle</label>
+                <option value="Author">
+                    <label>Autor</label>
+                </option>
+            </key>
+            <key id="FirstName">
+                <label>Vorname</label>
+            </key>
+            <key id="LastName">
+                <label>Nachname</label>
+            </key>
+        </key>
     </declaration>
+    <correlation>
+        <restriction key="Person">
+            <permit key="Role" minOccurs="1" maxOccurs="1"/>
+            <permit key="FirstName"/>
+            <permit key="LastName"/>
+        </restriction>
+
+        <restriction division="Monograph" unspecified="forbidden">
+            <permit division="Monograph"/>
+            <permit key="TitleDocMain" minOccurs="1"/>
+            <permit key="TitleDocMainShort" minOccurs="1"/>
+            <permit key="CatalogIDDigital" minOccurs="1"/>
+            <permit key="CatalogIDSource" minOccurs="1"/>
+            <permit key="TSL_ATS"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+        </restriction>
+        <restriction division="ContainedWork" unspecified="forbidden">
+                <permit key="TitleDocMain" minOccurs="1"/>
+                <permit key="TitleDocMainShort" minOccurs="1"/>
+                <permit key="CatalogIDDigital" minOccurs="1"/>
+            <permit key="CatalogIDSource" minOccurs="1"/>
+            <permit key="TSL_ATS"/>
+        </restriction>
+    </correlation>
+    <editing>
+        <setting key="TSL_ATS" alwaysShowing="true"/>
+        <setting key="Person" alwaysShowing="true">
+            <setting key="FirstName" alwaysShowing="true"/>
+            <setting key="LastName" alwaysShowing="true"/>
+        </setting>
+    </editing>
 </ruleset>

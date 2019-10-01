@@ -67,7 +67,7 @@ public class ConfigProjectTest {
     @Test
     public void shouldGetTitleDefinition() {
         String titleDefinition = configProject.getTitleDefinition();
-        String expected = "ATS+TSL+'_'+PPN digital a-Satz";
+        String expected = "TSL_ATS+'_'+CatalogIDDigital";
         assertEquals("Title definition is incorrect!", expected, titleDefinition);
     }
 }

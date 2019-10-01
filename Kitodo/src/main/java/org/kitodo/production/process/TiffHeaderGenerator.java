@@ -81,23 +81,23 @@ public class TiffHeaderGenerator extends Generator {
             newTiffHeader.append(calculateProcessTitleCheck("Autoren",
                     AdditionalDetailsTab.getListOfCreators(this.additionalDetailsTableRows)));
         } else {
-            for (AdditionalDetailsTableRow additionalField : this.additionalDetailsTableRows) {
-                String title = additionalField.getLabel();
-                String value = AdditionalDetailsTab.getMetadataValue(additionalField);
+            for (AdditionalDetailsTableRow additionalDetailsTableRow : this.additionalDetailsTableRows) {
+                String rowMetadataID = additionalDetailsTableRow.getMetadataID();
+                String value = AdditionalDetailsTab.getMetadataValue(additionalDetailsTableRow);
 
-                if ("HauptTitel".equals(title) && !value.isEmpty()) {
+                if ("TitleDocMain".equals(rowMetadataID) && !value.isEmpty()) {
                     this.tiffHeader = value;
                 }
                 /*
                  * if it is the ATS or TSL field, then use the calculated atstsl if it does not
                  * already exist
                  */
-                if ("TSL/ATS".equals(title) && value.isEmpty()) {
-                    AdditionalDetailsTab.setAdditionalDetailsRow(additionalField, this.atstsl);
+                if ("TSL_ATS".equals(rowMetadataID) && value.isEmpty()) {
+                    AdditionalDetailsTab.setAdditionalDetailsRow(additionalDetailsTableRow, this.atstsl);
                 }
                 // add the content to the tiff header
-                if (title.equals(token) && !value.isEmpty()) {
-                    newTiffHeader.append(calculateProcessTitleCheck(title, value));
+                if (rowMetadataID.equals(token) && !value.isEmpty()) {
+                    newTiffHeader.append(calculateProcessTitleCheck(rowMetadataID, value));
                 }
             }
         }

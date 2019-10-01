@@ -19,7 +19,6 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.forms.CreateProcessForm;
@@ -33,7 +32,6 @@ public class SearchTab {
 
     private CreateProcessForm createProcessForm;
     private Process templateProcess;
-    private Workpiece templateProcessWorkpiece;
 
     public SearchTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
@@ -74,7 +72,7 @@ public class SearchTab {
 
         try {
             URI uri = ServiceManager.getProcessService().getMetadataFileUri(templateProcess);
-            this.templateProcessWorkpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
+            ServiceManager.getMetsService().loadWorkpiece(uri);
         } catch (IOException e) {
             Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {"template-metadata" }, logger, e);
         }

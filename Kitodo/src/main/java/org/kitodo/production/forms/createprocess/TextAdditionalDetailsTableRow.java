@@ -91,7 +91,7 @@ public class TextAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableR
 
     @Override
     public boolean isValid() {
-        if (value.isEmpty()) {
+        if (Objects.isNull(value) || value.isEmpty()) {
             return false;
         }
         return settings.isValid(value);

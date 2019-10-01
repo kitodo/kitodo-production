@@ -95,7 +95,7 @@ public class TitleGeneratorTest {
     //TODO: add more test cases
     public void shouldGenerateTitle() throws Exception {
         TitleGenerator titleGenerator = new TitleGenerator("", createAdditionalDetailsRows());
-        String created = titleGenerator.generateTitle("TSL/ATS+'_'+PPN (digital)", null);
+        String created = titleGenerator.generateTitle("TSL_ATS+'_'+CatalogIDDigital", null);
         assertEquals("Created hash doesn't match the precomputed one!", "TestTest_123", created);
     }
 

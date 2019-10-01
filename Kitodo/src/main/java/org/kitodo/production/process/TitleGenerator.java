@@ -137,13 +137,13 @@ public class TitleGenerator extends Generator {
             throws ProcessGenerationException {
         StringBuilder newTitle = new StringBuilder();
         for (AdditionalDetailsTableRow row : this.additionalDetailsTableRows) {
-            String rowTitle = row.getLabel();
+            String rowMetadataID = row.getMetadataID();
             String rowValue = AdditionalDetailsTab.getMetadataValue(row);
             /*
              * if it is the ATS or TSL field, then use the calculated atstsl if it does not
              * already exist
              */
-            if ("TSL/ATS".equals(rowTitle)) {
+            if ("TSL_ATS".equals(rowMetadataID)) {
                 if (StringUtils.isEmpty(this.atstsl)) {
                     this.atstsl = createAtstsl(currentTitle, currentAuthors);
                 }
@@ -151,8 +151,8 @@ public class TitleGenerator extends Generator {
                 rowValue = this.atstsl;
             }
             // add the content to the title
-            if (rowTitle.equals(token) && Objects.nonNull(rowValue)) {
-                newTitle.append(calculateProcessTitleCheck(rowTitle, rowValue));
+            if (rowMetadataID.equals(token) && Objects.nonNull(rowValue)) {
+                newTitle.append(calculateProcessTitleCheck(rowMetadataID, rowValue));
             }
         }
         return newTitle.toString();

@@ -137,11 +137,26 @@ public class ProcessValidatorIT {
                     AdditionalDetailsTab.setAdditionalDetailsRow(row, "Test");
                     break;
                 case "TSL_ATS":
-                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "");
+                    AdditionalDetailsTab.setAdditionalDetailsRow(row, " ");
                     break;
                 case "CatalogIDSource":
                 case "CatalogIDDigital":
                     AdditionalDetailsTab.setAdditionalDetailsRow(row, "123");
+                    break;
+                case "Person":
+                    for (AdditionalDetailsTableRow personMetadataRow : ((FieldedAdditionalDetailsTableRow) row).getRows()) {
+                        switch (personMetadataRow.getMetadataID()) {
+                            case "Role":
+                            case "LastName":
+                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Author");
+                                break;
+                            case "FirstName":
+                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Test");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     break;
                 default:
                     break;

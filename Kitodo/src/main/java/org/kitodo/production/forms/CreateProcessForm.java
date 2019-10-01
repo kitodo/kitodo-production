@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -268,13 +269,16 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public String createNewProcess() {
         if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
-            if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())) {
+            if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
+                    || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
+                FacesContext.getCurrentInstance().validationFailed();
                 Helper.setErrorMessage("prozesskopieForm.createNewProcess.noInsertionPositionSelected");
                 return stayOnCurrentPage;
             } else {
                 User titleRecordOpenUser = DataEditorForm
                         .getUserOpened(titleRecordLinkTab.getTitleRecordProcess().getId());
                 if (Objects.nonNull(titleRecordOpenUser)) {
+                    FacesContext.getCurrentInstance().validationFailed();
                     Helper.setErrorMessage("prozesskopieForm.createNewProcess.titleRecordOpen",
                             titleRecordOpenUser.getFullName());
                     return stayOnCurrentPage;
