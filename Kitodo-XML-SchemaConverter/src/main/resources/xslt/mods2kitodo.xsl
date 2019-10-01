@@ -22,26 +22,23 @@
     <xsl:output method="xml" indent="yes" encoding="utf-8"/>
     <xsl:strip-space elements="*"/>
 
-    <xsl:template match="srw:records">
-        <!-- <xsl:apply-templates select="@*|node()"/> -->
-        <xsl:for-each select="srw:record/srw:recordData">
-            <mets:mdWrap MDTYPE="MODS">
-                <mets:xmlData>
-                    <kitodo:kitodo>
-                        <xsl:apply-templates select="@*|node()"/>
-                    </kitodo:kitodo>
-                </mets:xmlData>
-            </mets:mdWrap>
-        </xsl:for-each>
+    <xsl:template match="mods:mods">
+        <mets:mdWrap MDTYPE="MODS">
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <xsl:apply-templates select="@*|node()"/>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
     </xsl:template>
 
     <!-- ### TitleDocMain ### -->
-    <xsl:template match="mods:mods/mods:titleInfo/mods:title[not(@type='alternative')]">
+    <xsl:template match="mods:titleInfo/mods:title[not(@type='alternative')]">
         <kitodo:metadata name="TitleDocMain"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### Author, slub_Recipient ### -->
-    <xsl:template match="mods:mods/mods:name/mods:namePart">
+    <xsl:template match="mods:name/mods:namePart">
         <xsl:variable name="uri" select="../@valueURI" />
         <xsl:variable name="role" select="../mods:role/mods:roleTerm[not(@type)]" />
         <xsl:variable name="last_name" select="substring-before(normalize-space(), ',')" />
@@ -62,32 +59,32 @@
     </xsl:template>
 
     <!-- ### PlaceOfPublication ### -->
-    <xsl:template match="mods:mods/mods:originInfo/mods:place/mods:placeTerm[@type='text']">
+    <xsl:template match="mods:originInfo/mods:place/mods:placeTerm[@type='text']">
         <kitodo:metadata name="PlaceOfPublication"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### PublicationYear ### -->
-    <xsl:template match="mods:mods/mods:originInfo/mods:dateCreated[@encoding='w3cdtf']">
+    <xsl:template match="mods:originInfo/mods:dateCreated[@encoding='w3cdtf']">
         <kitodo:metadata name="PublicationYear"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### ShelfMarkSource ### -->
-    <xsl:template match="mods:mods/mods:location/mods:shelfLocator">
+    <xsl:template match="mods:location/mods:shelfLocator">
         <kitodo:metadata name="shelfmarksource"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### FormatSourcePrint ### -->
-    <xsl:template match="mods:mods/mods:physicalDescription/mods:extent">
+    <xsl:template match="mods:physicalDescription/mods:extent">
         <kitodo:metadata name="FormatSourcePrint"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### CatalogIDDigital ### -->
-    <xsl:template match="mods:mods/mods:recordInfo/mods:recordIdentifier">
+    <xsl:template match="mods:recordInfo/mods:recordIdentifier">
         <kitodo:metadata name="CatalogIDDigital"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### slub_link, slub_linktext ### -->
-    <xsl:template match="mods:mods/mods:location/mods:url">
+    <xsl:template match="mods:location/mods:url">
         <kitodo:metadata name="slub_link"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
         <kitodo:metadata name="slub_linktext">Katalognachweis</kitodo:metadata>
     </xsl:template>

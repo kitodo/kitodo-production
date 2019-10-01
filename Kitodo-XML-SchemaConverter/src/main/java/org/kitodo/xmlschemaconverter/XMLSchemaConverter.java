@@ -12,6 +12,7 @@
 package org.kitodo.xmlschemaconverter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidClassException;
@@ -19,6 +20,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +57,9 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
      */
     private static Map<MetadataFormat, List<String>> supportedSourceMetadataFormats = new HashMap<>();
     static {
-        supportedSourceMetadataFormats.put(MetadataFormat.MODS, Arrays.asList("/xslt/mods2kitodo.xsl"));
-        supportedSourceMetadataFormats.put(MetadataFormat.MARC, Arrays.asList("/xslt/marc2mods.xsl", "/xslt/mods2kitodo.xsl"));
+        supportedSourceMetadataFormats.put(MetadataFormat.MODS, Collections.singletonList("src/main/resources/xslt/mods2kitodo.xsl"));
+        supportedSourceMetadataFormats.put(MetadataFormat.MARC,
+                Arrays.asList("target/downloaded-sources/xslt/marc21slim2mods3-4.xsl", "src/main/resources/xslt/mods2kitodo.xsl"));
     }
 
     private static MetadataFormat supportedTargetMetadataFormat = MetadataFormat.KITODO;
@@ -94,7 +97,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             } else {
                 List<String> xslFiles = supportedSourceMetadataFormats.get(record.getMetadataFormat());
                 for (String xsltFile : xslFiles) {
-                    try (InputStream fileStream = getClass().getResourceAsStream(xsltFile)) {
+                    try (InputStream fileStream = new FileInputStream(xsltFile)) {
                         xmlString = transformXmlByXslt(xmlString, fileStream);
                     }
                 }
@@ -143,6 +146,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
         try {
             StringWriter stringWriter = new StringWriter();
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            System.setProperty("http.agent", "Chrome");
             Transformer xsltTransformer = transformerFactory.newTransformer(new StreamSource(stylesheetFile));
             TransformerHandler handler
                     = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
