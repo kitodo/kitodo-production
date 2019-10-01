@@ -212,7 +212,9 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Uses the aggregatet processes to create a new Workflow.
-     * @param tasks the list of tasks found in the projects
+     * 
+     * @param tasks
+     *            the list of tasks found in the projects
      * @return a navigation path
      */
     public String convertTasksToWorkflow(String tasks) {
@@ -253,6 +255,7 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Creates a new Workflow from the aggregated processes.
+     * 
      * @return a navigation path.
      */
     public String createNewWorkflow() {
@@ -283,11 +286,14 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * When the navigation to the migration form is coming from a workflow creation the URL contains an WorkflowId.
-     * @param workflowId the id of the created Workflow
+     * When the navigation to the migration form is coming from a workflow
+     * creation the URL contains an WorkflowId.
+     * 
+     * @param workflowId
+     *            the id of the created Workflow
      */
     public void setRedirectFromWorkflow(Integer workflowId) {
-        if (Objects.nonNull(workflowId) && workflowId!=0) {
+        if (Objects.nonNull(workflowId) && workflowId != 0) {
             // showPopup for Template
             try {
                 createTemplates();
@@ -369,8 +375,12 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Uses the existing template to add processes to.
-     * @param template The template to which's matching template the processes should be added
-     * @param existingTemplate the template to add the processes to
+     * 
+     * @param template
+     *            The template to which's matching template the processes should
+     *            be added
+     * @param existingTemplate
+     *            the template to add the processes to
      */
     public void useExistingTemplate(Template template, Template existingTemplate) {
         List<Process> processesToAddToTemplate = templatesToCreate.get(template);
@@ -378,14 +388,16 @@ public class MigrationForm extends BaseForm {
             addProcessesToTemplate(existingTemplate, processesToAddToTemplate);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+                e);
         }
         templatesToCreate.remove(template);
     }
 
     /**
      * Creates a new template.
-     * @param template The template to create.
+     * 
+     * @param template
+     *            The template to create.
      */
     public void createNewTemplate(Template template) {
         List<Process> processesToAddToTemplate = templatesToCreate.get(template);
@@ -393,13 +405,13 @@ public class MigrationForm extends BaseForm {
             ServiceManager.getTemplateService().save(template);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
-                    e);
+                e);
         }
         try {
             addProcessesToTemplate(template, processesToAddToTemplate);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+                e);
         }
         templatesToCreate.remove(template);
     }

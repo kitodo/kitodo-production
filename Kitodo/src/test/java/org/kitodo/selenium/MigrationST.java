@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
@@ -7,7 +18,6 @@ import java.io.File;
 import java.net.URI;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.config.ConfigCore;
@@ -42,25 +52,26 @@ public class MigrationST extends BaseTestSelenium {
         SystemPage systemPage = Pages.getSystemPage().goTo();
         long processTemplateId = ServiceManager.getProcessService().getById(1).getTemplate().getId();
 
-        Assert.assertEquals("wrong template", 1, processTemplateId);
+        assertEquals("wrong template", 1, processTemplateId);
         systemPage.startWorkflowMigration();
         systemPage.selectProjects();
-        Assert.assertEquals("FinishedClosedProgressOpenLocked", systemPage.getAggregatedTasks(3));
+        assertEquals("FinishedClosedProgressOpenLocked", systemPage.getAggregatedTasks(3));
         WorkflowEditPage workflowEditPage = systemPage.createNewWorkflow();
         workflowEditPage.changeWorkflowStatusToActive();
-        Assert.assertEquals("FinishedClosedProgressOpenLocked", workflowEditPage.getWorkflowTitle());
+        assertEquals("FinishedClosedProgressOpenLocked", workflowEditPage.getWorkflowTitle());
         systemPage = workflowEditPage.saveForMigration();
         String newTemplateTitle = "newTemplate";
         systemPage.createNewTemplateFromPopup(newTemplateTitle);
-        await().untilAsserted(() -> Assert.assertEquals("template of process should have changed", 4,(long) ServiceManager.getProcessService().getById(1).getTemplate().getId()));
+        await().untilAsserted(() -> assertEquals("template of process should have changed", 4,
+            (long) ServiceManager.getProcessService().getById(1).getTemplate().getId()));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         Workflow workflow = workflowService.getById(4);
         final long numberOfTemplates = workflow.getTemplates().size();
         final long workflowTemplateId = workflow.getTemplates().get(0).getId();
         String processTemplateTitle = ServiceManager.getProcessService().getById(1).getTemplate().getTitle();
 
-        Assert.assertEquals("only one template should be assigned", 1, numberOfTemplates);
-        Assert.assertEquals("wrong template", 4, workflowTemplateId);
-        Assert.assertEquals("wrong title for template", newTemplateTitle, processTemplateTitle);
+        assertEquals("only one template should be assigned", 1, numberOfTemplates);
+        assertEquals("wrong template", 4, workflowTemplateId);
+        assertEquals("wrong title for template", newTemplateTitle, processTemplateTitle);
     }
 }

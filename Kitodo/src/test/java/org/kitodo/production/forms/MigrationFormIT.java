@@ -12,12 +12,10 @@
 package org.kitodo.production.forms;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -78,26 +76,27 @@ public class MigrationFormIT {
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals("Processes should be found", 2, migrationForm.getAggregatedTasks().size());
+        String processesShouldBeFound = "Processes should be found";
+        Assert.assertEquals(processesShouldBeFound, 2, migrationForm.getAggregatedTasks().size());
 
         selectedProjects.add(ServiceManager.getProjectService().getById(2));
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals("Processes should be found", 3, migrationForm.getAggregatedTasks().size());
+        Assert.assertEquals(processesShouldBeFound, 3, migrationForm.getAggregatedTasks().size());
 
         selectedProjects.add(ServiceManager.getProjectService().getById(2));
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals("Processes should be found", 3, migrationForm.getAggregatedTasks().size());
+        Assert.assertEquals(processesShouldBeFound, 3, migrationForm.getAggregatedTasks().size());
 
         selectedProjects.remove(2);
         selectedProjects.remove(1);
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals("Processes should be found", 2, migrationForm.getAggregatedTasks().size());
+        Assert.assertEquals(processesShouldBeFound, 2, migrationForm.getAggregatedTasks().size());
     }
 
     @Test
@@ -173,47 +172,46 @@ public class MigrationFormIT {
         tasksToCompare.add(correctTaskOne);
         tasksToCompare.add(correctTaskTwo);
 
-
         correctTaskOne.setTypeMetadata(true);
 
         Assert.assertFalse("TypeMetadata should be different",
-                migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
+            migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
         correctTaskOne.setTypeMetadata(false);
         correctTaskOne.setTypeImagesWrite(true);
 
         Assert.assertFalse("typeImagesWrite should be different",
-                migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
+            migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
         correctTaskOne.setTypeImagesWrite(false);
         correctTaskOne.setTypeImagesRead(true);
 
         Assert.assertFalse("typeImagesRead should be different",
-                migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
+            migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
         correctTaskOne.setTypeImagesRead(false);
         correctTaskOne.setTypeAutomatic(true);
 
         Assert.assertFalse("typeAutomatic should be different",
-                migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
+            migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
         correctTaskOne.setTypeAutomatic(false);
         correctTaskOne.setTypeExportDMS(true);
 
         Assert.assertFalse("TypeExportDMS should be different",
-                migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
+            migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
         correctTaskOne.setTypeExportDMS(false);
         correctTaskOne.setTypeAcceptClose(true);
 
         Assert.assertFalse("TypeAcceptClose should be different",
-                migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
+            migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
         correctTaskOne.setTypeAcceptClose(false);
         correctTaskOne.setTypeCloseVerify(true);
 
         Assert.assertFalse("TypeCloseVerify should be different",
-                migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
+            migrationForm.tasksAreEqual(originalTasks, tasksToCompare));
 
         correctTaskOne.setTypeCloseVerify(false);
         correctTaskOne.setBatchStep(true);
@@ -231,17 +229,17 @@ public class MigrationFormIT {
 
         List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
 
-        HashSet newTemplates =  new HashSet<>();
+        HashSet newTemplates = new HashSet<>();
         newTemplates.add(template);
         Map matchingTemplates = migrationForm.getMatchingTemplates(newTemplates);
 
         Assert.assertNotNull(matchingTemplates.get(template));
-        Assert.assertEquals(existingTemplates.get(0),matchingTemplates.get(template));
+        Assert.assertEquals(existingTemplates.get(0), matchingTemplates.get(template));
 
         template.setDocket(null);
 
         Assert.assertNull(matchingTemplates.get(template));
-        Assert.assertNotEquals(existingTemplates.get(0),matchingTemplates.get(template));
+        Assert.assertNotEquals(existingTemplates.get(0), matchingTemplates.get(template));
     }
 
     @Test
@@ -252,12 +250,12 @@ public class MigrationFormIT {
         List<Process> firstTemplateProcesses = firstTemplate.getProcesses();
         Assert.assertEquals(2, firstTemplateProcesses.size());
         Assert.assertEquals(0, secondTemplate.getProcesses().size());
-        Assert.assertEquals(1,(long) firstTemplateProcesses.get(0).getTemplate().getId());
+        Assert.assertEquals(1, (long) firstTemplateProcesses.get(0).getTemplate().getId());
         migrationForm.addProcessesToTemplate(secondTemplate, firstTemplateProcesses);
 
         Assert.assertEquals(2, firstTemplateProcesses.size());
         Assert.assertEquals(2, secondTemplate.getProcesses().size());
-        Assert.assertEquals(2,(long) firstTemplateProcesses.get(0).getTemplate().getId());
+        Assert.assertEquals(2, (long) firstTemplateProcesses.get(0).getTemplate().getId());
     }
 
 }
