@@ -38,10 +38,11 @@ import org.xml.sax.SAXException;
 public class XmlSchemaConverterTest {
 
     private static XMLSchemaConverter converter = new XMLSchemaConverter();
-    private static final String TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
+    private static final String MODS_TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
+    private static final String MARC_TEST_FILE_PATH = "src/test/resources/marcXmlTestRecord.xml";
 
     @Test
-    public void shouldConvertToInternalFormat() throws IOException, ParserConfigurationException, SAXException {
+    public void shouldConvertModsToInternalFormat() throws IOException, ParserConfigurationException, SAXException {
 
         DataRecord testRecord = new DataRecord();
         testRecord.setMetadataFormat(MetadataFormat.MODS);
@@ -49,7 +50,7 @@ public class XmlSchemaConverterTest {
 
         DataRecord internalFormatRecord;
 
-        try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_FILE_PATH))) {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(MODS_TEST_FILE_PATH))) {
             testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
             internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, null);
         }
@@ -88,6 +89,61 @@ public class XmlSchemaConverterTest {
         Assert.assertEquals("Title after conversion is wrong!", title, "Test-Title");
         Assert.assertEquals("Catalog ID after conversion is wrong!", catalogId, "67890");
         Assert.assertEquals("PublicationYear after conversion is wrong!", year, "1999-12-31");
+    }
+
+    @Test
+    public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException {
+
+        DataRecord testRecord = new DataRecord();
+        testRecord.setMetadataFormat(MetadataFormat.MARC);
+        testRecord.setFileFormat(FileFormat.XML);
+
+        DataRecord internalFormatRecord;
+
+        try (InputStream inputStream = Files.newInputStream(Paths.get(MARC_TEST_FILE_PATH))) {
+            testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
+            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, null);
+        }
+
+        Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
+        Assert.assertEquals("Conversion result has wrong MetadataFormat!",
+                internalFormatRecord.getMetadataFormat(), MetadataFormat.KITODO);
+        Assert.assertEquals("Conversion result has wrong FileFormat!",
+                internalFormatRecord.getFileFormat(), FileFormat.XML);
+        Assert.assertThat("Wrong class of original data object!",
+                internalFormatRecord.getOriginalData(), instanceOf(String.class));
+        Document resultDocument = parseInputStreamToDocument((String) internalFormatRecord.getOriginalData());
+        NodeList metadataNodes = resultDocument.getElementsByTagName("kitodo:metadata");
+
+        String title = "";
+        String catalogId = "";
+        String place = "";
+        String shelfmarksource = "";
+        for (int i = 0; i < metadataNodes.getLength(); i++) {
+            Element element = (Element) metadataNodes.item(i);
+            switch (element.getAttribute("name")) {
+                case "CatalogIDDigital":
+                    catalogId = element.getTextContent();
+                    break;
+                case "TitleDocMain":
+                    title = element.getTextContent();
+                    break;
+                case "PlaceOfPublication":
+                    place = element.getTextContent();
+                    break;
+                case "shelfmarksource":
+                    shelfmarksource = element.getTextContent();
+                    break;
+                default:
+                    // ignore other elements
+                    break;
+            }
+        }
+
+        Assert.assertEquals("Title after conversion is wrong!", title, "Test-Title");
+        Assert.assertEquals("Catalog ID after conversion is wrong!", catalogId, "67890");
+        Assert.assertEquals("PlaceOfPublication after conversion is wrong!", place, "Test-Place");
+        Assert.assertEquals("shelfmarksource after conversion is wrong!", shelfmarksource, "Test-Shelflocator");
     }
 
     private Document parseInputStreamToDocument(String inputString) throws ParserConfigurationException,

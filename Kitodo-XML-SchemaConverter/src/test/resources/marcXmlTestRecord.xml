@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<record xmlns="http://www.loc.gov/MARC21/slim">
+    <leader>ccm a22 4500</leader>
+    <controlfield tag="001">67890</controlfield>
+    <controlfield tag="003">12345</controlfield>
+    <controlfield tag="005">123456789</controlfield>
+    <datafield tag="046" ind1=" " ind2=" ">
+        <subfield code="k">1999-12-31</subfield>
+    </datafield>
+    <datafield tag="245" ind1="1" ind2="0">
+        <subfield code="a">Test-Title</subfield>
+    </datafield>
+    <datafield tag="260" ind1=" " ind2=" ">
+        <subfield code="a">Test-Place</subfield>
+    </datafield>
+    <datafield tag="850" ind1=" " ind2=" ">
+        <subfield code="a">aa</subfield>
+    </datafield>
+    <datafield tag="852" ind1=" " ind2=" ">
+        <subfield code="h">Test-Shelflocator</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+        <subfield code="u">http://example.com?id=123456789</subfield>
+    </datafield>
+</record>
