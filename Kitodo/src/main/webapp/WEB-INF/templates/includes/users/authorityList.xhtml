@@ -21,15 +21,19 @@
                  value="#{AuthorityForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.authority}">
-            <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>
+            <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"
+                          title="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>
         </p:column>
         <p:column headerText="#{msgs.type}">
-            <h:outputText value="#{HelperForm.getTranslated(item.type)}"/>
+            <h:outputText value="#{HelperForm.getTranslated(item.type)}"
+                          title="#{HelperForm.getTranslated(item.type)}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">

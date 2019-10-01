@@ -19,15 +19,21 @@
                  value="#{LdapServerForm.ldapServers}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.ldapServer}">
-            <h:outputText value="#{item.title}"/>
+        <p:column headerText="#{msgs.ldapServer}"
+                  sortBy="#{item.title}">
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.url}">
-            <h:outputText value="#{item.url}"/>
+        <p:column headerText="#{msgs.url}"
+                  sortBy="#{item.url}">
+            <h:outputText value="#{item.url}"
+                          title="#{item.url}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">

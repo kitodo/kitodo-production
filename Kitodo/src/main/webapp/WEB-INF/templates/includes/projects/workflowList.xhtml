@@ -21,6 +21,8 @@
                  value="#{WorkflowForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -29,13 +31,15 @@
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title.keyword}"
                   rendered="#{ProjectForm.showColumn('workflow.title')}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.status}"
                   sortBy="#{item.status}"
                   rendered="#{ProjectForm.showColumn('workflow.status')}">
-            <h:outputText value="#{msgs[item.status]}"/>
+            <h:outputText value="#{msgs[item.status]}"
+                          title="#{msgs[item.status]}"/>
         </p:column>
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">

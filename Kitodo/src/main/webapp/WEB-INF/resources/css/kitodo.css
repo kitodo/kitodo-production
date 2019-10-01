@@ -2110,9 +2110,16 @@ footer {
     width: 280px;
 }
 
+.ui-datatable tr td.actionsColumn > div.actionsBlock,
+.ui-datatable tr td.actionsColumn > form {
+    float: right;
+}
+
 .ui-datatable tr td.actionsColumn > a,
 .ui-datatable tr td.actionsColumn > form > a,
-.ui-datatable tr td.actionsColumn > form > span {
+.ui-datatable tr td.actionsColumn > form > span,
+.ui-datatable tr td.actionsColumn > div.actionsBlock > a,
+.ui-datatable tr td.actionsColumn > div.actionsBlock > span {
     margin-right: 10px;
 }
 
@@ -2160,12 +2167,6 @@ footer {
     height: 16px;
     border-radius: var(--default-border-radius);
 }
-
-tbody#projectsTable_data > tr.ui-widget-content > td {
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     color: var(--medium-gray);

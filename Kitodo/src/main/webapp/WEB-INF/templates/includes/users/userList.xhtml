@@ -21,17 +21,23 @@
                  value="#{UserForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.username}"
+                  sortBy="#{item.surname}"
                   rendered="#{UserForm.showColumn('user.username')}">
-            <h:outputText value="#{item.surname}, #{item.name}"/>
+            <h:outputText value="#{item.surname}, #{item.name}"
+                          title="#{item.surname}, #{item.name}"/>
         </p:column>
         <p:column headerText="#{msgs.location}"
+                  sortBy="#{item.location}"
                   rendered="#{UserForm.showColumn('user.location')}">
-            <h:outputText value="#{item.location}"/>
+            <h:outputText title="#{item.location}"
+                          value="#{item.location}"/>
         </p:column>
         <p:column headerText="#{msgs.roles}"
                   rendered="#{UserForm.showColumn('user.roles')}">
@@ -57,11 +63,11 @@
         <p:column headerText="#{msgs.active}"
                   rendered="#{UserForm.showColumn('user.active')}"
                   styleClass="checkboxColumn">
-            <h:outputText>
-                <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
+            <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
+                <h:outputText title="#{msgs.active}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
-                </ui:fragment>
-            </h:outputText>
+                </h:outputText>
+            </ui:fragment>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">

@@ -21,19 +21,25 @@
                  value="#{DocketForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
         <p:column headerText="#{msgs.title}"
+                  sortBy="#{item.title}"
                   rendered="#{ProjectForm.showColumn('docket.title')}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
+                  sortBy="#{item.file}"
                   rendered="#{ProjectForm.showColumn('docket.filename')}">
-            <h:outputText value="#{item.file}"/>
+            <h:outputText value="#{item.file}"
+                          title="#{item.file}"/>
         </p:column>
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">

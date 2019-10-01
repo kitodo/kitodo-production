@@ -21,6 +21,8 @@
                  lazy="true"
                  id="projectsTable"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -28,19 +30,23 @@
 
         <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 18px;"
+        <p:column style="width: 20px;"
+                  resizable="false"
                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewProject')}">
             <p:rowToggler/>
         </p:column>
 
         <p:column headerText="#{msgs.title}"
+                  sortBy="#{item.title}"
                   rendered="#{ProjectForm.showColumn('project.title')}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.metsRightsOwner}"
                   rendered="#{ProjectForm.showColumn('project.metsRightsOwner')}">
-            <h:outputText value="#{item.metsRightsOwner}"/>
+            <h:outputText value="#{item.metsRightsOwner}"
+                          title="#{item.metsRightsOwner}"/>
         </p:column>
 
         <p:column headerText="#{msgs.active}"

@@ -852,6 +852,11 @@ tbody.ui-widget-content {
     border-radius: 0;
 }
 
+.ui-datatable-tablewrapper th[role='columnheader'],
+.ui-datatable-tablewrapper td[role='gridcell'] {
+    text-overflow: ellipsis;
+}
+
 .ui-datatable-odd,
 .ui-datatable-even,
 tfoot td.ui-state-default,
@@ -1092,6 +1097,14 @@ Popup dialogs
 
 .ui-dialog .ui-confirm-dialog-message {
     font-size: larger;
+}
+
+.ui-datatable .ui-column-resizer {
+    background-color: var(--medium-gray);
+    margin-left: 4px;
+    margin-right: 4px;
+    opacity: .5;
+    width: 1px;
 }
 
 #deleteConfirmDialog .ui-dialog-content {

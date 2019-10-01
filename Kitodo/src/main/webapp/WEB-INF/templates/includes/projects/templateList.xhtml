@@ -22,6 +22,8 @@
                  value="#{TemplateForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -29,7 +31,8 @@
 
         <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 18px;"
+        <p:column style="width: 20px;"
+                  resizable="false"
                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewTemplate')}">
             <p:rowToggler/>
         </p:column>
@@ -37,12 +40,14 @@
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"
                   rendered="#{ProjectForm.showColumn('template.title')}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.ruleset}"
                   rendered="#{ProjectForm.showColumn('template.ruleset')}">
-            <h:outputText value="#{item.ruleset.title}"/>
+            <h:outputText value="#{item.ruleset.title}"
+                          title="#{item.ruleset.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
