@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -109,7 +111,8 @@ public class CommentForm extends BaseForm {
         }
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
-        } catch (DAOException e) {
+            ServiceManager.getProcessService().saveToIndex(this.currentTask.getProcess(), true);
+        } catch (DAOException | CustomResponseException | DataException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
         newComment();

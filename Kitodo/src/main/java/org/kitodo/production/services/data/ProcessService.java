@@ -541,8 +541,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 searchQuery);
             QueryBuilder wildcardQueryForProjectTitle = createSimpleWildcardQuery(
                 ProcessTypeField.PROJECT_TITLE.getKey(), searchQuery);
+            QueryBuilder wildcardQueryForComments = createSimpleWildcardQuery(
+                    ProcessTypeField.COMMENTS_MESSAGE.getKey(), searchQuery);
             boolQuery.should(wildcardQueryForProcessTitle);
             boolQuery.should(wildcardQueryForProjectTitle);
+            boolQuery.should(wildcardQueryForComments);
         }
 
         return findByQuery(boolQuery, false);
