@@ -175,6 +175,9 @@ function initializeMap(imageDimensions, imagePath) {
             attributionOptions: {
                 collapsible: false
             },
+            zoomOptions: {
+                delta: 3
+            },
             rotate: false
         }).extend([
             new kitodo.RotateRightControl(),
@@ -190,10 +193,10 @@ function initializeMap(imageDimensions, imagePath) {
         view: new ol.View({
             projection: projection,
             center: ol.extent.getCenter(extent),
-            zoom: 1,
-            maxZoom: 8
+            zoomFactor: 1.1
         })
     });
+    kitodo.map.getView().fit(extent, {});
     kitodo.map.on("rendercomplete", function () {
         showCanvas();
     });
@@ -207,7 +210,7 @@ function updateMap(imageDimensions, imagePath) {
     kitodo.map.getLayers().getArray()[0].setSource(createSource(extent, imagePath, projection));
     kitodo.map.getView().setCenter(ol.extent.getCenter(extent));
     kitodo.map.getView().getProjection().setExtent(extent);
-
+    kitodo.map.getView().fit(extent, {});
 }
 
 function addListener(element) {
