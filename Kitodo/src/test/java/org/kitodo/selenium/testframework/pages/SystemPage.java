@@ -161,7 +161,6 @@ public class SystemPage extends Page<SystemPage> {
     public void startWorkflowMigration() throws Exception {
         switchToTabByIndex(TabIndex.MIGRATION.getIndex(), systemTabView);
         startWorkflowMigrationButton.click();
-
     }
 
     public WorkflowEditPage createNewWorkflow()
