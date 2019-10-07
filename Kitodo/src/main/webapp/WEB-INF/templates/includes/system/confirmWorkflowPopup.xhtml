@@ -45,6 +45,15 @@
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
                         </div>
+                        <div>
+                            <p:commandButton value="#{msgs.cancel}"
+                                             immediate="true"
+                                             icon="fa fa-times fa-lg"
+                                             iconPos="right"
+                                             styleClass="secondary right"
+                                             onclick="PF('confirmWorkflowPopup').hide();">
+                            </p:commandButton>
+                        </div>
                     </p:row>
                 </p:panelGrid>
             </h:form>
