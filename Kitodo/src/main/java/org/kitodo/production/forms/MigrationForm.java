@@ -257,7 +257,7 @@ public class MigrationForm extends BaseForm {
 
     /**
      * When the navigation to the migration form is coming from a workflow
-     * creation the URL contains an WorkflowId.
+     * creation the URL contains a WorkflowId.
      * 
      * @param workflowId
      *            the id of the created Workflow
