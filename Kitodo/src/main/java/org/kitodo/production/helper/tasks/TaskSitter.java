@@ -130,6 +130,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
      * lordship has scarpered. This is not a pity because it will be started
      * every some seconds.
      *
+     * <p>
      * After having finished iterating, the method will reduce the absolute
      * number of expired threads as configured. (Since new threads will be added
      * to the bottom of the list and we therefore want to remove older ones
