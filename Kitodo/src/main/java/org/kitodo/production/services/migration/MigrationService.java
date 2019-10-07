@@ -11,6 +11,17 @@
 
 package org.kitodo.production.services.migration;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
@@ -24,17 +35,6 @@ import org.kitodo.production.migration.TaskComparator;
 import org.kitodo.production.migration.TemplateComparator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public class MigrationService {
 
@@ -60,6 +60,10 @@ public class MigrationService {
         return localReference;
     }
 
+    /**
+     * Migrates the meta.xml to the new kitodo format.
+     * @throws DAOException when Database access fails
+     */
     public void migrateMetadata() throws DAOException {
         List<Process> processes = ServiceManager.getProcessService().getAll();
         FileService fileService = ServiceManager.getFileService();
@@ -74,6 +78,12 @@ public class MigrationService {
         }
     }
 
+    /**
+     * Test if a list of processes is equal, concerning the TaskComparator.
+     * @param firstProcessTasks The first list of tasks
+     * @param secondProcessTasks the second list of tasks
+     * @return true, if the lists are equal, false otherwise.
+     */
     public boolean tasksAreEqual(List<Task> firstProcessTasks, List<Task> secondProcessTasks) {
         TaskComparator taskComparator = new TaskComparator();
 
@@ -89,6 +99,11 @@ public class MigrationService {
         return true;
     }
 
+    /**
+     * Creates a String out of the tasks to identify different tasks orders.
+     * @param processTasks The List of tasks to generate a string from.
+     * @return A string identifing the tasks.
+     */
     public String createTaskString(List<Task> processTasks) {
         String taskString = "";
         for (Task processTask : processTasks) {
@@ -97,6 +112,12 @@ public class MigrationService {
         return taskString.replaceAll("\\s", "");
     }
 
+    /**
+     * Creates templates for a list of processes with a given workflow.
+     * @param processes The list of processes to create the templates for.
+     * @param workflowToUse the workflow to use for the template.
+     * @return A map with templates and the corresponding processes.
+     */
     public Map<Template, List<Process>> createTemplatesForProcesses(List<Process> processes, Workflow workflowToUse) {
         Map<Template, List<Process>> newTemplates = new HashMap<>();
         for (Process process : processes) {
@@ -124,6 +145,12 @@ public class MigrationService {
         return false;
     }
 
+    /**
+     * Matches templates from the database to a list of given templates.
+     * @param templates the templates to find matching templates in the database for.
+     * @return A Map with matching templates
+     * @throws DAOException is thrown if the database access fails
+     */
     public Map<Template, Template> getMatchingTemplates(Set<Template> templates) throws DAOException {
         Map<Template, Template> matchingTemplates = new HashMap<>();
         TemplateComparator templateComparator = new TemplateComparator();
@@ -139,6 +166,12 @@ public class MigrationService {
         return matchingTemplates;
     }
 
+    /**
+     * Adds a list of processes to a given template.
+     * @param template The template to add the processes to.
+     * @param processesToAddToTemplate the processes to be added to the template
+     * @throws DataException is thrown if database access fails
+     */
     public void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
         for (Process process : processesToAddToTemplate) {
             process.setTemplate(template);

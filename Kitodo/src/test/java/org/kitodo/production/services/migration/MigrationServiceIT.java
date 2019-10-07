@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.services.migration;
 
 import java.util.ArrayList;
@@ -5,9 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -25,15 +36,15 @@ public class MigrationServiceIT {
 
     private MigrationService migrationService = ServiceManager.getMigrationService();
 
-    @BeforeClass
-    public static void prepareDatabase() throws Exception {
+    @Before
+    public void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @AfterClass
-    public static void cleanDatabase() throws Exception {
+    @After
+    public void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
@@ -100,7 +111,6 @@ public class MigrationServiceIT {
         originalTasks.add(taskService.getById(1));
         originalTasks.add(taskService.getById(2));
 
-        List<Task> tasksToCompare = new ArrayList<>();
         Task correctTaskOne = new Task();
         correctTaskOne.setTitle("Finished");
         correctTaskOne.setOrdering(1);
@@ -109,6 +119,7 @@ public class MigrationServiceIT {
         correctTaskTwo.setTitle("Blocking");
         correctTaskTwo.setOrdering(2);
 
+        List<Task> tasksToCompare = new ArrayList<>();
         tasksToCompare.add(correctTaskOne);
         tasksToCompare.add(correctTaskTwo);
 
@@ -185,7 +196,6 @@ public class MigrationServiceIT {
 
     @Test
     public void testAddToTemplate() throws DAOException, DataException {
-        Template template = ServiceManager.getTemplateService().getById(1);
         ProcessService processService = ServiceManager.getProcessService();
         Process firstProcess = new Process();
         firstProcess.setTitle("firstMigrationProcess");
@@ -198,6 +208,7 @@ public class MigrationServiceIT {
         processes.add(firstProcess);
         processes.add(secondProcess);
 
+        Template template = ServiceManager.getTemplateService().getById(1);
         Assert.assertEquals(2, template.getProcesses().size());
         Assert.assertNull(firstProcess.getTemplate());
         Assert.assertNull(secondProcess.getTemplate());
