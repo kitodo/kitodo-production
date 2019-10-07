@@ -124,7 +124,7 @@ public class MigrationService {
         return false;
     }
 
-    public Map<Template, Template> getMatchingTemplates(Set<Template> templates) {
+    public Map<Template, Template> getMatchingTemplates(Set<Template> templates) throws DAOException {
         Map<Template, Template> matchingTemplates = new HashMap<>();
         TemplateComparator templateComparator = new TemplateComparator();
         List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
