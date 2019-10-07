@@ -71,6 +71,7 @@
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <spring.security.version>4.2.13.RELEASE</spring.security.version>
         <flyway-maven-plugin.version>5.1.4</flyway-maven-plugin.version>
+        <pitest.version>1.4.10</pitest.version>
     </properties>
 
     <repositories>
