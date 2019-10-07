@@ -181,7 +181,7 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Uses the aggregatet processes to create a new Workflow.
+     * Uses the aggregated processes to create a new Workflow.
      * 
      * @param tasks
      *            the list of tasks found in the projects
