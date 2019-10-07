@@ -12,12 +12,10 @@
 package org.kitodo.production.forms;
 
 import java.io.IOException;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,11 +36,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.migration.TaskComparator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
-import org.kitodo.production.migration.TemplateComparator;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.migration.MigrationService;
 import org.primefaces.PrimeFaces;
 
 @Named("MigrationForm")
@@ -59,6 +55,7 @@ public class MigrationForm extends BaseForm {
     private String currentTasks;
     private Map<Template, List<Process>> templatesToCreate = new HashMap<>();
     private Map<Template, Template> matchingTemplates = new HashMap<>();
+    private MigrationService migrationService = ServiceManager.getMigrationService();
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -67,17 +64,12 @@ public class MigrationForm extends BaseForm {
      * @throws DAOException
      *             if database access fails
      */
-    public void migrateMetadata() throws DAOException {
-        List<Process> processes = ServiceManager.getProcessService().getAll();
-        FileService fileService = ServiceManager.getFileService();
-        URI metadataFilePath;
-        for (Process process : processes) {
-            try {
-                metadataFilePath = fileService.getMetadataFilePath(process, true, true);
-                ServiceManager.getDataEditorService().readData(metadataFilePath);
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+    public void migrateMetadata() {
+        try {
+            migrationService.migrateMetadata();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                logger, e);
         }
     }
 
@@ -110,40 +102,18 @@ public class MigrationForm extends BaseForm {
 
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
         for (String tasks : aggregatedProcesses.keySet()) {
-            if (checkForTitle(tasks, process.getTasks())
-                    && tasksAreEqual(aggregatedProcesses.get(tasks).get(0).getTasks(), process.getTasks())) {
+            if (checkForTitle(tasks, process.getTasks()) && migrationService
+                    .tasksAreEqual(aggregatedProcesses.get(tasks).get(0).getTasks(), process.getTasks())) {
                 aggregatedProcesses.get(tasks).add(process);
                 return;
             }
         }
-        aggregatedProcesses.put(createTaskString(process.getTasks()), new ArrayList<>(Arrays.asList(process)));
-    }
-
-    boolean tasksAreEqual(List<Task> firstProcessTasks, List<Task> secondProcessTasks) {
-        TaskComparator taskComparator = new TaskComparator();
-
-        Iterator<Task> firstTaskIterator = firstProcessTasks.iterator();
-        Iterator<Task> secondTaskIterator = secondProcessTasks.iterator();
-        while (firstTaskIterator.hasNext() && secondTaskIterator.hasNext()) {
-            Task firstTask = firstTaskIterator.next();
-            Task secondTask = secondTaskIterator.next();
-            if (taskComparator.compare(firstTask, secondTask) != 0) {
-                return false;
-            }
-        }
-        return true;
+        aggregatedProcesses.put(migrationService.createTaskString(process.getTasks()),
+            new ArrayList<>(Arrays.asList(process)));
     }
 
     private boolean checkForTitle(String aggregatedTasks, List<Task> processTasks) {
-        return aggregatedTasks.equals(createTaskString(processTasks));
-    }
-
-    private String createTaskString(List<Task> processTasks) {
-        String taskString = "";
-        for (Task processTask : processTasks) {
-            taskString = taskString.concat(processTask.getTitle());
-        }
-        return taskString.replaceAll("\\s", "");
+        return aggregatedTasks.equals(migrationService.createTaskString(processTasks));
     }
 
     /**
@@ -237,7 +207,7 @@ public class MigrationForm extends BaseForm {
         List<Task> processTasks = aggregatedProcesses.get(currentTasks).get(0).getTasks();
         List<Template> allTemplates = ServiceManager.getTemplateService().getAll();
         for (Template template : allTemplates) {
-            if (tasksAreEqual(template.getTasks(), processTasks)) {
+            if (migrationService.tasksAreEqual(template.getTasks(), processTasks)) {
                 workflowToUse = template.getWorkflow();
                 return true;
             }
@@ -261,8 +231,8 @@ public class MigrationForm extends BaseForm {
     public String createNewWorkflow() {
 
         Process blueprintProcess = aggregatedProcesses.get(currentTasks).get(0);
-
         TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
+
         try {
             templateConverter.convertTasksToWorkflowFile(currentTasks, blueprintProcess.getTasks());
         } catch (IOException e) {
@@ -305,52 +275,11 @@ public class MigrationForm extends BaseForm {
     }
 
     private void createTemplates() throws DAOException {
-        templatesToCreate = createTemplatesForProcesses();
-        matchingTemplates = getMatchingTemplates(templatesToCreate.keySet());
-        PrimeFaces.current().executeScript("PF('createTemplatePopup').show();");
-    }
-
-    private Map<Template, List<Process>> createTemplatesForProcesses() {
-        List<Process> processesToMigrate = aggregatedProcesses.get(currentTasks);
-        Map<Template, List<Process>> newTemplates = new HashMap<>();
-        for (Process process : processesToMigrate) {
-            if (!templateListContainsTemplate(newTemplates, process)) {
-                Template template = new Template();
-                template.setDocket(process.getDocket());
-                template.setRuleset(process.getRuleset());
-                template.setWorkflow(workflowToUse);
-                template.setClient(process.getProject().getClient());
-                newTemplates.put(template, new ArrayList<>(Arrays.asList(process)));
-            }
-        }
-        return newTemplates;
-    }
-
-    private boolean templateListContainsTemplate(Map<Template, List<Process>> newTemplates, Process process) {
-        for (Template template : newTemplates.keySet()) {
-            if (template.getRuleset().equals(process.getRuleset()) && template.getDocket().equals(process.getDocket())
-                    && template.getWorkflow().equals(workflowToUse)) {
-                newTemplates.get(template).add(process);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    Map<Template, Template> getMatchingTemplates(Set<Template> templatesToCreate) throws DAOException {
-        TemplateComparator templateComparator = new TemplateComparator();
+        templatesToCreate = migrationService.createTemplatesForProcesses(aggregatedProcesses.get(currentTasks),
+            workflowToUse);
         matchingTemplates.clear();
-        List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
-
-        for (Template templateToCreate : templatesToCreate) {
-            for (Template existingTemplate : existingTemplates) {
-                if (templateComparator.compare(templateToCreate, existingTemplate) == 0) {
-                    matchingTemplates.put(templateToCreate, existingTemplate);
-                }
-            }
-        }
-        return matchingTemplates;
+        matchingTemplates = migrationService.getMatchingTemplates(templatesToCreate.keySet());
+        PrimeFaces.current().executeScript("PF('createTemplatePopup').show();");
     }
 
     /**
@@ -385,7 +314,7 @@ public class MigrationForm extends BaseForm {
     public void useExistingTemplate(Template template, Template existingTemplate) {
         List<Process> processesToAddToTemplate = templatesToCreate.get(template);
         try {
-            addProcessesToTemplate(existingTemplate, processesToAddToTemplate);
+            migrationService.addProcessesToTemplate(existingTemplate, processesToAddToTemplate);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                 e);
@@ -408,21 +337,12 @@ public class MigrationForm extends BaseForm {
                 e);
         }
         try {
-            addProcessesToTemplate(template, processesToAddToTemplate);
+            migrationService.addProcessesToTemplate(template, processesToAddToTemplate);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                 e);
         }
         templatesToCreate.remove(template);
-    }
-
-    void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
-        for (Process process : processesToAddToTemplate) {
-            process.setTemplate(template);
-            ServiceManager.getProcessService().save(process);
-        }
-        template.getProcesses().addAll(processesToAddToTemplate);
-        ServiceManager.getTemplateService().save(template);
     }
 
 }

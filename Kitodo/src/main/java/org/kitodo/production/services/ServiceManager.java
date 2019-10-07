@@ -40,6 +40,7 @@ import org.kitodo.production.services.dataeditor.RulesetManagementService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.image.ImageService;
+import org.kitodo.production.services.migration.MigrationService;
 import org.kitodo.production.services.schema.SchemaService;
 import org.kitodo.production.services.security.SecurityAccessService;
 import org.kitodo.production.services.security.SessionService;
@@ -52,36 +53,37 @@ public class ServiceManager {
     private static AuthorityService authorityService;
     private static BatchService batchService;
     private static ClientService clientService;
+    private static CommandService commandService;
+    private static CommentService commentService;
     private static DataEditorService dataEditorService;
     private static DocketService docketService;
+    private static FileService fileService;
+    private static FileStructureValidationService fileStructureValidationService;
     private static FilterService filterService;
+    private static FolderService folderService;
     private static ImageService imageService;
     private static ImportService importService;
     private static LdapGroupService ldapGroupService;
     private static LdapServerService ldapServerService;
+    private static ListColumnService listColumnService;
+    private static LongTermPreservationValidationService longTermPreservationValidationService;
+    private static MetadataValidationService metadataValidationService;
     private static MetsService metsService;
+    private static MigrationService migrationService;
     private static PropertyService propertyService;
     private static ProcessService processService;
-    private static FolderService folderService;
     private static ProjectService projectService;
+    private static RoleService roleService;
     private static RulesetService rulesetService;
+    private static RulesetManagementService rulesetManagementService;
+    private static SchemaService schemaService;
+    private static SecurityAccessService securityAccessService;
+    private static SessionService sessionService;
     private static TaskService taskService;
     private static TemplateService templateService;
-    private static RoleService roleService;
     private static UserService userService;
     private static WorkflowService workflowService;
     private static WorkflowConditionService workflowConditionService;
-    private static FileService fileService;
-    private static CommandService commandService;
-    private static SchemaService schemaService;
-    private static SecurityAccessService securityAccessService;
-    private static FileStructureValidationService fileStructureValidationService;
-    private static LongTermPreservationValidationService longTermPreservationValidationService;
-    private static MetadataValidationService metadataValidationService;
-    private static RulesetManagementService rulesetManagementService;
-    private static SessionService sessionService;
-    private static ListColumnService listColumnService;
-    private static CommentService commentService;
 
     /**
      * Private constructor.
@@ -266,6 +268,12 @@ public class ServiceManager {
     private static void initializeMetadataValidationService() {
         if (Objects.isNull(metadataValidationService)) {
             metadataValidationService = new MetadataValidationService();
+        }
+    }
+
+    private static void initializeMigrationService() {
+        if (Objects.isNull(migrationService)) {
+            migrationService = new MigrationService();
         }
     }
 
@@ -602,6 +610,17 @@ public class ServiceManager {
     public static MetadataValidationService getMetadataValidationService() {
         initializeMetadataValidationService();
         return metadataValidationService;
+    }
+
+    /**
+     * Initialize MigrationService if it is not yet initialized and
+     * next return it.
+     *
+     * @return MigrationService object
+     */
+    public static MigrationService getMigrationService() {
+        initializeMigrationService();
+        return migrationService;
     }
 
     /**
