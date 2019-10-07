@@ -12,13 +12,13 @@
 package org.kitodo.xmlschemaconverter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +56,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
     The order of XSLT file paths will determine the order of execution.
      */
     private static Map<MetadataFormat, List<String>> supportedSourceMetadataFormats = new HashMap<>();
+
     static {
         supportedSourceMetadataFormats.put(MetadataFormat.MODS, Collections.singletonList("src/main/resources/xslt/mods2kitodo.xsl"));
         supportedSourceMetadataFormats.put(MetadataFormat.MARC,
@@ -97,7 +98,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             } else {
                 List<String> xslFiles = supportedSourceMetadataFormats.get(record.getMetadataFormat());
                 for (String xsltFile : xslFiles) {
-                    try (InputStream fileStream = new FileInputStream(xsltFile)) {
+                    try (InputStream fileStream = Files.newInputStream(Paths.get(xsltFile))) {
                         xmlString = transformXmlByXslt(xmlString, fileStream);
                     }
                 }
