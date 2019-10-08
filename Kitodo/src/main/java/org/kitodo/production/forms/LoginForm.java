@@ -11,21 +11,30 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.controller.SessionClientController;
+import org.kitodo.production.security.CustomLoginSuccessHandler;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 
 @Named("LoginForm")
 @SessionScoped
 public class LoginForm implements Serializable {
     private User loggedUser;
-    private boolean alreadyLoggedIn = false;
     private boolean firstVisit = true;
+    private static final String SYSTEM_VIEW = "system.jsf";
+    private static final String DESKTOP_VIEW = "desktop.jsf";
 
     /**
      * Gets current authenticated User.
@@ -51,7 +60,7 @@ public class LoginForm implements Serializable {
      * @return true or false
      */
     public boolean isAlreadyLoggedIn() {
-        return this.alreadyLoggedIn;
+        return false;
     }
 
     /**
@@ -81,6 +90,39 @@ public class LoginForm implements Serializable {
         } else {
             return "login";
         }
+    }
 
+    /**
+     * Check if index is up to date and if user has multiple clients and display corresponding notification dialogs.
+     */
+    public void performPostLoginChecks() throws DataException, DAOException, IOException {
+
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+
+        if (ServiceManager.getIndexingService().isIndexCorrupted()) {
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
+                // redirect admins to system page
+                // TODO: once MigrationForm is ApplicationScoped, set tabIndex there before redirecting to 'system' page!
+                context.redirect(SYSTEM_VIEW);
+            } else {
+                // show dialog with logout button to other users
+                PrimeFaces.current().executeScript("PF('indexWarningDialog').show();");
+            }
+        } else {
+            PrimeFaces.current().executeScript("PF('indexWarningDialog').hide();");
+            SessionClientController controller = new SessionClientController();
+            if (controller.getAvailableClientsOfCurrentUser().size() > 1
+                    && Objects.isNull(controller.getCurrentSessionClient())) {
+                controller.showClientSelectDialog();
+            } else {
+                String originalRequest = CustomLoginSuccessHandler.getOriginalRequest(context.getSessionMap()
+                        .get(CustomLoginSuccessHandler.getSavedRequestString()));
+                if (originalRequest.isEmpty() || originalRequest.contains("login")) {
+                    context.redirect(DESKTOP_VIEW);
+                } else {
+                    context.redirect(context.getRequestContextPath() + originalRequest);
+                }
+            }
+        }
     }
 }

@@ -38,13 +38,13 @@
         <div class="wrapper">
             <section id="login-section">
                 <sec:authorize access="isAuthenticated()">
-                    <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
+                    <h:panelGrid columns="2" width="100%" style="margin-bottom:0;">
                         <h:panelGroup>
-                            <h:outputText style="font-weight: normal"
+                            <h:outputText style="font-weight: normal;"
                                           value="#{LoginForm.loggedUser.surname}, #{LoginForm.loggedUser.name}"/>
                         </h:panelGroup>
                         <h:panelGroup>
-                            <form action="${request.contextPath}/logout" method="POST">
+                            <form action="${request.contextPath}/logout" method="post">
                                 <input id="logout" type="submit" value="#{msgs.logout}"/>
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             </form>
@@ -54,10 +54,10 @@
 
                 <sec:authorize access="isAnonymous()">
                     <h3>#{msgs.pleaseSignIn}</h3>
-                    <form action="${request.contextPath}/login" method="POST">
-                        <font color="red">
+                    <form action="${request.contextPath}/login" method="post">
+                        <span style="color: red; ">
                             <h:outputText value="${SPRING_SECURITY_LAST_EXCEPTION.localizedMessage}"/>
-                        </font>
+                        </span>
                         <div>
                             <label for="username">#{msgs.username}</label>
                             <input id="username" name="username" autocomplete="username"/>

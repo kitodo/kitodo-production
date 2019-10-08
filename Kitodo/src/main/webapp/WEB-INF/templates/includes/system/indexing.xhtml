@@ -59,7 +59,7 @@
                                                  rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                                  value="#{msgs.deleteIndex}"
                                                  style="width: 100%;"
-                                                 action="#{indexingForm.deleteIndex(true)}"
+                                                 action="#{indexingForm.deleteIndex()}"
                                                  disabled="#{!indexingForm.indexExists() or indexingForm.indexingInProgress()}"
                                                  update="indexingTable"
                                                  onclick="return confirm('Do you REALLY want to delete the whole index?');deleteIndex(#{indexingForm.objectTypesAsJson});"/>

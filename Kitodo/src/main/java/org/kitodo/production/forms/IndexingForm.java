@@ -11,139 +11,43 @@
 
 package org.kitodo.production.forms;
 
-import static java.lang.Math.toIntExact;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigMain;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.IndexWorker;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.index.IndexingService;
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
 import org.omnifaces.util.Ajax;
-import org.primefaces.PrimeFaces;
 
 @Named
 @ApplicationScoped
 public class IndexingForm {
 
-    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
     private static List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
-
-    private static final String MAPPING_STARTED_MESSAGE = "mapping_started";
-    private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
-    private static final String MAPPING_FAILED_MESSAGE = "mapping_failed";
-
-    private static final String DELETION_STARTED_MESSAGE = "deletion_started";
-    private static final String DELETION_FINISHED_MESSAGE = "deletion_finished";
-    private static final String DELETION_FAILED_MESSAGE = "deletion_failed";
-
-    private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
-    private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
-
+    private static final Logger logger = LogManager.getLogger(IndexingForm.class);
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
-
-    private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
-    private int pause = 1000;
+    private String indexingStartedUser = "";
 
     @Inject
     @Push(channel = POLLING_CHANNEL_NAME)
     private PushContext pollingChannel;
-
-    private static final Logger logger = LogManager.getLogger(IndexingForm.class);
-
-    private ObjectType currentIndexState = ObjectType.NONE;
-
-    private boolean indexingAll = false;
-
-    private Boolean indexCorrupted;
-
-    private enum IndexStates {
-        NO_STATE,
-        DELETE_ERROR,
-        DELETE_SUCCESS,
-        MAPPING_ERROR,
-        MAPPING_SUCCESS,
-    }
-
-    private enum IndexingStates {
-        NO_STATE,
-        INDEXING_STARTED,
-        INDEXING_SUCCESSFUL,
-        INDEXING_FAILED,
-    }
-
-    private IndexStates currentState = IndexStates.NO_STATE;
-
-    private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
-
-    private Map<ObjectType, Integer> indexedObjects = new EnumMap<>(ObjectType.class);
-
-    private Map<ObjectType, IndexingStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
-
-    private Map<ObjectType, SearchService> searchServices = new EnumMap<>(ObjectType.class);
-
-    private Map<ObjectType, List<IndexWorker>> indexWorkers = new EnumMap<>(ObjectType.class);
-
-    private IndexWorker currentIndexWorker;
-
-    private String indexingStartedUser = "";
-    private LocalDateTime indexingStartedTime = null;
-
-    private Thread indexerThread = null;
-
-    /**
-     * Standard constructor.
-     */
-    IndexingForm() {
-        for (ObjectType objectType : objectTypes) {
-            searchServices.put(objectType, getService(objectType));
-            objectIndexingStates.put(objectType, IndexingStates.NO_STATE);
-        }
-
-        indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
-
-        prepareIndexWorker();
-
-        countDatabaseObjects();
-
-        if (indexExists()) {
-            for (ObjectType objectType : objectTypes) {
-                indexedObjects.put(objectType, countDatabaseObjects.get(objectType));
-            }
-        }
-    }
 
     /**
      * Get user which started indexing.
@@ -159,8 +63,10 @@ public class IndexingForm {
      * click.
      */
     public void countDatabaseObjects() {
-        for (ObjectType objectType : objectTypes) {
-            countDatabaseObjects.put(objectType, getNumberOfDatabaseObjects(objectType));
+        try {
+            ServiceManager.getIndexingService().countDatabaseObjects();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -170,7 +76,7 @@ public class IndexingForm {
      * @return time when indexing has started as LocalDateTime
      */
     public LocalDateTime getIndexingStartedTime() {
-        return indexingStartedTime;
+        return ServiceManager.getIndexingService().getIndexingStartedTime();
     }
 
     /**
@@ -179,7 +85,7 @@ public class IndexingForm {
      * @return value of countDatabaseObjects
      */
     public Map<ObjectType, Integer> getCountDatabaseObjects() {
-        return countDatabaseObjects;
+        return ServiceManager.getIndexingService().getCountDatabaseObjects();
     }
 
     /**
@@ -188,31 +94,7 @@ public class IndexingForm {
      * @return long number of all items that can be written to the index
      */
     public long getTotalCount() {
-        int totalCount = 0;
-        for (ObjectType objectType : objectTypes) {
-            totalCount += countDatabaseObjects.get(objectType);
-        }
-        return totalCount;
-    }
-
-    /**
-     * Check index integrity and display warning if objects in index do not correspond to objects in database.
-     */
-    public void checkIndexIntegrity() throws IOException {
-        if (Objects.isNull(indexCorrupted)) {
-            updateCounts();
-            indexCorrupted = getTotalCount() != getAllIndexed();
-        }
-
-        if (indexCorrupted) {
-            if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
-                // redirect admins to system page
-                FacesContext.getCurrentInstance().getExternalContext().redirect("system.jsf");
-            } else {
-                // show dialog with logout button to other users
-                PrimeFaces.current().executeScript("PF('logoutDialog').show();");
-            }
-        }
+        return ServiceManager.getIndexingService().getTotalCount();
     }
 
     /**
@@ -224,13 +106,12 @@ public class IndexingForm {
      * @return number of indexed objects
      */
     public long getNumberOfIndexedObjects(ObjectType objectType) {
-        long numberOfIndexedObjects = 0;
         try {
-            numberOfIndexedObjects = searchServices.get(objectType).count();
+            return ServiceManager.getIndexingService().getNumberOfIndexedObjects(objectType);
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return 0;
         }
-        return numberOfIndexedObjects;
     }
 
     /**
@@ -240,11 +121,12 @@ public class IndexingForm {
      * @return int number of all currently indexed objects
      */
     public int getAllIndexed() {
-        int allIndexed = 0;
-        for (ObjectType objectType : objectTypes) {
-            allIndexed += getNumberOfIndexedObjects(objectType);
+        try {
+            return ServiceManager.getIndexingService().getAllIndexed();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return 0;
         }
-        return allIndexed;
     }
 
     /**
@@ -255,7 +137,7 @@ public class IndexingForm {
      */
     public void callIndexing(ObjectType type) {
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        startIndexing(type);
+        ServiceManager.getIndexingService().startIndexing(type, pollingChannel);
     }
 
     /**
@@ -266,7 +148,7 @@ public class IndexingForm {
      */
     public void callIndexingRemaining(ObjectType type) {
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        startIndexingRemaining(type);
+        ServiceManager.getIndexingService().startIndexingRemaining(type, pollingChannel);
     }
 
     /**
@@ -274,22 +156,14 @@ public class IndexingForm {
      */
     public void startAllIndexing() {
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        IndexAllThread indexAllThread = new IndexAllThread();
-        indexAllThread.setName("IndexAllThread");
-        indexAllThread.start();
+        ServiceManager.getIndexingService().startAllIndexing(pollingChannel);
     }
 
     /**
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexingRemaining() {
-        for (Map.Entry<ObjectType, List<IndexWorker>> workerEntry : indexWorkers.entrySet()) {
-            List<IndexWorker> indexWorkerList = workerEntry.getValue();
-            for (IndexWorker worker : indexWorkerList) {
-                worker.setIndexAllObjects(false);
-            }
-        }
-        startAllIndexing();
+        ServiceManager.getIndexingService().startAllIndexingRemaining(pollingChannel);
     }
 
     /**
@@ -309,11 +183,11 @@ public class IndexingForm {
      *         progress or not
      */
     public boolean indexingInProgress() {
-        return !Objects.equals(this.currentIndexState, ObjectType.NONE) || indexingAll;
+        return ServiceManager.getIndexingService().indexingInProgress();
     }
 
     /**
-     * Create mapping which enables sorting and other aggregation functionalities.
+     * Create mapping which enables sorting and other aggregation functions.
      *
      * @param updatePollingChannel
      *            flag indicating whether the web socket channel to the frontend
@@ -321,41 +195,18 @@ public class IndexingForm {
      *            or not.
      */
     public void createMapping(boolean updatePollingChannel) {
-        if (updatePollingChannel) {
-            pollingChannel.send(MAPPING_STARTED_MESSAGE);
-        }
         try {
-            String mapping = readMapping();
-            String mappingStateMessage;
-            if (mapping.equals("")) {
-                if (indexRestClient.createIndex()) {
-                    currentState = IndexStates.MAPPING_SUCCESS;
-                    mappingStateMessage = MAPPING_FINISHED_MESSAGE;
-                } else {
-                    currentState = IndexStates.MAPPING_ERROR;
-                    mappingStateMessage = MAPPING_FAILED_MESSAGE;
-                }
-            } else {
-                if (indexRestClient.createIndex(mapping)) {
-                    if (isMappingValid(mapping)) {
-                        currentState = IndexStates.MAPPING_SUCCESS;
-                        mappingStateMessage = MAPPING_FINISHED_MESSAGE;
-                    } else {
-                        currentState = IndexStates.MAPPING_ERROR;
-                        mappingStateMessage = MAPPING_FAILED_MESSAGE;
-                    }
-                } else {
-                    currentState = IndexStates.MAPPING_ERROR;
-                    mappingStateMessage = MAPPING_FAILED_MESSAGE;
-                }
+            if (updatePollingChannel) {
+                pollingChannel.send(IndexingService.MAPPING_STARTED_MESSAGE);
             }
+            String mappingStateMessage = ServiceManager.getIndexingService().createMapping();
             if (updatePollingChannel) {
                 pollingChannel.send(mappingStateMessage);
             }
-        } catch (CustomResponseException | IOException e) {
-            currentState = IndexStates.MAPPING_ERROR;
+        } catch (IOException | CustomResponseException e) {
+            ServiceManager.getIndexingService().setIndexState(IndexingService.IndexStates.MAPPING_ERROR);
             if (updatePollingChannel) {
-                pollingChannel.send(MAPPING_FAILED_MESSAGE);
+                pollingChannel.send(IndexingService.MAPPING_FAILED_MESSAGE);
             }
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -364,24 +215,10 @@ public class IndexingForm {
     /**
      * Delete whole Elastic Search index.
      */
-    public void deleteIndex(boolean updatePollingChannel) {
-        if (updatePollingChannel) {
-            pollingChannel.send(DELETION_STARTED_MESSAGE);
-        }
-        String updateMessage;
-        try {
-            indexRestClient.deleteIndex();
-            resetGlobalProgress();
-            currentState = IndexStates.DELETE_SUCCESS;
-            updateMessage = DELETION_FINISHED_MESSAGE;
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            currentState = IndexStates.DELETE_ERROR;
-            updateMessage = DELETION_FAILED_MESSAGE;
-        }
-        if (updatePollingChannel) {
-            pollingChannel.send(updateMessage);
-        }
+    public void deleteIndex() {
+        pollingChannel.send(IndexingService.DELETION_STARTED_MESSAGE);
+        String updateMessage = ServiceManager.getIndexingService().deleteIndex();
+        pollingChannel.send(updateMessage);
     }
 
     /**
@@ -392,7 +229,7 @@ public class IndexingForm {
      */
     public String getServerInformation() {
         try {
-            return indexRestClient.getServerInformation();
+            return ServiceManager.getIndexingService().getServerInformation();
         } catch (IOException e) {
             Helper.setErrorMessage("elasticSearchNotRunning", logger, e);
             return "";
@@ -408,40 +245,11 @@ public class IndexingForm {
      * @return the progress of the current indexing process in percent
      */
     public int getProgress(ObjectType currentType) {
-        long numberOfObjects = countDatabaseObjects.get(currentType);
-        long nrOfIndexedObjects = getNumberOfIndexedObjects(currentType);
-        int progress = numberOfObjects > 0 ? (int) ((nrOfIndexedObjects / (float) numberOfObjects) * 100) : 0;
-        if (Objects.equals(currentIndexState, currentType) && (numberOfObjects == 0 || progress == 100)) {
-            lastIndexed.put(currentIndexState, LocalDateTime.now());
-            currentIndexState = ObjectType.NONE;
-            if (numberOfObjects == 0) {
-                objectIndexingStates.put(currentType, IndexingStates.NO_STATE);
-            } else {
-                objectIndexingStates.put(currentType, IndexingStates.INDEXING_SUCCESSFUL);
-            }
-            indexerThread.interrupt();
-            pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
-        }
-        return progress;
-    }
-
-    private void resetGlobalProgress() {
-        for (ObjectType objectType : objectTypes) {
-            indexedObjects.put(objectType, 0);
-        }
-    }
-
-    private static String readMapping() {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
-            String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
-                JsonObject jsonObject = jsonReader.readObject();
-                return jsonObject.toString();
-            }
-        } catch (IOException e) {
+        try {
+            return ServiceManager.getIndexingService().getProgress(currentType, pollingChannel);
+        } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return "";
+            return 0;
         }
     }
 
@@ -451,23 +259,7 @@ public class IndexingForm {
      * @return true if mapping is empty, otherwise false
      */
     public boolean isMappingEmpty() {
-        String emptyMapping = "{\n\"mappings\": {\n\n    }\n}";
-        return isMappingEqualTo(emptyMapping);
-    }
-
-    private boolean isMappingValid(String mapping) {
-        return isMappingEqualTo(mapping);
-    }
-
-    private boolean isMappingEqualTo(String mapping) {
-        try (JsonReader mappingExpectedReader = Json.createReader(new StringReader(mapping));
-                JsonReader mappingCurrentReader = Json.createReader(new StringReader(indexRestClient.getMapping()))) {
-            JsonObject mappingExpected = mappingExpectedReader.readObject();
-            JsonObject mappingCurrent = mappingCurrentReader.readObject().getJsonObject(indexRestClient.getIndex());
-            return mappingExpected.equals(mappingCurrent);
-        } catch (IOException e) {
-            return false;
-        }
+        return ServiceManager.getIndexingService().isMappingEmpty();
     }
 
     /**
@@ -477,7 +269,7 @@ public class IndexingForm {
      */
     public boolean indexExists() {
         try {
-            return indexRestClient.indexExists();
+            return ServiceManager.getIndexingService().indexExists();
         } catch (IOException | CustomResponseException ignored) {
             return false;
         }
@@ -490,8 +282,8 @@ public class IndexingForm {
      *
      * @return state of ES index
      */
-    public IndexStates getIndexState() {
-        return currentState;
+    public IndexingService.IndexStates getIndexState() {
+        return ServiceManager.getIndexingService().getIndexState();
     }
 
     /**
@@ -502,8 +294,8 @@ public class IndexingForm {
      *
      * @return indexing state of the given object type.
      */
-    public IndexingStates getObjectIndexState(ObjectType objectType) {
-        return objectIndexingStates.get(objectType);
+    public IndexingService.IndexingStates getObjectIndexState(ObjectType objectType) {
+        return ServiceManager.getIndexingService().getObjectIndexState(objectType);
     }
 
     /**
@@ -511,8 +303,8 @@ public class IndexingForm {
      *
      * @return 'indexing failed' state variable
      */
-    public IndexingStates getIndexingFailedState() {
-        return IndexingStates.INDEXING_FAILED;
+    public IndexingService.IndexingStates getIndexingFailedState() {
+        return IndexingService.IndexingStates.INDEXING_FAILED;
     }
 
     /**
@@ -520,8 +312,8 @@ public class IndexingForm {
      *
      * @return 'indexing successful' state variable
      */
-    public IndexingStates getIndexingSuccessfulState() {
-        return IndexingStates.INDEXING_SUCCESSFUL;
+    public IndexingService.IndexingStates getIndexingSuccessfulState() {
+        return IndexingService.IndexingStates.INDEXING_SUCCESSFUL;
     }
 
     /**
@@ -529,8 +321,8 @@ public class IndexingForm {
      *
      * @return 'indexing started' state variable
      */
-    public IndexingStates getIndexingStartedState() {
-        return IndexingStates.INDEXING_STARTED;
+    public IndexingService.IndexingStates getIndexingStartedState() {
+        return IndexingService.IndexingStates.INDEXING_STARTED;
     }
 
     /**
@@ -541,16 +333,8 @@ public class IndexingForm {
      *
      * @return static variable for global indexing state
      */
-    public IndexingStates getAllObjectsIndexingState() {
-        for (ObjectType objectType : objectTypes) {
-            if (Objects.equals(objectIndexingStates.get(objectType), IndexingStates.INDEXING_FAILED)) {
-                return IndexingStates.INDEXING_FAILED;
-            }
-            if (Objects.equals(objectIndexingStates.get(objectType), IndexingStates.NO_STATE)) {
-                return IndexingStates.NO_STATE;
-            }
-        }
-        return IndexingStates.INDEXING_SUCCESSFUL;
+    public IndexingService.IndexingStates getAllObjectsIndexingState() {
+        return ServiceManager.getIndexingService().getAllObjectsIndexingState();
     }
 
     /**
@@ -576,46 +360,6 @@ public class IndexingForm {
         return objectsTypesJson.build();
     }
 
-    private SearchService getService(ObjectType objectType) {
-        if (!searchServices.containsKey(objectType) || Objects.isNull(searchServices.get(objectType))) {
-            switch (objectType) {
-                case BATCH:
-                    searchServices.put(objectType, ServiceManager.getBatchService());
-                    break;
-                case DOCKET:
-                    searchServices.put(objectType, ServiceManager.getDocketService());
-                    break;
-                case PROCESS:
-                    searchServices.put(objectType, ServiceManager.getProcessService());
-                    break;
-                case PROJECT:
-                    searchServices.put(objectType, ServiceManager.getProjectService());
-                    break;
-                case PROPERTY:
-                    searchServices.put(objectType, ServiceManager.getPropertyService());
-                    break;
-                case RULESET:
-                    searchServices.put(objectType, ServiceManager.getRulesetService());
-                    break;
-                case TASK:
-                    searchServices.put(objectType, ServiceManager.getTaskService());
-                    break;
-                case TEMPLATE:
-                    searchServices.put(objectType, ServiceManager.getTemplateService());
-                    break;
-                case WORKFLOW:
-                    searchServices.put(objectType, ServiceManager.getWorkflowService());
-                    break;
-                case FILTER:
-                    searchServices.put(objectType, ServiceManager.getFilterService());
-                    break;
-                default:
-                    return null;
-            }
-        }
-        return searchServices.get(objectType);
-    }
-
     /**
      * Return NONE object type.
      *
@@ -626,162 +370,14 @@ public class IndexingForm {
     }
 
     /**
-     * Update counts of index and database objects.
-     */
-    private void updateCounts() {
-        for (ObjectType objectType : objectTypes) {
-            updateCount(objectType);
-        }
-        countDatabaseObjects();
-    }
-    /**
      * Update the view.
      */
     public void updateView() {
-        updateCounts();
-        Ajax.update("@all");
-    }
-
-    private void updateCount(ObjectType objectType) {
-        SearchService searchService = getService(objectType);
-        if (Objects.nonNull(searchService)) {
-            try {
-                indexedObjects.put(objectType, toIntExact(searchService.count()));
-            } catch (DataException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
-    }
-
-    private void prepareIndexWorker() {
-
-        int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
-        for (ObjectType objectType : ObjectType.values()) {
-            List<IndexWorker> indexWorkerList = new ArrayList<>();
-
-            int databaseObjectsSize = getNumberOfDatabaseObjects(objectType);
-            if (databaseObjectsSize > indexLimit) {
-                int start = 0;
-
-                while (start < databaseObjectsSize) {
-                    indexWorkerList.add(new IndexWorker(searchServices.get(objectType), start));
-                    start += indexLimit;
-                }
-            } else {
-                indexWorkerList.add(new IndexWorker(searchServices.get(objectType)));
-            }
-
-            indexWorkers.put(objectType, indexWorkerList);
-        }
-    }
-
-    /**
-     * Return the number of objects in the database for the given ObjectType.
-     *
-     * @param objectType
-     *            name of ObjectType for which the number of database objects is
-     *            returned
-     * @return number of database objects
-     */
-    private int getNumberOfDatabaseObjects(ObjectType objectType) {
         try {
-            SearchService searchService = searchServices.get(objectType);
-            if (Objects.nonNull(searchService)) {
-                return toIntExact(searchService.countDatabaseRows());
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return 0;
-    }
-
-    /**
-     * Index all objects of given type 'objectType'.
-     *
-     * @param type
-     *            type objects that get indexed
-     */
-    private void startIndexing(ObjectType type) {
-        if (countDatabaseObjects.get(type) > 0) {
-            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
-            for (IndexWorker worker : indexWorkerList) {
-                currentIndexWorker = worker;
-                runIndexing(currentIndexWorker, type);
-            }
-        }
-    }
-
-    /**
-     * Index all objects of given type 'objectType'.
-     *
-     * @param type
-     *            type objects that get indexed
-     */
-    private void startIndexingRemaining(ObjectType type) {
-        if (countDatabaseObjects.get(type) > 0) {
-            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
-            for (IndexWorker worker : indexWorkerList) {
-                worker.setIndexAllObjects(false);
-                currentIndexWorker = worker;
-                runIndexing(currentIndexWorker, type);
-            }
-        }
-    }
-
-    private void runIndexing(IndexWorker worker, ObjectType type) {
-        currentState = IndexStates.NO_STATE;
-        int attempts = 0;
-        while (attempts < 100) {
-            try {
-                if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
-                    if (Objects.equals(currentIndexState, ObjectType.NONE)) {
-                        logger.debug("Starting indexing of type " + type);
-                        indexingStartedTime = LocalDateTime.now();
-                        currentIndexState = type;
-                        objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
-                        pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
-                    }
-                    indexerThread = new Thread(worker);
-                    indexerThread.setName("Indexing " + worker.getIndexedObjects() + " of type " + type);
-                    indexerThread.setDaemon(true);
-                    indexerThread.start();
-                    indexerThread.join();
-                    break;
-                } else {
-                    logger.debug("Cannot start '{}' indexing while a different indexing process running: '{}'", type,
-                        this.currentIndexState);
-                    Thread.sleep(pause);
-                    attempts++;
-                }
-            } catch (InterruptedException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-
-    class IndexAllThread extends Thread {
-
-        @Override
-        public void run() {
-            resetGlobalProgress();
-            indexingAll = true;
-
-            for (ObjectType objectType : objectTypes) {
-                startIndexing(objectType);
-            }
-
-            try {
-                sleep(pause);
-            } catch (InterruptedException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                Thread.currentThread().interrupt();
-            }
-
-            currentIndexState = ObjectType.NONE;
-            indexingAll = false;
-
-            pollingChannel.send(INDEXING_FINISHED_MESSAGE);
+            ServiceManager.getIndexingService().updateCounts();
+            Ajax.update("@all");
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(e.getMessage());
         }
     }
 }
