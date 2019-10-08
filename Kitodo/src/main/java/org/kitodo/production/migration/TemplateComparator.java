@@ -20,7 +20,10 @@ public class TemplateComparator implements Comparator<Template> {
 
     @Override
     public int compare(Template firstTemplate, Template secondTemplate) {
-        if (Objects.isNull(firstTemplate) || Objects.isNull(secondTemplate)) {
+        if (Objects.isNull(firstTemplate)) {
+            return Objects.isNull(secondTemplate) ? 0 : 1;
+        }
+        if (Objects.isNull(secondTemplate)) {
             return 1;
         }
         if (Objects.isNull(firstTemplate.getWorkflow()) ? Objects.nonNull(secondTemplate.getWorkflow())
