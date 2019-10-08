@@ -56,8 +56,8 @@ public class XmlSchemaConverterTest {
 
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
         Assert.assertEquals("Conversion result has wrong MetadataFormat!",
-                internalFormatRecord.getMetadataFormat(), MetadataFormat.KITODO);
-        Assert.assertEquals("Conversion result has wrong FileFormat!", internalFormatRecord.getFileFormat(), FileFormat.XML);
+                MetadataFormat.KITODO, internalFormatRecord.getMetadataFormat());
+        Assert.assertEquals("Conversion result has wrong FileFormat!", FileFormat.XML, internalFormatRecord.getFileFormat());
         Assert.assertThat("Wrong class of original data object!", internalFormatRecord.getOriginalData(), instanceOf(String.class));
         Document resultDocument = parseInputStreamToDocument((String) internalFormatRecord.getOriginalData());
         NodeList metadataNodes = resultDocument.getElementsByTagName("kitodo:metadata");
@@ -83,9 +83,9 @@ public class XmlSchemaConverterTest {
             }
         }
 
-        Assert.assertEquals("Title after conversion is wrong!", title, "Test-Title");
-        Assert.assertEquals("Catalog ID after conversion is wrong!", catalogId, "67890");
-        Assert.assertEquals("PublicationYear after conversion is wrong!", year, "1999-12-31");
+        Assert.assertEquals("Title after conversion is wrong!", "Test-Title", title);
+        Assert.assertEquals("Catalog ID after conversion is wrong!", "67890", catalogId);
+        Assert.assertEquals("PublicationYear after conversion is wrong!", "1999-12-31", year);
     }
 
     @Test
@@ -103,8 +103,8 @@ public class XmlSchemaConverterTest {
 
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
         Assert.assertEquals("Conversion result has wrong MetadataFormat!",
-                internalFormatRecord.getMetadataFormat(), MetadataFormat.KITODO);
-        Assert.assertEquals("Conversion result has wrong FileFormat!", internalFormatRecord.getFileFormat(), FileFormat.XML);
+                MetadataFormat.KITODO, internalFormatRecord.getMetadataFormat());
+        Assert.assertEquals("Conversion result has wrong FileFormat!", FileFormat.XML, internalFormatRecord.getFileFormat());
         Assert.assertThat("Wrong class of original data object!", internalFormatRecord.getOriginalData(), instanceOf(String.class));
         Document resultDocument = parseInputStreamToDocument((String) internalFormatRecord.getOriginalData());
         NodeList metadataNodes = resultDocument.getElementsByTagName("kitodo:metadata");
@@ -134,10 +134,10 @@ public class XmlSchemaConverterTest {
             }
         }
 
-        Assert.assertEquals("Title after conversion is wrong!", title, "Test-Title");
-        Assert.assertEquals("Catalog ID after conversion is wrong!", catalogId, "67890");
-        Assert.assertEquals("PlaceOfPublication after conversion is wrong!", place, "Test-Place");
-        Assert.assertEquals("shelfmarksource after conversion is wrong!", shelfmarksource, "Test-Shelflocator");
+        Assert.assertEquals("Title after conversion is wrong!", "Test-Title", title);
+        Assert.assertEquals("Catalog ID after conversion is wrong!", "67890", catalogId);
+        Assert.assertEquals("PlaceOfPublication after conversion is wrong!", "Test-Place", place);
+        Assert.assertEquals("shelfmarksource after conversion is wrong!", "Test-Shelflocator", shelfmarksource);
     }
 
     private Document parseInputStreamToDocument(String inputString) throws ParserConfigurationException,
