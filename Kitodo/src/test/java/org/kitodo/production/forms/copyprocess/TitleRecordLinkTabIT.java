@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.forms.createprocess.TitleRecordLinkTab;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -84,9 +85,9 @@ public class TitleRecordLinkTabIT {
     @Test
     @Ignore
     public void shouldSearchForParentProcesses() throws Exception {
-        ProzesskopieForm prozesskopieForm = new ProzesskopieForm();
-        prozesskopieForm.project = ServiceManager.getProjectService().getById(1);
-        prozesskopieForm.template = ServiceManager.getTemplateService().getById(1);
+        CreateProcessForm createProcessForm = new CreateProcessForm();
+        createProcessForm.setProject(ServiceManager.getProjectService().getById(1));
+        createProcessForm.setTemplate(ServiceManager.getTemplateService().getById(1));
         TitleRecordLinkTab testedTitleRecordLinkTab = new TitleRecordLinkTab(null);
         testedTitleRecordLinkTab.setSearchQuery("HierarchyParent");
         testedTitleRecordLinkTab.searchForParentProcesses();

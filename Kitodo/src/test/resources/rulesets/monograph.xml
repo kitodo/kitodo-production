@@ -36,7 +36,6 @@
             <key id="Role">
                 <label>Rolle</label>
                 <option value="Author">
-                    <label>Author</label>
                     <label>Autor</label>
                 </option>
             </key>

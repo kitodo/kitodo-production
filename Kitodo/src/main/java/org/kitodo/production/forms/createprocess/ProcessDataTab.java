@@ -15,15 +15,12 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.forms.CreateProcessForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
@@ -37,9 +34,6 @@ public class ProcessDataTab {
     private String docType;
     private String atstsl = "";
     private String titleDefinition;
-    protected transient List<String> digitalCollections;
-    private transient List<String> availableDigitalCollections;
-    private transient Map<String, Boolean> standardFields;
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
     private int guessedImages = 0;
@@ -55,7 +49,7 @@ public class ProcessDataTab {
             this.docType = docType;
             this.createProcessForm.getWorkpiece().getRootElement().setType(getRulesetType());
             if (this.docType.isEmpty()) {
-                this.createProcessForm.getAdditionalDetailsTab().resetAddtionalDetailsTable();
+                this.createProcessForm.getAdditionalDetailsTab().setAdditionalDetailsTable(new FieldedAdditionalDetailsTableRow());
             } else {
                 this.createProcessForm.getAdditionalDetailsTab().show(this.createProcessForm.getWorkpiece().getRootElement());
             }
@@ -92,42 +86,6 @@ public class ProcessDataTab {
             }
         }
         return "";
-    }
-
-    /**
-     * Get digitalCollections.
-     *
-     * @return value of digitalCollections
-     */
-    public List<String> getDigitalCollections() {
-        return digitalCollections;
-    }
-
-    /**
-     * Set digitalCollections.
-     *
-     * @param digitalCollections as java.util.List of String
-     */
-    public void setDigitalCollections(List<String> digitalCollections) {
-        this.digitalCollections = digitalCollections;
-    }
-
-    /**
-     * Get availableDigitalCollections.
-     *
-     * @return value of availableDigitalCollections
-     */
-    public List<String> getAvailableDigitalCollections() {
-        return availableDigitalCollections;
-    }
-
-    /**
-     * Set availableDigitalCollections.
-     *
-     * @param availableDigitalCollections as java.util.List of String
-     */
-    public void setAvailableDigitalCollections(List<String> availableDigitalCollections) {
-        this.availableDigitalCollections = availableDigitalCollections;
     }
 
     /**
@@ -185,23 +143,6 @@ public class ProcessDataTab {
     }
 
     /**
-     * reset all process data.
-     */
-    public void resetProcessData() {
-        this.standardFields = new HashMap<>();
-        this.standardFields.put("collections", true);
-        this.standardFields.put("doctype", true);
-        this.standardFields.put("regelsatz", true);
-        this.standardFields.put("images", true);
-        this.tifHeaderDocumentName = "";
-        this.tifHeaderImageDescription = "";
-    }
-
-    public Map<String, Boolean> getStandardFields() {
-        return this.standardFields;
-    }
-
-    /**
      * Get all document types.
      *
      * @return list of ConfigOpacDoctype objects
@@ -220,12 +161,30 @@ public class ProcessDataTab {
     }
 
     /**
+     * Get titleDefinition.
+     *
+     * @return value of titleDefinition
+     */
+    public String getTitleDefinition() {
+        return titleDefinition;
+    }
+
+    /**
      * Set tifDefinition.
      *
      * @param tifDefinition as java.lang.String
      */
     public void setTifDefinition(String tifDefinition) {
         this.tifDefinition = tifDefinition;
+    }
+
+    /**
+     * Get tifDefinition.
+     *
+     * @return value of tifDefinition
+     */
+    public String getTifDefinition() {
+        return tifDefinition;
     }
 
     /**
@@ -265,14 +224,5 @@ public class ProcessDataTab {
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    /**
-     * Set standardFields.
-     *
-     * @param standardFields as java.util.Map
-     */
-    public void setStandardFields(Map<String, Boolean> standardFields) {
-        this.standardFields = standardFields;
     }
 }

@@ -45,30 +45,17 @@ public final class ProcessValidator {
      *            of process for validation
      * @param additionalDetailsTableRows
      *            for process validation
-     * @param digitalCollections
-     *            as List of Strings
-     * @param standardFields
-     *            as Map Boolean to String
      * @param criticiseEmptyTitle
      *            true or false
      * @return true or false
      */
     public static boolean isContentValid(String title, List<AdditionalDetailsTableRow> additionalDetailsTableRows,
-            List<String> digitalCollections, Map<String, Boolean> standardFields, boolean criticiseEmptyTitle) {
+                                         boolean criticiseEmptyTitle) {
         boolean valid = true;
 
         if (criticiseEmptyTitle) {
             valid = isProcessTitleCorrect(title);
         }
-
-        // Check the standard entries that must be specified
-
-        // no collection selected
-        if (standardFields.get("collections") && digitalCollections.isEmpty()) {
-            valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorNoCollection");
-        }
-
         // check the additional inputs that must be specified
         for (AdditionalDetailsTableRow row : additionalDetailsTableRows) {
             if (row.isRequired() && !row.isValid()) {

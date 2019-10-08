@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
 import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
@@ -144,11 +143,12 @@ public class TitleGenerator extends Generator {
              * already exist
              */
             if ("TSL_ATS".equals(rowMetadataID)) {
-                if (StringUtils.isEmpty(this.atstsl)) {
+                if (rowValue.isEmpty()) {
                     this.atstsl = createAtstsl(currentTitle, currentAuthors);
+                    AdditionalDetailsTab.setAdditionalDetailsRow(row, this.atstsl);
+                    rowValue = this.atstsl;
                 }
-                AdditionalDetailsTab.setAdditionalDetailsRow(row, this.atstsl);
-                rowValue = this.atstsl;
+                this.atstsl = rowValue;
             }
             // add the content to the title
             if (rowMetadataID.equals(token) && Objects.nonNull(rowValue)) {

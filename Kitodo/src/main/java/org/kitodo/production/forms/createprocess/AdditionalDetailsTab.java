@@ -11,11 +11,14 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +29,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.production.forms.CreateProcessForm;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -42,14 +44,10 @@ public class AdditionalDetailsTab {
 
     private CreateProcessForm createProcessForm;
 
-    private FieldedAdditionalDetailsTableRow additionalDetailsTable = FieldedAdditionalDetailsTableRow.EMPTY;
+    private FieldedAdditionalDetailsTableRow additionalDetailsTable = new FieldedAdditionalDetailsTableRow();
 
     public AdditionalDetailsTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
-    }
-
-    public void resetAddtionalDetailsTable() {
-        this.additionalDetailsTable = new FieldedAdditionalDetailsTableRow();
     }
 
     /**
@@ -64,6 +62,16 @@ public class AdditionalDetailsTab {
                 this.createProcessForm.getPriorityList());
         additionalDetailsTable = new FieldedAdditionalDetailsTableRow(this, structure, divisionView);
     }
+
+    /**
+     * Set additionalDetailsTable.
+     * @param additionalDetailsTable
+     *          as FieldedAdditionalDetailsTableRow
+     */
+    public void setAdditionalDetailsTable(FieldedAdditionalDetailsTableRow additionalDetailsTable) {
+        this.additionalDetailsTable = additionalDetailsTable;
+    }
+
 
     /**
      * Returns the rows of logical metadata that JSF has to display.
@@ -102,7 +110,7 @@ public class AdditionalDetailsTab {
 
         List<MetadataViewInterface> filteredViews = docTypeAddableDivisions
                .stream()
-               .filter(v -> v.getId().equals(metadataId))
+               .filter(metadataView -> metadataView.getId().equals(metadataId))
                .collect(Collectors.toList());
 
         if (!filteredViews.isEmpty()) {
@@ -118,7 +126,7 @@ public class AdditionalDetailsTab {
         throw new NoSuchMetadataFieldException(metadataId, "");
     }
 
-    void setAdditionalDetailsTable(List<AdditionalDetailsTableRow> rows, NodeList nodes, boolean childRows) {
+    void fillAdditionalDetailsTable(List<AdditionalDetailsTableRow> rows, NodeList nodes, boolean childRows) {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             Element element = (Element) node;
@@ -130,7 +138,7 @@ public class AdditionalDetailsTab {
                         filled = true;
                         if (node.getLocalName().equals("metadataGroup")
                                 && tableRow instanceof FieldedAdditionalDetailsTableRow) {
-                            setAdditionalDetailsTable(((FieldedAdditionalDetailsTableRow) tableRow).getRows(),
+                            fillAdditionalDetailsTable(((FieldedAdditionalDetailsTableRow) tableRow).getRows(),
                                     element.getChildNodes(), true);
                         } else if (node.getLocalName().equals("metadata")) {
                             setAdditionalDetailsRow(tableRow, element.getTextContent());
@@ -144,7 +152,7 @@ public class AdditionalDetailsTab {
                     AdditionalDetailsTableRow newRow = addAdditionalDetailRow(nodeName);
                     this.additionalDetailsTable.getRows().add(newRow);
                     if (newRow instanceof FieldedAdditionalDetailsTableRow) {
-                        setAdditionalDetailsTable(((FieldedAdditionalDetailsTableRow) newRow).getRows(), element.getChildNodes(), true);
+                        fillAdditionalDetailsTable(((FieldedAdditionalDetailsTableRow) newRow).getRows(), element.getChildNodes(), true);
                     } else {
                         setAdditionalDetailsRow(newRow, element.getTextContent());
                     }
@@ -189,7 +197,7 @@ public class AdditionalDetailsTab {
         } else if (row instanceof BooleanAdditionalDetailsTableRow) {
             return String.valueOf(((BooleanAdditionalDetailsTableRow) row).isActive());
         } else if (row instanceof SelectAdditionalDetailsTableRow) {
-            return ((SelectAdditionalDetailsTableRow) row).getSelectedItem();
+            return String.join(", ", ((SelectAdditionalDetailsTableRow) row).getSelectedItems());
         } else if (row instanceof FieldedAdditionalDetailsTableRow && row.getMetadataID().equals(PERSON)) {
             value = getCreator(((FieldedAdditionalDetailsTableRow) row).getRows());
         }

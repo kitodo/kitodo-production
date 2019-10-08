@@ -26,7 +26,6 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.production.forms.CreateProcessForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
@@ -214,7 +213,7 @@ public class ImportTab implements Serializable {
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
         for (int i = 0; i < kitodoNodes.getLength(); i++) {
             Node kitodoNode = kitodoNodes.item(i);
-            this.createProcessForm.getAdditionalDetailsTab().setAdditionalDetailsTable(additionalDetailsTableRows,
+            this.createProcessForm.getAdditionalDetailsTab().fillAdditionalDetailsTable(additionalDetailsTableRows,
                     kitodoNode.getChildNodes(), false);
         }
     }

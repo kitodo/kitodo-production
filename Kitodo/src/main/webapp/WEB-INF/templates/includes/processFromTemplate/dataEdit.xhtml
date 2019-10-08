@@ -34,9 +34,8 @@
 
             <div>
                 <!-- DocType -->
-                <p:outputLabel value="DocType" rendered="#{CreateProcessForm.processDataTab.standardFields.doctype}"/>
+                <p:outputLabel value="DocType"/>
                 <p:selectOneMenu id="docType" value="#{CreateProcessForm.processDataTab.docType}"
-                                 rendered="#{CreateProcessForm.processDataTab.standardFields.doctype}"
                                  styleClass="prozessKopieFeldbreite">
                     <f:selectItems value="#{CreateProcessForm.processDataTab.allDoctypes}"
                                    var="step"
@@ -49,9 +48,8 @@
             <div>
                 <!-- Preferences -->
                 <p:outputLabel for="ruleset"
-                               rendered="#{CreateProcessForm.processDataTab.standardFields.regelsatz}"
                                value="#{msgs.ruleset}"/>
-                <h:panelGroup rendered="#{CreateProcessForm.processDataTab.standardFields.regelsatz}">
+                <h:panelGroup>
                     <p:selectOneMenu id="ruleset"
                                      value="#{CreateProcessForm.mainProcess.ruleset}"
                                      converter="#{rulesetConverter}"
@@ -61,21 +59,6 @@
                         <f:selectItems value="#{ProcessForm.rulesets}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
-            </div>
-
-            <div>
-                <!-- digital collection -->
-                <p:outputLabel for="digitalCollections"
-                               rendered="#{CreateProcessForm.processDataTab.standardFields.collections}"
-                               value="#{msgs.digitalCollections}"/>
-                <p:selectManyCheckbox id="digitalCollections"
-                                      value="#{CreateProcessForm.processDataTab.digitalCollections}"
-                                      layout="grid"
-                                      columns="1"
-                                      rendered="#{CreateProcessForm.processDataTab.standardFields.collections}"
-                                      required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItems value="#{CreateProcessForm.processDataTab.availableDigitalCollections}"/>
-                </p:selectManyCheckbox >
             </div>
         </p:row>
 
@@ -100,22 +83,20 @@
 
             <div>
                 <p:outputLabel for="guessImages"
-                               value="#{msgs.guessImages}"
-                               rendered="#{CreateProcessForm.processDataTab.standardFields.images}"/>
+                               value="#{msgs.guessImages}"/>
                 <p:inputText class="input"
                              id="guessImages"
                              value="#{CreateProcessForm.processDataTab.guessedImages}"
-                             rendered="#{CreateProcessForm.processDataTab.standardFields.images}"
                              styleClass="prozessKopieFeldbreite"/>
             </div>
 
             <div>
                 <p:outputLabel for="useTemplates"
                                value="#{msgs.showInSelectList}"
-                               rendered="#{CreateProcessForm.useTemplates}"/>
+                               rendered="#{CreateProcessForm.usingTemplates}"/>
                 <p:selectBooleanCheckbox styleClass="switch input"
                                          id="useTemplates"
-                                         rendered="#{CreateProcessForm.useTemplates}"
+                                         rendered="#{CreateProcessForm.usingTemplates}"
                                          value="#{CreateProcessForm.mainProcess.inChoiceListShown}"/>
             </div>
         </p:row>

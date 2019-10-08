@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.createprocess;
 
 import com.sun.jersey.api.NotFoundException;
 
@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -34,13 +33,11 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom.JDOMException;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProject;
-import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -53,12 +50,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
-import org.kitodo.production.forms.createprocess.ImportTab;
-import org.kitodo.production.forms.createprocess.ProcessDataTab;
-import org.kitodo.production.forms.createprocess.SearchTab;
-import org.kitodo.production.forms.createprocess.TitleRecordLinkTab;
+import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
@@ -75,7 +67,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private final ImportTab importTab = new ImportTab(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
-    private AdditionalDetailsTab additionalDetailsTab = new AdditionalDetailsTab(this);
+    private final AdditionalDetailsTab additionalDetailsTab = new AdditionalDetailsTab(this);
     private final SearchTab searchTab = new SearchTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
@@ -85,7 +77,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private Project project;
     private Workpiece workpiece = new Workpiece();
     private Template template;
-    private boolean useTemplates;
+    private boolean usingTemplates;
     private LinkedList<Process> processes = new LinkedList<>(Collections.singletonList(new Process()));
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
 
@@ -171,17 +163,17 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      *
      * @return value of useTemplate
      */
-    public boolean isUseTemplates() {
-        return useTemplates;
+    public boolean isUsingTemplates() {
+        return usingTemplates;
     }
 
     /**
      * Set useTemplate.
      *
-     * @param useTemplates as boolean
+     * @param usingTemplates as boolean
      */
-    public void setUseTemplates(boolean useTemplates) {
-        this.useTemplates = useTemplates;
+    public void setUsingTemplates(boolean usingTemplates) {
+        this.usingTemplates = usingTemplates;
     }
 
     /**
@@ -208,10 +200,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @return value of first element in newProcesses
      */
     public Process getMainProcess() {
-        if (this.processes.isEmpty()) {
+        if (processes.isEmpty()) {
             throw new NotFoundException("Process list is empty!");
         }
-        return this.processes.get(0);
+        return processes.get(0);
     }
 
     /**
@@ -257,11 +249,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public void resetForm() {
-        this.getProcessDataTab().resetProcessData();
-        this.getAdditionalDetailsTab().resetAddtionalDetailsTable();
     }
 
     /**
@@ -333,21 +320,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @return true if process was prepared, otherwise false
      */
     public boolean prepareProcess(int templateId, int projectId) {
-        //atstsl = "";
         ProcessGenerator processGenerator = new ProcessGenerator();
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);
             if (generated) {
-                this.processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
-                this.project = processGenerator.getProject();
-                this.template = processGenerator.getTemplate();
-                resetForm();
-                this.rulesetManagementInterface = openRulesetFile(this.getMainProcess().getRuleset().getFile());
+                processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
+                project = processGenerator.getProject();
+                template = processGenerator.getTemplate();
+                rulesetManagementInterface = openRulesetFile(getMainProcess().getRuleset().getFile());
                 readProjectConfigs();
-                this.processDataTab.setDigitalCollections(new ArrayList<>());
-                initializePossibleDigitalCollections();
-                // TODO: do we really still need this?
-                //this.rdf = null;
                 return true;
             }
         } catch (ProcessGenerationException | IOException e) {
@@ -362,18 +343,16 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @return true if process was created, otherwise false
      */
     public boolean createProcess() {
-        Process mainProcess = this.getMainProcess();
+        Process mainProcess = getMainProcess();
         if (!ProcessValidator.isContentValid(mainProcess.getTitle(),
-                this.additionalDetailsTab.getAdditionalDetailsTableRows(),
-                this.processDataTab.getDigitalCollections(),
-                this.processDataTab.getStandardFields(),
+                additionalDetailsTab.getAdditionalDetailsTableRows(),
                 true)) {
             return false;
         }
         addProperties();
         updateTasks(mainProcess);
         try {
-            mainProcess.setSortHelperImages(this.processDataTab.getGuessedImages());
+            mainProcess.setSortHelperImages(processDataTab.getGuessedImages());
             ServiceManager.getProcessService().save(mainProcess);
         } catch (DataException e) {
             Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
@@ -384,8 +363,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             return false;
         }
 
-        // TODO: check if this is still required!
-        //processRdfConfiguration();
         if (Objects.nonNull(workpiece)) {
             workpiece.getRootElement().setType(processDataTab.getRulesetType());
             additionalDetailsTab.preserve();
@@ -414,20 +391,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private void addProperties() {
         Process mainProcess = getMainProcess();
-        addMetadataProperties(this.getAdditionalDetailsTab().getAdditionalDetailsTableRows(), mainProcess);
-
-        for (String col : this.getProcessDataTab().getDigitalCollections()) {
-            ProcessGenerator.addPropertyForProcess(mainProcess, "digitalCollection", col);
-        }
-
-        ProcessGenerator.addPropertyForWorkpiece(mainProcess, "DocType", this.getProcessDataTab().getDocType());
+        addMetadataProperties(additionalDetailsTab.getAdditionalDetailsTableRows(), mainProcess);
+        ProcessGenerator.addPropertyForWorkpiece(mainProcess, "DocType", processDataTab.getDocType());
         ProcessGenerator.addPropertyForWorkpiece(mainProcess, "TifHeaderImagedescription",
-                this.getProcessDataTab().getTifHeaderImageDescription());
+                processDataTab.getTifHeaderImageDescription());
         ProcessGenerator.addPropertyForWorkpiece(mainProcess, "TifHeaderDocumentname",
-                this.getProcessDataTab().getTifHeaderDocumentName());
-        if (Objects.nonNull(this.template)) {
-            ProcessGenerator.addPropertyForProcess(mainProcess, "Template", this.template.getTitle());
-            ProcessGenerator.addPropertyForProcess(mainProcess, "TemplateID", String.valueOf(this.template.getId()));
+                processDataTab.getTifHeaderDocumentName());
+        if (Objects.nonNull(template)) {
+            ProcessGenerator.addPropertyForProcess(mainProcess, "Template", template.getTitle());
+            ProcessGenerator.addPropertyForProcess(mainProcess, "TemplateID", String.valueOf(template.getId()));
         }
     }
 
@@ -461,15 +433,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private void updateTasks(Process process) {
         for (Task task : process.getTasks()) {
-            // always save date and user for each step
             task.setProcessingTime(process.getCreationDate());
             task.setEditType(TaskEditType.AUTOMATIC);
-            // only if its done, set edit start and end date
             if (task.getProcessingStatus() == TaskStatus.DONE) {
                 task.setProcessingBegin(process.getCreationDate());
-                // this concerns steps, which are set as done right on creation
-                // bearbeitungsbeginn is set to creation timestamp of process
-                // because the creation of it is basically begin of work
                 Date date = new Date();
                 task.setProcessingTime(date);
                 task.setProcessingEnd(date);
@@ -500,19 +467,16 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     protected void readProjectConfigs() {
         ConfigProject configProject;
         try {
-            configProject = new ConfigProject(this.project.getTitle());
+            configProject = new ConfigProject(project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
-        this.processDataTab.setDocType(configProject.getDocType());
-        //this.useOpac = cp.isUseOpac();
-        this.useTemplates = configProject.isUseTemplates();
+        processDataTab.setDocType(configProject.getDocType());
+        usingTemplates = configProject.isUseTemplates();
 
-        this.processDataTab.setTifDefinition(configProject.getTifDefinition());
-        this.processDataTab.setTitleDefinition(configProject.getTitleDefinition());
-
-        this.processDataTab.getStandardFields().putAll(configProject.getHiddenFields());
+        processDataTab.setTifDefinition(configProject.getTifDefinition());
+        processDataTab.setTitleDefinition(configProject.getTitleDefinition());
     }
 
     private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
@@ -525,21 +489,5 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
         return ruleset;
-    }
-
-    private void initializePossibleDigitalCollections() {
-        try {
-            DigitalCollection.possibleDigitalCollectionsForProcess(getMainProcess().getProject());
-        } catch (JDOMException | IOException e) {
-            Helper.setErrorMessage("Error while parsing digital collections", logger, e);
-        }
-
-        this.processDataTab.setAvailableDigitalCollections(DigitalCollection.getPossibleDigitalCollection());
-        this.processDataTab.setDigitalCollections(DigitalCollection.getDigitalCollections());
-
-        // if only one collection is possible take it directly
-        if (this.processDataTab.getAvailableDigitalCollections().size() == 1) {
-            this.processDataTab.getDigitalCollections().add(this.processDataTab.getAvailableDigitalCollections().get(0));
-        }
     }
 }

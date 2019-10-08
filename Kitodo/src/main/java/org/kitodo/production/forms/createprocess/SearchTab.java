@@ -21,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.production.forms.CreateProcessForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.services.ServiceManager;
@@ -84,8 +83,6 @@ public class SearchTab {
                 this.templateProcess);
         readTemplateTemplates(this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows(),
                 this.templateProcess);
-        readTemplateProperties(this.createProcessForm.getProcessDataTab().getDigitalCollections(),
-                this.templateProcess);
     }
 
     private void readTemplateWorkpieces(List<AdditionalDetailsTableRow> additionalFields, Process processForChoice) {
@@ -109,16 +106,6 @@ public class SearchTab {
                     this.createProcessForm.getAdditionalDetailsTab().setAdditionalDetailsRow(row,
                             templateProperty.getValue());
                 }
-            }
-        }
-    }
-
-    // TODO: check whether we only need digital collections as "metadata" in the future
-    //  in that case: refactor this method to work like "readTemplateTemplates" and "readTemplateWorkpieces"!
-    private void readTemplateProperties(List<String> digitalCollections, Process processForChoice) {
-        for (Property processProperty : processForChoice.getProperties()) {
-            if (processProperty.getTitle().equals("digitalCollection")) {
-                digitalCollections.add(processProperty.getValue());
             }
         }
     }

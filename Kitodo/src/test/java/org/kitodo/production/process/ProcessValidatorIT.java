@@ -16,12 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -58,30 +54,20 @@ public class ProcessValidatorIT {
 
     @Test
     public void contentShouldBeValid() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalDetailsRows(),
-            Arrays.asList("Digi1", "Digi2"), createStandardFields(), true);
+        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalDetailsRows(), true);
         assertTrue("Process content is invalid!", valid);
     }
 
     @Test
     public void contentShouldBeInvalidTitle() throws Exception {
-        boolean valid = ProcessValidator.isContentValid("First process", createAdditionalDetailsRows(),
-            Arrays.asList("Digi1", "Digi2"), createStandardFields(), true);
+        boolean valid = ProcessValidator.isContentValid("First process", createAdditionalDetailsRows(), true);
         assertFalse("Process content is valid - title should be invalid!", valid);
-    }
-
-    @Test
-    public void contentShouldBeInvalidCollections() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalDetailsRows(), Collections.emptyList(),
-            createStandardFields(), true);
-        assertFalse("Process content is valid - collections should be invalid!", valid);
     }
 
     @Ignore("find ou values for which it fails")
     @Test
     public void contentShouldBeInvalidAdditionalFields() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalDetailsRows(),
-            Arrays.asList("Digi1", "Digi2"), createStandardFields(), true);
+        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalDetailsRows(), true);
         assertTrue("Process content is valid - additional fields should be invalid!", valid);
     }
 
@@ -163,14 +149,5 @@ public class ProcessValidatorIT {
             }
         }
         return additionalDetailsTable.getRows();
-    }
-
-    private Map<String, Boolean> createStandardFields() {
-        Map<String, Boolean> standardFields = new HashMap<>();
-        standardFields.put("collections", true);
-        standardFields.put("doctype", true);
-        standardFields.put("regelsatz", true);
-        standardFields.put("images", true);
-        return standardFields;
     }
 }
