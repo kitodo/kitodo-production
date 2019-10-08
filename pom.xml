@@ -49,8 +49,8 @@
         <commons-io.version>2.6</commons-io.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <org.apache.xmlgraphics.version>2.3</org.apache.xmlgraphics.version>
-        <hamcrest.version>2.1-rc3</hamcrest.version>
-        <hibernate.version>5.4.3.Final</hibernate.version>
+        <hamcrest.version>2.2-rc1</hamcrest.version>
+        <hibernate.version>5.4.6.Final</hibernate.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
         <jersey.version>1.19.4</jersey.version>
