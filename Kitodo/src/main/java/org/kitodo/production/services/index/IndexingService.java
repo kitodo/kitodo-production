@@ -38,6 +38,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.IndexStates;
+import org.kitodo.production.enums.IndexingStates;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.IndexWorker;
@@ -57,16 +59,17 @@ public class IndexingService {
     private int pause = 1000;
     private IndexStates currentState = IndexStates.NO_STATE;
     private IndexWorker currentIndexWorker;
-    private LocalDateTime indexingStartedTime = null;
 
     private ObjectType currentIndexState = ObjectType.NONE;
 
+    // TODO: remove unused 'indexedObjects' variable? (why is this unused?)
     private Map<ObjectType, Integer> indexedObjects = new EnumMap<>(ObjectType.class);
 
     private boolean indexingAll = false;
 
     private Map<ObjectType, IndexingStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
 
+    // TODO: move messages to enum?
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
     private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
 
@@ -78,23 +81,9 @@ public class IndexingService {
     private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
     public static final String MAPPING_FAILED_MESSAGE = "mapping_failed";
 
+    // TODO: remove unused 'lastIndexed' variable? (why is this unused?)
     private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
     private Thread indexerThread = null;
-
-    public enum IndexingStates {
-        NO_STATE,
-        INDEXING_STARTED,
-        INDEXING_SUCCESSFUL,
-        INDEXING_FAILED,
-    }
-
-    public enum IndexStates {
-        NO_STATE,
-        DELETE_ERROR,
-        DELETE_SUCCESS,
-        MAPPING_ERROR,
-        MAPPING_SUCCESS,
-    }
 
     /**
      * Standard constructor.
@@ -336,7 +325,6 @@ public class IndexingService {
                 if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
                     if (Objects.equals(currentIndexState, ObjectType.NONE)) {
                         logger.debug("Starting indexing of type " + type);
-                        indexingStartedTime = LocalDateTime.now();
                         currentIndexState = type;
                         objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
                         pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
@@ -474,15 +462,6 @@ public class IndexingService {
 
     public void setIndexState(IndexStates state) {
         currentState = state;
-    }
-
-    /**
-     * Get time when indexing has started.
-     *
-     * @return time when indexing has started as LocalDateTime
-     */
-    public LocalDateTime getIndexingStartedTime() {
-        return indexingStartedTime;
     }
 
     /**

@@ -28,6 +28,8 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.IndexStates;
+import org.kitodo.production.enums.IndexingStates;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -44,6 +46,7 @@ public class IndexingForm {
     private static final Logger logger = LogManager.getLogger(IndexingForm.class);
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
     private String indexingStartedUser = "";
+    private LocalDateTime indexingStartedTime = null;
 
     @Inject
     @Push(channel = POLLING_CHANNEL_NAME)
@@ -76,7 +79,7 @@ public class IndexingForm {
      * @return time when indexing has started as LocalDateTime
      */
     public LocalDateTime getIndexingStartedTime() {
-        return ServiceManager.getIndexingService().getIndexingStartedTime();
+        return indexingStartedTime;
     }
 
     /**
@@ -136,6 +139,7 @@ public class IndexingForm {
      *            type objects that get indexed
      */
     public void callIndexing(ObjectType type) {
+        indexingStartedTime = LocalDateTime.now();
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
         ServiceManager.getIndexingService().startIndexing(type, pollingChannel);
     }
@@ -147,6 +151,7 @@ public class IndexingForm {
      *            type objects that get indexed
      */
     public void callIndexingRemaining(ObjectType type) {
+        indexingStartedTime = LocalDateTime.now();
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
         ServiceManager.getIndexingService().startIndexingRemaining(type, pollingChannel);
     }
@@ -155,6 +160,7 @@ public class IndexingForm {
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexing() {
+        indexingStartedTime = LocalDateTime.now();
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
         ServiceManager.getIndexingService().startAllIndexing(pollingChannel);
     }
@@ -204,7 +210,7 @@ public class IndexingForm {
                 pollingChannel.send(mappingStateMessage);
             }
         } catch (IOException | CustomResponseException e) {
-            ServiceManager.getIndexingService().setIndexState(IndexingService.IndexStates.MAPPING_ERROR);
+            ServiceManager.getIndexingService().setIndexState(IndexStates.MAPPING_ERROR);
             if (updatePollingChannel) {
                 pollingChannel.send(IndexingService.MAPPING_FAILED_MESSAGE);
             }
@@ -282,7 +288,7 @@ public class IndexingForm {
      *
      * @return state of ES index
      */
-    public IndexingService.IndexStates getIndexState() {
+    public IndexStates getIndexState() {
         return ServiceManager.getIndexingService().getIndexState();
     }
 
@@ -294,35 +300,8 @@ public class IndexingForm {
      *
      * @return indexing state of the given object type.
      */
-    public IndexingService.IndexingStates getObjectIndexState(ObjectType objectType) {
+    public IndexingStates getObjectIndexState(ObjectType objectType) {
         return ServiceManager.getIndexingService().getObjectIndexState(objectType);
-    }
-
-    /**
-     * Return static variable representing the 'indexing failed' state.
-     *
-     * @return 'indexing failed' state variable
-     */
-    public IndexingService.IndexingStates getIndexingFailedState() {
-        return IndexingService.IndexingStates.INDEXING_FAILED;
-    }
-
-    /**
-     * Return static variable representing the 'indexing successful' state.
-     *
-     * @return 'indexing successful' state variable
-     */
-    public IndexingService.IndexingStates getIndexingSuccessfulState() {
-        return IndexingService.IndexingStates.INDEXING_SUCCESSFUL;
-    }
-
-    /**
-     * Return static variable representing the 'indexing started' state.
-     *
-     * @return 'indexing started' state variable
-     */
-    public IndexingService.IndexingStates getIndexingStartedState() {
-        return IndexingService.IndexingStates.INDEXING_STARTED;
     }
 
     /**
@@ -333,7 +312,7 @@ public class IndexingForm {
      *
      * @return static variable for global indexing state
      */
-    public IndexingService.IndexingStates getAllObjectsIndexingState() {
+    public IndexingStates getAllObjectsIndexingState() {
         return ServiceManager.getIndexingService().getAllObjectsIndexingState();
     }
 

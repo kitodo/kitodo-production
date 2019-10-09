@@ -15,6 +15,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui">
+    <p:importEnum type="org.kitodo.production.enums.IndexingStates" allSuffix="ALL_ENUM_VALUES"/>
+    <!--@elvariable id="objectType" type="org.kitodo.production.enums.ObjectType"-->
     <h:panelGroup rendered="#{objectType ne indexingForm.noneType}">
         <tr>
             <td>#{objectType.translationPlural}</td>
@@ -49,9 +51,21 @@
                 <h:outputText value="#{indexingForm.getNumberOfIndexedObjects(objectType)} / #{indexingForm.countDatabaseObjects[objectType]}"/>
             </td>
             <td>
-                <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState(objectType) == indexingForm.indexingStartedState}"/>
-                <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState(objectType) == indexingForm.indexingFailedState}"/>
-                <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState(objectType) == indexingForm.indexingSuccessfulState}" />
+                <!--@elvariable id="INDEXING_STARTED" type="org.kitodo.production.enums.IndexingStates"-->
+                <p:graphicImage alt="in progress"
+                                value="/pages/images/ajax-loader.gif"
+                                style="max-height: 20px;"
+                                rendered="#{indexingForm.getObjectIndexState(objectType) == INDEXING_STARTED}"/>
+                <!--@elvariable id="INDEXING_FAILED" type="org.kitodo.production.enums.IndexingStates"-->
+                <p:graphicImage alt="failed"
+                                value="/pages/images/fail.svg"
+                                style="max-height: 20px;"
+                                rendered="#{indexingForm.getObjectIndexState(objectType) == INDEXING_FAILED}"/>
+                <!--@elvariable id="INDEXING_SUCCESSFUL" type="org.kitodo.production.enums.IndexingStates"-->
+                <p:graphicImage alt="success"
+                                value="/pages/images/success.svg"
+                                style="max-height: 20px;"
+                                rendered="#{indexingForm.getObjectIndexState(objectType) == INDEXING_SUCCESSFUL}" />
             </td>
         </tr>
     </h:panelGroup>
