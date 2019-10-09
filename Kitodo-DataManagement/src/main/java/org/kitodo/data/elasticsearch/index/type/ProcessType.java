@@ -12,8 +12,10 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 
@@ -48,11 +50,21 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.DOCKET.getKey(), getId(process.getDocket()));
         jsonObject.put(ProcessTypeField.BATCHES.getKey(), addObjectRelation(process.getBatches(), true));
         jsonObject.put(ProcessTypeField.COMMENTS.getKey(), addObjectRelation(process.getComments()));
+        jsonObject.put(ProcessTypeField.COMMENTS_MESSAGE.getKey(), getProcessComments(process));
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
         jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), addObjectRelation(process.getProperties(), true));
         jsonObject.put(ProcessTypeField.TEMPLATES.getKey(), addObjectRelation(process.getTemplates()));
         jsonObject.put(ProcessTypeField.WORKPIECES.getKey(), addObjectRelation(process.getWorkpieces()));
         jsonObject.put(ProcessTypeField.METADATA.getKey(), process.getMetadata());
         return jsonObject;
+    }
+
+    private String getProcessComments(Process process) {
+        String commentsMessages = "";
+        List<Comment> processComments = process.getComments();
+        for (Comment comment : processComments) {
+            commentsMessages = commentsMessages.concat(comment.getMessage());
+        }
+        return commentsMessages;
     }
 }
