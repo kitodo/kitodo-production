@@ -281,7 +281,7 @@ public class BatchForm extends BaseForm {
         try {
             ServiceManager.getBatchService().removeAll(this.selectedBatches);
             filterAll();
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
     }
