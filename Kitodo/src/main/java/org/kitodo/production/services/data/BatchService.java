@@ -120,9 +120,9 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @param batches
      *            to remove
      */
-    public void removeAll(Iterable<Batch> batches) throws DAOException {
+    public void removeAll(Iterable<Batch> batches) throws DataException {
         for (Batch batch : batches) {
-            dao.remove(batch);
+            remove(batch);
         }
     }
 
