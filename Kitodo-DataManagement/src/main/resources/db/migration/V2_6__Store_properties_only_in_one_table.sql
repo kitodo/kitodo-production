@@ -91,7 +91,7 @@ CREATE TABLE process_x_property (
 );
 
 INSERT INTO process_x_property (property_id,process_id)
-SELECT id, process_id
+SELECT id * 4 - 3 AS id, process_id
 FROM processProperty;
 
 CREATE TABLE template_x_property (
@@ -100,7 +100,7 @@ CREATE TABLE template_x_property (
 );
 
 INSERT INTO template_x_property (property_id,template_id)
-SELECT id, template_id
+SELECT id * 4 - 2 AS id, template_id
 FROM templateProperty;
 
 CREATE TABLE user_x_property (
@@ -109,7 +109,7 @@ CREATE TABLE user_x_property (
 );
 
 INSERT INTO user_x_property (property_id,user_id)
-SELECT id, user_id
+SELECT id * 4 - 1 AS id, user_id
 FROM userProperty;
 
 CREATE TABLE workpiece_x_property (
@@ -118,7 +118,7 @@ CREATE TABLE workpiece_x_property (
 );
 
 INSERT INTO workpiece_x_property (property_id,workpiece_id)
-SELECT id, workpiece_id
+SELECT id * 4 AS id, workpiece_id
 FROM workpieceProperty;
 
 -- 3. Create property table
@@ -138,16 +138,16 @@ CREATE TABLE property (
 -- 4. Insert values into property table from old [...]property tables
 
 INSERT INTO property (id, title, value, obligatory, dataType, choice, creationDate, container)
-       SELECT id, title, value, obligatory, dataType, choice, creationDate, container
+       SELECT id * 4 - 3 AS id, title, value, obligatory, dataType, choice, creationDate, container
        FROM processProperty;
 INSERT INTO property (id, title, value, obligatory, dataType, choice, creationDate, container)
-       SELECT id, title, value, obligatory, dataType, choice, creationDate, container
+       SELECT id * 4 - 2 AS id, title, value, obligatory, dataType, choice, creationDate, container
        FROM templateProperty;
 INSERT INTO property (id, title, value, obligatory, dataType, choice, creationDate)
-       SELECT id, title, value, obligatory, dataType, choice, creationDate
+       SELECT id * 4 - 1 AS id, title, value, obligatory, dataType, choice, creationDate
        FROM userProperty;
 INSERT INTO property (id, title, value, obligatory, dataType, choice, creationDate, container)
-       SELECT id, title, value, obligatory, dataType, choice, creationDate, container
+       SELECT id * 4 AS id, title, value, obligatory, dataType, choice, creationDate, container
        FROM workpieceProperty;
 
 -- 5. Introduce auto_increment to property table
