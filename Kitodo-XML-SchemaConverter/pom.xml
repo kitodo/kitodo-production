@@ -19,8 +19,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <name>Kitodo - MODS XML SchemaConverter</name>
-    <artifactId>kitodo-modsxml-schemaconverter</artifactId>
+    <name>Kitodo - XML SchemaConverter</name>
+    <artifactId>kitodo-xml-schemaconverter</artifactId>
 
     <dependencies>
         <dependency>
@@ -45,6 +45,26 @@
 
     <build>
         <plugins>
+            <plugin>
+                <!--Download xslt for marc to mods-->
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.3.0</version>
+                <executions>
+                    <execution>
+                        <id>mets</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://www.loc.gov/standards/mods/v3/MARC21slim2MODS3-4.xsl</url>
+                            <outputFileName>marc21slim2mods3-4.xsl</outputFileName>
+                            <outputDirectory>${project.build.directory}/downloaded-sources/xslt</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

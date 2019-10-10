@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.loc.gov/mods/v3"
+      version="3.4"
+      xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+   <identifier type="uri">http://record.identifier.uri</identifier>
+   <recordInfo>
+      <recordIdentifier source="12345">67890</recordIdentifier>
+      <recordCreationDate encoding="marc">123456789</recordCreationDate>
+      <recordChangeDate encoding="iso8601">123456789</recordChangeDate>
+      <recordContentSource authority="marcorg">Test-Authority</recordContentSource>
+   </recordInfo>
+   <relatedItem>
+      <identifier type="localparentid">Test-Parent-ID</identifier>
+      <identifier type="uri">Test-Parent-URI</identifier>
+      <titleInfo>
+         <title>Test-Parent-Title</title>
+      </titleInfo>
+   </relatedItem>
+   <typeOfResource manuscript="yes">text</typeOfResource>
+   <name type="personal"
+         authority="GND"
+         valueURI="http://d-nb.info/gnd/123456789">
+      <namePart>Test-Name</namePart>
+      <role>
+         <roleTerm type="code" authority="marcrelator">rcp</roleTerm>
+         <roleTerm>addressee</roleTerm>
+      </role>
+   </name>
+   <name type="personal">
+      <namePart>TestPerson</namePart>
+      <role>
+         <roleTerm type="code" authority="marcrelator">oth</roleTerm>
+         <roleTerm>other</roleTerm>
+      </role>
+   </name>
+   <titleInfo>
+      <title>Test-Title</title>
+   </titleInfo>
+   <originInfo>
+      <dateCreated encoding="w3cdtf">1999-12-31</dateCreated>
+      <place>
+         <placeTerm type="text">Test-Place</placeTerm>
+      </place>
+   </originInfo>
+   <location>
+      <shelfLocator>Test-Shelflocator</shelfLocator>
+   </location>
+   <location>
+      <url>http://this.is-a.test</url>
+   </location>
+</mods>

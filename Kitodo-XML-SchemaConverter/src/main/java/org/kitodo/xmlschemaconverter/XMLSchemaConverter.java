@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.modsxmlschemaconverter;
+package org.kitodo.xmlschemaconverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,12 @@ import java.io.InvalidClassException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 
@@ -42,11 +48,21 @@ import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.exceptions.ConfigException;
 import org.xml.sax.InputSource;
 
-public class ModsXMLSchemaConverter implements SchemaConverterInterface {
+public class XMLSchemaConverter implements SchemaConverterInterface {
 
-    private static final String XSLT_FILEPATH = "/xslt/mods2kitodo.xsl";
+    /*
+    Map of supported source metadata formats.
+    Each value contains a list of paths to XSLT files to transform the source format to internal Kitodo format.
+    The order of XSLT file paths will determine the order of execution.
+     */
+    private static Map<MetadataFormat, List<String>> supportedSourceMetadataFormats = new HashMap<>();
 
-    private static MetadataFormat supportedSourceMetadataFormat = MetadataFormat.MODS;
+    static {
+        supportedSourceMetadataFormats.put(MetadataFormat.MODS, Collections.singletonList("src/main/resources/xslt/mods2kitodo.xsl"));
+        supportedSourceMetadataFormats.put(MetadataFormat.MARC,
+                Arrays.asList("target/downloaded-sources/xslt/marc21slim2mods3-4.xsl", "src/main/resources/xslt/mods2kitodo.xsl"));
+    }
+
     private static MetadataFormat supportedTargetMetadataFormat = MetadataFormat.KITODO;
     private static FileFormat supportedSourceFileFormat = FileFormat.XML;
     private static FileFormat supportedTargetFileFormat = FileFormat.XML;
@@ -80,9 +96,13 @@ public class ModsXMLSchemaConverter implements SchemaConverterInterface {
                     conversionResult = transformXmlByXslt(xmlString, fileStream);
                 }
             } else {
-                try (InputStream fileStream = getClass().getResourceAsStream(XSLT_FILEPATH)) {
-                    conversionResult = transformXmlByXslt(xmlString, fileStream);
+                List<String> xslFiles = supportedSourceMetadataFormats.get(record.getMetadataFormat());
+                for (String xsltFile : xslFiles) {
+                    try (InputStream fileStream = Files.newInputStream(Paths.get(xsltFile))) {
+                        xmlString = transformXmlByXslt(xmlString, fileStream);
+                    }
                 }
+                conversionResult = xmlString;
             }
 
             DataRecord resultRecord = new DataRecord();
@@ -103,7 +123,7 @@ public class ModsXMLSchemaConverter implements SchemaConverterInterface {
 
     @Override
     public boolean supportsSourceMetadataFormat(MetadataFormat format) {
-        return supportedSourceMetadataFormat.equals(format);
+        return supportedSourceMetadataFormats.containsKey(format);
     }
 
     @Override
@@ -127,6 +147,7 @@ public class ModsXMLSchemaConverter implements SchemaConverterInterface {
         try {
             StringWriter stringWriter = new StringWriter();
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            System.setProperty("http.agent", "Chrome");
             Transformer xsltTransformer = transformerFactory.newTransformer(new StreamSource(stylesheetFile));
             TransformerHandler handler
                     = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
