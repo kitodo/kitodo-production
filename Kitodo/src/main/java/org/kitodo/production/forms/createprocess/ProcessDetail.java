@@ -24,7 +24,7 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-public abstract class AdditionalDetailsTableRow implements Serializable {
+public abstract class ProcessDetail implements Serializable {
 
     /**
      * Describes the relationship between the domain in the rule set and the
@@ -48,7 +48,7 @@ public abstract class AdditionalDetailsTableRow implements Serializable {
     /**
      * Metadata panel on which this row is showing.
      */
-    protected final AdditionalDetailsTab tab;
+    protected final ProcessMetadataTab tab;
 
     /**
      * Creates a new metadata panel row.
@@ -60,7 +60,7 @@ public abstract class AdditionalDetailsTableRow implements Serializable {
      * @param label
      *            the label of this row
      */
-    AdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container, String label) {
+    ProcessDetail(ProcessMetadataTab tab, ProcessFieldedMetadata container, String label) {
         this.tab = tab;
         this.label = label;
     }

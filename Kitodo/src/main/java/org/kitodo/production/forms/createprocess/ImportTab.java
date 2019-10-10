@@ -207,13 +207,13 @@ public class ImportTab implements Serializable {
             return;
         }
 
-        List<AdditionalDetailsTableRow> additionalDetailsTableRows =
-                this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows();
+        List<ProcessDetail> processDetailsList =
+                this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
         for (int i = 0; i < kitodoNodes.getLength(); i++) {
             Node kitodoNode = kitodoNodes.item(i);
-            this.createProcessForm.getAdditionalDetailsTab().fillAdditionalDetailsTable(additionalDetailsTableRows,
+            this.createProcessForm.getProcessMetadataTab().fillProcessDetailsElements(processDetailsList,
                     kitodoNode.getChildNodes(), false);
         }
     }

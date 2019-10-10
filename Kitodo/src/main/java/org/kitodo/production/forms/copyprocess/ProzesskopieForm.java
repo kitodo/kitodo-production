@@ -67,7 +67,7 @@ import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
+import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
 import org.kitodo.production.forms.createprocess.TitleRecordLinkTab;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.helper.Helper;
@@ -114,7 +114,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
     /**
      * Backing bean for the metadata panel.
      */
-    private AdditionalDetailsTab additionalDetailsTab;
+    private ProcessMetadataTab processMetadataTab;
     /**
      * The ruleset that the file is based on.
      */
@@ -244,9 +244,9 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
                 clearValues();
                 readProjectConfigs();
                 this.ruleset = openRulesetFile(this.prozessKopie.getRuleset().getFile());
-                additionalDetailsTab = new AdditionalDetailsTab(null);
+                processMetadataTab = new ProcessMetadataTab(null);
                 this.workpiece = new Workpiece();
-                additionalDetailsTab.show(workpiece.getRootElement());
+                processMetadataTab.initializeProcessDetails(workpiece.getRootElement());
                 this.rdf = null;
                 this.digitalCollections = new ArrayList<>();
                 initializePossibleDigitalCollections();
@@ -643,7 +643,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
         }
 
         if (Objects.nonNull(workpiece)) {
-            additionalDetailsTab.preserve();
+            processMetadataTab.preserve();
             try (OutputStream out = ServiceManager.getFileService().write(
                     ServiceManager.getProcessService().getMetadataFileUri(prozessKopie))) {
                 ServiceManager.getMetsService().save(workpiece, out);
@@ -1026,21 +1026,21 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
     }
 
     /**
-     * Get additionalDetailsTab.
+     * Get processMetadataTab.
      *
-     * @return value of additionalDetailsTab
+     * @return value of processMetadataTab
      */
-    public AdditionalDetailsTab getAdditionalDetailsTab() {
-        return additionalDetailsTab;
+    public ProcessMetadataTab getProcessMetadataTab() {
+        return processMetadataTab;
     }
 
     /**
-     * Set additionalDetailsTab.
+     * Set processMetadataTab.
      *
-     * @param additionalDetailsTab as org.kitodo.production.forms.createprocess.AdditionalDetailsTab
+     * @param processMetadataTab as org.kitodo.production.forms.createprocess.ProcessMetadataTab
      */
-    public void setAdditionalDetailsTab(AdditionalDetailsTab additionalDetailsTab) {
-        this.additionalDetailsTab = additionalDetailsTab;
+    public void setProcessMetadataTab(ProcessMetadataTab processMetadataTab) {
+        this.processMetadataTab = processMetadataTab;
     }
 
     /**
@@ -1053,7 +1053,7 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
         if (!this.docType.equals(docType)) {
             this.docType = docType;
             // This is now done in "ProcessDataTab"!
-            //additionalDetailsTab.setDocType(docType);
+            //processMetadataTab.setDocType(docType);
             if (Objects.nonNull(rdf)) {
                 LegacyMetsModsDigitalDocumentHelper tmp = rdf;
 

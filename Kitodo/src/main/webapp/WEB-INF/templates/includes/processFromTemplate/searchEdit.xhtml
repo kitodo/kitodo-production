@@ -21,10 +21,10 @@
     <h:outputScript name="js/opacImport.js" target="body"/>
     <p:panelGrid layout="grid" columns="2" cellpadding="10">
         <!-- choose from existing processes  -->
-        <p:row rendered="#{CreateProcessForm.usingTemplates}">
+        <p:row rendered="#{CreateProcessForm.processDataTab.usingTemplates}">
             <div>
                 <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
-                <p:selectOneMenu id="processSelect" value="#{CreateProcessForm.searchTab.templateProcess}"
+                <p:selectOneMenu id="processSelect" value="#{CreateProcessForm.searchTab.originalProcess}"
                                  converter="#{processConverter}">
                     <f:selectItems value="#{CreateProcessForm.searchTab.processesForChoiceList}"/>
                 </p:selectOneMenu>

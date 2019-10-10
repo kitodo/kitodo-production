@@ -29,7 +29,7 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 /**
  * A row on the metadata panel that contains an on/off switch.
  */
-public class BooleanAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableRow implements Serializable {
+public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Serializable {
 
     /**
      * Whether the switch is on or off.
@@ -48,8 +48,8 @@ public class BooleanAdditionalDetailsTableRow extends SimpleAdditionalDetailsTab
      * @param data
      *            data to display
      */
-    BooleanAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
-                                     SimpleMetadataViewInterface settings, MetadataEntry data) {
+    ProcessBooleanMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
+                           SimpleMetadataViewInterface settings, MetadataEntry data) {
         super(tab, container, settings);
         this.active = Objects.nonNull(data);
     }

@@ -19,7 +19,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-abstract class SimpleAdditionalDetailsTableRow extends AdditionalDetailsTableRow implements Serializable {
+abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
 
     /**
      * Container to store the ruleset settings.
@@ -30,14 +30,14 @@ abstract class SimpleAdditionalDetailsTableRow extends AdditionalDetailsTableRow
      * Constructor, must be called from the subclass.
      *
      * @param tab
-     *            the metadata panel this row is in
+     *            the ProcessMetadataTab wish this row is in
      * @param container
      *            the parental metadata group
      * @param settings
      *            the ruleset settings for this field.
      */
-    protected SimpleAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
-                                              SimpleMetadataViewInterface settings) {
+    protected ProcessSimpleMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
+                                    SimpleMetadataViewInterface settings) {
         super(tab, container, settings.getLabel());
         this.settings = settings;
     }

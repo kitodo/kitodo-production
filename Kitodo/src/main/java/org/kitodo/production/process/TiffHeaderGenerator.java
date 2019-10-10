@@ -21,8 +21,8 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
 import org.kitodo.production.helper.Helper;
 
 public class TiffHeaderGenerator extends Generator {
@@ -37,11 +37,11 @@ public class TiffHeaderGenerator extends Generator {
      *
      * @param atstsl
      *            field used for tiff header generation
-     * @param additionalDetailsTableRows
+     * @param processDetailsList
      *            fields used for tiff header generation
      */
-    public TiffHeaderGenerator(String atstsl, List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
-        super(atstsl, additionalDetailsTableRows);
+    public TiffHeaderGenerator(String atstsl, List<ProcessDetail> processDetailsList) {
+        super(atstsl, processDetailsList);
     }
 
     /**
@@ -69,35 +69,32 @@ public class TiffHeaderGenerator extends Generator {
                 tiffHeaderImageDescriptionBuilder.append(getTifHeaderType(docType));
             } else {
                 // otherwise, evaluate the token as a field name
-                tiffHeaderImageDescriptionBuilder.append(evaluateAdditionalDetailsRows(token));
+                tiffHeaderImageDescriptionBuilder.append(getProcessDetailValueByMetadataId(token));
             }
         }
         return reduceLengthOfTifHeaderImageDescription(tiffHeaderImageDescriptionBuilder.toString());
     }
 
-    private String evaluateAdditionalDetailsRows(String token) throws ProcessGenerationException {
+    private String getProcessDetailValueByMetadataId(String metadataId) throws ProcessGenerationException {
         StringBuilder newTiffHeader = new StringBuilder();
-        if ("Autoren".equals(token)) {
+        if ("Autoren".equals(metadataId)) {
             newTiffHeader.append(calculateProcessTitleCheck("Autoren",
-                    AdditionalDetailsTab.getListOfCreators(this.additionalDetailsTableRows)));
+                    ProcessMetadataTab.getListOfCreators(this.processDetailsList)));
         } else {
-            for (AdditionalDetailsTableRow additionalDetailsTableRow : this.additionalDetailsTableRows) {
-                String rowMetadataID = additionalDetailsTableRow.getMetadataID();
-                String value = AdditionalDetailsTab.getMetadataValue(additionalDetailsTableRow);
+            for (ProcessDetail processDetail : this.processDetailsList) {
+                String detailMetadataID = processDetail.getMetadataID();
+                String detailValue = ProcessMetadataTab.getProcessDetailValue(processDetail);
 
-                if ("TitleDocMain".equals(rowMetadataID) && !value.isEmpty()) {
-                    this.tiffHeader = value;
+                if ("TitleDocMain".equals(detailMetadataID) && !detailValue.isEmpty()) {
+                    this.tiffHeader = detailValue;
                 }
-                /*
-                 * if it is the ATS or TSL field, then use the calculated atstsl if it does not
-                 * already exist
-                 */
-                if ("TSL_ATS".equals(rowMetadataID) && value.isEmpty()) {
-                    AdditionalDetailsTab.setAdditionalDetailsRow(additionalDetailsTableRow, this.atstsl);
+                //if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
+                if ("TSL_ATS".equals(detailMetadataID) && detailValue.isEmpty() && !this.atstsl.isEmpty()) {
+                    ProcessMetadataTab.setProcessDetailValue(processDetail, this.atstsl);
                 }
                 // add the content to the tiff header
-                if (rowMetadataID.equals(token) && !value.isEmpty()) {
-                    newTiffHeader.append(calculateProcessTitleCheck(rowMetadataID, value));
+                if (detailMetadataID.equals(metadataId) && !detailValue.isEmpty()) {
+                    newTiffHeader.append(calculateProcessTitleCheck(detailMetadataID, detailValue));
                 }
             }
         }

@@ -24,9 +24,9 @@ import org.junit.Test;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
-import org.kitodo.production.forms.createprocess.FieldedAdditionalDetailsTableRow;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
+import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -94,42 +94,42 @@ public class TitleGeneratorTest {
     @Test
     //TODO: add more test cases
     public void shouldGenerateTitle() throws Exception {
-        TitleGenerator titleGenerator = new TitleGenerator("", createAdditionalDetailsRows());
+        TitleGenerator titleGenerator = new TitleGenerator("", createProcessDetailsList());
         String created = titleGenerator.generateTitle("TSL_ATS+'_'+CatalogIDDigital", null);
         assertEquals("Created hash doesn't match the precomputed one!", "TestTest_123", created);
     }
 
-    private List<AdditionalDetailsTableRow> createAdditionalDetailsRows() throws IOException {
+    static List<ProcessDetail> createProcessDetailsList() throws IOException {
         Workpiece workpiece = new Workpiece();
         workpiece.getRootElement().setType("Monograph");
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService().getRulesetManagement();
         rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
         StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
                 "Monograph", "", Locale.LanguageRange.parse("en"));
-        FieldedAdditionalDetailsTableRow additionalDetailsTable = new FieldedAdditionalDetailsTableRow(
+        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(
                 null, workpiece.getRootElement(), monograph);
-        for (AdditionalDetailsTableRow row : additionalDetailsTable.getRows()) {
-            switch (row.getMetadataID()) {
+        for (ProcessDetail detail : processDetails.getRows()) {
+            switch (detail.getMetadataID()) {
                 case "TitleDocMain":
                 case "TitleDocMainShort":
-                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "Test");
+                    ProcessMetadataTab.setProcessDetailValue(detail, "Test");
                     break;
                 case "TSL_ATS":
-                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "");
+                    ProcessMetadataTab.setProcessDetailValue(detail, "");
                     break;
                 case "CatalogIDSource":
                 case "CatalogIDDigital":
-                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "123");
+                    ProcessMetadataTab.setProcessDetailValue(detail, "123");
                     break;
                 case "Person":
-                    for (AdditionalDetailsTableRow personMetadataRow : ((FieldedAdditionalDetailsTableRow) row).getRows()) {
+                    for (ProcessDetail personMetadataRow : ((ProcessFieldedMetadata) detail).getRows()) {
                         switch (personMetadataRow.getMetadataID()) {
                             case "Role":
                             case "LastName":
-                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Author");
+                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Author");
                                 break;
                             case "FirstName":
-                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Test");
+                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Test");
                                 break;
                             default:
                                 break;
@@ -140,6 +140,6 @@ public class TitleGeneratorTest {
                     break;
             }
         }
-        return additionalDetailsTable.getRows();
+        return processDetails.getRows();
     }
 }

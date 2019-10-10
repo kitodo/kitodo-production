@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 
 public abstract class Generator {
@@ -24,21 +24,21 @@ public abstract class Generator {
     private static final String INCOMPLETE_DATA = "errorDataIncomplete";
 
     protected String atstsl = "";
-    protected List<AdditionalDetailsTableRow> additionalDetailsTableRows;
+    protected List<ProcessDetail> processDetailsList;
 
     /**
      * Constructor for abstract Generator.
      *
      * @param atstsl
      *            field used for generation
-     * @param additionalDetailsTableRows
+     * @param processDetailsList
      *            fields used for generation
      */
-    public Generator(String atstsl, List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
+    public Generator(String atstsl, List<ProcessDetail> processDetailsList) {
         if (Objects.nonNull(atstsl)) {
             this.atstsl = atstsl;
         }
-        this.additionalDetailsTableRows = additionalDetailsTableRows;
+        this.processDetailsList = processDetailsList;
     }
 
     /**
@@ -50,41 +50,12 @@ public abstract class Generator {
         return atstsl;
     }
 
-    /**
-     * Set atstsl.
-     *
-     * @param atstsl
-     *            as java.lang.String
-     */
-    public void setAtstsl(String atstsl) {
-        this.atstsl = atstsl;
-    }
+    protected String calculateProcessTitleCheck(String detailMetadataId, String detailValue) throws ProcessGenerationException {
+        String processTitleCheck = detailValue;
 
-    /**
-     * Get additional fields.
-     *
-     * @return value of additionalFields
-     */
-    public List<AdditionalDetailsTableRow> getAdditionalFields() {
-        return additionalDetailsTableRows;
-    }
-
-    /**
-     * Set additional fields.
-     *
-     * @param additionalDetailsTableRows
-     *            as List of AdditionalField objects
-     */
-    public void setAdditionalFields(List<AdditionalDetailsTableRow> additionalDetailsTableRows) {
-        this.additionalDetailsTableRows = additionalDetailsTableRows;
-    }
-
-    protected String calculateProcessTitleCheck(String fieldName, String fieldValue) throws ProcessGenerationException {
-        String processTitleCheck = fieldValue;
-
-        if ("Bandnummer".equals(fieldName) || "Volume number".equals(fieldName)) {
+        if ("CurrentNo".equals(detailMetadataId)) {
             try {
-                int bandInt = Integer.parseInt(fieldValue);
+                int bandInt = Integer.parseInt(detailValue);
                 DecimalFormat df = new DecimalFormat("#0000");
                 processTitleCheck = df.format(bandInt);
             } catch (NumberFormatException e) {

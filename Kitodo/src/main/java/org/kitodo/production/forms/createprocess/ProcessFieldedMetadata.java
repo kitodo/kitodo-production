@@ -38,20 +38,7 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-
-/**
- * Represents the metadata panel in the metadata editor, or a metadata group
- * within that panel. Basically both are the same, with the exception that the
- * label of the metadata panel is not used.
- */
-public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow implements Serializable {
-
-    /**
-     * An empty metadata group for the empty metadata panel showing. The empty
-     * metadata panel can be displayed if the element selected in the structure
-     * window isn’t a structure (has no metadata).
-     */
-    static final FieldedAdditionalDetailsTableRow EMPTY = new FieldedAdditionalDetailsTableRow();
+public class ProcessFieldedMetadata extends ProcessDetail implements Serializable {
 
     /**
      * Fields the user has selected to show in addition, with no data yet.
@@ -76,7 +63,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
     /**
      * The rows that JSF has to display.
      */
-    private List<AdditionalDetailsTableRow> rows = new ArrayList<>();
+    private List<ProcessDetail> rows = new ArrayList<>();
 
     /**
      * The structure this panel is related to, if it isn’t a sub-panel.
@@ -84,10 +71,9 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
     private IncludedStructuralElement structure;
 
     /**
-     * Creates an empty metadata group. This constructor is used to create the
-     * {@link #EMPTY} constant above.
+     * Creates an empty metadata group.
      */
-    public FieldedAdditionalDetailsTableRow() {
+    public ProcessFieldedMetadata() {
         super(null, null, null);
         this.rows = new ArrayList<>();
         this.metadata = Collections.emptyList();
@@ -96,25 +82,25 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
 
     /**
      * Creates a new root metadata group representing the metadata table
-     * content in the metadata panel.
+     * content in the processMetadataTab.
      *
      * @param tab
-     *            MetadataPanel to which the FieldedMetadataTableRow is added
+     *            ProcessMetadataTab to which the ProcessFieldedMetadata is added
      * @param structure
      *            structure selected by the user
      * @param divisionView
      *            information about that structure from the rule set
      */
-    public FieldedAdditionalDetailsTableRow(AdditionalDetailsTab tab, IncludedStructuralElement structure,
-                                     StructuralElementViewInterface divisionView) {
+    public ProcessFieldedMetadata(ProcessMetadataTab tab, IncludedStructuralElement structure,
+                                  StructuralElementViewInterface divisionView) {
         this(tab, null, structure, divisionView, structure.getMetadata());
     }
 
     /**
      * Creates a sub-panel for a metadata group.
      *
-     * @param panel
-     *            metadata panel on which this row is showing
+     * @param tab
+     *            processMetadataTab on which this row is showing
      * @param container
      *            parental metadata group
      * @param metadataView
@@ -122,17 +108,17 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      * @param metadata
      *            data of the group, may be empty but must be modifiable
      */
-    private FieldedAdditionalDetailsTableRow(AdditionalDetailsTab panel, FieldedAdditionalDetailsTableRow container,
-                                             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-        this(panel, container, null, metadataView, metadata);
+    private ProcessFieldedMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
+                                   ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
+        this(tab, container, null, metadataView, metadata);
     }
 
     /**
-     * Creates a new fielded metadata panel. This constructor is called from
+     * Creates a new fielded metadata . This constructor is called from
      * one of the above ones and does the work.
      *
-     * @param panel
-     *            metadata panel on which this row is showing
+     * @param tab
+     *            ProcessMetadataTab on which this row is showing
      * @param container
      *            parental metadata group
      * @param structure
@@ -142,10 +128,10 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      * @param metadata
      *            metadata, may be empty but must be modifiable
      */
-    public FieldedAdditionalDetailsTableRow(AdditionalDetailsTab panel, FieldedAdditionalDetailsTableRow container,
-                                            IncludedStructuralElement structure,
-                                             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-        super(panel, container, metadataView.getId());
+    public ProcessFieldedMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
+                                  IncludedStructuralElement structure,
+                                  ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
+        super(tab, container, metadataView.getId());
         this.structure = structure;
         this.metadata = metadata;
         this.metadataView = metadataView;
@@ -218,8 +204,8 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      *            data for that group, must contain at most one element
      * @return a sub-panel for JSF to render
      */
-    public FieldedAdditionalDetailsTableRow  createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
-                                                                      Collection<Metadata> values) {
+    public ProcessFieldedMetadata createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
+                                                           Collection<Metadata> values) {
         Collection<Metadata> value;
 
         switch (values.size()) {
@@ -240,7 +226,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
                 throw new IllegalStateException("Too many (" + values.size() + ") complex metadata of type \""
                         + metadataView.getId() + "\" in a single row. Must be 0 or 1 per row.");
         }
-        return new FieldedAdditionalDetailsTableRow(tab, this, complexMetadataView, value);
+        return new ProcessFieldedMetadata(tab, this, complexMetadataView, value);
     }
 
     /**
@@ -253,20 +239,20 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      *            the value(s) to be displayed
      * @return a backing bean for the row
      */
-    public AdditionalDetailsTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
-                                                     Collection<Metadata> values) {
+    public ProcessDetail createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
+                                                 Collection<Metadata> values) {
         switch (simpleMetadataView.getInputType()) {
             case MULTIPLE_SELECTION:
             case MULTI_LINE_SINGLE_SELECTION:
             case ONE_LINE_SINGLE_SELECTION:
-                return new SelectAdditionalDetailsTableRow(tab, this, simpleMetadataView, simpleValues(values));
+                return new ProcessSelectMetadata(tab, this, simpleMetadataView, simpleValues(values));
             case BOOLEAN:
-                return new BooleanAdditionalDetailsTableRow(tab, this, simpleMetadataView, oneSimpleValue(values));
+                return new ProcessBooleanMetadata(tab, this, simpleMetadataView, oneSimpleValue(values));
             case DATE:
             case INTEGER:
             case MULTI_LINE_TEXT:
             case ONE_LINE_TEXT:
-                return new TextAdditionalDetailsTableRow(tab, this, simpleMetadataView, oneSimpleValue(values));
+                return new ProcessTextMetadata(tab, this, simpleMetadataView, oneSimpleValue(values));
             default:
                 throw new IllegalStateException("complete switch");
         }
@@ -353,7 +339,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
      *
      * @return the rows that JSF has to display
      */
-    public List<AdditionalDetailsTableRow> getRows() {
+    public List<ProcessDetail> getRows() {
         return rows;
     }
 
@@ -374,7 +360,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
 
     @Override
     public boolean isValid() {
-        for (AdditionalDetailsTableRow row : getRows()) {
+        for (ProcessDetail row : getRows()) {
             if (!row.isValid()) {
                 return false;
             }
@@ -383,7 +369,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
     }
 
     /**
-     * Reads the contents of the metadata panel and stores the values in the
+     * Reads the contents of the processMetadataTab and stores the values in the
      * appropriate place. If the line is used to edit a field of the METS
      * structure, this field is set, otherwise the metadata will be stored in
      * the list. The hidden metadata is also written back there again.
@@ -399,7 +385,7 @@ public class FieldedAdditionalDetailsTableRow extends AdditionalDetailsTableRow 
     void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
             metadata.clear();
-            for (AdditionalDetailsTableRow row : rows) {
+            for (ProcessDetail row : rows) {
                 Pair<Method, Object> metsFieldValue = row.getStructureFieldValue();
                 if (Objects.nonNull(metsFieldValue)) {
                     try {

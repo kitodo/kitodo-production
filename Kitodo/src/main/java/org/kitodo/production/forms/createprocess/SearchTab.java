@@ -30,28 +30,28 @@ public class SearchTab {
     private static final Logger logger = LogManager.getLogger(SearchTab.class);
 
     private CreateProcessForm createProcessForm;
-    private Process templateProcess;
+    private Process originalProcess;
 
     public SearchTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 
     /**
-     * Get templateProcess.
+     * Get originalProcess.
      *
-     * @return value of templateProcess
+     * @return value of originalProcess
      */
-    public Process getTemplateProcess() {
-        return templateProcess;
+    public Process getOriginalProcess() {
+        return originalProcess;
     }
 
     /**
-     * Set templateProcess.
+     * Set originalProcess.
      *
-     * @param templateProcess as java.lang.Process
+     * @param originalProcess as java.lang.Process
      */
-    public void setTemplateProcess(Process templateProcess) {
-        this.templateProcess = templateProcess;
+    public void setOriginalProcess(Process originalProcess) {
+        this.originalProcess = originalProcess;
     }
 
     /**
@@ -64,32 +64,28 @@ public class SearchTab {
     }
 
     /**
-     * Auswahl des Prozesses auswerten.
+     * Evaluate selected template.
      */
-    public String evaluateTemplateSelection() {
-        readTemplateSelection();
-
+    public void evaluateTemplateSelection() {
+        fillProcessDetailsFromOriginalProcessProperties();
         try {
-            URI uri = ServiceManager.getProcessService().getMetadataFileUri(templateProcess);
+            URI uri = ServiceManager.getProcessService().getMetadataFileUri(originalProcess);
             ServiceManager.getMetsService().loadWorkpiece(uri);
         } catch (IOException e) {
             Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {"template-metadata" }, logger, e);
         }
-        return null;
     }
 
-    private void readTemplateSelection() {
-        readTemplateWorkpieces(this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows(),
-                this.templateProcess);
-        readTemplateTemplates(this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows(),
-                this.templateProcess);
+    private void fillProcessDetailsFromOriginalProcessProperties() {
+        fillProcessDetailsFromWorkpieceProperties();
+        fillProcessDetailsFromTemplateProperties();
     }
 
-    private void readTemplateWorkpieces(List<AdditionalDetailsTableRow> additionalFields, Process processForChoice) {
-        for (Property workpieceProperty : processForChoice.getWorkpieces()) {
-            for (AdditionalDetailsTableRow row : additionalFields) {
-                if (row.getLabel().equals(workpieceProperty.getTitle())) {
-                    this.createProcessForm.getAdditionalDetailsTab().setAdditionalDetailsRow(row,
+    private void fillProcessDetailsFromWorkpieceProperties() {
+        for (Property workpieceProperty : this.originalProcess.getWorkpieces()) {
+            for (ProcessDetail detail : this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements()) {
+                if (detail.getLabel().equals(workpieceProperty.getTitle())) {
+                    this.createProcessForm.getProcessMetadataTab().setProcessDetailValue(detail,
                             workpieceProperty.getValue());
                 }
                 if (workpieceProperty.getTitle().equals("DocType")) {
@@ -99,11 +95,11 @@ public class SearchTab {
         }
     }
 
-    private void readTemplateTemplates(List<AdditionalDetailsTableRow> additionalFields, Process processForChoice) {
-        for (Property templateProperty : processForChoice.getTemplates()) {
-            for (AdditionalDetailsTableRow row : additionalFields) {
-                if (row.getLabel().equals(templateProperty.getTitle())) {
-                    this.createProcessForm.getAdditionalDetailsTab().setAdditionalDetailsRow(row,
+    private void fillProcessDetailsFromTemplateProperties() {
+        for (Property templateProperty : this.originalProcess.getTemplates()) {
+            for (ProcessDetail processDetail : this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements()) {
+                if (processDetail.getLabel().equals(templateProperty.getTitle())) {
+                    this.createProcessForm.getProcessMetadataTab().setProcessDetailValue(processDetail,
                             templateProperty.getValue());
                 }
             }

@@ -35,8 +35,7 @@
             <div>
                 <!-- DocType -->
                 <p:outputLabel value="DocType"/>
-                <p:selectOneMenu id="docType" value="#{CreateProcessForm.processDataTab.docType}"
-                                 styleClass="prozessKopieFeldbreite">
+                <p:selectOneMenu id="docType" value="#{CreateProcessForm.processDataTab.docType}">
                     <f:selectItems value="#{CreateProcessForm.processDataTab.allDoctypes}"
                                    var="step"
                                    itemLabel="#{step.localizedLabel}"
@@ -54,11 +53,20 @@
                                      value="#{CreateProcessForm.mainProcess.ruleset}"
                                      converter="#{rulesetConverter}"
                                      onchange="document.getElementById('OpacRequest').click()"
-                                     styleClass="prozessKopieFeldbreite"
                                      required="true">
                         <f:selectItems value="#{ProcessForm.rulesets}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
+            </div>
+
+            <div>
+                <p:outputLabel for="usingTemplates"
+                               value="#{msgs.showInSelectList}"
+                               rendered="#{CreateProcessForm.processDataTab.usingTemplates}"/>
+                <p:selectBooleanCheckbox styleClass="switch input"
+                                         id="usingTemplates"
+                                         rendered="#{CreateProcessForm.processDataTab.usingTemplates}"
+                                         value="#{CreateProcessForm.mainProcess.inChoiceListShown}"/>
             </div>
         </p:row>
 
@@ -68,8 +76,7 @@
                 <p:outputLabel for="tifHeaderDocumentName"
                                value="#{msgs.tifHeaderDocumentName}"/>
                 <p:inputText class="input" id="tifHeaderDocumentName"
-                             value="#{CreateProcessForm.processDataTab.tifHeaderDocumentName}"
-                             styleClass="prozessKopieFeldbreite"/>
+                             value="#{CreateProcessForm.processDataTab.tiffHeaderDocumentName}"/>
             </div>
 
             <div>
@@ -77,8 +84,7 @@
                 <p:outputLabel for="tifHeaderImageDescription"
                                value="#{msgs.tifHeaderImageDescription}"/>
                 <p:inputText class="input" id="tifHeaderImageDescription"
-                             value="#{CreateProcessForm.processDataTab.tifHeaderImageDescription}"
-                             styleClass="prozessKopieFeldbreite"/>
+                             value="#{CreateProcessForm.processDataTab.tiffHeaderImageDescription}"/>
             </div>
 
             <div>
@@ -86,18 +92,7 @@
                                value="#{msgs.guessImages}"/>
                 <p:inputText class="input"
                              id="guessImages"
-                             value="#{CreateProcessForm.processDataTab.guessedImages}"
-                             styleClass="prozessKopieFeldbreite"/>
-            </div>
-
-            <div>
-                <p:outputLabel for="useTemplates"
-                               value="#{msgs.showInSelectList}"
-                               rendered="#{CreateProcessForm.usingTemplates}"/>
-                <p:selectBooleanCheckbox styleClass="switch input"
-                                         id="useTemplates"
-                                         rendered="#{CreateProcessForm.usingTemplates}"
-                                         value="#{CreateProcessForm.mainProcess.inChoiceListShown}"/>
+                             value="#{CreateProcessForm.processDataTab.guessedImages}"/>
             </div>
         </p:row>
 

@@ -30,14 +30,14 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-public class TextAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableRow implements Serializable {
-    private static final Logger logger = LogManager.getLogger(TextAdditionalDetailsTableRow.class);
+public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serializable {
+    private static final Logger logger = LogManager.getLogger(ProcessTextMetadata.class);
 
     private String value;
     private Date date;
 
-    TextAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
-                                  SimpleMetadataViewInterface settings, MetadataEntry value) {
+    ProcessTextMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
+                        SimpleMetadataViewInterface settings, MetadataEntry value) {
         super(tab, container, settings);
         if (Objects.nonNull(value)) {
             this.value = value.getValue();
@@ -98,7 +98,7 @@ public class TextAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableR
     }
 
     /**
-     * Returns the contents of the text input field of this metadata table row.
+     * Returns the contents of the text input field of this process metadata.
      *
      * @return the contents of the input field
      */
@@ -107,7 +107,7 @@ public class TextAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableR
     }
 
     /**
-     * Sets the contents of the text input field of this metadata table row.
+     * Sets the contents of the text input field of this process metadata.
      *
      * @param value
      *            value to be set

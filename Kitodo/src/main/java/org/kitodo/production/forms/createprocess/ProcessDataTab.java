@@ -11,15 +11,16 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigProject;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.TiffHeaderGenerator;
@@ -34,10 +35,15 @@ public class ProcessDataTab {
     private String docType;
     private String atstsl = "";
     private String titleDefinition;
-    private String tifHeaderImageDescription = "";
-    private String tifHeaderDocumentName = "";
+    private String tiffHeaderImageDescription = "";
+    private String tiffHeaderDocumentName = "";
+    private String tiffDefinition;
+    private boolean usingTemplates;
     private int guessedImages = 0;
-    private String tifDefinition;
+
+    public ProcessDataTab(CreateProcessForm createProcessForm) {
+        this.createProcessForm = createProcessForm;
+    }
 
     /**
      * Set docType.
@@ -47,17 +53,14 @@ public class ProcessDataTab {
     public void setDocType(String docType) {
         if (Objects.isNull(this.docType) || !this.docType.equals(docType)) {
             this.docType = docType;
-            this.createProcessForm.getWorkpiece().getRootElement().setType(getRulesetType());
+            this.createProcessForm.getWorkpiece().getRootElement().setType(this.docType);
             if (this.docType.isEmpty()) {
-                this.createProcessForm.getAdditionalDetailsTab().setAdditionalDetailsTable(new FieldedAdditionalDetailsTableRow());
+                this.createProcessForm.getProcessMetadataTab().setProcessDetails(new ProcessFieldedMetadata());
             } else {
-                this.createProcessForm.getAdditionalDetailsTab().show(this.createProcessForm.getWorkpiece().getRootElement());
+                this.createProcessForm.getProcessMetadataTab()
+                        .initializeProcessDetails(this.createProcessForm.getWorkpiece().getRootElement());
             }
         }
-    }
-
-    public ProcessDataTab(CreateProcessForm createProcessForm) {
-        this.createProcessForm = createProcessForm;
     }
 
     /**
@@ -66,62 +69,69 @@ public class ProcessDataTab {
      * @return value of docType
      */
     public String getDocType() {
+        if (Objects.isNull(docType)) {
+            String monograph = (String) getAllDoctypes()
+                    .stream()
+                    .filter(typ -> typ.getValue().equals("Monograph"))
+                    .findFirst()
+                    .get().getValue();
+            setDocType(Objects.isNull(monograph) || monograph.isEmpty() ? (String) getAllDoctypes().get(0).getValue() : monograph);
+        }
         return docType;
     }
 
     /**
-     * Get rulesetType of docType.
+     * Get useTemplate.
      *
-     * @return value of rulesetType
+     * @return value of useTemplate
      */
-    public String getRulesetType() {
-        if (Objects.nonNull(docType) && !docType.isEmpty()) {
-            try {
-                ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(docType);
-                if (Objects.nonNull(configOpacDoctype)) {
-                    return configOpacDoctype.getRulesetType();
-                }
-            } catch (FileNotFoundException e) {
-                logger.error(e.getLocalizedMessage());
-            }
-        }
-        return "";
+    public boolean isUsingTemplates() {
+        return usingTemplates;
     }
 
     /**
-     * Get tifHeaderImageDescription.
+     * Set useTemplate.
      *
-     * @return value of tifHeaderImageDescription
+     * @param usingTemplates as boolean
      */
-    public String getTifHeaderImageDescription() {
-        return tifHeaderImageDescription;
+    public void setUsingTemplates(boolean usingTemplates) {
+        this.usingTemplates = usingTemplates;
     }
 
     /**
-     * Set tifHeaderImageDescription.
+     * Get tiffHeaderImageDescription.
      *
-     * @param tifHeaderImageDescription as java.lang.String
+     * @return value of tiffHeaderImageDescription
      */
-    public void setTifHeaderImageDescription(String tifHeaderImageDescription) {
-        this.tifHeaderImageDescription = tifHeaderImageDescription;
+    public String getTiffHeaderImageDescription() {
+        return tiffHeaderImageDescription;
     }
 
     /**
-     * Get tifHeaderDocumentName.
+     * Set tiffHeaderImageDescription.
      *
-     * @return value of tifHeaderDocumentName
+     * @param tiffHeaderImageDescription as java.lang.String
      */
-    public String getTifHeaderDocumentName() {
-        return tifHeaderDocumentName;
+    public void setTiffHeaderImageDescription(String tiffHeaderImageDescription) {
+        this.tiffHeaderImageDescription = tiffHeaderImageDescription;
     }
 
     /**
-     * Set tifHeaderDocumentName.
+     * Get tiffHeaderDocumentName.
      *
-     * @param tifHeaderDocumentName as java.lang.String
+     * @return value of tiffHeaderDocumentName
      */
-    public void setTifHeaderDocumentName(String tifHeaderDocumentName) {
-        this.tifHeaderDocumentName = tifHeaderDocumentName;
+    public String getTiffHeaderDocumentName() {
+        return tiffHeaderDocumentName;
+    }
+
+    /**
+     * Set tiffHeaderDocumentName.
+     *
+     * @param tiffHeaderDocumentName as java.lang.String
+     */
+    public void setTiffHeaderDocumentName(String tiffHeaderDocumentName) {
+        this.tiffHeaderDocumentName = tiffHeaderDocumentName;
     }
 
     /**
@@ -145,10 +155,13 @@ public class ProcessDataTab {
     /**
      * Get all document types.
      *
-     * @return list of ConfigOpacDoctype objects
+     * @return list of all ruleset divisions
      */
-    public List<ConfigOpacDoctype> getAllDoctypes() {
-        return ConfigOpac.getAllDoctypes();
+    public List<SelectItem> getAllDoctypes() {
+        return createProcessForm.getRuleset()
+                .getStructuralElements(createProcessForm.getPriorityList()).entrySet()
+                .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -170,21 +183,21 @@ public class ProcessDataTab {
     }
 
     /**
-     * Set tifDefinition.
+     * Set tiffDefinition.
      *
-     * @param tifDefinition as java.lang.String
+     * @param tiffDefinition as java.lang.String
      */
-    public void setTifDefinition(String tifDefinition) {
-        this.tifDefinition = tifDefinition;
+    public void setTiffDefinition(String tiffDefinition) {
+        this.tiffDefinition = tiffDefinition;
     }
 
     /**
-     * Get tifDefinition.
+     * Get tiffDefinition.
      *
      * @return value of tifDefinition
      */
-    public String getTifDefinition() {
-        return tifDefinition;
+    public String getTiffDefinition() {
+        return tiffDefinition;
     }
 
     /**
@@ -194,12 +207,12 @@ public class ProcessDataTab {
         generateProcessTitle();
         generateTiffHeader();
         Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
-                "editForm:processFromTemplateTabView:additionalFields");
+                "editForm:processFromTemplateTabView:processMetadata");
     }
 
     private void generateProcessTitle() {
         TitleGenerator titleGenerator = new TitleGenerator(this.atstsl,
-                this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows());
+                this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
         try {
             String newTitle = titleGenerator.generateTitle(this.titleDefinition, null);
             this.createProcessForm.getMainProcess().setTitle(newTitle);
@@ -215,14 +228,30 @@ public class ProcessDataTab {
      */
     private void generateTiffHeader() {
         // document name is generally equal to process title
-        this.tifHeaderDocumentName = this.createProcessForm.getMainProcess().getTitle();
+        this.tiffHeaderDocumentName = this.createProcessForm.getMainProcess().getTitle();
 
         TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl,
-                this.createProcessForm.getAdditionalDetailsTab().getAdditionalDetailsTableRows());
+                this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
         try {
-            this.tifHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tifDefinition, this.docType);
+            this.tiffHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tiffDefinition, this.docType);
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    /**
+     * Read project configs for display in GUI.
+     */
+    public void prepare() {
+        ConfigProject configProject;
+        try {
+            configProject = new ConfigProject(createProcessForm.getProject().getTitle());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return;
+        }
+        usingTemplates = configProject.isUseTemplates();
+        tiffDefinition = configProject.getTifDefinition();
+        titleDefinition = configProject.getTitleDefinition();
     }
 }

@@ -51,7 +51,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.forms.createprocess.FieldedAdditionalDetailsTableRow;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
@@ -259,9 +259,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      * @throws ProcessGenerationException
-     *             if there is an item “Volume number” or “Bandnummer” in the
-     *             projects configuration, but its value cannot be evaluated to
-     *             an integer
+     *             if there is a "CurrentNo" item in the projects configuration,
+     *             but its value cannot be evaluated to an integer
      */
     public void nextStep()
             throws ConfigurationException, DAOException, DataException, IOException, ProcessGenerationException {
@@ -374,7 +373,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
 
         List<AdditionalField> projectAdditionalFields = configProject.getAdditionalFields();
-        FieldedAdditionalDetailsTableRow table = new FieldedAdditionalDetailsTableRow();
+        ProcessFieldedMetadata table = new ProcessFieldedMetadata();
         for (AdditionalField additionalField : projectAdditionalFields) {
             if (isDocTypeAndNotIsNotDoctype(additionalField, docType)) {
                 String value = metadata.getOrDefault(additionalField.getDocStruct(), Collections.emptyMap())

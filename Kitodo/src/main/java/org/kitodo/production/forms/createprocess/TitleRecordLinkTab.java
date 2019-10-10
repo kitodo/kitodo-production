@@ -111,7 +111,6 @@ public class TitleRecordLinkTab {
         try {
             titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
             createInsertionPositionSelectionTree();
-            possibleParentProcesses = Collections.emptyList();
         } catch (DAOException | IOException e) {
             Helper.setErrorMessage("errorLoadingOne",
                 new Object[] {chosenParentProcess,
@@ -148,7 +147,7 @@ public class TitleRecordLinkTab {
                     .getValue();
         } else {
             selectedInsertionPosition = null;
-            Helper.setMessage("prozesskopieForm.titleRecordLinkTab.noInsertionPosition");
+            Helper.setMessage("createProcessForm.titleRecordLinkTab.noInsertionPosition");
         }
     }
 
@@ -192,7 +191,7 @@ public class TitleRecordLinkTab {
 
         boolean linkingAllowedHere = Objects.isNull(currentIncludedStructuralElement.getLink())
                 && currentIncludedStructuralElementView.getAllowedSubstructuralElements()
-                        .containsKey(createProcessForm.getProcessDataTab().getRulesetType());
+                        .containsKey(createProcessForm.getProcessDataTab().getDocType());
 
         if (linkingAllowedHere) {
             new InsertionPositionSelectionTreeNode(includedStructuralElementNode, selectableInsertionPositions.size());
@@ -239,15 +238,18 @@ public class TitleRecordLinkTab {
      * constant above, the corresponding message is displayed.
      */
     public void searchForParentProcesses() {
+        rootElement = new DefaultTreeNode();
+        selectableInsertionPositions = Collections.emptyList();
+        selectedInsertionPosition = null;
         if (searchQuery.trim().isEmpty()) {
-            Helper.setMessage("prozesskopieForm.titleRecordLinkTab.searchButtonClick.empty");
+            Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.empty");
             return;
         }
         try {
             List<ProcessDTO> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
                 createProcessForm.getProject().getId(), createProcessForm.getTemplate().getRuleset().getId());
             if (processes.isEmpty()) {
-                Helper.setMessage("prozesskopieForm.titleRecordLinkTab.searchButtonClick.noHits");
+                Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.noHits");
             }
             indicationOfMoreHitsVisible = processes.size() > MAXIMUM_NUMBER_OF_HITS;
             possibleParentProcesses = new ArrayList<>();
@@ -255,7 +257,7 @@ public class TitleRecordLinkTab {
                 possibleParentProcesses.add(new SelectItem(process.getId().toString(), process.getTitle()));
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("prozesskopieForm.titleRecordLinkTab.searchButtonClick.error", e.getMessage(),
+            Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.error", e.getMessage(),
                 logger, e);
             indicationOfMoreHitsVisible = false;
             possibleParentProcesses = Collections.emptyList();

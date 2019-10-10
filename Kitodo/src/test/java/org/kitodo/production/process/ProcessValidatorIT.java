@@ -30,9 +30,9 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTab;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
-import org.kitodo.production.forms.createprocess.FieldedAdditionalDetailsTableRow;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
+import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProcessValidatorIT {
@@ -54,20 +54,20 @@ public class ProcessValidatorIT {
 
     @Test
     public void contentShouldBeValid() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalDetailsRows(), true);
+        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createProcessDetailsList(), true);
         assertTrue("Process content is invalid!", valid);
     }
 
     @Test
     public void contentShouldBeInvalidTitle() throws Exception {
-        boolean valid = ProcessValidator.isContentValid("First process", createAdditionalDetailsRows(), true);
+        boolean valid = ProcessValidator.isContentValid("First process", createProcessDetailsList(), true);
         assertFalse("Process content is valid - title should be invalid!", valid);
     }
 
     @Ignore("find ou values for which it fails")
     @Test
     public void contentShouldBeInvalidAdditionalFields() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalDetailsRows(), true);
+        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createProcessDetailsList(), true);
         assertTrue("Process content is valid - additional fields should be invalid!", valid);
     }
 
@@ -107,37 +107,36 @@ public class ProcessValidatorIT {
         assertFalse("Property exists!", exists);
     }
 
-    private List<AdditionalDetailsTableRow> createAdditionalDetailsRows() throws IOException {
+    private List<ProcessDetail> createProcessDetailsList() throws IOException {
         Workpiece workpiece = new Workpiece();
         workpiece.getRootElement().setType("Monograph");
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService().getRulesetManagement();
         rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
         StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
                 "Monograph", "", Locale.LanguageRange.parse("en"));
-        FieldedAdditionalDetailsTableRow additionalDetailsTable = new FieldedAdditionalDetailsTableRow(
-                null, workpiece.getRootElement(), monograph);
-        for (AdditionalDetailsTableRow row : additionalDetailsTable.getRows()) {
-            switch (row.getMetadataID()) {
+        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(null, workpiece.getRootElement(), monograph);
+        for (ProcessDetail detail : processDetails.getRows()) {
+            switch (detail.getMetadataID()) {
                 case "TitleDocMain":
                 case "TitleDocMainShort":
-                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "Test");
+                    ProcessMetadataTab.setProcessDetailValue(detail, "Test");
                     break;
                 case "TSL_ATS":
-                    AdditionalDetailsTab.setAdditionalDetailsRow(row, " ");
+                    ProcessMetadataTab.setProcessDetailValue(detail, " ");
                     break;
                 case "CatalogIDSource":
                 case "CatalogIDDigital":
-                    AdditionalDetailsTab.setAdditionalDetailsRow(row, "123");
+                    ProcessMetadataTab.setProcessDetailValue(detail, "123");
                     break;
                 case "Person":
-                    for (AdditionalDetailsTableRow personMetadataRow : ((FieldedAdditionalDetailsTableRow) row).getRows()) {
+                    for (ProcessDetail personMetadataRow : ((ProcessFieldedMetadata) detail).getRows()) {
                         switch (personMetadataRow.getMetadataID()) {
                             case "Role":
                             case "LastName":
-                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Author");
+                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Author");
                                 break;
                             case "FirstName":
-                                AdditionalDetailsTab.setAdditionalDetailsRow(personMetadataRow, "Test");
+                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Test");
                                 break;
                             default:
                                 break;
@@ -148,6 +147,6 @@ public class ProcessValidatorIT {
                     break;
             }
         }
-        return additionalDetailsTable.getRows();
+        return processDetails.getRows();
     }
 }

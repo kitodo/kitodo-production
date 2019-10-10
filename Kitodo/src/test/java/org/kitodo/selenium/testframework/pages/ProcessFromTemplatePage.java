@@ -48,19 +48,19 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement docTypeSelect;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":additionalDetailsTable:0:inputText")
+    @FindBy(id = TAB_VIEW + ":processDetailsTable:0:inputText")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":additionalDetailsTable:1:inputText")
+    @FindBy(id = TAB_VIEW + ":processDetailsTable:1:inputText")
     private WebElement titleSortInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":additionalDetailsTable:2:inputText")
+    @FindBy(id = TAB_VIEW + ":processDetailsTable:2:inputText")
     private WebElement ppnAnalogInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":additionalDetailsTable:3:inputText")
+    @FindBy(id = TAB_VIEW + ":processDetailsTable:3:inputText")
     private WebElement ppnDigitalInput;
 
     @SuppressWarnings("unused")
@@ -166,7 +166,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     public boolean createProcessAsChildNotPossible() throws Exception {
         switchToTabByIndex(1);
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_3")));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_0")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 

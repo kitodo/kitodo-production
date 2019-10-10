@@ -37,7 +37,6 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -67,7 +66,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private final ImportTab importTab = new ImportTab(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
-    private final AdditionalDetailsTab additionalDetailsTab = new AdditionalDetailsTab(this);
+    private final ProcessMetadataTab processMetadataTab = new ProcessMetadataTab(this);
     private final SearchTab searchTab = new SearchTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
@@ -77,7 +76,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private Project project;
     private Workpiece workpiece = new Workpiece();
     private Template template;
-    private boolean usingTemplates;
     private LinkedList<Process> processes = new LinkedList<>(Collections.singletonList(new Process()));
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
 
@@ -132,12 +130,12 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     }
 
     /**
-     * Get additionalDetailsTab.
+     * Get processMetadataTab.
      *
-     * @return value of additionalDetailsTab
+     * @return value of processMetadataTab
      */
-    public AdditionalDetailsTab getAdditionalDetailsTab() {
-        return additionalDetailsTab;
+    public ProcessMetadataTab getProcessMetadataTab() {
+        return processMetadataTab;
     }
 
     /**
@@ -156,24 +154,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public TitleRecordLinkTab getTitleRecordLinkTab() {
         return titleRecordLinkTab;
-    }
-
-    /**
-     * Get useTemplate.
-     *
-     * @return value of useTemplate
-     */
-    public boolean isUsingTemplates() {
-        return usingTemplates;
-    }
-
-    /**
-     * Set useTemplate.
-     *
-     * @param usingTemplates as boolean
-     */
-    public void setUsingTemplates(boolean usingTemplates) {
-        this.usingTemplates = usingTemplates;
     }
 
     /**
@@ -328,7 +308,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 rulesetManagementInterface = openRulesetFile(getMainProcess().getRuleset().getFile());
-                readProjectConfigs();
+                processDataTab.prepare();
                 return true;
             }
         } catch (ProcessGenerationException | IOException e) {
@@ -345,7 +325,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     public boolean createProcess() {
         Process mainProcess = getMainProcess();
         if (!ProcessValidator.isContentValid(mainProcess.getTitle(),
-                additionalDetailsTab.getAdditionalDetailsTableRows(),
+                processMetadataTab.getProcessDetailsElements(),
                 true)) {
             return false;
         }
@@ -364,8 +344,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
 
         if (Objects.nonNull(workpiece)) {
-            workpiece.getRootElement().setType(processDataTab.getRulesetType());
-            additionalDetailsTab.preserve();
+            workpiece.getRootElement().setType(processDataTab.getDocType());
+            processMetadataTab.preserve();
             try (OutputStream out = ServiceManager.getFileService()
                     .write(ServiceManager.getProcessService().getMetadataFileUri(getMainProcess()))) {
                 ServiceManager.getMetsService().save(workpiece, out);
@@ -391,36 +371,36 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private void addProperties() {
         Process mainProcess = getMainProcess();
-        addMetadataProperties(additionalDetailsTab.getAdditionalDetailsTableRows(), mainProcess);
+        addMetadataProperties(processMetadataTab.getProcessDetailsElements(), mainProcess);
         ProcessGenerator.addPropertyForWorkpiece(mainProcess, "DocType", processDataTab.getDocType());
         ProcessGenerator.addPropertyForWorkpiece(mainProcess, "TifHeaderImagedescription",
-                processDataTab.getTifHeaderImageDescription());
+                processDataTab.getTiffHeaderImageDescription());
         ProcessGenerator.addPropertyForWorkpiece(mainProcess, "TifHeaderDocumentname",
-                processDataTab.getTifHeaderDocumentName());
+                processDataTab.getTiffHeaderDocumentName());
         if (Objects.nonNull(template)) {
             ProcessGenerator.addPropertyForProcess(mainProcess, "Template", template.getTitle());
             ProcessGenerator.addPropertyForProcess(mainProcess, "TemplateID", String.valueOf(template.getId()));
         }
     }
 
-    private void addMetadataProperties(List<AdditionalDetailsTableRow> additionalRows, Process process) {
+    private void addMetadataProperties(List<ProcessDetail> processDetailList, Process process) {
         try {
-            for (AdditionalDetailsTableRow row : additionalRows) {
-                if (!row.getMetadata().isEmpty() && row.getMetadata().toArray()[0] instanceof Metadata) {
-                    String metadataValue = AdditionalDetailsTab.getMetadataValue(row);
-                    Metadata metadata = (Metadata) row.getMetadata().toArray()[0];
+            for (ProcessDetail processDetail : processDetailList) {
+                if (!processDetail.getMetadata().isEmpty() && processDetail.getMetadata().toArray()[0] instanceof Metadata) {
+                    String metadataValue = ProcessMetadataTab.getProcessDetailValue(processDetail);
+                    Metadata metadata = (Metadata) processDetail.getMetadata().toArray()[0];
                     switch (metadata.getDomain()) {
                         case DMD_SEC:
-                            ProcessGenerator.addPropertyForWorkpiece(process, row.getLabel(), metadataValue);
+                            ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
                             break;
                         case SOURCE_MD:
-                            ProcessGenerator.addPropertyForTemplate(process, row.getLabel(), metadataValue);
+                            ProcessGenerator.addPropertyForTemplate(process, processDetail.getLabel(), metadataValue);
                             break;
                         case TECH_MD:
-                            ProcessGenerator.addPropertyForProcess(process, row.getLabel(), metadataValue);
+                            ProcessGenerator.addPropertyForProcess(process, processDetail.getLabel(), metadataValue);
                             break;
                         default:
-                            logger.info("Don't save metadata '" + row.getMetadataID() + "' with domain '"
+                            logger.info("Don't save metadata '" + processDetail.getMetadataID() + "' with domain '"
                                     + metadata.getDomain() + "' to property.");
                             break;
                     }
@@ -459,24 +439,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             }
             return false;
         }
-    }
-
-    /**
-     * Read project configs for display in GUI.
-     */
-    protected void readProjectConfigs() {
-        ConfigProject configProject;
-        try {
-            configProject = new ConfigProject(project.getTitle());
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
-        }
-        processDataTab.setDocType(configProject.getDocType());
-        usingTemplates = configProject.isUseTemplates();
-
-        processDataTab.setTifDefinition(configProject.getTifDefinition());
-        processDataTab.setTitleDefinition(configProject.getTitleDefinition());
     }
 
     private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {

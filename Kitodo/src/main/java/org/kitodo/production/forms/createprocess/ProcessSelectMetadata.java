@@ -32,7 +32,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
-public class SelectAdditionalDetailsTableRow extends SimpleAdditionalDetailsTableRow implements Serializable {
+public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Serializable {
 
     /**
      * Converts the select items map to the select items type required by JSF to
@@ -60,8 +60,8 @@ public class SelectAdditionalDetailsTableRow extends SimpleAdditionalDetailsTabl
      */
     private List<String> selectedItems = new ArrayList<>();
 
-    SelectAdditionalDetailsTableRow(AdditionalDetailsTab tab, FieldedAdditionalDetailsTableRow container,
-                                    SimpleMetadataViewInterface settings, Collection<MetadataEntry> selected) {
+    ProcessSelectMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
+                          SimpleMetadataViewInterface settings, Collection<MetadataEntry> selected) {
         super(tab, container, settings);
         this.items = toItems(settings.getSelectItems());
         for (MetadataEntry entry : selected) {

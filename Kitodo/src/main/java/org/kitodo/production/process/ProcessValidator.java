@@ -12,7 +12,6 @@
 package org.kitodo.production.process;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +22,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.createprocess.AdditionalDetailsTableRow;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -43,13 +42,13 @@ public final class ProcessValidator {
      * 
      * @param title
      *            of process for validation
-     * @param additionalDetailsTableRows
+     * @param processDetailsList
      *            for process validation
      * @param criticiseEmptyTitle
      *            true or false
      * @return true or false
      */
-    public static boolean isContentValid(String title, List<AdditionalDetailsTableRow> additionalDetailsTableRows,
+    public static boolean isContentValid(String title, List<ProcessDetail> processDetailsList,
                                          boolean criticiseEmptyTitle) {
         boolean valid = true;
 
@@ -57,8 +56,8 @@ public final class ProcessValidator {
             valid = isProcessTitleCorrect(title);
         }
         // check the additional inputs that must be specified
-        for (AdditionalDetailsTableRow row : additionalDetailsTableRows) {
-            if (row.isRequired() && !row.isValid()) {
+        for (ProcessDetail detail : processDetailsList) {
+            if (detail.isRequired() && !detail.isValid()) {
                 valid = false;
                 Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorFieldIsEmpty");
             }
