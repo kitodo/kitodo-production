@@ -26,11 +26,11 @@
               closable="false">
         <ui:fragment rendered="#{indexingForm.indexingInProgress()}">
             <h3>#{msgs.systemMaintenanceHeader}</h3>
-            <div class="select-note">#{msgs.systemMaintenanceMessage}</div>
+            <div class="select-note ui-messages-error">#{msgs.systemMaintenanceMessage}</div>
         </ui:fragment>
         <ui:fragment rendered="#{not indexingForm.indexingInProgress()}">
             <h3>#{msgs.systemErrorHeader}</h3>
-            <div class="select-note">#{msgs.systemErrorIndexOutOfDateMessage}</div>
+            <div class="select-note ui-messages-error">#{msgs.systemErrorIndexOutOfDateMessage}</div>
         </ui:fragment>
 
         <p:panelGrid>
