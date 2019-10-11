@@ -95,7 +95,9 @@ public class MigrationForm extends BaseForm {
             processList.addAll(project.getProcesses());
         }
         for (Process process : processList) {
-            addToAggregatedProcesses(aggregatedProcesses, process);
+            if(Objects.isNull(process.getTemplate())) {
+                addToAggregatedProcesses(aggregatedProcesses, process);
+            }
         }
         processListShown = true;
     }
