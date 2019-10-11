@@ -33,7 +33,7 @@ import org.primefaces.PrimeFaces;
 public class LoginForm implements Serializable {
     private User loggedUser;
     private boolean firstVisit = true;
-    private static final String SYSTEM_VIEW = "system.jsf";
+    private static final String INDEXING_PAGE = "system.jsf?tabIndex=2";
     private static final String DESKTOP_VIEW = "desktop.jsf";
 
     /**
@@ -101,9 +101,8 @@ public class LoginForm implements Serializable {
 
         if (ServiceManager.getIndexingService().isIndexCorrupted()) {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
-                // redirect admins to system page
-                // TODO: once MigrationForm is ApplicationScoped, set tabIndex there before redirecting to 'system' page!
-                context.redirect(SYSTEM_VIEW);
+                // redirect admins to indexing page
+                context.redirect(INDEXING_PAGE);
             } else {
                 // show dialog with logout button to other users
                 PrimeFaces.current().executeScript("PF('indexWarningDialog').show();");
