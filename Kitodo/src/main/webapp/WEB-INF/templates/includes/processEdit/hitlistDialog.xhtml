@@ -23,10 +23,10 @@
               resizable="false"
               showHeader="false"
               dynamic="true">
-        <h3>#{msgs.hitlist} (#{ImportForm.numberOfHits} #{msgs.hits})</h3>
+        <h3>#{msgs.hitlist} (#{CreateProcessForm.importTab.numberOfHits} #{msgs.hits})</h3>
         <h:form id="hitlistDialogForm">
             <p:dataTable id="hitlistDialogTable"
-                         value="#{ImportForm.hits}"
+                         value="#{CreateProcessForm.importTab.hits}"
                          var="hit"
                          rows="#{LoginForm.loggedUser.tableSize}"
                          paginatorPosition="bottom"
@@ -40,9 +40,8 @@
                                    onclick="PF('hitlist').hide()"
                                    update="editForm"
                                    immediate="true"
-                                   action="#{ImportForm.getSelectedRecord()}">
+                                   action="#{CreateProcessForm.importTab.getSelectedRecord()}">
                         <f:param name="ID" value="#{hit.identifier}"/>
-                        <f:setPropertyActionListener target="#{ImportForm.prozesskopieForm}" value="#{ProzesskopieForm}" />
                     </p:commandLink>
                 </p:column>
             </p:dataTable>

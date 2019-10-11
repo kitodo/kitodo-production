@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,8 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,9 +26,7 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
@@ -40,17 +36,24 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-@Named("ImportForm")
-@ViewScoped
-public class ImportForm implements Serializable {
-    private static final Logger logger = LogManager.getLogger(ImportForm.class);
+public class ImportTab implements Serializable {
+    private static final Logger logger = LogManager.getLogger(ImportTab.class);
 
-    private ProzesskopieForm prozesskopieForm;
+    private CreateProcessForm createProcessForm;
     private String selectedCatalog;
     private String selectedField;
     private String searchTerm;
     private SearchResult searchResult;
     private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
+
+    /**
+     * Standard constructor.
+     *
+     * @param createProcessForm CreateProcessForm instance to which this ImportTab is assigned.
+     */
+    public ImportTab(CreateProcessForm createProcessForm) {
+        this.createProcessForm = createProcessForm;
+    }
 
     /**
      * Getter for selectedCatalog.
@@ -109,24 +112,6 @@ public class ImportForm implements Serializable {
         this.selectedField = field;
     }
 
-    /**
-     * Get prozesskopieForm.
-     *
-     * @return value of prozesskopieForm
-     */
-    public ProzesskopieForm getProzesskopieForm() {
-        return prozesskopieForm;
-    }
-
-    /**
-     * Set prozesskopieForm.
-     *
-     * @param prozesskopieForm
-     *            as org.kitodo.forms.ProzesskopieForm
-     */
-    public void setProzesskopieForm(ProzesskopieForm prozesskopieForm) {
-        this.prozesskopieForm = prozesskopieForm;
-    }
 
     /**
      * Get list of catalogs.
@@ -207,54 +192,29 @@ public class ImportForm implements Serializable {
      */
     public void getSelectedRecord() {
         String recordId = Helper.getRequestParameter("ID");
+        getRecordById(this.selectedCatalog, recordId);
+        Ajax.update("editForm");
+        this.createProcessForm.setEditActiveTabIndex(2);
+    }
+
+    private void getRecordById(String catalog, String recordId) {
         Document record;
         try {
-            record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
+            record = ServiceManager.getImportService().getSelectedRecord(catalog, recordId);
         } catch (IOException | SAXException | ParserConfigurationException | URISyntaxException
                 | NoRecordFoundException | UnsupportedFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
-        List<AdditionalField> actualFields = this.prozesskopieForm.getAdditionalFields();
+        List<ProcessDetail> processDetailsList =
+                this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
-
-        // TODO: iterating over multiple kitodo nodes will overwrite existing
-        // 'additionalField' values from the last kitodo node!
         for (int i = 0; i < kitodoNodes.getLength(); i++) {
             Node kitodoNode = kitodoNodes.item(i);
-            actualFields = insertFieldValues(actualFields, kitodoNode.getChildNodes());
+            this.createProcessForm.getProcessMetadataTab().fillProcessDetailsElements(processDetailsList,
+                    kitodoNode.getChildNodes(), false);
         }
-
-        this.prozesskopieForm.setAdditionalFields(actualFields);
-
-        Ajax.update("editForm");
-        this.prozesskopieForm.setEditActiveTabIndex(2);
-    }
-
-    private List<AdditionalField> insertFieldValues(List<AdditionalField> additionalFields, NodeList nodes) {
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            if (node.getLocalName().equals("metadataGroup")) {
-                additionalFields = insertFieldValues(additionalFields, node.getChildNodes());
-            } else if (node.getLocalName().equals("metadata")) {
-                Element element = (Element) node;
-                for (AdditionalField additionalField : additionalFields) {
-                    if (Objects.nonNull(additionalField.getMetadata())
-                            && additionalField.getMetadata().equals(element.getAttribute("name"))) {
-                        // Append author to list of existing authors
-                        if (additionalField.getMetadata().equals("ListOfCreators")) {
-                            additionalField
-                                    .setValue(Objects.isNull(additionalField.getValue()) ? element.getTextContent()
-                                            : additionalField.getValue() + ", " + element.getTextContent());
-                        } else {
-                            additionalField.setValue(element.getTextContent());
-                        }
-                    }
-                }
-            }
-        }
-        return additionalFields;
     }
 }

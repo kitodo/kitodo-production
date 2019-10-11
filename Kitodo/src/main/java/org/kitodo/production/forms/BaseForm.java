@@ -47,7 +47,7 @@ public class BaseForm implements Serializable {
     protected static final String ERROR_LOADING_MANY = "errorLoadingMany";
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     protected static final String ERROR_DELETING = "errorDeleting";
-    protected static final String ERROR_READING = "errorReading";
+    public static final String ERROR_READING = "errorReading";
     protected static final String ERROR_RELOADING = "errorReloading";
     protected static final String ERROR_SAVING = "errorSaving";
 

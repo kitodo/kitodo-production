@@ -17,7 +17,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import java.io.IOException;
 import java.net.URI;
 import java.time.MonthDay;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,7 +37,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -50,6 +51,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
@@ -257,9 +259,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      * @throws ProcessGenerationException
-     *             if there is an item “Volume number” or “Bandnummer” in the
-     *             projects configuration, but its value cannot be evaluated to
-     *             an integer
+     *             if there is a "CurrentNo" item in the projects configuration,
+     *             but its value cannot be evaluated to an integer
      */
     public void nextStep()
             throws ConfigurationException, DAOException, DataException, IOException, ProcessGenerationException {
@@ -292,7 +293,12 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         initializeRulesetFields(overallWorkpiece.getRootElement().getType());
 
         ConfigProject configProject = new ConfigProject(overallProcess.getProject().getTitle());
-        titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece);
+
+        Collection<MetadataViewInterface> addableDivisions = rulesetService.openRuleset(overallProcess.getRuleset())
+                .getStructuralElementView(overallWorkpiece.getRootElement().getType(), "", ENGLISH)
+                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
+
+        titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece , addableDivisions);
         titleDefinition = configProject.getTitleDefinition();
 
         processesToCreate = course.getProcesses();
@@ -340,14 +346,14 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     /**
      * Initializes the title generator.
      *
-     * @param overallProcess
-     *            the overall course process
      * @param configProject
      *            the config project
+     * @param addableDivisions
+     *            addable Metadata views
      * @return the initialized title generator
      */
-    private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece)
-            throws IOException, ConfigurationException {
+    private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
+                                                           Collection<MetadataViewInterface> addableDivisions) {
 
         IncludedStructuralElement rootElement = workpiece.getRootElement();
         Map<String, Map<String, String>> metadata = new HashMap<>(4);
@@ -367,17 +373,31 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
 
         List<AdditionalField> projectAdditionalFields = configProject.getAdditionalFields();
-        List<AdditionalField> additionalFields = new ArrayList<>(projectAdditionalFields.size());
+        ProcessFieldedMetadata table = new ProcessFieldedMetadata();
         for (AdditionalField additionalField : projectAdditionalFields) {
             if (isDocTypeAndNotIsNotDoctype(additionalField, docType)) {
                 String value = metadata.getOrDefault(additionalField.getDocStruct(), Collections.emptyMap())
                         .get(additionalField.getMetadata());
-                additionalField.setValue(value);
-                additionalFields.add(additionalField);
+                List<MetadataViewInterface> filteredViews = addableDivisions
+                        .stream()
+                        .filter(v -> v.getId().equals(additionalField.getMetadata()))
+                        .collect(Collectors.toList());
+                if (!filteredViews.isEmpty()) {
+                    MetadataEntry metadataEntry = new MetadataEntry();
+                    metadataEntry.setValue(value);
+                    if (filteredViews.get(0).isComplex()) {
+                        table.getRows().add(table.createMetadataGroupPanel(
+                                (ComplexMetadataViewInterface) filteredViews.get(0),
+                                Collections.singletonList(metadataEntry)));
+                    } else {
+                        table.getRows().add(table.createMetadataEntryEdit(
+                                (SimpleMetadataViewInterface) filteredViews.get(0),
+                                Collections.singletonList(metadataEntry)));
+                    }
+                }
             }
         }
-
-        return new TitleGenerator(topstruct.getOrDefault("TSL_ATS", ""), additionalFields);
+        return new TitleGenerator(topstruct.getOrDefault("TSL_ATS", ""), table.getRows());
     }
 
     /**

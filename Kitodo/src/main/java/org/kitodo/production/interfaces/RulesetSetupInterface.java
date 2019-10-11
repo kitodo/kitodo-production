@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.dataeditor;
+package org.kitodo.production.interfaces;
 
 import java.util.List;
 import java.util.Locale.LanguageRange;

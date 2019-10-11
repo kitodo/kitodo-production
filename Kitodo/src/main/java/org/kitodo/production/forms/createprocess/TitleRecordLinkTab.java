@@ -9,9 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.copyprocess;
-
-import de.unigoettingen.sub.search.opac.ConfigOpac;
+package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
 import java.net.URI;
@@ -52,10 +50,7 @@ public class TitleRecordLinkTab {
      */
     private static final int MAXIMUM_NUMBER_OF_HITS = 10;
 
-    /**
-     * Process creation dialog to which this tab belongs.
-     */
-    private final ProzesskopieForm copyProcessForm;
+    private final CreateProcessForm createProcessForm;
 
     /**
      * The user-selected parent process.
@@ -101,11 +96,11 @@ public class TitleRecordLinkTab {
     /**
      * Creates a new data object underlying the title record link tab.
      *
-     * @param prozesskopieForm
-     *            process copy form containing the object
+     * @param createProcessForm
+     *            CreateProcessForm containing the object
      */
-    public TitleRecordLinkTab(ProzesskopieForm prozesskopieForm) {
-        this.copyProcessForm = prozesskopieForm;
+    public TitleRecordLinkTab(CreateProcessForm createProcessForm) {
+        this.createProcessForm = createProcessForm;
     }
 
     /**
@@ -116,7 +111,6 @@ public class TitleRecordLinkTab {
         try {
             titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
             createInsertionPositionSelectionTree();
-            possibleParentProcesses = Collections.emptyList();
         } catch (DAOException | IOException e) {
             Helper.setErrorMessage("errorLoadingOne",
                 new Object[] {chosenParentProcess,
@@ -153,7 +147,7 @@ public class TitleRecordLinkTab {
                     .getValue();
         } else {
             selectedInsertionPosition = null;
-            Helper.setMessage("prozesskopieForm.titleRecordLinkTab.noInsertionPosition");
+            Helper.setMessage("createProcessForm.titleRecordLinkTab.noInsertionPosition");
         }
     }
 
@@ -190,14 +184,14 @@ public class TitleRecordLinkTab {
         }
 
         StructuralElementViewInterface currentIncludedStructuralElementView = ruleset.getStructuralElementView(type,
-            copyProcessForm.getAcquisitionStage(), priorityList);
+            createProcessForm.getAcquisitionStage(), priorityList);
 
         TreeNode includedStructuralElementNode = new InsertionPositionSelectionTreeNode(parentNode,
                 currentIncludedStructuralElementView.getLabel());
 
         boolean linkingAllowedHere = Objects.isNull(currentIncludedStructuralElement.getLink())
                 && currentIncludedStructuralElementView.getAllowedSubstructuralElements()
-                        .containsKey(ConfigOpac.getDoctypeByName(copyProcessForm.getDocType()).getRulesetType());
+                        .containsKey(createProcessForm.getProcessDataTab().getDocType());
 
         if (linkingAllowedHere) {
             new InsertionPositionSelectionTreeNode(includedStructuralElementNode, selectableInsertionPositions.size());
@@ -244,15 +238,18 @@ public class TitleRecordLinkTab {
      * constant above, the corresponding message is displayed.
      */
     public void searchForParentProcesses() {
+        rootElement = new DefaultTreeNode();
+        selectableInsertionPositions = Collections.emptyList();
+        selectedInsertionPosition = null;
         if (searchQuery.trim().isEmpty()) {
-            Helper.setMessage("prozesskopieForm.titleRecordLinkTab.searchButtonClick.empty");
+            Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.empty");
             return;
         }
         try {
             List<ProcessDTO> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
-                copyProcessForm.getProject().getId(), copyProcessForm.getTemplate().getRuleset().getId());
+                createProcessForm.getProject().getId(), createProcessForm.getTemplate().getRuleset().getId());
             if (processes.isEmpty()) {
-                Helper.setMessage("prozesskopieForm.titleRecordLinkTab.searchButtonClick.noHits");
+                Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.noHits");
             }
             indicationOfMoreHitsVisible = processes.size() > MAXIMUM_NUMBER_OF_HITS;
             possibleParentProcesses = new ArrayList<>();
@@ -260,7 +257,7 @@ public class TitleRecordLinkTab {
                 possibleParentProcesses.add(new SelectItem(process.getId().toString(), process.getTitle()));
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("prozesskopieForm.titleRecordLinkTab.searchButtonClick.error", e.getMessage(),
+            Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.error", e.getMessage(),
                 logger, e);
             indicationOfMoreHitsVisible = false;
             possibleParentProcesses = Collections.emptyList();

@@ -23,19 +23,22 @@
             <div>
                 <!-- process title -->
                 <p:outputLabel for="processTitle" value="#{msgs.processTitle}"/>
-                <p:inputText id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="input-with-button"
+                <p:inputText id="processTitle"
+                             value="#{CreateProcessForm.mainProcess.title}"
+                             styleClass="input-with-button"
                              required="#{not empty param['editForm:save']}"/>
                 <p:commandButton id="generateTitleButton"
-                                 actionListener="#{ProzesskopieForm.calculateProcessTitle}"
+                                 actionListener="#{CreateProcessForm.processDataTab.generateProcessTitleAndTiffHeader}"
                                  icon="fa fa-cog" title="#{msgs.generate}"/>
             </div>
 
             <div>
                 <!-- DocType -->
-                <p:outputLabel value="DocType" rendered="#{ProzesskopieForm.standardFields.doctype}"/>
-                <p:selectOneMenu id="docType" value="#{ProzesskopieForm.docType}"
-                                  rendered="#{ProzesskopieForm.standardFields.doctype}" styleClass="prozessKopieFeldbreite">
-                    <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
+                <p:outputLabel value="DocType"/>
+                <p:selectOneMenu id="docType" value="#{CreateProcessForm.processDataTab.docType}">
+                    <f:selectItems value="#{CreateProcessForm.processDataTab.allDoctypes}"
+                                   var="step"
+                                   itemLabel="#{step.localizedLabel}"
                                    itemValue="#{step.title}"/>
                     <f:ajax event="change" render="@form"/>
                 </p:selectOneMenu>
@@ -43,10 +46,13 @@
 
             <div>
                 <!-- Preferences -->
-                <p:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.regelsatz}" value="#{msgs.ruleset}"/>
-                <h:panelGroup rendered="#{ProzesskopieForm.standardFields.regelsatz}">
-                    <p:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
-                                     onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"
+                <p:outputLabel for="ruleset"
+                               value="#{msgs.ruleset}"/>
+                <h:panelGroup>
+                    <p:selectOneMenu id="ruleset"
+                                     value="#{CreateProcessForm.mainProcess.ruleset}"
+                                     converter="#{rulesetConverter}"
+                                     onchange="document.getElementById('OpacRequest').click()"
                                      required="true">
                         <f:selectItems value="#{ProcessForm.rulesets}"/>
                     </p:selectOneMenu>
@@ -54,40 +60,39 @@
             </div>
 
             <div>
-                <!-- digital collection -->
-                <p:outputLabel for="digitalCollections" rendered="#{ProzesskopieForm.standardFields.collections}"
-                               value="#{msgs.digitalCollections}"/>
-                <p:selectManyCheckbox id="digitalCollections" value="#{ProzesskopieForm.digitalCollections}"
-                                      layout="grid" columns="1" rendered="#{ProzesskopieForm.standardFields.collections}"
-                                      required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}"/>
-                </p:selectManyCheckbox >
+                <p:outputLabel for="usingTemplates"
+                               value="#{msgs.showInSelectList}"
+                               rendered="#{CreateProcessForm.processDataTab.usingTemplates}"/>
+                <p:selectBooleanCheckbox styleClass="switch input"
+                                         id="usingTemplates"
+                                         rendered="#{CreateProcessForm.processDataTab.usingTemplates}"
+                                         value="#{CreateProcessForm.mainProcess.inChoiceListShown}"/>
             </div>
         </p:row>
 
         <p:row>
             <div>
                 <!-- Tifheader - Documentname -->
-                <p:outputLabel for="tifHeaderDocumentName" value="#{msgs.tifHeaderDocumentName}"/>
-                <p:inputText class="input" id="tifHeaderDocumentName" value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
+                <p:outputLabel for="tifHeaderDocumentName"
+                               value="#{msgs.tifHeaderDocumentName}"/>
+                <p:inputText class="input" id="tifHeaderDocumentName"
+                             value="#{CreateProcessForm.processDataTab.tiffHeaderDocumentName}"/>
             </div>
 
             <div>
                 <!-- Tifheader - Imagedescription -->
-                <p:outputLabel for="tifHeaderImageDescription" value="#{msgs.tifHeaderImageDescription}"/>
-                <p:inputText class="input" id="tifHeaderImageDescription" value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
+                <p:outputLabel for="tifHeaderImageDescription"
+                               value="#{msgs.tifHeaderImageDescription}"/>
+                <p:inputText class="input" id="tifHeaderImageDescription"
+                             value="#{CreateProcessForm.processDataTab.tiffHeaderImageDescription}"/>
             </div>
 
             <div>
-                <p:outputLabel for="guessImages" value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}"/>
-                <p:inputText class="input" id="guessImages" value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}"
-                             styleClass="prozessKopieFeldbreite"/>
-            </div>
-
-            <div>
-                <p:outputLabel for="useTemplates" value="#{msgs.showInSelectList}" rendered="#{ProzesskopieForm.useTemplates}"/>
-                <p:selectBooleanCheckbox styleClass="switch input" id="useTemplates" rendered="#{ProzesskopieForm.useTemplates}"
-                                         value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
+                <p:outputLabel for="guessImages"
+                               value="#{msgs.guessImages}"/>
+                <p:inputText class="input"
+                             id="guessImages"
+                             value="#{CreateProcessForm.processDataTab.guessedImages}"/>
             </div>
         </p:row>
 

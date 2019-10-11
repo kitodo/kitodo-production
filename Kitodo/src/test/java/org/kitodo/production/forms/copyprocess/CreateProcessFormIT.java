@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -32,6 +32,7 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -39,7 +40,7 @@ import org.kitodo.production.services.file.FileService;
 /**
  * Tests for ProcessService class.
  */
-public class ProzesskopieFormIT {
+public class CreateProcessFormIT {
 
     private static FileService fileService = new FileService();
     private static final ProcessService processService = ServiceManager.getProcessService();
@@ -81,16 +82,12 @@ public class ProzesskopieFormIT {
 
     @Test
     public void shouldCreateNewProcess() throws Exception {
-        ProzesskopieForm underTest = new ProzesskopieForm();
-        underTest.additionalFields = Collections.emptyList();
-        underTest.digitalCollections = Collections.emptyList();
-        underTest.docType = "";
-        underTest.prozessKopie = new Process();
-        underTest.prozessKopie.setProject(ServiceManager.getProjectService().getById(1));
-        underTest.prozessKopie.setRuleset(ServiceManager.getRulesetService().getById(1));
-        underTest.prozessKopie.setTitle("title");
-        underTest.standardFields = new HashMap<>();
-        underTest.standardFields.put("collections", Boolean.FALSE);
+        CreateProcessForm underTest = new CreateProcessForm();
+        underTest.getProcessDataTab().setDocType("");
+        underTest.setProcesses(new LinkedList<>(Collections.singletonList(new Process())));
+        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
+        underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
+        underTest.getMainProcess().setTitle("title");
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         ExecutionPermission.setExecutePermission(script);

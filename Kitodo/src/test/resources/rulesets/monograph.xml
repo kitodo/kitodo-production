@@ -11,18 +11,10 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../../../../Kitodo-DataEditor/src/main/resources/ruleset.xsd">
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2">
     <declaration>
         <division id="Monograph">
-            <label>Monograph</label>
-        </division>
-        <division id="something">
-            <label>Outline element</label>
-        </division>
-        <division id="ContainedWork">
-            <label>Beigefügtes Werk</label>
+            <label>Monographie</label>
         </division>
         <key id="TitleDocMain" domain="source">
             <label>HauptTitel</label>
@@ -58,36 +50,21 @@
     <correlation>
         <restriction key="Person">
             <permit key="Role" minOccurs="1" maxOccurs="1"/>
-            <permit key="FirstName"/>
-            <permit key="LastName"/>
+            <permit key="FirstName" minOccurs="1" maxOccurs="1"/>
+            <permit key="LastName" minOccurs="1" maxOccurs="1"/>
         </restriction>
 
         <restriction division="Monograph" unspecified="forbidden">
-            <permit division="Monograph"/>
             <permit key="TitleDocMain" minOccurs="1"/>
             <permit key="TitleDocMainShort" minOccurs="1"/>
+            <permit key="TSL_ATS" minOccurs="1"/>
             <permit key="CatalogIDDigital" minOccurs="1"/>
             <permit key="CatalogIDSource" minOccurs="1"/>
-            <permit key="TSL_ATS"/>
-            <permit key="Person">
+            <permit key="Person" minOccurs="1">
                 <permit key="Role" unspecified="forbidden">
                     <permit value="Author"/>
                 </permit>
             </permit>
         </restriction>
-        <restriction division="ContainedWork" unspecified="forbidden">
-                <permit key="TitleDocMain" minOccurs="1"/>
-                <permit key="TitleDocMainShort" minOccurs="1"/>
-                <permit key="CatalogIDDigital" minOccurs="1"/>
-            <permit key="CatalogIDSource" minOccurs="1"/>
-            <permit key="TSL_ATS"/>
-        </restriction>
     </correlation>
-    <editing>
-        <setting key="TSL_ATS" alwaysShowing="true"/>
-        <setting key="Person" alwaysShowing="true">
-            <setting key="FirstName" alwaysShowing="true"/>
-            <setting key="LastName" alwaysShowing="true"/>
-        </setting>
-    </editing>
 </ruleset>

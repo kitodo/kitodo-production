@@ -12,7 +12,6 @@
 package org.kitodo.production.process;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,8 +22,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 
 public final class ProcessValidator {
@@ -43,36 +42,22 @@ public final class ProcessValidator {
      * 
      * @param title
      *            of process for validation
-     * @param additionalFields
+     * @param processDetailsList
      *            for process validation
-     * @param digitalCollections
-     *            as List of Strings
-     * @param standardFields
-     *            as Map Boolean to String
      * @param criticiseEmptyTitle
      *            true or false
      * @return true or false
      */
-    public static boolean isContentValid(String title, List<AdditionalField> additionalFields,
-            List<String> digitalCollections, Map<String, Boolean> standardFields, boolean criticiseEmptyTitle) {
+    public static boolean isContentValid(String title, List<ProcessDetail> processDetailsList,
+                                         boolean criticiseEmptyTitle) {
         boolean valid = true;
 
         if (criticiseEmptyTitle) {
             valid = isProcessTitleCorrect(title);
         }
-
-        // Check the standard entries that must be specified
-
-        // no collection selected
-        if (standardFields.get("collections") && digitalCollections.isEmpty()) {
-            valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorNoCollection");
-        }
-
         // check the additional inputs that must be specified
-        for (AdditionalField field : additionalFields) {
-            String value = field.getValue();
-            if (StringUtils.isBlank(value) && field.isRequired() && field.showDependingOnDoctype()) {
+        for (ProcessDetail detail : processDetailsList) {
+            if (detail.isRequired() && !detail.isValid()) {
                 valid = false;
                 Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorFieldIsEmpty");
             }

@@ -14,12 +14,10 @@ package org.kitodo.production.process;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,9 +25,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.production.process.field.AdditionalField;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
+import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProcessValidatorIT {
@@ -51,47 +54,37 @@ public class ProcessValidatorIT {
 
     @Test
     public void contentShouldBeValid() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalFields(),
-            Arrays.asList("Digi1", "Digi2"), createStandardFields(), true);
+        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createProcessDetailsList(), true);
         assertTrue("Process content is invalid!", valid);
     }
 
     @Test
     public void contentShouldBeInvalidTitle() throws Exception {
-        boolean valid = ProcessValidator.isContentValid("First process", createAdditionalFields(),
-            Arrays.asList("Digi1", "Digi2"), createStandardFields(), true);
+        boolean valid = ProcessValidator.isContentValid("First process", createProcessDetailsList(), true);
         assertFalse("Process content is valid - title should be invalid!", valid);
-    }
-
-    @Test
-    public void contentShouldBeInvalidCollections() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalFields(), Collections.emptyList(),
-            createStandardFields(), true);
-        assertFalse("Process content is valid - collections should be invalid!", valid);
     }
 
     @Ignore("find ou values for which it fails")
     @Test
     public void contentShouldBeInvalidAdditionalFields() throws Exception {
-        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createAdditionalFields(),
-            Arrays.asList("Digi1", "Digi2"), createStandardFields(), true);
+        boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createProcessDetailsList(), true);
         assertTrue("Process content is valid - additional fields should be invalid!", valid);
     }
 
     @Test
-    public void processTitleShouldBeCorrect() throws Exception {
+    public void processTitleShouldBeCorrect() {
         boolean valid = ProcessValidator.isProcessTitleCorrect(NON_EXISTENT);
         assertTrue("Process title is invalid!", valid);
     }
 
     @Test
-    public void processTitleShouldBeIncorrectWhiteSpaces() throws Exception {
+    public void processTitleShouldBeIncorrectWhiteSpaces() {
         boolean valid = ProcessValidator.isProcessTitleCorrect("First process");
         assertFalse("Process content is valid - title should be invalid!", valid);
     }
 
     @Test
-    public void processTitleShouldBeIncorrectNotUnique() throws Exception {
+    public void processTitleShouldBeIncorrectNotUnique() {
         boolean valid = ProcessValidator.isProcessTitleCorrect("DBConnectionTest");
         assertFalse("Process content is valid - title should be invalid!", valid);
     }
@@ -114,35 +107,46 @@ public class ProcessValidatorIT {
         assertFalse("Property exists!", exists);
     }
 
-    private List<AdditionalField> createAdditionalFields() {
-        List<AdditionalField> additionalFields = new ArrayList<>();
-        additionalFields.add(createAdditionalField("Artist", "", ""));
-        additionalFields.add(createAdditionalField("Schrifttyp", "", ""));
-        additionalFields.add(createAdditionalField("Titel", "Test", "TitleDocMain"));
-        additionalFields.add(createAdditionalField("Titel (Sortierung)", "Test", "TitleDocMainShort"));
-        additionalFields.add(createAdditionalField("Autoren", "Test Author", "ListOfCreators"));
-        additionalFields.add(createAdditionalField("ATS", "", "TSL_ATS"));
-        additionalFields.add(createAdditionalField("TSL", "", "TSL_ATS"));
-        additionalFields.add(createAdditionalField("PPN analog a-Satz", "123", "CatalogIDSource"));
-        additionalFields.add(createAdditionalField("PPN digital a-Satz", "123", "CatalogIDDigital"));
-        return additionalFields;
-    }
-
-    private AdditionalField createAdditionalField(String title, String value, String metadata) {
-        AdditionalField additionalField = new AdditionalField("monograph");
-        additionalField.setTitle(title);
-        additionalField.setValue(value);
-        additionalField.setMetadata(metadata);
-        additionalField.setIsDocType("monograph");
-        return additionalField;
-    }
-
-    private Map<String, Boolean> createStandardFields() {
-        Map<String, Boolean> standardFields = new HashMap<>();
-        standardFields.put("collections", true);
-        standardFields.put("doctype", true);
-        standardFields.put("regelsatz", true);
-        standardFields.put("images", true);
-        return standardFields;
+    private List<ProcessDetail> createProcessDetailsList() throws IOException {
+        Workpiece workpiece = new Workpiece();
+        workpiece.getRootElement().setType("Monograph");
+        RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
+        StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
+                "Monograph", "", Locale.LanguageRange.parse("en"));
+        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(null, workpiece.getRootElement(), monograph);
+        for (ProcessDetail detail : processDetails.getRows()) {
+            switch (detail.getMetadataID()) {
+                case "TitleDocMain":
+                case "TitleDocMainShort":
+                    ProcessMetadataTab.setProcessDetailValue(detail, "Test");
+                    break;
+                case "TSL_ATS":
+                    ProcessMetadataTab.setProcessDetailValue(detail, " ");
+                    break;
+                case "CatalogIDSource":
+                case "CatalogIDDigital":
+                    ProcessMetadataTab.setProcessDetailValue(detail, "123");
+                    break;
+                case "Person":
+                    for (ProcessDetail personMetadataRow : ((ProcessFieldedMetadata) detail).getRows()) {
+                        switch (personMetadataRow.getMetadataID()) {
+                            case "Role":
+                            case "LastName":
+                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Author");
+                                break;
+                            case "FirstName":
+                                ProcessMetadataTab.setProcessDetailValue(personMetadataRow, "Test");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return processDetails.getRows();
     }
 }

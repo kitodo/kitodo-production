@@ -66,11 +66,11 @@ public class FileLoader {
         content.add("</item>");
         content.add("<item from=\"werk\" isdoctype=\"monograph\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"CatalogIDDigital\">PPN digital a-Satz");
         content.add("</item>");
-        content.add("<processtitle isdoctype=\"multivolume\">ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)</processtitle>");
-        content.add("<processtitle isdoctype=\"monograph\">ATS+TSL+'_'+PPN digital a-Satz</processtitle>");
-        content.add("<processtitle isdoctype=\"periodical\">TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)</processtitle>");
-        content.add("<processtitle isnotdoctype=\"periodical\">TSL+'_'+PPN digital c/a-Aufnahmel+'_'+Bandnummer</processtitle>");
-        content.add("<processtitle isnotdoctype=\"multivolume\">ATS+TSL+'_'+PPN digital c/a-Aufnahmel+'_'+Bandnummer</processtitle>");
+        content.add("<processtitle isdoctype=\"multivolume\">TSL_ATS+'_'+CatalogIDDigital</processtitle>");
+        content.add("<processtitle isdoctype=\"monograph\">TSL_ATS+'_'+CatalogIDDigital</processtitle>");
+        content.add("<processtitle isdoctype=\"periodical\">TSL_ATS+'_'+CatalogIDDigital</processtitle>");
+        content.add("<processtitle isnotdoctype=\"periodical\">TSL_ATS+'_'+CatalogIDDigital</processtitle>");
+        content.add("<processtitle isnotdoctype=\"multivolume\">TSL_ATS+'_'+CatalogIDDigital)</processtitle>");
         content.add("</itemlist>");
         content.add("</createNewProcess>");
         content.add("</project>");
@@ -130,15 +130,16 @@ public class FileLoader {
         content.add("    </createNewProcess>");
         content.add("    <tifheader>");
         content.add(
-            "      <monograph>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungs"
-                    + "jahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN digital a-Satz+'|'</monograph>");
+            "      <monograph>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+TitleDocMain+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'"
+                    + "+PublicationYear+'|[[ERSCHEINUNGSORT]]'+PlaceOfPublication+'|[[VERZ_STRCT]]'+TSL_ATS+'_'+CatalogIDDigital"
+                    + "+'|'</monograph>");
         content.add(
-            "      <multivolume>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinun"
-                    + "gsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)+'"
+            "      <multivolume>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+TitleDocMain+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'"
+                    + "+PublicationYear+'|[[ERSCHEINUNGSORT]]'+PlaceOfPublication+'|[[VERZ_STRCT]]'+TSL_ATS+'_'+CatalogIDDigital+'"
                     + "|'</multivolume>");
         content.add(
-            "      <periodical>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinung"
-                    + "sjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)+'|"
+            "      <periodical>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+TitleDocMain+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'"
+                    + "+PublicationYear+'|[[ERSCHEINUNGSORT]]'+PlaceOfPublication+'|[[VERZ_STRCT]]'+TSL_ATS+'_'+CatalogIDDigital+'|"
                     + "'</periodical>");
         content.add("    </tifheader>");
         content.add("    <dmsImport/>");

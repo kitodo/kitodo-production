@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.process.field.AdditionalField;
 
 public class TiffHeaderGenerator extends Generator {
 
@@ -37,11 +37,11 @@ public class TiffHeaderGenerator extends Generator {
      *
      * @param atstsl
      *            field used for tiff header generation
-     * @param additionalFields
+     * @param processDetailsList
      *            fields used for tiff header generation
      */
-    public TiffHeaderGenerator(String atstsl, List<AdditionalField> additionalFields) {
-        super(atstsl, additionalFields);
+    public TiffHeaderGenerator(String atstsl, List<ProcessDetail> processDetailsList) {
+        super(atstsl, processDetailsList);
     }
 
     /**
@@ -69,38 +69,35 @@ public class TiffHeaderGenerator extends Generator {
                 tiffHeaderImageDescriptionBuilder.append(getTifHeaderType(docType));
             } else {
                 // otherwise, evaluate the token as a field name
-                tiffHeaderImageDescriptionBuilder.append(evaluateAdditionalFields(token));
-
+                tiffHeaderImageDescriptionBuilder.append(getProcessDetailValueByMetadataId(token));
             }
         }
         return reduceLengthOfTifHeaderImageDescription(tiffHeaderImageDescriptionBuilder.toString());
     }
 
-    private String evaluateAdditionalFields(String token) throws ProcessGenerationException {
+    private String getProcessDetailValueByMetadataId(String metadataId) throws ProcessGenerationException {
         StringBuilder newTiffHeader = new StringBuilder();
+        if ("Autoren".equals(metadataId)) {
+            newTiffHeader.append(calculateProcessTitleCheck("Autoren",
+                    ProcessMetadataTab.getListOfCreators(this.processDetailsList)));
+        } else {
+            for (ProcessDetail processDetail : this.processDetailsList) {
+                String detailMetadataID = processDetail.getMetadataID();
+                String detailValue = ProcessMetadataTab.getProcessDetailValue(processDetail);
 
-        for (AdditionalField additionalField : this.additionalFields) {
-            String title = additionalField.getTitle();
-            String value = additionalField.getValue();
-            boolean showDependingOnDoctype = additionalField.showDependingOnDoctype();
-
-            if ("Titel".equals(title) || "Title".equals(title) && !StringUtils.isEmpty(value)) {
-                this.tiffHeader = value;
-            }
-            /*
-             * if it is the ATS or TSL field, then use the calculated atstsl if it does not
-             * already exist
-             */
-            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype && StringUtils.isEmpty(value)) {
-                additionalField.setValue(this.atstsl);
-            }
-
-            // add the content to the tiff header
-            if (title.equals(token) && showDependingOnDoctype && Objects.nonNull(value)) {
-                newTiffHeader.append(calculateProcessTitleCheck(title, value));
+                if ("TitleDocMain".equals(detailMetadataID) && !detailValue.isEmpty()) {
+                    this.tiffHeader = detailValue;
+                }
+                //if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
+                if ("TSL_ATS".equals(detailMetadataID) && detailValue.isEmpty() && !this.atstsl.isEmpty()) {
+                    ProcessMetadataTab.setProcessDetailValue(processDetail, this.atstsl);
+                }
+                // add the content to the tiff header
+                if (detailMetadataID.equals(metadataId) && !detailValue.isEmpty()) {
+                    newTiffHeader.append(calculateProcessTitleCheck(detailMetadataID, detailValue));
+                }
             }
         }
-
         return newTiffHeader.toString();
     }
 
