@@ -69,26 +69,26 @@ public class MigrationFormIT {
         migrationForm.showAggregatedProcesses();
 
         String processesShouldBeFound = "Processes should be found";
-        Assert.assertEquals(processesShouldBeFound, 2, migrationForm.getAggregatedTasks().size());
+        Assert.assertEquals(processesShouldBeFound, 0, migrationForm.getAggregatedTasks().size());
 
         selectedProjects.add(ServiceManager.getProjectService().getById(2));
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals(processesShouldBeFound, 3, migrationForm.getAggregatedTasks().size());
+        Assert.assertEquals(processesShouldBeFound, 1, migrationForm.getAggregatedTasks().size());
 
         selectedProjects.add(ServiceManager.getProjectService().getById(2));
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals(processesShouldBeFound, 3, migrationForm.getAggregatedTasks().size());
+        Assert.assertEquals(processesShouldBeFound, 1, migrationForm.getAggregatedTasks().size());
 
         selectedProjects.remove(2);
         selectedProjects.remove(1);
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals(processesShouldBeFound, 2, migrationForm.getAggregatedTasks().size());
+        Assert.assertEquals(processesShouldBeFound, 0, migrationForm.getAggregatedTasks().size());
     }
 
 }
