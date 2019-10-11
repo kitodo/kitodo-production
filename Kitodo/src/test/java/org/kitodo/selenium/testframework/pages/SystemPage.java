@@ -11,6 +11,9 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -23,8 +26,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import static org.awaitility.Awaitility.await;
-
 public class SystemPage extends Page<SystemPage> {
 
     @SuppressWarnings("unused")
@@ -34,6 +35,10 @@ public class SystemPage extends Page<SystemPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "systemTabView:indexing_form:indexingTable")
     private WebElement indexingTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "systemTabView:migrationForm:aggregatedTasksTable")
+    private WebElement aggregatedTasksTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "systemTabView:indexing_form:createMappingButton")
@@ -46,6 +51,31 @@ public class SystemPage extends Page<SystemPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "systemTabView:indexing_form:startIndexingAllButton")
     private WebElement startIndexingAllButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "systemTabView:migrationForm:migrateWorkflows")
+    private WebElement startWorkflowMigrationButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "systemTabView:migrationForm:migrateProject")
+    private WebElement migrateSelectedProjectsButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "confirmWorkflowForm:createNewWorkflow")
+    private WebElement createNewWorkflowButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "createTemplateForm:createTemplatesTable:0:createNewTemplate")
+    private WebElement createNewTemplateButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "createTemplateForm:createTemplatesTable:0:templateTitle")
+    private WebElement templateTitleInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "createTemplateForm:close")
+    private WebElement closePopupButton;
+
 
     public SystemPage() {
         super("pages/system.jsf");
@@ -126,5 +156,37 @@ public class SystemPage extends Page<SystemPage> {
         List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
         WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
         return lastRow.findElement(By.className("ui-progressbar-label")).getText();
+    }
+
+    public void startWorkflowMigration() throws Exception {
+        switchToTabByIndex(TabIndex.MIGRATION.getIndex(), systemTabView);
+        startWorkflowMigrationButton.click();
+    }
+
+    public WorkflowEditPage createNewWorkflow()
+            throws IllegalAccessException, InstantiationException, InterruptedException {
+        WebElement element = Browser.getDriver()
+                .findElement(By.xpath("//*[@id=\"systemTabView:migrationForm:aggregatedTasksTable:2:createWorkflowActionButton\"]"));
+        element.click();
+        clickButtonAndWaitForRedirect(createNewWorkflowButton, Pages.getWorkflowEditPage().getUrl());
+        return Pages.getWorkflowEditPage();
+    }
+
+    public void selectProjects() {
+        Browser.getDriver().findElements(By.className("ui-chkbox")).get(0).click();
+        Browser.getDriver().findElements(By.className("ui-chkbox")).get(1).click();
+
+        migrateSelectedProjectsButton.click();
+    }
+
+    public String getAggregatedTasks(int rowIndex) {
+        List<String> tableDataByColumn = getTableDataByColumn(aggregatedTasksTable, 0);
+        return tableDataByColumn.get(rowIndex);
+    }
+
+    public void createNewTemplateFromPopup(String title) {
+        templateTitleInput.sendKeys(title);
+        createNewTemplateButton.click();
+        closePopupButton.click();
     }
 }

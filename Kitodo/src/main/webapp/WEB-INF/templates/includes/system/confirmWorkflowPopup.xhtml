@@ -21,17 +21,16 @@
                   width="400px"
                   modal="true"
                   dynamic="true">
-            <h:form id="confirmWokflowForm">
-                <p:panelGrid id="passwordGrid" columns="1" layout="grid">
+            <h:form id="confirmWorkflowForm">
+                <p:panelGrid columns="1" layout="grid">
                     <p:row>
 
                         <div>
                             <p:commandButton id="useExistingWorkflow"
-                                             value="#{msgs.cancel}"
+                                             value="#{msgs.useExistingWorkflow}"
                                              action="#{MigrationForm.useExistingWorkflow()}"
                                              icon="fa fa-floppy-o fa-lg"
                                              iconPos="right"
-                                             validateClient="true"
                                              styleClass="button-filled-blue"
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
@@ -42,9 +41,17 @@
                                              action="#{MigrationForm.createNewWorkflow()}"
                                              icon="fa fa-floppy-o fa-lg"
                                              iconPos="right"
-                                             validateClient="true"
                                              styleClass="button-filled-blue"
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
+                            </p:commandButton>
+                        </div>
+                        <div>
+                            <p:commandButton value="#{msgs.cancel}"
+                                             immediate="true"
+                                             icon="fa fa-times fa-lg"
+                                             iconPos="right"
+                                             styleClass="secondary right"
+                                             onclick="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
                         </div>
                     </p:row>

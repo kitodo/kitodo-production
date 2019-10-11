@@ -74,4 +74,13 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
+
+    public SystemPage saveForMigration() throws IllegalAccessException, InstantiationException {
+        clickButtonAndWaitForRedirect(saveButton, Pages.getSystemPage().getUrl());
+        return Pages.getSystemPage();
+    }
+
+    public String getWorkflowTitle() {
+        return fileInput.getAttribute("value");
+    }
 }
