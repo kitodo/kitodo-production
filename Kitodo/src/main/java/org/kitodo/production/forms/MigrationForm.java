@@ -15,14 +15,18 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +44,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.MigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
+import org.kitodo.production.migration.NewspaperProcessesMigrator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
@@ -63,6 +68,9 @@ public class MigrationForm extends BaseForm {
     private MigrationService migrationService = ServiceManager.getMigrationService();
     private boolean metadataShown;
     private boolean workflowShown;
+    private boolean newspaperMigrationRendered = false;
+    private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
+    private List<SelectItem> newspaperBatchesItems;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -75,6 +83,7 @@ public class MigrationForm extends BaseForm {
             projectListShown = true;
             metadataShown = true;
             workflowShown = false;
+            newspaperMigrationRendered = false;
         } catch (DAOException e) {
             Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
@@ -89,6 +98,7 @@ public class MigrationForm extends BaseForm {
             projectListShown = true;
             workflowShown = true;
             metadataShown = false;
+            newspaperMigrationRendered = false;
         } catch (DAOException e) {
             Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
@@ -414,5 +424,83 @@ public class MigrationForm extends BaseForm {
      */
     public void setWorkflowToUse(Workflow workflowToUse) {
         this.workflowToUse = workflowToUse;
+    }
+
+    /**
+     * Action performed when the migrateNewspaperBatches button is clicked.
+     */
+    public void showPossibleBatches() {
+        newspaperMigrationRendered = true;
+        projectListShown = false;
+    }
+
+    /**
+     * Returns whether the newspaperMigration panel group is rendered.
+     *
+     * @return whether the newspaperMigration panel group is rendered
+     */
+
+    public boolean isNewspaperMigrationRendered() {
+        return newspaperMigrationRendered;
+    }
+
+    /**
+     * Returns the selected items of the newspaperBatches select box.
+     *
+     * @return the selected items of the newspaperBatches select box
+     */
+    public Collection<Integer> getNewspaperBatchesSelectedItems() {
+        return newspaperBatchesSelectedItems;
+    }
+
+    /**
+     * Sets the selected items of the newspaperBatches select box.
+     *
+     * @param selectedItems
+     *            elected items of the newspaperBatches select box to set
+     */
+    public void setNewspaperBatchesSelectedItems(Collection<Integer> selectedItems) {
+        newspaperBatchesSelectedItems = selectedItems;
+    }
+
+    /**
+     * Returns the items of the newspaperBatches select box.
+     *
+     * @return the items of the newspaperBatches select box
+     */
+    public List<SelectItem> getNewspaperBatchesItems() {
+        if (Objects.isNull(newspaperBatchesItems)) {
+            try {
+                newspaperBatchesItems = NewspaperProcessesMigrator.getNewspaperBatches().stream()
+                        .map(batchTransfer -> new SelectItem(batchTransfer.getId(), batchTransfer.getTitle()))
+                        .collect(Collectors.toList());
+            } catch (DataException | DAOException | IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                return Collections.emptyList();
+            }
+        }
+        return newspaperBatchesItems;
+    }
+
+    /**
+     * Action performed when the startNewspaperMigration button is clicked.
+     */
+    public void startNewspaperMigrationClick() {
+        try {
+            for (Integer batchId : newspaperBatchesSelectedItems) {
+                NewspaperProcessesMigrator.initializeMigration(batchId);
+            }
+            newspaperMigrationRendered = false;
+            newspaperBatchesSelectedItems = new ArrayList<>();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Action performed when the cancelNewspaperMigration button is clicked.
+     */
+    public void cancelNewspaperMigrationClick() {
+        newspaperMigrationRendered = false;
     }
 }

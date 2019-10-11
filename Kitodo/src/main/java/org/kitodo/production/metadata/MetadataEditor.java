@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
@@ -394,6 +396,25 @@ public class MetadataEditor {
     }
 
     /**
+     * Returns the value of the specified metadata entry.
+     *
+     * @param includedStructuralElement
+     *            included structural element from whose metadata the value is
+     *            to be retrieved
+     * @param key
+     *            key of the metadata to be determined
+     * @return the value of the metadata entry, otherwise {@code null}
+     */
+    public static String getMetadataValue(IncludedStructuralElement includedStructuralElement, String key) {
+        for (Metadata metadata : includedStructuralElement.getMetadata()) {
+            if (metadata.getKey().equals(key) && metadata instanceof MetadataEntry) {
+                return ((MetadataEntry) metadata).getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Reads the simple metadata from an included structural element defined by
      * the simple metadata view interface, including {@code mets:div} metadata.
      *
@@ -426,6 +447,24 @@ public class MetadataEditor {
                     .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast).map(MetadataEntry::getValue)
                     .collect(Collectors.toList());
             return simpleMetadataValues;
+        }
+    }
+
+    /**
+     * Removes all metadata of the given key from the given included structural
+     * element.
+     *
+     * @param includedStructuralElement
+     *            included structural element to remove metadata from
+     * @param key
+     *            key of metadata to remove
+     */
+    public static void removeAllMetadata(IncludedStructuralElement includedStructuralElement, String key) {
+        for (Iterator<Metadata> iterator = includedStructuralElement.getMetadata().iterator(); iterator.hasNext();) {
+            Metadata metadata = iterator.next();
+            if (key.equals(metadata.getKey())) {
+                iterator.remove();
+            }
         }
     }
 

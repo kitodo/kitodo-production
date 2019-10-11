@@ -11,8 +11,8 @@
 
 package org.kitodo.dataeditor.handlers;
 
-import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.StructMapType;
@@ -33,13 +33,13 @@ public class MetsKitodoStructMapHandler {
      *            "PHYSICAL" or "LOGICAL".
      * @return The StructMapType object.
      */
-    public static StructMapType getMetsStructMapByType(Mets mets, String type) {
+    public static Optional<StructMapType> getMetsStructMapByType(Mets mets, String type) {
         for (StructMapType structMap : mets.getStructMap()) {
             if (Objects.equals(type, structMap.getTYPE())) {
-                return structMap;
+                return Optional.of(structMap);
             }
         }
-        throw new NoSuchElementException("StructMap element of type " + type + " does not exist");
+        return Optional.empty();
     }
 
 
