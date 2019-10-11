@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -40,6 +41,11 @@ public class WorkingST extends BaseTestSelenium {
 
     @BeforeClass
     public static void setup() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
+        MockDatabase.startNode();
+        MockDatabase.insertProcessesForWorkflowFull();
+        
         currentTasksEditPage = Pages.getCurrentTasksEditPage();
         processesPage = Pages.getProcessesPage();
         tasksPage = Pages.getTasksPage();
