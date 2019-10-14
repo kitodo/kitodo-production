@@ -57,9 +57,6 @@ public class IndexingService {
     private Map<ObjectType, IndexStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
     private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
 
-    // TODO: remove unused 'indexedObjects' variable? (why is this unused?)
-    private Map<ObjectType, Integer> indexedObjects = new EnumMap<>(ObjectType.class);
-
     // messages for web socket communication
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
     private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
@@ -94,16 +91,6 @@ public class IndexingService {
             prepareIndexWorker();
             countDatabaseObjects();
         } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-
-        try {
-            if (indexExists()) {
-                for (ObjectType objectType : objectTypes) {
-                    indexedObjects.put(objectType, countDatabaseObjects.get(objectType));
-                }
-            }
-        } catch (IOException | CustomResponseException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -183,18 +170,8 @@ public class IndexingService {
     /**
      * Update counts of index and database objects.
      */
-    private void updateCounts() throws DataException, DAOException {
-        for (ObjectType objectType : objectTypes) {
-            updateCount(objectType);
-        }
+    private void updateCounts() throws DAOException {
         countDatabaseObjects();
-    }
-
-    private void updateCount(ObjectType objectType) throws DataException {
-        SearchService searchService = getService(objectType);
-        if (Objects.nonNull(searchService)) {
-            indexedObjects.put(objectType, toIntExact(searchService.count()));
-        }
     }
 
     public Map<ObjectType, Integer> getCountDatabaseObjects() {
@@ -369,12 +346,6 @@ public class IndexingService {
         return progress;
     }
 
-    private void resetGlobalProgress() {
-        for (ObjectType objectType : objectTypes) {
-            indexedObjects.put(objectType, 0);
-        }
-    }
-
     /**
      * Create mapping which enables sorting and other aggregation functions.
      */
@@ -410,7 +381,6 @@ public class IndexingService {
     public String deleteIndex() {
         try {
             indexRestClient.deleteIndex();
-            resetGlobalProgress();
             currentState = IndexStates.DELETING_SUCCESSFUL;
             return DELETION_FINISHED_MESSAGE;
         } catch (IOException e) {
@@ -575,7 +545,6 @@ public class IndexingService {
 
         @Override
         public void run() {
-            resetGlobalProgress();
             indexingAll = true;
 
             for (ObjectType objectType : objectTypes) {
