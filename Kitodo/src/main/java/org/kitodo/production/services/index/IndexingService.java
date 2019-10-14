@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -39,7 +38,6 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.IndexStates;
-import org.kitodo.production.enums.IndexingStates;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.IndexWorker;
@@ -51,25 +49,18 @@ public class IndexingService {
 
     private static final Logger logger = LogManager.getLogger(IndexingService.class);
 
+    private static volatile IndexingService instance = null;
+
     private static List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
     private Map<ObjectType, SearchService> searchServices = new EnumMap<>(ObjectType.class);
-    private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
     private Map<ObjectType, List<IndexWorker>> indexWorkers = new EnumMap<>(ObjectType.class);
-    private static volatile IndexingService instance = null;
-    private int pause = 1000;
-    private IndexStates currentState = IndexStates.NO_STATE;
-    private IndexWorker currentIndexWorker;
-
-    private ObjectType currentIndexState = ObjectType.NONE;
+    private Map<ObjectType, IndexStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
+    private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
 
     // TODO: remove unused 'indexedObjects' variable? (why is this unused?)
     private Map<ObjectType, Integer> indexedObjects = new EnumMap<>(ObjectType.class);
 
-    private boolean indexingAll = false;
-
-    private Map<ObjectType, IndexingStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
-
-    // TODO: move messages to enum?
+    // messages for web socket communication
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
     private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
 
@@ -81,8 +72,13 @@ public class IndexingService {
     private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
     public static final String MAPPING_FAILED_MESSAGE = "mapping_failed";
 
-    // TODO: remove unused 'lastIndexed' variable? (why is this unused?)
-    private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
+    private int pause = 1000;
+    private boolean indexingAll = false;
+
+    private IndexWorker currentIndexWorker;
+    private ObjectType currentIndexState = ObjectType.NONE;
+    private IndexStates currentState = IndexStates.NO_STATE;
+
     private Thread indexerThread = null;
 
     /**
@@ -91,7 +87,7 @@ public class IndexingService {
     private IndexingService() {
         for (ObjectType objectType : objectTypes) {
             searchServices.put(objectType, getService(objectType));
-            objectIndexingStates.put(objectType, IndexingStates.NO_STATE);
+            objectIndexingStates.put(objectType, IndexStates.NO_STATE);
         }
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         try {
@@ -187,7 +183,7 @@ public class IndexingService {
     /**
      * Update counts of index and database objects.
      */
-    public void updateCounts() throws DataException, DAOException {
+    private void updateCounts() throws DataException, DAOException {
         for (ObjectType objectType : objectTypes) {
             updateCount(objectType);
         }
@@ -320,13 +316,13 @@ public class IndexingService {
     private void runIndexing(IndexWorker worker, ObjectType type, PushContext pollingChannel) {
         currentState = IndexStates.NO_STATE;
         int attempts = 0;
-        while (attempts < 100) {
+        while (attempts < ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT)) {
             try {
                 if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
                     if (Objects.equals(currentIndexState, ObjectType.NONE)) {
                         logger.debug("Starting indexing of type " + type);
                         currentIndexState = type;
-                        objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
+                        objectIndexingStates.put(type, IndexStates.INDEXING_STARTED);
                         pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
                     }
                     indexerThread = new Thread(worker);
@@ -361,12 +357,11 @@ public class IndexingService {
         long nrOfIndexedObjects = getNumberOfIndexedObjects(currentType);
         int progress = numberOfObjects > 0 ? (int) ((nrOfIndexedObjects / (float) numberOfObjects) * 100) : 0;
         if (Objects.equals(currentIndexState, currentType) && (numberOfObjects == 0 || progress == 100)) {
-            lastIndexed.put(currentIndexState, LocalDateTime.now());
             currentIndexState = ObjectType.NONE;
             if (numberOfObjects == 0) {
-                objectIndexingStates.put(currentType, IndexingStates.NO_STATE);
+                objectIndexingStates.put(currentType, IndexStates.NO_STATE);
             } else {
-                objectIndexingStates.put(currentType, IndexingStates.INDEXING_SUCCESSFUL);
+                objectIndexingStates.put(currentType, IndexStates.INDEXING_SUCCESSFUL);
             }
             indexerThread.interrupt();
             pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
@@ -387,23 +382,23 @@ public class IndexingService {
         String mapping = readMapping();
         if (mapping.equals("")) {
             if (indexRestClient.createIndex()) {
-                currentState = IndexStates.MAPPING_SUCCESS;
+                currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
                 return MAPPING_FINISHED_MESSAGE;
             } else {
-                currentState = IndexStates.MAPPING_ERROR;
+                currentState = IndexStates.CREATING_MAPPING_FAILED;
                 return MAPPING_FAILED_MESSAGE;
             }
         } else {
             if (indexRestClient.createIndex(mapping)) {
                 if (isMappingValid(mapping)) {
-                    currentState = IndexStates.MAPPING_SUCCESS;
+                    currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
                     return MAPPING_FINISHED_MESSAGE;
                 } else {
-                    currentState = IndexStates.MAPPING_ERROR;
+                    currentState = IndexStates.CREATING_MAPPING_FAILED;
                     return MAPPING_FAILED_MESSAGE;
                 }
             } else {
-                currentState = IndexStates.MAPPING_ERROR;
+                currentState = IndexStates.CREATING_MAPPING_FAILED;
                 return MAPPING_FAILED_MESSAGE;
             }
         }
@@ -416,11 +411,11 @@ public class IndexingService {
         try {
             indexRestClient.deleteIndex();
             resetGlobalProgress();
-            currentState = IndexStates.DELETE_SUCCESS;
+            currentState = IndexStates.DELETING_SUCCESSFUL;
             return DELETION_FINISHED_MESSAGE;
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            currentState = IndexStates.DELETE_ERROR;
+            currentState = IndexStates.DELETING_FAILED;
             return DELETION_FAILED_MESSAGE;
         }
     }
@@ -472,7 +467,7 @@ public class IndexingService {
      *
      * @return indexing state of the given object type.
      */
-    public IndexingStates getObjectIndexState(ObjectType objectType) {
+    public IndexStates getObjectIndexState(ObjectType objectType) {
         return objectIndexingStates.get(objectType);
     }
 
@@ -484,16 +479,16 @@ public class IndexingService {
      *
      * @return static variable for global indexing state
      */
-    public IndexingStates getAllObjectsIndexingState() {
+    public IndexStates getAllObjectsIndexingState() {
         for (ObjectType objectType : objectTypes) {
-            if (Objects.equals(objectIndexingStates.get(objectType), IndexingStates.INDEXING_FAILED)) {
-                return IndexingStates.INDEXING_FAILED;
+            if (Objects.equals(objectIndexingStates.get(objectType), IndexStates.INDEXING_FAILED)) {
+                return IndexStates.INDEXING_FAILED;
             }
-            if (Objects.equals(objectIndexingStates.get(objectType), IndexingStates.NO_STATE)) {
-                return IndexingStates.NO_STATE;
+            if (Objects.equals(objectIndexingStates.get(objectType), IndexStates.NO_STATE)) {
+                return IndexStates.NO_STATE;
             }
         }
-        return IndexingStates.INDEXING_SUCCESSFUL;
+        return IndexStates.INDEXING_SUCCESSFUL;
     }
 
     /**

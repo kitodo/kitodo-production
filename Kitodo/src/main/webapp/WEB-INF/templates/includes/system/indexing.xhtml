@@ -16,7 +16,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui"
         xmlns:o="http://omnifaces.org/ui">
-    <p:importEnum type="org.kitodo.production.enums.IndexingStates" allSuffix="ALL_ENUM_VALUES"/>
+    <p:importEnum type="org.kitodo.production.enums.IndexStates" allSuffix="ALL_ENUM_VALUES"/>
     <p:importEnum type="org.kitodo.production.enums.ObjectType" var="objectTypeEnum"/>
     <p:panel id="listWrapper">
         <h:outputScript name="js/indexing.js"/>
@@ -48,8 +48,8 @@
                             </td>
                             <td>
                                 <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
-                                <p:graphicImage id="create-mapping-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'MAPPING_ERROR'}"/>
-                                <p:graphicImage id="create-mapping-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'MAPPING_SUCCESS'}"/>
+                                <p:graphicImage id="create-mapping-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'CREATING_MAPPING_FAILED'}"/>
+                                <p:graphicImage id="create-mapping-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'CREATING_MAPPING_SUCCESSFUL'}"/>
                             </td>
                         </tr>
                         <!-- Delete Index -->
@@ -67,8 +67,8 @@
                             </td>
                             <td>
                                 <p:graphicImage id="delete-index-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
-                                <p:graphicImage id="delete-index-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETE_ERROR'}"/>
-                                <p:graphicImage id="delete-index-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETE_SUCCESS'}"/>
+                                <p:graphicImage id="delete-index-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETING_FAILED'}"/>
+                                <p:graphicImage id="delete-index-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETING_SUCCESSFUL'}"/>
                             </td>
                         </tr>
                         </tbody>
@@ -134,12 +134,12 @@
                                                 value="/pages/images/ajax-loader.gif"
                                                 style="max-height: 20px;"
                                                 rendered="#{indexingForm.indexingInProgress()}"/>
-                                <!--@elvariable id="INDEXING_FAILED" type="org.kitodo.production.enums.IndexingStates"-->
+                                <!--@elvariable id="INDEXING_FAILED" type="org.kitodo.production.enums.IndexStates"-->
                                 <p:graphicImage alt="failed"
                                                 value="/pages/images/fail.svg"
                                                 style="max-height: 20px;"
                                                 rendered="#{indexingForm.allObjectsIndexingState == INDEXING_FAILED}"/>
-                                <!--@elvariable id="INDEXING_SUCCESSFUL" type="org.kitodo.production.enums.IndexingStates"-->
+                                <!--@elvariable id="INDEXING_SUCCESSFUL" type="org.kitodo.production.enums.IndexStates"-->
                                 <p:graphicImage alt="success"
                                                 value="/pages/images/success.svg"
                                                 style="max-height: 20px;"

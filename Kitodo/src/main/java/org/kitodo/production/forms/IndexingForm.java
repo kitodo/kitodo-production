@@ -29,7 +29,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.IndexStates;
-import org.kitodo.production.enums.IndexingStates;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -210,7 +209,7 @@ public class IndexingForm {
                 pollingChannel.send(mappingStateMessage);
             }
         } catch (IOException | CustomResponseException e) {
-            ServiceManager.getIndexingService().setIndexState(IndexStates.MAPPING_ERROR);
+            ServiceManager.getIndexingService().setIndexState(IndexStates.CREATING_MAPPING_FAILED);
             if (updatePollingChannel) {
                 pollingChannel.send(IndexingService.MAPPING_FAILED_MESSAGE);
             }
@@ -300,7 +299,7 @@ public class IndexingForm {
      *
      * @return indexing state of the given object type.
      */
-    public IndexingStates getObjectIndexState(ObjectType objectType) {
+    public IndexStates getObjectIndexState(ObjectType objectType) {
         return ServiceManager.getIndexingService().getObjectIndexState(objectType);
     }
 
@@ -312,7 +311,7 @@ public class IndexingForm {
      *
      * @return static variable for global indexing state
      */
-    public IndexingStates getAllObjectsIndexingState() {
+    public IndexStates getAllObjectsIndexingState() {
         return ServiceManager.getIndexingService().getAllObjectsIndexingState();
     }
 

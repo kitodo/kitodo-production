@@ -24,19 +24,21 @@
               appendTo="@(body)"
               resizable="false"
               closable="false">
-        <ui:fragment rendered="#{indexingForm.indexingInProgress()}">
-            <h3>#{msgs.systemMaintenanceHeader}</h3>
-            <div class="select-note ui-messages-error">
-                #{msgs.systemMaintenanceMessage}
-            </div>
-        </ui:fragment>
-        <ui:fragment rendered="#{not indexingForm.indexingInProgress()}">
-            <h3>#{msgs.systemErrorHeader}</h3>
-            <div class="select-note ui-messages-error">
-                #{msgs.systemErrorIndexOutOfDateMessage}<br/>
-                #{msgs.systemErrorInformAdminMessage}
-            </div>
-        </ui:fragment>
+        <h:panelGroup id="messageWrapper">
+            <ui:fragment rendered="#{indexingForm.indexingInProgress()}">
+                <h3>#{msgs.systemMaintenanceHeader}</h3>
+                <div class="select-note ui-messages-error">
+                    #{msgs.systemMaintenanceMessage}
+                </div>
+            </ui:fragment>
+            <ui:fragment rendered="#{not indexingForm.indexingInProgress()}">
+                <h3>#{msgs.systemErrorHeader}</h3>
+                <div class="select-note ui-messages-error">
+                    #{msgs.systemErrorIndexOutOfDateMessage}<br/>
+                    #{msgs.systemErrorInformAdminMessage}
+                </div>
+            </ui:fragment>
+        </h:panelGroup>
 
         <p:panelGrid>
             <h:form id="retryForm">
@@ -54,6 +56,7 @@
                                          iconPos="right"
                                          value="#{msgs.retry}"
                                          action="#{LoginForm.performPostLoginChecks()}"
+                                         update="messageWrapper retryForm"
                                          styleClass="secondary right"/>
                     </p:row>
                 </p:panelGrid>
