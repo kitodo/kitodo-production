@@ -351,7 +351,7 @@ public class IndexingService {
      */
     public String createMapping() throws IOException, CustomResponseException {
         String mapping = readMapping();
-        if (mapping.equals("")) {
+        if ("".equals(mapping)) {
             if (indexRestClient.createIndex()) {
                 currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
                 return MAPPING_FINISHED_MESSAGE;

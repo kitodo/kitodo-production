@@ -16,9 +16,6 @@ import org.openqa.selenium.support.FindBy;
 
 public class PostLoginChecksPage extends Page<PostLoginChecksPage> {
 
-    @FindBy(id = "retryForm:retryButton")
-    private WebElement retryButton;
-
     @FindBy(id = "retryForm:logoutButton")
     private WebElement logoutButton;
 
@@ -27,7 +24,7 @@ public class PostLoginChecksPage extends Page<PostLoginChecksPage> {
     }
 
     @Override
-    public PostLoginChecksPage goTo() throws Exception {
+    public PostLoginChecksPage goTo() {
         // this page is never navigated to directly by the user
         return null;
     }
