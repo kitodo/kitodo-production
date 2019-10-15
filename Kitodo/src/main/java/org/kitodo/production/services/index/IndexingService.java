@@ -59,7 +59,7 @@ public class IndexingService {
 
     // messages for web socket communication
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
-    private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
+    static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
 
     public static final String DELETION_STARTED_MESSAGE = "deletion_started";
     private static final String DELETION_FINISHED_MESSAGE = "deletion_finished";
@@ -69,7 +69,8 @@ public class IndexingService {
     private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
     public static final String MAPPING_FAILED_MESSAGE = "mapping_failed";
 
-    private int pause = 1000;
+    static final int PAUSE = 1000;
+
     private boolean indexingAll = false;
 
     private IndexWorker currentIndexWorker;
@@ -77,23 +78,6 @@ public class IndexingService {
     private IndexStates currentState = IndexStates.NO_STATE;
 
     private Thread indexerThread = null;
-
-    /**
-     * Standard constructor.
-     */
-    private IndexingService() {
-        for (ObjectType objectType : objectTypes) {
-            searchServices.put(objectType, getService(objectType));
-            objectIndexingStates.put(objectType, IndexStates.NO_STATE);
-        }
-        indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
-        try {
-            prepareIndexWorker();
-            countDatabaseObjects();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
 
     /**
      * Return singleton variable of type IndexingService.
@@ -112,6 +96,23 @@ public class IndexingService {
             }
         }
         return localReference;
+    }
+
+    /**
+     * Standard constructor.
+     */
+    private IndexingService() {
+        for (ObjectType objectType : objectTypes) {
+            searchServices.put(objectType, getService(objectType));
+            objectIndexingStates.put(objectType, IndexStates.NO_STATE);
+        }
+        indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
+        try {
+            prepareIndexWorker();
+            countDatabaseObjects();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     private SearchService getService(ObjectType objectType) {
@@ -311,7 +312,7 @@ public class IndexingService {
                 } else {
                     logger.debug("Cannot start '{}' indexing while a different indexing process running: '{}'", type,
                             this.currentIndexState);
-                    Thread.sleep(pause);
+                    Thread.sleep(PAUSE);
                     attempts++;
                 }
             } catch (InterruptedException e) {
@@ -517,7 +518,7 @@ public class IndexingService {
      * Start indexing of all database objects in separate thread.
      */
     public void startAllIndexing(PushContext context) {
-        IndexAllThread indexAllThread = new IndexAllThread(context);
+        IndexAllThread indexAllThread = new IndexAllThread(context, this);
         indexAllThread.setName("IndexAllThread");
         indexAllThread.start();
     }
@@ -535,33 +536,20 @@ public class IndexingService {
         startAllIndexing(pushContext);
     }
 
-    class IndexAllThread extends Thread {
+    void setIndexingAll(boolean indexing) {
+        indexingAll = indexing;
+    }
 
-        PushContext context;
+    void resetCurrentIndexState() {
+        currentIndexState = ObjectType.NONE;
+    }
 
-        IndexAllThread(PushContext pushContext) {
-            context = pushContext;
-        }
-
-        @Override
-        public void run() {
-            indexingAll = true;
-
-            for (ObjectType objectType : objectTypes) {
-                startIndexing(objectType, context);
-            }
-
-            try {
-                sleep(pause);
-            } catch (InterruptedException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                Thread.currentThread().interrupt();
-            }
-
-            currentIndexState = ObjectType.NONE;
-            indexingAll = false;
-
-            context.send(INDEXING_FINISHED_MESSAGE);
-        }
+    /**
+     * Get logger.
+     *
+     * @return value of logger
+     */
+    public static Logger getLogger() {
+        return logger;
     }
 }

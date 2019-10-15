@@ -98,30 +98,37 @@ public class LoginForm implements Serializable {
     public void performPostLoginChecks() throws DataException, DAOException, IOException {
 
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        SessionClientController controller = new SessionClientController();
+        PrimeFaces.current().executeScript("PF('indexWarningDialog').hide();");
 
-        if (ServiceManager.getIndexingService().isIndexCorrupted()) {
-            if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
-                // redirect admins to indexing page
-                context.redirect(INDEXING_PAGE);
-            } else {
-                // show dialog with logout button to other users
-                PrimeFaces.current().executeScript("PF('indexWarningDialog').show();");
-            }
-        } else {
-            PrimeFaces.current().executeScript("PF('indexWarningDialog').hide();");
-            SessionClientController controller = new SessionClientController();
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
             if (controller.getAvailableClientsOfCurrentUser().size() > 1
                     && Objects.isNull(controller.getCurrentSessionClient())) {
                 controller.showClientSelectDialog();
+            } else if (ServiceManager.getIndexingService().isIndexCorrupted()) {
+                context.redirect(INDEXING_PAGE);
             } else {
-                String originalRequest = CustomLoginSuccessHandler.getOriginalRequest(context.getSessionMap()
-                        .get(CustomLoginSuccessHandler.getSavedRequestString()));
-                if (originalRequest.isEmpty() || originalRequest.contains("login")) {
-                    context.redirect(DESKTOP_VIEW);
-                } else {
-                    context.redirect(context.getRequestContextPath() + originalRequest);
-                }
+                redirect(context);
             }
+        } else {
+            if (ServiceManager.getIndexingService().isIndexCorrupted()) {
+                PrimeFaces.current().executeScript("PF('indexWarningDialog').show();");
+            } else if (controller.getAvailableClientsOfCurrentUser().size() > 1
+                    && Objects.isNull(controller.getCurrentSessionClient())) {
+                controller.showClientSelectDialog();
+            } else {
+                redirect(context);
+            }
+        }
+    }
+
+    private void redirect(ExternalContext context) throws IOException {
+        String originalRequest = CustomLoginSuccessHandler.getOriginalRequest(context.getSessionMap()
+                .get(CustomLoginSuccessHandler.getSavedRequestString()));
+        if (originalRequest.isEmpty() || originalRequest.contains("login")) {
+            context.redirect(DESKTOP_VIEW);
+        } else {
+            context.redirect(context.getRequestContextPath() + originalRequest);
         }
     }
 }
