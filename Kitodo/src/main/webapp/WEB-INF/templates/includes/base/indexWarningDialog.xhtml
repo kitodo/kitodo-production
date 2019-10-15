@@ -28,13 +28,14 @@
             <ui:fragment rendered="#{indexingForm.indexingInProgress()}">
                 <h3>#{msgs.systemMaintenanceHeader}</h3>
                 <div class="select-note ui-messages-error">
-                    #{msgs.systemMaintenanceMessage}
+                    #{msgs.systemMaintenanceMessage}<br/>
+                    #{msgs.systemComeBackLaterMessage}
                 </div>
             </ui:fragment>
             <ui:fragment rendered="#{not indexingForm.indexingInProgress()}">
                 <h3>#{msgs.systemErrorHeader}</h3>
                 <div class="select-note ui-messages-error">
-                    #{msgs.systemErrorIndexOutOfDateMessage}<br/>
+                    #{msgs.systemErrorMessage}<br/>
                     #{msgs.systemErrorInformAdminMessage}
                 </div>
             </ui:fragment>
