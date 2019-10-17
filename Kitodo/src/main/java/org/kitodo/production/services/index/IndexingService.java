@@ -78,6 +78,8 @@ public class IndexingService {
     private IndexStates currentState = IndexStates.NO_STATE;
 
     private Thread indexerThread = null;
+    
+    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
 
     /**
      * Return singleton variable of type IndexingService.
@@ -511,8 +513,6 @@ public class IndexingService {
             return "";
         }
     }
-
-    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
 
     /**
      * Start indexing of all database objects in separate thread.
