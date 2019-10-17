@@ -26,7 +26,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
@@ -180,8 +179,7 @@ public class LanguageForm implements Serializable {
         context.getViewRoot().setLocale(locale);
         context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
         // Reload current page to make language change effective
-        context.getExternalContext()
-                .redirect(((HttpServletRequest) context.getExternalContext().getRequest()).getRequestURI());
+        context.getExternalContext().redirect(null);
     }
 
     /**
