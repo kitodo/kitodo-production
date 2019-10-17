@@ -299,7 +299,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      *
      * @return true if process was prepared, otherwise false
      */
-    public boolean prepareProcess(int templateId, int projectId) {
+    private boolean prepareProcess(int templateId, int projectId) {
         ProcessGenerator processGenerator = new ProcessGenerator();
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);

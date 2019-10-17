@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;

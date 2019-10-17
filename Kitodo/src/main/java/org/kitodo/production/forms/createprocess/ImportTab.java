@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,9 +27,6 @@ import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.Helper;
-import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
-
 import org.kitodo.production.model.LazyHitModel;
 import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
@@ -51,7 +49,7 @@ public class ImportTab implements Serializable {
     private static final String ID_PARAMETER_NAME = "ID";
     private static final String FORM_CLIENTID = "editForm";
     private static final String KITODO_STRING = "kitodo";
-    private static final String HITLIST_TABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
+    private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
     private DataTable hitsTable;
 
     /**
@@ -62,12 +60,6 @@ public class ImportTab implements Serializable {
     ImportTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
-
-    @PostConstruct
-    private void initializeHitsTable() {
-        hitsTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITLIST_TABLE_NAME);
-    }
-
 
     /**
      * Get list of catalogs.
@@ -107,13 +99,14 @@ public class ImportTab implements Serializable {
     public void search() {
         try {
             int pageSize = ServiceManager.getUserService().getAuthenticatedUser().getTableSize();
+            this.hitsTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME);
             this.hitModel.load(
                     (this.hitsTable.getPage() + 1) * pageSize,
                     pageSize,
                     "",
                     SortOrder.ASCENDING,
                     null);
-            PrimeFaces.current().executeScript("PF('hitlist').show()");
+            PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
