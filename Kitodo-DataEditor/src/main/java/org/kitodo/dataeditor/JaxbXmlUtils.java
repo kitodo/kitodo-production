@@ -146,7 +146,7 @@ public class JaxbXmlUtils {
      *
      * @param mdSecType
      *            The mdSec element.
-     * @return A list of objects wraped in Optional class.
+     * @return A list of objects wrapped in Optional class.
      */
     static Optional<List<Object>> getXmlDataOfMdSec(MdSecType mdSecType) {
         // Wrapping null-checks at getter-chain into Optional<T>.class

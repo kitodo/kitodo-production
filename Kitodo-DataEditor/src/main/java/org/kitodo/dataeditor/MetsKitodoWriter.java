@@ -34,7 +34,7 @@ public class MetsKitodoWriter {
     private Marshaller jaxbMetsMarshaller;
 
     /**
-     * The Constructor which instanciates the JAXB context of MetsKitodo format.
+     * The Constructor which instantiates the JAXB context of MetsKitodo format.
      */
     public MetsKitodoWriter() throws JAXBException {
         jaxbMetsContext = JAXBContext.newInstance(Mets.class);

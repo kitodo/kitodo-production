@@ -97,7 +97,7 @@ public class CommandService {
     }
 
     /**
-     * Method runs a specified script file asynchron.
+     * Method runs a specified script file asynchronously.
      *
      * @param script
      *            The script.
@@ -118,7 +118,7 @@ public class CommandService {
     }
 
     /**
-     * Method executes a script file with parameters asynchron.
+     * Method executes a script file with parameters asynchronously.
      *
      * @param scriptFile
      *            The script file.
@@ -133,7 +133,7 @@ public class CommandService {
     }
 
     /**
-     * Method executes a script file asynchron.
+     * Method executes a script file asynchronously.
      *
      * @param scriptFile
      *            The script file.
@@ -145,7 +145,7 @@ public class CommandService {
     }
 
     /**
-     * Should be used to handle finished asynchron script executions.
+     * Should be used to handle finished asynchronous script executions.
      *
      * @param commandResult
      *            The finished command result.

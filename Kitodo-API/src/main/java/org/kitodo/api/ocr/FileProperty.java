@@ -14,7 +14,7 @@ package org.kitodo.api.ocr;
 import java.net.URI;
 
 /**
- * The propertys of the input and output files.
+ * The properties of the input and output files.
  */
 public class FileProperty {
 

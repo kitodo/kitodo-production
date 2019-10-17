@@ -108,7 +108,7 @@ public class CustomListColumnInitializer {
      * @param customColumnList
      *              list of custom column names that should be in the database
      * @throws DAOException
-     *              thrown when custom colum table or entries cannot be found in database
+     *              thrown when custom column table or entries cannot be found in database
      */
     private void updateCustomColumnsInDatabase(List<String> customColumnList) throws DAOException {
         ServiceManager.getListColumnService().removeCustomListColumns(customColumnList);

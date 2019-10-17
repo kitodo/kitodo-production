@@ -12,7 +12,7 @@
 package org.kitodo.api.filemanagement;
 
 /**
- * The sub types of processes, which are represented in seperate folders or
+ * The sub types of processes, which are represented in separate folders or
  * files on the filemanagement.
  */
 public enum ProcessSubType {

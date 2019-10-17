@@ -23,7 +23,7 @@
  *  Example:
  *  <span class="toggle" data-for="toggle-1">Click me</span>
  *
- *  Then create the HTML-Elemenent, whose visibilty will be toggled and give it the classname that you specified in
+ *  Then create the HTML element whose visibility will be toggled and give it the classname that you specified in
  *  the "data-for" attribute of your trigger HTML-Element
  *
  *  Example:

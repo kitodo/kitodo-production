@@ -44,7 +44,7 @@ public class ProjectsRootNode {
 
     /**
      * Copy Constructor to instantiate an already populated ProjectsRootNode.
-     * Copying is done that way that a *new* list object is genererated, so
+     * Copying is done that way that a *new* list object is generated, so
      * modifying the list (eg. removing, adding or resorting its elements) will
      * *not* influence the list the copy was derived from. However, no copies
      * are created of the list *entries*, so modifying a Project in the list

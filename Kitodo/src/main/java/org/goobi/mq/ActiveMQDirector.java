@@ -37,7 +37,7 @@ import org.kitodo.config.enums.ParameterCore;
 /**
  * The class ActiveMQDirector is the head of all Active MQ processors. It
  * implements the ServletContextListener interface and is − if configured in
- * web.xml − called automatically upon server starup. Its job is to connect to
+ * web.xml − called automatically upon server startup. Its job is to connect to
  * the Active MQ server and register the listeners configured.
  *
  * <p>

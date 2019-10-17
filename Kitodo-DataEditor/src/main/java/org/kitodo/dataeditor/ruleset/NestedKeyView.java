@@ -388,7 +388,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * @param <V>
      *            the type of metadata objects
      * @param currentEntries
-     *            metadata objects that have already been entered, along witht
+     *            metadata objects that have already been entered, along with
      *            heir key
      * @param additionalKeys
      *            metadata keys that the user has already selected

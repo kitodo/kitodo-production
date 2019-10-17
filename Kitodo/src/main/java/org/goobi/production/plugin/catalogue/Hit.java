@@ -64,7 +64,7 @@ import org.kitodo.production.model.bibliography.Citation;
  * {@code subseries} − Name of the subseries, if any<br>
  * {@code theses} − Kind of academic writing (i.e. “Diss.”)<br>
  * {@code title} − Main title<br>
- * {@code url} − URL (for internet ressources and online journals)<br/>
+ * {@code url} − URL (for internet resources and online journals)<br/>
  * {@code volume} − Number of the volume, if any<br/>
  * {@code volumetitle} − Title of the volume, if any<br/>
  * {@code year} − 4-digit year of publication

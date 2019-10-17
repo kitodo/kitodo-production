@@ -261,7 +261,7 @@ public class WorkflowForm extends BaseForm {
     }
 
     private void saveWorkflow() {
-        // TODO: Erik needs to make field inivisible in the editor
+        // TODO: Erik needs to make field invisible in the editor
         try {
             ServiceManager.getWorkflowService().save(this.workflow);
         } catch (DataException e) {

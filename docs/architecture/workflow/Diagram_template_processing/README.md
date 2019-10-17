@@ -22,4 +22,4 @@ task.getAttributeValueNs(NAMESPACE, "priority")
 ## Database
 
 Template table was modified to store reference to Workflow table.
-Additionaly Task table has a column workflowCondition, which stores information about possible conditions defined in gateways.
+Additionally Task table has a column workflowCondition, which stores information about possible conditions defined in gateways.

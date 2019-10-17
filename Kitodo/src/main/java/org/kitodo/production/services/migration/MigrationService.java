@@ -102,7 +102,7 @@ public class MigrationService {
     /**
      * Creates a String out of the tasks to identify different tasks orders.
      * @param processTasks The List of tasks to generate a string from.
-     * @return A string identifing the tasks.
+     * @return A string identifying the tasks.
      */
     public String createTaskString(List<Task> processTasks) {
         String taskString = "";

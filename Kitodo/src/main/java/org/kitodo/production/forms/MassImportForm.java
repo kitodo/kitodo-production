@@ -360,7 +360,7 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get recrods.
+     * Get records.
      *
      * @return the records
      */

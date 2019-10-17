@@ -88,7 +88,7 @@ WHERE t.process_id = temp.old_id;
 -- 10. Delete processes from batches that are templates
 --
 -- If someone ever linked that together, which was possible in the front-end,
--- this is a mistake in the data. Batches are were not inteded to ever contain
+-- this is a mistake in the data. Batches are not intended to ever contain
 -- templates, and those batches cannot ever have been useful for anything.
 --
 

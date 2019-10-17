@@ -89,7 +89,7 @@ public class WebDriverProvider {
             if (geckoDriverFile.canExecute()) {
                 System.setProperty("webdriver.gecko.driver", geckoDriverFile.getPath());
             } else {
-                logger.error("Geckodriver not executeable");
+                logger.error("Geckodriver not executable");
             }
         } else {
             logger.error("Geckodriver file not found");
@@ -144,7 +144,7 @@ public class WebDriverProvider {
             if (chromeDriverFile.canExecute()) {
                 System.setProperty("webdriver.chrome.driver", chromeDriverFile.getPath());
             } else {
-                logger.error("Chromedriver not executeable");
+                logger.error("Chromedriver not executable");
             }
         } else {
             logger.error("Chromedriver file not found");

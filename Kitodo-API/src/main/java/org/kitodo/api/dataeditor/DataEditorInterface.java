@@ -36,7 +36,7 @@ public interface DataEditorInterface {
      *            The URI to the xml file to edit.
      * @param rulesetFileUri
      *            The URI to the rulesetFile.
-     * @return true, if editing was succesfull, false otherwise.
+     * @return true, if editing was successful, false otherwise.
      */
     boolean editData(URI xmlFileUri, URI rulesetFileUri);
 
