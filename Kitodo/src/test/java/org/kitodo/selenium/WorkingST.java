@@ -41,9 +41,11 @@ public class WorkingST extends BaseTestSelenium {
 
     @BeforeClass
     public static void setup() throws Exception {
+        MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+        MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
-
+        
         currentTasksEditPage = Pages.getCurrentTasksEditPage();
         processesPage = Pages.getProcessesPage();
         tasksPage = Pages.getTasksPage();

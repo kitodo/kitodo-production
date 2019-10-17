@@ -1343,11 +1343,11 @@ Popup dialogs
 }
 
 /* Info messages */
-#error-messages div.ui-messages-info {
+.ui-messages-info {
     background-color: var(--green);
 }
 
 /* Error messages */
-#error-messages div.ui-messages-error {
+.ui-messages-error {
     background-color: var(--orange);
 }

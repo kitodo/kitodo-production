@@ -1,0 +1,68 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog class="client-select-dialog"
+              id="clientSelectDialog"
+              widgetVar="selectClientDialog"
+              showHeader="false"
+              modal="true"
+              width="500px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <h3>#{msgs.welcome}, #{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}</h3>
+        <h:form id="select-session-client-form">
+            <div class="select-note ui-messages-info">#{msgs.clientSelectNote}</div>
+            <div class="select-selector">
+                <p>#{msgs.clientSelect}</p>
+                <p>
+                    <p:selectOneMenu id="client"
+                                     converter="#{clientConverter}"
+                                     value="#{SessionClientController.selectedClient}"
+                                     autoWidth="false">
+                        <f:selectItems value="#{SessionClientController.availableClientsOfCurrentUser}" var="client" itemValue="#{client}"
+                                       itemLabel="#{client.name}"/>
+                    </p:selectOneMenu>
+                </p>
+                <p:panelGrid>
+                    <p:row>
+                        <p:commandButton id="setSessionClientButton"
+                                         actionListener="#{SessionClientController.setSelectedClientAsSessionClient}"
+                                         action="#{LoginForm.performPostLoginChecks()}"
+                                         onstart="PF('selectClientDialog').hide(); $('#loadingScreen').show();"
+                                         oncomplete="$('#loadingScreen').hide();"
+                                         disabled="#{not SessionClientController.areClientsAvailableForUser()}"
+                                         update="@all"
+                                         styleClass="primary right"
+                                         value="#{msgs.select}"
+                                         icon="fa fa-check"
+                                         iconPos="right"/>
+                        <p:button href="${request.contextPath}/logout"
+                                  id="cancelSessionClientSelectionButton"
+                                  type="button"
+                                  value="#{msgs.cancel}"
+                                  styleClass="secondary right"
+                                  icon="fa fa-close"
+                                  iconPos="right"/>
+                    </p:row>
+                </p:panelGrid>
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>

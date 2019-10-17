@@ -980,7 +980,6 @@ main i.fa {
 }
 
 .select-note {
-    background: var(--orange);
     padding: 16px 32px 16px 32px;
     color: var(--pure-white);
     hyphens: auto;

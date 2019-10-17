@@ -22,6 +22,9 @@
         <!--@elvariable id="workflowId" type="int"-->
         <f:viewParam name="workflowId"/>
         <f:viewAction action="#{MigrationForm.setRedirectFromWorkflow(workflowId)}"/>
+        <!--@elvariable id="tabIndex" type="java.lang.String"-->
+        <f:viewParam name="tabIndex"/>
+        <f:viewAction action="#{MigrationForm.setActiveTabIndexFromTemplate(tabIndex)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

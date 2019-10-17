@@ -196,6 +196,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage(LOGIN_PAGE)
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/pages/desktop.jsf")
+                .successHandler(new CustomLoginSuccessHandler())
                 .permitAll()
                 .and()
             .logout()
@@ -206,7 +207,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * Sets the DynamicAuthenticationProvider as AuthenticationProvider.
      * (authentication against ldap or database).
-     * 
+     *
      * @param authenticationManagerBuilder
      *            The authentication manager builder
      */

@@ -54,6 +54,10 @@ public class Pages {
         return getPage(LoginPage.class);
     }
 
+    public static PostLoginChecksPage getPostLoginChecksPage() throws InstantiationException, IllegalAccessException {
+        return getPage(PostLoginChecksPage.class);
+    }
+
     public static MetadataEditorPage getMetadataEditorPage() throws InstantiationException, IllegalAccessException {
         return getPage(MetadataEditorPage.class);
     }
