@@ -23,7 +23,7 @@
               resizable="false"
               showHeader="false"
               dynamic="true">
-        <h3>#{msgs.hitlist} (#{CreateProcessForm.importTab.numberOfHits} #{msgs.hits})</h3>
+        <h3>#{msgs.hitlist}</h3>
         <h:form id="hitlistDialogForm">
             <p:dataTable id="hitlistDialogTable"
                          value="#{CreateProcessForm.importTab.hitModel}"
@@ -34,8 +34,7 @@
                          lazy="true"
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                          currentPageReportTemplate="#{msgs.currentPageReportTemplate}">
-                <p:ajax event="page" listener="#{CreateProcessForm.importTab.printPageNumber()}"/>
-                <p:column headerText="#{msgs.hits}">
+                <p:column headerText="#{CreateProcessForm.importTab.hitModel.rowCount} #{msgs.hits}">
                     <p:commandLink id="selectRecord"
                                    value="#{hit.title}"
                                    title="#{hit.title}"

@@ -32,7 +32,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.model.SortOrder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,7 +49,6 @@ public class ImportTab implements Serializable {
     private static final String FORM_CLIENTID = "editForm";
     private static final String KITODO_STRING = "kitodo";
     private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
-    private DataTable hitsTable;
 
     /**
      * Standard constructor.
@@ -98,14 +96,8 @@ public class ImportTab implements Serializable {
      */
     public void search() {
         try {
-            int pageSize = ServiceManager.getUserService().getAuthenticatedUser().getTableSize();
-            this.hitsTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME);
-            this.hitModel.load(
-                    (this.hitsTable.getPage() + 1) * pageSize,
-                    pageSize,
-                    "",
-                    SortOrder.ASCENDING,
-                    null);
+            DataTable hits = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME);
+            hits.reset();
             PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -122,20 +114,6 @@ public class ImportTab implements Serializable {
             return this.hitModel.getHits();
         } else {
             return new LinkedList<>();
-        }
-    }
-
-    /**
-     * Get total number of hits for performed query. Returns 0 if searchResult
-     * instance is null.
-     *
-     * @return total number of hits
-     */
-    public int getNumberOfHits() {
-        if (Objects.nonNull(this.hitModel)) {
-            return this.hitModel.getRowCount();
-        } else {
-            return 0;
         }
     }
 
@@ -170,11 +148,12 @@ public class ImportTab implements Serializable {
         }
     }
 
+    /**
+     * Get LazyHitModel.
+     *
+     * @return LazyHitModel of this ImportTab
+     */
     public LazyHitModel getHitModel() {
         return this.hitModel;
-    }
-
-    public void printPageNumber() {
-        System.out.println("Current page number: " + this.hitsTable.getPage());
     }
 }

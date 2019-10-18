@@ -119,9 +119,11 @@ public class SRUImport implements ExternalDataImportInterface {
 
             try {
                 URI queryURL = createQueryURI(queryParameters);
-                return performQuery(
-                        queryURL.toString()
-                                + "&startRecord=" + start
+                String queryString = queryURL.toString();
+                if (start > 0 ) {
+                    queryString += ("&startRecord=" + start);
+                }
+                return performQuery(queryString
                                 + "&maximumRecords=" + numberOfRecords
                                 + "&query=" + createSearchFieldString(searchFieldMap));
             } catch (URISyntaxException | UnsupportedEncodingException e) {
