@@ -747,7 +747,7 @@ public class FileService {
     }
 
     /**
-     * Get's the URI for a Process Sub-location. Possible Locations are listed
+     * Gets the URI for a Process Sub-location. Possible Locations are listed
      * in ProcessSubType
      *
      * @param process
@@ -764,7 +764,7 @@ public class FileService {
     }
 
     /**
-     * Get's the URI for a Process Sub-location. Possible Locations are listed
+     * Gets the URI for a Process Sub-location. Possible Locations are listed
      * in ProcessSubType
      *
      * @param process

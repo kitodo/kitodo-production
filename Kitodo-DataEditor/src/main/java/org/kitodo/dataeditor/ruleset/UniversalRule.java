@@ -40,7 +40,7 @@ public class UniversalRule {
      *
      * @param rule
      *            rule for which a hashish key is to be formed
-     * @return key is tripple
+     * @return key is triple
      */
     private static Triple<String, String, String> formAKeyForARuleInATemporaryMap(Rule rule) {
         return Triple.of(rule.getDivision().orElse(null), rule.getKey().orElse(null), rule.getValue().orElse(null));

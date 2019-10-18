@@ -65,15 +65,15 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
             encryptionCipher.init(Cipher.ENCRYPT_MODE, secretKey, algorithmParameterSpec);
             decryptionCipher.init(Cipher.DECRYPT_MODE, secretKey, algorithmParameterSpec);
         } catch (InvalidKeySpecException e) {
-            logger.info("Catched InvalidKeySpecException with message: " + e.getMessage());
+            logger.info("Caught InvalidKeySpecException with message: " + e.getMessage());
         } catch (NoSuchAlgorithmException e) {
-            logger.info("Catched NoSuchAlgorithmException with message: " + e.getMessage());
+            logger.info("Caught NoSuchAlgorithmException with message: " + e.getMessage());
         } catch (NoSuchPaddingException e) {
-            logger.info("Catched NoSuchPaddingException with message: " + e.getMessage());
+            logger.info("Caught NoSuchPaddingException with message: " + e.getMessage());
         } catch (InvalidAlgorithmParameterException e) {
-            logger.info("Catched InvalidAlgorithmParameterException with message: " + e.getMessage());
+            logger.info("Caught InvalidAlgorithmParameterException with message: " + e.getMessage());
         } catch (InvalidKeyException e) {
-            logger.info("Catched InvalidKeyException with message: " + e.getMessage());
+            logger.info("Caught InvalidKeyException with message: " + e.getMessage());
         }
     }
 
@@ -102,9 +102,9 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
             byte[] enc = encryptionCipher.doFinal(utfEight);
             return new String(Base64.encodeBase64(enc), StandardCharsets.UTF_8);
         } catch (BadPaddingException e) {
-            logger.warn("Catched BadPaddingException with message: " + e.getMessage());
+            logger.warn("Caught BadPaddingException with message: " + e.getMessage());
         } catch (IllegalBlockSizeException e) {
-            logger.warn("Catched IllegalBlockSizeException with message: " + e.getMessage());
+            logger.warn("Caught IllegalBlockSizeException with message: " + e.getMessage());
         }
         return null;
     }
@@ -122,9 +122,9 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
             byte[] utfEight = decryptionCipher.doFinal(dec);
             return new String(utfEight, StandardCharsets.UTF_8);
         } catch (IllegalBlockSizeException e) {
-            logger.warn("Catched IllegalBlockSizeException with message: " + e.getMessage());
+            logger.warn("Caught IllegalBlockSizeException with message: " + e.getMessage());
         } catch (BadPaddingException e) {
-            logger.warn("Catched BadPaddingException with message: " + e.getMessage());
+            logger.warn("Caught BadPaddingException with message: " + e.getMessage());
         }
         return null;
     }

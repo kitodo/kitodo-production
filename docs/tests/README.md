@@ -19,7 +19,7 @@ To run a mutation test, you have to add the Pitest plugin to build/plugins in yo
  </plugin>
 ```
 
-By default Pitest will mutate all code in your project/modul. You can limit which code is mutated
+By default Pitest will mutate all code in your project/module. You can limit which code is mutated
 and which tests are run using `targetClasses` and `targetTests`.
 
 ```

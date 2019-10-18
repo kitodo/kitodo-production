@@ -39,8 +39,8 @@ Select downloaded file `debian-9.5.0-amd64-netinst.iso`
 * User name: `kitodo`
 * User password: `kitodo`
 * Time zone: `Eastern`
-* Partioning method: `Guided - use entire disk`
-* Partioning scheme: `All files in one partition`
+* Partitioning method: `Guided - use entire disk`
+* Partitioning scheme: `All files in one partition`
 * Mirror: `Germany/ftp.de.debian.org`
 * Proxy: ` ` (blank)
 * Software: deselect `print server`

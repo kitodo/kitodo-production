@@ -130,7 +130,7 @@ Add projects: In Eclipse, select *File*, *Import*, *Maven*, *Existing Maven proj
 
 Prepare the web application
 ---------------------------
-For any further steps and thoughout all development, make sure Elasticsearch is running. You start it by running `elasticsearch.bat` in the bin folder of the unzipped installation.
+For any further steps and throughout all development, make sure Elasticsearch is running. You start it by running `elasticsearch.bat` in the bin folder of the unzipped installation.
 
 In Eclipse, right-click on the kitodo project, select run as, run on server, to launch Kitodo.Production in your Tomcat.
 

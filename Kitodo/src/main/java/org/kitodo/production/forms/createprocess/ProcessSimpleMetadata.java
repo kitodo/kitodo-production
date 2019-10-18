@@ -54,7 +54,7 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
     }
 
     /**
-     * Returns if the field may be edited. Some fileds may be disallowed to be
+     * Returns if the field may be edited. Some fields may be disallowed to be
      * edit from the rule set.
      *
      * @return whether the field is editable
