@@ -121,7 +121,7 @@ public class SRUImport implements ExternalDataImportInterface {
                 URI queryURL = createQueryURI(queryParameters);
                 String queryString = queryURL.toString();
                 if (start > 0 ) {
-                    queryString += ("&startRecord=" + start);
+                    queryString += "&startRecord=" + start;
                 }
                 return performQuery(queryString
                                 + "&maximumRecords=" + numberOfRecords
