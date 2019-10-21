@@ -239,7 +239,7 @@ public class MigrationForm extends BaseForm {
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
 
         try {
-            templateConverter.convertTasksToWorkflowFile(currentTasks,processTasks );
+            templateConverter.convertTasksToWorkflowFile(currentTasks, processTasks);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
