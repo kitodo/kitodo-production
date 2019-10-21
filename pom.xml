@@ -72,6 +72,7 @@
         <spring.security.version>4.2.13.RELEASE</spring.security.version>
         <flyway-maven-plugin.version>5.1.4</flyway-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
+        <mariadb-java-client.version>2.4.4</mariadb-java-client.version>
     </properties>
 
     <repositories>
@@ -270,6 +271,11 @@
                                 <groupId>mysql</groupId>
                                 <artifactId>mysql-connector-java</artifactId>
                                 <version>${mysql.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mariadb.jdbc</groupId>
+                                <artifactId>mariadb-java-client</artifactId>
+                                <version>${mariadb-java-client.version}</version>
                             </dependency>
                         </dependencies>
                         <executions>
