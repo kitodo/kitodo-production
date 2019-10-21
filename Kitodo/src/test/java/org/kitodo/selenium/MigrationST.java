@@ -16,11 +16,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.WorkflowService;
@@ -49,20 +51,23 @@ public class MigrationST extends BaseTestSelenium {
 
     @Test
     public void testMigration() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+        process.setTemplate(null);
+        ServiceManager.getProcessService().save(process);
         SystemPage systemPage = Pages.getSystemPage().goTo();
-        long processTemplateId = ServiceManager.getProcessService().getById(1).getTemplate().getId();
 
-        assertEquals("wrong template", 1, processTemplateId);
+        assertEquals("wrong template", null, process.getTemplate());
         systemPage.startWorkflowMigration();
         systemPage.selectProjects();
-        assertEquals("FinishedClosedProgressOpenLocked", systemPage.getAggregatedTasks(3));
+        assertEquals("FinishedClosedProgressOpenLocked", systemPage.getAggregatedTasks(2));
         WorkflowEditPage workflowEditPage = systemPage.createNewWorkflow();
         workflowEditPage.changeWorkflowStatusToActive();
         assertEquals("FinishedClosedProgressOpenLocked", workflowEditPage.getWorkflowTitle());
         systemPage = workflowEditPage.saveForMigration();
         String newTemplateTitle = "newTemplate";
         systemPage.createNewTemplateFromPopup(newTemplateTitle);
-        await().untilAsserted(() -> assertEquals("template of process should have changed", 4,
+        await().pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions().untilAsserted(() -> assertEquals("template of process should have changed", 4,
             (long) ServiceManager.getProcessService().getById(1).getTemplate().getId()));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         Workflow workflow = workflowService.getById(4);
