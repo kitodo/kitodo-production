@@ -93,11 +93,18 @@ public class SRUImport implements ExternalDataImportInterface {
         loadOPACConfiguration(catalogId);
         HashMap<String, String> searchFields = new HashMap<>();
         searchFields.put(field, term);
-        return search(catalogId, searchFields, rows);
+        return search(catalogId, searchFields, 1, rows);
     }
 
-    private SearchResult search(String catalogId, Map<String, String> searchParameters, int numberOfRecords) {
-        // TODO: check how the fields of hits from SRU interfaces can be configured via CQL (need only title and id!)
+    @Override
+    public SearchResult search(String catalogId, String field, String term, int start, int rows) {
+        loadOPACConfiguration(catalogId);
+        HashMap<String, String> searchFields = new HashMap<>();
+        searchFields.put(field, term);
+        return search(catalogId, searchFields, start, rows);
+    }
+
+    private SearchResult search(String catalogId, Map<String, String> searchParameters, int start, int numberOfRecords) {
         loadOPACConfiguration(catalogId);
         if (searchFieldMapping.keySet().containsAll(searchParameters.keySet())) {
 
@@ -112,8 +119,11 @@ public class SRUImport implements ExternalDataImportInterface {
 
             try {
                 URI queryURL = createQueryURI(queryParameters);
-                return performQuery(
-                        queryURL.toString()
+                String queryString = queryURL.toString();
+                if (start > 0 ) {
+                    queryString += "&startRecord=" + start;
+                }
+                return performQuery(queryString
                                 + "&maximumRecords=" + numberOfRecords
                                 + "&query=" + createSearchFieldString(searchFieldMap));
             } catch (URISyntaxException | UnsupportedEncodingException e) {

@@ -54,6 +54,25 @@ public interface ExternalDataImportInterface {
     SearchResult search(String catalogId, String field, String term, int rows);
 
     /**
+     * Perform search in catalog with given ID 'catalogId' with given search fields
+     * 'field' and term 'term'. The parameter rows controls how many records should
+     * be returned. The parameter 'start' controls the index of the first hit.
+     *
+     * @param catalogId
+     *            ID of the catalog that will be queried.
+     * @param field
+     *            search field that will be queried
+     * @param term
+     *            value of search field that will be queried
+     * @param rows
+     *            number of records to be returned
+     * @param start
+     *            index of the first record to be returned
+     * @return Search result of performed query.
+     */
+    SearchResult search(String catalogId, String field, String term, int start, int rows);
+
+    /**
      * Searches for Data in a given source by term and field.
      *
      * @param ids

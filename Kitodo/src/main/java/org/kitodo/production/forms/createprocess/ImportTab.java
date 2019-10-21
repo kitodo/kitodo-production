@@ -18,18 +18,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.model.LazyHitModel;
 import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,80 +40,24 @@ import org.xml.sax.SAXException;
 
 public class ImportTab implements Serializable {
     private static final Logger logger = LogManager.getLogger(ImportTab.class);
+    private LazyHitModel hitModel = new LazyHitModel();
 
     private CreateProcessForm createProcessForm;
-    private String selectedCatalog;
-    private String selectedField;
-    private String searchTerm;
-    private SearchResult searchResult;
     private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
+    private static final int ADDITIONAL_FIELDS_TAB_INDEX = 2;
+    private static final String ID_PARAMETER_NAME = "ID";
+    private static final String FORM_CLIENTID = "editForm";
+    private static final String KITODO_STRING = "kitodo";
+    private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
 
     /**
      * Standard constructor.
      *
      * @param createProcessForm CreateProcessForm instance to which this ImportTab is assigned.
      */
-    public ImportTab(CreateProcessForm createProcessForm) {
+    ImportTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
-
-    /**
-     * Getter for selectedCatalog.
-     *
-     * @return value of selectedCatalog
-     */
-    public String getSelectedCatalog() {
-        return selectedCatalog;
-    }
-
-    /**
-     * Setter for selectedCatalog.
-     *
-     * @param catalog
-     *            as java.lang.String
-     */
-    public void setSelectedCatalog(String catalog) {
-        this.selectedCatalog = catalog;
-    }
-
-    /**
-     * Get searchTerm.
-     *
-     * @return value of searchTerm
-     */
-    public String getSearchTerm() {
-        return this.searchTerm;
-    }
-
-    /**
-     * Set searchTerm.
-     *
-     * @param searchTerm
-     *            as java.lang.String
-     */
-    public void setSearchTerm(String searchTerm) {
-        this.searchTerm = searchTerm;
-    }
-
-    /**
-     * Get selectedField.
-     *
-     * @return value of selectedField
-     */
-    public String getSelectedField() {
-        return this.selectedField;
-    }
-
-    /**
-     * Set selectedField.
-     *
-     * @param field
-     *            as java.lang.String
-     */
-    public void setSelectedField(String field) {
-        this.selectedField = field;
-    }
-
 
     /**
      * Get list of catalogs.
@@ -133,11 +79,11 @@ public class ImportTab implements Serializable {
      * @return list of search fields
      */
     public List<String> getSearchFields() {
-        if (this.selectedCatalog.isEmpty()) {
+        if (this.hitModel.getSelectedCatalog().isEmpty()) {
             return new LinkedList<>();
         } else {
             try {
-                return ServiceManager.getImportService().getAvailableSearchFields(this.selectedCatalog);
+                return ServiceManager.getImportService().getAvailableSearchFields(this.hitModel.getSelectedCatalog());
             } catch (IllegalArgumentException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return new LinkedList<>();
@@ -150,51 +96,35 @@ public class ImportTab implements Serializable {
      */
     public void search() {
         try {
-            this.searchResult = ServiceManager.getImportService().performSearch(this.selectedField, this.searchTerm,
-                this.selectedCatalog);
-            PrimeFaces.current().executeScript("PF('hitlist').show()");
+            DataTable hits = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME);
+            hits.reset();
+            PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
     /**
-     * Get retrieved hits. Returns empty list if searchResult instance is null.
+     * Get retrieved hits. Returns empty list if LazyHitModel instance is null.
      *
      * @return hits
      */
     public List<SingleHit> getHits() {
-        if (Objects.nonNull(this.searchResult)) {
-            return this.searchResult.getHits();
+        if (Objects.nonNull(this.hitModel)) {
+            return this.hitModel.getHits();
         } else {
             return new LinkedList<>();
         }
-
-    }
-
-    /**
-     * Get total number of hits for performed query. Returns 0 if searchResult
-     * instance is null.
-     *
-     * @return total number of hits
-     */
-    public int getNumberOfHits() {
-        if (Objects.nonNull(this.searchResult)) {
-            return this.searchResult.getNumberOfHits();
-        } else {
-            return 0;
-        }
-
     }
 
     /**
      * Get the full record with the given ID from the catalog.
      */
     public void getSelectedRecord() {
-        String recordId = Helper.getRequestParameter("ID");
-        getRecordById(this.selectedCatalog, recordId);
-        Ajax.update("editForm");
-        this.createProcessForm.setEditActiveTabIndex(2);
+        String recordId = Helper.getRequestParameter(ID_PARAMETER_NAME);
+        getRecordById(this.hitModel.getSelectedCatalog(), recordId);
+        Ajax.update(FORM_CLIENTID);
+        this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
     }
 
     private void getRecordById(String catalog, String recordId) {
@@ -210,11 +140,20 @@ public class ImportTab implements Serializable {
         List<ProcessDetail> processDetailsList =
                 this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Element root = record.getDocumentElement();
-        NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
+        NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO_STRING);
         for (int i = 0; i < kitodoNodes.getLength(); i++) {
             Node kitodoNode = kitodoNodes.item(i);
             this.createProcessForm.getProcessMetadataTab().fillProcessDetailsElements(processDetailsList,
                     kitodoNode.getChildNodes(), false);
         }
+    }
+
+    /**
+     * Get LazyHitModel.
+     *
+     * @return LazyHitModel of this ImportTab
+     */
+    public LazyHitModel getHitModel() {
+        return this.hitModel;
     }
 }
