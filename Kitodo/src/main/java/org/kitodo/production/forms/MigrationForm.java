@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +62,6 @@ public class MigrationForm extends BaseForm {
      * Migrates the meta.xml for all processes in the database (if it's in the
      * old format).
      *
-     * @throws DAOException
-     *             if database access fails
      */
     public void migrateMetadata() {
         try {
@@ -101,14 +100,18 @@ public class MigrationForm extends BaseForm {
     }
 
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
+        List<Task> processTasks = process.getTasks();
+        processTasks.sort(Comparator.comparingInt(Task::getOrdering));
         for (String tasks : aggregatedProcesses.keySet()) {
-            if (checkForTitle(tasks, process.getTasks()) && migrationService
-                    .tasksAreEqual(aggregatedProcesses.get(tasks).get(0).getTasks(), process.getTasks())) {
+            List<Task> aggregatedTasks = aggregatedProcesses.get(tasks).get(0).getTasks();
+            aggregatedTasks.sort(Comparator.comparingInt(Task::getOrdering));
+            if (checkForTitle(tasks, processTasks) && migrationService
+                    .tasksAreEqual(aggregatedTasks, processTasks)) {
                 aggregatedProcesses.get(tasks).add(process);
                 return;
             }
         }
-        aggregatedProcesses.put(migrationService.createTaskString(process.getTasks()),
+        aggregatedProcesses.put(migrationService.createTaskString(processTasks),
             new ArrayList<>(Arrays.asList(process)));
     }
 
@@ -232,9 +235,11 @@ public class MigrationForm extends BaseForm {
 
         Process blueprintProcess = aggregatedProcesses.get(currentTasks).get(0);
         TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
+        List<Task> processTasks = blueprintProcess.getTasks();
+        processTasks.sort(Comparator.comparingInt(Task::getOrdering));
 
         try {
-            templateConverter.convertTasksToWorkflowFile(currentTasks, blueprintProcess.getTasks());
+            templateConverter.convertTasksToWorkflowFile(currentTasks, processTasks);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

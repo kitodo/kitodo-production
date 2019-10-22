@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -106,6 +107,7 @@ public class MigrationService {
      */
     public String createTaskString(List<Task> processTasks) {
         String taskString = "";
+        processTasks.sort(Comparator.comparingInt(Task::getOrdering));
         for (Task processTask : processTasks) {
             taskString = taskString.concat(processTask.getTitle());
         }
