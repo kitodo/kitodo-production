@@ -31,6 +31,7 @@ public class ProcessDataTab {
 
     private static final Logger logger = LogManager.getLogger(ProcessDataTab.class);
 
+    private List<SelectItem> allDocTypes;
     private CreateProcessForm createProcessForm;
     private String docType;
     private String atstsl = "";
@@ -69,13 +70,8 @@ public class ProcessDataTab {
      * @return value of docType
      */
     public String getDocType() {
-        if (Objects.isNull(docType)) {
-            String monograph = (String) getAllDoctypes()
-                    .stream()
-                    .filter(typ -> typ.getValue().equals("Monograph"))
-                    .findFirst()
-                    .get().getValue();
-            setDocType(Objects.isNull(monograph) || monograph.isEmpty() ? (String) getAllDoctypes().get(0).getValue() : monograph);
+        if (Objects.isNull(docType) && !allDocTypes.isEmpty()) {
+            setDocType((String) allDocTypes.get(0).getValue());
         }
         return docType;
     }
@@ -158,10 +154,7 @@ public class ProcessDataTab {
      * @return list of all ruleset divisions
      */
     public List<SelectItem> getAllDoctypes() {
-        return createProcessForm.getRuleset()
-                .getStructuralElements(createProcessForm.getPriorityList()).entrySet()
-                .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        return allDocTypes;
     }
 
     /**
@@ -243,6 +236,7 @@ public class ProcessDataTab {
      * Read project configs for display in GUI.
      */
     public void prepare() {
+        allDocTypes = getAllRulesetDivisions();
         ConfigProject configProject;
         try {
             configProject = new ConfigProject(createProcessForm.getProject().getTitle());
@@ -253,5 +247,16 @@ public class ProcessDataTab {
         usingTemplates = configProject.isUseTemplates();
         tiffDefinition = configProject.getTifDefinition();
         titleDefinition = configProject.getTitleDefinition();
+    }
+
+    private List<SelectItem> getAllRulesetDivisions() {
+        List<SelectItem>  allDocTypes = createProcessForm.getRuleset()
+                .getStructuralElements(createProcessForm.getPriorityList()).entrySet()
+                .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+        if (allDocTypes.isEmpty()) {
+            Helper.setErrorMessage("errorLoadingDocTypes");
+        }
+        return allDocTypes;
     }
 }
