@@ -28,8 +28,8 @@
         <xsl:variable name="title" select="kitodo:metadata[@name='TitleDocMain']"/>
 
         <xsl:variable name="role" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='Role']"/>
-        <xsl:variable name="last_name" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='lastName']"/>
-        <xsl:variable name="first_name" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='firstName']"/>
+        <xsl:variable name="last_name" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='LastName']"/>
+        <xsl:variable name="first_name" select="kitodo:metadataGroup[@name='Person']/kitodo:metadata[@name='FirstName']"/>
 
         <xsl:variable name="place" select="kitodo:metadata[@name='PlaceOfPublication']"/>
         <xsl:variable name="publisher" select="kitodo:metadata[@name='PublisherName']"/>
