@@ -12,9 +12,13 @@
 package org.kitodo.production.helper.tasks;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
@@ -23,6 +27,8 @@ import org.kitodo.production.services.migration.MigrationService;
  * Migrates metadata in a separate thread.
  */
 public class MigrationTask extends EmptyTask {
+    private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
+
     /**
      * Key figure of the process to be migrated. At the same time progress.
      */
@@ -77,11 +83,18 @@ public class MigrationTask extends EmptyTask {
      */
     @Override
     public void run() {
+        String processTitle = null;
         try {
             while (index < processes.size()) {
+                final long begin = System.nanoTime();
                 Process process = processes.get(index++);
-                setWorkDetail(process.getTitle());
+                processTitle = process.getTitle();
+                setWorkDetail(processTitle);
                 migrationService.migrateMetadata(process);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Migrating {} took {} ms", processTitle,
+                        TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+                }
                 setProgress(100 * index / processes.size());
                 if (isInterrupted()) {
                     return;
@@ -89,6 +102,7 @@ public class MigrationTask extends EmptyTask {
             }
             setProgress(100);
         } catch (Exception exception) {
+            Helper.setErrorMessage(exception.getLocalizedMessage(), processTitle, logger, exception);
             super.setException(exception);
         }
     }
