@@ -11,8 +11,6 @@
 
 package org.kitodo.production.security.password;
 
-import com.ibm.icu.impl.locale.XCldrStub;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -66,7 +64,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
         }
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(
-                XCldrStub.Joiner.on(",").join(validator.getMessages(result)))
+                String.join(",", validator.getMessages(result)))
                 .addConstraintViolation();
         return false;
     }
