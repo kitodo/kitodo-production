@@ -35,11 +35,13 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
+import org.kitodo.production.workflow.model.Converter;
 import org.primefaces.PrimeFaces;
 
 @Named("MigrationForm")
@@ -200,7 +202,7 @@ public class MigrationForm extends BaseForm {
                 PrimeFaces.current().executeScript("PF('confirmWorkflowPopup').show();");
                 return this.stayOnCurrentPage;
             }
-        } catch (DAOException e) {
+        } catch (DAOException | IOException | WorkflowException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
                 e);
             return this.stayOnCurrentPage;
@@ -208,12 +210,15 @@ public class MigrationForm extends BaseForm {
         return createNewWorkflow();
     }
 
-    private boolean workflowAlreadyExist() throws DAOException {
+    private boolean workflowAlreadyExist() throws DAOException, IOException, WorkflowException {
         List<Task> processTasks = aggregatedProcesses.get(currentTasks).get(0).getTasks();
-        List<Template> allTemplates = ServiceManager.getTemplateService().getAll();
-        for (Template template : allTemplates) {
+        List<Workflow> allWorkflows = ServiceManager.getWorkflowService().getAll();
+        for (Workflow workflow : allWorkflows) {
+            Converter converter = new Converter(workflow.getTitle());
+            Template template = new Template();
+            converter.convertWorkflowToTemplate(template);
             if (migrationService.tasksAreEqual(template.getTasks(), processTasks)) {
-                workflowToUse = template.getWorkflow();
+                workflowToUse = workflow;
                 return true;
             }
         }
