@@ -101,9 +101,15 @@ public class MigrationTask extends EmptyTask {
                 }
             }
             setProgress(100);
-        } catch (Exception exception) {
-            Helper.setErrorMessage(exception.getLocalizedMessage(), processTitle, logger, exception);
-            super.setException(exception);
+        } catch (Throwable thrown) {
+            if (thrown instanceof Error) {
+                throw (Error) thrown;
+            } else {
+                if (thrown instanceof Exception) {
+                    Helper.setErrorMessage(thrown.getLocalizedMessage(), processTitle, logger, (Exception) thrown);
+                }
+                super.setException(thrown);
+            }
         }
     }
 }

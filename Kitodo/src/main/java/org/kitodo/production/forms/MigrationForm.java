@@ -59,7 +59,7 @@ public class MigrationForm extends BaseForm {
     private Map<Template, List<Process>> templatesToCreate = new HashMap<>();
     private Map<Template, Template> matchingTemplates = new HashMap<>();
     private MigrationService migrationService = ServiceManager.getMigrationService();
-    private boolean migrateWorkflow;
+    private boolean migrateWorkflow = true;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
