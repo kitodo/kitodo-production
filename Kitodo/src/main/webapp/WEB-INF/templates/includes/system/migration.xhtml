@@ -35,8 +35,15 @@
                 <f:selectItems value="#{MigrationForm.allProjects}" var="project" itemLabel="#{project.title}"
                                itemValue="#{project}"/>
             </p:selectManyCheckbox>
+            <p:commandButton value="#{msgs.migrateMetadata}"
+                             id="migrate"
+                             rendered="#{MigrationForm.metadataShown}"
+                             update="systemTabView:migrationForm"
+                             styleClass="primary"
+                             action="#{MigrationForm.convertMetadata()}"/>
             <p:commandButton value="#{msgs.migrateProjects}"
                              id="migrateProject"
+                             rendered="#{MigrationForm.workflowShown}"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
                              action="#{MigrationForm.showAggregatedProcesses()}"/>

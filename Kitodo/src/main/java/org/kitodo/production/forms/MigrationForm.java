@@ -59,7 +59,8 @@ public class MigrationForm extends BaseForm {
     private Map<Template, List<Process>> templatesToCreate = new HashMap<>();
     private Map<Template, Template> matchingTemplates = new HashMap<>();
     private MigrationService migrationService = ServiceManager.getMigrationService();
-    private boolean migrateWorkflow = true;
+    private boolean metadataShown;
+    private boolean workflowShown;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -67,10 +68,11 @@ public class MigrationForm extends BaseForm {
      *
      */
     public void migrateMetadata() {
-        migrateWorkflow = false;
         try {
             allProjects = ServiceManager.getProjectService().getAll();
             projectListShown = true;
+            metadataShown = true;
+            workflowShown = false;
         } catch (DAOException e) {
             Helper.setErrorMessage("Error during database access");
         }
@@ -80,10 +82,11 @@ public class MigrationForm extends BaseForm {
      * Shows all projects for migration.
      */
     public void showPossibleProjects() {
-        migrateWorkflow = true;
         try {
             allProjects = ServiceManager.getProjectService().getAll();
             projectListShown = true;
+            workflowShown = true;
+            metadataShown = false;
         } catch (DAOException e) {
             Helper.setErrorMessage("Error during database access");
         }
@@ -93,24 +96,28 @@ public class MigrationForm extends BaseForm {
      * Shows all processes related to the selected projects.
      */
     public void showAggregatedProcesses() {
-        if (migrateWorkflow) {
-            List<Process> processList = new ArrayList<>();
-            aggregatedProcesses.clear();
-            for (Project project : selectedProjects) {
-                processList.addAll(project.getProcesses());
-            }
-            for (Process process : processList) {
-                if (Objects.isNull(process.getTemplate())) {
-                    addToAggregatedProcesses(aggregatedProcesses, process);
-                }
-            }
-            processListShown = true;
-        } else {
-            for (Project project : selectedProjects) {
-                TaskManager.addTask(new MigrationTask(project));
-            }
-            projectListShown = false;
+        List<Process> processList = new ArrayList<>();
+        aggregatedProcesses.clear();
+        for (Project project : selectedProjects) {
+            processList.addAll(project.getProcesses());
         }
+        for (Process process : processList) {
+            if (Objects.isNull(process.getTemplate())) {
+                addToAggregatedProcesses(aggregatedProcesses, process);
+            }
+        }
+        processListShown = true;
+    }
+
+    /**
+     * Method for migrating the metadata. This is done when the user clicks the
+     * button to migrate metadata under the projects selection.
+     */
+    public void convertMetadata() {
+        for (Project project : selectedProjects) {
+            TaskManager.addTask(new MigrationTask(project));
+        }
+        projectListShown = false;
     }
 
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
@@ -153,12 +160,32 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
+     * Returns whether the switch for starting the metadata migration should be
+     * displayed.
+     *
+     * @return whether the switch for starting the metadata migration should be
+     *         displayed
+     */
+    public boolean isMetadataShown() {
+        return metadataShown;
+    }
+
+    /**
      * Get projectListShown.
      *
      * @return value of projectListShown
      */
     public boolean isProjectListShown() {
         return projectListShown;
+    }
+
+    /**
+     * Returns whether the switch for creating workflows should be displayed.
+     *
+     * @return whether the switch for creating workflows should be displayed
+     */
+    public boolean isWorkflowShown() {
+        return workflowShown;
     }
 
     /**
@@ -363,5 +390,4 @@ public class MigrationForm extends BaseForm {
         }
         templatesToCreate.remove(template);
     }
-
 }
