@@ -25,7 +25,7 @@
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{ProcessForm.process.id ne null and SecurityAccessController.hasAuthorityToEditProcess()}"/>
+              value="#{ProcessForm.process.id ne null and SecurityAccessController.hasAuthorityToEditProcess(id)}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode" value="#{not isEditMode and SecurityAccessController.hasAuthorityToViewProcess()}"/>
 

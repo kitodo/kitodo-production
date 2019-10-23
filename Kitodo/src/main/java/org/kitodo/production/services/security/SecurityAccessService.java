@@ -11,8 +11,11 @@
 
 package org.kitodo.production.services.security;
 
+import java.util.List;
 import java.util.Objects;
 
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.security.SecurityAccess;
@@ -324,19 +327,21 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to edit the process.
      *
+     * @param processId the specific processId
      * @return true if the current user has the authority to edit the process
      */
-    public boolean hasAuthorityToEditProcess() {
-        return hasAuthorityForClient("editProcess");
+    public boolean hasAuthorityToEditProcess(int processId) throws DataException {
+        return hasAuthorityForClient("editProcess") && hasAuthorityForProcess(processId);
     }
 
     /**
      * Check if the current user has the authority to edit the project.
      *
+     * @param projectId the specific processId
      * @return true if the current user has the authority to edit the project
      */
-    public boolean hasAuthorityToEditProject() {
-        return hasAuthorityForClient("editProject");
+    public boolean hasAuthorityToEditProject(int projectId) {
+        return hasAuthorityForClient("editProject") && hasAuthorityForProject(projectId);
     }
 
     /**
@@ -433,20 +438,22 @@ public class SecurityAccessService extends SecurityAccess {
      * Check if the current user has the authority to view the process. Add and edit
      * authorities include also view.
      *
+     * @param processId the specific processId
      * @return true if the current user has the authority to view the process
      */
-    public boolean hasAuthorityToViewProcess() {
-        return hasAnyAuthorityForClient("viewProcess, addProcess, editProcess");
+    public boolean hasAuthorityToViewProcess(int processId) throws DataException {
+        return hasAnyAuthorityForClient("viewProcess, addProcess, editProcess") && hasAuthorityForProcess(processId);
     }
 
     /**
      * Check if the current user has the authority to view the project. Add and edit
      * authorities include also view.
      *
+     * @param projectId the specific processId
      * @return true if the current user has the authority to view the project
      */
-    public boolean hasAuthorityToViewProject() {
-        return hasAnyAuthorityForClient("viewProject, addProject, editProject");
+    public boolean hasAuthorityToViewProject(int projectId) {
+        return hasAnyAuthorityForClient("viewProject, addProject, editProject") && hasAuthorityForProject(projectId);
     }
 
     /**
@@ -737,9 +744,10 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to edit the process
      *         metadata
+     * @param processId the specific processId
      */
-    public boolean hasAuthorityToEditProcessMetaData() {
-        return hasAuthorityForClient("editProcessMetaData");
+    public boolean hasAuthorityToEditProcessMetaData(int processId) throws DataException {
+        return hasAuthorityForClient("editProcessMetaData") && hasAuthorityForProcess(processId);
     }
 
     /**
@@ -747,9 +755,10 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to view the process
      *         metadata
+     * @param processId the specific processId
      */
-    public boolean hasAuthorityToViewProcessMetaData() {
-        return hasAuthorityForClient("viewProcessMetaData");
+    public boolean hasAuthorityToViewProcessMetaData(int processId) throws DataException {
+        return hasAuthorityForClient("viewProcessMetaData") && hasAuthorityForProcess(processId);
     }
 
     /**
@@ -758,9 +767,10 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to edit the process
      *         structure data
+     * @param processId the specific processId
      */
-    public boolean hasAuthorityToEditProcessStructureData() {
-        return hasAuthorityForClient("editProcessStructureData");
+    public boolean hasAuthorityToEditProcessStructureData(int processId) throws DataException {
+        return hasAuthorityForClient("editProcessStructureData") && hasAuthorityForProcess(processId);
     }
 
     /**
@@ -769,27 +779,40 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to view the process
      *         structure data
+     * @param processId the specific processId
      */
-    public boolean hasAuthorityToViewProcessStructureData() {
-        return hasAuthorityForClient("viewProcessStructureData");
+    public boolean hasAuthorityToViewProcessStructureData(int processId) throws DataException {
+        return hasAuthorityForClient("viewProcessStructureData") && hasAuthorityForProcess(processId);
     }
 
     /**
      * Check if the current user has the authority to edit the process images.
      *
      * @return true if the current user has the authority to edit the process images
+     * @param processId the specific processId
      */
-    public boolean hasAuthorityToEditProcessImages() {
-        return hasAuthorityForClient("editProcessImages");
+    public boolean hasAuthorityToEditProcessImages(int processId) throws DataException {
+        return hasAuthorityForClient("editProcessImages") && hasAuthorityForProcess(processId);
     }
 
     /**
      * Check if the current user has the authority to view the process images.
      *
      * @return true if the current user has the authority to view the process images
+     * @param processId the specific processId
      */
-    public boolean hasAuthorityToViewProcessImages() {
-        return hasAuthorityForClient("viewProcessImages");
+    public boolean hasAuthorityToViewProcessImages(int processId) throws DataException {
+        return hasAuthorityForClient("viewProcessImages") && hasAuthorityForProcess(processId);
+    }
+
+    private boolean hasAuthorityForProcess(int processId) throws DataException {
+        Integer projectId = ServiceManager.getProcessService().findById(processId).getProject().getId();
+        return hasAuthorityForProject(projectId);
+    }
+
+    private boolean hasAuthorityForProject(Integer projectId){
+        List<Project> projects = ServiceManager.getUserService().getCurrentUser().getProjects();
+        return projects.stream().anyMatch(project -> project.getId().equals(projectId));
     }
 
     /**
