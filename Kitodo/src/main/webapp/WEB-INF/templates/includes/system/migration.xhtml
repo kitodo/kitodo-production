@@ -20,6 +20,7 @@
     <h:form id="migrationForm">
         <p:commandButton value="migrate"
                          id="migrateMetadata"
+                         update="systemTabView:migrationForm"
                          action="#{MigrationForm.migrateMetadata()}"
                          styleClass="primary"/>
         <p:commandButton value="#{msgs.migrateWorkflow}"

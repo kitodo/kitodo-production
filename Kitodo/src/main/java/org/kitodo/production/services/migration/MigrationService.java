@@ -62,20 +62,21 @@ public class MigrationService {
     }
 
     /**
-     * Migrates the meta.xml to the new kitodo format.
-     * @throws DAOException when Database access fails
+     * Migrates the meta.xml to the new Kitodo format.
+     *
+     * @param process
+     *            process whose meta.xml is to be migrated
+     * @throws DAOException
+     *             when Database access fails
      */
-    public void migrateMetadata() throws DAOException {
-        List<Process> processes = ServiceManager.getProcessService().getAll();
+    public void migrateMetadata(Process process) throws DAOException {
         FileService fileService = ServiceManager.getFileService();
         URI metadataFilePath;
-        for (Process process : processes) {
-            try {
-                metadataFilePath = fileService.getMetadataFilePath(process, true, true);
-                ServiceManager.getDataEditorService().readData(metadataFilePath);
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+        try {
+            metadataFilePath = fileService.getMetadataFilePath(process, true, true);
+            ServiceManager.getDataEditorService().readData(metadataFilePath);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
