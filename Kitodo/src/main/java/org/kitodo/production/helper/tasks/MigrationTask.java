@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -101,15 +102,9 @@ public class MigrationTask extends EmptyTask {
                 }
             }
             setProgress(100);
-        } catch (Throwable thrown) {
-            if (thrown instanceof Error) {
-                throw (Error) thrown;
-            } else {
-                if (thrown instanceof Exception) {
-                    Helper.setErrorMessage(thrown.getLocalizedMessage(), processTitle, logger, (Exception) thrown);
-                }
-                super.setException(thrown);
-            }
+        } catch (DAOException exception) {
+            Helper.setErrorMessage(exception.getLocalizedMessage(), processTitle, logger, exception);
+            super.setException(exception);
         }
     }
 }
