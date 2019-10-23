@@ -74,7 +74,7 @@ public class MigrationForm extends BaseForm {
             metadataShown = true;
             workflowShown = false;
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error during database access");
+            Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -88,7 +88,7 @@ public class MigrationForm extends BaseForm {
             workflowShown = true;
             metadataShown = false;
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error during database access");
+            Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
     }
 

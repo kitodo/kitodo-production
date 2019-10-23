@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
@@ -28,7 +27,7 @@ import org.kitodo.production.services.migration.MigrationService;
  * Migrates metadata in a separate thread.
  */
 public class MigrationTask extends EmptyTask {
-    private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
+    private static final Logger logger = LogManager.getLogger(MigrationTask.class);
 
     /**
      * Service who has to migrate the processes.
