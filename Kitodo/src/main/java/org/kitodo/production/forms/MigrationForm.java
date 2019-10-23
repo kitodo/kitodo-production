@@ -37,6 +37,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.tasks.MigrationTask;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
@@ -57,6 +59,8 @@ public class MigrationForm extends BaseForm {
     private Map<Template, List<Process>> templatesToCreate = new HashMap<>();
     private Map<Template, Template> matchingTemplates = new HashMap<>();
     private MigrationService migrationService = ServiceManager.getMigrationService();
+    private boolean metadataShown;
+    private boolean workflowShown;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -65,10 +69,12 @@ public class MigrationForm extends BaseForm {
      */
     public void migrateMetadata() {
         try {
-            migrationService.migrateMetadata();
+            allProjects = ServiceManager.getProjectService().getAll();
+            projectListShown = true;
+            metadataShown = true;
+            workflowShown = false;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                logger, e);
+            Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -79,8 +85,10 @@ public class MigrationForm extends BaseForm {
         try {
             allProjects = ServiceManager.getProjectService().getAll();
             projectListShown = true;
+            workflowShown = true;
+            metadataShown = false;
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error during database access");
+            Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -94,11 +102,22 @@ public class MigrationForm extends BaseForm {
             processList.addAll(project.getProcesses());
         }
         for (Process process : processList) {
-            if(Objects.isNull(process.getTemplate())) {
+            if (Objects.isNull(process.getTemplate())) {
                 addToAggregatedProcesses(aggregatedProcesses, process);
             }
         }
         processListShown = true;
+    }
+
+    /**
+     * Method for migrating the metadata. This is done when the user clicks the
+     * button to migrate metadata under the projects selection.
+     */
+    public void convertMetadata() {
+        for (Project project : selectedProjects) {
+            TaskManager.addTask(new MigrationTask(project));
+        }
+        projectListShown = false;
     }
 
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
@@ -141,12 +160,32 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
+     * Returns whether the switch for starting the metadata migration should be
+     * displayed.
+     *
+     * @return whether the switch for starting the metadata migration should be
+     *         displayed
+     */
+    public boolean isMetadataShown() {
+        return metadataShown;
+    }
+
+    /**
      * Get projectListShown.
      *
      * @return value of projectListShown
      */
     public boolean isProjectListShown() {
         return projectListShown;
+    }
+
+    /**
+     * Returns whether the switch for creating workflows should be displayed.
+     *
+     * @return whether the switch for creating workflows should be displayed
+     */
+    public boolean isWorkflowShown() {
+        return workflowShown;
     }
 
     /**
@@ -187,7 +226,7 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Uses the aggregated processes to create a new Workflow.
-     * 
+     *
      * @param tasks
      *            the list of tasks found in the projects
      * @return a navigation path
@@ -230,7 +269,7 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Creates a new Workflow from the aggregated processes.
-     * 
+     *
      * @return a navigation path.
      */
     public String createNewWorkflow() {
@@ -265,7 +304,7 @@ public class MigrationForm extends BaseForm {
     /**
      * When the navigation to the migration form is coming from a workflow
      * creation the URL contains a WorkflowId.
-     * 
+     *
      * @param workflowId
      *            the id of the created Workflow
      */
@@ -311,7 +350,7 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Uses the existing template to add processes to.
-     * 
+     *
      * @param template
      *            The template to which's matching template the processes should
      *            be added
@@ -331,7 +370,7 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Creates a new template.
-     * 
+     *
      * @param template
      *            The template to create.
      */
@@ -351,5 +390,4 @@ public class MigrationForm extends BaseForm {
         }
         templatesToCreate.remove(template);
     }
-
 }
