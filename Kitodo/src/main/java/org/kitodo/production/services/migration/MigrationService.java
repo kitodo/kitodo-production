@@ -112,7 +112,7 @@ public class MigrationService {
         for (Task processTask : processTasks) {
             taskString = taskString.concat(processTask.getTitle());
         }
-        return taskString.replaceAll("\\s", "");
+        return taskString.replaceAll("\\s", "").replaceAll("/","");
     }
 
     /**
