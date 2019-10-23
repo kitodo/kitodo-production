@@ -61,14 +61,14 @@ public class MigrationTask extends EmptyTask {
      * Clone constructor. Provides the ability to restart an export that was
      * previously interrupted by the user.
      *
-     * @param source
+     * @param sourceMigrationTask
      *            terminated thread
      */
-    private MigrationTask(MigrationTask source) {
-        super(source);
-        this.index = source.index;
-        this.migrationService = source.migrationService;
-        this.processes = source.processes;
+    private MigrationTask(MigrationTask sourceMigrationTask) {
+        super(sourceMigrationTask);
+        this.index = sourceMigrationTask.index;
+        this.migrationService = sourceMigrationTask.migrationService;
+        this.processes = sourceMigrationTask.processes;
     }
 
     /**
