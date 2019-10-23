@@ -31,11 +31,6 @@ public class MigrationTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
 
     /**
-     * Key figure of the process to be migrated. At the same time progress.
-     */
-    private int index = 0;
-
-    /**
      * Service who has to migrate the processes.
      */
     final private MigrationService migrationService;
@@ -44,6 +39,12 @@ public class MigrationTask extends EmptyTask {
      * List of processes to be migrated.
      */
     final private List<Process> processes;
+
+    /**
+     * Migration progress. Points to the index of the next process in case the
+     * thread is interrupted and restarted. Also used for the progress bar.
+     */
+    private int progress = 0;
 
     /**
      * Creates a new migration task.
@@ -66,7 +67,7 @@ public class MigrationTask extends EmptyTask {
      */
     private MigrationTask(MigrationTask sourceMigrationTask) {
         super(sourceMigrationTask);
-        this.index = sourceMigrationTask.index;
+        this.progress = sourceMigrationTask.progress;
         this.migrationService = sourceMigrationTask.migrationService;
         this.processes = sourceMigrationTask.processes;
     }
@@ -86,9 +87,9 @@ public class MigrationTask extends EmptyTask {
     public void run() {
         String processTitle = null;
         try {
-            while (index < processes.size()) {
+            for (int index = progress; index < processes.size(); index++) {
                 final long begin = System.nanoTime();
-                Process process = processes.get(index++);
+                Process process = processes.get(index);
                 processTitle = process.getTitle();
                 setWorkDetail(processTitle);
                 migrationService.migrateMetadata(process);
@@ -96,7 +97,8 @@ public class MigrationTask extends EmptyTask {
                     logger.trace("Migrating {} took {} ms", processTitle,
                         TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
                 }
-                setProgress(100 * index / processes.size());
+                progress = index + 1;
+                setProgress(100 * progress / processes.size());
                 if (isInterrupted()) {
                     return;
                 }
