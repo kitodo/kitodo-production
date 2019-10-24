@@ -40,7 +40,7 @@
                                    var="step"
                                    itemLabel="#{step.localizedLabel}"
                                    itemValue="#{step.title}"/>
-                    <f:ajax event="change" render="@form"/>
+                    <p:ajax event="change" update="editForm:processFromTemplateTabView:processDetailsTable"/>
                 </p:selectOneMenu>
             </div>
 
@@ -52,9 +52,11 @@
                     <p:selectOneMenu id="ruleset"
                                      value="#{CreateProcessForm.mainProcess.ruleset}"
                                      converter="#{rulesetConverter}"
-                                     onchange="document.getElementById('OpacRequest').click()"
                                      required="true">
                         <f:selectItems value="#{ProcessForm.rulesets}"/>
+                        <p:ajax event="change"
+                                listener="#{CreateProcessForm.updateRulesetAndDocType(CreateProcessForm.mainProcess.ruleset.file)}"
+                                update="editForm:processFromTemplateTabView:docType,editForm:processFromTemplateTabView:processDetailsTable"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
             </div>

@@ -31,6 +31,7 @@ public class ProcessDataTab {
 
     private static final Logger logger = LogManager.getLogger(ProcessDataTab.class);
 
+    private List<SelectItem> allDocTypes;
     private CreateProcessForm createProcessForm;
     private String docType;
     private String atstsl = "";
@@ -51,15 +52,13 @@ public class ProcessDataTab {
      * @param docType as java.lang.String
      */
     public void setDocType(String docType) {
-        if (Objects.isNull(this.docType) || !this.docType.equals(docType)) {
-            this.docType = docType;
-            this.createProcessForm.getWorkpiece().getRootElement().setType(this.docType);
-            if (this.docType.isEmpty()) {
-                this.createProcessForm.getProcessMetadataTab().setProcessDetails(new ProcessFieldedMetadata());
-            } else {
-                this.createProcessForm.getProcessMetadataTab()
-                        .initializeProcessDetails(this.createProcessForm.getWorkpiece().getRootElement());
-            }
+        this.docType = docType;
+        this.createProcessForm.getWorkpiece().getRootElement().setType(this.docType);
+        if (this.docType.isEmpty()) {
+            this.createProcessForm.getProcessMetadataTab().setProcessDetails(new ProcessFieldedMetadata());
+        } else {
+            this.createProcessForm.getProcessMetadataTab()
+                    .initializeProcessDetails(this.createProcessForm.getWorkpiece().getRootElement());
         }
     }
 
@@ -69,14 +68,6 @@ public class ProcessDataTab {
      * @return value of docType
      */
     public String getDocType() {
-        if (Objects.isNull(docType)) {
-            String monograph = (String) getAllDoctypes()
-                    .stream()
-                    .filter(typ -> typ.getValue().equals("Monograph"))
-                    .findFirst()
-                    .get().getValue();
-            setDocType(Objects.isNull(monograph) || monograph.isEmpty() ? (String) getAllDoctypes().get(0).getValue() : monograph);
-        }
         return docType;
     }
 
@@ -158,10 +149,21 @@ public class ProcessDataTab {
      * @return list of all ruleset divisions
      */
     public List<SelectItem> getAllDoctypes() {
-        return createProcessForm.getRuleset()
-                .getStructuralElements(createProcessForm.getPriorityList()).entrySet()
-                .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        return allDocTypes;
+    }
+
+    /**
+     * Set allDocTypes.
+     *
+     * @param allDocTypes as java.util.List<javax.faces.model.SelectItem>
+     */
+    public void setAllDocTypes(List<SelectItem> allDocTypes) {
+        this.allDocTypes = allDocTypes;
+        if (allDocTypes.isEmpty()) {
+            setDocType("");
+        } else {
+            setDocType((String) allDocTypes.get(0).getValue());
+        }
     }
 
     /**
