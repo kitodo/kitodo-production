@@ -353,7 +353,7 @@ public class IndexingForm {
     public void updateView() {
         try {
             if (ServiceManager.getIndexingService().isIndexCorrupted()) {
-                Helper.setErrorMessage("systemErrorMessage");
+                Helper.setErrorMessage("indexOutOfDate");
             }
             Ajax.update("@all");
         } catch (DataException | DAOException e) {
