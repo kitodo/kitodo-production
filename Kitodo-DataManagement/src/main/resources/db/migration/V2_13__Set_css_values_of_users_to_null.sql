@@ -11,4 +11,4 @@
 
 -- Sets the used CSS-file for every user to null.
 
-UPDATE user SET css = NULL
+UPDATE user SET css = NULL;
