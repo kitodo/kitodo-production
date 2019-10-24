@@ -84,17 +84,18 @@ public class TiffHeaderGenerator extends Generator {
             for (ProcessDetail processDetail : this.processDetailsList) {
                 String detailMetadataID = processDetail.getMetadataID();
                 String detailValue = ProcessMetadataTab.getProcessDetailValue(processDetail);
-
-                if ("TitleDocMain".equals(detailMetadataID) && !detailValue.isEmpty()) {
-                    this.tiffHeader = detailValue;
-                }
-                //if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
-                if ("TSL_ATS".equals(detailMetadataID) && detailValue.isEmpty() && !this.atstsl.isEmpty()) {
-                    ProcessMetadataTab.setProcessDetailValue(processDetail, this.atstsl);
-                }
-                // add the content to the tiff header
-                if (detailMetadataID.equals(metadataId) && !detailValue.isEmpty()) {
-                    newTiffHeader.append(calculateProcessTitleCheck(detailMetadataID, detailValue));
+                if (Objects.nonNull(detailValue)) {
+                    if ("TitleDocMain".equals(detailMetadataID) && !detailValue.isEmpty()) {
+                        this.tiffHeader = detailValue;
+                    }
+                    //if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
+                    if ("TSL_ATS".equals(detailMetadataID) && detailValue.isEmpty() && !this.atstsl.isEmpty()) {
+                        ProcessMetadataTab.setProcessDetailValue(processDetail, this.atstsl);
+                    }
+                    // add the content to the tiff header
+                    if (detailMetadataID.equals(metadataId) && !detailValue.isEmpty()) {
+                        newTiffHeader.append(calculateProcessTitleCheck(detailMetadataID, detailValue));
+                    }
                 }
             }
         }

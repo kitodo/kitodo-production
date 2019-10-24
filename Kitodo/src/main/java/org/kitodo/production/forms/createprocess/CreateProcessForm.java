@@ -91,6 +91,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         return rulesetManagementInterface;
     }
 
+    /**
+     * Update ruleset and docType.
+     * @param rulesetFileName as String
+     */
     public void updateRulesetAndDocType(String rulesetFileName) {
         setRulesetManagementInterface(rulesetFileName);
         processDataTab.setAllDocTypes(getAllRulesetDivisions());
@@ -477,5 +481,19 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
         return ruleset;
+    }
+
+    /**
+     * Initialize the list of created processes.
+     */
+    public void initializeProcesses() {
+        try {
+            ProcessGenerator processGenerator = new ProcessGenerator();
+            processGenerator.generateProcess(template.getId(), project.getId());
+            this.processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
+        } catch (ProcessGenerationException e) {
+            logger.error(e.getLocalizedMessage());
+        }
+        this.processMetadataTab.initializeProcessDetails(workpiece.getRootElement());
     }
 }
