@@ -212,11 +212,15 @@ public class MigrationForm extends BaseForm {
 
     private boolean workflowAlreadyExist() throws DAOException, IOException, WorkflowException {
         List<Task> processTasks = aggregatedProcesses.get(currentTasks).get(0).getTasks();
+        System.out.println("processTasks: " + processTasks.size());
         List<Workflow> allWorkflows = ServiceManager.getWorkflowService().getAll();
+        System.out.println("alWorkfows: " + allWorkflows.size() );
         for (Workflow workflow : allWorkflows) {
+            System.out.println("workflowname: " + workflow.getTitle());
             Converter converter = new Converter(workflow.getTitle());
             Template template = new Template();
             converter.convertWorkflowToTemplate(template);
+            System.out.println("convertedTasks: " + template.getTasks().size());
             if (migrationService.tasksAreEqual(template.getTasks(), processTasks)) {
                 workflowToUse = workflow;
                 return true;

@@ -16,11 +16,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workflow;
@@ -33,6 +36,15 @@ import org.kitodo.selenium.testframework.pages.SystemPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 
 public class MigrationST extends BaseTestSelenium {
+
+    @BeforeClass
+    public static void setup() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
+        MockDatabase.startNode();
+        MockDatabase.insertProcessesForWorkflowFull();
+    }
+
     @Before
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
@@ -42,8 +54,8 @@ public class MigrationST extends BaseTestSelenium {
     public void logout() throws Exception {
         FileService fileService = ServiceManager.getFileService();
         String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
-        URI svgDiagramURI = new File(diagramDirectory + "FinishedClosedProgressOpenLocked.svg").toURI();
-        URI xmlDiagramURI = new File(diagramDirectory + "FinishedClosedProgressOpenLocked.bpmn20.xml").toURI();
+        URI svgDiagramURI = new File(diagramDirectory + "Task1ScriptTaskTask3Task4Task5.svg").toURI();
+        URI xmlDiagramURI = new File(diagramDirectory + "Task1ScriptTaskTask3Task4Task5.bpmn20.xml").toURI();
         fileService.delete(svgDiagramURI);
         fileService.delete(xmlDiagramURI);
         Pages.getTopNavigation().logout();
@@ -51,7 +63,7 @@ public class MigrationST extends BaseTestSelenium {
 
     @Test
     public void testMigration() throws Exception {
-        Process process = ServiceManager.getProcessService().getById(1);
+        Process process = ServiceManager.getProcessService().getById(4);
         process.setTemplate(null);
         ServiceManager.getProcessService().save(process);
         SystemPage systemPage = Pages.getSystemPage().goTo();
@@ -59,10 +71,10 @@ public class MigrationST extends BaseTestSelenium {
         assertEquals("wrong template", null, process.getTemplate());
         systemPage.startWorkflowMigration();
         systemPage.selectProjects();
-        assertEquals("FinishedClosedProgressOpenLocked", systemPage.getAggregatedTasks(2));
+        assertEquals("Task1ScriptTaskTask3Task4Task5", systemPage.getAggregatedTasks(2));
         WorkflowEditPage workflowEditPage = systemPage.createNewWorkflow();
         workflowEditPage.changeWorkflowStatusToActive();
-        assertEquals("FinishedClosedProgressOpenLocked", workflowEditPage.getWorkflowTitle());
+        assertEquals("Task1ScriptTaskTask3Task4Task5", workflowEditPage.getWorkflowTitle());
         systemPage = workflowEditPage.saveForMigration();
         String newTemplateTitle = "newTemplate";
         systemPage.createNewTemplateFromPopup(newTemplateTitle);
