@@ -16,10 +16,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <ui:param name="readOnly"
-              value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"
-    />
-
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData(taskId) and not SecurityAccessController.hasAuthorityToEditProcessMetaData(taskId)}"/>
     <p:panel id="physicalMetadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="physicalMetadata">
             <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">

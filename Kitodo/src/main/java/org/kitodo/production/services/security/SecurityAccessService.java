@@ -744,10 +744,20 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to edit the process
      *         metadata
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      */
-    public boolean hasAuthorityToEditProcessMetaData(int processId) throws DataException {
-        return hasAuthorityForClient("editProcessMetaData") && hasAuthorityForProcess(processId);
+    public boolean hasAuthorityToEditProcessMetaData(int taskId) throws DataException {
+        return hasAuthorityForClient("editProcessMetaData") && hasAuthorityForTask(taskId);
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process metadata.
+     *
+     * @return true if the current user has the authority to edit the process
+     *         metadata
+     */
+    public boolean hasAuthorityToEditProcessMetaData() {
+        return hasAuthorityForClient("editProcessMetaData");
     }
 
     /**
@@ -755,10 +765,20 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to view the process
      *         metadata
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      */
-    public boolean hasAuthorityToViewProcessMetaData(int processId) throws DataException {
-        return hasAuthorityForClient("viewProcessMetaData") && hasAuthorityForProcess(processId);
+    public boolean hasAuthorityToViewProcessMetaData(int taskId) throws DataException {
+        return hasAuthorityForClient("viewProcessMetaData") && hasAuthorityForTask(taskId);
+    }
+
+    /**
+     * Check if the current user has the authority to view the process metadata.
+     *
+     * @return true if the current user has the authority to view the process
+     *         metadata
+     */
+    public boolean hasAuthorityToViewProcessMetaData()  {
+        return hasAuthorityForClient("viewProcessMetaData");
     }
 
     /**
@@ -767,10 +787,21 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to edit the process
      *         structure data
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      */
-    public boolean hasAuthorityToEditProcessStructureData(int processId) throws DataException {
-        return hasAuthorityForClient("editProcessStructureData") && hasAuthorityForProcess(processId);
+    public boolean hasAuthorityToEditProcessStructureData(int taskId) throws DataException {
+        return hasAuthorityForClient("editProcessStructureData") && hasAuthorityForTask(taskId);
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process structure
+     * data.
+     *
+     * @return true if the current user has the authority to edit the process
+     *         structure data
+     */
+    public boolean hasAuthorityToEditProcessStructureData(){
+        return hasAuthorityForClient("editProcessStructureData");
     }
 
     /**
@@ -779,30 +810,64 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to view the process
      *         structure data
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      */
-    public boolean hasAuthorityToViewProcessStructureData(int processId) throws DataException {
-        return hasAuthorityForClient("viewProcessStructureData") && hasAuthorityForProcess(processId);
+    public boolean hasAuthorityToViewProcessStructureData(int taskId) throws DataException {
+        return hasAuthorityForClient("viewProcessStructureData") && hasAuthorityForTask(taskId);
+    }
+
+    /**
+     * Check if the current user has the authority to view the process structure
+     * data.
+     *
+     * @return true if the current user has the authority to view the process
+     *         structure data
+     */
+    public boolean hasAuthorityToViewProcessStructureData() {
+        return hasAuthorityForClient("viewProcessStructureData");
     }
 
     /**
      * Check if the current user has the authority to edit the process images.
      *
      * @return true if the current user has the authority to edit the process images
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      */
-    public boolean hasAuthorityToEditProcessImages(int processId) throws DataException {
-        return hasAuthorityForClient("editProcessImages") && hasAuthorityForProcess(processId);
+    public boolean hasAuthorityToEditProcessImages(int taskId) throws DataException {
+        return hasAuthorityForClient("editProcessImages") && hasAuthorityForTask(taskId);
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process images.
+     *
+     * @return true if the current user has the authority to edit the process images
+     */
+    public boolean hasAuthorityToEditProcessImages() {
+        return hasAuthorityForClient("editProcessImages");
     }
 
     /**
      * Check if the current user has the authority to view the process images.
      *
      * @return true if the current user has the authority to view the process images
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      */
-    public boolean hasAuthorityToViewProcessImages(int processId) throws DataException {
-        return hasAuthorityForClient("viewProcessImages") && hasAuthorityForProcess(processId);
+    public boolean hasAuthorityToViewProcessImages(int taskId) throws DataException {
+        return hasAuthorityForClient("viewProcessImages") && hasAuthorityForTask(taskId);
+    }
+
+    /**
+     * Check if the current user has the authority to view the process images.
+     *
+     * @return true if the current user has the authority to view the process images
+     */
+    public boolean hasAuthorityToViewProcessImages() {
+        return hasAuthorityForClient("viewProcessImages");
+    }
+
+    private boolean hasAuthorityForTask(int taskId) throws DataException {
+        Integer processId = ServiceManager.getTaskService().findById(taskId).getProcess().getId();
+        return hasAuthorityForProcess(processId);
     }
 
     private boolean hasAuthorityForProcess(int processId) throws DataException {

@@ -18,9 +18,9 @@
 
     <!--@elvariable id="mayWrite" type="boolean"-->
     <ui:param name="mayWrite" value="#{
-                                    SecurityAccessController.hasAuthorityToEditProcessMetaData() or
-                                    SecurityAccessController.hasAuthorityToEditProcessImages() or
-                                    SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
+                                    SecurityAccessController.hasAuthorityToEditProcessMetaData(taskId) or
+                                    SecurityAccessController.hasAuthorityToEditProcessImages(taskId) or
+                                    SecurityAccessController.hasAuthorityToEditProcessStructureData(taskId)}"/>
     <p:panel styleClass="content-header">
         <h3 id="headerText">
             <h:outputText value="#{DataEditorForm.processTitle} (#{msgs.id}: #{DataEditorForm.process.id}) - #{msgs.metadataEdit} (Task: '#{DataEditorForm.currentTask.title}')"

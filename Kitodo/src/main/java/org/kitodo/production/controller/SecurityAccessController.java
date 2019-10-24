@@ -772,67 +772,76 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to edit the process metadata.
      *
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      * @return true if the current user has the authority to edit the process
      *         metadata
      */
-    public boolean hasAuthorityToEditProcessMetaData(int processId) throws DataException {
-        return securityAccessService.hasAuthorityToEditProcessMetaData(processId);
+    public boolean hasAuthorityToEditProcessMetaData(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToEditProcessMetaData(taskId);
     }
 
     /**
      * Check if the current user has the authority to view the process metadata.
      *
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      * @return true if the current user has the authority to view the process
      *         metadata
      */
-    public boolean hasAuthorityToViewProcessMetaData(int processId) throws DataException {
-        return securityAccessService.hasAuthorityToViewProcessMetaData(processId);
+    public boolean hasAuthorityToViewProcessMetaData(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToViewProcessMetaData(taskId);
     }
 
     /**
      * Check if the current user has the authority to edit the process structure
      * data.
      *
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      * @return true if the current user has the authority to edit the process
      *         structure data
      */
-    public boolean hasAuthorityToEditProcessStructureData(int processId) throws DataException {
-        return securityAccessService.hasAuthorityToEditProcessStructureData(processId);
+    public boolean hasAuthorityToEditProcessStructureData(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToEditProcessStructureData(taskId);
     }
 
     /**
      * Check if the current user has the authority to view the process structure
      * data.
      *
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      * @return true if the current user has the authority to view the process
      *         structure data
      */
-    public boolean hasAuthorityToViewProcessStructureData(int processId) throws DataException {
-        return securityAccessService.hasAuthorityToViewProcessStructureData(processId);
+    public boolean hasAuthorityToViewProcessStructureData(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToViewProcessStructureData(taskId);
     }
 
     /**
      * Check if the current user has the authority to edit the process images.
      *
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      * @return true if the current user has the authority to edit the process images
      */
-    public boolean hasAuthorityToEditProcessImages(int processId) throws DataException {
-        return securityAccessService.hasAuthorityToEditProcessImages(processId);
+    public boolean hasAuthorityToEditProcessImages(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToEditProcessImages(taskId);
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process images.
+     *
+     * @return true if the current user has the authority to edit the process images
+     */
+    public boolean hasAuthorityToEditProcessImages() {
+        return securityAccessService.hasAuthorityToEditProcessImages();
     }
 
     /**
      * Check if the current user has the authority to view the process images.
      *
-     * @param processId the specific processId
+     * @param taskId the specific taskId
      * @return true if the current user has the authority to view the process images
      */
-    public boolean hasAuthorityToViewProcessImages(int processId) throws DataException {
-        return securityAccessService.hasAuthorityToViewProcessImages(processId);
+    public boolean hasAuthorityToViewProcessImages(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToViewProcessImages(taskId);
     }
 
     /**
@@ -840,17 +849,16 @@ public class SecurityAccessController {
      * Access to the metadata editor is granted if the user has the authority to
      * view or edit data in any part of the editor.
      *
-     * @param processId the specific processId
      * @return true if the current user has the authority to view or edit any part
      *         of the data in the metadata editor
      */
-    public boolean hasAuthorityToOpenMetadataEditor(int processId) throws DataException {
-        return securityAccessService.hasAuthorityToViewProcessMetaData(processId)
-                || securityAccessService.hasAuthorityToEditProcessMetaData(processId)
-                || securityAccessService.hasAuthorityToViewProcessStructureData(processId)
-                || securityAccessService.hasAuthorityToEditProcessStructureData(processId)
-                || securityAccessService.hasAuthorityToViewProcessImages(processId)
-                || securityAccessService.hasAuthorityToEditProcessImages(processId);
+    public boolean hasAuthorityToOpenMetadataEditor() {
+        return securityAccessService.hasAuthorityToViewProcessMetaData()
+                || securityAccessService.hasAuthorityToEditProcessMetaData()
+                || securityAccessService.hasAuthorityToViewProcessStructureData()
+                || securityAccessService.hasAuthorityToEditProcessStructureData()
+                || securityAccessService.hasAuthorityToViewProcessImages()
+                || securityAccessService.hasAuthorityToEditProcessImages();
 
     }
 

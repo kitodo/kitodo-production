@@ -106,7 +106,7 @@
                                        styleClass="action"
                                        title="#{msgs['dataEditor.selectMetadataTask']} (#{process.title})"
                                        oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
-                                       rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor(id) and taskOptions.size() gt 1}">
+                                       rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
                             <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
                             <h:outputText><i class="fa fa-list-alt"/></h:outputText>
                         </p:commandLink>
@@ -115,7 +115,7 @@
                                 outcome="/pages/metadataEditor?faces-redirect=true"
                                 styleClass="action"
                                 title="#{msgs.metadataEdit}"
-                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor(id) and taskOptions.size() le 1}">
+                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                             <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
                             <f:param name="referrer" value="#{'searchResult'}"/>
                             <h:outputText><i class="fa fa-list-alt"/></h:outputText>
@@ -125,7 +125,7 @@
                                        action="#{SearchResultForm.downloadToHome(process.id)}"
                                        styleClass="action"
                                        title="#{msgs.linkHomeDirectory}"
-                                       rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages(id)}">
+                                       rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                             <h:outputText><i class="fa fa-download"/></h:outputText>
                             <!-- TODO: add separate message in case it already exists and alert -->
                         </p:commandLink>
@@ -168,7 +168,7 @@
                                         <h:link outcome="processEdit"
                                                 styleClass="action"
                                                 title="#{msgs.view}"
-                                                rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                                                rendered="#{SecurityAccessController.hasAuthorityToViewProcess(id) and not SecurityAccessController.hasAuthorityToEditProcess(id)}">
                                             <i class="fa fa-eye fa-lg"/>
                                             <f:param name="referer" value="processes"/>
                                             <f:param name="id" value="#{parent.id}"/>
@@ -179,7 +179,7 @@
                                         <h:link outcome="processEdit"
                                                 styleClass="action"
                                                 title="#{msgs.edit}"
-                                                rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                                                rendered="#{SecurityAccessController.hasAuthorityToEditProcess(id)}">
                                             <i class="fa fa-pencil-square-o fa-lg"/>
                                             <f:param name="referer" value="processes"/>
                                             <f:param name="id" value="#{parent.id}"/>

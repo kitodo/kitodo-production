@@ -22,7 +22,7 @@
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
         <!--@elvariable id="editImages" type="boolean"-->
-        <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
+        <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages(taskId)}"/>
 
         <h:form id="imagePreviewForm" style="height: 100%;">
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
