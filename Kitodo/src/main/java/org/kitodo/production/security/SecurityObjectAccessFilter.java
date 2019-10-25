@@ -23,7 +23,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.security.SecurityAccessService;
 import org.springframework.security.access.AccessDeniedException;
@@ -62,12 +61,8 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             }
 
             Map<String, Boolean> requested = new HashMap<>();
-            try {
-                requested.put("processEdit", securityAccessService.hasAuthorityToViewProcess(Integer.parseInt(id)));
-            } catch (DataException e) {
-                logger.error("Error on authority check" + e.getMessage());
-            }
-            requested.put("projectEdit", securityAccessService.hasAuthorityToViewProject(Integer.parseInt(id)));
+            requested.put("processEdit", securityAccessService.hasAuthorityToViewProcess());
+            requested.put("projectEdit", securityAccessService.hasAuthorityToViewProject());
             requested.put("templateEdit", securityAccessService.hasAuthorityToViewTemplate());
             requested.put("workflowEdit", securityAccessService.hasAuthorityToViewWorkflow());
             requested.put("docketEdit", securityAccessService.hasAuthorityToViewDocket());

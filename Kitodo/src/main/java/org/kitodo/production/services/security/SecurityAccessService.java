@@ -327,7 +327,8 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to edit the process.
      *
-     * @param processId the specific processId
+     * @param processId
+     *            the specific processId
      * @return true if the current user has the authority to edit the process
      */
     public boolean hasAuthorityToEditProcess(int processId) throws DataException {
@@ -335,13 +336,32 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to edit the process.
+     *
+     * @return true if the current user has the authority to edit the process
+     */
+    public boolean hasAuthorityToEditProcess() {
+        return hasAuthorityForClient("editProcess");
+    }
+
+    /**
      * Check if the current user has the authority to edit the project.
      *
-     * @param projectId the specific processId
+     * @param projectId
+     *            the specific processId
      * @return true if the current user has the authority to edit the project
      */
     public boolean hasAuthorityToEditProject(int projectId) {
         return hasAuthorityForClient("editProject") && hasAuthorityForProject(projectId);
+    }
+
+    /**
+     * Check if the current user has the authority to edit the project.
+     *
+     * @return true if the current user has the authority to edit the project
+     */
+    public boolean hasAuthorityToEditProject() {
+        return hasAuthorityForClient("editProject");
     }
 
     /**
@@ -438,7 +458,8 @@ public class SecurityAccessService extends SecurityAccess {
      * Check if the current user has the authority to view the process. Add and edit
      * authorities include also view.
      *
-     * @param processId the specific processId
+     * @param processId
+     *            the specific processId
      * @return true if the current user has the authority to view the process
      */
     public boolean hasAuthorityToViewProcess(int processId) throws DataException {
@@ -446,14 +467,35 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view the process. Add and edit
+     * authorities include also view.
+     *
+     * @return true if the current user has the authority to view the process
+     */
+    public boolean hasAuthorityToViewProcess() {
+        return hasAnyAuthorityForClient("viewProcess, addProcess, editProcess");
+    }
+
+    /**
      * Check if the current user has the authority to view the project. Add and edit
      * authorities include also view.
      *
-     * @param projectId the specific processId
+     * @param projectId
+     *            the specific processId
      * @return true if the current user has the authority to view the project
      */
     public boolean hasAuthorityToViewProject(int projectId) {
         return hasAnyAuthorityForClient("viewProject, addProject, editProject") && hasAuthorityForProject(projectId);
+    }
+
+    /**
+     * Check if the current user has the authority to view the project. Add and edit
+     * authorities include also view.
+     *
+     * @return true if the current user has the authority to view the project
+     */
+    public boolean hasAuthorityToViewProject() {
+        return hasAnyAuthorityForClient("viewProject, addProject, editProject");
     }
 
     /**
@@ -742,9 +784,10 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to edit the process metadata.
      *
+     * @param taskId
+     *            the specific taskId
      * @return true if the current user has the authority to edit the process
      *         metadata
-     * @param taskId the specific taskId
      */
     public boolean hasAuthorityToEditProcessMetaData(int taskId) throws DataException {
         return hasAuthorityForClient("editProcessMetaData") && hasAuthorityForTask(taskId);
@@ -763,9 +806,10 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to view the process metadata.
      *
+     * @param taskId
+     *            the specific taskId
      * @return true if the current user has the authority to view the process
      *         metadata
-     * @param taskId the specific taskId
      */
     public boolean hasAuthorityToViewProcessMetaData(int taskId) throws DataException {
         return hasAuthorityForClient("viewProcessMetaData") && hasAuthorityForTask(taskId);
@@ -777,7 +821,7 @@ public class SecurityAccessService extends SecurityAccess {
      * @return true if the current user has the authority to view the process
      *         metadata
      */
-    public boolean hasAuthorityToViewProcessMetaData()  {
+    public boolean hasAuthorityToViewProcessMetaData() {
         return hasAuthorityForClient("viewProcessMetaData");
     }
 
@@ -785,9 +829,10 @@ public class SecurityAccessService extends SecurityAccess {
      * Check if the current user has the authority to edit the process structure
      * data.
      *
+     * @param taskId
+     *            the specific taskId
      * @return true if the current user has the authority to edit the process
      *         structure data
-     * @param taskId the specific taskId
      */
     public boolean hasAuthorityToEditProcessStructureData(int taskId) throws DataException {
         return hasAuthorityForClient("editProcessStructureData") && hasAuthorityForTask(taskId);
@@ -800,7 +845,7 @@ public class SecurityAccessService extends SecurityAccess {
      * @return true if the current user has the authority to edit the process
      *         structure data
      */
-    public boolean hasAuthorityToEditProcessStructureData(){
+    public boolean hasAuthorityToEditProcessStructureData() {
         return hasAuthorityForClient("editProcessStructureData");
     }
 
@@ -808,9 +853,10 @@ public class SecurityAccessService extends SecurityAccess {
      * Check if the current user has the authority to view the process structure
      * data.
      *
+     * @param taskId
+     *            the specific taskId
      * @return true if the current user has the authority to view the process
      *         structure data
-     * @param taskId the specific taskId
      */
     public boolean hasAuthorityToViewProcessStructureData(int taskId) throws DataException {
         return hasAuthorityForClient("viewProcessStructureData") && hasAuthorityForTask(taskId);
@@ -830,8 +876,8 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to edit the process images.
      *
-     * @return true if the current user has the authority to edit the process images
      * @param taskId the specific taskId
+     * @return true if the current user has the authority to edit the process images
      */
     public boolean hasAuthorityToEditProcessImages(int taskId) throws DataException {
         return hasAuthorityForClient("editProcessImages") && hasAuthorityForTask(taskId);
@@ -849,8 +895,8 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to view the process images.
      *
-     * @return true if the current user has the authority to view the process images
      * @param taskId the specific taskId
+     * @return true if the current user has the authority to view the process images
      */
     public boolean hasAuthorityToViewProcessImages(int taskId) throws DataException {
         return hasAuthorityForClient("viewProcessImages") && hasAuthorityForTask(taskId);
@@ -875,7 +921,7 @@ public class SecurityAccessService extends SecurityAccess {
         return hasAuthorityForProject(projectId);
     }
 
-    private boolean hasAuthorityForProject(Integer projectId){
+    private boolean hasAuthorityForProject(Integer projectId) {
         List<Project> projects = ServiceManager.getUserService().getCurrentUser().getProjects();
         return projects.stream().anyMatch(project -> project.getId().equals(projectId));
     }

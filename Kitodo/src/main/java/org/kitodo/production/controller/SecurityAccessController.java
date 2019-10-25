@@ -340,6 +340,15 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to edit the process.
+     *
+     * @return true if the current user has the authority to edit the process
+     */
+    public boolean hasAuthorityToEditProcess() {
+        return securityAccessService.hasAuthorityToEditProcess();
+    }
+
+    /**
      * Check if the current user has the authority to edit the project.
      *
      * @param projectId the specific projectId
@@ -347,6 +356,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToEditProject(int projectId) {
         return securityAccessService.hasAuthorityToEditProject(projectId);
+    }
+
+    /**
+     * Check if the current user has the authority to edit the project.
+     *
+     * @return true if the current user has the authority to edit the project
+     */
+    public boolean hasAuthorityToEditProject() {
+        return securityAccessService.hasAuthorityToEditProject();
     }
 
     /**
@@ -450,6 +468,15 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to view the process.
+     *
+     * @return true if the current user has the authority to view the process
+     */
+    public boolean hasAuthorityToViewProcess() {
+        return securityAccessService.hasAuthorityToViewProcess();
+    }
+
+    /**
      * Check if the current user has the authority to view the project.
      *
      * @param projectId the specific projectId
@@ -457,6 +484,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToViewProject(int projectId) {
         return securityAccessService.hasAuthorityToViewProject(projectId);
+    }
+
+    /**
+     * Check if the current user has the authority to view the project.
+     *
+     * @return true if the current user has the authority to view the project
+     */
+    public boolean hasAuthorityToViewProject() {
+        return securityAccessService.hasAuthorityToViewProject();
     }
 
     /**

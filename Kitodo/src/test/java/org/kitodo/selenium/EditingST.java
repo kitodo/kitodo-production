@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
