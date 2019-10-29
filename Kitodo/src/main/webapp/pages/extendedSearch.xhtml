@@ -23,7 +23,8 @@
                       value="#{msgs.search}"
                       icon="fa fa-search"
                       iconPos="right"
-                      styleClass="right">
+                      styleClass="right"
+                      rendered="#{SecurityAccessController.hasAuthorityToViewProcessList() and SecurityAccessController.hasAuthorityToViewTaskList()}">
             <p:menuitem id="submitSearchProcess"
                         value="#{msgs.searchForVolume}"
                         action="#{SearchForm.filterProcesses}"
@@ -35,6 +36,22 @@
                         onclick="setConfirmUnload(false)"
                         rendered="#{SecurityAccessController.hasAuthorityToViewTaskList()}"/>
         </p:menuButton>
+        <p:commandButton id="submitProcessSearch"
+                         value="#{msgs.searchForVolume}"
+                         action="#{SearchForm.filterProcesses}"
+                         onclick="setConfirmUnload(false)"
+                         icon="fa fa-search"
+                         iconPos="right"
+                         styleClass="right"
+                         rendered="#{SecurityAccessController.hasAuthorityToViewProcessList() and not SecurityAccessController.hasAuthorityToViewTaskList()}"/>
+        <p:commandButton id="submitTaskSearch"
+                         value="#{msgs.searchForTask}"
+                         action="#{SearchForm.filterTasks}"
+                         onclick="setConfirmUnload(false)"
+                         icon="fa fa-search"
+                         iconPos="right"
+                         styleClass="right"
+                         rendered="#{SecurityAccessController.hasAuthorityToViewTaskList() and not SecurityAccessController.hasAuthorityToViewProcessList()}"/>
     </ui:define>
 
     <ui:define name="pageTabView">
