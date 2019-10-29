@@ -11,6 +11,10 @@
 
 package org.kitodo.production.model.bibliography.course;
 
+import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
-import org.joda.time.MonthDay;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 
@@ -35,25 +35,25 @@ public class IndividualIssue {
      * The constant DAY holds a DateTimeFormatter used to get the a two-digit
      * day (01—31) from the newspaper’s date.
      */
-    private static final DateTimeFormatter DAY = DateTimeFormat.forPattern("dd");
+    private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("dd");
 
     /**
      * The constant MONTH holds a DateTimeFormatter used to get the a two-digit
      * month (01—12) from the newspaper’s date.
      */
-    private static final DateTimeFormatter MONTH = DateTimeFormat.forPattern("MM");
+    private static final DateTimeFormatter MONTH = DateTimeFormatter.ofPattern("MM");
 
     /**
      * The constant YEAR2 holds a DateTimeFormatter used to get the a four-digit
      * year of era (00—99, always positive) from the newspaper’s date.
      */
-    private static final DateTimeFormatter YEAR2 = DateTimeFormat.forPattern("YY");
+    private static final DateTimeFormatter YEAR2 = DateTimeFormatter.ofPattern("YY");
 
     /**
      * The constant YEAR4 holds a DateTimeFormatter used to get the a four-digit
      * year of era (0001—9999, always positive) from the newspaper’s date.
      */
-    private static final DateTimeFormatter YEAR4 = DateTimeFormat.forPattern("YYYY");
+    private static final DateTimeFormatter YEAR4 = DateTimeFormatter.ofPattern("YYYY");
 
     /**
      * Metadata key to store the sorting number.
@@ -119,11 +119,11 @@ public class IndividualIssue {
             case DAYS:
                 return date.hashCode();
             case WEEKS:
-                return prime * getFirstYear(yearStart) + date.getWeekOfWeekyear();
+                return prime * getFirstYear(yearStart) + date.get(WeekFields.ISO.weekOfWeekBasedYear()); // TODO Weekfields.ISO correct?
             case MONTHS:
-                return prime * getFirstYear(yearStart) + date.getMonthOfYear();
+                return prime * getFirstYear(yearStart) + date.getMonthValue();
             case QUARTERS:
-                return prime * getFirstYear(yearStart) + (date.getMonthOfYear() - 1) / 3;
+                return prime * getFirstYear(yearStart) + (date.getMonthValue() - 1) / 3;
             case YEARS:
                 return getFirstYear(yearStart);
             default:
@@ -140,7 +140,7 @@ public class IndividualIssue {
      */
     private int getFirstYear(MonthDay yearStart) {
         int year = date.getYear();
-        return date.compareTo(yearStart.toLocalDate(year)) < 0 ? year - 1 : year;
+        return date.compareTo(yearStart.atYear(year)) < 0 ? year - 1 : year;
     }
 
     /**
@@ -200,7 +200,7 @@ public class IndividualIssue {
         int length = heading.length();
         String upperCase = heading.toUpperCase();
         String lowerCase = heading.toLowerCase();
-        genericFields.put("#DAY", DAY.print(date));
+        genericFields.put("#DAY", DAY.format(date));
         genericFields.put("#I", length > 1 ? upperCase.substring(0, 1) : upperCase);
         genericFields.put("#i", length > 1 ? lowerCase.substring(0, 1) : lowerCase);
         genericFields.put("#IS", length > 2 ? upperCase.substring(0, 2) : upperCase);
@@ -210,9 +210,9 @@ public class IndividualIssue {
         genericFields.put("#ISSU", length > 4 ? upperCase.substring(0, 4) : upperCase);
         genericFields.put("#issu", length > 4 ? lowerCase.substring(0, 4) : lowerCase);
         genericFields.put("#Issue", heading);
-        genericFields.put("#MONTH", MONTH.print(date));
-        genericFields.put("#YEAR", YEAR4.print(date));
-        genericFields.put("#YR", YEAR2.print(date));
+        genericFields.put("#MONTH", MONTH.format(date));
+        genericFields.put("#YEAR", YEAR4.format(date));
+        genericFields.put("#YR", YEAR2.format(date));
         return genericFields;
     }
 
@@ -229,7 +229,7 @@ public class IndividualIssue {
      *         the value
      */
     public Iterable<Pair<String, String>> getMetadata(int monthOfYear, int dayOfMonth) {
-        return getMetadata(new MonthDay(monthOfYear, dayOfMonth));
+        return getMetadata(MonthDay.of(monthOfYear, dayOfMonth));
     }
 
     /**

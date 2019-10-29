@@ -13,6 +13,9 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,10 +33,6 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.IllegalFieldValueException;
-import org.joda.time.LocalDate;
-import org.joda.time.ReadablePartial;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.DateUtils;
@@ -120,18 +119,18 @@ public class CalendarForm implements Serializable {
             }
             if (onBlock) {
                 switch (date.getDayOfWeek()) {
-                    case DateTimeConstants.SATURDAY:
+                    case SATURDAY:
                         return "saturday";
-                    case DateTimeConstants.SUNDAY:
+                    case SUNDAY:
                         return "sunday";
                     default:
                         return "weekday";
                 }
             } else {
                 switch (date.getDayOfWeek()) {
-                    case DateTimeConstants.SATURDAY:
+                    case SATURDAY:
                         return "saturdayNoBlock";
-                    case DateTimeConstants.SUNDAY:
+                    case SUNDAY:
                         return "sundayNoBlock";
                     default:
                         return "weekdayNoBlock";
@@ -536,7 +535,7 @@ public class CalendarForm implements Serializable {
          * will be removed. Otherwise, an additional issue will be added.
          */
         public void selectClick() {
-            if (issue.isDayOfWeek(date.getDayOfWeek())) {
+            if (issue.isDayOfWeek(date.getDayOfWeek().getValue())) {
                 issue.removeExclusion(date);
             } else {
                 issue.addAddition(date);
@@ -550,7 +549,7 @@ public class CalendarForm implements Serializable {
          * will be removed.
          */
         public void unselectClick() {
-            if (issue.isDayOfWeek(date.getDayOfWeek())) {
+            if (issue.isDayOfWeek(date.getDayOfWeek().getValue())) {
                 issue.addExclusion(date);
             } else {
                 issue.removeAddition(date);
@@ -580,7 +579,7 @@ public class CalendarForm implements Serializable {
      * Historien”, which is often recognized as the first newspaper, began. If
      * the user tries to create a block before that date, a hint will be shown.
      */
-    private static final LocalDate START_RELATION = new LocalDate(1605, 9, 12);
+    private static final LocalDate START_RELATION = LocalDate.of(1605, 9, 12);
 
     /**
      * The Map blockChangerResolver is populated with the IDs used in the block
@@ -888,7 +887,7 @@ public class CalendarForm implements Serializable {
     protected List<List<Cell>> getEmptySheet() {
         List<List<Cell>> emptySheet = new ArrayList<>(31);
         for (int day = 1; day <= 31; day++) {
-            ArrayList<Cell> row = new ArrayList<>(DateTimeConstants.DECEMBER);
+            ArrayList<Cell> row = new ArrayList<>(12);
             for (int month = 1; month <= 12; month++) {
                 row.add(new Cell());
             }
@@ -905,7 +904,7 @@ public class CalendarForm implements Serializable {
      */
     public String getFirstAppearance() {
         if (Objects.nonNull(blockShowing) && Objects.nonNull(blockShowing.getFirstAppearance())) {
-            return DateUtils.DATE_FORMATTER.print(blockShowing.getFirstAppearance());
+            return DateUtils.DATE_FORMATTER.format(blockShowing.getFirstAppearance());
         } else {
             return null;
         }
@@ -946,7 +945,7 @@ public class CalendarForm implements Serializable {
      */
     public String getLastAppearance() {
         if (Objects.nonNull(blockShowing) && Objects.nonNull(blockShowing.getLastAppearance())) {
-            return DateUtils.DATE_FORMATTER.print(blockShowing.getLastAppearance());
+            return DateUtils.DATE_FORMATTER.format(blockShowing.getLastAppearance());
         } else {
             return null;
         }
@@ -1069,8 +1068,7 @@ public class CalendarForm implements Serializable {
                 numbers[i] = Integer.parseInt(dateParser.group(i + 1));
             }
             if (numbers[2] < 100) {
-                new LocalDate();
-                numbers[2] += 100 * today.getCenturyOfEra();
+                numbers[2] += 100 * Math.floor((double) today.getYear() / 100);
                 if (numbers[2] > today.getYear()) {
                     numbers[2] -= 100;
                 }
@@ -1078,13 +1076,13 @@ public class CalendarForm implements Serializable {
                     Arrays.asList(dateParser.group(3), Integer.toString(numbers[2]))));
             }
             try {
-                return new LocalDate(numbers[2], numbers[1], numbers[0]);
-            } catch (IllegalFieldValueException invalidDate) {
+                return LocalDate.of(numbers[2], numbers[1], numbers[0]);
+            } catch (DateTimeException invalidDate) {
                 try {
-                    LocalDate swapped = new LocalDate(numbers[2], numbers[0], numbers[1]);
+                    LocalDate swapped = LocalDate.of(numbers[2], numbers[0], numbers[1]);
                     Helper.setMessage(BLOCK + input + ".swapped");
                     return swapped;
-                } catch (IllegalFieldValueException stillInvalid) {
+                } catch (DateTimeException stillInvalid) {
                     Helper.setErrorMessage(invalidDate.getLocalizedMessage(), logger, stillInvalid);
                 }
             }
@@ -1105,10 +1103,10 @@ public class CalendarForm implements Serializable {
     protected void populateByCalendar(List<List<Cell>> sheet) {
         Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<>();
         Block currentBlock = null;
-        ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
-        for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date
+        LocalDate nextYear = LocalDate.of(yearShowing + 1, Month.JANUARY, 1);
+        for (LocalDate date = LocalDate.of(yearShowing, Month.JANUARY, 1); date
                 .isBefore(nextYear); date = date.plusDays(1)) {
-            Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
+            Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthValue() - 1);
             cell.setDate(date);
             if (Objects.isNull(currentBlock) || !currentBlock.isMatch(date)) {
                 currentBlock = course.isMatch(date);

@@ -11,6 +11,8 @@
 
 package org.kitodo.production.model.bibliography.course;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,8 +20,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 
 /**
@@ -559,11 +559,11 @@ public class Block {
     public String toString(DateTimeFormatter dateConverter) {
         StringBuilder result = new StringBuilder();
         if (Objects.nonNull(firstAppearance)) {
-            result.append(dateConverter.print(firstAppearance));
+            result.append(dateConverter.format(firstAppearance));
         }
         result.append(" − ");
         if (Objects.nonNull(lastAppearance)) {
-            result.append(dateConverter.print(lastAppearance));
+            result.append(dateConverter.format(lastAppearance));
         }
         return result.toString();
     }

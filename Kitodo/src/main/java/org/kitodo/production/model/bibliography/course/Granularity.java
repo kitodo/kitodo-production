@@ -11,8 +11,9 @@
 
 package org.kitodo.production.model.bibliography.course;
 
-import org.joda.time.LocalDate;
-import org.joda.time.format.ISODateTimeFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.kitodo.exceptions.NotImplementedException;
 
 /**
@@ -65,16 +66,16 @@ public enum Granularity {
     public String format(LocalDate date) {
         switch (this) {
             case DAYS:
-                return ISODateTimeFormat.date().print(date);
+                return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
             case MONTHS:
-                return ISODateTimeFormat.yearMonth().print(date);
+                return DateTimeFormatter.ofPattern("yyyy-MM").format(date);
             case QUARTERS:
-                return ISODateTimeFormat.year().print(date) + "/Q"
-                        + ((date.getMonthOfYear() - 1) / 3) + 1;
+                return DateTimeFormatter.ofPattern("yyyy").format(date) + "/Q"
+                        + ((date.getMonthValue() - 1) / 3) + 1;
             case WEEKS:
-                return ISODateTimeFormat.weekyearWeek().print(date);
+                return DateTimeFormatter.ofPattern("yyyy-'W'ww").format(date);
             case YEARS:
-                return ISODateTimeFormat.year().print(date);
+                return DateTimeFormatter.ofPattern("yyyy").format(date);
             default:
                 throw new NotImplementedException();
         }

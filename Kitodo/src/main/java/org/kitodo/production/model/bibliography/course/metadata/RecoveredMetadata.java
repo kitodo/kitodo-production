@@ -11,7 +11,8 @@
 
 package org.kitodo.production.model.bibliography.course.metadata;
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
+
 import org.kitodo.production.model.bibliography.course.Granularity;
 
 /**

@@ -12,6 +12,10 @@
 package org.kitodo.production.model.bibliography.course;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,10 +34,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.joda.time.MonthDay;
-import org.joda.time.format.DateTimeFormat;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 import org.kitodo.production.model.bibliography.course.metadata.RecoveredMetadata;
@@ -251,7 +251,7 @@ public class Course extends ArrayList<Block> {
     /**
      * January the 1ˢᵗ.
      */
-    public static final MonthDay FIRST_OF_JANUARY = new MonthDay(1, 1);
+    public static final MonthDay FIRST_OF_JANUARY = MonthDay.of(1, 1);
 
     private static final int WEEKDAY_PAGES = 40;
     private static final int SUNDAY_PAGES = 240;
@@ -273,7 +273,7 @@ public class Course extends ArrayList<Block> {
     /**
      * The first day of the year.
      */
-    private MonthDay yearStart = new MonthDay(1, 1);
+    private MonthDay yearStart = MonthDay.of(1, 1);
 
     /**
      * Default constructor, creates an empty course. Must be made explicit since
@@ -301,8 +301,8 @@ public class Course extends ArrayList<Block> {
         Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);
         String yearBegin = rootNode.getAttribute(ATTRIBUTE_YEAR_BEGIN);
         if (!yearBegin.isEmpty()) {
-            LocalDate dateTime = DateTimeFormat.forPattern("--MM-dd").parseLocalDate(yearBegin);
-            yearStart = new MonthDay(dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+            LocalDate dateTime = LocalDate.parse(yearBegin, DateTimeFormatter.ofPattern("--MM-dd").withLocale(DateTimeFormatter.ISO_DATE.getLocale()));
+            yearStart = MonthDay.of(dateTime.getMonthValue(), dateTime.getDayOfMonth());
         }
         yearName = rootNode.getAttribute(ATTRIBUTE_YEAR_TERM);
         Element processesNode = XMLUtils.getFirstChildWithTagName(rootNode, ELEMENT_PROCESSES);
@@ -642,7 +642,7 @@ public class Course extends ArrayList<Block> {
             for (LocalDate day = block.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
                 for (Issue issue : block.getIssues()) {
                     if (issue.isMatch(day)) {
-                        totalNumberOfPages += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? WEEKDAY_PAGES
+                        totalNumberOfPages += day.getDayOfWeek() != DayOfWeek.SUNDAY ? WEEKDAY_PAGES
                                 : SUNDAY_PAGES;
                     }
                 }

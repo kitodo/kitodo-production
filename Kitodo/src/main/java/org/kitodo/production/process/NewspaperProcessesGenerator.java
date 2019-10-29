@@ -16,7 +16,9 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.MonthDay;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,9 +34,6 @@ import javax.naming.ConfigurationException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
@@ -538,15 +537,14 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         if (PATTERN_DOUBLE_YEAR.equals(scheme)) {
             int firstYear = date.getYear();
             MonthDay yearBegin = yearSimpleMetadataView.getYearBegin();
-            LocalDate yearStartThisYear = new LocalDate(firstYear, yearBegin.getMonthValue(),
-                    yearBegin.getDayOfMonth());
+            LocalDate yearStartThisYear = LocalDate.of(firstYear, yearBegin.getMonth(), yearBegin.getDayOfMonth());
             if (date.isBefore(yearStartThisYear)) {
                 firstYear--;
             }
             return String.format("%04d/%04d", firstYear, firstYear + 1);
         } else {
-            DateTimeFormatter yearFormatter = DateTimeFormat.forPattern(scheme);
-            return yearFormatter.print(date);
+            DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern(scheme);
+            return yearFormatter.format(date);
         }
     }
 

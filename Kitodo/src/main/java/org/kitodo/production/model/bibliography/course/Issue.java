@@ -11,12 +11,12 @@
 
 package org.kitodo.production.model.bibliography.course;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 
 /**
  * The class Issue represents the regular appearance of one (or the) issue of a
@@ -128,8 +128,8 @@ public class Issue {
      *            An int representing the day of week (1 = monday … 7 = sunday)
      * @return true if the Set was changed
      */
-    private boolean addDayOfWeek(int dayOfWeek) {
-        boolean modified = daysOfWeek.add(dayOfWeek);
+    private boolean addDayOfWeek(DayOfWeek dayOfWeek) {
+        boolean modified = daysOfWeek.add(dayOfWeek.getValue());
         if (modified) {
             course.clearProcesses();
         }
@@ -154,7 +154,7 @@ public class Issue {
      * @return true if the set was changed
      */
     public boolean addMonday() {
-        return addDayOfWeek(DateTimeConstants.MONDAY);
+        return addDayOfWeek(DayOfWeek.MONDAY);
     }
 
     /**
@@ -163,7 +163,7 @@ public class Issue {
      * @return true if the set was changed
      */
     public boolean addTuesday() {
-        return addDayOfWeek(DateTimeConstants.TUESDAY);
+        return addDayOfWeek(DayOfWeek.TUESDAY);
     }
 
     /**
@@ -172,7 +172,7 @@ public class Issue {
      * @return true if the set was changed
      */
     public boolean addWednesday() {
-        return addDayOfWeek(DateTimeConstants.WEDNESDAY);
+        return addDayOfWeek(DayOfWeek.WEDNESDAY);
     }
 
     /**
@@ -181,7 +181,7 @@ public class Issue {
      * @return true if the set was changed
      */
     public boolean addThursday() {
-        return addDayOfWeek(DateTimeConstants.THURSDAY);
+        return addDayOfWeek(DayOfWeek.THURSDAY);
     }
 
     /**
@@ -190,7 +190,7 @@ public class Issue {
      * @return true if the set was changed
      */
     public boolean addFriday() {
-        return addDayOfWeek(DateTimeConstants.FRIDAY);
+        return addDayOfWeek(DayOfWeek.FRIDAY);
     }
 
     /**
@@ -199,7 +199,7 @@ public class Issue {
      * @return true if the set was changed
      */
     public boolean addSaturday() {
-        return addDayOfWeek(DateTimeConstants.SATURDAY);
+        return addDayOfWeek(DayOfWeek.SATURDAY);
     }
 
     /**
@@ -208,7 +208,7 @@ public class Issue {
      * @return true if the set was changed
      */
     public boolean addSunday() {
-        return addDayOfWeek(DateTimeConstants.SUNDAY);
+        return addDayOfWeek(DayOfWeek.SUNDAY);
     }
 
     /**
@@ -319,7 +319,7 @@ public class Issue {
      * @return true, if the issue regularly appears on Mondays.
      */
     public boolean isMonday() {
-        return daysOfWeek.contains(DateTimeConstants.MONDAY);
+        return daysOfWeek.contains(DayOfWeek.MONDAY.getValue());
     }
 
     /**
@@ -329,7 +329,7 @@ public class Issue {
      * @return true, if the issue regularly appears on Tuesdays.
      */
     public boolean isTuesday() {
-        return daysOfWeek.contains(DateTimeConstants.TUESDAY);
+        return daysOfWeek.contains(DayOfWeek.TUESDAY.getValue());
     }
 
     /**
@@ -339,7 +339,7 @@ public class Issue {
      * @return true, if the issue regularly appears on Wednesdays.
      */
     public boolean isWednesday() {
-        return daysOfWeek.contains(DateTimeConstants.WEDNESDAY);
+        return daysOfWeek.contains(DayOfWeek.WEDNESDAY.getValue());
     }
 
     /**
@@ -349,7 +349,7 @@ public class Issue {
      * @return true, if the issue regularly appears on Thursdays.
      */
     public boolean isThursday() {
-        return daysOfWeek.contains(DateTimeConstants.THURSDAY);
+        return daysOfWeek.contains(DayOfWeek.THURSDAY.getValue());
     }
 
     /**
@@ -359,7 +359,7 @@ public class Issue {
      * @return true, if the issue regularly appears on Fridays.
      */
     public boolean isFriday() {
-        return daysOfWeek.contains(DateTimeConstants.FRIDAY);
+        return daysOfWeek.contains(DayOfWeek.FRIDAY.getValue());
     }
 
     /**
@@ -369,7 +369,7 @@ public class Issue {
      * @return true, if the issue regularly appears on Saturdays.
      */
     public boolean isSaturday() {
-        return daysOfWeek.contains(DateTimeConstants.SATURDAY);
+        return daysOfWeek.contains(DayOfWeek.SATURDAY.getValue());
     }
 
     /**
@@ -379,7 +379,7 @@ public class Issue {
      * @return true, if the issue regularly appears on Sundays.
      */
     public boolean isSunday() {
-        return daysOfWeek.contains(DateTimeConstants.SUNDAY);
+        return daysOfWeek.contains(DayOfWeek.SUNDAY.getValue());
     }
 
     /**
@@ -399,17 +399,17 @@ public class Issue {
         Set<LocalDate> remainingExclusions = new HashSet<>();
 
         @SuppressWarnings("unchecked")
-        HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][APPEARED + 1];
-        for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+        HashSet<LocalDate>[][] subsets = new HashSet[DayOfWeek.SUNDAY.getValue()][APPEARED + 1];
+        for (int dayOfWeek = DayOfWeek.MONDAY.getValue(); dayOfWeek <= DayOfWeek.SUNDAY.getValue(); dayOfWeek++) {
             subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<>();
             subsets[dayOfWeek - 1][APPEARED] = new HashSet<>();
         }
 
         for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-            subsets[day.getDayOfWeek() - 1][isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
+            subsets[day.getDayOfWeek().getValue() - 1][isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
         }
 
-        for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+        for (int dayOfWeek = DayOfWeek.MONDAY.getValue(); dayOfWeek <= DayOfWeek.SUNDAY.getValue(); dayOfWeek++) {
             if (subsets[dayOfWeek - 1][APPEARED].size() > subsets[dayOfWeek - 1][NOT_APPEARED].size()) {
                 daysOfWeek.add(dayOfWeek);
                 remainingExclusions.addAll(subsets[dayOfWeek - 1][NOT_APPEARED]);
@@ -443,8 +443,8 @@ public class Issue {
      *            An int representing the day of week (1 = monday … 7 = sunday)
      * @return true if the Set was changed
      */
-    private boolean removeDayOfWeek(int dayOfWeek) {
-        boolean modified = daysOfWeek.remove(dayOfWeek);
+    private boolean removeDayOfWeek(DayOfWeek dayOfWeek) {
+        boolean modified = daysOfWeek.remove(dayOfWeek.getValue());
         if (modified) {
             course.clearProcesses();
         }
@@ -469,7 +469,7 @@ public class Issue {
      * @return true if the Set was changed
      */
     public boolean removeMonday() {
-        return removeDayOfWeek(DateTimeConstants.MONDAY);
+        return removeDayOfWeek(DayOfWeek.MONDAY);
     }
 
     /**
@@ -478,7 +478,7 @@ public class Issue {
      * @return true if the Set was changed
      */
     public boolean removeTuesday() {
-        return removeDayOfWeek(DateTimeConstants.TUESDAY);
+        return removeDayOfWeek(DayOfWeek.TUESDAY);
     }
 
     /**
@@ -487,7 +487,7 @@ public class Issue {
      * @return true if the Set was changed
      */
     public boolean removeWednesday() {
-        return removeDayOfWeek(DateTimeConstants.WEDNESDAY);
+        return removeDayOfWeek(DayOfWeek.WEDNESDAY);
     }
 
     /**
@@ -496,7 +496,7 @@ public class Issue {
      * @return true if the Set was changed
      */
     public boolean removeThursday() {
-        return removeDayOfWeek(DateTimeConstants.THURSDAY);
+        return removeDayOfWeek(DayOfWeek.THURSDAY);
     }
 
     /**
@@ -505,7 +505,7 @@ public class Issue {
      * @return true if the Set was changed
      */
     public boolean removeFriday() {
-        return removeDayOfWeek(DateTimeConstants.FRIDAY);
+        return removeDayOfWeek(DayOfWeek.FRIDAY);
     }
 
     /**
@@ -514,7 +514,7 @@ public class Issue {
      * @return true if the Set was changed
      */
     public boolean removeSaturday() {
-        return removeDayOfWeek(DateTimeConstants.SATURDAY);
+        return removeDayOfWeek(DayOfWeek.SATURDAY);
     }
 
     /**
@@ -523,7 +523,7 @@ public class Issue {
      * @return true if the Set was changed
      */
     public boolean removeSunday() {
-        return removeDayOfWeek(DateTimeConstants.SUNDAY);
+        return removeDayOfWeek(DayOfWeek.SUNDAY);
     }
 
     /**
@@ -552,13 +552,13 @@ public class Issue {
         StringBuilder result = new StringBuilder();
         result.append(heading);
         result.append(" (");
-        result.append(daysOfWeek.contains(DateTimeConstants.MONDAY) ? 'M' : '-');
-        result.append(daysOfWeek.contains(DateTimeConstants.TUESDAY) ? 'T' : '-');
-        result.append(daysOfWeek.contains(DateTimeConstants.WEDNESDAY) ? 'W' : '-');
-        result.append(daysOfWeek.contains(DateTimeConstants.THURSDAY) ? 'T' : '-');
-        result.append(daysOfWeek.contains(DateTimeConstants.FRIDAY) ? 'F' : '-');
-        result.append(daysOfWeek.contains(DateTimeConstants.SATURDAY) ? 'S' : '-');
-        result.append(daysOfWeek.contains(DateTimeConstants.SUNDAY) ? 'S' : '-');
+        result.append(daysOfWeek.contains(DayOfWeek.MONDAY.getValue()) ? 'M' : '-');
+        result.append(daysOfWeek.contains(DayOfWeek.TUESDAY.getValue()) ? 'T' : '-');
+        result.append(daysOfWeek.contains(DayOfWeek.WEDNESDAY.getValue()) ? 'W' : '-');
+        result.append(daysOfWeek.contains(DayOfWeek.THURSDAY.getValue()) ? 'T' : '-');
+        result.append(daysOfWeek.contains(DayOfWeek.FRIDAY.getValue()) ? 'F' : '-');
+        result.append(daysOfWeek.contains(DayOfWeek.SATURDAY.getValue()) ? 'S' : '-');
+        result.append(daysOfWeek.contains(DayOfWeek.SUNDAY.getValue()) ? 'S' : '-');
         result.append(") +");
         if (additions.size() <= 5) {
             result.append(additions.toString());
