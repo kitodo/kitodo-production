@@ -40,9 +40,11 @@ public class MigrationTaskIT {
     @Test
     public void testMigrationTask() throws InterruptedException {
         MigrationTask migrationTask = new MigrationTask(project);
+        Assert.assertFalse(ServiceManager.discardDataEditorService());
         migrationTask.start();
         Assert.assertTrue(migrationTask.isAlive());
         migrationTask.join();
+        Assert.assertTrue(ServiceManager.discardDataEditorService());
         Assert.assertFalse(migrationTask.isAlive());
         Assert.assertEquals(100, migrationTask.getProgress());
     }

@@ -111,6 +111,12 @@ public class ServiceManager {
         }
     }
 
+    public static boolean discardDataEditorService() {
+        boolean discarded = Objects.nonNull(dataEditorService);
+        dataEditorService = null;
+        return discarded;
+    }
+
     private static void initializeDataEditorService() {
         if (Objects.isNull(dataEditorService)) {
             dataEditorService = new DataEditorService();
