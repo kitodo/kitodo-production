@@ -11,10 +11,10 @@
 
 package org.kitodo.production.model.bibliography.course.metadata;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Issue;
 

@@ -11,6 +11,8 @@
 
 package org.kitodo.production.model.bibliography.course;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,8 +20,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 import org.kitodo.production.helper.DateUtils;
 
 /**
@@ -111,7 +111,7 @@ public class CourseToGerman {
             Issue issue = issueIterator.next();
             result.append("an allen ");
             int daysOfWeekCount = 0;
-            for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+            for (int dayOfWeek = DayOfWeek.MONDAY.getValue(); dayOfWeek <= DayOfWeek.SUNDAY.getValue(); dayOfWeek++) {
                 if (issue.isDayOfWeek(dayOfWeek)) {
                     result.append(DAYS_OF_WEEK_NAMES[dayOfWeek]);
                     result.append("en");
@@ -221,7 +221,7 @@ public class CourseToGerman {
 
             if (!nextInSameMonth) {
                 buffer.append(' ');
-                buffer.append(MONTH_NAMES[current.getMonthOfYear()]);
+                buffer.append(MONTH_NAMES[current.getMonthValue()]);
             }
 
             if (!DateUtils.sameYear(current, next)) {
@@ -240,7 +240,7 @@ public class CourseToGerman {
                 }
             } else if (next != null) {
                 if (nextInSameMonth && nextBothInSameMonth
-                        || !nextInSameMonth && next.getMonthOfYear() != lastMonthOfYear) {
+                        || !nextInSameMonth && next.getMonthValue() != lastMonthOfYear) {
                     buffer.append(", ");
                 } else {
                     buffer.append(" und ");
@@ -265,7 +265,7 @@ public class CourseToGerman {
     private static void appendDate(StringBuilder buffer, LocalDate date) {
         buffer.append(date.getDayOfMonth());
         buffer.append(". ");
-        buffer.append(MONTH_NAMES[date.getMonthOfYear()]);
+        buffer.append(MONTH_NAMES[date.getMonthValue()]);
         buffer.append(' ');
         buffer.append(date.getYear());
     }

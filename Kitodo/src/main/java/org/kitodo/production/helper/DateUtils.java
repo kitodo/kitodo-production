@@ -11,25 +11,22 @@
 
 package org.kitodo.production.helper;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.TreeSet;
 
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 /**
  * The class DateUtils contains an omnium-gatherum of functions that work on
- * calendar dates. All functionality is realized using the org.joda.time.*
- * library.
+ * calendar dates.
  */
 public class DateUtils {
     /**
      * The field DATE_FORMATTER provides a DateTimeFormatter that is used to
      * convert between LocalDate objects and String in common German notation.
      */
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy");
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     /**
      * Private constructor to hide the implicit public one.
@@ -55,7 +52,7 @@ public class DateUtils {
      * @return the last month which can be found up to the end of that year
      */
     public static int lastMonthForYear(TreeSet<LocalDate> data, int year) {
-        return data.headSet(new LocalDate(year, DateTimeConstants.DECEMBER, 31), true).last().getMonthOfYear();
+        return data.headSet(LocalDate.of(year, Month.DECEMBER, 31), true).last().getMonthValue();
     }
 
     /**
@@ -74,7 +71,7 @@ public class DateUtils {
         if (!sameYear(compared, comparee)) {
             return false;
         }
-        return compared.getMonthOfYear() == comparee.getMonthOfYear();
+        return compared.getMonthValue() == comparee.getMonthValue();
     }
 
     /**

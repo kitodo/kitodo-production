@@ -11,13 +11,12 @@
 
 package org.kitodo.production.model.bibliography.course.metadata;
 
+import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
-import org.joda.time.MonthDay;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.ISODateTimeFormat;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -168,7 +167,7 @@ public class CountableMetadata {
             }
         }
         throw new IllegalStateException("Issue “" + selectedIssue.getRight().getHeading() + "” not found on "
-                + DateTimeFormat.mediumDate().print(selectedIssue.getLeft()));
+                + DateTimeFormatter.ISO_LOCAL_DATE.format(selectedIssue.getLeft()));
     }
 
     /**
@@ -235,21 +234,21 @@ public class CountableMetadata {
     /**
      * Returns a human-readable concise description of this countable metadata.
      *
-     * @retun a human-readable description of this metadata
+     * @return a human-readable description of this metadata
      */
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(startValue);
         stringBuilder.append(" from ");
-        stringBuilder.append(ISODateTimeFormat.date().print(create.getLeft()));
+        stringBuilder.append(DateTimeFormatter.ISO_DATE.format(create.getLeft()));
         stringBuilder.append(", ");
         stringBuilder.append(create.getRight().getHeading());
         if (delelte == null) {
             stringBuilder.append(" infinitely");
         } else {
             stringBuilder.append(" to ");
-            stringBuilder.append(ISODateTimeFormat.date().print(delelte.getLeft()));
+            stringBuilder.append(DateTimeFormatter.ISO_DATE.format(delelte.getLeft()));
             stringBuilder.append(", ");
             stringBuilder.append(delelte.getRight().getHeading());
         }
