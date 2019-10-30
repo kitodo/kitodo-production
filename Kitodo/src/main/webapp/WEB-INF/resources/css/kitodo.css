@@ -1770,9 +1770,9 @@ Column content
 
 .thumbnail-container {
     display: inline-block;
-    height: 80px;
+    height: 104px;
     position: relative;
-    width: 65px;
+    width: 75px;
 }
 
 .thumbnail-container .assigned-several-times {
