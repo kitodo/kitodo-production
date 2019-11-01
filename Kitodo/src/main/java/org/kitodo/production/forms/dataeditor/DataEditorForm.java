@@ -310,10 +310,27 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     /**
      * Save the structure and metadata.
+     */
+    public void save() {
+        metadataPanel.preserve();
+        structurePanel.preserve();
+        try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
+            ServiceManager.getMetsService().save(workpiece, out);
+            PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
+                    + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
+        PrimeFaces.current().ajax().update("notifications");
+    }
+
+    /**
+     * Save the structure and metadata.
      *
      * @return navigation target
      */
-    public String save() {
+    public String saveAndExit() {
         metadataPanel.preserve();
         structurePanel.preserve();
         try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {

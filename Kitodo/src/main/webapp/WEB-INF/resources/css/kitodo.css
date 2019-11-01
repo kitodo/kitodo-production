@@ -1099,7 +1099,7 @@ Metadata Editor
 }
 
 #metadataEditorHeader h3 {
-    width: calc(100% - 450px);
+    width: calc(100% - 700px);
 }
 
 #metadataEditorHeader .ui-panel,
