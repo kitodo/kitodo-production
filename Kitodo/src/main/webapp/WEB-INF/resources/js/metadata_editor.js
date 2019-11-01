@@ -44,6 +44,7 @@ metadataEditor.dragdrop = {
 
 metadataEditor.shortcuts = {
     KEYS: {
+        HELP: 191, // "?"
         STRUCTURED_VIEW: 83, // "S"
         UNSTRUCTURED_VIEW: 85, // "U"
         DETAIL_VIEW: 68 // "D"
@@ -69,6 +70,9 @@ metadataEditor.shortcuts = {
                         metadataEditor.shortcuts.changeView(event, "PREVIEW");
                         break;
                 }
+            } else if (!(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA")
+                && event.keyCode === metadataEditor.shortcuts.KEYS.HELP) {
+                PF('helpDialog').show();
             }
         });
     },
