@@ -41,3 +41,55 @@ metadataEditor.dragdrop = {
         }
     }
 };
+
+metadataEditor.shortcuts = {
+    KEYS: {
+        STRUCTURED_VIEW: 83, // "S"
+        UNSTRUCTURED_VIEW: 85, // "U"
+        DETAIL_VIEW: 68 // "D"
+    },
+    changeView(event, galleryViewMode) {
+        let currentGalleryViewMode = $("#imagePreviewForm\\:galleryViewMode ").text().toUpperCase();
+        if (currentGalleryViewMode !== galleryViewMode) {
+            setGalleryViewMode([{name: "galleryViewMode", value: galleryViewMode}]);
+        }
+        event.preventDefault();
+    },
+    listen() {
+        $(document).on("keydown.shortcuts", function (event) {
+            if (event.metaKey ||event.ctrlKey) {
+                switch (event.keyCode) {
+                    case metadataEditor.shortcuts.KEYS.STRUCTURED_VIEW:
+                        metadataEditor.shortcuts.changeView(event, "LIST");
+                        break;
+                    case metadataEditor.shortcuts.KEYS.UNSTRUCTURED_VIEW:
+                        metadataEditor.shortcuts.changeView(event, "GRID");
+                        break;
+                    case metadataEditor.shortcuts.KEYS.DETAIL_VIEW:
+                        metadataEditor.shortcuts.changeView(event, "PREVIEW");
+                        break;
+                }
+            }
+        });
+    },
+    ignore() {
+        $(document).off("keydown.shortcuts");
+    },
+    updateViews() {
+        switch ($("#imagePreviewForm\\:galleryViewMode ").text().toUpperCase()) {
+            case "LIST":
+            case "GRID":
+                destruct();
+                break;
+            case "PREVIEW":
+                initialize();
+                scrollToSelectedThumbnail();
+                changeToMapView();
+                break;
+        }
+    }
+};
+
+$(document).ready(function () {
+    metadataEditor.shortcuts.listen();
+});
