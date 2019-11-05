@@ -87,7 +87,7 @@
                                         value="#{stripe.medias}"
                                         binding="#{structuredThumbnail}">
                                 <p:panel id="structuredPageDropArea"
-                                         rendered="#{not editImages}"
+                                         rendered="#{editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel"
                                          a:ondragstart="metadataEditor.dragdrop.addDragAmountIcon(event);"
@@ -116,7 +116,7 @@
                                                 oncomplete="scrollToSelectedTreeNode();"/>
                                     </h:panelGroup>
                                 </p:panel>
-                                <ui:fragment rendered="#{not editImages}">
+                                <ui:fragment rendered="#{editImages}">
                                     <p:draggable id="structuredPagesDraggable"
                                                  scope="assignedPagesDroppable"
                                                  for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
