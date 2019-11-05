@@ -113,6 +113,7 @@ public class SelectTemplateDialogView implements Serializable {
                     Helper.setErrorMessage(e.getLocalizedMessage());
                 }
             } else if (project.getTemplates().size() > 1) {
+                PrimeFaces.current().ajax().update("projectsTabView:selectTemplateDialog");
                 PrimeFaces.current().executeScript("PF('selectTemplateDialog').show();");
             } else {
                 Helper.setErrorMessage("noTemplatesConfigured");

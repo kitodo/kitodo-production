@@ -113,6 +113,7 @@ public class SelectProjectDialogView implements Serializable {
                     Helper.setErrorMessage(e.getLocalizedMessage());
                 }
             } else if (templateDTO.getProjects().size() > 1) {
+                PrimeFaces.current().ajax().update("projectsTabView:selectProjectDialog");
                 PrimeFaces.current().executeScript("PF('selectProjectDialog').show();");
             } else {
                 Helper.setErrorMessage("noProjectsConfigured");
