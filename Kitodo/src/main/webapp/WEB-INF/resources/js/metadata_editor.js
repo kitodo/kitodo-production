@@ -45,9 +45,8 @@ metadataEditor.dragdrop = {
 metadataEditor.shortcuts = {
     KEYS: {
         HELP: "?",
-        STRUCTURED_VIEW: "s",
-        UNSTRUCTURED_VIEW: "u",
-        DETAIL_VIEW: "d"
+        STRUCTURED_VIEW: "_",
+        DETAIL_VIEW: "*"
     },
     changeView(event, galleryViewMode) {
         let currentGalleryViewMode = $("#imagePreviewForm\\:galleryViewMode ").text().toUpperCase();
@@ -62,9 +61,6 @@ metadataEditor.shortcuts = {
                 switch (event.key) {
                     case metadataEditor.shortcuts.KEYS.STRUCTURED_VIEW:
                         metadataEditor.shortcuts.changeView(event, "LIST");
-                        break;
-                    case metadataEditor.shortcuts.KEYS.UNSTRUCTURED_VIEW:
-                        metadataEditor.shortcuts.changeView(event, "GRID");
                         break;
                     case metadataEditor.shortcuts.KEYS.DETAIL_VIEW:
                         metadataEditor.shortcuts.changeView(event, "PREVIEW");
@@ -82,7 +78,6 @@ metadataEditor.shortcuts = {
     updateViews() {
         switch ($("#imagePreviewForm\\:galleryViewMode ").text().toUpperCase()) {
             case "LIST":
-            case "GRID":
                 destruct();
                 break;
             case "PREVIEW":
