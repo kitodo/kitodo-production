@@ -13,12 +13,12 @@ package org.kitodo.production.services.data;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -277,7 +277,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
     private boolean isLoginAllowed(String login) {
         KitodoConfigFile blacklist = KitodoConfigFile.LOGIN_BLACKLIST;
         // If user defined blacklist doesn't exists, use default one
-        try (InputStream inputStream = blacklist.exists() ? new FileInputStream(blacklist.getFile())
+        try (InputStream inputStream = blacklist.exists() ? Files.newInputStream(blacklist.getFile().toPath())
                 : Thread.currentThread().getContextClassLoader().getResourceAsStream(blacklist.getName());
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader reader = new BufferedReader(inputStreamReader)) {
