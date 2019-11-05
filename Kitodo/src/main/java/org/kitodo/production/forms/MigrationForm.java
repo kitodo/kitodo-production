@@ -233,31 +233,8 @@ public class MigrationForm extends BaseForm {
      */
     public String convertTasksToWorkflow(String tasks) {
         currentTasks = tasks;
-
-        try {
-            if (workflowAlreadyExist()) {
-                PrimeFaces.current().executeScript("PF('confirmWorkflowPopup').show();");
-                return this.stayOnCurrentPage;
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
-                e);
-            return this.stayOnCurrentPage;
-        }
-        return createNewWorkflow();
-    }
-
-    private boolean workflowAlreadyExist() throws DAOException {
-        List<Task> processTasks = aggregatedProcesses.get(currentTasks).get(0).getTasks();
-        List<Template> allTemplates = ServiceManager.getTemplateService().getAll();
-        for (Template template : allTemplates) {
-            if (migrationService.tasksAreEqual(template.getTasks(), processTasks)) {
-                workflowToUse = template.getWorkflow();
-                return true;
-            }
-        }
-        return false;
-
+        PrimeFaces.current().executeScript("PF('confirmWorkflowPopup').show();");
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -389,5 +366,27 @@ public class MigrationForm extends BaseForm {
                 e);
         }
         templatesToCreate.remove(template);
+    }
+
+    public List<Workflow> getAllWorkflows() {
+        return ServiceManager.getWorkflowService().getAllActiveWorkflows();
+    }
+
+    /**
+     * Get workflowToUse.
+     *
+     * @return value of workflowToUse
+     */
+    public Workflow getWorkflowToUse() {
+        return workflowToUse;
+    }
+
+    /**
+     * Set workflowToUse.
+     *
+     * @param workflowToUse as org.kitodo.data.database.beans.Workflow
+     */
+    public void setWorkflowToUse(Workflow workflowToUse) {
+        this.workflowToUse = workflowToUse;
     }
 }

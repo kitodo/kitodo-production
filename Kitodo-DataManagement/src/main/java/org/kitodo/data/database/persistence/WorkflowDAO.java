@@ -44,6 +44,10 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
             offset, size);
     }
 
+    public List<Workflow> getAllActive() {
+        return getByQuery("FROM Workflow WHERE status = 'ACTIVE'");
+    }
+
     @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Workflow.class, id);
