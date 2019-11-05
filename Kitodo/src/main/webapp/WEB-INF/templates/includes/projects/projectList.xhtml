@@ -79,7 +79,9 @@
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:commandLink>
 
-                <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
+                <h:link rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
+                    <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
+                </h:link>
 
                 <p:commandLink id="deleteProject"
                                action="#{ProjectForm.delete}"
