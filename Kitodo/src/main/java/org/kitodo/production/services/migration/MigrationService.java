@@ -176,7 +176,11 @@ public class MigrationService {
      * @throws DataException is thrown if database access fails
      */
     public void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
-        for (Process process : processesToAddToTemplate) {
+        int numberOfProcesses = processesToAddToTemplate.size();
+        for (int currentProcess = 0; currentProcess < numberOfProcesses; currentProcess++) {
+            Process process = processesToAddToTemplate.get(currentProcess);
+            logger.trace("Assigning template \"{}\" to process \"{}\" ({}% complete)", template.getTitle(),
+                process.getTitle(), 100 * currentProcess / numberOfProcesses);
             process.setTemplate(template);
             ServiceManager.getProcessService().save(process);
         }
