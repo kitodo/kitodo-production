@@ -35,6 +35,7 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.MigrationTask;
@@ -42,6 +43,7 @@ import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
+import org.kitodo.production.workflow.model.Converter;
 import org.primefaces.PrimeFaces;
 
 @Named("MigrationForm")
@@ -375,6 +377,14 @@ public class MigrationForm extends BaseForm {
      *            The template to create.
      */
     public void createNewTemplate(Template template) {
+        try {
+            Converter converter = new Converter(template.getWorkflow().getTitle());
+            converter.convertWorkflowToTemplate(template);
+        } catch (IOException | DAOException | WorkflowException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
+
         List<Process> processesToAddToTemplate = templatesToCreate.get(template);
         try {
             ServiceManager.getTemplateService().save(template);
