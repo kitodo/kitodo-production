@@ -223,7 +223,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         div.setLABEL(super.getLabel());
         div.setORDERLABEL(super.getOrderlabel());
         div.setTYPE(super.getType());
-        smLinkData.addAll(super.getViews().parallelStream().map(View::getMediaUnit).map(mediaUnitIDs::get)
+        smLinkData.addAll(super.getViews().stream().map(View::getMediaUnit).map(mediaUnitIDs::get)
                 .map(mediaUnitId -> Pair.of(metsReferrerId, mediaUnitId)).collect(Collectors.toList()));
 
         Optional<MdSecType> optionalDmdSec = createMdSec(super.getMetadata(), MdSec.DMD_SEC);
