@@ -48,15 +48,23 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form id="templateActionForm">
+
+                    <p:commandLink id="createProcessFromTemplate"
+                                   title="#{msgs['createNewProcess']}"
+                                   action="#{SelectProjectDialogView.createProcessForTemplate(0, item.id)}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                        <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
+                    </p:commandLink>
+
                     <h:link id="viewTemplate" outcome="templateEdit" title="#{msgs.view}"
                             rendered="#{SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate()}">
-                        <i class="fa fa-eye fa-lg"/>
+                        <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
                     <h:link id="editTemplate" outcome="templateEdit" title="#{msgs.edit}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditTemplate()}">
-                        <i class="fa fa-pencil-square-o fa-lg"/>
+                        <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
@@ -122,4 +130,5 @@
         </p:rowExpansion>
 
     </p:dataTable>
+    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/selectProject.xhtml"/>
 </ui:composition>

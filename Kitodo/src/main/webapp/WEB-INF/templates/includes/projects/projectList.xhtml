@@ -59,18 +59,26 @@
         <p:column headerText="#{msgs.actions}"
                   styleClass="actionsColumn">
             <h:form id="projectActionForm">
+
+                <p:commandLink id="createProcessFromTemplate"
+                               title="#{msgs['createNewProcess']}"
+                               action="#{SelectTemplateDialogView.createProcessForProject(item.id, 0)}"
+                               rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                    <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
+                </p:commandLink>
+
                 <h:link id="viewProject" rendered="#{SecurityAccessController.hasAuthorityToViewProject() and not SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.view}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
-                    <i class="fa fa-eye fa-lg"/>
+                    <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                 </h:link>
 
                 <h:link id="editProject" rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.edit}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
-                    <i class="fa fa-pencil-square-o fa-lg"/>
+                    <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
 
                 <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
@@ -136,4 +144,5 @@
         </p:rowExpansion>
 
     </p:dataTable>
+    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/selectTemplate.xhtml"/>
 </ui:composition>
