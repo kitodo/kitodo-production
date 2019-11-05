@@ -44,10 +44,10 @@ metadataEditor.dragdrop = {
 
 metadataEditor.shortcuts = {
     KEYS: {
-        HELP: 191, // "?"
-        STRUCTURED_VIEW: 83, // "S"
-        UNSTRUCTURED_VIEW: 85, // "U"
-        DETAIL_VIEW: 68 // "D"
+        HELP: "?",
+        STRUCTURED_VIEW: "s",
+        UNSTRUCTURED_VIEW: "u",
+        DETAIL_VIEW: "d"
     },
     changeView(event, galleryViewMode) {
         let currentGalleryViewMode = $("#imagePreviewForm\\:galleryViewMode ").text().toUpperCase();
@@ -58,8 +58,8 @@ metadataEditor.shortcuts = {
     },
     listen() {
         $(document).on("keydown.shortcuts", function (event) {
-            if (event.metaKey ||event.ctrlKey) {
-                switch (event.keyCode) {
+            if (event.metaKey || event.ctrlKey) {
+                switch (event.key) {
                     case metadataEditor.shortcuts.KEYS.STRUCTURED_VIEW:
                         metadataEditor.shortcuts.changeView(event, "LIST");
                         break;
@@ -71,7 +71,7 @@ metadataEditor.shortcuts = {
                         break;
                 }
             } else if (!(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA")
-                && event.keyCode === metadataEditor.shortcuts.KEYS.HELP) {
+                && event.key === metadataEditor.shortcuts.KEYS.HELP) {
                 PF('helpDialog').show();
             }
         });
