@@ -284,7 +284,8 @@ a.plain.ui-state-disabled,
 .ui-button.ui-state-disabled,
 .ui-commandlink:disabled,
 .ui-commandlink.disabled,
-.ui-commandlink.ui-state-disabled {
+.ui-commandlink.ui-state-disabled,
+.actionsColumn span.ui-state-disabled {
     color: var(--medium-gray);
     cursor: default;
     opacity: initial;

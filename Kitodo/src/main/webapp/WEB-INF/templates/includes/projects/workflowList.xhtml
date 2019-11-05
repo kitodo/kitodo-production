@@ -41,25 +41,37 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form>
-                    <h:link id="viewWorkflow" outcome="workflowEdit" title="#{msgs.view}"
-                            rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow() and item.status eq 'active')}">
-                        <i class="fa fa-eye fa-lg"/>
+                    <h:link id="viewWorkflow"
+                            outcome="workflowEdit"
+                            title="#{msgs.view}"
+                            disabled="#{item.status ne 'active'}"
+                            styleClass="#{item.status ne 'active' ? 'ui-state-disabled' : ''}"
+                            rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow())}">
+                        <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:link id="editWorkflow" outcome="workflowEdit" title="#{msgs.edit}"
-                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow() and item.status eq 'draft'}">
-                        <i class="fa fa-pencil-square-o fa-lg"/>
+                    <h:link id="editWorkflow"
+                            outcome="workflowEdit"
+                            title="#{msgs.edit}"
+                            disabled="#{item.status ne 'draft'}"
+                            styleClass="#{item.status ne 'draft' ? 'ui-state-disabled' : ''}"
+                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
+                        <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" title="#{msgs.duplicateWorkflow}"
+                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}"
+                                   title="#{msgs.duplicateWorkflow}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
 
-                    <p:commandLink id="archiveWorkflow" action="#{WorkflowForm.archive}" title="#{msgs.archive}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow() and item.status eq 'active'}"
+                    <p:commandLink id="archiveWorkflow"
+                                   action="#{WorkflowForm.archive}"
+                                   title="#{msgs.archive}"
+                                   disabled="#{item.status ne 'active'}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}"
                                    update="projectsTabView:workflowTable">
                         <h:outputText><i class="fa fa-archive"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
