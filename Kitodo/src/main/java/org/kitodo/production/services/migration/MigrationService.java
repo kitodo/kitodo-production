@@ -180,7 +180,6 @@ public class MigrationService {
             process.setTemplate(template);
             ServiceManager.getProcessService().save(process);
         }
-        template.getProcesses().addAll(processesToAddToTemplate);
         ServiceManager.getTemplateService().save(template);
     }
 }

@@ -135,6 +135,10 @@ public class WorkflowForm extends BaseForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
+        if (migration && WorkflowStatus.DRAFT.equals(this.workflow.getStatus())) {
+            Helper.setErrorMessage(Helper.getTranslation("errorMigrationDraft"));
+            return this.stayOnCurrentPage;
+        }
         try {
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
@@ -150,7 +154,8 @@ public class WorkflowForm extends BaseForm {
             Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         } catch (WorkflowException e) {
-            Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle(), e.getMessage() }, logger, e);
+            Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle(), e.getMessage() }, logger,
+                e);
             return this.stayOnCurrentPage;
         }
     }
