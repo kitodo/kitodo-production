@@ -139,6 +139,7 @@
                             <p:outputLabel for="ldapServer" value="#{msgs.ldapServer}"/>
                             <p:selectOneMenu id="ldapServer" converter="#{ldapServerConverter}"
                                              value="#{LdapGroupForm.myLdapGruppe.ldapServer}">
+                                <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.notSelected} --" noSelectionOption="true"/>
                                 <f:selectItems value="#{LdapServerForm.ldapServers}" var="ldapServer"
                                                itemValue="#{ldapServer}" itemLabel="#{ldapServer.title}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
