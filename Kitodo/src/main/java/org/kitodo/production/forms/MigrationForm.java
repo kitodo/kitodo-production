@@ -99,9 +99,21 @@ public class MigrationForm extends BaseForm {
         List<Process> processList = new ArrayList<>();
         aggregatedProcesses.clear();
         for (Project project : selectedProjects) {
+            logger.trace("Listing processes from project \"{}\"...", project.getTitle());
             processList.addAll(project.getProcesses());
         }
-        for (Process process : processList) {
+        int numberOfProcesses = processList.size();
+        long lastSystemSecond = System.nanoTime() / 1_000_000_000;
+        for (int currentProcess = 0; currentProcess < processList.size(); currentProcess++) {
+            Process process = processList.get(currentProcess);
+            if (logger.isTraceEnabled()) {
+                long currentSystemSecond = System.nanoTime() / 1_000_000_000;
+                if (currentSystemSecond != lastSystemSecond) {
+                    lastSystemSecond = currentSystemSecond;
+                    logger.trace("Analyzing process {}/{} ({}% done)", currentProcess, numberOfProcesses,
+                        100 * currentProcess / numberOfProcesses);
+                }
+            }
             if (Objects.isNull(process.getTemplate())) {
                 addToAggregatedProcesses(aggregatedProcesses, process);
             }
