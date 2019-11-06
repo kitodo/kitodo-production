@@ -44,7 +44,7 @@
                              style="margin: 0 10px;"
                              action="#{MigrationForm.convertMetadata()}"
                              oncomplete="alert('#{msgs.migrateMetadataHint}');"/>
-            <p:commandButton value="#{msgs.migrateProjects}"
+            <p:commandButton value="#{msgs.listProcesses}"
                              id="migrateProject"
                              rendered="#{MigrationForm.workflowShown}"
                              update="systemTabView:migrationForm"
