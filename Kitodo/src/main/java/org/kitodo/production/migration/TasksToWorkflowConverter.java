@@ -94,12 +94,12 @@ public class TasksToWorkflowConverter {
     private void saveFile(String title, String fileContent) throws IOException {
         FileService fileService = ServiceManager.getFileService();
         URI xmlDiagramURI = new File(ConfigCore.getKitodoDiagramDirectory() + title + ".bpmn20.xml").toURI();
-        if(fileService.fileExist(xmlDiagramURI)){
-           fileService.delete(xmlDiagramURI) ;
+        if (fileService.fileExist(xmlDiagramURI)) {
+            fileService.delete(xmlDiagramURI);
         }
 
         try (OutputStream outputStream = fileService.write(xmlDiagramURI);
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(fileContent);
         }
     }

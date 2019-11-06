@@ -32,12 +32,12 @@ public class MigrationTask extends EmptyTask {
     /**
      * Service who has to migrate the processes.
      */
-    final private MigrationService migrationService;
+    private final MigrationService migrationService;
 
     /**
      * List of processes to be migrated.
      */
-    final private List<Process> processes;
+    private final List<Process> processes;
 
     /**
      * Migration progress. Points to the index of the next process in case the
