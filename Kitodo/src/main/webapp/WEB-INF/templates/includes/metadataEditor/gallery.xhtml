@@ -45,6 +45,7 @@
                                      icon="fa fa-th-large"
                                      oncomplete="destruct()"
                                      title="#{msgs['dataEditor.galleryUnstructuredView']}"
+                                     rendered="false"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="grid" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
