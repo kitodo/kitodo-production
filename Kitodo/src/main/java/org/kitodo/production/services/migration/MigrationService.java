@@ -128,6 +128,7 @@ public class MigrationService {
                 template.setRuleset(process.getRuleset());
                 template.setWorkflow(workflowToUse);
                 template.setClient(process.getProject().getClient());
+                template.setProjects(Arrays.asList(process.getProject()));
                 newTemplates.put(template, new ArrayList<>(Arrays.asList(process)));
             }
         }
@@ -174,11 +175,16 @@ public class MigrationService {
      * @throws DataException is thrown if database access fails
      */
     public void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
-        for (Process process : processesToAddToTemplate) {
+        int numberOfProcesses = processesToAddToTemplate.size();
+        for (int currentProcess = 0; currentProcess < numberOfProcesses; currentProcess++) {
+            Process process = processesToAddToTemplate.get(currentProcess);
+            logger.trace("Assigning template \"{}\" to process \"{}\" ({}% complete)", template.getTitle(),
+                process.getTitle(), 100 * currentProcess / numberOfProcesses);
             process.setTemplate(template);
             ServiceManager.getProcessService().save(process);
         }
         template.getProcesses().addAll(processesToAddToTemplate);
+        template.getProjects().add(processesToAddToTemplate.get(0).getProject());
         ServiceManager.getTemplateService().save(template);
     }
 }

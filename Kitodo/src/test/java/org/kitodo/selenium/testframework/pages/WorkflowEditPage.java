@@ -64,10 +64,9 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
         return this;
     }
 
-    public WorkflowEditPage changeWorkflowStatusToActive(){
+    public void changeWorkflowStatusToActive(){
         workflowStatusInput.click();
         activeOption.click();
-        return this;
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
@@ -82,5 +81,9 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
 
     public String getWorkflowTitle() {
         return fileInput.getAttribute("value");
+    }
+
+    public void changeWorkflowTitle(String workflowTitle) {
+        fileInput.sendKeys(workflowTitle);
     }
 }

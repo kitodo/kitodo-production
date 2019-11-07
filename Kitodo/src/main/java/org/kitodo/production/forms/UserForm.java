@@ -132,7 +132,7 @@ public class UserForm extends BaseForm {
     public String save() {
         String login = this.userObject.getLogin();
 
-        if (!isLoginValid(login)) {
+        if (!isUserExistingOrLoginValid(login)) {
             Helper.setErrorMessage("loginNotValid", new Object[] {login });
             return this.stayOnCurrentPage;
         }
@@ -164,8 +164,8 @@ public class UserForm extends BaseForm {
         }
     }
 
-    private boolean isLoginValid(String inLogin) {
-        return userService.isLoginValid(inLogin);
+    private boolean isUserExistingOrLoginValid(String login) {
+        return Objects.nonNull(userObject.getId()) || userService.isLoginValid(login);
     }
 
     private boolean isMissingClient() {

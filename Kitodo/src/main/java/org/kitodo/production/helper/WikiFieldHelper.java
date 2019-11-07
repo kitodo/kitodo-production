@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -238,6 +240,9 @@ public class WikiFieldHelper {
         <font color="#FF0000">Jun 16, 2016 1:12:58 PM: Korrektur fÃ¼r Schritt Scannen: bla bla bla.. (Admin, test)</font><br/>
         <font color="#006600">Jun 17, 2016 10:36:43 AM: bla bla (Admin, test)</font><br/>
         <font color="#0033CC">Jun 17, 2016 10:40:43 AM: bla bla (Admin, test)</font>
+
+       Another existing format, with German-style formatted date:
+       <font color="#FF0000">06.04.2017 09:38:58: bla bla (User, Example)</font><br/>
     */
     private static void transformOldFormatWikifieldToComments(Document document, Process process) {
         Element root = document.getDocumentElement();
@@ -308,9 +313,15 @@ public class WikiFieldHelper {
     }
 
     private static Date getCreationDateOld(String message) {
-        int index = message.contains("PM") ? message.indexOf("PM") : message.indexOf("AM");
-        String date = message.substring(0, index + 2);
         try {
+            Pattern pattern = Pattern.compile("^\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}:\\d{2}(?=: )");
+            Matcher matcher = pattern.matcher(message);
+            if (matcher.find()) {
+                return new SimpleDateFormat("dd.MM.yyy hh:mm:ss").parse(matcher.group());
+            }
+
+            int index = message.contains("PM") ? message.indexOf("PM") : message.indexOf("AM");
+            String date = message.substring(0, index + 2);
             DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy h:mm:ss a", Locale.ENGLISH);
             return dateFormat.parse(date);
         } catch (ParseException e) {

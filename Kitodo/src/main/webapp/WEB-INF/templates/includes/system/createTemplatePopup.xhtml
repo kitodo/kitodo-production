@@ -13,7 +13,7 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
     <!-- edit dialog -->
     <p:dialog id="createTemplatePopup"
               widgetVar="createTemplatePopup"
@@ -45,7 +45,7 @@
                 </p:column>
                 <p:column headerText="#{msgs.existingTemplate}"
                           styleClass="actionsColumn">
-                    <p:panelGrid render="#{existingTemplate ne null}" columns="2">
+                    <p:panelGrid id="existingTemplates" rendered="#{existingTemplate ne null}" columns="2">
                         <h:outputText value="#{msgs.title}"/>
                         <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.title}"/>
                         <h:outputText value="#{msgs.docket}"/>
@@ -54,7 +54,8 @@
                         <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.ruleset.title}"/>
                         <h:outputText value="#{msgs.workflow}"/>
                         <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.workflow.title}"/>
-                        <p:commandButton action="#{MigrationForm.useExistingTemplate(template,existingTemplate)}"
+                        <p:commandButton process="@this existingTemplates"
+                                         action="#{MigrationForm.useExistingTemplate(template,existingTemplate)}"
                                          value="#{msgs.useExistingTemplate}"
                                          icon="fa fa-floppy-o fa-lg"
                                          iconPos="right"
@@ -67,10 +68,13 @@
                           styleClass="dialogButtonWrapper">
                 <p:commandButton id="close"
                                  onclick="PF('createTemplatePopup').hide();"
+                                 update="systemTabView:migrationForm:aggregatedTasksTable"
                                  value="#{msgs.close}"
                                  icon="fa fa-times fa-lg"
                                  iconPos="right"
-                                 styleClass="secondary right close"/>
+                                 styleClass="secondary right close">
+                    <f:actionListener binding="#{MigrationForm.showAggregatedProcesses()}"/>
+                </p:commandButton>
             </h:panelGroup>
         </h:form>
     </p:dialog>
