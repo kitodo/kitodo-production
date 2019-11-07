@@ -229,12 +229,10 @@ public class MigrationForm extends BaseForm {
      *
      * @param tasks
      *            the list of tasks found in the projects
-     * @return a navigation path
      */
-    public String convertTasksToWorkflow(String tasks) {
+    public void convertTasksToWorkflow(String tasks) {
         currentTasks = tasks;
         PrimeFaces.current().executeScript("PF('confirmWorkflowPopup').show();");
-        return this.stayOnCurrentPage;
     }
 
     /**
@@ -368,6 +366,10 @@ public class MigrationForm extends BaseForm {
         templatesToCreate.remove(template);
     }
 
+    /**
+     * Gets all workflows, possible to use in migration.
+     * @return A list of workflows.
+     */
     public List<Workflow> getAllWorkflows() {
         return ServiceManager.getWorkflowService().getAllActiveWorkflows();
     }
