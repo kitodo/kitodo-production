@@ -40,7 +40,6 @@ public class KitodoScriptService {
     private Map<String, String> parameters;
     private static final Logger logger = LogManager.getLogger(KitodoScriptService.class);
     private final FileService fileService = ServiceManager.getFileService();
-    private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
     private static final String RULESET = "ruleset";
     private static final String SCRIPT = "script";
     private static final String SOURCE_FOLDER = "sourcefolder";
@@ -63,7 +62,7 @@ public class KitodoScriptService {
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
             if (Objects.isNull(tok) || !tok.contains(":")) {
-                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing delimiter / unknown parameter: ", tok);
+                Helper.setErrorMessage("missing delimiter / unknown parameter: ", tok);
             } else {
                 String key = tok.substring(0, tok.indexOf(':'));
                 String value = tok.substring(tok.indexOf(':') + 1);
@@ -73,7 +72,7 @@ public class KitodoScriptService {
 
         // pass the appropriate method with the correct parameters
         if (Objects.isNull(this.parameters.get("action"))) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing action",
+            Helper.setErrorMessage("missing action",
                 " - possible: 'action:addRole, action:setTaskProperty, action:setStepStatus, "
                         + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                         + "action:importFromFileSystem'");
@@ -81,7 +80,7 @@ public class KitodoScriptService {
         }
 
         if (executeScript(processes)) {
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "", "kitodoScript finished");
+            Helper.setMessage("kitodoScript finished");
         }
     }
 
@@ -124,7 +123,7 @@ public class KitodoScriptService {
                 String taskName = this.parameters.get("stepname");
                 String scriptName = this.parameters.get(SCRIPT);
                 if (Objects.isNull(scriptName)) {
-                    Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "", "Missing parameter");
+                    Helper.setErrorMessage("Missing parameter");
                     return false;
                 } else {
                     runScript(processes, taskName, scriptName);
@@ -139,7 +138,7 @@ public class KitodoScriptService {
                 deleteProcess(processes, contentOnly);
                 break;
             default:
-                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown action",
+                Helper.setErrorMessage("Unknown action",
                     " - use: 'action:addRole, action:setTaskProperty, action:setStepStatus, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
@@ -153,12 +152,12 @@ public class KitodoScriptService {
             try {
                 LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 fileService.writeMetadataFile(rdf, process);
-                Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
+                Helper.setMessage("ContentFiles updated: ", process.getTitle());
             } catch (IOException | RuntimeException e) {
-                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating content files", logger, e);
+                Helper.setErrorMessage("Error while updating content files", logger, e);
             }
         }
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "updateContentFiles finished");
+        Helper.setMessage("updateContentFiles finished");
     }
 
     private void deleteProcess(List<Process> processes, boolean contentOnly) {
@@ -226,7 +225,7 @@ public class KitodoScriptService {
         URI sourceFolder = new File(this.parameters.get(SOURCE_FOLDER)).toURI();
         try {
             if (!fileService.isDirectory(sourceFolder)) {
-                Helper.setErrorMessage(KITODO_SCRIPT_FIELD,
+                Helper.setErrorMessage(
                     "Directory " + this.parameters.get(SOURCE_FOLDER) + " does not exisist");
                 return;
             }
@@ -235,19 +234,19 @@ public class KitodoScriptService {
                 String processTitle = process.getTitle();
                 URI imagesFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, process);
                 if (!fileService.getSubUris(imagesFolder).isEmpty()) {
-                    Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
+                    Helper.setErrorMessage(
                         "The process " + processTitle + " [" + processId + "] has already data in image folder");
                 } else {
                     URI sourceFolderProcess = fileService.createResource(sourceFolder, processTitle);
                     if (!fileService.isDirectory(sourceFolder)) {
-                        Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
+                        Helper.setErrorMessage(
                             "The directory for process " + processTitle + " [" + processId + "] is not existing");
                     } else {
                         fileService.copyDirectory(sourceFolderProcess, imagesFolder);
-                        Helper.setMessage(KITODO_SCRIPT_FIELD, "",
+                        Helper.setMessage(
                             "The directory for process " + processTitle + " [" + processId + "] is copied");
                     }
-                    Helper.setMessage(KITODO_SCRIPT_FIELD, "",
+                    Helper.setMessage(
                         "The process " + processTitle + " [" + processId + "] is copied");
                 }
             }
@@ -271,7 +270,7 @@ public class KitodoScriptService {
             List<Ruleset> rulesets = ServiceManager.getRulesetService()
                     .getByQuery("from Ruleset where title='" + this.parameters.get(RULESET) + "'");
             if (rulesets.isEmpty()) {
-                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Could not find ruleset: ", RULESET);
+                Helper.setErrorMessage("Could not find ruleset: ", RULESET);
                 return;
             }
             Ruleset ruleset = rulesets.get(0);
@@ -299,7 +298,7 @@ public class KitodoScriptService {
         }
 
         executeActionForAddShellToScript(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addShellScriptToStep finished: ");
+        Helper.setMessage("addShellScriptToStep finished: ");
     }
 
     private void executeActionForAddShellToScript(List<Process> processes) {
@@ -309,7 +308,7 @@ public class KitodoScriptService {
                     task.setScriptPath(this.parameters.get(SCRIPT));
                     task.setScriptName(this.parameters.get("label"));
                     saveProcess(process);
-                    Helper.setMessage(KITODO_SCRIPT_FIELD, "Added script to step: ", process.getTitle());
+                    Helper.setMessage("Added script to step: ", process.getTitle());
                     break;
                 }
             }
@@ -334,19 +333,19 @@ public class KitodoScriptService {
         if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages")
                 && !property.equals("validate") && !property.equals("exportdms") && !property.equals("batch")
                 && !property.equals("automatic")) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
+            Helper.setErrorMessage(
                 "wrong parameter 'property'; possible values: metadata, readimages, writeimages, "
                         + "validate, exportdms");
             return;
         }
 
         if (!value.equals("true") && !value.equalsIgnoreCase(String.valueOf(Boolean.FALSE))) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "wrong parameter 'value'; possible " + "values: true, false");
+            Helper.setErrorMessage("wrong parameter 'value'; possible " + "values: true, false");
             return;
         }
 
         executeActionForSetTaskProperty(processes, property, value);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "setTaskProperty abgeschlossen: ");
+        Helper.setMessage("setTaskProperty abgeschlossen: ");
     }
 
     private void executeActionForSetTaskProperty(List<Process> processes, String property, String value) {
@@ -380,7 +379,7 @@ public class KitodoScriptService {
                     }
 
                     saveProcess(process);
-                    Helper.setMessage(KITODO_SCRIPT_FIELD, "Error while saving process: ", process.getTitle());
+                    Helper.setMessage("Error while saving process: ", process.getTitle());
                     break;
                 }
             }
@@ -400,13 +399,13 @@ public class KitodoScriptService {
 
         if (!this.parameters.get(STATUS).equals("0") && !this.parameters.get(STATUS).equals("1")
                 && !this.parameters.get(STATUS).equals("2") && !this.parameters.get(STATUS).equals("3")) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Wrong status parameter: status ",
+            Helper.setErrorMessage("Wrong status parameter: status ",
                 "(possible: 0=closed, 1=open, 2=in work, 3=finished");
             return;
         }
 
         executeActionForSetTaskStatus(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "setStepStatus finished: ");
+        Helper.setMessage("setStepStatus finished: ");
     }
 
     private void executeActionForSetTaskStatus(List<Process> processes) {
@@ -417,7 +416,7 @@ public class KitodoScriptService {
                             .getStatusFromValue(Integer.valueOf(this.parameters.get(STATUS)));
                     task.setProcessingStatus(newTaskStatus);
                     saveTask(process.getTitle(), task);
-                    Helper.setMessage(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
+                    Helper.setMessage("stepstatus set in process: ", process.getTitle());
                     break;
                 }
             }
@@ -442,12 +441,12 @@ public class KitodoScriptService {
         if (!foundRoles.isEmpty()) {
             role = foundRoles.get(0);
         } else {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown role: ", this.parameters.get(ROLE));
+            Helper.setErrorMessage("Unknown role: ", this.parameters.get(ROLE));
             return;
         }
 
         executeActionForAddRole(processes, role);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addRole finished");
+        Helper.setMessage("addRole finished");
     }
 
     private void executeActionForAddRole(List<Process> processes, Role role) {
@@ -461,7 +460,7 @@ public class KitodoScriptService {
                     }
                 }
             }
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "added role to task: ", process.getTitle());
+            Helper.setMessage("added role to task: ", process.getTitle());
         }
     }
 
@@ -478,12 +477,12 @@ public class KitodoScriptService {
                 if (tiffHeaderFile.exists()) {
                     Files.delete(tiffHeaderFile.toPath());
                 }
-                Helper.setMessage(KITODO_SCRIPT_FIELD, "TiffHeaderFile deleted: ", process.getTitle());
+                Helper.setMessage("TiffHeaderFile deleted: ", process.getTitle());
             } catch (IOException | RuntimeException e) {
-                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while deleting TiffHeader", logger, e);
+                Helper.setErrorMessage("Error while deleting TiffHeader", logger, e);
             }
         }
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "deleteTiffHeaderFile finished");
+        Helper.setMessage("deleteTiffHeaderFile finished");
     }
 
     private void exportDms(List<Process> processes, String exportImages) {
@@ -500,7 +499,7 @@ public class KitodoScriptService {
 
     private boolean isActionParameterInvalid(String parameter) {
         if (Objects.isNull(this.parameters.get(parameter)) || Objects.equals(this.parameters.get(parameter), "")) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing parameter: ", parameter);
+            Helper.setErrorMessage("missing parameter: ", parameter);
             return true;
         }
         return false;
@@ -510,7 +509,7 @@ public class KitodoScriptService {
         try {
             ServiceManager.getProcessService().save(process);
         } catch (DataException e) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while saving process: " + process.getTitle(), logger, e);
+            Helper.setErrorMessage("Error while saving process: " + process.getTitle(), logger, e);
         }
     }
 
@@ -518,7 +517,7 @@ public class KitodoScriptService {
         try {
             ServiceManager.getTaskService().save(task);
         } catch (DataException e) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while saving - " + processTitle, logger, e);
+            Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
         }
     }
 }
