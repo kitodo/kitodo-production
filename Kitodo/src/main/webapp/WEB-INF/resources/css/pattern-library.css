@@ -76,9 +76,14 @@ a.ui-state-hover i {
     color: var(--focused-blue);
 }
 
-a.disabled i {
+a.disabled i,
+span.disabled i {
     color: var(--medium-gray);
     cursor: default;
+}
+
+span.disabled {
+    pointer-events: auto;
 }
 
 .ui-state-error {

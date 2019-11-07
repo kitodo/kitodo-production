@@ -45,7 +45,7 @@
                             outcome="workflowEdit"
                             title="#{msgs.view}"
                             disabled="#{item.status ne 'active'}"
-                            styleClass="#{item.status ne 'active' ? 'ui-state-disabled' : ''}"
+                            styleClass="#{item.status ne 'active' ? 'disabled' : ''}"
                             rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow())}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
@@ -55,7 +55,7 @@
                             outcome="workflowEdit"
                             title="#{msgs.edit}"
                             disabled="#{item.status ne 'draft'}"
-                            styleClass="#{item.status ne 'draft' ? 'ui-state-disabled' : ''}"
+                            styleClass="#{item.status ne 'draft' ? 'disabled' : ''}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
@@ -71,9 +71,10 @@
                                    action="#{WorkflowForm.archive}"
                                    title="#{msgs.archive}"
                                    disabled="#{item.status ne 'active'}"
+                                   styleClass="#{item.status ne 'active' ? 'disabled' : ''}"
                                    rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}"
                                    update="projectsTabView:workflowTable">
-                        <h:outputText><i class="fa fa-archive"/></h:outputText>
+                        <h:outputText title="#{msgs.archive}"><i class="fa fa-archive"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
                         <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmArchiveWorkflow}"
                                    icon="ui-icon-alert"/>
