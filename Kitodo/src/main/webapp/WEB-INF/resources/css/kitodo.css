@@ -1780,6 +1780,12 @@ Column content
     width: 75px;
 }
 
+.thumbnail-container > .ui-widget-content {
+    height: 100%;
+    padding: 0;
+    width: 100%;
+}
+
 .thumbnail-container .assigned-several-times {
     bottom: 5px;
     color: var(--pure-white);

@@ -43,6 +43,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -86,14 +87,11 @@ public class GalleryPanel {
     private MediaVariant mediaViewVariant;
     private Map<String, GalleryMediaContent> previewImageResolver = new HashMap<>();
     private MediaVariant previewVariant;
-    private String selectionType = "";
     private Pair<MediaUnit, IncludedStructuralElement> lastSelection;
 
     private List<GalleryStripe> stripes;
 
     private Subfolder previewFolder;
-
-    private boolean isDragged = false;
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -171,14 +169,6 @@ public class GalleryPanel {
     }
 
     /**
-     * Set selectionType sent as request parameter.
-     */
-    public void setSelectionType() {
-        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        selectionType = params.get("selectionType");
-    }
-
-    /**
      * Get list of all logical structure elements for this process.
      *
      * @return List of logical elements
@@ -235,11 +225,9 @@ public class GalleryPanel {
             GalleryMediaContent galleryMediaContent = createGalleryMediaContent(toStripeView);
             toStripe.getMedias().add(galleryMediaContent);
             if (movedViews.contains(toStripeView)) {
-                selectionType = "multi";
-                select(galleryMediaContent, toStripe);
+                select(galleryMediaContent, toStripe, "multi");
             }
         }
-        isDragged = true;
     }
 
     private boolean dragStripeIndexMatches(DragDropEvent event) {
@@ -590,15 +578,48 @@ public class GalleryPanel {
     }
 
     /**
+     * Update the media selection based on the page index, stripe index and pressed modifier keys passed as request parameter.
+     * This method should be called via remoteCommand.
+     */
+    public void select() {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+
+        String selectedMediaUnitOrder = params.get("page");
+        MediaUnit selectedMediaUnit = null;
+        for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnits()) {
+            if (Objects.equals(mediaUnit.getOrder(), Integer.parseInt(selectedMediaUnitOrder))) {
+                selectedMediaUnit = mediaUnit;
+                break;
+            }
+        }
+
+        String parentStripeIndex = params.get("stripe");
+        GalleryStripe parentStripe;
+        try {
+            parentStripe = stripes.get(Integer.parseInt(parentStripeIndex));
+        } catch (NumberFormatException e) {
+            parentStripe = null;
+        }
+
+        GalleryMediaContent currentSelection = getGalleryMediaContent(selectedMediaUnit);
+        String selectionType = params.get("selectionType");
+        select(currentSelection, parentStripe, selectionType);
+
+        if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
+            PrimeFaces.current().executeScript("checkScrollPosition();initializeImage();scrollToSelectedTreeNode()");
+        } else {
+            PrimeFaces.current().executeScript("scrollToSelectedTreeNode()");
+        }
+    }
+
+    /**
      * Update selection based on the passed GalleryMediaContent and selectionType.
      *
      * @param currentSelection the GalleryMediaContent that was clicked
+     * @param parentStripe the GalleryStripe the clicked GalleryMediaContent is part of
+     * @param selectionType the type of selection based on the pressed modifier key
      */
-    public void select(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
-        if (isDragged) {
-            isDragged = false;
-            return;
-        }
+    private void select(GalleryMediaContent currentSelection, GalleryStripe parentStripe, String selectionType) {
         IncludedStructuralElement structureElement;
         if (Objects.nonNull(parentStripe)) {
             structureElement = parentStripe.getStructure();
@@ -627,7 +648,6 @@ public class GalleryPanel {
                 break;
         }
 
-        selectionType = "default";
         lastSelection = new ImmutablePair<>(mediaUnit, structureElement);
         updateStructure(currentSelection);
     }
