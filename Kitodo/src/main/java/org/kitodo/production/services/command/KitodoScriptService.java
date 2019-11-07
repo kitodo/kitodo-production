@@ -241,7 +241,7 @@ public class KitodoScriptService {
                 continue;
             }
             List<String> ungeneratableFolders = new ArrayList<>(folders);
-            boolean all = folders.size() == 1 && folders.get(0).toLowerCase().equals("all");
+            boolean all = folders.size() == 1 && folders.get(0).equalsIgnoreCase("all");
             List<Subfolder> outputs = new ArrayList<>();
             for (Folder folder : process.getProject().getFolders()) {
                 if ((all || folders.contains(folder.getPath())) && !folder.equals(generatorSource)
