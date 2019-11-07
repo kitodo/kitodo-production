@@ -15,14 +15,19 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
@@ -31,10 +36,15 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.tasks.TaskManager;
+import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.image.ImageGenerator;
+import org.kitodo.production.thread.TaskImageGeneratorThread;
 
 public class KitodoScriptService {
     private Map<String, String> parameters;
@@ -140,6 +150,14 @@ public class KitodoScriptService {
                 }
                 deleteProcess(processes, contentOnly);
                 break;
+            case "generateImages":
+                List<String> folders = Arrays.asList(parameters.get("folders").split(","));
+                String images = parameters.get("images").toLowerCase();
+                GenerationMode mode = images.startsWith("missing")
+                        ? images.length() > 7 ? GenerationMode.MISSING_OR_DAMAGED : GenerationMode.MISSING
+                        : GenerationMode.ALL;
+                generateImages(processes, mode, folders);
+                break;
             default:
                 Helper.setErrorMessage("Unknown action",
                     " - use: 'action:addRole, action:setTaskProperty, action:setStepStatus, "
@@ -205,6 +223,54 @@ public class KitodoScriptService {
 
     private void deleteMetadataDirectory(Process process) throws IOException {
         fileService.deleteProcessContent(process);
+    }
+
+
+    private void generateImages(List<Process> processes, GenerationMode generationMode, List<String> folders) {
+        for (Process process : processes) {
+            Folder generatorSource = process.getProject().getGeneratorSource();
+            if (Objects.isNull(generatorSource)) {
+                Helper.setErrorMessage("kitodoScript.generateImages.error.noSourceFolder",
+                    new String[] {process.getTitle(), process.getProject().getTitle() });
+                continue;
+            }
+            Subfolder sourceFolder = new Subfolder(process, generatorSource);
+            if (sourceFolder.listContents().isEmpty()) {
+                Helper.setErrorMessage("kitodoScript.generateImages.error.noSourceFiles",
+                    new String[] {process.getTitle(), sourceFolder.getRelativeDirectoryPath() });
+                continue;
+            }
+            List<String> ungeneratableFolders = new ArrayList<>(folders);
+            boolean all = folders.size() == 1 && folders.get(0).toLowerCase().equals("all");
+            List<Subfolder> outputs = new ArrayList<>();
+            for (Folder folder : process.getProject().getFolders()) {
+                if ((all || folders.contains(folder.getPath())) && !folder.equals(generatorSource)
+                        && (folder.getDerivative().isPresent() || folder.getDpi().isPresent()
+                                || folder.getImageScale().isPresent() || folder.getImageSize().isPresent())) {
+                    outputs.add(new Subfolder(process, folder));
+                    ungeneratableFolders.remove(folder.getPath());
+                }
+            }
+            if (outputs.isEmpty()) {
+                Helper.setErrorMessage("kitodoScript.generateImages.error.noDestination",
+                    new String[] {process.getTitle(), String.join(", ", ungeneratableFolders) });
+                continue;
+            }
+            ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, generationMode, outputs);
+            TaskManager.addTask(new TaskImageGeneratorThread(process.getTitle(), imageGenerator));
+            String generationModeTranslated = Helper
+                    .getTranslation("imageGenerator.generationMode.".concat(generationMode.toString()));
+            String generatableFolders = outputs.stream().map(Subfolder::getFolder).map(Folder::getPath)
+                    .collect(Collectors.joining(", "));
+            if (ungeneratableFolders.isEmpty()) {
+                Helper.setMessage(MessageFormat.format(Helper.getTranslation("kitodoScript.generateImages.ok"),
+                    generationModeTranslated, process.getTitle(), String.join(", ", generatableFolders)));
+            } else {
+                Helper.setMessage(MessageFormat.format(Helper.getTranslation("kitodoScript.generateImages.partitial"),
+                    generationModeTranslated, process.getTitle(), generatableFolders,
+                    String.join(", ", ungeneratableFolders)));
+            }
+        }
     }
 
     private void runScript(List<Process> processes, String taskName, String scriptName) throws DataException {
