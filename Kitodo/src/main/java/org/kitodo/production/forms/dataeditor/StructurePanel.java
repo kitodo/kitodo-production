@@ -446,15 +446,14 @@ public class StructurePanel implements Serializable {
         }
 
         if (Boolean.FALSE.equals(this.isSeparateMedia())) {
-            String page = Helper.getTranslation("page").concat(" ");
             for (View view : structure.getViews()) {
                 if (!viewsShowingOnAChild.contains(view) && Objects.nonNull(view.getMediaUnit())) {
+                    String order = view.getMediaUnit().getOrder() + " : ";
                     if (Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
-                        addTreeNode(page.concat(view.getMediaUnit().getOrderlabel()), false, false, view, parent);
+                        addTreeNode(order + view.getMediaUnit().getOrderlabel(), false, false, view, parent);
                     } else {
-                        addTreeNode(page, false, false, view, parent);
+                        addTreeNode(order + "uncounted", false, false, view, parent);
                     }
-
                     viewsShowingOnAChild.add(view);
                 }
             }
