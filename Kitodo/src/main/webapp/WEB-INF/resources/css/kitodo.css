@@ -2026,7 +2026,8 @@ footer {
 }
 
 .ui-datatable tr td.actionsColumn > a,
-.ui-datatable tr td.actionsColumn > form > a  {
+.ui-datatable tr td.actionsColumn > form > a,
+.ui-datatable tr td.actionsColumn > form > span {
     margin-right: 10px;
 }
 
