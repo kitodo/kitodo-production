@@ -27,9 +27,9 @@
         <h:form id="executeScriptSelectedForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <h3>#{msgs.executeKitodoScript} #{msgs.possibleActionsForSelected}</h3>
+                    <h3>#{msgs.executeKitodoScript}</h3>
                     <h:panelGroup layout="block"
-                                  styleClass="dialogFieldWrapper">
+                                  styleClass="dialogFieldWrapper kitodoScript">
                         <div>
                             <div>
                                 <p:commandButton value="addUser"
@@ -69,6 +69,7 @@
                                                value="#{msgs.script}"/>
                                 <p:inputTextarea id="selectionScriptFieldTextArea"
                                                  value="#{ProcessForm.kitodoScriptSelection}"
+                                                 style="height: 65px; padding: 4px 8px;"
                                                  styleClass="input editDialog"/>
                             </div>
                         </div>
