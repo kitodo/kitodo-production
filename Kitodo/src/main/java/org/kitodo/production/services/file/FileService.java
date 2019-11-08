@@ -171,16 +171,30 @@ public class FileService {
      */
     public URI createProcessLocation(Process process) throws IOException {
         URI processLocationUri = fileManagementModule.createProcessLocation(process.getId().toString());
+        createProcessFolders(process, processLocationUri);
+        return processLocationUri;
+    }
+
+    /**
+     * Creates the folders inside a process location.
+     *
+     * @param process
+     *            the process
+     */
+    public void createProcessFolders(Process process) throws IOException {
+        createProcessFolders(process, fileManagementModule.createUriForExistingProcess(process.getId().toString()));
+    }
+
+    private void createProcessFolders(Process process, URI processLocationUri) throws IOException {
         for (Folder folder : process.getProject().getFolders()) {
+            URI parentFolderUri = processLocationUri;
             if (folder.isCreateFolder()) {
-                URI parentFolderUri = processLocationUri;
                 for (String singleFolder : new Subfolder(process, folder).getRelativeDirectoryPath()
                         .split(Pattern.quote(File.separator))) {
                     parentFolderUri = createMetaDirectory(parentFolderUri, singleFolder);
                 }
             }
         }
-        return processLocationUri;
     }
 
     /**

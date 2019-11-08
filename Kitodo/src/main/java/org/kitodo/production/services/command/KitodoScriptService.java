@@ -94,6 +94,9 @@ public class KitodoScriptService {
             case "addRole":
                 addRole(processes);
                 break;
+            case "createFolders":
+                createFolders(processes);
+                break;
             case "setTaskProperty":
                 setTaskProperty(processes);
                 break;
@@ -159,6 +162,16 @@ public class KitodoScriptService {
             }
         }
         Helper.setMessage(KITODO_SCRIPT_FIELD, "", "updateContentFiles finished");
+    }
+
+    private void createFolders(List<Process> processes) {
+        for (Process process : processes) {
+            try {
+                fileService.createProcessFolders(process);
+            } catch (IOException e) {
+                Helper.setErrorMessage("Error while creating folders", logger, e);
+            }
+        }
     }
 
     private void deleteProcess(List<Process> processes, boolean contentOnly) {
