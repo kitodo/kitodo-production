@@ -13,7 +13,7 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
         <!-- edit dialog -->
         <p:dialog id="confirmWorkflowPopup"
                   widgetVar="confirmWorkflowPopup"
@@ -26,6 +26,11 @@
                     <p:row>
 
                         <div>
+                            <p:panel rendered="#{not empty MigrationForm.allWorkflows}">
+                            <p:selectOneMenu id="allWorkflows" value="#{MigrationForm.workflowToUse}"
+                                             converter="#{workflowConverter}">
+                                <f:selectItems value="#{MigrationForm.allWorkflows}" var="workflow" itemLabel="#{workflow.title}" itemValue="#{workflow}"/>
+                            </p:selectOneMenu>
                             <p:commandButton id="useExistingWorkflow"
                                              value="#{msgs.useExistingWorkflow}"
                                              action="#{MigrationForm.useExistingWorkflow()}"
@@ -34,6 +39,8 @@
                                              styleClass="button-filled-blue"
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
+                            </p:panel>
+                            <h:outputText rendered="#{empty MigrationForm.allWorkflows}" value="#{msgs.noExistingWorkflow}"/>
                         </div>
                         <div>
                             <p:commandButton id="createNewWorkflow"

@@ -139,4 +139,12 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
     public List<Workflow> getAvailableWorkflows() {
         return dao.getAvailableWorkflows(ServiceManager.getUserService().getSessionClientId());
     }
+
+    /**
+     * Get all workflows with status 'active'.
+     * @return a list of active workflows
+     */
+    public List<Workflow> getAllActiveWorkflows() {
+        return dao.getAllActive();
+    }
 }

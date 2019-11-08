@@ -62,4 +62,12 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
             "SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId WHERE w.status = 'ACTIVE'",
             Collections.singletonMap("clientId", clientId));
     }
+
+    /**
+     * Gets all active workflows.
+     * @return A list of workflows with status "active"
+     */
+    public List<Workflow> getAllActive() {
+        return getByQuery("FROM Workflow WHERE status = 'ACTIVE'");
+    }
 }
