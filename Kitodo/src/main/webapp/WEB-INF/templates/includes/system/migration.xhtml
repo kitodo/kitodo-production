@@ -18,10 +18,11 @@
         xmlns:p="http://primefaces.org/ui">
 
     <h:form id="migrationForm">
-        <p:commandButton value="migrate"
+        <p:commandButton value="#{msgs.migrateMetadata}"
                          id="migrateMetadata"
                          update="systemTabView:migrationForm"
                          action="#{MigrationForm.migrateMetadata()}"
+                         style="margin: 10px;"
                          styleClass="primary"/>
         <p:commandButton value="#{msgs.migrateWorkflow}"
                          id="migrateWorkflows"
@@ -30,22 +31,25 @@
                          action="#{MigrationForm.showPossibleProjects()}"
                          immediate="true"/>
         <h:panelGroup rendered="#{MigrationForm.isProjectListShown()}">
-            <h:outputText value="#{msgs.projectsForMigration}"/>
-            <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}">
+            <div style="margin: 0 10px;"><h:outputText value="#{msgs.projectsForMigration}:"/></div>
+            <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}" style="margin: 10px;">
                 <f:selectItems value="#{MigrationForm.allProjects}" var="project" itemLabel="#{project.title}"
                                itemValue="#{project}"/>
             </p:selectManyCheckbox>
-            <p:commandButton value="#{msgs.migrateMetadata}"
+            <p:commandButton value="#{msgs.migrateMetadataOfSelectedProjects}"
                              id="migrate"
                              rendered="#{MigrationForm.metadataShown}"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
-                             action="#{MigrationForm.convertMetadata()}"/>
-            <p:commandButton value="#{msgs.migrateProjects}"
+                             style="margin: 0 10px;"
+                             action="#{MigrationForm.convertMetadata()}"
+                             oncomplete="alert('#{msgs.migrateMetadataHint}');"/>
+            <p:commandButton value="#{msgs.listProcesses}"
                              id="migrateProject"
                              rendered="#{MigrationForm.workflowShown}"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
+                             style="margin: 0 10px 10px;"
                              action="#{MigrationForm.showAggregatedProcesses()}"/>
         </h:panelGroup>
         <h:panelGroup rendered="#{MigrationForm.processListShown}">

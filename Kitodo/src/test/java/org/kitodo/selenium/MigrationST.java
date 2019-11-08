@@ -59,7 +59,7 @@ public class MigrationST extends BaseTestSelenium {
         assertEquals("wrong template", null, process.getTemplate());
         systemPage.startWorkflowMigration();
         systemPage.selectProjects();
-        assertEquals("FinishedClosedProgressOpenLocked", systemPage.getAggregatedTasks(2));
+        assertEquals("Finished, Closed, Progress, Open, Locked", systemPage.getAggregatedTasks(2));
         WorkflowEditPage workflowEditPage = systemPage.createNewWorkflow();
         workflowEditPage.changeWorkflowStatusToActive();
         assertEquals("ChangeME", workflowEditPage.getWorkflowTitle());

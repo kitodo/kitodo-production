@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,12 +108,9 @@ public class MigrationService {
      * @return A string identifying the tasks.
      */
     public String createTaskString(List<Task> processTasks) {
-        String taskString = "";
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
-        for (Task processTask : processTasks) {
-            taskString = taskString.concat(processTask.getTitle());
-        }
-        return taskString.replaceAll("\\s", "").replaceAll("/","");
+        String taskString = processTasks.stream().map(Task::getTitle).collect(Collectors.joining(", "));
+        return taskString;
     }
 
     /**
