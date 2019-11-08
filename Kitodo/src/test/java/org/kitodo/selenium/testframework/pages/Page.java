@@ -189,6 +189,9 @@ public abstract class Page<T> {
             try {
                 await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                         .ignoreExceptions().until(() -> isButtonClicked.test(button));
+                if (Browser.isAlertPresent() && url.contains("login")) {
+                    Browser.getDriver().switchTo().alert().accept();
+                }
                 webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
             } catch (TimeoutException e) {

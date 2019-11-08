@@ -109,6 +109,12 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     public String createProcess() throws Exception {
+        switchToTabByIndex(1);
+        clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_1")));
+        await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isDisplayed.test(processFromTemplateTabView));
+
         switchToTabByIndex(2);
         titleInput.sendKeys("TestProcess");
         titleSortInput.sendKeys("TestProcess");
@@ -133,6 +139,12 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
      * @return generated title
      */
     public String createProcessAsChild(String parentProcessTitle) throws Exception {
+        switchToTabByIndex(1);
+        clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_1")));
+        await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isDisplayed.test(processFromTemplateTabView));
+
         switchToTabByIndex(2);
         titleInput.sendKeys("TestProcessChild");
         titleSortInput.sendKeys("TestProcessChild");

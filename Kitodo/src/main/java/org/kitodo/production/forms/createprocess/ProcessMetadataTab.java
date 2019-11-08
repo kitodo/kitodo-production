@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
@@ -131,7 +132,7 @@ public class ProcessMetadataTab {
             boolean filled = false;
             for (ProcessDetail detail : processDetailList) {
                 if (Objects.nonNull(detail.getMetadataID()) && detail.getMetadataID().equals(nodeName)) {
-                    if (isChild || getProcessDetailValue(detail).isEmpty()) {
+                    if (isChild || StringUtils.isBlank(getProcessDetailValue(detail))) {
                         filled = true;
                         if (node.getLocalName().equals("metadataGroup")
                                 && detail instanceof ProcessFieldedMetadata) {
@@ -229,9 +230,12 @@ public class ProcessMetadataTab {
     private static String getCreator(List<ProcessDetail> processDetailList) {
         String author = "";
         for (ProcessDetail detail : processDetailList) {
-            if (FIRST_NAME.equals(detail.getMetadataID())
-                    || LAST_NAME.equals(detail.getMetadataID())) {
-                author = author.concat(ProcessMetadataTab.getProcessDetailValue(detail));
+            String detailMetadataID = detail.getMetadataID();
+            String detailValue = ProcessMetadataTab.getProcessDetailValue(detail);
+            if ((FIRST_NAME.equals(detailMetadataID)
+                    || LAST_NAME.equals(detailMetadataID))
+                    && Objects.nonNull(detailValue)) {
+                author = author.concat(detailValue);
             }
         }
         return author;

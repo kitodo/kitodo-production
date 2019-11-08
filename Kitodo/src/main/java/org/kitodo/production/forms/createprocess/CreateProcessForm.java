@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -87,6 +89,34 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     @Override
     public RulesetManagementInterface getRuleset() {
         return rulesetManagementInterface;
+    }
+
+    /**
+     * Update ruleset and docType.
+     * @param rulesetFileName as String
+     */
+    public void updateRulesetAndDocType(String rulesetFileName) {
+        setRulesetManagementInterface(rulesetFileName);
+        processDataTab.setAllDocTypes(getAllRulesetDivisions());
+    }
+
+    private void setRulesetManagementInterface(String rulesetFileName) {
+        try {
+            this.rulesetManagementInterface = openRulesetFile(rulesetFileName);
+        } catch (IOException e) {
+            logger.error(e.getLocalizedMessage());
+        }
+    }
+
+    private List<SelectItem> getAllRulesetDivisions() {
+        List<SelectItem> allDocTypes = rulesetManagementInterface
+                .getStructuralElements(priorityList).entrySet()
+                .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+        if (allDocTypes.isEmpty()) {
+            Helper.setErrorMessage("errorLoadingDocTypes");
+        }
+        return allDocTypes;
     }
 
     /**
@@ -307,11 +337,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
-                rulesetManagementInterface = openRulesetFile(getMainProcess().getRuleset().getFile());
+                updateRulesetAndDocType(getMainProcess().getRuleset().getFile());
                 processDataTab.prepare();
                 return true;
             }
-        } catch (ProcessGenerationException | IOException e) {
+        } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return false;
@@ -451,5 +481,19 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
         return ruleset;
+    }
+
+    /**
+     * Initialize the list of created processes.
+     */
+    public void initializeProcesses() {
+        try {
+            ProcessGenerator processGenerator = new ProcessGenerator();
+            processGenerator.generateProcess(template.getId(), project.getId());
+            this.processes = new LinkedList<>(Collections.singletonList(processGenerator.getGeneratedProcess()));
+        } catch (ProcessGenerationException e) {
+            logger.error(e.getLocalizedMessage());
+        }
+        this.processMetadataTab.initializeProcessDetails(workpiece.getRootElement());
     }
 }
