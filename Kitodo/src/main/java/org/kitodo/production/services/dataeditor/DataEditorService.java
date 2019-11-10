@@ -61,7 +61,7 @@ public class DataEditorService {
      * @return list of title metadata keys
      */
     public static List<String> getTitleKeys() {
-        return Arrays.stream(ConfigCore.getParameter(ParameterCore.TITLE_KEYS).split(","))
+        return Arrays.stream(ConfigCore.getParameter(ParameterCore.TITLE_KEYS, "").split(","))
                 .map(String::trim).collect(Collectors.toList());
     }
 }
