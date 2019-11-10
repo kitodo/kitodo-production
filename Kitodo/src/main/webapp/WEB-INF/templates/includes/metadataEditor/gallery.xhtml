@@ -73,7 +73,7 @@
                                 styleClass="pageList"
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
-                        <h:outputText value="#{stripe.label}"
+                        <h:outputText value="#{stripe.label} #{DataEditorForm.getStructureElementTitle(stripe.structure)}"
                                       style="font-weight: bold;"
                                       rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
                         <p:outputPanel deferred="true"

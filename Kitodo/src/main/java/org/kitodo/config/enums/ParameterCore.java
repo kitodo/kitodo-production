@@ -203,7 +203,7 @@ public enum ParameterCore implements ParameterInterface {
 
     /**
      * Sorting of images.
-     * 
+     *
      * <p>
      * Numeric sorting of images. 1 is lesser then 002, compares the number of
      * image names, characters other than digits are not supported.
@@ -336,6 +336,12 @@ public enum ParameterCore implements ParameterInterface {
      * Separators available for double page pagination modes.
      */
     PAGE_SEPARATORS(new Parameter<>("metsEditor.pageSeparators", "\" \"")),
+
+    /**
+     # Priority list of metadata keys used to display title information in the metadata editors structure and gallery
+     panels.
+     */
+    TITLE_KEYS(new Parameter<>("metsEditor.titleMetadata", "")),
 
     /*
      * backup of metadata configuration

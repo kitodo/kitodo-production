@@ -36,6 +36,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -56,6 +58,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
 
 @Named("DataEditorForm")
@@ -674,5 +677,29 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             includedStructuralElement.getViews().removeFirstOccurrence(view);
         }
         view.getMediaUnit().getIncludedStructuralElements().remove(includedStructuralElement);
+    }
+
+    /**
+     * Retrieve and return 'title' value of given Object 'dataObject' if Object is instance of
+     * 'IncludedStructuralElement' and if it does have a title. Uses a configurable list of metadata keys to determine
+     * which metadata keys should be considered.
+     * Return empty string otherwise.
+     *
+     * @param dataObject
+     *          StructureTreeNode containing the IncludedStructuralElement whose title is returned
+     * @return 'title' value of the IncludedStructuralElement contained in the given StructureTreeNode 'treeNode'
+     */
+    public String getStructureElementTitle(Object dataObject) {
+        if (dataObject instanceof IncludedStructuralElement) {
+            IncludedStructuralElement element = (IncludedStructuralElement) dataObject;
+            List<Metadata> titleMetadata = element.getMetadata().stream()
+                    .filter(m -> DataEditorService.getTitleKeys().contains(m.getKey())).collect(Collectors.toList());
+            for (Metadata metadata : titleMetadata) {
+                if (metadata instanceof MetadataEntry) {
+                    return " - " + ((MetadataEntry) metadata).getValue();
+                }
+            }
+        }
+        return "";
     }
 }

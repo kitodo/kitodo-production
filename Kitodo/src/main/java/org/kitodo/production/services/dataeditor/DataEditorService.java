@@ -14,6 +14,9 @@ package org.kitodo.production.services.dataeditor;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 import org.kitodo.config.ConfigCore;
@@ -49,5 +52,16 @@ public class DataEditorService {
 
     private String getXsltFolder() {
         return ConfigCore.getParameter(ParameterCore.DIR_XSLT);
+    }
+
+    /**
+     * Retrieve and return list of metadata keys that are used for displaying title information in the metadata editors
+     * structure and gallery panels from the Kitodo configuration file.
+     *
+     * @return list of title metadata keys
+     */
+    public static List<String> getTitleKeys() {
+        return Arrays.stream(ConfigCore.getParameter(ParameterCore.TITLE_KEYS).split(","))
+                .map(String::trim).collect(Collectors.toList());
     }
 }
