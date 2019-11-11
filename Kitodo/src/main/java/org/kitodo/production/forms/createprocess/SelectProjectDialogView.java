@@ -63,10 +63,10 @@ public class SelectProjectDialogView implements Serializable {
     /**
      * Set selectedProjectId.
      *
-     * @param id as int
+     * @param projectId as int
      */
-    public void setSelectedProjectId(int id) {
-        this.selectedProjectId = id;
+    public void setSelectedProjectId(int projectId) {
+        this.selectedProjectId = projectId;
     }
 
     /**
