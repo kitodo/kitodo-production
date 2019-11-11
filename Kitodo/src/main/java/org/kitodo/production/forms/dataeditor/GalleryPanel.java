@@ -87,7 +87,6 @@ public class GalleryPanel {
     private MediaVariant mediaViewVariant;
     private Map<String, GalleryMediaContent> previewImageResolver = new HashMap<>();
     private MediaVariant previewVariant;
-    private Pair<MediaUnit, IncludedStructuralElement> lastSelection;
 
     private List<GalleryStripe> stripes;
 
@@ -95,10 +94,6 @@ public class GalleryPanel {
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
-    }
-
-    void clear() {
-        lastSelection = null;
     }
 
     String getAcquisitionStage() {
@@ -120,7 +115,11 @@ public class GalleryPanel {
      * @return value of lastSelection
      */
     public Pair<MediaUnit, IncludedStructuralElement> getLastSelection() {
-        return lastSelection;
+        if (dataEditor.getSelectedMedia().size() > 0) {
+            return dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -319,7 +318,6 @@ public class GalleryPanel {
                         if (Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit())) {
                             dataEditor.getSelectedMedia().clear();
                             dataEditor.getSelectedMedia().add(new ImmutablePair<>(mediaUnit, galleryStripe.getStructure()));
-                            lastSelection = new ImmutablePair<>(mediaUnit, galleryStripe.getStructure());
                             break;
                         }
                     }
@@ -332,7 +330,6 @@ public class GalleryPanel {
                         dataEditor.getSelectedMedia().clear();
                         dataEditor.getSelectedMedia().add(new ImmutablePair<>(
                                 mediaUnit, getLogicalStructureOfMedia(galleryMediaContent).getStructure()));
-                        lastSelection = new ImmutablePair<>(mediaUnit, getLogicalStructureOfMedia(galleryMediaContent).getStructure());
                         break;
                     }
                 }
@@ -467,64 +464,116 @@ public class GalleryPanel {
         return null;
     }
 
+    /**
+     * Get a List of all MediaUnits and the IncludedStructuralElements they are assigned to
+     * which are displayed between two selected MediaUnits. This method selects the Stripes that are affected by the selection and delegates
+     * the selection of the contained MediaUnits.
+     * @param first
+     *          First selected MediaUnit. A Pair of the MediaUnit and the IncludedStructuralElement to which the MediaUnit is assigned.
+     * @param last
+     *          Last selected MediaUnit. A Pair of the MediaUnit and the Included StructuralElement to which the MediaUnit is assigned.
+     * @return
+     *          A List of all selected MediaUnits
+     */
     private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaWithinRange(Pair<MediaUnit, IncludedStructuralElement> first,
                                                           Pair<MediaUnit, IncludedStructuralElement> last) {
         // Pairs of stripe index and media index
         Pair<Integer, Integer> firstIndices = getIndices(first.getKey(), first.getValue());
         Pair<Integer, Integer> lastIndices = getIndices(last.getKey(), last.getValue());
-        Pair<Integer, Integer> minIndices;
-        Pair<Integer, Integer> maxIndices;
 
         if (!Objects.nonNull(firstIndices) || !Objects.nonNull(lastIndices)) {
-            return null;
-        }
-
-        /* Stripe with index 0 represents "unstructured media".
-           This stripe is displayed last, but is actually the root element (first stripe). */
-        if (!Objects.equals(firstIndices.getKey(), lastIndices.getKey())
-                && ((lastIndices.getKey() == 0) || ((firstIndices.getKey() < lastIndices.getKey()) && (firstIndices.getKey() != 0)))) {
-            minIndices = firstIndices;
-            maxIndices = lastIndices;
-        } else if (Objects.equals(firstIndices.getKey(), lastIndices.getKey())) {
-            if (firstIndices.getValue() < lastIndices.getValue()) {
-                minIndices = firstIndices;
-                maxIndices = new ImmutablePair<>(firstIndices.getKey(), lastIndices.getValue());
-            } else {
-                minIndices = new ImmutablePair<>(firstIndices.getKey(), lastIndices.getValue());
-                maxIndices = firstIndices;
-            }
-        } else {
-            minIndices = lastIndices;
-            maxIndices = firstIndices;
+            return new LinkedList<>();
         }
 
         List<GalleryStripe> stripesWithinRange = new LinkedList<>();
-        if (maxIndices.getKey() == 0 && minIndices.getKey() != 0) {
-            for (int i = minIndices.getKey(); i <= stripes.size() - 1; i++) {
+
+        /* Stripe with index 0 represents "unstructured media".
+           This stripe is displayed last, but is actually the root element (first stripe). */
+        if (Objects.equals(firstIndices.getKey(), lastIndices.getKey())) {
+            stripesWithinRange.add(stripes.get(firstIndices.getKey()));
+        } else if (lastIndices.getKey() == 0) {
+            // count up, last stripe is "unstructured media"
+            for (int i = firstIndices.getKey(); i <= stripes.size() - 1; i++) {
                 stripesWithinRange.add(stripes.get(i));
             }
-            if (!stripesWithinRange.contains(stripes.get(0))) {
-                stripesWithinRange.add(stripes.get(0));
+            stripesWithinRange.add(stripes.get(0));
+        } else if (firstIndices.getKey() != 0 && firstIndices.getKey() < lastIndices.getKey()) {
+            // count up first stripe and last stripe are not "unstructured media"
+            for (int i = firstIndices.getKey(); i <= lastIndices.getKey(); i++) {
+                stripesWithinRange.add(stripes.get(i));
+            }
+        } else if (firstIndices.getKey() == 0) {
+            // count down, first stripe is "unstructured media"
+            stripesWithinRange.add(stripes.get(0));
+            for (int i = stripes.size() - 1; i >= lastIndices.getKey(); i--) {
+                stripesWithinRange.add(stripes.get(i));
             }
         } else {
-            for (int i = minIndices.getKey(); i <= maxIndices.getKey(); i++) {
+            // count down
+            for (int i = firstIndices.getKey(); i >= lastIndices.getKey(); i--) {
                 stripesWithinRange.add(stripes.get(i));
             }
         }
-        return getMediaWithinRange(minIndices.getValue(), maxIndices.getValue(), stripesWithinRange);
+
+        return getMediaWithinRangeFromSelectedStripes(firstIndices, lastIndices, stripesWithinRange);
     }
 
-    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaWithinRange(int firstMediaIndex, int lastMediaIndex,
-                                                                                 List<GalleryStripe> galleryStripes) {
-        LinkedList<Pair<MediaUnit, IncludedStructuralElement>> mediaWithinRange = new LinkedList<>();
-        if (galleryStripes.size() > 1) {
-            GalleryStripe firstStripe = galleryStripes.get(0);
-            for (int i = firstMediaIndex; i < galleryStripes.get(0).getMedias().size(); i++) {
-                mediaWithinRange.add(new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(),
-                        firstStripe.getStructure()));
+    /**
+     * Get a List of all MediaUnits and the IncludedStructuralElements they are assigned to
+     * which are displayed between two selected MediaUnits. This method selected the MediaUnits between and including the two indices.
+     * @param firstIndices
+     *          First selected MediaUnit.
+     *          A Pair of indices of the MediaUnit and the IncludedStructuralElement to which the MediaUnit is assigned.
+     * @param lastIndices
+     *          Last selected MediaUnit.
+     *          A Pair of indices of the MediaUnit and the Included StructuralElement to which the MediaUnit is assigned.
+     * @param galleryStripes
+     *          A List of GalleryStripes which contain the two selected MediaUnits and all in between
+     * @return
+     *          A List of all selected MediaUnits
+     */
+    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaWithinRangeFromSelectedStripes(
+            Pair<Integer, Integer> firstIndices, Pair<Integer, Integer> lastIndices, List<GalleryStripe> galleryStripes) {
+        boolean countDown = false;
+
+        /* Count down if firstIndices are larger than lastIndices.
+           (Each Pair represents a stripe index and the index of the selected media within this stripe.)
+         */
+        if (firstIndices.getKey() > lastIndices.getKey() && lastIndices.getKey() != 0
+                || (Objects.equals(firstIndices.getKey(), lastIndices.getKey()) && firstIndices.getValue() > lastIndices.getValue())
+                || (!Objects.equals(firstIndices.getKey(), lastIndices.getKey()) && firstIndices.getKey() == 0)) {
+            countDown = true;
+        }
+
+        if (galleryStripes.size() == 0) {
+            return new LinkedList<>();
+        }
+
+        if (countDown) {
+            return getMediaBackwards(firstIndices.getValue(), lastIndices.getValue(), galleryStripes);
+        } else {
+            return getMediaForwards(firstIndices.getValue(), lastIndices.getValue(), galleryStripes);
+        }
+    }
+
+    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaForwards(Integer firstIndex, Integer lastIndex,
+                                                                              List<GalleryStripe> galleryStripes) {
+        List<Pair<MediaUnit, IncludedStructuralElement>> mediaWithinRange = new LinkedList<>();
+        GalleryStripe firstStripe = galleryStripes.get(0);
+
+        if (galleryStripes.size() == 1) {
+            for (int i = firstIndex; i <= lastIndex; i++) {
+                mediaWithinRange.add(
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
+            }
+        } else {
+
+            for (int i = firstIndex; i <= firstStripe.getMedias().size() - 1; i++) {
+                mediaWithinRange.add(
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
             }
 
-            for (int i = 1; i < galleryStripes.size() - 1; i++) {
+            for (int i = 1; i <= galleryStripes.size() - 2; i++) {
                 GalleryStripe galleryStripe = galleryStripes.get(i);
                 for (GalleryMediaContent media : galleryStripe.getMedias()) {
                     mediaWithinRange.add(new ImmutablePair<>(media.getView().getMediaUnit(), galleryStripe.getStructure()));
@@ -532,14 +581,42 @@ public class GalleryPanel {
             }
 
             GalleryStripe lastStripe = galleryStripes.get(galleryStripes.size() - 1);
-            for (int i = 0; i <= lastMediaIndex; i++) {
-                mediaWithinRange.add(new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getMediaUnit(),
-                        lastStripe.getStructure()));
+            for (int i = 0; i <= lastIndex; i++) {
+                mediaWithinRange.add(
+                        new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getMediaUnit(), lastStripe.getStructure()));
             }
-        } else if (galleryStripes.size() == 1) {
-            GalleryStripe stripe = galleryStripes.get(0);
-            for (int i = firstMediaIndex; i <= lastMediaIndex; i++) {
-                mediaWithinRange.add(new ImmutablePair<>(stripe.getMedias().get(i).getView().getMediaUnit(), stripe.getStructure()));
+        }
+        return mediaWithinRange;
+    }
+
+    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaBackwards(Integer firstIndex, Integer lastIndex,
+                                                                               List<GalleryStripe> galleryStripes) {
+        List<Pair<MediaUnit, IncludedStructuralElement>> mediaWithinRange = new LinkedList<>();
+        GalleryStripe firstStripe = galleryStripes.get(0);
+
+        if (galleryStripes.size() == 1) {
+            for (int i = firstIndex; i >= lastIndex; i--) {
+                mediaWithinRange.add(
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
+            }
+        } else {
+            for (int i = firstIndex; i >= 0; i--) {
+                mediaWithinRange.add(
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
+            }
+
+            for (int i = 1; i <= galleryStripes.size() - 2; i++) {
+                GalleryStripe galleryStripe = galleryStripes.get(i);
+                for (int j = galleryStripe.getMedias().size() - 1; j >= 0; j--) {
+                    mediaWithinRange.add(new ImmutablePair<>(
+                            galleryStripe.getMedias().get(j).getView().getMediaUnit(), galleryStripe.getStructure()));
+                }
+            }
+
+            GalleryStripe lastStripe = galleryStripes.get(galleryStripes.size() - 1);
+            for (int i = lastStripe.getMedias().size() - 1; i >= lastIndex; i--) {
+                mediaWithinRange.add(
+                        new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getMediaUnit(), lastStripe.getStructure()));
             }
         }
         return mediaWithinRange;
@@ -620,18 +697,11 @@ public class GalleryPanel {
      * @param selectionType the type of selection based on the pressed modifier key
      */
     private void select(GalleryMediaContent currentSelection, GalleryStripe parentStripe, String selectionType) {
-        IncludedStructuralElement structureElement;
-        if (Objects.nonNull(parentStripe)) {
-            structureElement = parentStripe.getStructure();
-        } else {
+        if (Objects.isNull(parentStripe)) {
             parentStripe = getLogicalStructureOfMedia(currentSelection);
-            structureElement = parentStripe.getStructure();
         }
 
-        MediaUnit mediaUnit;
-        if (Objects.nonNull(currentSelection)) {
-            mediaUnit = currentSelection.getView().getMediaUnit();
-        } else {
+        if (Objects.isNull(currentSelection)) {
             Helper.setErrorMessage("Passed GalleryMediaContent must not be null.");
             return;
         }
@@ -648,7 +718,6 @@ public class GalleryPanel {
                 break;
         }
 
-        lastSelection = new ImmutablePair<>(mediaUnit, structureElement);
         updateStructure(currentSelection);
     }
 
@@ -657,7 +726,6 @@ public class GalleryPanel {
             return;
         }
 
-        lastSelection = new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
         dataEditor.getSelectedMedia().clear();
         dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure()));
     }
@@ -667,23 +735,23 @@ public class GalleryPanel {
             return;
         }
 
-        if (Objects.isNull(lastSelection)) {
-            lastSelection = new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
+        if (dataEditor.getSelectedMedia().isEmpty()) {
+            dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure()));
+            return;
         }
 
-        Pair<MediaUnit, IncludedStructuralElement> selectedMediaPair =
+        Pair<MediaUnit, IncludedStructuralElement> firstSelectedMediaPair =
+                dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
+        Pair<MediaUnit, IncludedStructuralElement> lastSelectedMediaPair =
                 new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
+
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getSelectedMedia().addAll(getMediaWithinRange(selectedMediaPair, lastSelection));
+        dataEditor.getSelectedMedia().addAll(getMediaWithinRange(firstSelectedMediaPair, lastSelectedMediaPair));
     }
 
     private void multiSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
         Pair<MediaUnit, IncludedStructuralElement> selectedMediaPair = new ImmutablePair<>(
                 currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
-
-        if (Objects.isNull(lastSelection)) {
-            lastSelection = selectedMediaPair;
-        }
 
         if (dataEditor.getSelectedMedia().contains(selectedMediaPair)) {
             if (dataEditor.getSelectedMedia().size() > 1) {
