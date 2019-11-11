@@ -83,7 +83,7 @@ public class CreateProcessFormIT {
     @Test
     public void shouldCreateNewProcess() throws Exception {
         CreateProcessForm underTest = new CreateProcessForm();
-        underTest.getProcessDataTab().setDocType("");
+        underTest.getProcessDataTab().setDocType("Monograph");
         underTest.setProcesses(new LinkedList<>(Collections.singletonList(new Process())));
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));

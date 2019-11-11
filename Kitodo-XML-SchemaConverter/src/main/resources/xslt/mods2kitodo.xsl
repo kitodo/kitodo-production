@@ -32,33 +32,49 @@
     </xsl:template>
 
     <!-- ### TitleDocMain ### -->
-    <xsl:template match="mods:titleInfo[not(@type='alternative')]/mods:title">
+    <xsl:template match="mods:mods/mods:titleInfo[1]/mods:title">
         <kitodo:metadata name="TitleDocMain"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### TitleDocMainShort ### -->
-    <xsl:template match="mods:titleInfo[@type='alternative']/mods:title">
+    <xsl:template match="mods:mods/mods:titleInfo[@type='alternative']/mods:title">
         <kitodo:metadata name="TitleDocMainShort"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### PlaceOfPublication ### -->
-    <xsl:template match="mods:originInfo/mods:place/mods:placeTerm">
+    <xsl:template match="mods:originInfo/mods:place/mods:placeTerm[@type='text']">
         <kitodo:metadata name="PlaceOfPublication"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### PublicationRun ### -->
-    <xsl:template match="mods:originInfo/mods:dateIssued | mods:originInfo/mods:dateCreated">
+    <xsl:template match="mods:originInfo/mods:dateIssued">
         <kitodo:metadata name="PublicationRun"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
 
     <!-- ### DocType ### -->
-    <xsl:template match="mods:originInfo/mods:issuance">
-        <kitodo:metadata name="docType"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
-    </xsl:template>
+    <kitodo:metadata name="docType">
+        <xsl:choose>
+            <xsl:when test="(mods:originInfo/mods:issuance[.='monographic'])
+                                            or (mods:originInfo/mods:issuance[.='single unit'])
+                                            or (mods:originInfo/mods:issuance[.='integrating resource'])">
+                <xsl:text>Monograph</xsl:text>
+            </xsl:when>
+            <xsl:when test="(mods:originInfo/mods:issuance[.='multipart monograph'])">
+                <xsl:text>MultiVolumeWork</xsl:text>
+            </xsl:when>
+            <xsl:when test="(mods:originInfo/mods:issuance[.='continuing'])
+                                            or (mods:originInfo/mods:issuance[.='serial'])">
+                <xsl:text>Periodical</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>Monograph</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </kitodo:metadata>
 
     <!-- ### DocLanguage ### -->
-    <xsl:template match="mods:language/mods:languageTerm[@type='text']">
+    <xsl:template match="mods:language/mods:languageTerm[@type='text'] | mods:language/mods:languageTerm[@type='code']">
         <kitodo:metadata name="DocLanguage"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
@@ -84,7 +100,7 @@
 
     <!-- ### PublicationYear ### -->
     <xsl:template match="mods:originInfo/mods:dateCreated[@encoding='w3cdtf']">
-        <kitodo:metadata name="PublicationYear"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
+        <kitodo:metadata name="PublicationYear"><xsl:value-of select="normalize-space(substring(., 1, 4))" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### PublicationStart ### -->
