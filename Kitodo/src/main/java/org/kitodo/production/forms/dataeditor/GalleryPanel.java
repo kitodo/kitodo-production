@@ -740,8 +740,7 @@ public class GalleryPanel {
             return;
         }
 
-        Pair<MediaUnit, IncludedStructuralElement> firstSelectedMediaPair =
-                dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
+        Pair<MediaUnit, IncludedStructuralElement> firstSelectedMediaPair = dataEditor.getSelectedMedia().get(0);
         Pair<MediaUnit, IncludedStructuralElement> lastSelectedMediaPair =
                 new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
 
