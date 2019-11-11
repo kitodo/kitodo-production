@@ -1357,3 +1357,7 @@ Popup dialogs
 .ui-messages-error {
     background-color: var(--orange);
 }
+
+.pagination-select-items .ui-chkbox {
+    height: 0;
+}
