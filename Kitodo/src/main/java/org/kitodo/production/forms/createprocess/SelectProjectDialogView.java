@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -40,7 +41,7 @@ public class SelectProjectDialogView implements Serializable {
     private int selectedProjectId;
     private TemplateDTO templateDTO;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
-    private final static String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
 
     /**
      * Get template.
