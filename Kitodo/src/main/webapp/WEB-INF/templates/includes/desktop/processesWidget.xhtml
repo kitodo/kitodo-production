@@ -55,14 +55,15 @@
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                 </p:commandLink>
                 <!-- else, open metadata editor directly -->
-                <h:link id="readXML"
-                        outcome="/pages/metadataEditor?faces-redirect=true"
-                        title="#{msgs.metadataEdit}"
-                        rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
-                    <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
-                    <f:param name="referrer" value="#{'desktop'}"/>
+                <!--@elvariable id="currentTaskId" type="int"-->
+                <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}" />
+                <h:commandLink id="readXML"
+                               action="#{DataEditorForm.open(currentTaskId, 'desktop')}"
+                               title="#{msgs.metadataEdit}"
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                    <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                </h:link>
+                </h:commandLink>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
