@@ -432,23 +432,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             taskQuery.must(processingStatus);
         }
 
-        // only assigned projects
-        List<Project> assignedProjects = user.getProjects();
-        Set<Integer> projectIds = new HashSet<>();
-        for (Project project : assignedProjects) {
-            projectIds.add(project.getId());
-        }
-
-        // only processes which are not templates and are part of assigned
-        // projects
-        try {
-            List<ProcessDTO> processDTOS = ServiceManager.getProcessService()
-                    .findByProjectIds(projectIds, true);
-            taskQuery.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true));
-        } catch (DataException e) {
-            logger.error(e.getMessage(), e);
-        }
-
         // only tasks assigned to the user groups the current user is member of
         List<Role> userRoles = user.getRoles();
         taskQuery.must(createSetQueryForBeans(TaskTypeField.ROLES + ".id", userRoles, true));
