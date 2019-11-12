@@ -32,11 +32,11 @@ import org.openqa.selenium.support.FindBy;
 public class ProjectsPage extends Page<ProjectsPage> {
 
     private static final String PROJECTS_TAB_VIEW = "projectsTabView";
-    private static final String PROJECTS_TABLE = PROJECTS_TAB_VIEW + ":projectsTable";
-    private static final String TEMPLATE_TABLE = PROJECTS_TAB_VIEW + ":templateTable";
-    private static final String WORKFLOW_TABLE = PROJECTS_TAB_VIEW + ":workflowTable";
-    private static final String DOCKET_TABLE = PROJECTS_TAB_VIEW + ":docketTable";
-    private static final String RULESET_TABLE = PROJECTS_TAB_VIEW + ":rulesetTable";
+    private static final String PROJECTS_TABLE = "projectsTable";
+    private static final String TEMPLATE_TABLE = "templateTable";
+    private static final String WORKFLOW_TABLE = "workflowTable";
+    private static final String DOCKET_TABLE = "docketTable";
+    private static final String RULESET_TABLE = "rulesetTable";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROJECTS_TAB_VIEW)
