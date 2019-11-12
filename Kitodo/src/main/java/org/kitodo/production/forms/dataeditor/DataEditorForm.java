@@ -183,7 +183,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @param referringView
      *            JSF page the user came from
      */
-    public void open(String taskID, String referringView) {
+    public String open(String taskID, String referringView) {
         try {
             this.currentTask = ServiceManager.getTaskService().getById(Integer.parseInt(taskID));
             this.referringView = referringView;
@@ -198,13 +198,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             openProcesses.put(process.getId(), user);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(referringView);
-            } catch (IOException ex) {
-                logger.error("Unable to redirect to referrer '" + referringView + "'. (" + ex.getLocalizedMessage()
-                        + ")");
-            }
+            return referringView;
         }
+        return "/pages/metadataEditor?faces-redirect=true";
     }
 
     /**
@@ -663,19 +659,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 processID}, logger, e);
             return -1;
         }
-    }
-
-    /**
-     * Create and return the navigation path to the metadata editor, containing the currentTask ID and the given
-     * referrer as view/URL parameters.
-     *
-     * @param referrer
-     *          path of referring view
-     * @return navigation path to metadata editor page including currentTasks ID and referrer as view parameters
-     */
-    public String selectCurrentTask(String referrer) {
-        return "/pages/metadataEditor?faces-redirect=true&taskId=" + this.getCurrentTask().getId()
-                + "&referrer=" + referrer;
     }
 
     void assignView(IncludedStructuralElement includedStructuralElement, View view) {
