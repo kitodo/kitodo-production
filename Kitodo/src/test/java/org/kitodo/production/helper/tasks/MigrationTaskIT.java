@@ -68,12 +68,12 @@ public class MigrationTaskIT {
             metsService.loadWorkpiece(processService.getMetadataFileUri(processService.getById(2))));
     }
 
-    private static void moveMetaFileAway(int id, String tempFileName) throws Exception {
-        File processHome = new File(ConfigCore.getKitodoDataDirectory(), Integer.toString(id));
+    private static void moveMetaFileAway(int recordNumber, String tempFileName) throws Exception {
+        File processHome = new File(ConfigCore.getKitodoDataDirectory(), Integer.toString(recordNumber));
         new File(processHome, "meta.xml").renameTo(new File(processHome, tempFileName));
     }
 
-    private static void createTestMetafile(int id) throws Exception {
+    private static void createTestMetafile(int recordNumber) throws Exception {
         List<String> lines = Arrays.asList("<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
             "<mets:mets xsi:schemaLocation=\"http://www.loc.gov/mods/v3 "
                     + "http://www.loc.gov/standards/mods/mods.xsd http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd "
