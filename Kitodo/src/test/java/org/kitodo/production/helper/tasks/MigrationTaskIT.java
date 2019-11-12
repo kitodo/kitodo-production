@@ -11,6 +11,9 @@
 
 package org.kitodo.production.helper.tasks;
 
+import java.lang.reflect.Field;
+import java.util.Objects;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -38,13 +41,15 @@ public class MigrationTaskIT {
     }
 
     @Test
-    public void testMigrationTask() throws InterruptedException {
+    public void testMigrationTask() throws Exception {
         MigrationTask migrationTask = new MigrationTask(project);
-        Assert.assertFalse(ServiceManager.discardDataEditorService());
+        Field dataEditorServiceField = ServiceManager.class.getDeclaredField("dataEditorService");
+        dataEditorServiceField.setAccessible(true);
+        Assert.assertTrue(Objects.isNull(dataEditorServiceField.get(null)));
         migrationTask.start();
         Assert.assertTrue(migrationTask.isAlive());
         migrationTask.join();
-        Assert.assertTrue(ServiceManager.discardDataEditorService());
+        Assert.assertTrue(Objects.nonNull(dataEditorServiceField.get(null)));
         Assert.assertFalse(migrationTask.isAlive());
         Assert.assertEquals(100, migrationTask.getProgress());
     }
