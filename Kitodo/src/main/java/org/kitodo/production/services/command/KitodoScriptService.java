@@ -151,12 +151,17 @@ public class KitodoScriptService {
                 deleteProcess(processes, contentOnly);
                 break;
             case "generateImages":
-                List<String> folders = Arrays.asList(parameters.get("folders").split(","));
-                String images = parameters.get("images").toLowerCase();
-                GenerationMode mode = images.startsWith("missing")
-                        ? images.length() > 7 ? GenerationMode.MISSING_OR_DAMAGED : GenerationMode.MISSING
-                        : GenerationMode.ALL;
-                generateImages(processes, mode, folders);
+                String folders = parameters.get("folders");
+                List<String> foldersList = Arrays.asList("all");
+                if (Objects.nonNull(folders)) {
+                    foldersList = Arrays.asList(folders.split(","));
+                }
+                GenerationMode mode = GenerationMode.ALL;
+                String images = parameters.get("images");
+                if (Objects.nonNull(images) && images.toLowerCase().startsWith("missing")) {
+                    mode = images.length() > 7 ? GenerationMode.MISSING_OR_DAMAGED : GenerationMode.MISSING;
+                }
+                generateImages(processes, mode, foldersList);
                 break;
             default:
                 Helper.setErrorMessage("Unknown action",
@@ -240,34 +245,35 @@ public class KitodoScriptService {
                     new String[] {process.getTitle(), sourceFolder.getRelativeDirectoryPath() });
                 continue;
             }
-            List<String> ungeneratableFolders = new ArrayList<>(folders);
             boolean all = folders.size() == 1 && folders.get(0).equalsIgnoreCase("all");
-            List<Subfolder> outputs = new ArrayList<>();
+            List<String> ungeneratableFolders = all ? new ArrayList<>() : new ArrayList<>(folders);
+            List<Subfolder> outputFolders = new ArrayList<>();
             for (Folder folder : process.getProject().getFolders()) {
                 if ((all || folders.contains(folder.getPath())) && !folder.equals(generatorSource)
                         && (folder.getDerivative().isPresent() || folder.getDpi().isPresent()
                                 || folder.getImageScale().isPresent() || folder.getImageSize().isPresent())) {
-                    outputs.add(new Subfolder(process, folder));
+                    outputFolders.add(new Subfolder(process, folder));
                     ungeneratableFolders.remove(folder.getPath());
                 }
             }
-            if (outputs.isEmpty()) {
+            if (outputFolders.isEmpty()) {
                 Helper.setErrorMessage("kitodoScript.generateImages.error.noDestination",
                     new String[] {process.getTitle(), String.join(", ", ungeneratableFolders) });
                 continue;
             }
-            ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, generationMode, outputs);
+            ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, generationMode, outputFolders);
             TaskManager.addTask(new TaskImageGeneratorThread(process.getTitle(), imageGenerator));
             String generationModeTranslated = Helper
                     .getTranslation("imageGenerator.generationMode.".concat(generationMode.toString()));
-            String generatableFolders = outputs.stream().map(Subfolder::getFolder).map(Folder::getPath)
-                    .collect(Collectors.joining(", "));
+            String generatedFolders = // folders whose contents CAN BE generated
+                    outputFolders.stream().map(Subfolder::getFolder).map(Folder::getPath)
+                            .collect(Collectors.joining(", "));
             if (ungeneratableFolders.isEmpty()) {
                 Helper.setMessage(MessageFormat.format(Helper.getTranslation("kitodoScript.generateImages.ok"),
-                    generationModeTranslated, process.getTitle(), String.join(", ", generatableFolders)));
+                    generationModeTranslated, process.getTitle(), String.join(", ", generatedFolders)));
             } else {
                 Helper.setMessage(MessageFormat.format(Helper.getTranslation("kitodoScript.generateImages.partitial"),
-                    generationModeTranslated, process.getTitle(), generatableFolders,
+                    generationModeTranslated, process.getTitle(), generatedFolders,
                     String.join(", ", ungeneratableFolders)));
             }
         }
