@@ -61,7 +61,8 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView" widgetVar="projectsTabView">
+        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" prependId="false"
+                   id="projectsTabView" widgetVar="projectsTabView">
             <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
             <p:tab title="#{msgs.projectList}" id="projectTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">

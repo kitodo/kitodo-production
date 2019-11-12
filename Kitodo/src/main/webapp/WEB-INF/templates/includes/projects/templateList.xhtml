@@ -51,8 +51,10 @@
 
                     <p:commandLink id="createProcessFromTemplate"
                                    title="#{msgs['createNewProcess']}"
-                                   action="#{SelectProjectDialogView.createProcessForTemplate(0, item.id)}"
+                                   actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
+                                   action="#{SelectProjectDialogView.createProcessFromTemplate()}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                        <f:setPropertyActionListener value="0" target="#{SelectProjectDialogView.selectedProjectId}"/>
                         <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
                     </p:commandLink>
 
@@ -76,7 +78,7 @@
 
                     <p:commandLink id="deleteTemplate" action="#{TemplateForm.delete}" title="#{msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteTemplate()}"
-                                   update="projectsTabView:templateTable">
+                                   update="templateTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
                         <p:confirm header="#{msgs.confirmDelete}"

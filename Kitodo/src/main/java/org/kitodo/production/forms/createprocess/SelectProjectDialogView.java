@@ -25,8 +25,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -38,7 +36,7 @@ import org.primefaces.PrimeFaces;
 public class SelectProjectDialogView implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(SelectProjectDialogView.class);
-    private int selectedProjectId;
+    private int selectedProjectId = 0;
     private TemplateDTO templateDTO;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
@@ -50,6 +48,15 @@ public class SelectProjectDialogView implements Serializable {
      */
     public TemplateDTO getTemplate() {
         return templateDTO;
+    }
+
+    /**
+     * Set templateDTO.
+     *
+     * @param templateDTO as org.kitodo.production.dto.TemplateDTO
+     */
+    public void setTemplateDTO(TemplateDTO templateDTO) {
+        this.templateDTO = templateDTO;
     }
 
     /**
@@ -87,40 +94,30 @@ public class SelectProjectDialogView implements Serializable {
     }
 
     /**
-     * Navigate to 'createProcess' page if given ID 'templateId' is > 0.
-     * Show template selection dialog if 'templateId' is 0 and more than one template is configured for given project.
-     * Display error message if no template is configured for given project.
-     *
-     * @param projectId id of project for which a new process is created.
-     * @param templateId id of template from which new process is created for Project with given ID.
+     * Navigate to 'createProcess' page if 'selectedProjectId' is > 0.
+     * Show project selection dialog if 'selectedProjectId' is 0 and more the current template is used in more than one
+     * project.
+     * Display error message if the current template is not used in any project.
      */
-    public void createProcessForTemplate(int projectId, int templateId) {
-        try {
-            this.templateDTO = ServiceManager.getTemplateService().findById(templateId);
-            if (projectId > 0 || this.templateDTO.getProjects().size() == 1) {
-                ProjectDTO projectDTO;
-                if (projectId > 0) {
-                    projectDTO = ServiceManager.getProjectService().findById(projectId);
-                } else {
-                    projectDTO = this.templateDTO.getProjects().get(0);
-                }
-                try {
-                    FacesContext context = FacesContext.getCurrentInstance();
-                    String path = context.getExternalContext().getRequestContextPath() + CREATE_PROCESS_PATH
-                            + "&templateId=" + templateId + "&projectId=" + projectDTO.getId()
-                            + "&referrer=" + context.getViewRoot().getViewId();
-                    context.getExternalContext().redirect(path);
-                } catch (IOException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage());
-                }
-            } else if (templateDTO.getProjects().size() > 1) {
-                PrimeFaces.current().ajax().update("projectsTabView:selectProjectDialog");
-                PrimeFaces.current().executeScript("PF('selectProjectDialog').show();");
-            } else {
-                Helper.setErrorMessage("noProjectsConfigured");
+    public void createProcessFromTemplate() {
+        if (this.templateDTO.getProjects().size() == 1) {
+            this.selectedProjectId = this.templateDTO.getProjects().get(0).getId();
+        }
+        if (this.selectedProjectId > 0) {
+            try {
+                FacesContext context = FacesContext.getCurrentInstance();
+                String path = context.getExternalContext().getRequestContextPath() + CREATE_PROCESS_PATH
+                        + "&templateId=" + this.templateDTO.getId() + "&projectId=" + this.selectedProjectId
+                        + "&referrer=" + context.getViewRoot().getViewId();
+                context.getExternalContext().redirect(path);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage());
             }
-        } catch (DataException e) {
-            Helper.setErrorMessage(e);
+        } else if (templateDTO.getProjects().size() > 1) {
+            PrimeFaces.current().ajax().update("selectProjectDialog");
+            PrimeFaces.current().executeScript("PF('selectProjectDialog').show();");
+        } else {
+            Helper.setErrorMessage("noProjectsConfigured");
         }
     }
 }
