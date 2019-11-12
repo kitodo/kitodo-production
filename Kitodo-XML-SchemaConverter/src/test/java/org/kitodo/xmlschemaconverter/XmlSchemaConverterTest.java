@@ -85,7 +85,7 @@ public class XmlSchemaConverterTest {
 
         Assert.assertEquals("Title after conversion is wrong!", "Test-Title", title);
         Assert.assertEquals("Catalog ID after conversion is wrong!", "67890", catalogId);
-        Assert.assertEquals("PublicationYear after conversion is wrong!", "1999-12-31", year);
+        Assert.assertEquals("PublicationYear after conversion is wrong!", "1999", year);
     }
 
     @Test

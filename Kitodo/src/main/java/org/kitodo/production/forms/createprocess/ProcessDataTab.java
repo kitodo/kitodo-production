@@ -52,7 +52,15 @@ public class ProcessDataTab {
      * @param docType as java.lang.String
      */
     public void setDocType(String docType) {
-        this.docType = docType;
+        if (Objects.isNull(allDocTypes) || allDocTypes.isEmpty()) {
+            this.docType = "";
+            Helper.setErrorMessage("errorLoadingDocTypes");
+        } else if (docTypeExistsInRuleset(docType)) {
+            this.docType = docType;
+        } else {
+            this.docType = (String) allDocTypes.get(0).getValue();
+            Helper.setErrorMessage("docTypeNotFound", new Object[] {docType});
+        }
         this.createProcessForm.getWorkpiece().getRootElement().setType(this.docType);
         if (this.docType.isEmpty()) {
             this.createProcessForm.getProcessMetadataTab().setProcessDetails(new ProcessFieldedMetadata());
@@ -60,6 +68,15 @@ public class ProcessDataTab {
             this.createProcessForm.getProcessMetadataTab()
                     .initializeProcessDetails(this.createProcessForm.getWorkpiece().getRootElement());
         }
+    }
+
+    private boolean docTypeExistsInRuleset(String docType) {
+        for (SelectItem division : allDocTypes) {
+            if (docType.equals(division.getValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

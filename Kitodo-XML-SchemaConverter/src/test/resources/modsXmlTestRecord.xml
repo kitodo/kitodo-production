@@ -47,8 +47,8 @@
    <titleInfo>
       <title>Test-Title</title>
    </titleInfo>
-   <originInfo>
-      <dateCreated encoding="w3cdtf">1999-12-31</dateCreated>
+   <originInfo eventType="publication">
+      <dateIssued encoding="w3cdtf">1999-12-31</dateIssued>
       <place>
          <placeTerm type="text">Test-Place</placeTerm>
       </place>
