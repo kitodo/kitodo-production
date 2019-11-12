@@ -154,7 +154,7 @@
                 <p:outputLabel for="taskStatusFilter" value="#{msgs.taskStatus}: " />
                 <p:selectOneMenu id="taskStatusFilter" value="#{SearchResultForm.currentTaskStatusFilter}">
                     <f:selectItem value="#{null}" itemLabel="#{msgs.filterByTaskStatus}" />
-                    <f:selectItems value="#{SearchResultForm.taskStatusForFiltering}" var="status" itemValue="#{status.value}" itemLabel="#{status.title}"/>
+                    <f:selectItems value="#{SearchResultForm.taskStatusForFiltering}" var="status" itemValue="#{status.value}" itemLabel="#{HelperForm.getTranslated(status.title)}"/>
                     <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
                             update="searchResultForm"/>
                 </p:selectOneMenu>
