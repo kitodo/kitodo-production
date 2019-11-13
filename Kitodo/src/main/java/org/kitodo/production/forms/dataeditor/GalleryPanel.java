@@ -430,8 +430,7 @@ public class GalleryPanel {
         URI previewUri = mediaUnit.getMediaFiles().get(previewVariant);
         URI mediaViewUri = mediaUnit.getMediaFiles().get(mediaViewVariant);
         String canonical = Objects.nonNull(previewUri) ? previewFolder.getCanonical(previewUri) : null;
-        return new GalleryMediaContent(this, view, canonical, mediaUnit.getOrder(),
-                mediaUnit.getOrderlabel(), previewUri, mediaViewUri);
+        return new GalleryMediaContent(this, view, canonical, previewUri, mediaViewUri);
     }
 
     /**
