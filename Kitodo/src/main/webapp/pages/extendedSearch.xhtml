@@ -162,6 +162,7 @@
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="taskStatus" value="#{SearchForm.status}">
+                            	<f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems value="#{SearchForm.stepstatus}" var="stepstatus"
                                                itemLabel="#{HelperForm.getTranslated(stepstatus.title)}" itemValue="#{stepstatus.searchString}"/>
                             </p:selectOneMenu>
