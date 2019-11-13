@@ -540,8 +540,8 @@ public class GalleryPanel {
            (Each Pair represents a stripe index and the index of the selected media within this stripe.)
          */
         if (firstIndices.getKey() > lastIndices.getKey() && lastIndices.getKey() != 0
-                || (Objects.equals(firstIndices.getKey(), lastIndices.getKey()) && firstIndices.getValue() > lastIndices.getValue())
-                || (!Objects.equals(firstIndices.getKey(), lastIndices.getKey()) && firstIndices.getKey() == 0)) {
+                || Objects.equals(firstIndices.getKey(), lastIndices.getKey()) && firstIndices.getValue() > lastIndices.getValue()
+                || !Objects.equals(firstIndices.getKey(), lastIndices.getKey()) && firstIndices.getKey() == 0) {
             countDown = true;
         }
 
