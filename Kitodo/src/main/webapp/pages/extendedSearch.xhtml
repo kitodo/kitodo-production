@@ -163,7 +163,7 @@
                         <p:column>
                             <p:selectOneMenu id="taskStatus" value="#{SearchForm.status}">
                                 <f:selectItems value="#{SearchForm.stepstatus}" var="stepstatus"
-                                               itemLabel="#{stepstatus.title}" itemValue="#{stepstatus.searchString}"/>
+                                               itemLabel="#{HelperForm.getTranslated(stepstatus.title)}" itemValue="#{stepstatus.searchString}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
