@@ -8,6 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+/* globals setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF */
 
 var metadataEditor = {};
 
@@ -57,18 +58,16 @@ metadataEditor.shortcuts = {
     },
     listen() {
         $(document).on("keydown.shortcuts", function (event) {
-            if (event.metaKey || event.ctrlKey) {
-                switch (event.key) {
-                    case metadataEditor.shortcuts.KEYS.STRUCTURED_VIEW:
-                        metadataEditor.shortcuts.changeView(event, "LIST");
-                        break;
-                    case metadataEditor.shortcuts.KEYS.DETAIL_VIEW:
-                        metadataEditor.shortcuts.changeView(event, "PREVIEW");
-                        break;
-                }
-            } else if (!(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA")
+            if (!(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA")
                 && event.key === metadataEditor.shortcuts.KEYS.HELP) {
-                PF('helpDialog').show();
+                PF("helpDialog").show();
+                return;
+            }
+
+            if (event.key === metadataEditor.shortcuts.KEYS.STRUCTURED_VIEW && event.ctrlKey) {
+                metadataEditor.shortcuts.changeView(event, "LIST");
+            } else if (event.key === metadataEditor.shortcuts.KEYS.DETAIL_VIEW && event.ctrlKey) {
+                metadataEditor.shortcuts.changeView(event, "PREVIEW");
             }
         });
     },
