@@ -2208,8 +2208,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> getMetadataForIndex(Process process, boolean forIndexingAll) {
-        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process, forIndexingAll)) {
-            JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
+        try {
+            URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process, false, true);
+            if (!ServiceManager.getFileService().fileExist(metadataFileUri)) {
+                logger.info("No metadata file for indexing: {}", metadataFileUri);
+                return Collections.emptyList();
+            }
+            String metadataFile;
+            try (InputStream inputStream = ServiceManager.getFileService().readMetadataFile(process, forIndexingAll)) {
+                metadataFile = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            }
+            JSONObject xmlJSONObject = XML.toJSONObject(metadataFile);
             Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
             if (json.keySet().contains("mets")) {
                 Map<String, Object> mets = (Map<String, Object>) json.get("mets");
@@ -2223,9 +2232,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 return metadata;
             }
         } catch (NullPointerException | IOException e) {
-            logger.info("File was not found: " + e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     private Map<String, Object> iterateOverJsonObject(JSONObject xmlJSONObject) {

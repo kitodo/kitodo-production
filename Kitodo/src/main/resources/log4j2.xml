@@ -24,7 +24,13 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="de.unigoettingen.sub.search.opac, org.goobi, org.kitodo" level="error">
+        <Logger name="de.unigoettingen.sub.search.opac" level="error" additivity="false">
+            <AppenderRef ref="LOGFILE" level="error" />
+        </Logger>
+        <Logger name="org.goobi" level="error"  additivity="false">
+            <AppenderRef ref="LOGFILE" level="error" />
+        </Logger>
+        <Logger name="org.kitodo" level="error"  additivity="false">
             <AppenderRef ref="LOGFILE" level="error" />
         </Logger>
         <Root level="error">
