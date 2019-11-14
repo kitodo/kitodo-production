@@ -44,16 +44,6 @@ public class GalleryMediaContent {
     private final String id;
 
     /**
-     * Order number of the medium.
-     */
-    private int order;
-
-    /**
-     * Order label for the media.
-     */
-    private String orderlabel;
-
-    /**
      * URI to content for media preview.
      */
     private URI previewUri;
@@ -73,12 +63,6 @@ public class GalleryMediaContent {
      * @param canonical
      *            the canonical part of the file name, used as the identifier
      *            for the media content
-     * @param order
-     *            order number of the medium in the playback order of the media.
-     *            It is only used to display the user. The sorting takes place
-     *            in the containing structure.
-     * @param orderlabel
-     *            order label for the media in the playback order of the media
      * @param previewUri
      *            URI to content for media preview. Can be {@code null}, then a
      *            placeholder is used.
@@ -86,13 +70,10 @@ public class GalleryMediaContent {
      *            URI to the content for the media view. Can be {@code null},
      *            then no media view is offered.
      */
-    GalleryMediaContent(GalleryPanel panel, View view, String canonical, int order, String orderlabel, URI previewUri,
-            URI mediaViewUri) {
+    GalleryMediaContent(GalleryPanel panel, View view, String canonical, URI previewUri, URI mediaViewUri) {
         this.panel = panel;
         this.view = view;
         this.id = canonical;
-        this.order = order;
-        this.orderlabel = orderlabel;
         this.previewUri = previewUri;
         this.mediaViewUri = mediaViewUri;
     }
@@ -123,7 +104,7 @@ public class GalleryMediaContent {
      * @return the order number
      */
     public String getOrder() {
-        return Integer.toString(order);
+        return Integer.toString(view.getMediaUnit().getOrder());
     }
 
     /**
@@ -132,7 +113,7 @@ public class GalleryMediaContent {
      * @return the order label
      */
     public String getOrderlabel() {
-        return orderlabel;
+        return view.getMediaUnit().getOrderlabel();
     }
 
     /**
