@@ -123,6 +123,19 @@ public class GalleryPanel {
     }
 
     /**
+     * Check if passed galleryMediaContent is the last selection.
+     * @param galleryMediaContent GalleryMediaContent to be checked
+     * @return boolean
+     */
+    public boolean isLastSelection(GalleryMediaContent galleryMediaContent) {
+        if (dataEditor.getSelectedMedia().size() > 0 && Objects.nonNull(galleryMediaContent)) {
+            return Objects.equals(galleryMediaContent.getView().getMediaUnit(),
+                    dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1).getKey());
+        }
+        return false;
+    }
+
+    /**
      * Get the list of image file paths for the current process.
      *
      * @return List of fullsize PNG images

@@ -13,7 +13,7 @@
 var metadataEditor = {
     dragging: false,
     handleMouseDown(event) {
-        if (event.currentTarget.querySelectorAll(".active").length === 0) {
+        if ($(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
             this.select(event);
         }
     },

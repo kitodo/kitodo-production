@@ -47,7 +47,7 @@
                     <p:commandButton id="listViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-list"
-                                     oncomplete="metadataEditor.shortcuts.updateViews()"
+                                     oncomplete="metadataEditor.shortcuts.updateViews();destruct();scrollToSelectedStructureThumbnail()"
                                      title="#{msgs['dataEditor.galleryStructuredView']} (#{msgs['shortcuts.dataEditor.structuredView.keys']})"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
@@ -68,7 +68,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
-                                     oncomplete="metadataEditor.shortcuts.updateViews()"
+                                     oncomplete="metadataEditor.shortcuts.updateViews();initialize();scrollToSelectedPreviewThumbnail();changeToMapView()"
                                      title="#{msgs['dataEditor.galleryDetailView']} (#{msgs['shortcuts.dataEditor.detailView.keys']})"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
@@ -90,10 +90,10 @@
                         <h:outputText value="#{stripe.label} #{DataEditorForm.getStructureElementTitle(stripe.structure)}"
                                       style="font-weight: bold;"
                                       rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
-                        <p:outputPanel deferred="true"
-                                       deferredMode="visible">
+                        <p:outputPanel>
                             <!--@elvariable id="structuredThumbnail" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                             <p:dataList styleClass="structureElementDataList"
+                                        itemStyleClass="media-position"
                                         rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"
                                         id="structureElementDataList"
                                         var="media"
@@ -104,26 +104,28 @@
                                          rendered="#{editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel"
-                                         a:ondragstart="metadataEditor.handleDragStart(event)"
-                                         a:onmousedown="metadataEditor.handleMouseDown(event)"
-                                         a:onmouseup="metadataEditor.handleMouseUp(event)"
-                                         a:data-order="#{media.order}"
-                                         a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
-                                    <h:panelGroup>
-                                        <h:panelGroup class="thumbnail-container">
-                                                <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'active' : ''}"
-                                                                rendered="#{media.showingInPreview}">
-                                                    <f:param name="id" value="#{media.id}" />
-                                                </p:graphicImage>
-                                                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                                                              rendered="#{media.assignedSeveralTimes}"
-                                                              styleClass="assigned-several-times"/>
-                                                <h:panelGroup class="thumbnail-overlay">
-                                                    #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                                </h:panelGroup>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
+                                         a:ondragstart="metadataEditor.handleDragStart(event)">
+                                    <p:outputPanel styleClass="thumbnail-parent">
+                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                        <p:outputPanel styleClass="thumbnail-container"
+                                                       deferred="true"
+                                                       deferredMode="visible"
+                                                       a:onmousedown="metadataEditor.handleMouseDown(event)"
+                                                       a:onmouseup="metadataEditor.handleMouseUp(event)"
+                                                       a:data-order="#{media.order}"
+                                                       a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
+                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                            rendered="#{media.showingInPreview}">
+                                                <f:param name="id" value="#{media.id}" />
+                                            </p:graphicImage>
+                                            <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                                                          rendered="#{media.assignedSeveralTimes}"
+                                                          styleClass="assigned-several-times"/>
+                                            <h:panelGroup class="thumbnail-overlay">
+                                                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                            </h:panelGroup>
+                                        </p:outputPanel>
+                                    </p:outputPanel>
                                 </p:panel>
                                 <ui:fragment rendered="#{editImages}">
                                     <p:draggable id="structuredPagesDraggable"
@@ -171,12 +173,12 @@
                                   style="font-weight: bold;"/>
                     <h:panelGroup id="unstructuredMedia"
                                   layout="block">
-                        <p:outputPanel deferred="true"
-                                       deferredMode="visible">
+                        <p:outputPanel>
                             <!-- Index 0 of stripes is used to retrieve the logical root element. -->
                             <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                             <p:dataList id="unstructuredMediaList"
                                         styleClass="pageList"
+                                        itemStyleClass="media-position"
                                         value="#{DataEditorForm.galleryPanel.stripes.get(0).medias}"
                                         binding="#{currentMedia}"
                                         emptyMessage="#{msgs['noMedia']}"
@@ -185,16 +187,18 @@
                                          rendered="#{editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="unstructuredMediaPanel"
-                                         a:ondragstart="metadataEditor.handleDragStart(event)"
-                                         a:onmousedown="metadataEditor.handleMouseDown(event)"
-                                         a:onmouseup="metadataEditor.handleMouseUp(event)"
-                                         a:data-order="#{media.order}"
-                                         a:data-stripe="0">
-                                <h:panelGroup id="updateSelectedUnstructuredMediaLink">
-                                        <h:panelGroup styleClass="thumbnail-container">
+                                         a:ondragstart="metadataEditor.handleDragStart(event)">
+                                    <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
+                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                        <p:outputPanel styleClass="thumbnail-container"
+                                                       deferred="true"
+                                                       deferredMode="visible"
+                                                       a:onmousedown="metadataEditor.handleMouseDown(event)"
+                                                       a:onmouseup="metadataEditor.handleMouseUp(event)"
+                                                       a:data-order="#{media.order}"
+                                                       a:data-stripe="0">
                                                 <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                                                 <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'active' : ''}"
                                                                 rendered="#{media.showingInPreview}">
                                                     <f:param name="id"
                                                              value="#{media.id}"/>
@@ -202,7 +206,7 @@
                                                 <h:panelGroup class="thumbnail-overlay">
                                                     #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
                                                 </h:panelGroup>
-                                        </h:panelGroup>
+                                        </p:outputPanel>
                                     </h:panelGroup>
                                 </p:panel>
                                 <ui:fragment rendered="#{editImages}">
@@ -253,7 +257,8 @@
                 <div class="thumbnailWrapper">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
-                        <p:outputPanel deferred="true"
+                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"
+                                       deferred="true"
                                        deferredMode="visible">
                             <p:panel a:onmousedown="metadataEditor.handleMouseDown(event)"
                                      a:ondragstart="metadataEditor.handleDragStart(event)"
@@ -261,7 +266,6 @@
                                      a:data-order="#{media.order}">
                                 <h:panelGroup layout="block" styleClass="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                        class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''}"
                                                         rendered="#{media.showingInPreview}">
                                             <f:param name="id"
                                                      value="#{media.id}"/>
@@ -288,23 +292,24 @@
                             <div id="thumbnailWrapper">
                                 <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                            var="media">
-                                    <p:outputPanel deferred="true"
-                                                   deferredMode="visible">
-                                        <h:panelGroup layout="block">
-                                                <p:panel layout="block"
-                                                         styleClass="thumbnail-container"
-                                                         a:onmousedown="metadataEditor.handleMouseDown(event)"
-                                                         a:onmouseup="metadataEditor.handleMouseUp(event)"
-                                                         a:data-order="#{media.order}">
-                                                        <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                                      class="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''}"
-                                                                                      rendered="#{media.showingInPreview}">
-                                                            <f:param name="id" value="#{media.id}" />
-                                                        </p:graphicImage></h:outputText>
-                                                        <h:panelGroup layout="block" styleClass="thumbnail-overlay">
-                                                            #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                                        </h:panelGroup>
-                                                </p:panel>
+                                    <p:outputPanel>
+                                        <h:panelGroup layout="block" styleClass="thumbnail-parent">
+                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                            <p:outputPanel layout="block"
+                                                           deferred="true"
+                                                           deferredMode="visible"
+                                                           styleClass="thumbnail-container"
+                                                           a:onmousedown="metadataEditor.handleMouseDown(event)"
+                                                           a:onmouseup="metadataEditor.handleMouseUp(event)"
+                                                           a:data-order="#{media.order}">
+                                                <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                                              rendered="#{media.showingInPreview}">
+                                                    <f:param name="id" value="#{media.id}" />
+                                                </p:graphicImage></h:outputText>
+                                                <h:panelGroup layout="block" styleClass="thumbnail-overlay">
+                                                    #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                                </h:panelGroup>
+                                            </p:outputPanel>
                                         </h:panelGroup>
                                     </p:outputPanel>
                                 </ui:repeat>

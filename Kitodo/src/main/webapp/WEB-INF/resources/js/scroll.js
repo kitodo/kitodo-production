@@ -146,10 +146,10 @@ function initializeStructureTreeScrolling() {
     });
 }
 
-function scrollToSelectedThumbnail() {
+function scrollToSelectedPreviewThumbnail() {
     var scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
-        var selectedThumbnail = scrollableContent.find(".active.thumbnail");
+        var selectedThumbnail = scrollableContent.find(".active");
         if (selectedThumbnail.length === 1) {
             var thumbnailHeight = selectedThumbnail.parent().height();
             var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
@@ -160,6 +160,24 @@ function scrollToSelectedThumbnail() {
             }
         }
     }
+}
+
+function scrollToSelectedStructureThumbnail() {
+    let scrollableContent = $("#imagePreviewForm\\:structuredPagesField");
+    if (scrollableContent.length) {
+        let selectedThumbnail = scrollableContent.find(".active");
+        if (selectedThumbnail.length === 1) {
+            let mediaPosition = selectedThumbnail.closest(".media-position");
+            scrollableContent.animate({
+                scrollTop: mediaPosition[0].offsetTop
+            }, 180, null, null);
+        }
+    }
+}
+
+function scrollToSelectedThumbnail() {
+    scrollToSelectedStructureThumbnail();
+    scrollToSelectedPreviewThumbnail();
 }
 
 function scrollToSelectedTreeNode() {

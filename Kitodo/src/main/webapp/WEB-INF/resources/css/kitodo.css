@@ -1616,6 +1616,10 @@ Column content
     user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
 }
 
+#imagePreviewForm\:structuredPagesField {
+    position: relative;
+}
+
 #imagePreviewForm\:tifFoldersLabel {
     color: var(--pure-white);
     line-height: var(--input-height);
@@ -1713,14 +1717,6 @@ Column content
     background-color: var(--blue);
 }
 
-.thumbnailWrapper {
-    margin-left: 5px;
-}
-
-.thumbnailWrapper > .ui-outputpanel {
-    display: inline-block;
-}
-
 #galleryWrapperPanel,
 #galleryWrapperPanel_content {
     height: 100%;
@@ -1753,6 +1749,10 @@ Column content
     text-align: center;
 }
 
+#thumbnailWrapper .thumbnail-parent {
+    display: inline-block;
+}
+
 #thumbnailStripeScrollableContent a {
     display: block;
 }
@@ -1768,7 +1768,20 @@ Column content
     pointer-events: none;
 }
 
+.thumbnail-parent {
+    display: block;
+    height: 104px;
+    width: 75px;
+    position: relative;
+}
+
 .thumbnail {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.thumbnail + .thumbnail-container img {
     background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
     box-sizing: border-box;
@@ -1778,15 +1791,15 @@ Column content
     width: 100%;
 }
 
-.thumbnail.active {
+.thumbnail.active + .thumbnail-container img {
     border-color: var(--green);
 }
 
 .thumbnail-container {
     display: inline-block;
-    height: 104px;
+    height: 100%;
     position: relative;
-    width: 75px;
+    width: 100%;
 }
 
 .thumbnail-container > .ui-widget-content {
