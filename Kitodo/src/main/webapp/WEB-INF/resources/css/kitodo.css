@@ -1912,6 +1912,24 @@ Column content
     top: -5px;
 }
 
+#keyboardShortcuts {
+    margin: var(--default-double-size);
+    list-style: none;
+    line-height: var(--input-height);
+}
+
+#keyboardShortcuts li label:last-child {
+    float: right;
+}
+
+kbd {
+    background: var(--cloudy-gray);
+    color: var(--medium-gray);
+    border-radius: var(--default-border-radius);
+    margin: 0 var(--default-half-size);
+    padding: 0 var(--default-half-size);
+}
+
 /*----------------------------------------------------------------------
 Workflow Editor
 ----------------------------------------------------------------------*/

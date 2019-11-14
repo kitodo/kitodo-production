@@ -26,6 +26,13 @@
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
 
             <p:remoteCommand name="select" action="#{DataEditorForm.galleryPanel.setSelectionType}"/>
+            <p:remoteCommand name="setGalleryViewMode"
+                             action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
+                             update="imagePreviewForm galleryHeadingWrapper"
+                             oncomplete="metadataEditor.shortcuts.updateViews()"/>
+            <p:outputLabel id="galleryViewMode"
+                           value="#{DataEditorForm.galleryPanel.galleryViewMode}"
+                           style="display: none"/>
 
             <p:panelGrid id="imageControlPanel" columns="3"
                          style="right: 47px; top: 0; position: absolute;">
@@ -33,8 +40,8 @@
                     <p:commandButton id="listViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-list"
-                                     oncomplete="destruct()"
-                                     title="#{msgs['dataEditor.galleryStructuredView']}"
+                                     oncomplete="metadataEditor.shortcuts.updateViews()"
+                                     title="#{msgs['dataEditor.galleryStructuredView']} (#{msgs['shortcuts.dataEditor.structuredView.keys']})"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
@@ -43,7 +50,7 @@
                     <p:commandButton id="gridViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-th-large"
-                                     oncomplete="destruct()"
+                                     oncomplete="metadataEditor.shortcuts.updateViews()"
                                      title="#{msgs['dataEditor.galleryUnstructuredView']}"
                                      rendered="false"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
@@ -54,8 +61,8 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
-                                     oncomplete="initialize();scrollToSelectedThumbnail();changeToMapView()"
-                                     title="#{msgs['dataEditor.galleryDetailView']}"
+                                     oncomplete="metadataEditor.shortcuts.updateViews()"
+                                     title="#{msgs['dataEditor.galleryDetailView']} (#{msgs['shortcuts.dataEditor.detailView.keys']})"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>

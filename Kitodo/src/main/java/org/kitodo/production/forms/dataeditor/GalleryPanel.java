@@ -315,6 +315,15 @@ public class GalleryPanel {
     }
 
     /**
+     * Set galleryViewMode.
+     * The new value can be passed from a {@code <p:remoteCommand/>} as request parameter.
+     */
+    public void setGalleryViewMode() {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        this.galleryViewMode = GalleryViewMode.valueOf(params.get("galleryViewMode").toUpperCase());
+    }
+
+    /**
      * Update the selected TreeNode in the physical structure tree.
      */
     private void updateStructure(GalleryMediaContent galleryMediaContent) {
