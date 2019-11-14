@@ -84,7 +84,15 @@ var scrollDown = function (elementID, triggerCompleteFunction) {
     }
 };
 
+function destruct() {
+    $(document).off("mouseenter.scrollGallery");
+    $(document).off("mouseleave.scrollGallery");
+}
+
 function initialize() {
+    // make sure that event handlers are only registered once
+    destruct();
+
     checkScrollPosition($("#thumbnailStripeScrollableContent"));
 
     $(document).on("mouseenter.scrollGallery", ".scroll-button", function (e) {
@@ -151,7 +159,7 @@ function scrollToSelectedPreviewThumbnail() {
     if (scrollableContent.length) {
         var selectedThumbnail = scrollableContent.find(".active");
         if (selectedThumbnail.length === 1) {
-            var thumbnailHeight = selectedThumbnail.parent().height();
+            var thumbnailHeight = selectedThumbnail.parent().parent().height();
             var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
             if (selectedIndex >= 0) {
                 scrollableContent.animate({
@@ -188,11 +196,6 @@ function scrollToSelectedTreeNode() {
             scrollTop: selectedTreeNode.position().top - structureTree.height()/2
         }, 180, null, null);
     }
-}
-
-function destruct() {
-    $(document).off("mouseenter.scrollGallery");
-    $(document).off("mouseleave.scrollGallery");
 }
 
 $(document).ready(function () {
