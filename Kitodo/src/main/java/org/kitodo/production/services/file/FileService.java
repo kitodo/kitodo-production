@@ -71,6 +71,19 @@ public class FileService {
             FileManagementInterface.class).loadModule();
 
     /**
+     * Adds a slash to a URI to mark it as a directory, if it does not already
+     * end with one.
+     *
+     * @param uri
+     *            URI that you know to name a directory
+     * @return URI, which definitely ends in a slash
+     */
+    public URI asDirectory(URI uri) {
+        String uriString = uri.toString();
+        return uriString.endsWith("/") ? uri : URI.create(uriString.concat("/"));
+    }
+
+    /**
      * Creates a MetaDirectory.
      *
      * @param parentFolderUri
@@ -82,7 +95,9 @@ public class FileService {
      *             an IOException
      */
     URI createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
-        if (!fileExist(parentFolderUri.resolve(directoryName))) {
+        if (fileExist(asDirectory(parentFolderUri).resolve(directoryName))) {
+            logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
+        } else {
             CommandService commandService = ServiceManager.getCommandService();
             String path = FileSystems.getDefault()
                     .getPath(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
@@ -97,8 +112,6 @@ public class FileService {
                 logger.warn(message);
                 throw new IOException(message);
             }
-        } else {
-            logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
         }
         return URI.create(parentFolderUri.getPath() + '/' + directoryName);
     }
@@ -171,6 +184,21 @@ public class FileService {
      */
     public URI createProcessLocation(Process process) throws IOException {
         URI processLocationUri = fileManagementModule.createProcessLocation(process.getId().toString());
+        createProcessFolders(process, processLocationUri);
+        return processLocationUri;
+    }
+
+    /**
+     * Creates the folders inside a process location.
+     *
+     * @param process
+     *            the process
+     */
+    public void createProcessFolders(Process process) throws IOException {
+        createProcessFolders(process, fileManagementModule.createUriForExistingProcess(process.getId().toString()));
+    }
+
+    private void createProcessFolders(Process process, URI processLocationUri) throws IOException {
         for (Folder folder : process.getProject().getFolders()) {
             if (folder.isCreateFolder()) {
                 URI parentFolderUri = processLocationUri;
@@ -180,7 +208,6 @@ public class FileService {
                 }
             }
         }
-        return processLocationUri;
     }
 
     /**

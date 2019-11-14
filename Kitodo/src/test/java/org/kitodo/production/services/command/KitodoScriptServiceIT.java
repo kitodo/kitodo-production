@@ -11,23 +11,32 @@
 
 package org.kitodo.production.services.command;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
+import org.kitodo.TreeDeleter;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 
 public class KitodoScriptServiceIT {
+
+    private static final File scriptCreateDirMeta = new File(
+            ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -39,6 +48,31 @@ public class KitodoScriptServiceIT {
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+    }
+
+    @Test
+    public void shouldCreateProcessFolders() throws Exception {
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
+        }
+
+        Process process = ServiceManager.getProcessService().getById(1);
+        ServiceManager.getFileService().createProcessLocation(process);
+
+        File processHome = new File(ConfigCore.getKitodoDataDirectory(), "1");
+        File max = new File(processHome, "jpgs/max");
+        max.delete();
+
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+
+        String script = "action:createFolders";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        kitodoScript.execute(processes, script);
+
+        assertTrue(max + ": There is no such directory!", max.isDirectory());
+
+        TreeDeleter.deltree(processHome);
     }
 
     @Test
