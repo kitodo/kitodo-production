@@ -25,7 +25,6 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
@@ -365,7 +364,7 @@ public class MigrationForm extends BaseForm {
      *            The template to create.
      */
     public void createNewTemplate(Template template) {
-        if (isTitleValid(template)) {
+        if (migrationService.isTitleValid(template)) {
             try {
                 Converter converter = new Converter(template.getWorkflow().getTitle());
                 converter.convertWorkflowToTemplate(template);
@@ -416,21 +415,4 @@ public class MigrationForm extends BaseForm {
     public void setWorkflowToUse(Workflow workflowToUse) {
         this.workflowToUse = workflowToUse;
     }
-
-    private boolean isTitleValid(Template template) {
-        String templateTitle = template.getTitle();
-        if (StringUtils.isNotBlank(templateTitle)) {
-            List<Template> templates = ServiceManager.getTemplateService().getTemplatesWithTitleAndClient(templateTitle,
-                template.getClient().getId());
-            int count = templates.size();
-            if (count != 0) {
-                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, "templateTitleAlreadyInUse");
-                return false;
-            }
-            return true;
-        }
-        Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, "templateTitleEmpty");
-        return false;
-    }
-
 }
