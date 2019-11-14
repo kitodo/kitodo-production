@@ -34,6 +34,9 @@ import org.primefaces.model.SortOrder;
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private static final String SORT_TITLE = "title";
+    private List taskList = new ArrayList();
+    private List processList = new ArrayList();
+    private List projectList = new ArrayList();
 
     /**
      * Default constructor.
@@ -68,14 +71,14 @@ public class DesktopForm extends BaseForm {
      */
     public List getTasks() {
         try {
-            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList()) {
-                return ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap());
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList() && taskList.isEmpty()) {
+                taskList = ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap());
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
                 e);
         }
-        return new ArrayList();
+        return taskList;
     }
 
     /**
@@ -85,14 +88,14 @@ public class DesktopForm extends BaseForm {
      */
     public List getProcesses() {
         try {
-            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList()) {
-                return ServiceManager.getProcessService().loadData(0, 10,SORT_TITLE, SortOrder.ASCENDING, null);
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
+                processList =  ServiceManager.getProcessService().loadData(0, 10,SORT_TITLE, SortOrder.ASCENDING, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
                 logger, e);
         }
-        return new ArrayList();
+        return processList;
     }
 
     /**
@@ -102,14 +105,14 @@ public class DesktopForm extends BaseForm {
      */
     public List getProjects() {
         try {
-            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()) {
-                return ServiceManager.getProjectService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList() && projectList.isEmpty()) {
+                projectList = ServiceManager.getProjectService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
         }
-        return new ArrayList();
+        return projectList;
     }
 
     /**
