@@ -316,7 +316,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         if (prepareProcess(templateId, projectId)) {
             return stayOnCurrentPage;
         }
-        return MessageFormat.format(REDIRECT_PATH, referringView);
+        return referringView;
     }
 
     /**

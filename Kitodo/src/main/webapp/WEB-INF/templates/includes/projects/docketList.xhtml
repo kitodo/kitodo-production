@@ -52,7 +52,7 @@
 
                 <p:commandLink id="deleteDocket" action="#{DocketForm.delete}" title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteDocket()}"
-                               update="projectsTabView:docketTable">
+                               update="docketTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{DocketForm.docketById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"

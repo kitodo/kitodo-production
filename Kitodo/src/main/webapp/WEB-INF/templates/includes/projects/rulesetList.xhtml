@@ -63,7 +63,7 @@
                 </h:link>
                 <p:commandLink id="deleteRuleset" action="#{RulesetForm.delete}" title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteRuleset()}"
-                               update="projectsTabView:rulesetTable">
+                               update="rulesetTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{RulesetForm.rulesetById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"

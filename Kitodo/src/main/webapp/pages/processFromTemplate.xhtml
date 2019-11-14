@@ -18,9 +18,13 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
         <f:viewParam name="id"/>
+        <!--@elvariable id="templateId" type="java.lang.Integer"-->
         <f:viewParam name="templateId"/>
+        <!--@elvariable id="projectId" type="java.lang.Integer"-->
         <f:viewParam name="projectId"/>
+        <!--@elvariable id="referrer" type="java.lang.String"-->
         <f:viewParam name="referrer"/>
         <f:viewAction action="#{ProcessForm.load(id)}" />
         <f:viewAction action="#{CreateProcessForm.prepare(templateId, projectId, referrer)}"/>
@@ -39,7 +43,7 @@
                          update="notifications, sticky-notifications"/>
         <p:button value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="projects"
+                  outcome="#{not empty param['referrer'] ? param['referrer'] : 'desktop'}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>

@@ -1084,7 +1084,7 @@ h3#headerText {
 .kitodoScript button {
     margin: 0 0 5px 5px;
 }
-    
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/
@@ -2081,7 +2081,7 @@ footer {
     border-radius: var(--default-border-radius);
 }
 
-tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
+tbody#projectsTable_data > tr.ui-widget-content > td {
     padding-top: 6px;
     padding-bottom: 6px;
 }

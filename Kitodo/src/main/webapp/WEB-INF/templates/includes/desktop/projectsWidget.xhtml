@@ -32,11 +32,20 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
             <h:form id="projectActionForm">
+                <p:commandLink id="createProcessFromTemplate"
+                               title="#{msgs['createNewProcess']}"
+                               action="#{SelectTemplateDialogView.createProcessForProject()}"
+                               rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                    <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
+                    <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{project}"/>
+
+                    <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
+                </p:commandLink>
                 <h:link rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.edit}">
                     <f:param name="id" value="#{project.id}" />
                     <f:param name="referer" value="desktop"/>
-                    <i class="fa fa-pencil-square-o fa-lg"/>
+                    <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
                 <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
                                action="#{ProjectForm.duplicate(project.id)}" immediate="true"
@@ -56,4 +65,5 @@
             </h:form>
         </p:column>
     </p:dataTable>
+    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/selectTemplate.xhtml"/>
 </ui:composition>
