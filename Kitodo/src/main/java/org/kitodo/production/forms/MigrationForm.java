@@ -364,28 +364,30 @@ public class MigrationForm extends BaseForm {
      *            The template to create.
      */
     public void createNewTemplate(Template template) {
-        try {
-            Converter converter = new Converter(template.getWorkflow().getTitle());
-            converter.convertWorkflowToTemplate(template);
-        } catch (IOException | DAOException | WorkflowException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
-        }
+        if (migrationService.isTitleValid(template)) {
+            try {
+                Converter converter = new Converter(template.getWorkflow().getTitle());
+                converter.convertWorkflowToTemplate(template);
+            } catch (IOException | DAOException | WorkflowException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()},
+                        logger, e);
+            }
 
-        List<Process> processesToAddToTemplate = templatesToCreate.get(template);
-        try {
-            ServiceManager.getTemplateService().save(template);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger,
-                e);
+            List<Process> processesToAddToTemplate = templatesToCreate.get(template);
+            try {
+                ServiceManager.getTemplateService().save(template);
+            } catch (DataException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TEMPLATE.getTranslationSingular()}, logger,
+                        e);
+            }
+            try {
+                migrationService.addProcessesToTemplate(template, processesToAddToTemplate);
+            } catch (DataException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()}, logger,
+                        e);
+            }
+            templatesToCreate.remove(template);
         }
-        try {
-            migrationService.addProcessesToTemplate(template, processesToAddToTemplate);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
-        }
-        templatesToCreate.remove(template);
     }
 
     /**
