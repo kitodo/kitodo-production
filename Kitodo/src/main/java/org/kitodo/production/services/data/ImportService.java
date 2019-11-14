@@ -244,15 +244,15 @@ public class ImportService {
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
         NodeList nodeList = (NodeList) parentIDXpath.compile(PARENT_XPATH)
                 .evaluate(document, XPathConstants.NODESET);
-        if (nodeList.getLength() != 1) {
-            return null;
-        } else {
+        if (nodeList.getLength() == 1) {
             Node parentIDNode = nodeList.item(0);
             if (PARENTHESIS_TRIM_MODE.equals(trimMode)) {
                 return parentIDNode.getTextContent().replaceAll("\\([^)]+\\)", "");
             } else {
                 return parentIDNode.getTextContent();
             }
+        } else {
+            return null;
         }
     }
 
@@ -261,14 +261,14 @@ public class ImportService {
         parentProcess.getChildren().add(childProcess);
     }
 
-    private String importProcessAndReturnParentID(String id, LinkedList<TempProcess> allProcesses,
+    private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses,
                                                   CreateProcessForm createProcessForm)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
 
         String opac = createProcessForm.getImportTab().getHitModel().getSelectedCatalog();
 
-        DataRecord internalRecord = importRecord(opac, id);
+        DataRecord internalRecord = importRecord(opac, recordId);
         if (!(internalRecord.getOriginalData() instanceof String)) {
             throw new UnsupportedFormatException("Original metadata of internal record has to be an XML String, '"
                     + internalRecord.getOriginalData().getClass().getName() + "' found!");
@@ -307,16 +307,16 @@ public class ImportService {
     }
 
     /**
-     * Import a process identified by the given ID 'id' using the given CreateProcessForm 'createProcessForm'.
+     * Import a record identified by the given ID 'recordId' using the given CreateProcessForm 'createProcessForm'.
      * Additionally, import all ancestors of the given process referenced in the original data of the process imported
      * from the OPAC selected in the given CreateProcessForm instance.
      * Return the list of processes as a LinkedList of TempProcess.
      *
-     * @param id identifier of the process to import
+     * @param recordId identifier of the process to import
      * @param createProcessForm CreateProcessForm instance containing import configuration
      * @return List of TempProcess
      */
-    public LinkedList<TempProcess> importProcessHierarchy(String id, CreateProcessForm createProcessForm,
+    public LinkedList<TempProcess> importProcessHierarchy(String recordId, CreateProcessForm createProcessForm,
                                                           int importDepth)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
@@ -324,7 +324,7 @@ public class ImportService {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
-        String parentID = importProcessAndReturnParentID(id, processes, createProcessForm);
+        String parentID = importProcessAndReturnParentID(recordId, processes, createProcessForm);
         int level = 1;
         while (Objects.nonNull(parentID) && level < importDepth) {
             try {

@@ -326,7 +326,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             boolean generated = processGenerator.generateProcess(templateId, projectId);
             if (generated) {
                 processes = new LinkedList<>(Collections.singletonList(new TempProcess(
-                        (processGenerator.getGeneratedProcess()), new Workpiece())));
+                        processGenerator.getGeneratedProcess(), new Workpiece())));
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset().getFile());
