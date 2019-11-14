@@ -373,6 +373,9 @@ public class MockDatabase {
         authorities.add(new Authority("deleteTask" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("addTask" + CLIENT_ASSIGNABLE));
 
+        // Database statistics
+        authorities.add(new Authority("viewDatabaseStatistic" + GLOBAL_ASSIGNABLE));
+
         for (Authority authority : authorities) {
             ServiceManager.getAuthorityService().saveToDatabase(authority);
         }
@@ -1100,6 +1103,7 @@ public class MockDatabase {
         Role projectRoleForSecondClient = ServiceManager.getRoleService().getById(4);
         Role withoutAuthoritiesRole = ServiceManager.getRoleService().getById(5);
         Role metadataRole = ServiceManager.getRoleService().getById(6);
+        Role databaseRole = ServiceManager.getRoleService().getById(7);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1113,6 +1117,7 @@ public class MockDatabase {
         firstUser.setMetadataLanguage("de");
         firstUser.getRoles().add(adminRole);
         firstUser.getRoles().add(generalRole);
+        firstUser.getRoles().add(databaseRole);
         firstUser.getClients().add(firstClient);
         ServiceManager.getUserService().saveToDatabase(firstUser);
 
@@ -1249,6 +1254,17 @@ public class MockDatabase {
         sixthRole.setAuthorities(userMetadataAuthorities);
 
         ServiceManager.getRoleService().saveToDatabase(sixthRole);
+
+        // insert database authority
+        Role databaseStatisticsRole = new Role();
+        databaseStatisticsRole.setTitle("Database management role");
+        databaseStatisticsRole.setClient(client);
+
+        List<Authority> databaseStatisticAuthorities = new ArrayList<>();
+        databaseStatisticAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewDatabaseStatistic" + GLOBAL_ASSIGNABLE));
+        databaseStatisticsRole.setAuthorities(databaseStatisticAuthorities);
+
+        ServiceManager.getRoleService().saveToDatabase(databaseStatisticsRole);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {
