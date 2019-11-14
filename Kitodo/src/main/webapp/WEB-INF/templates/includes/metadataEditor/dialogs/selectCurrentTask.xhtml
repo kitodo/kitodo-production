@@ -48,7 +48,7 @@
                     <p:panelGrid>
                         <p:row>
                             <p:commandButton id="setCurrentTaskButton"
-                                             action="#{DataEditorForm.selectCurrentTask(view.viewId)}"
+                                             action="#{DataEditorForm.open(DataEditorForm.currentTask.id, view.viewId)}"
                                              onclick="PF('selectCurrentTaskDialog').hide();"
                                              styleClass="primary right"
                                              iconPos="right"

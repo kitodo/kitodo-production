@@ -1070,7 +1070,7 @@ h3#headerText {
     display: inline-block;
     overflow-x: hidden;
     text-overflow: ellipsis;
-    width: calc(100% - 300px);
+    width: calc(100% - 500px);
     white-space: nowrap;
 }
 
@@ -1084,7 +1084,7 @@ h3#headerText {
 .kitodoScript button {
     margin: 0 0 5px 5px;
 }
-    
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/
@@ -1099,7 +1099,7 @@ Metadata Editor
 }
 
 #metadataEditorHeader h3 {
-    width: calc(100% - 450px);
+    width: calc(100% - 700px);
 }
 
 #metadataEditorHeader .ui-panel,
@@ -1853,6 +1853,8 @@ Column content
     color: var(--pure-white);
     padding: 5px;
     border-top: solid var(--contrast-border-width) var(--blue);
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #imagePreviewForm\:structuredPages ul {
@@ -1923,6 +1925,24 @@ Column content
     right: -5px;
     text-align: center;
     top: -5px;
+}
+
+#keyboardShortcuts {
+    margin: var(--default-double-size);
+    list-style: none;
+    line-height: var(--input-height);
+}
+
+#keyboardShortcuts li label:last-child {
+    float: right;
+}
+
+kbd {
+    background: var(--cloudy-gray);
+    color: var(--medium-gray);
+    border-radius: var(--default-border-radius);
+    margin: 0 var(--default-half-size);
+    padding: 0 var(--default-half-size);
 }
 
 /*----------------------------------------------------------------------
@@ -2096,7 +2116,7 @@ footer {
     border-radius: var(--default-border-radius);
 }
 
-tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
+tbody#projectsTable_data > tr.ui-widget-content > td {
     padding-top: 6px;
     padding-bottom: 6px;
 }

@@ -36,6 +36,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -56,6 +58,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
 
 @Named("DataEditorForm")
@@ -183,7 +186,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @param referringView
      *            JSF page the user came from
      */
-    public void open(String taskID, String referringView) {
+    public String open(String taskID, String referringView) {
         try {
             this.currentTask = ServiceManager.getTaskService().getById(Integer.parseInt(taskID));
             this.referringView = referringView;
@@ -198,13 +201,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             openProcesses.put(process.getId(), user);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(referringView);
-            } catch (IOException ex) {
-                logger.error("Unable to redirect to referrer '" + referringView + "'. (" + ex.getLocalizedMessage()
-                        + ")");
-            }
+            return referringView;
         }
+        return "/pages/metadataEditor?faces-redirect=true";
     }
 
     /**
@@ -309,10 +308,27 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     /**
      * Save the structure and metadata.
+     */
+    public void save() {
+        metadataPanel.preserve();
+        structurePanel.preserve();
+        try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
+            ServiceManager.getMetsService().save(workpiece, out);
+            PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
+                    + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
+        PrimeFaces.current().ajax().update("notifications");
+    }
+
+    /**
+     * Save the structure and metadata.
      *
      * @return navigation target
      */
-    public String save() {
+    public String saveAndExit() {
         metadataPanel.preserve();
         structurePanel.preserve();
         try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
@@ -664,19 +680,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
     }
 
-    /**
-     * Create and return the navigation path to the metadata editor, containing the currentTask ID and the given
-     * referrer as view/URL parameters.
-     *
-     * @param referrer
-     *          path of referring view
-     * @return navigation path to metadata editor page including currentTasks ID and referrer as view parameters
-     */
-    public String selectCurrentTask(String referrer) {
-        return "/pages/metadataEditor?faces-redirect=true&taskId=" + this.getCurrentTask().getId()
-                + "&referrer=" + referrer;
-    }
-
     void assignView(IncludedStructuralElement includedStructuralElement, View view) {
         includedStructuralElement.getViews().add(view);
         view.getMediaUnit().getIncludedStructuralElements().add(includedStructuralElement);
@@ -690,5 +693,29 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             includedStructuralElement.getViews().removeFirstOccurrence(view);
         }
         view.getMediaUnit().getIncludedStructuralElements().remove(includedStructuralElement);
+    }
+
+    /**
+     * Retrieve and return 'title' value of given Object 'dataObject' if Object is instance of
+     * 'IncludedStructuralElement' and if it does have a title. Uses a configurable list of metadata keys to determine
+     * which metadata keys should be considered.
+     * Return empty string otherwise.
+     *
+     * @param dataObject
+     *          StructureTreeNode containing the IncludedStructuralElement whose title is returned
+     * @return 'title' value of the IncludedStructuralElement contained in the given StructureTreeNode 'treeNode'
+     */
+    public String getStructureElementTitle(Object dataObject) {
+        if (dataObject instanceof IncludedStructuralElement) {
+            IncludedStructuralElement element = (IncludedStructuralElement) dataObject;
+            List<Metadata> titleMetadata = element.getMetadata().stream()
+                    .filter(m -> DataEditorService.getTitleKeys().contains(m.getKey())).collect(Collectors.toList());
+            for (Metadata metadata : titleMetadata) {
+                if (metadata instanceof MetadataEntry) {
+                    return " - " + ((MetadataEntry) metadata).getValue();
+                }
+            }
+        }
+        return "";
     }
 }

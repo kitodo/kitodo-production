@@ -791,4 +791,13 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToViewProcessImages() {
         return hasAuthorityForClient("viewProcessImages");
     }
+
+    /**
+     * Check if the current user has the authority to view the database statistics.
+     *
+     * @return true if the current user has the authority to view database statistics
+     */
+    public boolean hasAuthorityToViewDatabaseStatistic() {
+        return hasAuthorityGlobal("viewDatabaseStatistic");
+    }
 }

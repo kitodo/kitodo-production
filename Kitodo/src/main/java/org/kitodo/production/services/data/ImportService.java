@@ -41,6 +41,9 @@ import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ImportService {
@@ -49,6 +52,9 @@ public class ImportService {
 
     private static volatile ImportService instance = null;
     private static ExternalDataImportInterface importModule;
+    private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
+    private static final String KITODO_STRING = "kitodo";
+
 
     /**
      * Return singleton variable of type ImportService.
@@ -209,5 +215,27 @@ public class ImportService {
                     + record.getMetadataFormat() + "' and '" + record.getFileFormat() + "'!");
         }
         return converterModules.get(0);
+    }
+
+    /**
+     * Get docType form imported record.
+     * @param record imported record
+     *       as Document
+     * @return docType as String
+     */
+    public String getRecordDocType(Document record) {
+        Element root = record.getDocumentElement();
+        NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO_STRING);
+        if (kitodoNodes.getLength() > 0) {
+            NodeList importedMetadata = kitodoNodes.item(0).getChildNodes();
+            for (int i = 0; i < importedMetadata.getLength(); i++) {
+                Node metadataNode = importedMetadata.item(i);
+                Element metadataElement = (Element) metadataNode;
+                if ("docType".equals(metadataElement.getAttribute("name"))) {
+                    return metadataElement.getTextContent();
+                }
+            }
+        }
+        return "";
     }
 }

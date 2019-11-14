@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
@@ -186,5 +187,26 @@ public class MigrationService {
         template.getProcesses().addAll(processesToAddToTemplate);
         template.getProjects().add(processesToAddToTemplate.get(0).getProject());
         ServiceManager.getTemplateService().save(template);
+    }
+
+    /**
+     * Checks if the template tile is already in use or is empty.
+     * @param template the template to check
+     * @return true, is title is valid, false if title is empty or already in use
+     */
+    public boolean isTitleValid(Template template) {
+        String templateTitle = template.getTitle();
+        if (StringUtils.isNotBlank(templateTitle)) {
+            List<Template> templates = ServiceManager.getTemplateService().getTemplatesWithTitleAndClient(templateTitle,
+                template.getClient().getId());
+            int count = templates.size();
+            if (count != 0) {
+                Helper.setErrorMessage("templateTitleAlreadyInUse");
+                return false;
+            }
+            return true;
+        }
+        Helper.setErrorMessage("templateTitleEmpty");
+        return false;
     }
 }

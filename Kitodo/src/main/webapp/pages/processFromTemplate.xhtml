@@ -18,12 +18,16 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
         <f:viewParam name="id"/>
+        <!--@elvariable id="templateId" type="java.lang.Integer"-->
         <f:viewParam name="templateId"/>
+        <!--@elvariable id="projectId" type="java.lang.Integer"-->
         <f:viewParam name="projectId"/>
+        <!--@elvariable id="referrer" type="java.lang.String"-->
         <f:viewParam name="referrer"/>
         <f:viewAction action="#{ProcessForm.load(id)}" />
-        <f:viewAction action="#{CreateProcessForm.prepare(templateId, projectId, referrer)}"/>
+        <f:viewAction action="#{CreateProcessForm.prepareProcess(templateId, projectId, referrer)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -37,9 +41,17 @@
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
                          oncomplete="if (args &amp;&amp; !args.validationFailed) PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications, sticky-notifications"/>
+        <p:commandButton id="saveContinue"
+                         value="#{msgs.save} + #{msgs.newElement}"
+                         action="#{CreateProcessForm.createNewProcessAndContinue}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         styleClass="secondary"/>
         <p:button value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="projects"
+                  outcome="#{not empty param['referrer'] ? param['referrer'] : 'desktop'}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>

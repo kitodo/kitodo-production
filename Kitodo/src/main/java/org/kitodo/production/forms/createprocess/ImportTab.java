@@ -137,6 +137,7 @@ public class ImportTab implements Serializable {
             return;
         }
 
+        createProcessForm.getProcessDataTab().setDocType(ServiceManager.getImportService().getRecordDocType(record));
         List<ProcessDetail> processDetailsList =
                 this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Element root = record.getDocumentElement();

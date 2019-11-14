@@ -1,0 +1,59 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <!-- edit dialog -->
+        <p:dialog widgetVar="helpDialog"
+                  id="helpDialog"
+                  width="700px"
+                  modal="true"
+                  resizable="false"
+                  showHeader="false"
+                  dynamic="true">
+            <h:form id="helpForm">
+                <h3>#{msgs.shortcuts}</h3>
+                <ul id="keyboardShortcuts">
+                    <li>
+                        <h:outputLabel value="#{msgs['shortcuts.help']}"/>
+                        <h:outputLabel><kbd>#{msgs['shortcuts.help.keys']}</kbd></h:outputLabel>
+                    </li>
+                    <li>
+                        <h:outputLabel value="#{msgs['shortcuts.dataEditor.structuredView']}"/>
+                        <h:outputLabel><kbd>#{msgs['shortcuts.dataEditor.structuredView.keys']}</kbd></h:outputLabel>
+                    </li>
+                    <li>
+                        <h:outputLabel value="#{msgs['shortcuts.dataEditor.detailView']}"/>
+                        <h:outputLabel><kbd>#{msgs['shortcuts.dataEditor.detailView.keys']}</kbd></h:outputLabel>
+                    </li>
+                </ul>
+
+                <h:panelGroup layout="block"
+                              styleClass="dialogButtonWrapper">
+                    <p:commandButton id="close"
+                                     type="button"
+                                     onclick="PF('helpDialog').hide();"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     styleClass="secondary right close"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</ui:composition>

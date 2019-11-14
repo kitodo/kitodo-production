@@ -265,4 +265,15 @@ public class MigrationServiceIT {
         Assert.assertEquals("",
             migrationService.createTaskString(ServiceManager.getProcessService().getById(3).getTasks()));
     }
+
+    @Test
+    public void testTitleIsValid() throws DAOException {
+        Template newTemplate = new Template();
+        newTemplate.setClient(ServiceManager.getClientService().getById(1));
+        Assert.assertFalse(migrationService.isTitleValid(newTemplate));
+        newTemplate.setTitle("test");
+        Assert.assertTrue(migrationService.isTitleValid(newTemplate));
+        newTemplate.setTitle("First template");
+        Assert.assertFalse(migrationService.isTitleValid(newTemplate));
+    }
 }

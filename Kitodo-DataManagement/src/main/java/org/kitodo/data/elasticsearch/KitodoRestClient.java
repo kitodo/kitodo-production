@@ -81,7 +81,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
 
     /**
      * Create REST client with basic authentication.
-     * 
+     *
      * @param host
      *            default host is localhost
      * @param port
@@ -196,7 +196,11 @@ public abstract class KitodoRestClient implements RestClientInterface {
 
     protected void handleResponseException(ResponseException e) throws CustomResponseException {
         if (e.getResponse().getStatusLine().getStatusCode() == 404) {
-            logger.debug(e.getMessage(), e);
+            if (logger.isTraceEnabled()) {
+                logger.trace(e.getMessage(), e);
+            } else {
+                logger.debug(e.getMessage().replaceAll("\\p{Space}+", " "));
+            }
         } else {
             throw new CustomResponseException(e);
         }

@@ -47,13 +47,14 @@
                             </div>
 
                             <div>
-                                <p:selectManyMenu id="paginationSelection"
+                                <p:selectManyMenu id="paginationSelection" styleClass="pagination-select-items"
                                                   value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
                                                   style="height: 100%;"
                                                   required="true"
                                                   requiredMessage="#{msgs.paginationNoPagesSelected}"
                                                   filter="true"
-                                                  filterMatchMode="contains">
+                                                  filterMatchMode="contains"
+                                                  showCheckbox="true">
                                     <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
                                 </p:selectManyMenu>
                             </div>

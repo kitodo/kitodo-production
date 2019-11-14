@@ -80,6 +80,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private Template template;
     private LinkedList<Process> processes = new LinkedList<>(Collections.singletonList(new Process()));
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
+    private String referringView = "";
 
     /**
      * Returns the ruleset management to access the ruleset.
@@ -301,22 +302,17 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     }
 
     /**
-     * Prepare template and project for which new process will be created.
+     * Create new Process and reload current view to add another Process.
      *
-     * @param templateId
-     *            id of template to query from database
-     * @param projectId
-     *            id of project to query from database
-     * @param referringView
-     *            JSF page the user came from
-     *
-     * @return path to page with form
+     * @return path to reload current view
      */
-    public String prepare(int templateId, int projectId, String referringView) {
-        if (prepareProcess(templateId, projectId)) {
-            return stayOnCurrentPage;
-        }
-        return MessageFormat.format(REDIRECT_PATH, referringView);
+    public String createNewProcessAndContinue() {
+        createNewProcess();
+        return FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath()
+                + "?referrer=" + referringView
+                + "&templateId=" + template.getId()
+                + "&projectId=" + project.getId()
+                + "&faces-redirect=true";
     }
 
     /**
@@ -326,10 +322,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      *            id of template to query from database
      * @param projectId
      *            id of project to query from database
-     *
-     * @return true if process was prepared, otherwise false
+     * @param referringView
+     *            view the user was coming from
      */
-    private boolean prepareProcess(int templateId, int projectId) {
+    public void prepareProcess(int templateId, int projectId, String referringView) {
+        this.referringView = referringView;
         ProcessGenerator processGenerator = new ProcessGenerator();
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);
@@ -339,12 +336,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset().getFile());
                 processDataTab.prepare();
-                return true;
             }
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return false;
     }
 
     /**

@@ -78,7 +78,7 @@
                         <ui:include src="/WEB-INF/templates/includes/desktop/projectsWidget.xhtml"/>
                     </div>
                 </p:panel>
-                <p:panel styleClass="grid-item">
+                <p:panel styleClass="grid-item" rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.databaseStatistic}</h3>
