@@ -432,6 +432,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             taskQuery.must(processingStatus);
         }
 
+        // ignore template tasks
+        taskQuery.mustNot(createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(),(Integer) null, true));
+
         // only tasks assigned to the user groups the current user is member of
         List<Role> userRoles = user.getRoles();
         taskQuery.must(createSetQueryForBeans(TaskTypeField.ROLES + ".id", userRoles, true));
