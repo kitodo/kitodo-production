@@ -84,7 +84,12 @@ public class GalleryStripe {
         return medias;
     }
 
-    IncludedStructuralElement getStructure() {
+    /**
+     * Returns the structure of the stripe.
+     *
+     * @return structure
+     */
+    public IncludedStructuralElement getStructure() {
         return structure;
     }
 }

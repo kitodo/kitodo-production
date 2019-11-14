@@ -1838,6 +1838,8 @@ Column content
     color: var(--pure-white);
     padding: 5px;
     border-top: solid var(--contrast-border-width) var(--blue);
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #imagePreviewForm\:structuredPages ul {

@@ -56,6 +56,7 @@
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
                 <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.unknownType'] : logicalElementType}" style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"/>
                 <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
                               rendered="#{logicalNode.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
