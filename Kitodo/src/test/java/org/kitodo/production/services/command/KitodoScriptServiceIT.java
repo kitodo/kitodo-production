@@ -28,9 +28,13 @@ import org.kitodo.MockDatabase;
 import org.kitodo.TreeDeleter;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.production.helper.tasks.EmptyTask;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.services.ServiceManager;
 
 public class KitodoScriptServiceIT {
@@ -57,6 +61,7 @@ public class KitodoScriptServiceIT {
         }
 
         Process process = ServiceManager.getProcessService().getById(1);
+        process.setTitle("FirstProcess");
         ServiceManager.getFileService().createProcessLocation(process);
 
         File processHome = new File(ConfigCore.getKitodoDataDirectory(), "1");
@@ -145,5 +150,39 @@ public class KitodoScriptServiceIT {
 
         Task task = ServiceManager.getTaskService().getById(7);
         assertFalse("Task property was set - default value is false!", task.isTypeCloseVerify());
+    }
+
+    @Test
+    public void shouldGenerateDerivativeImages() throws Exception {
+
+        Folder generatorSource = new Folder();
+        generatorSource.setMimeType("image/tiff");
+        generatorSource.setPath("images/(processtitle)_media");
+        Process processTwo = ServiceManager.getProcessService().getById(2);
+        Project project = processTwo.getProject();
+        generatorSource.setProject(project);
+        ServiceManager.getFolderService().saveToDatabase(generatorSource);
+        project.setGeneratorSource(generatorSource);
+        ServiceManager.getProjectService().save(project);
+        List<Process> processes = new ArrayList<>();
+        processTwo.setTitle("SecondProcess");
+        processes.add(processTwo);
+
+        new KitodoScriptService().execute(processes,
+            "action:generateImages \"folders:jpgs/max,jpgs/thumbs\" images:all");
+        EmptyTask taskImageGeneratorThread = TaskManager.getTaskList().get(0);
+        while (taskImageGeneratorThread.isStartable() || taskImageGeneratorThread.isStoppable()) {
+            Thread.sleep(400);
+        }
+        TaskManager.stopAndDeleteAllTasks();
+
+        File processHome = new File(ConfigCore.getKitodoDataDirectory(), "2");
+        File maxJpg = new File(processHome, "jpgs/max/00000001.jpg");
+        assertTrue(maxJpg.exists());
+        File thumbsJpg = new File(processHome, "jpgs/thumbs/00000001.jpg");
+        assertTrue(thumbsJpg.exists());
+
+        maxJpg.delete();
+        thumbsJpg.delete();
     }
 }
