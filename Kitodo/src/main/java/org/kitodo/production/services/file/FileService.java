@@ -32,6 +32,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,7 +96,8 @@ public class FileService {
      *             an IOException
      */
     URI createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
-        if (fileExist(asDirectory(parentFolderUri).resolve(directoryName))) {
+        URI directoryUri = asDirectory(parentFolderUri).resolve(URIUtil.encodePath(directoryName));
+        if (fileExist(directoryUri)) {
             logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
         } else {
             CommandService commandService = ServiceManager.getCommandService();
@@ -113,7 +115,7 @@ public class FileService {
                 throw new IOException(message);
             }
         }
-        return URI.create(parentFolderUri.getPath() + '/' + directoryName);
+        return directoryUri;
     }
 
     /**

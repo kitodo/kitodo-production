@@ -61,6 +61,7 @@ public class KitodoScriptServiceIT {
         }
 
         Process process = ServiceManager.getProcessService().getById(1);
+        process.setTitle("FirstProcess");
         ServiceManager.getFileService().createProcessLocation(process);
 
         File processHome = new File(ConfigCore.getKitodoDataDirectory(), "1");
