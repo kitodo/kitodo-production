@@ -45,9 +45,18 @@
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:when
-                                    test="((mods:relatedItem/mods:identifier[@type='localparentid']) or (mods:relatedItem[@type='host']))
-                and ((mods:originInfo/mods:issuance[.='monographic']) or (mods:originInfo/mods:issuance[.='integrating resource']) or(mods:originInfo/mods:issuance[.='single unit']))">
-                                <xsl:text>Volume</xsl:text>
+                                    test="((mods:relatedItem/mods:identifier[@type='localparentid']) or (mods:relatedItem[@type='host']))">
+                                <xsl:choose>
+                                    <xsl:when test="((mods:originInfo/mods:issuance[.='monographic'])
+                                                  or (mods:originInfo/mods:issuance[.='integrating resource'])
+                                                  or (mods:originInfo/mods:issuance[.='single unit'])
+                                                  or (mods:typeOfResource[@manuscript='yes'][.='text']))">
+                                        <xsl:text>Volume</xsl:text>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>MultiVolumeWork</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:choose>
@@ -186,7 +195,7 @@
     <!-- ### Author, slub_Recipient ### -->
     <xsl:template match="mods:name[@type='personal']">
         <xsl:variable name="uri" select="mods:nameIdentifier"/>
-        <xsl:variable name="role" select="mods:role/mods:roleTerm[@type='text']"/>
+        <xsl:variable name="role" select="mods:role/mods:roleTerm[@type='text'][1]"/>
         <xsl:variable name="last_name" select="mods:namePart[@type='family']"/>
         <xsl:variable name="first_name" select="mods:namePart[@type='given']"/>
         <xsl:variable name="display_name" select="mods:namePart"/>

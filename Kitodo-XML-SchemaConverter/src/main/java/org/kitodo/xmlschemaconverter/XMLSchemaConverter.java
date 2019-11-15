@@ -18,6 +18,7 @@ import java.io.InvalidClassException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,6 +101,10 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
                 for (String xsltFile : xslFiles) {
                     try (InputStream fileStream = Files.newInputStream(Paths.get(xsltFile))) {
                         xmlString = transformXmlByXslt(xmlString, fileStream);
+                    } catch (NoSuchFileException e) {
+                        try (InputStream alternativeFileStream = Files.newInputStream(Paths.get("Kitodo-XML-SchemaConverter/" + xsltFile))) {
+                            xmlString = transformXmlByXslt(xmlString, alternativeFileStream);
+                        }
                     }
                 }
                 conversionResult = xmlString;

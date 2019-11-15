@@ -116,6 +116,56 @@ public class OPACConfig {
     }
 
     /**
+     * Load the "exemplarField" of the catalog used to retrieve exemplar record information
+     * from individual records of that catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return String XPath for exemplar record information
+     */
+    public static String getExemplarFieldXPath(String catalogName) {
+        return getCatalog(catalogName).getString("exemplarField[@xpath]");
+    }
+
+    /**
+     * Load the "ownerSubPath" of the catalog used to retrieve the owner of a exemplar record
+     * from individual records of that catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return String XPath for owner information about an exemplar record
+     */
+    public static String getExemplarFieldOwnerXPath(String catalogName) {
+        return getCatalog(catalogName).getString("exemplarField[@ownerSubPath]");
+    }
+
+    /**
+     * Load the "signatureSubPath" of the catalog used to retrieve the signature of a exemplar record
+     * from individual records of that catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return String XPath for signature information about an exemplar record
+     */
+    public static String getExemplarFieldSignatureXPath(String catalogName) {
+        return getCatalog(catalogName).getString("exemplarField[@signatureSubPath]");
+    }
+
+    /**
+     * Load the "ownerMetadata" of the catalog used to store the exemplar record owner
+     * of individual records of that catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return String metadata name for exemplar record owner information
+     */
+    public static String getExemplarFieldOwnerMetadata(String catalogName) {
+        return getCatalog(catalogName).getString("exemplarField[@ownerMetadata]");
+    }
+
+    /**
+     * Load the "signatureMetadata" of the catalog used to store the exemplar record signature
+     * of individual records of that catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return String metadata name for exemplar record signature information
+     */
+    public static String getExemplarFieldSignatureMetadata(String catalogName) {
+        return getCatalog(catalogName).getString("exemplarField[@signatureMetadata]");
+    }
+
+    /**
      * Retrieve the list of catalogs' titles from config file.
      * @return List of Strings containing all catalog titles.
      */

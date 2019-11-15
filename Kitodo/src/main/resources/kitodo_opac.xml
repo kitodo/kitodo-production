@@ -49,9 +49,13 @@
     <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
-        <metadataFormat>MODS</metadataFormat>
-        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <metadataFormat>MARC</metadataFormat>
         <parentElement trimMode="parenthesis"/>
+        <exemplarField xpath=".//*[local-name()='datafield'][@tag='954']"
+                       ownerSubPath=".//*[local-name()='subfield'][@code='0']"
+                       ownerMetadata="Owner"
+                       signatureSubPath=".//*[local-name()='subfield'][@code='d']"
+                       signatureMetadata="shelfmarksource"/>
         <config>
             <param name="host" value="sru.gbv.de" />
             <param name="scheme" value="http" />
@@ -61,7 +65,7 @@
         <urlParameters>
             <param name="version" value="1.2" />
             <param name="operation" value="searchRetrieve" />
-            <param name="recordSchema" value="mods" />
+            <param name="recordSchema" value="marcxml" />
         </urlParameters>
         <searchFields>
             <searchField label="Titel" value="pica.tit"/>
@@ -78,8 +82,8 @@
     <catalogue title="K10Plus" description="K10Plus OPAC">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
-        <metadataFormat>MODS</metadataFormat>
-        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <metadataFormat>MARC</metadataFormat>
+        <parentElement trimMode="parenthesis"/>
         <config>
             <param name="host" value="sru.k10plus.de" />
             <param name="scheme" value="https" />
@@ -87,9 +91,9 @@
         </config>
         <identifierParameter value="pica.ppn" />
         <urlParameters>
-            <param name="version" value="1.1" />
+            <param name="version" value="1.2" />
             <param name="operation" value="searchRetrieve" />
-            <param name="recordSchema" value="mods" />
+            <param name="recordSchema" value="marcxml" />
         </urlParameters>
         <searchFields>
             <searchField label="Titel" value="pica.tit"/>

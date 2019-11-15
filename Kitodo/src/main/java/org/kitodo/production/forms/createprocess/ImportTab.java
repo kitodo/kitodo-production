@@ -26,7 +26,9 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.Helper;
@@ -127,6 +129,10 @@ public class ImportTab implements Serializable {
         getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
         Ajax.update(FORM_CLIENTID);
         this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
+        // if more than one exemplar record was found, display a selection dialog to the user
+        if (ServiceManager.getImportService().getExemplarRecords().size() > 0) {
+            PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
+        }
     }
 
     private void getRecordById(String recordId) {
@@ -174,6 +180,15 @@ public class ImportTab implements Serializable {
         PrimeFaces.current().executeScript(script);
     }
 
+    private void showExemplarRecordSelectedMessage(ExemplarRecord record) {
+        String summary = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedSummary");
+        String detail = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedDetail",
+                Arrays.asList(record.getOwner(), record.getSignature()));
+        String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
+                .replace("SEVERITY", "info");
+        PrimeFaces.current().executeScript(script);
+    }
+
     /**
      * Get import depth.
      *
@@ -190,5 +205,31 @@ public class ImportTab implements Serializable {
      */
     public void setImportDepth(int depth) {
         importDepth = depth;
+    }
+
+    /**
+     * Get exemplarRecords.
+     *
+     * @return value of exemplarRecords
+     */
+    public LinkedList<ExemplarRecord> getExemplarRecords() {
+        return ServiceManager.getImportService().getExemplarRecords();
+    }
+
+    /**
+     * Set selectedExemplarRecord.
+     *
+     * @param selectedExemplarRecord as org.kitodo.api.schemaconverter.ExemplarRecord
+     */
+    public void setSelectedExemplarRecord(ExemplarRecord selectedExemplarRecord) {
+        try {
+            ImportService.setSelectedExemplarRecord(selectedExemplarRecord, this.hitModel.getSelectedCatalog(),
+                    this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
+            showExemplarRecordSelectedMessage(selectedExemplarRecord);
+            Ajax.update(FORM_CLIENTID);
+        } catch (ParameterNotFoundException e) {
+            Helper.setErrorMessage("newProcess.catalogueSearch.exemplarRecordParameterNotFoundError",
+                    new Object[] {e.getMessage(), this.hitModel.getSelectedCatalog() });
+        }
     }
 }

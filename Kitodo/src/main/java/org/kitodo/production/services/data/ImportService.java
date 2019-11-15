@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,7 +25,6 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -42,6 +42,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.schemaconverter.DataRecord;
+import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
@@ -52,6 +53,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
@@ -85,6 +87,7 @@ public class ImportService {
     private static final String PARENT_XPATH = "//kitodo:metadata[@name='CatalogIDPredecessorPeriodical']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
     private String trimMode = "";
+    private LinkedList<ExemplarRecord> exemplarRecords;
 
     private static final String PERSON = "Person";
     private static final String ROLE = "Role";
@@ -191,6 +194,37 @@ public class ImportService {
         }
     }
 
+    private LinkedList<ExemplarRecord> extractExemplarRecords(DataRecord record, String opac) throws XPathExpressionException,
+            ParserConfigurationException, SAXException, IOException {
+        LinkedList<ExemplarRecord> exemplarRecords = new LinkedList<>();
+        String exemplarXPath = OPACConfig.getExemplarFieldXPath(opac);
+        String ownerXPath = OPACConfig.getExemplarFieldOwnerXPath(opac);
+        String signatureXPath = OPACConfig.getExemplarFieldSignatureXPath(opac);
+
+        if (!StringUtils.isBlank(exemplarXPath) && !StringUtils.isBlank(ownerXPath)
+                && !StringUtils.isBlank(signatureXPath) && record.getOriginalData() instanceof String) {
+            String xmlString = (String) record.getOriginalData();
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new KitodoNamespaceContext());
+            Document doc = XMLUtils.parseXMLString(xmlString);
+            NodeList exemplars = (NodeList) xPath.compile(exemplarXPath).evaluate(doc, XPathConstants.NODESET);
+            for (int i = 0; i < exemplars.getLength(); i++) {
+                Node exemplar = exemplars.item(i);
+                Node ownerNode = (Node) xPath.compile(ownerXPath).evaluate(exemplar, XPathConstants.NODE);
+                Node signatureNode = (Node) xPath.compile(signatureXPath).evaluate(exemplar, XPathConstants.NODE);
+
+                if (Objects.nonNull(ownerNode) && Objects.nonNull(signatureNode)) {
+                    String owner = ownerNode.getTextContent();
+                    String signature = signatureNode.getTextContent();
+                    if (!StringUtils.isBlank(owner) && !StringUtils.isBlank(signature)) {
+                        exemplarRecords.add(new ExemplarRecord(owner, signature));
+                    }
+                }
+            }
+        }
+        return exemplarRecords;
+    }
+
     /**
      * Iterate over "SchemaConverterInterface" implementations using KitodoServiceLoader and return
      * first implementation that supports the Metadata and File formats of the given DataRecord object
@@ -264,7 +298,7 @@ public class ImportService {
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
 
-        DataRecord internalRecord = importRecord(opac, recordId);
+        DataRecord internalRecord = importRecord(opac, recordId, allProcesses.isEmpty());
         if (!(internalRecord.getOriginalData() instanceof String)) {
             throw new UnsupportedFormatException("Original metadata of internal record has to be an XML String, '"
                     + internalRecord.getOriginalData().getClass().getName() + "' found!");
@@ -331,21 +365,31 @@ public class ImportService {
         return processes;
     }
 
-    private DataRecord importRecord(String opac, String identifier) throws NoRecordFoundException,
-            UnsupportedFormatException, URISyntaxException, IOException {
+    private DataRecord importRecord(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
+            UnsupportedFormatException, URISyntaxException, IOException, XPathExpressionException,
+            ParserConfigurationException, SAXException {
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);
+
+        if (extractExemplars) {
+            exemplarRecords = ServiceManager.getImportService().extractExemplarRecords(dataRecord, opac);
+        }
 
         // ################# CONVERT ################
         // depending on metadata and return form, call corresponding schema converter module!
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
-        URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
-                .resolve(new URI(OPACConfig.getXsltMappingFile(opac)));
-        return converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML,
-                ServiceManager.getFileService().getFile(xsltFile));
+        File mappingFile = null;
+
+        String mappingFileName = OPACConfig.getXsltMappingFile(opac);
+        if (!StringUtils.isBlank(mappingFileName)) {
+            URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
+                    .resolve(new URI(mappingFileName));
+            mappingFile = ServiceManager.getFileService().getFile(xsltFile);
+        }
+        return converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
     }
 
     private NodeList extractMetadataNodeList(Document document) throws ProcessGenerationException {
@@ -568,5 +612,42 @@ public class ImportService {
      */
     public String getTiffDefinition() {
         return tiffDefinition;
+    }
+
+    /**
+     * Get exemplarRecords.
+     *
+     * @return value of exemplarRecords
+     */
+    public LinkedList<ExemplarRecord> getExemplarRecords() {
+        return exemplarRecords;
+    }
+
+    /**
+     * Set selected exemplar record data.
+     * @param exemplarRecord
+     *          selected exemplar record
+     * @param opac
+     *          selected catalog
+     * @param metadata
+     *          list of metadata fields
+     * @throws ParameterNotFoundException if a parameter required for exemplar record extraction is missing
+     */
+    public static void setSelectedExemplarRecord(ExemplarRecord exemplarRecord, String opac,
+                                                 List<ProcessDetail> metadata)  throws ParameterNotFoundException{
+        String ownerMetadataName = OPACConfig.getExemplarFieldOwnerMetadata(opac);
+        String signatureMetadataName = OPACConfig.getExemplarFieldSignatureMetadata(opac);
+        if (StringUtils.isBlank(ownerMetadataName)) {
+            throw new ParameterNotFoundException("ownerMetadata");
+        } else if (StringUtils.isBlank(signatureMetadataName)) {
+            throw new ParameterNotFoundException("signatureMetadata");
+        }
+        for (ProcessDetail processDetail : metadata) {
+            if (ownerMetadataName.equals(processDetail.getMetadataID())) {
+                ImportService.setProcessDetailValue(processDetail, exemplarRecord.getOwner());
+            } else if (signatureMetadataName.equals(processDetail.getMetadataID())) {
+                ImportService.setProcessDetailValue(processDetail, exemplarRecord.getSignature());
+            }
+        }
     }
 }

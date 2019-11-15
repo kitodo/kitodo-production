@@ -29,6 +29,7 @@ public class KitodoNamespaceContext implements NamespaceContext {
         namespaces.put("kitodo", "http://meta.kitodo.org/v1/");
         namespaces.put("mets", "http://www.loc.gov/METS/");
         namespaces.put("mods", "http://www.loc.gov/mods/v3");
+        namespaces.put("marc", "http://www.loc.gov/MARC21/slim");
     }
 
     @Override
