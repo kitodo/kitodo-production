@@ -239,7 +239,6 @@ public class ImportService {
     }
 
     private String getParentID(Document document) throws XPathExpressionException {
-
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
         NodeList nodeList = (NodeList) parentIDXpath.compile(PARENT_XPATH)
@@ -320,7 +319,6 @@ public class ImportService {
                                                           int importDepth)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
-
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
@@ -404,7 +402,6 @@ public class ImportService {
                 }
             }
             if (!filled) {
-
                 try {
                     ProcessDetail newDetail = addProcessDetail(nodeName, docType, stage, languages, ruleset, topLevelMetadata);
                     topLevelMetadata.getRows().add(newDetail);
@@ -441,10 +438,9 @@ public class ImportService {
         return value;
     }
 
-
     /**
      * Set the value of a specific process detail in processDetails.
-     * @param processDetail the specific process detail that its value want to be modified
+     * @param processDetail the specific process detail whose value should be set to the param value
      *      as ProcessDetail
      * @param value
      *       as a java.lang.String
@@ -494,7 +490,7 @@ public class ImportService {
     }
 
     /**
-     * get all creators names .
+     * Get all creators names.
      * @param processDetailsList the list of elements in processDetails
      *      as a list of processDetail
      * @return all creators names as a String
