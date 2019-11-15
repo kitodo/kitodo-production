@@ -680,8 +680,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
     }
 
-    void assignView(IncludedStructuralElement includedStructuralElement, View view) {
-        includedStructuralElement.getViews().add(view);
+    void assignView(IncludedStructuralElement includedStructuralElement, View view, Integer index) {
+        if (Objects.nonNull(index) && index >= 0 && index < includedStructuralElement.getViews().size()) {
+            includedStructuralElement.getViews().add(index, view);
+        } else {
+            includedStructuralElement.getViews().add(view);
+        }
         view.getMediaUnit().getIncludedStructuralElements().add(includedStructuralElement);
     }
 
