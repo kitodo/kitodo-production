@@ -8,19 +8,46 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF */
+/* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF */
 
-var metadataEditor = {};
-
-metadataEditor.select = {
-
-    selectionType(event) {
-        if (event.metaKey || event.ctrlKey) {
-            select([{name: "page", value: event.currentTarget.dataset.order},{name: "selectionType", value: "multi"}]);
-        } else if (event.shiftKey) {
-            select([{name: "page", value: event.currentTarget.dataset.order},{name: "selectionType", value: "range"}]);
+var metadataEditor = {
+    dragging: false,
+    handleMouseDown(event) {
+        if (event.currentTarget.querySelectorAll(".active").length === 0) {
+            this.select(event);
+        }
+    },
+    handleMouseUp(event) {
+        this.dragdrop.removeDragAmountIcon();
+        if (this.dragging) {
+            this.dragging = false;
         } else {
-            select([{name: "page", value: event.currentTarget.dataset.order},{name: "selectionType", value: "default"}]);
+            this.select(event);
+        }
+    },
+    handleDragStart(event) {
+        this.dragging = true;
+        this.dragdrop.addDragAmountIcon(event);
+    },
+    select(event) {
+        if (event.metaKey || event.ctrlKey) {
+            select([
+                {name: "page", value: event.currentTarget.dataset.order},
+                {name: "stripe", value: event.currentTarget.dataset.stripe},
+                {name: "selectionType", value: "multi"}
+            ]);
+        } else if (event.shiftKey) {
+            select([
+                {name: "page", value: event.currentTarget.dataset.order},
+                {name: "stripe", value: event.currentTarget.dataset.stripe},
+                {name: "selectionType", value: "range"}
+            ]);
+        } else {
+            select([
+                {name: "page", value: event.currentTarget.dataset.order},
+                {name: "stripe", value: event.currentTarget.dataset.stripe},
+                {name: "selectionType", value: "default"}
+            ]);
         }
     }
 };

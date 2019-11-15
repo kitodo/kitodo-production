@@ -260,7 +260,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     public String close() {
         metadataPanel.clear();
         structurePanel.clear();
-        galleryPanel.clear();
         workpiece = null;
         mainFileUri = null;
         ruleset = null;
