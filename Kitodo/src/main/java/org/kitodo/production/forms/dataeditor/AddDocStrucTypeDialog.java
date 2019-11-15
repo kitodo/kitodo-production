@@ -125,6 +125,9 @@ public class AddDocStrucTypeDialog {
      * @return the selected item of the docStructAddTypeSelection
      */
     public List<SelectItem> getDocStructAddTypeSelectionItems() {
+        if (Objects.isNull(docStructPositionSelectionSelectedItem)) {
+            return Collections.emptyList();
+        }
         switch (docStructPositionSelectionSelectedItem) {
             case AFTER_CURRENT_ELEMENT:
             case BEFORE_CURRENT_ELEMENT:
