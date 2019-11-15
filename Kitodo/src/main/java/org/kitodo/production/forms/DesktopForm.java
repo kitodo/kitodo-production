@@ -152,4 +152,13 @@ public class DesktopForm extends BaseForm {
         }
         return 0L;
     }
+
+    /**
+     * Empties the lists for caching.
+     */
+    public void emptyCache() {
+        taskList.clear();
+        processList.clear();
+        projectList.clear();
+    }
 }
