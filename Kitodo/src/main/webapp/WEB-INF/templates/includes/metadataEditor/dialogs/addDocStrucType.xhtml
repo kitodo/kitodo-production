@@ -58,7 +58,7 @@
 
                 <br/>
 
-                <h:panelGrid columns="2" columnClasses="top,top">
+                <h:panelGrid columns="2" columnClasses="top,top" rendered="#{DataEditorForm.addDocStrucTypeDialog.preselectedViews.size() eq 0}">
                     <h:outputText value="#{msgs.defaults}:"/>
 
                     <h:panelGroup>
@@ -74,7 +74,7 @@
                 <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
                     <h:panelGroup rendered="#{DataEditorForm.addDocStrucTypeDialog.subdialog == 1}">
                         <p:panelGrid columns="2">
-                            <p:row>
+                            <p:row rendered="#{DataEditorForm.addDocStrucTypeDialog.preselectedViews.size() eq 0}">
                                 <h:outputText value="#{msgs.firstPage}:"/>
                                 <p:selectOneMenu id="selectFirstPageOnAddNode"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem}"
@@ -86,7 +86,7 @@
                                 </p:selectOneMenu>
                             </p:row>
 
-                            <p:row>
+                            <p:row rendered="#{DataEditorForm.addDocStrucTypeDialog.preselectedViews.size() eq 0}">
                                 <h:outputText value="#{msgs.lastPage}:"/>
                                 <p:selectOneMenu id="selectLastPageOnAddNode"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem}"
@@ -98,6 +98,10 @@
                                 </p:selectOneMenu>
                             </p:row>
                         </p:panelGrid>
+
+                        <p:row rendered="#{DataEditorForm.addDocStrucTypeDialog.preselectedViews.size() gt 0}">
+                            <h:outputText value="#{DataEditorForm.addDocStrucTypeDialog.preselectedViews.size()} #{msgs.mediaWillBeAssigned}"/>
+                        </p:row>
 
                         <h:panelGroup layout="block">
                             <p:commandButton id="addSingleDocStrucSubmitBtn"

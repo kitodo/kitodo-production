@@ -52,6 +52,22 @@ var metadataEditor = {
     }
 };
 
+metadataEditor.contextMenu = {
+    listen() {
+        let imagePreviewForm = $("#imagePreviewForm");
+        document.oncontextmenu = function() {
+            return false;
+        };
+        $(document).on("mousedown", ".thumbnail-parent", function(event) {
+            if (event.originalEvent.button === 2) {
+                PF("galleryContextMenu").show(event);
+                event.preventDefault();
+                return false;
+            }
+        });
+    }
+};
+
 metadataEditor.dragdrop = {
     addDragAmountIcon(event) {
         var dragAmount = document.querySelectorAll(".thumbnail.active").length;
@@ -117,4 +133,5 @@ metadataEditor.shortcuts = {
 
 $(document).ready(function () {
     metadataEditor.shortcuts.listen();
+    metadataEditor.contextMenu.listen();
 });

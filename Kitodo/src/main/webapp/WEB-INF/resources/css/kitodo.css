@@ -1620,6 +1620,11 @@ Column content
     position: relative;
 }
 
+#imagePreviewForm\:galleryContextMenu .ui-menuitem-link.ui-state-hover {
+    background: transparent;
+    color: var(--blue);
+}
+
 #imagePreviewForm\:tifFoldersLabel {
     color: var(--pure-white);
     line-height: var(--input-height);

@@ -324,6 +324,18 @@
                     </h:panelGroup>
                 </h:panelGroup>
             </ui:fragment>
+            <p:button style="display:none" id="contextMenuHiddenTrigger"/>
+            <p:contextMenu id="galleryContextMenu"
+                           widgetVar="galleryContextMenu"
+                           for="contextMenuHiddenTrigger">
+                <p:menuitem value="#{msgs.addIncludedStructuralElement} #{msgs.assignMedia}"
+                            action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
+                            update="dialogAddDocStrucTypeForm"
+                            oncomplete="PF('dialogAddDocStrucType').show()">
+                    <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
+                    <f:actionListener binding="#{DataEditorForm.structurePanel.setSelectedLogicalNode(DataEditorForm.structurePanel.logicalTree.children.get(0))}"/>
+                </p:menuitem>
+            </p:contextMenu>
 
         </h:form>
         <h:outputStylesheet name="webjars/openlayers/5.2.0/ol.css"/>
