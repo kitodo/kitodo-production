@@ -21,7 +21,8 @@ var metadataEditor = {
         this.dragdrop.removeDragAmountIcon();
         if (this.dragging) {
             this.dragging = false;
-        } else {
+        } else if (event.button !== 2
+            || $(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
             this.select(event);
         }
     },
