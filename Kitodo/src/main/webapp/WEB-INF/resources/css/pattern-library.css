@@ -1266,6 +1266,11 @@ Popup dialogs
     padding: 16px;
 }
 
+.ui-growl-item p {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
 .ui-growl-item-container {
     opacity: 1;
     color: var(--pure-white);
