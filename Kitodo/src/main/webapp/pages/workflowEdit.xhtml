@@ -70,7 +70,8 @@
                          actionListener="#{WorkflowForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button value="#{msgs.cancel}" onclick="setConfirmUnload(false);"
+        <p:button value="#{isEditMode || isCreateMode || isDuplicateMode ? msgs.cancel : msgs.close}"
+                  onclick="setConfirmUnload(false);"
                   outcome="projects"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
