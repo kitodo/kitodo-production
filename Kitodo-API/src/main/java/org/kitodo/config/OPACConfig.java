@@ -47,7 +47,7 @@ public class OPACConfig {
     public static String getConfigValue(String catalogName, String parameter) throws ParameterNotFoundException {
         HierarchicalConfiguration opacConfiguration = getCatalog(catalogName);
         if (Objects.isNull(opacConfiguration)) {
-            throw new ParameterNotFoundException("No configuration foudn for catalog '" + catalogName + "'!");
+            throw new ParameterNotFoundException("No configuration found for catalog '" + catalogName + "'!");
         } else {
             String parameterValue = opacConfiguration.getString(parameter);
             if (parameterValue.isEmpty()) {

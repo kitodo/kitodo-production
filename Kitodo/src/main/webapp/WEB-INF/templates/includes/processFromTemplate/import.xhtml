@@ -39,9 +39,9 @@
             <div>
                 <p:outputLabel for="fieldSelectMenu"
                                value="#{msgs.field}"
-                               rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"/>
+                               rendered="#{not empty CreateProcessForm.importTab.hitModel.selectedCatalog}"/>
                 <p:selectOneMenu id="fieldSelectMenu"
-                                 rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
+                                 rendered="#{not empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
                                  required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"
                                  value="#{CreateProcessForm.importTab.hitModel.selectedField}">
                     <f:selectItem itemValue="#{null}"
@@ -54,7 +54,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="importDepth"
-                               rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
+                               rendered="#{not empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
                                value="#{msgs.importDepth}"/>
                 <p:spinner id="importDepth"
                            class="input"
@@ -65,11 +65,11 @@
             </div>
             <div>
                 <p:outputLabel for="searchTerm"
-                               rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
+                               rendered="#{not empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
                                value="#{msgs.value}"/>
                 <p:inputText id="searchTerm"
                              onkeypress="if (event.keyCode === 13) { document.getElementById('editForm:processFromTemplateTabView:performCatalogSearch').click(); return false; }"
-                             rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
+                             rendered="#{not empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
                              value="#{CreateProcessForm.importTab.hitModel.searchTerm}"
                              class="input"
                              placeholder="#{msgs['newProcess.catalogueSearch.searchTerm']}"
