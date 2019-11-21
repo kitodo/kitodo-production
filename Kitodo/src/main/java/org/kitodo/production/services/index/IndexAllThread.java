@@ -11,9 +11,10 @@
 
 package org.kitodo.production.services.index;
 
+import javax.faces.push.PushContext;
+
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.omnifaces.cdi.PushContext;
 
 public class IndexAllThread extends Thread {
 
