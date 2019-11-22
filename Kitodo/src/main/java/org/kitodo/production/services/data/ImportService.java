@@ -46,6 +46,7 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProject;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -95,6 +96,10 @@ public class ImportService {
     private static final String MONOGRAPH = "Monograph";
     private static final String VOLUME = "Volume";
     private static final String MULTI_VOLUME_WORK = "MultiVolumeWork";
+
+    private String titleDefinition;
+    private String tiffDefinition;
+    private boolean usingTemplates;
 
     /**
      * Return singleton variable of type ImportService.
@@ -525,5 +530,55 @@ public class ImportService {
             }
         }
         return author;
+    }
+
+    /**
+     * Prepare.
+     * @param projectTitle
+     *      title of the project
+     * @throws IOException when trying to create a 'ConfigProject' instance.
+     */
+    public void prepare(String projectTitle) throws IOException {
+        ConfigProject configProject = new ConfigProject(projectTitle);
+        usingTemplates = configProject.isUseTemplates();
+        tiffDefinition = configProject.getTifDefinition();
+        titleDefinition = configProject.getTitleDefinition();
+    }
+
+    /**
+     * Get useTemplate.
+     *
+     * @return value of useTemplate
+     */
+    public boolean isUsingTemplates() {
+        return usingTemplates;
+    }
+
+    /**
+     * Set useTemplate.
+     *
+     * @param usingTemplates as boolean
+     */
+    public void setUsingTemplates(boolean usingTemplates) {
+        this.usingTemplates = usingTemplates;
+    }
+
+    /**
+     * Get titleDefinition.
+     *
+     * @return value of titleDefinition
+     */
+    public String getTitleDefinition() {
+        return titleDefinition;
+    }
+
+
+    /**
+     * Get tiffDefinition.
+     *
+     * @return value of tifDefinition
+     */
+    public String getTiffDefinition() {
+        return tiffDefinition;
     }
 }

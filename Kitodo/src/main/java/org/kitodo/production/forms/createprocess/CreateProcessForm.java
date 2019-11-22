@@ -277,7 +277,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 }
             }
         }
-        if (createProcessHierarchy()) {
+        try {
+            createProcessHierarchy();
             Process mainProcess = getMainProcess();
             if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
                 ServiceManager.getProcessService().refresh(mainProcess);
@@ -291,6 +292,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 }
             }
             return processListPath;
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
+        } catch (IOException | ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
         }
         return this.stayOnCurrentPage;
     }
@@ -339,94 +345,67 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     /**
      * Create process hierarchy.
-     *
-     * @return true if process hierarchy was created, false otherwise
      */
-    private boolean createProcessHierarchy() {
-
-        // first: process process hierarchy
+    private void createProcessHierarchy() throws DataException, ProcessGenerationException, IOException {
         processProcessHierarchy();
-
-        // second: process main process
-        Process mainProcess = getMainProcess();
-        if (!ProcessValidator.isContentValid(mainProcess.getTitle(),
-                processMetadataTab.getProcessDetailsElements(),
-                true)) {
-            return false;
-        }
-
-        addProperties(mainProcess, processMetadataTab.getProcessDetailsElements(), processDataTab.getDocType(),
-                processDataTab.getTiffHeaderImageDescription());
-        updateTasks(mainProcess);
-        try {
-            mainProcess.setSortHelperImages(processDataTab.getGuessedImages());
-            ServiceManager.getProcessService().save(mainProcess);
-        } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
-            return false;
-        }
+        ServiceManager.getProcessService().save(getMainProcess());
         if (!createProcessesLocation()) {
-            return false;
+            throw new IOException("Unable to create directories for process hierarchy!");
         }
-
         if (ensureNonEmptyTitles()) {
-            try {
-                ServiceManager.getProcessService().save(getMainProcess());
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular()},
-                        logger, e);
-                return false;
-            }
+            ServiceManager.getProcessService().save(getMainProcess());
         }
-
-        preserveProcessHierarchyMetadata();
-
+        saveProcessHierarchyMetadata();
         if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
             getMainProcess().setParent(titleRecordLinkTab.getTitleRecordProcess());
             titleRecordLinkTab.getTitleRecordProcess().getChildren().add(getMainProcess());
         }
-
-        try {
-            ServiceManager.getProcessService().save(mainProcess);
-        } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
-            return false;
-        }
-        return true;
+        ServiceManager.getProcessService().save(getMainProcess());
     }
 
-    private void processProcessHierarchy() {
+    private void processProcessHierarchy() throws ProcessGenerationException {
         for (TempProcess tempProcess : this.processes) {
+            Process process = tempProcess.getProcess();
+            List<ProcessDetail> processDetails;
+            String docType;
+            String tiffHeader;
             if (this.processes.indexOf(tempProcess) == 0) {
-                // skip "mainProcess" as it is processed later
-                continue;
+                processDetails = processMetadataTab.getProcessDetailsElements();
+                docType = processDataTab.getDocType();
+                tiffHeader = processDataTab.getTiffHeaderImageDescription();
+                process.setSortHelperImages(processDataTab.getGuessedImages());
+                if (!ProcessValidator.isContentValid(process.getTitle(), processDetails, true)) {
+                    throw new ProcessGenerationException("Error creating process hierarchy: invalid process content!");
+                }
+                processMetadataTab.preserve();
+            } else {
+                ProcessFieldedMetadata metadata = this.getProcessMetadataTab().initializeProcessDetails(
+                        tempProcess.getWorkpiece().getRootElement());
+                docType = tempProcess.getWorkpiece().getRootElement().getType();
+                ImportService.fillProcessDetails(metadata, tempProcess.getMetadataNodes(),
+                        this.rulesetManagementInterface, docType, this.acquisitionStage, this.priorityList);
+                try {
+                    metadata.preserve();
+                } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                }
+                processDetails = metadata.getRows();
+                try {
+                    String atstsl = ProcessService.generateProcessTitle("", processDetails,
+                            ServiceManager.getImportService().getTitleDefinition(), process);
+                    tiffHeader = ProcessService.generateTiffHeader(processDetails, atstsl,
+                            ServiceManager.getImportService().getTiffDefinition(), docType);
+                } catch (ProcessGenerationException e) {
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                    tiffHeader = "";
+                }
             }
-            ProcessFieldedMetadata metadata = this.getProcessMetadataTab().initializeProcessDetails(
-                    tempProcess.getWorkpiece().getRootElement());
-            String docType = tempProcess.getWorkpiece().getRootElement().getType();
-            ImportService.fillProcessDetails(metadata, tempProcess.getMetadataNodes(),
-                    this.rulesetManagementInterface, docType , this.acquisitionStage,  this.priorityList);
-            try {
-                metadata.preserve();
-            } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-            try {
-                String atstsl = ProcessService.generateProcessTitle("", metadata.getRows(),
-                        this.processDataTab.getTitleDefinition(), tempProcess.getProcess());
-                String tiffHeader = ProcessService.generateTiffHeader(metadata.getRows(), atstsl,
-                        this.processDataTab.getTiffDefinition(), docType);
-                addProperties(tempProcess.getProcess(), metadata.getRows(), docType, tiffHeader);
-                updateTasks(tempProcess.getProcess());
-            } catch (ProcessGenerationException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+            addProperties(process, processDetails, docType, tiffHeader);
+            updateTasks(process);
         }
     }
 
-    private void preserveProcessHierarchyMetadata() {
+    private void saveProcessHierarchyMetadata() {
         for (TempProcess tempProcess : this.processes) {
             if (this.processes.indexOf(tempProcess) == 0) {
                 processMetadataTab.preserve();

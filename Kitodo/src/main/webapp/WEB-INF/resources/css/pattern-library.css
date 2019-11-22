@@ -714,9 +714,15 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-inputfield.ui-state-disabled,
 .ui-inputfield.ui-state-disabled::placeholder,
 .ui-selectonemenu.ui-state-disabled .ui-selectonemenu-label,
-.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger {
+.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger,
+.ui-spinner.ui-state-disabled .ui-spinner-input,
+.ui-spinner.ui-state-disabled .ui-spinner-button::after {
     color: var(--medium-gray);
     border-color: var(--medium-gray);
+}
+
+.ui-spinner.ui-state-disabled {
+    opacity: initial;
 }
 
 .ui-spinner .ui-spinner-button {

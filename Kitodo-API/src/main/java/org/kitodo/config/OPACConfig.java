@@ -20,6 +20,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -50,7 +51,7 @@ public class OPACConfig {
             throw new ParameterNotFoundException("No configuration found for catalog '" + catalogName + "'!");
         } else {
             String parameterValue = opacConfiguration.getString(parameter);
-            if (parameterValue.isEmpty()) {
+            if (StringUtils.isBlank(parameterValue)) {
                 throw new ParameterNotFoundException("Parameter '" + parameter
                         + "' not found in OPAC configuration for catalog '" + catalogName + "'!");
             }
@@ -92,15 +93,6 @@ public class OPACConfig {
      */
     public static String getXsltMappingFile(String catalogName) {
         return getCatalog(catalogName).getString("mappingFile");
-    }
-
-    /**
-     * Retrieve the "importDepth" of the catalog identified by its title.
-     * @param catalogName String identifying the catalog by its title
-     * @return int value of importDepth
-     */
-    public static int getImportDepth(String catalogName) {
-        return getCatalog(catalogName).getInt("importDepth");
     }
 
     /**

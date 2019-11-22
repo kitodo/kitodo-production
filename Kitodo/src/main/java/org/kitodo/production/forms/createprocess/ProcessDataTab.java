@@ -19,10 +19,10 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.omnifaces.util.Ajax;
 
@@ -34,11 +34,8 @@ public class ProcessDataTab {
     private CreateProcessForm createProcessForm;
     private String docType;
     private String atstsl = "";
-    private String titleDefinition;
     private String tiffHeaderImageDescription = "";
     private String tiffHeaderDocumentName = "";
-    private String tiffDefinition;
-    private boolean usingTemplates;
     private int guessedImages = 0;
 
     ProcessDataTab(CreateProcessForm createProcessForm) {
@@ -96,7 +93,7 @@ public class ProcessDataTab {
      * @return value of useTemplate
      */
     public boolean isUsingTemplates() {
-        return usingTemplates;
+        return ServiceManager.getImportService().isUsingTemplates();
     }
 
     /**
@@ -105,7 +102,7 @@ public class ProcessDataTab {
      * @param usingTemplates as boolean
      */
     public void setUsingTemplates(boolean usingTemplates) {
-        this.usingTemplates = usingTemplates;
+        ServiceManager.getImportService().setUsingTemplates(usingTemplates);
     }
 
     /**
@@ -186,35 +183,18 @@ public class ProcessDataTab {
     }
 
     /**
-     * Get titleDefinition.
-     *
-     * @return value of titleDefinition
-     */
-    String getTitleDefinition() {
-        return titleDefinition;
-    }
-
-    /**
-     * Get tiffDefinition.
-     *
-     * @return value of tifDefinition
-     */
-    String getTiffDefinition() {
-        return tiffDefinition;
-    }
-
-    /**
      * Generate process titles and other details.
      */
     public void generateProcessTitleAndTiffHeader() {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Process process = this.createProcessForm.getMainProcess();
         try {
-            this.atstsl = ProcessService.generateProcessTitle(this.atstsl, processDetails, this.titleDefinition, process);
+            this.atstsl = ProcessService.generateProcessTitle(this.atstsl, processDetails,
+                    ServiceManager.getImportService().getTitleDefinition(), process);
             // document name is generally equal to process title
             this.tiffHeaderDocumentName = process.getTitle();
             this.tiffHeaderImageDescription = ProcessService.generateTiffHeader(
-                    processDetails, this.atstsl, this.tiffDefinition, this.docType);
+                    processDetails, this.atstsl, ServiceManager.getImportService().getTiffDefinition(), this.docType);
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -226,15 +206,10 @@ public class ProcessDataTab {
      * Read project configs for display in GUI.
      */
     public void prepare() {
-        ConfigProject configProject;
         try {
-            configProject = new ConfigProject(createProcessForm.getProject().getTitle());
+            ServiceManager.getImportService().prepare(createProcessForm.getProject().getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
         }
-        usingTemplates = configProject.isUseTemplates();
-        tiffDefinition = configProject.getTifDefinition();
-        titleDefinition = configProject.getTitleDefinition();
     }
 }
