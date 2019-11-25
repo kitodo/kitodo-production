@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.push.Push;
+import javax.faces.push.PushContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
@@ -33,8 +35,6 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
-import org.omnifaces.cdi.Push;
-import org.omnifaces.cdi.PushContext;
 import org.omnifaces.util.Ajax;
 
 @Named

@@ -12,10 +12,10 @@
 -->
 
 <ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui"
-        xmlns:o="http://omnifaces.org/ui">
+        xmlns:p="http://primefaces.org/ui">
     <p:importEnum type="org.kitodo.production.enums.IndexStates" allSuffix="ALL_ENUM_VALUES"/>
     <p:importEnum type="org.kitodo.production.enums.ObjectType" var="objectTypeEnum"/>
     <p:panel id="listWrapper">
@@ -152,7 +152,7 @@
                 </p:panel>
                 <p:commandButton class="refreshTable" update="indexingTable" style="visibility: hidden;"/>
                 <p:poll widgetVar="progressPoll" update="indexingTable" interval="1" autoStart="false"/>
-                <o:socket channel="togglePollingChannel" onmessage="toggleProgressPolling" />
+                <f:websocket channel="togglePollingChannel" onmessage="toggleProgressPolling" />
             </ui:fragment>
         </h:form>
     </p:panel>

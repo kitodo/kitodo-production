@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.faces.push.PushContext;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -43,7 +44,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.IndexWorker;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
-import org.omnifaces.cdi.PushContext;
 
 public class IndexingService {
 
@@ -78,7 +78,7 @@ public class IndexingService {
     private IndexStates currentState = IndexStates.NO_STATE;
 
     private Thread indexerThread = null;
-    
+
     private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
 
     /**
