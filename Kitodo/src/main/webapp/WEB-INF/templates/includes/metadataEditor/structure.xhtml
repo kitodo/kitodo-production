@@ -36,7 +36,8 @@
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();initializeImage()"
-                    update="@(.thumbnail)
+                    update="@(.stripe)
+                            @(.thumbnail)
                             galleryHeadingWrapper
                             structureTreeForm:contextMenuLogicalTree
                             structureTreeForm:physicalTree
