@@ -38,7 +38,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsRightsOwnerButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwner', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwner || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsRightsOwnerButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwner', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwner}"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerUrl" value="#{msgs.metsRightsOwnerSite}" />
@@ -48,7 +48,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerUrlButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsRightsOwnerUrlButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwnerUrl', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwnerSite || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsRightsOwnerUrlButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwnerUrl', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwnerSite}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReference" value="#{msgs.metsDigiprovReference}" />
@@ -58,7 +58,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsDigiprovReferenceButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsDigiprovReferenceButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsDigiprovReference', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovReference || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsDigiprovReferenceButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsDigiprovReference', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovReference}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPointerPath" value="#{msgs.metsPointerPath}" />
@@ -68,7 +68,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPointerPathButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsPointerPathButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPointerPath', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsPointerPath || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsPointerPathButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPointerPath', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsPointerPath}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPurl" value="#{msgs.metsPurl}" />
@@ -78,7 +78,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPurlButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsPurlButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPurl', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsPurl || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsPurlButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPurl', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsPurl}"/>
             </div>
         </p:row>
         <p:row>
@@ -90,7 +90,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerLogoButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsRightsOwnerLogoButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwnerLogo', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwnerLogo || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsRightsOwnerLogoButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwnerLogo', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwnerLogo}"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerContact" value="#{msgs.metsRightsOwnerMail}" />
@@ -99,7 +99,7 @@
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerContactButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsRightsOwnerContactButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwnerContact', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwnerMail || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsRightsOwnerContactButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsRightsOwnerContact', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsRightsOwnerMail}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovPresentation" value="#{msgs.metsDigiprovPresentation}" />
@@ -109,7 +109,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsDigiprovPresentationButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsDigiprovPresentationButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsDigiprovPresentation', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovPresentation || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsDigiprovPresentationButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsDigiprovPresentation', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsDigiprovPresentation}"/>
             </div>
             <div>
                 <p:outputLabel for="metsContentId" value="#{msgs.metsContentIDs}" />
@@ -119,7 +119,7 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsContentIdButton"/>
                 </p:inputText>
-                <p:commandButton id="copyMetsContentIdButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsContentId', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsContentIDs || ProjectForm.locked}"/>
+                <p:commandButton id="copyMetsContentIdButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsContentId', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsContentIDs}"/>
             </div>
         </p:row>
     </p:panelGrid>
