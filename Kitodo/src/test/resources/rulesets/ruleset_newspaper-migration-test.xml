@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../../../../Kitodo-DataEditor/src/main/resources/ruleset.xsd">
+    <declaration>
+        <division id="Newspaper">
+            <label>Newspaper</label>
+            <label lang="de">Zeitung</label>
+            <subdivisionByDate>
+                <division id="NewspaperYear" dates="ORDERLABEL" scheme="yyyy">
+                    <label>year</label>
+                    <label lang="de">Jahr</label>
+                </division>
+                <division id="NewspaperMonth" dates="ORDERLABEL" scheme="yyyy-MM">
+                    <label>month</label>
+                    <label lang="de">Monat</label>
+                </division>
+                <division id="NewspaperDay" dates="ORDERLABEL" scheme="yyyy-MM-dd">
+                    <label>day</label>
+                    <label lang="de">Tag</label>
+                </division>
+            </subdivisionByDate>
+        </division>
+        <division id="PeriodicalIssue">
+            <label>Issue</label>
+            <label lang="de">Heft/Ausgabe</label>
+        </division>
+        <key id="ORDERLABEL" domain="mets:div">
+            <label>METS order label</label>
+            <label lang="de">METS Reihenfolge-Etikett</label>
+        </key>
+        <key id="PeriodicalIssue">
+            <label>Name of Issue</label>
+            <label lang="de">Ausgabenbezeichnung</label>
+        </key>
+        <key id="CurrentNo">
+            <label>number of volume/issue (or year)</label>
+            <label lang="de">Band-/Heft-Nummer (oder Jahr)</label>
+        </key>
+        <key id="TitleDocMain">
+            <label>main title</label>
+            <label lang="de">Haupttitel</label>
+        </key>
+        <key id="TitleDocMainShort">
+            <label>main title (sorting)</label>
+            <label lang="de">Haupttitel (Sortierung)</label>
+        </key>
+        <key id="singleDigCollection">
+            <label>digital collection</label>
+            <label lang="de">Digitale Sammlung</label>
+        </key>
+        <key id="TSL_ATS">
+            <label>TSL/ATS</label>
+        </key>
+    </declaration>
+</ruleset>
