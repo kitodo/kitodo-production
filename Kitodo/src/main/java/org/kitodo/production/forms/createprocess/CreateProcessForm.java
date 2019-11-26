@@ -293,6 +293,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             }
             Process mainProcess = getMainProcess();
             try {
+                mainProcess.setParent(titleRecordLinkTab.getTitleRecordProcess());
+                titleRecordLinkTab.getTitleRecordProcess().getChildren().add(mainProcess);
                 ServiceManager.getProcessService().save(mainProcess);
                 MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
                         titleRecordLinkTab.getSelectedInsertionPosition(), mainProcess.getId());
