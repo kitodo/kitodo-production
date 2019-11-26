@@ -50,7 +50,7 @@ public class MetadataEditor {
     /**
      * LOCTYPE used for internal links.
      */
-    public static final String INTERNAL_LOCTYPE = "Kitodo.Production";
+    private static final String INTERNAL_LOCTYPE = "Kitodo.Production";
 
     /**
      * Connects two processes by means of a link. The link is sorted as a linked
@@ -76,9 +76,9 @@ public class MetadataEditor {
         for (int index = 0; index < indices.size(); index++) {
             if (index < indices.size() - 1) {
                 includedStructuralElement = includedStructuralElement.getChildren()
-                        .get(Integer.valueOf(indices.get(index)));
+                        .get(Integer.parseInt(indices.get(index)));
             } else {
-                addLink(includedStructuralElement, Integer.valueOf(indices.get(index)), childProcessId);
+                addLink(includedStructuralElement, Integer.parseInt(indices.get(index)), childProcessId);
             }
         }
         ServiceManager.getFileService().createBackupFile(process);
@@ -411,11 +411,11 @@ public class MetadataEditor {
         if (domain.equals(Domain.METS_DIV)) {
             switch (simpleMetadataView.getId().toLowerCase()) {
                 case "label":
-                    return Arrays.asList(division.getLabel());
+                    return Collections.singletonList(division.getLabel());
                 case "orderlabel":
-                    return Arrays.asList(division.getOrderlabel());
+                    return Collections.singletonList(division.getOrderlabel());
                 case "type":
-                    return Arrays.asList(division.getType());
+                    return Collections.singletonList(division.getType());
                 default:
                     throw new IllegalArgumentException(division.getClass().getSimpleName() + " has no field '"
                             + simpleMetadataView.getId() + "'.");

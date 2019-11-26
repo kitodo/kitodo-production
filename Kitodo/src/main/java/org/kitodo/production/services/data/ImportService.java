@@ -260,11 +260,6 @@ public class ImportService {
         }
     }
 
-    private void setParentRelations(Process parentProcess, Process childProcess) {
-        childProcess.setParent(parentProcess);
-        parentProcess.getChildren().add(childProcess);
-    }
-
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses,
                                                   CreateProcessForm createProcessForm)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
@@ -302,10 +297,6 @@ public class ImportService {
 
         TempProcess tempProcess = new TempProcess(process, metadataNodes, docType);
 
-        // skip setting relations to parent process if this is the first imported process of the hierarchy!
-        if (!allProcesses.isEmpty()) {
-            setParentRelations(tempProcess.getProcess(), allProcesses.getLast().getProcess());
-        }
         allProcesses.add(tempProcess);
         return getParentID(internalDocument);
     }

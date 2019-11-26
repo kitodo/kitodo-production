@@ -261,44 +261,49 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public String createNewProcess() {
         if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
-            if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
-                    || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
-                FacesContext.getCurrentInstance().validationFailed();
-                Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
-                return stayOnCurrentPage;
-            } else {
-                User titleRecordOpenUser = DataEditorForm
-                        .getUserOpened(titleRecordLinkTab.getTitleRecordProcess().getId());
-                if (Objects.nonNull(titleRecordOpenUser)) {
-                    FacesContext.getCurrentInstance().validationFailed();
-                    Helper.setErrorMessage("createProcessForm.createNewProcess.titleRecordOpen",
-                            titleRecordOpenUser.getFullName());
-                    return stayOnCurrentPage;
-                }
+            return attachMainProcessToExistingProcess();
+        } else {
+            try {
+                createProcessHierarchy();
+                return processListPath;
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                        logger, e);
+            } catch (IOException | ProcessGenerationException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage());
             }
+            return this.stayOnCurrentPage;
         }
-        try {
-            createProcessHierarchy();
-            Process mainProcess = getMainProcess();
-            if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
-                ServiceManager.getProcessService().refresh(mainProcess);
-                try {
-                    MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
-                            titleRecordLinkTab.getSelectedInsertionPosition(), mainProcess.getId());
+    }
 
-                } catch (IOException exception) {
-                    Helper.setErrorMessage("errorSaving", titleRecordLinkTab.getTitleRecordProcess().getTitle(), logger,
-                            exception);
-                }
+    private String attachMainProcessToExistingProcess() {
+        if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
+                || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
+            FacesContext.getCurrentInstance().validationFailed();
+            Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
+            return stayOnCurrentPage;
+        } else {
+            User titleRecordOpenUser = DataEditorForm
+                    .getUserOpened(titleRecordLinkTab.getTitleRecordProcess().getId());
+            if (Objects.nonNull(titleRecordOpenUser)) {
+                FacesContext.getCurrentInstance().validationFailed();
+                Helper.setErrorMessage("createProcessForm.createNewProcess.titleRecordOpen",
+                        titleRecordOpenUser.getFullName());
+                return stayOnCurrentPage;
             }
-            return processListPath;
-        } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
-        } catch (IOException | ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            Process mainProcess = getMainProcess();
+            try {
+                ServiceManager.getProcessService().save(mainProcess);
+                MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
+                        titleRecordLinkTab.getSelectedInsertionPosition(), mainProcess.getId());
+                return processListPath;
+
+            } catch (IOException | DataException exception) {
+                Helper.setErrorMessage("errorSaving", titleRecordLinkTab.getTitleRecordProcess().getTitle(), logger,
+                        exception);
+                return stayOnCurrentPage;
+            }
         }
-        return this.stayOnCurrentPage;
     }
 
     /**
@@ -360,6 +365,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             getMainProcess().setParent(titleRecordLinkTab.getTitleRecordProcess());
             titleRecordLinkTab.getTitleRecordProcess().getChildren().add(getMainProcess());
         }
+        // add links between processes
+        for (int i = 0; i < this.processes.size() - 1; i++) {
+            TempProcess tempProcess = this.processes.get(i);
+            MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
+        }
         ServiceManager.getProcessService().save(getMainProcess());
     }
 
@@ -369,6 +379,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             List<ProcessDetail> processDetails;
             String docType;
             String tiffHeader;
+            // set parent relations between all consecutive process pairs until the last process
+            int index = this.processes.indexOf(tempProcess);
+            if (index < this.processes.size() - 1) {
+                ProcessService.setParentRelations(this.processes.get(index + 1).getProcess(), process);
+            }
             if (this.processes.indexOf(tempProcess) == 0) {
                 processDetails = processMetadataTab.getProcessDetailsElements();
                 docType = processDataTab.getDocType();

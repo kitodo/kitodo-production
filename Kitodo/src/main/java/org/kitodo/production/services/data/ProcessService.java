@@ -2393,4 +2393,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(atstsl, processDetails);
         return tiffHeaderGenerator.generateTiffHeader(tiffDefinition, docType);
     }
+
+    /**
+     * Set given Process "parentProcess" as parent of given Process "childProcess" and Process "childProcess" as child
+     * of given Process "parentProcess".
+     * @param parentProcess
+     *          parentProcess of given childProcess
+     * @param childProcess
+     *          childProcess of given parentProcess
+     */
+    public static void setParentRelations(Process parentProcess, Process childProcess) {
+        childProcess.setParent(parentProcess);
+        parentProcess.getChildren().add(childProcess);
+    }
 }
