@@ -17,6 +17,7 @@ import org.goobi.io.SafeFile;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.faces.context.FacesContext;
@@ -3098,15 +3099,59 @@ public class Metadaten {
      *             multi-select input
      */
     public List<RenderableMetadataGroup> getMyGroups() throws ConfigurationException {
-        List<MetadataGroup> records;
-        if (myDocStruct == null || (records = myDocStruct.getAllMetadataGroups()) == null) {
+        if (myDocStruct == null) {
             return Collections.emptyList();
         }
+
+        List<MetadataGroup> records = myDocStruct.getAllMetadataGroups();
+        if (records == null) {
+            records = Collections.emptyList();
+        }
+        List<MetadataGroupType> defaultGroupTypes = myDocStruct.getType().getAllDefaultDisplayMetadataGroups();
+        if (records.isEmpty() && defaultGroupTypes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         List<RenderableMetadataGroup> result = new ArrayList<RenderableMetadataGroup>(records.size());
         String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
         String projectName = myProzess.getProjekt().getTitel();
+        Map<String, List<MetadataGroup>> displayGroups = myProzess.getRegelsatz().isOrderMetadataByRuleset()
+                ? new LinkedHashMap<String, List<MetadataGroup>>() : new TreeMap<String, List<MetadataGroup>>();
+        for (MetadataGroupType groupType : myDocStruct.getType().getAllMetadataGroupTypes()) {
+            displayGroups.put(groupType.getName(), null);
+        }
+        for (MetadataGroupType groupType : defaultGroupTypes) {
+            displayGroups.put(groupType.getName(), new ArrayList());
+        }
         for (MetadataGroup record : records) {
-            result.add(new RenderableMetadataGroup(record, this, language, projectName));
+            String name = record.getType().getName();
+            if (displayGroups.get(name) == null) {
+                displayGroups.put(name, new ArrayList());
+            }
+            displayGroups.get(name).add(record);
+        }
+        for (Entry<String, List<MetadataGroup>> entry : displayGroups.entrySet()) {
+            records = entry.getValue();
+            if (records != null) {
+                if (records.size() > 0) {
+                    for (MetadataGroup record : records) {
+                        result.add(new RenderableMetadataGroup(record, this, language, projectName));
+                    }
+                } else {
+                    for (MetadataGroupType groupType : myDocStruct.getType().getAllMetadataGroupTypes()) {
+                        if (groupType.getName().equals(entry.getKey())) {
+                            RenderableMetadataGroup newMetadataGroup = new RenderableMetadataGroup(groupType, language, projectName);
+                            result.add(newMetadataGroup);
+                            try {
+                                myDocStruct.addMetadataGroup(newMetadataGroup.toMetadataGroup());
+                            } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                                throw new IllegalStateException(e.getMessage(), e);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         }
         return result;
     }
