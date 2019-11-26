@@ -12,44 +12,47 @@
 
 var metadataEditor = {
     dragging: false,
-    handleMouseDown(event) {
-        if ($(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
-            this.select(event);
+    pages: {
+        handleMouseDown(event) {
+            if ($(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
+                this.select(event);
+            }
+        },
+        handleMouseUp(event) {
+            metadataEditor.dragdrop.removeDragAmountIcon();
+            if (metadataEditor.dragging) {
+                metadataEditor.dragging = false;
+            } else if (event.button !== 2
+                || $(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
+                this.select(event);
+            }
+        },
+        handleDragStart(event) {
+            metadataEditor.dragging = true;
+            metadataEditor.dragdrop.addDragAmountIcon(event);
+        },
+        select(event) {
+            if (event.metaKey || event.ctrlKey) {
+                metadataEditor.select(event.currentTarget.dataset.order, event.currentTarget.dataset.stripe, "multi");
+            } else if (event.shiftKey) {
+                metadataEditor.select(event.currentTarget.dataset.order, event.currentTarget.dataset.stripe, "range");
+            } else {
+                metadataEditor.select(event.currentTarget.dataset.order, event.currentTarget.dataset.stripe, "default");
+            }
         }
     },
-    handleMouseUp(event) {
-        this.dragdrop.removeDragAmountIcon();
-        if (this.dragging) {
-            this.dragging = false;
-        } else if (event.button !== 2
-            || $(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
-            this.select(event);
-        }
+    stripes: {
+        handleMouseDown(event) {
+            metadataEditor.select(null, event.currentTarget.dataset.stripe, "default");
+        },
     },
-    handleDragStart(event) {
-        this.dragging = true;
-        this.dragdrop.addDragAmountIcon(event);
-    },
-    select(event) {
-        if (event.metaKey || event.ctrlKey) {
-            select([
-                {name: "page", value: event.currentTarget.dataset.order},
-                {name: "stripe", value: event.currentTarget.dataset.stripe},
-                {name: "selectionType", value: "multi"}
-            ]);
-        } else if (event.shiftKey) {
-            select([
-                {name: "page", value: event.currentTarget.dataset.order},
-                {name: "stripe", value: event.currentTarget.dataset.stripe},
-                {name: "selectionType", value: "range"}
-            ]);
-        } else {
-            select([
-                {name: "page", value: event.currentTarget.dataset.order},
-                {name: "stripe", value: event.currentTarget.dataset.stripe},
-                {name: "selectionType", value: "default"}
-            ]);
-        }
+    select(pageIndex, stripeIndex, selectionType) {
+        // call the remoteCommand in gallery.xhtml
+        select([
+            {name: "page", value: pageIndex},
+            {name: "stripe", value: stripeIndex},
+            {name: "selectionType", value: selectionType}
+        ]);
     }
 };
 

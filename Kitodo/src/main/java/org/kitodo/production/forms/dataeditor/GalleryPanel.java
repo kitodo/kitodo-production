@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -681,26 +682,38 @@ public class GalleryPanel {
      */
     public void select() {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String mediaUnitOrder = params.get("page");
+        String stripeIndex = params.get("stripe");
+        String selectionType = params.get("selectionType");
 
-        String selectedMediaUnitOrder = params.get("page");
+        if (StringUtils.isNotBlank(mediaUnitOrder)) {
+            selectMedia(mediaUnitOrder, stripeIndex, selectionType);
+        } else if (StringUtils.isNotBlank(stripeIndex)) {
+            try {
+                selectStructure(stripeIndex);
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage("Could not select stripe: Stripe index \"" + stripeIndex + "\" could not be parsed.");
+            }
+        }
+    }
+
+    private void selectMedia(String mediaUnitOrder, String stripeIndex, String selectionType) {
         MediaUnit selectedMediaUnit = null;
         for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnits()) {
-            if (Objects.equals(mediaUnit.getOrder(), Integer.parseInt(selectedMediaUnitOrder))) {
+            if (Objects.equals(mediaUnit.getOrder(), Integer.parseInt(mediaUnitOrder))) {
                 selectedMediaUnit = mediaUnit;
                 break;
             }
         }
 
-        String parentStripeIndex = params.get("stripe");
         GalleryStripe parentStripe;
         try {
-            parentStripe = stripes.get(Integer.parseInt(parentStripeIndex));
+            parentStripe = stripes.get(Integer.parseInt(stripeIndex));
         } catch (NumberFormatException e) {
             parentStripe = null;
         }
 
         GalleryMediaContent currentSelection = getGalleryMediaContent(selectedMediaUnit);
-        String selectionType = params.get("selectionType");
         select(currentSelection, parentStripe, selectionType);
 
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
@@ -708,6 +721,11 @@ public class GalleryPanel {
         } else {
             PrimeFaces.current().executeScript("scrollToSelectedTreeNode()");
         }
+    }
+
+    private void selectStructure(String stripeIndex) {
+        IncludedStructuralElement includedStructuralElement = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
+        dataEditor.getStructurePanel().updateLogicalNodeSelection(includedStructuralElement);
     }
 
     /**

@@ -751,6 +751,28 @@ public class StructurePanel implements Serializable {
         }
     }
 
+    void updateLogicalNodeSelection(IncludedStructuralElement includedStructuralElement) {
+        if (Objects.nonNull(previouslySelectedLogicalNode)) {
+            previouslySelectedLogicalNode.setSelected(false);
+        }
+        if (Objects.nonNull(selectedLogicalNode)) {
+            selectedLogicalNode.setSelected(false);
+        }
+        if (Objects.nonNull(logicalTree)) {
+            TreeNode selectedTreeNode = updateLogicalNodeSelectionRecursive(includedStructuralElement, logicalTree);
+            if (Objects.nonNull(selectedTreeNode)) {
+                setSelectedLogicalNode(selectedTreeNode);
+                try {
+                    dataEditor.switchStructure(selectedTreeNode.getData(), false);
+                } catch (NoSuchMetadataFieldException e) {
+                    logger.error(e.getLocalizedMessage());
+                }
+            } else {
+                Helper.setErrorMessage("Unable to update node selection in logical structure!");
+            }
+        }
+    }
+
     /**
      * Update the node selection in logical tree.
      * @param structure the IncludedStructuralElement to be selected as a TreeNode

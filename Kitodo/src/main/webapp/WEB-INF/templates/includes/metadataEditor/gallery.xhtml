@@ -27,12 +27,13 @@
 
             <p:remoteCommand name="select"
                              action="#{DataEditorForm.galleryPanel.select}"
-                             update="@(.thumbnail)
-                                    galleryHeadingWrapper
-                                    imagePreviewForm:mediaViewData
-                                    structureTreeForm:logicalTree
-                                    structureTreeForm:physicalTree
-                                    metadataAccordion:logicalMetadataWrapperPanel"/>
+                             update="@(.stripe)
+                                     @(.thumbnail)
+                                     galleryHeadingWrapper
+                                     imagePreviewForm:mediaViewData
+                                     structureTreeForm:logicalTree
+                                     structureTreeForm:physicalTree
+                                     metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
                              update="imagePreviewForm galleryHeadingWrapper"
@@ -89,6 +90,8 @@
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
                         <p:outputLabel value="#{stripe.label} #{DataEditorForm.getStructureElementTitle(stripe.structure)}"
                                        styleClass="stripe #{DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
+                                       a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
+                                       a:onmousedown="metadataEditor.stripes.handleMouseDown(event)"
                                        rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
                         <p:outputPanel>
                             <!--@elvariable id="structuredThumbnail" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
@@ -104,14 +107,14 @@
                                          rendered="#{editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel"
-                                         a:ondragstart="metadataEditor.handleDragStart(event)">
+                                         a:ondragstart="metadataEditor.pages.handleDragStart(event)">
                                     <p:outputPanel styleClass="thumbnail-parent">
                                         <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
                                         <p:outputPanel styleClass="thumbnail-container"
                                                        deferred="true"
                                                        deferredMode="visible"
-                                                       a:onmousedown="metadataEditor.handleMouseDown(event)"
-                                                       a:onmouseup="metadataEditor.handleMouseUp(event)"
+                                                       a:onmousedown="metadataEditor.pages.handleMouseDown(event)"
+                                                       a:onmouseup="metadataEditor.pages.handleMouseUp(event)"
                                                        a:data-order="#{media.order}"
                                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
@@ -170,7 +173,9 @@
                     <!-- Unstructured media-->
                     <p:outputPanel>
                         <p:outputLabel value="#{msgs['dataEditor.unstructuredMedia']}"
-                                       styleClass="gallery-stripe-header stripe #{DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.get(0).getStructure()) ? 'selected' : ''}"/>
+                                       styleClass="gallery-stripe-header stripe #{DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.get(0).getStructure()) ? 'selected' : ''}"
+                                       a:data-stripe="0"
+                                       a:onmousedown="metadataEditor.stripes.handleMouseDown(event)"/>
                         <h:panelGroup id="unstructuredMedia"
                                       layout="block">
                             <p:outputPanel>
@@ -187,14 +192,14 @@
                                              rendered="#{editImages}"
                                              styleClass="page-drop-area"/>
                                     <p:panel id="unstructuredMediaPanel"
-                                             a:ondragstart="metadataEditor.handleDragStart(event)">
+                                             a:ondragstart="metadataEditor.pages.handleDragStart(event)">
                                         <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
                                             <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
                                             <p:outputPanel styleClass="thumbnail-container"
                                                            deferred="true"
                                                            deferredMode="visible"
-                                                           a:onmousedown="metadataEditor.handleMouseDown(event)"
-                                                           a:onmouseup="metadataEditor.handleMouseUp(event)"
+                                                           a:onmousedown="metadataEditor.pages.handleMouseDown(event)"
+                                                           a:onmouseup="metadataEditor.pages.handleMouseUp(event)"
                                                            a:data-order="#{media.order}"
                                                            a:data-stripe="0">
                                                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
@@ -261,9 +266,9 @@
                         <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"
                                        deferred="true"
                                        deferredMode="visible">
-                            <p:panel a:onmousedown="metadataEditor.handleMouseDown(event)"
-                                     a:ondragstart="metadataEditor.handleDragStart(event)"
-                                     a:onmouseup="metadataEditor.handleMouseUp(event)"
+                            <p:panel a:onmousedown="metadataEditor.pages.handleMouseDown(event)"
+                                     a:ondragstart="metadataEditor.pages.handleDragStart(event)"
+                                     a:onmouseup="metadataEditor.pages.handleMouseUp(event)"
                                      a:data-order="#{media.order}">
                                 <h:panelGroup layout="block" styleClass="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
@@ -300,8 +305,8 @@
                                                            deferred="true"
                                                            deferredMode="visible"
                                                            styleClass="thumbnail-container"
-                                                           a:onmousedown="metadataEditor.handleMouseDown(event)"
-                                                           a:onmouseup="metadataEditor.handleMouseUp(event)"
+                                                           a:onmousedown="metadataEditor.pages.handleMouseDown(event)"
+                                                           a:onmouseup="metadataEditor.pages.handleMouseUp(event)"
                                                            a:data-order="#{media.order}">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                                               rendered="#{media.showingInPreview}">
