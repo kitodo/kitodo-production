@@ -1620,7 +1620,8 @@ Column content
     position: relative;
 }
 
-#imagePreviewForm\:galleryContextMenu .ui-menuitem-link.ui-state-hover {
+#imagePreviewForm\:mediaContextMenu .ui-menuitem-link.ui-state-hover,
+#imagePreviewForm\:stripeContextMenu .ui-menuitem-link.ui-state-hover {
     background: transparent;
     color: var(--blue);
 }

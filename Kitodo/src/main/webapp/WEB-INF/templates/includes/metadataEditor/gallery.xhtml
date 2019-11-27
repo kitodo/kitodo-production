@@ -18,6 +18,8 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
     <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
+        <!--@elvariable id="readOnly" type="boolean"-->
+        <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
         <!--@elvariable id="editImages" type="boolean"-->
         <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
@@ -331,16 +333,42 @@
                 </h:panelGroup>
             </ui:fragment>
             <p:button style="display:none" id="contextMenuHiddenTrigger"/>
-            <p:contextMenu id="galleryContextMenu"
-                           widgetVar="galleryContextMenu"
+            <p:contextMenu id="mediaContextMenu"
+                           widgetVar="mediaContextMenu"
                            for="contextMenuHiddenTrigger">
-                <p:menuitem value="#{msgs.addIncludedStructuralElement} #{msgs.assignMedia}"
+                <p:menuitem value="#{msgs.addElement} #{msgs.assignMedia}"
+                            icon="fa fa-plus fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
                             action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
-                            update="dialogAddDocStrucTypeForm"
-                            oncomplete="PF('dialogAddDocStrucType').show()">
+                            oncomplete="PF('dialogAddDocStrucType').show()"
+                            update="dialogAddDocStrucTypeForm">
                     <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
                     <f:actionListener binding="#{DataEditorForm.structurePanel.setSelectedLogicalNode(DataEditorForm.structurePanel.logicalTree.children.get(0))}"/>
                 </p:menuitem>
+            </p:contextMenu>
+            <p:contextMenu id="stripeContextMenu"
+                           widgetVar="stripeContextMenu"
+                           for="contextMenuHiddenTrigger">
+                <p:menuitem value="#{msgs.addElement}"
+                            icon="fa fa-plus fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
+                            actionListener="#{DataEditorForm.addDocStrucTypeDialog.clearPreselectedViews}"
+                            oncomplete="PF('dialogAddDocStrucType').show()"
+                            update="dialogAddDocStrucTypeForm"/>
+                <p:menuitem value="#{msgs.removeElement}"
+                            icon="fa fa-trash fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            action="#{DataEditorForm.deleteStructure()}"
+                            onclick="$('#loadingScreen').show()"
+                            oncomplete="$('#loadingScreen').hide()"
+                            update="structureTreeForm:logicalTree
+                                    paginationForm:paginationWrapperPanel
+                                    metadataAccordion:logicalMetadataWrapperPanel
+                                    galleryWrapperPanel"/>
             </p:contextMenu>
 
         </h:form>

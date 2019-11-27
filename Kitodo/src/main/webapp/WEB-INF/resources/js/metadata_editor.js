@@ -43,7 +43,9 @@ var metadataEditor = {
     },
     stripes: {
         handleMouseDown(event) {
-            metadataEditor.select(null, event.currentTarget.dataset.stripe, "default");
+            if (!$(event.currentTarget).hasClass("selected")) {
+                metadataEditor.select(null, event.currentTarget.dataset.stripe, "default");
+            }
         },
     },
     select(pageIndex, stripeIndex, selectionType) {
@@ -62,11 +64,14 @@ metadataEditor.contextMenu = {
         document.oncontextmenu = function() {
             return false;
         };
-        $(document).on("mousedown", ".thumbnail-parent", function(event) {
+        $(document).on("mousedown.thumbnail", ".thumbnail-parent", function(event) {
             if (event.originalEvent.button === 2) {
-                PF("galleryContextMenu").show(event);
-                event.preventDefault();
-                return false;
+                PF("mediaContextMenu").show(event);
+            }
+        });
+        $(document).on("mousedown.stripe", ".stripe", function(event) {
+            if (event.originalEvent.button === 2) {
+                PF("stripeContextMenu").show(event);
             }
         });
     }
