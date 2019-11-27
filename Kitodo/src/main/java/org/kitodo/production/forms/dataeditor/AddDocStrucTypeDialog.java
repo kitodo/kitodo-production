@@ -30,6 +30,7 @@ import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -110,6 +111,10 @@ public class AddDocStrucTypeDialog {
             IncludedStructuralElement newStructure = MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
                     docStructPositionSelectionSelectedItem, getViewsToAdd());
+            dataEditor.getSelectedMedia().clear();
+            for (View view: getViewsToAdd()) {
+                dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getMediaUnit(), newStructure));
+            }
             dataEditor.refreshStructurePanel();
             TreeNode selectedLogicalTreeNode = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
                     this.dataEditor.getStructurePanel().getLogicalTree());
