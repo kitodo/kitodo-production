@@ -331,7 +331,7 @@ public class AddDocStrucTypeDialog {
     }
 
     private List<View> getViewsToAdd() {
-        if (preselectedViews.size() > 0) {
+        if (Objects.nonNull(preselectedViews) && preselectedViews.size() > 0) {
             return preselectedViews;
         }
         try {
