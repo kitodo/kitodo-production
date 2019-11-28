@@ -11,6 +11,9 @@
 
 package org.kitodo.production.migration;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -181,12 +184,7 @@ public class NewspaperProcessesMigrator {
     /**
      * Years iterator during creation of year processes.
      */
-    private Iterator<Entry<String, IncludedStructuralElement>> yearsIterator;
-
-    /**
-     * The next year process to create.
-     */
-    private Entry<String, IncludedStructuralElement> yearToCreate;
+    private PeekingIterator<Entry<String, IncludedStructuralElement>> yearsIterator;
 
     /**
      * Creates a new process migrator.
@@ -563,8 +561,7 @@ public class NewspaperProcessesMigrator {
     }
 
     /**
-     * Creates the next year process. {@link #nextYear()} must have been invoked
-     * before to move the iterator forward.
+     * Creates the next year process.
      *
      * @throws ProcessGenerationException
      *             if the process cannot be generated
@@ -577,6 +574,7 @@ public class NewspaperProcessesMigrator {
      */
     public void createNextYearProcess() throws ProcessGenerationException, IOException, DataException, DAOException {
         final long begin = System.nanoTime();
+        Entry<String, IncludedStructuralElement> yearToCreate = yearsIterator.next();
         String yearTitle = getYearTitle(yearToCreate.getKey());
         logger.info("Creating process for year {}, {}...", yearToCreate.getKey(), yearTitle);
         ProcessGenerator processGenerator = new ProcessGenerator();
@@ -641,22 +639,12 @@ public class NewspaperProcessesMigrator {
     }
 
     /**
-     * Moves the iterator to create the next year process.
+     * Returns the title of the year process to create next.
      *
      * @return the title of the year process to create next
      */
-    public String nextYear() {
-        yearToCreate = yearsIterator.next();
-        return getYearTitle(yearToCreate.getKey());
-    }
-
-    /**
-     * Returns the title of the overall process.
-     *
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
+    public String getPendingYearTitle() {
+        return getYearTitle(yearsIterator.peek().getKey());
     }
 
     /**
@@ -668,6 +656,15 @@ public class NewspaperProcessesMigrator {
      */
     public String getProcessTitle(int transferIndex) {
         return transferredProcess.get(transferIndex).getTitle();
+    }
+
+    /**
+     * Returns the title of the overall process.
+     *
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -688,7 +685,7 @@ public class NewspaperProcessesMigrator {
      */
     public boolean hasNextYear() {
         if (Objects.isNull(yearsIterator)) {
-            yearsIterator = years.entrySet().iterator();
+            yearsIterator = Iterators.peekingIterator((years.entrySet().iterator()));
         }
         return yearsIterator.hasNext();
     }

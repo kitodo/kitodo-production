@@ -148,7 +148,7 @@ public class NewspaperMigrationTask extends EmptyTask {
                 break;
             }
             case CREATE_YEARS: {
-                super.setWorkDetail(migrator.nextYear());
+                super.setWorkDetail(migrator.getPendingYearTitle());
                 migrator.createNextYearProcess();
                 break;
             }
