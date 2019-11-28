@@ -12,39 +12,55 @@
 
 var metadataEditor = {
     dragging: false,
+    handleMouseDown(event) {
+        let target = $(event.target);
+        if (target.closest(".stripe").length === 1) {
+            this.stripes.handleMouseDown(event);
+        } else if (target.closest(".thumbnail-container").length === 1) {
+            this.pages.handleMouseDown(event, target.closest(".thumbnail-container"));
+        }
+    },
+    handleMouseUp(event) {
+        let target = $(event.target);
+        if (target.closest(".thumbnail-container").length === 1) {
+            this.pages.handleMouseUp(event, target.closest(".thumbnail-container"));
+        }
+    },
+    handleDragStart(event) {
+        this.pages.handleDragStart(event);
+    },
     pages: {
-        handleMouseDown(event) {
-            if ($(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
-                this.select(event);
+        handleMouseDown(event, target) {
+            if (target.closest(".thumbnail-parent").find(".active").length === 0) {
+                this.select(event, target);
             }
         },
-        handleMouseUp(event) {
+        handleMouseUp(event, target) {
             metadataEditor.dragdrop.removeDragAmountIcon();
             if (metadataEditor.dragging) {
                 metadataEditor.dragging = false;
-            } else if (event.button !== 2
-                || $(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
-                this.select(event);
+            } else if (event.button !== 2 || target.closest(".thumbnail-parent").find(".active").length === 0) {
+                this.select(event, target);
             }
         },
         handleDragStart(event) {
             metadataEditor.dragging = true;
             metadataEditor.dragdrop.addDragAmountIcon(event);
         },
-        select(event) {
+        select(event, target) {
             if (event.metaKey || event.ctrlKey) {
-                metadataEditor.select(event.currentTarget.dataset.order, event.currentTarget.dataset.stripe, "multi");
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "multi");
             } else if (event.shiftKey) {
-                metadataEditor.select(event.currentTarget.dataset.order, event.currentTarget.dataset.stripe, "range");
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "range");
             } else {
-                metadataEditor.select(event.currentTarget.dataset.order, event.currentTarget.dataset.stripe, "default");
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "default");
             }
         }
     },
     stripes: {
         handleMouseDown(event) {
-            if (!$(event.currentTarget).hasClass("selected")) {
-                metadataEditor.select(null, event.currentTarget.dataset.stripe, "default");
+            if (!$(event.target).hasClass("selected")) {
+                metadataEditor.select(null, event.target.dataset.stripe, "default");
             }
         },
     },
@@ -60,7 +76,6 @@ var metadataEditor = {
 
 metadataEditor.contextMenu = {
     listen() {
-        let imagePreviewForm = $("#imagePreviewForm");
         document.oncontextmenu = function() {
             return false;
         };
@@ -84,7 +99,7 @@ metadataEditor.dragdrop = {
             var element = document.createElement("div");
             element.id = "dragAmount";
             element.innerText = dragAmount;
-            event.currentTarget.appendChild(element);
+            event.target.appendChild(element);
         }
     },
     removeDragAmountIcon() {
