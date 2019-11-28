@@ -81,37 +81,40 @@ public class NewspaperMigrationTaskIT {
 
     @Test
     public void testNewspaperMigrationTask() throws Exception {
-        NewspaperMigrationTask underTest = new NewspaperMigrationTask(batchService.findById(5));
 
+        Process issueOne = processService.getById(1);
+        Assert.assertNull("should not yet have parent", issueOne.getParent());
+        Process issueTwo = processService.getById(2);
+        Assert.assertNull("should not yet have parent", issueTwo.getParent());
+        Assert.assertEquals("should not yet have created year process", 0,
+            processService.findByTitle("NewsMiTe_1850").size());
+        Assert.assertEquals("should not yet have created overall process", 0,
+            processService.findByTitle("NewsMiTe").size());
+
+        NewspaperMigrationTask underTest = new NewspaperMigrationTask(batchService.findById(5));
         underTest.start();
         Assert.assertTrue("should be running", underTest.isAlive());
         underTest.join();
         Assert.assertFalse("should have finished", underTest.isAlive());
-
         Assert.assertEquals("should have completed", 100, underTest.getProgress());
 
-        Process issueOne = processService.getById(1);
         Workpiece workpiece = ServiceManager.getMetsService()
                 .loadWorkpiece(processService.getMetadataFileUri(issueOne));
         IncludedStructuralElement rootElement = workpiece.getRootElement();
         Assert.assertEquals("should have modified METS file", "NewspaperMonth", rootElement.getType());
-
         Assert.assertEquals("should have added date for month", "1850-03", rootElement.getOrderlabel());
         Assert.assertEquals("should have added date for day", "1850-03-12",
             rootElement.getChildren().get(0).getOrderlabel());
 
         Assert.assertEquals("should have created year process", 1, processService.findByTitle("NewsMiTe_1850").size());
-
         Assert.assertEquals("should have created overall process", 1, processService.findByTitle("NewsMiTe").size());
-
         Process newspaperProcess = processService.getById(4);
         Process yearProcess = processService.getById(5);
         Assert.assertTrue("should have added link from newspaper process to year process",
             newspaperProcess.getChildren().contains(yearProcess));
-
         List<Process> linksInYear = yearProcess.getChildren();
         Assert.assertTrue("should have added links from year process to issues",
-            linksInYear.contains(issueOne) && linksInYear.contains(processService.getById(2)));
+            linksInYear.contains(issueOne) && linksInYear.contains(issueTwo));
     }
 
     @AfterClass
