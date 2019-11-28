@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -108,16 +109,21 @@ public class TitleRecordLinkTab {
      * selected process and the possible insertion positions.
      */
     public void chooseParentProcess() {
-        try {
-            titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
-            createInsertionPositionSelectionTree();
-        } catch (DAOException | IOException e) {
-            Helper.setErrorMessage("errorLoadingOne",
-                new Object[] {chosenParentProcess,
-                              possibleParentProcesses.parallelStream()
-                                      .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
-                                      .orElse(new SelectItem(null, null)).getLabel() },
-                logger, e);
+        if (StringUtils.isBlank(chosenParentProcess)) {
+            rootElement = new DefaultTreeNode();
+            titleRecordProcess = null;
+        } else {
+            try {
+                titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
+                createInsertionPositionSelectionTree();
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage("errorLoadingOne",
+                        new Object[] {chosenParentProcess,
+                                possibleParentProcesses.parallelStream()
+                                        .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
+                                        .orElse(new SelectItem(null, null)).getLabel() },
+                        logger, e);
+            }
         }
     }
 
