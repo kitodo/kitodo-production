@@ -181,6 +181,7 @@
                      disabled="#{ProjectForm.locked}">
         <f:selectItem itemLabel="#{msgs['folderUse.preview.disabled']}" itemValue="#{null}" noSelectionOption="true" />
         <f:selectItems value="#{ProjectForm.folderList}" />
+        <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 
     <!-- folder for media view -->
@@ -189,6 +190,7 @@
                      disabled="#{ProjectForm.locked}">
         <f:selectItem itemLabel="#{msgs['folderUse.mediaView.disabled']}" itemValue="#{null}" noSelectionOption="true" />
         <f:selectItems value="#{ProjectForm.folderList}" />
+        <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 
     <!-- source folder for content generation -->
@@ -197,5 +199,6 @@
                      disabled="#{ProjectForm.locked}">
         <f:selectItem itemLabel="#{msgs['folderUse.generatorSource.disabled']}" itemValue="#{null}" noSelectionOption="true" />
         <f:selectItems value="#{ProjectForm.folderList}" />
+        <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 </ui:composition>
