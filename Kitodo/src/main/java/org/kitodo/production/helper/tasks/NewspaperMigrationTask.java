@@ -69,14 +69,14 @@ public class NewspaperMigrationTask extends EmptyTask {
     /**
      * Creates a new newspaper migration task.
      *
-     * @param batchTransfer
-     *            transfers a newspaper batch
+     * @param transferredBatch
+     *            an object that transfers a newspaper batch from index
      */
-    public NewspaperMigrationTask(BatchDTO batchTransfer) {
-        super(batchTransfer.getTitle());
-        this.numberOfProcesses = batchTransfer.getProcesses().size();
+    public NewspaperMigrationTask(BatchDTO transferredBatch) {
+        super(transferredBatch.getTitle());
+        this.numberOfProcesses = transferredBatch.getProcesses().size();
         this.part = Part.CONVERT_PROCESSES;
-        this.migrator = new NewspaperProcessesMigrator(batchTransfer);
+        this.migrator = new NewspaperProcessesMigrator(transferredBatch);
     }
 
     /**

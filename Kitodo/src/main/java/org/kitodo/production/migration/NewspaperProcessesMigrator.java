@@ -139,7 +139,7 @@ public class NewspaperProcessesMigrator {
     /**
      * List of transferred processes.
      */
-    private final List<ProcessDTO> processesTransfer;
+    private final List<ProcessDTO> transferredProcess;
 
     /**
      * Record ID of the process template.
@@ -206,7 +206,7 @@ public class NewspaperProcessesMigrator {
      */
     public NewspaperProcessesMigrator(BatchDTO batchTransfer) {
         this.batchNumber = batchTransfer.getId();
-        this.processesTransfer = batchTransfer.getProcesses();
+        this.transferredProcess = batchTransfer.getProcesses();
     }
 
     /**
@@ -346,7 +346,7 @@ public class NewspaperProcessesMigrator {
      */
     public void convertProcess(int index) throws DAOException, IOException, ConfigurationException {
         final long begin = System.nanoTime();
-        Integer processId = processesTransfer.get(index).getId();
+        Integer processId = transferredProcess.get(index).getId();
         Process process = processService.getById(processId);
         String processTitle = process.getTitle();
         logger.info("Starting to convert process {} (ID {})...", processTitle, processId);
@@ -708,7 +708,7 @@ public class NewspaperProcessesMigrator {
      * @return the process title
      */
     public String getProcessTitle(int transferIndex) {
-        return processesTransfer.get(transferIndex).getTitle();
+        return transferredProcess.get(transferIndex).getTitle();
     }
 
     /**
