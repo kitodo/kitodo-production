@@ -49,14 +49,16 @@
             <h:outputText>
                 <h:form id="templateActionForm">
 
-                    <p:commandLink id="createProcessFromTemplate"
-                                   title="#{msgs['createNewProcess']}"
-                                   actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
-                                   action="#{SelectProjectDialogView.createProcessFromTemplate()}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                        <f:setPropertyActionListener value="0" target="#{SelectProjectDialogView.selectedProjectId}"/>
-                        <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
-                    </p:commandLink>
+                    <h:panelGroup title="#{item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
+                        <p:commandLink id="createProcessFromTemplate"
+                                       actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
+                                       action="#{SelectProjectDialogView.createProcessFromTemplate()}"
+                                       disabled="#{item.projects.size() lt 1}"
+                                       rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                            <f:setPropertyActionListener value="0" target="#{SelectProjectDialogView.selectedProjectId}"/>
+                            <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
+                        </p:commandLink>
+                    </h:panelGroup>
 
                     <h:link id="viewTemplate" outcome="templateEdit" title="#{msgs.view}"
                             rendered="#{SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate()}">
