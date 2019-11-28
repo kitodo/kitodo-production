@@ -84,7 +84,15 @@ var scrollDown = function (elementID, triggerCompleteFunction) {
     }
 };
 
+function destruct() {
+    $(document).off("mouseenter.scrollGallery");
+    $(document).off("mouseleave.scrollGallery");
+}
+
 function initialize() {
+    // make sure that event handlers are only registered once
+    destruct();
+
     checkScrollPosition($("#thumbnailStripeScrollableContent"));
 
     $(document).on("mouseenter.scrollGallery", ".scroll-button", function (e) {
@@ -146,12 +154,12 @@ function initializeStructureTreeScrolling() {
     });
 }
 
-function scrollToSelectedThumbnail() {
+function scrollToSelectedPreviewThumbnail() {
     var scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
-        var selectedThumbnail = scrollableContent.find(".active.thumbnail");
+        var selectedThumbnail = scrollableContent.find(".active");
         if (selectedThumbnail.length === 1) {
-            var thumbnailHeight = selectedThumbnail.parent().height();
+            var thumbnailHeight = selectedThumbnail.parent().parent().height();
             var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
             if (selectedIndex >= 0) {
                 scrollableContent.animate({
@@ -162,6 +170,24 @@ function scrollToSelectedThumbnail() {
     }
 }
 
+function scrollToSelectedStructureThumbnail() {
+    let scrollableContent = $("#imagePreviewForm\\:structuredPagesField");
+    if (scrollableContent.length) {
+        let selectedThumbnail = scrollableContent.find(".active");
+        if (selectedThumbnail.length === 1) {
+            let mediaPosition = selectedThumbnail.closest(".media-position");
+            scrollableContent.animate({
+                scrollTop: mediaPosition[0].offsetTop
+            }, 180, null, null);
+        }
+    }
+}
+
+function scrollToSelectedThumbnail() {
+    scrollToSelectedStructureThumbnail();
+    scrollToSelectedPreviewThumbnail();
+}
+
 function scrollToSelectedTreeNode() {
     let selectedTreeNode = $(".ui-treenode-selected");
     let structureTree = $("#structureTreeForm\\:structurePanel");
@@ -170,11 +196,6 @@ function scrollToSelectedTreeNode() {
             scrollTop: selectedTreeNode.position().top - structureTree.height()/2
         }, 180, null, null);
     }
-}
-
-function destruct() {
-    $(document).off("mouseenter.scrollGallery");
-    $(document).off("mouseleave.scrollGallery");
 }
 
 $(document).ready(function () {
