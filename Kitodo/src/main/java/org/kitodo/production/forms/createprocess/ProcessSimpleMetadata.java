@@ -29,16 +29,11 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
     /**
      * Constructor, must be called from the subclass.
      *
-     * @param tab
-     *            the ProcessMetadataTab wish this row is in
-     * @param container
-     *            the parental metadata group
      * @param settings
      *            the ruleset settings for this field.
      */
-    protected ProcessSimpleMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
-                                    SimpleMetadataViewInterface settings) {
-        super(tab, container, settings.getLabel());
+    protected ProcessSimpleMetadata(SimpleMetadataViewInterface settings) {
+        super(settings.getLabel());
         this.settings = settings;
     }
 

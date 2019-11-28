@@ -48,6 +48,7 @@ import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.ParameterNotFoundException;
 
 public class SRUImport implements ExternalDataImportInterface {
 
@@ -227,7 +228,7 @@ public class SRUImport implements ExternalDataImportInterface {
             for (HierarchicalConfiguration queryParam : urlParameters.configurationsAt(PARAM_TAG)) {
                 parameters.put(queryParam.getString(NAME_ATTRIBUTE), queryParam.getString(VALUE_ATTRIBUTE));
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | ParameterNotFoundException e) {
             logger.error(e.getLocalizedMessage());
         }
     }

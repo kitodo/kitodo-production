@@ -74,7 +74,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * Creates an empty metadata group.
      */
     public ProcessFieldedMetadata() {
-        super(null, null, null);
+        super(null);
         this.rows = new ArrayList<>();
         this.metadata = Collections.emptyList();
         this.hiddenMetadata = Collections.emptyList();
@@ -84,43 +84,31 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * Creates a new root metadata group representing the metadata table
      * content in the processMetadataTab.
      *
-     * @param tab
-     *            ProcessMetadataTab to which the ProcessFieldedMetadata is added
      * @param structure
      *            structure selected by the user
      * @param divisionView
      *            information about that structure from the rule set
      */
-    public ProcessFieldedMetadata(ProcessMetadataTab tab, IncludedStructuralElement structure,
-                                  StructuralElementViewInterface divisionView) {
-        this(tab, null, structure, divisionView, structure.getMetadata());
+    public ProcessFieldedMetadata(IncludedStructuralElement structure, StructuralElementViewInterface divisionView) {
+        this(structure, divisionView, structure.getMetadata());
     }
 
     /**
      * Creates a sub-panel for a metadata group.
      *
-     * @param tab
-     *            processMetadataTab on which this row is showing
-     * @param container
-     *            parental metadata group
      * @param metadataView
      *            information about that group from the rule set
      * @param metadata
      *            data of the group, may be empty but must be modifiable
      */
-    private ProcessFieldedMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
-                                   ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-        this(tab, container, null, metadataView, metadata);
+    private ProcessFieldedMetadata(ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
+        this(null, metadataView, metadata);
     }
 
     /**
      * Creates a new fielded metadata . This constructor is called from
      * one of the above ones and does the work.
      *
-     * @param tab
-     *            ProcessMetadataTab on which this row is showing
-     * @param container
-     *            parental metadata group
      * @param structure
      *            structure selected by the user, null in case of a sub-panel
      * @param metadataView
@@ -128,10 +116,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @param metadata
      *            metadata, may be empty but must be modifiable
      */
-    public ProcessFieldedMetadata(ProcessMetadataTab tab, ProcessFieldedMetadata container,
-                                  IncludedStructuralElement structure,
-                                  ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-        super(tab, container, metadataView.getId());
+    private ProcessFieldedMetadata(IncludedStructuralElement structure, ComplexMetadataViewInterface metadataView,
+                                   Collection<Metadata> metadata) {
+        super(metadataView.getId());
         this.structure = structure;
         this.metadata = metadata;
         this.metadataView = metadataView;
@@ -226,7 +213,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 throw new IllegalStateException("Too many (" + values.size() + ") complex metadata of type \""
                         + metadataView.getId() + "\" in a single row. Must be 0 or 1 per row.");
         }
-        return new ProcessFieldedMetadata(tab, this, complexMetadataView, value);
+        return new ProcessFieldedMetadata(complexMetadataView, value);
     }
 
     /**
@@ -245,14 +232,14 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             case MULTIPLE_SELECTION:
             case MULTI_LINE_SINGLE_SELECTION:
             case ONE_LINE_SINGLE_SELECTION:
-                return new ProcessSelectMetadata(tab, this, simpleMetadataView, simpleValues(values));
+                return new ProcessSelectMetadata(simpleMetadataView, simpleValues(values));
             case BOOLEAN:
-                return new ProcessBooleanMetadata(tab, this, simpleMetadataView, oneSimpleValue(values));
+                return new ProcessBooleanMetadata(simpleMetadataView, oneSimpleValue(values));
             case DATE:
             case INTEGER:
             case MULTI_LINE_TEXT:
             case ONE_LINE_TEXT:
-                return new ProcessTextMetadata(tab, this, simpleMetadataView, oneSimpleValue(values));
+                return new ProcessTextMetadata(simpleMetadataView, oneSimpleValue(values));
             default:
                 throw new IllegalStateException("complete switch");
         }

@@ -20,10 +20,12 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.ParameterNotFoundException;
 
 public class OPACConfig {
     private static final Logger logger = LogManager.getLogger(OPACConfig.class);
@@ -43,8 +45,18 @@ public class OPACConfig {
      * @param parameter String identifying the parameter by name
      * @return value of parameter
      */
-    public static String getConfigValue(String catalogName, String parameter) {
-        return getCatalog(catalogName).getString(parameter);
+    public static String getConfigValue(String catalogName, String parameter) throws ParameterNotFoundException {
+        HierarchicalConfiguration opacConfiguration = getCatalog(catalogName);
+        if (Objects.isNull(opacConfiguration)) {
+            throw new ParameterNotFoundException("No configuration found for catalog '" + catalogName + "'!");
+        } else {
+            String parameterValue = opacConfiguration.getString(parameter);
+            if (StringUtils.isBlank(parameterValue)) {
+                throw new ParameterNotFoundException("Parameter '" + parameter
+                        + "' not found in OPAC configuration for catalog '" + catalogName + "'!");
+            }
+            return parameterValue;
+        }
     }
 
     /**
@@ -84,6 +96,16 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve 'trimMode' attribute value of the "parentElement" node for
+     * the OPAC with the given name 'catalogName' from the OPAC configuration file.
+     * @param catalogName String identifying the catalog by its title
+     * @return trim mode for the parent
+     */
+    public static String getParentIDTrimMode(String catalogName) {
+        return getCatalog(catalogName).getString("parentElement[@trimMode]");
+    }
+
+    /**
      * Load the "identifierParameter" of the catalog used to retrieve specific
      * individual records from that catalog.
      * @param catalogName String identifying the catalog by its title
@@ -111,7 +133,7 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by attribute "title"
      * @return HierarchicalConfiguration for single catalog
      */
-    public static HierarchicalConfiguration getCatalog(String catalogName) {
+    private static HierarchicalConfiguration getCatalog(String catalogName) {
         XMLConfiguration conf = getConfig();
         int countCatalogues = conf.getMaxIndex("catalogue");
         HierarchicalConfiguration catalog = null;

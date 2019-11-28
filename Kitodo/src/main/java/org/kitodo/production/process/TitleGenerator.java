@@ -16,9 +16,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
-import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
+import org.kitodo.production.services.data.ImportService;
 
 public class TitleGenerator extends Generator {
 
@@ -43,7 +44,7 @@ public class TitleGenerator extends Generator {
      */
     public String generateTitle(String titleDefinition, Map<String, String> genericFields)
             throws ProcessGenerationException {
-        String currentAuthors = ProcessMetadataTab.getListOfCreators(this.processDetailsList);
+        String currentAuthors = ImportService.getListOfCreators(this.processDetailsList);
         String currentTitle = getCurrentValue(TITLE_DOC_MAIN);
 
         StringBuilder newTitle = new StringBuilder();
@@ -126,7 +127,7 @@ public class TitleGenerator extends Generator {
             }*/
             String metadata = row.getMetadataID();
             if (Objects.nonNull(metadata) && metadata.equals(metadataTag)) {
-                return ProcessMetadataTab.getProcessDetailValue(row);
+                return ImportService.getProcessDetailValue(row);
             }
         }
         return "";
@@ -137,12 +138,12 @@ public class TitleGenerator extends Generator {
         StringBuilder newTitle = new StringBuilder();
         for (ProcessDetail row : this.processDetailsList) {
             String rowMetadataID = row.getMetadataID();
-            String rowValue = ProcessMetadataTab.getProcessDetailValue(row);
+            String rowValue = ImportService.getProcessDetailValue(row);
             // if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
             if ("TSL_ATS".equals(rowMetadataID)) {
-                if (rowValue.isEmpty()) {
+                if (StringUtils.isBlank(rowValue)) {
                     this.atstsl = createAtstsl(currentTitle, currentAuthors);
-                    ProcessMetadataTab.setProcessDetailValue(row, this.atstsl);
+                    ImportService.setProcessDetailValue(row, this.atstsl);
                     rowValue = this.atstsl;
                 }
                 this.atstsl = rowValue;
