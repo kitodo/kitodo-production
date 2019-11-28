@@ -62,16 +62,6 @@ public class NewspaperProcessesMigrator {
     private static final Logger logger = LogManager.getLogger(NewspaperProcessesMigrator.class);
 
     /**
-     * Attachment to filename for the overall anchor file in Production v. 2.
-     */
-    private static final String APPENDIX_ANCOR = "_anchor";
-
-    /**
-     * Attachment to filename for the year anchor file in Production v. 2.
-     */
-    private static final String APPENDIX_YEAR = "_year";
-
-    /**
      * Metadata field in Production v. 2 where the displayed title is contained.
      */
     private static final String FIELD_TITLE = "TitleDocMain";
@@ -250,41 +240,13 @@ public class NewspaperProcessesMigrator {
         boolean newspaperBatch = true;
         for (ProcessDTO processTransfer : batchTransfer.getProcesses()) {
             Process process = processService.getById(processTransfer.getId());
-            URI yearMetadata = insertBeforeXml(fileService.getMetadataFilePath(process), APPENDIX_YEAR);
-            if (!fileService.fileExist(yearMetadata)) {
+            if (!fileService.processOwnsYearXML(process)) {
                 newspaperBatch = false;
                 break;
             }
         }
         logger.trace("{} {} newspaper batch.", batchTransfer.getTitle(), newspaperBatch ? "is a" : "is not a");
         return newspaperBatch;
-    }
-
-    /**
-     * Inserts a string before the {@code .xml} in an URI.
-     *
-     * @param uri
-     *            URI to insert the string into
-     * @param insert
-     *            string to insert
-     * @return URI with string inserted
-     */
-    private static URI insertBeforeXml(URI uri, String insert) {
-        String data = uri.toASCIIString();
-        int dataLength = data.length();
-        int questionMark = data.indexOf('?');
-        int resourceLength = questionMark >= 0 ? questionMark : dataLength;
-        if (questionMark < 0) {
-            int hash = data.indexOf('#');
-            resourceLength = hash >= 0 ? hash : dataLength;
-        }
-        int beforeXml = data.lastIndexOf(".xml", resourceLength);
-        int cutPosition = beforeXml >= 0 ? beforeXml : resourceLength;
-        StringBuilder buffer = new StringBuilder(dataLength + insert.length());
-        buffer.append(data, 0, cutPosition);
-        buffer.append(insert);
-        buffer.append(data, cutPosition, dataLength);
-        return URI.create(buffer.toString());
     }
 
     /**
@@ -351,8 +313,8 @@ public class NewspaperProcessesMigrator {
         String processTitle = process.getTitle();
         logger.info("Starting to convert process {} (ID {})...", processTitle, processId);
         URI metadataFilePath = fileService.getMetadataFilePath(process);
-        URI anchorFilePath = insertBeforeXml(metadataFilePath, APPENDIX_ANCOR);
-        URI yearFilePath = insertBeforeXml(metadataFilePath, APPENDIX_YEAR);
+        URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
+        URI yearFilePath = fileService.createYearFile(metadataFilePath);
 
         dataEditorService.readData(anchorFilePath);
         dataEditorService.readData(yearFilePath);
