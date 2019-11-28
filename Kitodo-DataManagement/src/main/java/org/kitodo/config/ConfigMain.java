@@ -121,4 +121,15 @@ public class ConfigMain {
             return inDefault;
         }
     }
+
+    /**
+     * Request String[]-parameter from Configuration.
+     *
+     * @param inParameter
+     *            as Parameter whose value is to be returned
+     * @return Parameter as String[]
+     */
+    public static String[] getStringArrayParameter(String inParameter) {
+        return getConfig().getStringArray(inParameter);
+    }
 }

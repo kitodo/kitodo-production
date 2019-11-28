@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.forms.FolderGenerator;
 
@@ -67,8 +68,7 @@ public class Folder extends BaseBean {
      *
      * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf#page=12"
      */
-    private static final List<String> DFG_VIEWER_FILEGRPS = Arrays.asList("DEFAULT", "MIN", "MAX", "THUMBS",
-        "DOWNLOAD");
+    private static final List<String> DFG_VIEWER_FILEGRPS = Arrays.asList(ConfigMain.getStringArrayParameter("filegroups"));
 
     /**
      * Whether the folder is copied to the hotfolder during DMS import.
