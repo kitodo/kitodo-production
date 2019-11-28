@@ -23,10 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +38,7 @@ import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.MigrationTask;
@@ -70,7 +69,7 @@ public class MigrationForm extends BaseForm {
     private boolean workflowShown;
     private boolean newspaperMigrationRendered = false;
     private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
-    private List<SelectItem> newspaperBatchesItems;
+    private List<BatchDTO> newspaperBatchesItems;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -468,12 +467,10 @@ public class MigrationForm extends BaseForm {
      *
      * @return the items of the newspaperBatches select box
      */
-    public List<SelectItem> getNewspaperBatchesItems() {
+    public List<BatchDTO> getNewspaperBatchesItems() {
         if (Objects.isNull(newspaperBatchesItems)) {
             try {
-                newspaperBatchesItems = NewspaperProcessesMigrator.getNewspaperBatches().stream()
-                        .map(batchTransfer -> new SelectItem(batchTransfer.getId(), batchTransfer.getTitle()))
-                        .collect(Collectors.toList());
+                newspaperBatchesItems = NewspaperProcessesMigrator.getNewspaperBatches();
             } catch (DataException | DAOException | IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return Collections.emptyList();
