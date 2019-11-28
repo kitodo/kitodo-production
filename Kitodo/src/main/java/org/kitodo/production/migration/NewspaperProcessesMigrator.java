@@ -103,7 +103,7 @@ public class NewspaperProcessesMigrator {
      * Service to read and write Batch objects in the database or search engine
      * index.
      */
-    private final BatchService batchService = ServiceManager.getBatchService();
+    private final static BatchService batchService = ServiceManager.getBatchService();
 
     /**
      * Service that contains the meta-data editor.
@@ -118,7 +118,7 @@ public class NewspaperProcessesMigrator {
     /**
      * Service to access files on the storage.
      */
-    private final FileService fileService = ServiceManager.getFileService();
+    private final static FileService fileService = ServiceManager.getFileService();
 
     /**
      * Service to read and write METS file format.
@@ -134,7 +134,7 @@ public class NewspaperProcessesMigrator {
      * Service to read and write Process objects in the database or search
      * engine index.
      */
-    private final ProcessService processService = ServiceManager.getProcessService();
+    private final static ProcessService processService = ServiceManager.getProcessService();
 
     /**
      * List of transferred processes.
@@ -221,13 +221,9 @@ public class NewspaperProcessesMigrator {
      *             if an I/O error occurs when accessing the file system
      */
     public static List<BatchDTO> getNewspaperBatches() throws DataException, DAOException, IOException {
-        final BatchService batchService = ServiceManager.getBatchService();
-        final ProcessService processService = ServiceManager.getProcessService();
-        final FileService fileService = ServiceManager.getFileService();
-
         List<BatchDTO> newspaperBatches = new ArrayList<>();
         for (BatchDTO batchTransfer : batchService.findAll()) {
-            if (isNewspaperBatch(batchTransfer, processService, fileService)) {
+            if (isNewspaperBatch(batchTransfer)) {
                 newspaperBatches.add(batchTransfer);
             }
         }
@@ -242,18 +238,13 @@ public class NewspaperProcessesMigrator {
      *
      * @param batchTransfer
      *            object transferring a batch
-     * @param processService
-     *            service to access processes
-     * @param fileService
-     *            service to access files
      * @return whether the batch is a newspaper batch
      * @throws DAOException
      *             if a process cannot be load from the database
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
      */
-    private static boolean isNewspaperBatch(BatchDTO batchTransfer, ProcessService processService,
-            FileService fileService) throws DAOException, IOException {
+    private static boolean isNewspaperBatch(BatchDTO batchTransfer) throws DAOException, IOException {
 
         logger.trace("Examining batch {}...", batchTransfer.getTitle());
         boolean newspaperBatch = true;
