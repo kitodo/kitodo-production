@@ -96,7 +96,7 @@ public class NewspaperProcessesMigrator {
      * Service to read and write Batch objects in the database or search engine
      * index.
      */
-    private final static BatchService batchService = ServiceManager.getBatchService();
+    private static final BatchService batchService = ServiceManager.getBatchService();
 
     /**
      * Service that contains the meta-data editor.
@@ -111,7 +111,7 @@ public class NewspaperProcessesMigrator {
     /**
      * Service to access files on the storage.
      */
-    private final static FileService fileService = ServiceManager.getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
 
     /**
      * Service to read and write METS file format.
@@ -127,7 +127,7 @@ public class NewspaperProcessesMigrator {
      * Service to read and write Process objects in the database or search
      * engine index.
      */
-    private final static ProcessService processService = ServiceManager.getProcessService();
+    private static final ProcessService processService = ServiceManager.getProcessService();
 
     /**
      * List of transferred processes.
@@ -685,7 +685,7 @@ public class NewspaperProcessesMigrator {
      */
     public boolean hasNextYear() {
         if (Objects.isNull(yearsIterator)) {
-            yearsIterator = Iterators.peekingIterator((years.entrySet().iterator()));
+            yearsIterator = Iterators.peekingIterator(years.entrySet().iterator());
         }
         return yearsIterator.hasNext();
     }
