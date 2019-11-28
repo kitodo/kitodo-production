@@ -79,9 +79,10 @@
         <metadataFormat>MODS</metadataFormat>
         <mappingFile>mods2kitodo.xsl</mappingFile>
         <config>
-            <param name="host" value="kalliope-verbund.info" />
+            <param name="host" value="localhost" />
             <param name="scheme" value="http" />
             <param name="path" value="/sru" />
+            <param name="port" value="8888" />
         </config>
         <identifierParameter value="ead.id" />
         <urlParameters>

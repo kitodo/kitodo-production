@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<srw:searchRetrieveResponse xmlns:srw="http://www.loc.gov/zing/srw/">
+    <srw:version>1.2</srw:version>
+    <srw:numberOfRecords>1</srw:numberOfRecords>
+    <srw:records>
+        <srw:record>
+            <srw:recordSchema>mods</srw:recordSchema>
+            <srw:recordPacking>xml</srw:recordPacking>
+            <srw:recordData>
+                <mods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xmlns="http://www.loc.gov/mods/v3"
+                      version="3.4"
+                      xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+                    <identifier type="uri">http://www.test.id</identifier>
+                    <recordInfo>
+                        <recordIdentifier source="1">2</recordIdentifier>
+                        <recordCreationDate encoding="marc">2019-11-09</recordCreationDate>
+                        <recordChangeDate encoding="iso8601">2019-11-09</recordChangeDate>
+                    </recordInfo>
+                    <titleInfo>
+                        <title>Elternvorgang</title>
+                    </titleInfo>
+                </mods>
+            </srw:recordData>
+        </srw:record>
+    </srw:records>
+</srw:searchRetrieveResponse>

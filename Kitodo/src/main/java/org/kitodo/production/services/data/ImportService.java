@@ -54,7 +54,6 @@ import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
@@ -260,12 +259,10 @@ public class ImportService {
         }
     }
 
-    private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses,
-                                                  CreateProcessForm createProcessForm)
+    private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
+                                                  int projectID, int templateID)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
-
-        String opac = createProcessForm.getImportTab().getHitModel().getSelectedCatalog();
 
         DataRecord internalRecord = importRecord(opac, recordId);
         if (!(internalRecord.getOriginalData() instanceof String)) {
@@ -287,9 +284,6 @@ public class ImportService {
 
         NodeList metadataNodes = extractMetadataNodeList(internalDocument);
 
-        int projectID = createProcessForm.getProject().getId();
-        int templateID = createProcessForm.getTemplate().getId();
-
         Process process = null;
         if (processGenerator.generateProcess(templateID, projectID)) {
             process = processGenerator.getGeneratedProcess();
@@ -302,27 +296,30 @@ public class ImportService {
     }
 
     /**
-     * Import a record identified by the given ID 'recordId' using the given CreateProcessForm 'createProcessForm'.
+     * Import a record identified by the given ID 'recordId'.
      * Additionally, import all ancestors of the given process referenced in the original data of the process imported
      * from the OPAC selected in the given CreateProcessForm instance.
      * Return the list of processes as a LinkedList of TempProcess.
      *
      * @param recordId identifier of the process to import
-     * @param createProcessForm CreateProcessForm instance containing import configuration
+     * @param opac the name of the catalog from which the record is imported
+     * @param projectId the ID of the project for which a process is created
+     * @param templateId the ID of the template from which a process is created
+     * @param importDepth the number of hierarchical processes that will be imported from the catalog
      * @return List of TempProcess
      */
-    public LinkedList<TempProcess> importProcessHierarchy(String recordId, CreateProcessForm createProcessForm,
-                                                          int importDepth)
+    public LinkedList<TempProcess> importProcessHierarchy(String recordId, String opac, int projectId,
+                                                          int templateId, int importDepth)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
-        String parentID = importProcessAndReturnParentID(recordId, processes, createProcessForm);
+        String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId);
         int level = 1;
         while (Objects.nonNull(parentID) && level < importDepth) {
             try {
-                parentID = importProcessAndReturnParentID(parentID, processes, createProcessForm);
+                parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId);
                 level++;
             } catch (SAXParseException e) {
                 // this happens for example if a document is part of a "Virtueller Bestand" in Kalliope for which a

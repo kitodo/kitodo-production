@@ -132,7 +132,8 @@ public class ImportTab implements Serializable {
     private void getRecordById(String recordId) {
         try {
             LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(recordId,
-                    this.createProcessForm, this.importDepth);
+                    this.hitModel.getSelectedCatalog(), this.createProcessForm.getProject().getId(),
+                    this.createProcessForm.getTemplate().getId(), this.importDepth);
             this.createProcessForm.setProcesses(processes);
 
             // Fill metadata fields in metadata tab on successful import

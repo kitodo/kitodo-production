@@ -9,15 +9,7 @@
   * For the full copyright and license information, please read the
   * GPL3-License.txt file that was distributed with this source code.
   -->
-<srw:searchRetrieveResponse xmlns:srw="http://www.loc.gov/zing/srw/"
-                            xmlns:srw_dc="info:srw/schema/1/dc-v1.1"
-                            xmlns:dc="http://purl.org/dc/elements/1.1/"
-                            xmlns:diag="http://www.loc.gov/zing/srw/diagnostic/"
-                            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                            xmlns:mods="http://www.loc.gov/mods/v3"
-                            xmlns:cld="http://www.ukoln.ac.uk/metadata/rslp/schema/"
-                            xmlns:dcterms="http://purl.org/dc/terms/"
-                            xmlns:my="http://www.infolytics.com/kopac">
+<srw:searchRetrieveResponse xmlns:srw="http://www.loc.gov/zing/srw/">
    <srw:version>1.2</srw:version>
    <srw:numberOfRecords>1</srw:numberOfRecords>
    <srw:records>
@@ -35,6 +27,9 @@
                   <recordCreationDate encoding="marc">2019-11-09</recordCreationDate>
                   <recordChangeDate encoding="iso8601">2019-11-09</recordChangeDate>
                </recordInfo>
+               <relatedItem>
+                  <identifier type="localparentid">2</identifier>
+               </relatedItem>
             </mods>
          </srw:recordData>
       </srw:record>
