@@ -489,18 +489,15 @@ public class NewspaperProcessesMigrator {
             SimpleMetadataViewInterface simpleMetadataView, String value) {
 
         int index = 0;
-        FOR_LOOP: for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
+        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
             String firstSimpleMetadataValue = MetadataEditor.readSimpleMetadataValues(child, simpleMetadataView).get(0);
-            switch (Integer.signum(firstSimpleMetadataValue.compareTo(value))) {
-                case -1:
-                    index++;
-                    break;
-                case 0:
-                    return child;
-                case 1:
-                    break FOR_LOOP;
-                default:
-                    throw new IllegalStateException("complete switch");
+            int comparison = firstSimpleMetadataValue.compareTo(value);
+            if (comparison <= -1) {
+                index++;
+            } else if (comparison == 0) {
+                return child;
+            } else {
+                break;
             }
         }
         IncludedStructuralElement computed = new IncludedStructuralElement();
