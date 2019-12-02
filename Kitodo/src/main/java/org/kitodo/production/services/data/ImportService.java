@@ -373,7 +373,7 @@ public class ImportService {
         DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);
 
         if (extractExemplars) {
-            exemplarRecords = ServiceManager.getImportService().extractExemplarRecords(dataRecord, opac);
+            exemplarRecords = extractExemplarRecords(dataRecord, opac);
         }
 
         // ################# CONVERT ################
