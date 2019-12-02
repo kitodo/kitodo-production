@@ -31,6 +31,12 @@ public class Division {
     private String id;
 
     /**
+     * The sequence description to form a process title.
+     */
+    @XmlAttribute
+    private String processTitle;
+
+    /**
      * The key used to store the part of the date relevant to this division, to
      * which the described subtree dates.
      */
@@ -65,7 +71,7 @@ public class Division {
     /**
      * Returns the key used to store the part of the date relevant to this
      * division, to which the described subtree dates.
-     * 
+     *
      * @return the key used to store the date
      */
     public Optional<String> getDates() {
@@ -104,8 +110,17 @@ public class Division {
     }
 
     /**
+     * Returns the sequence description to form a process title.
+     *
+     * @return the key used to store the date
+     */
+    public Optional<String> getProcessTitle() {
+        return Optional.ofNullable(processTitle);
+    }
+
+    /**
      * Returns the scheme of the date.
-     * 
+     *
      * @return the scheme
      */
     public String getScheme() {
@@ -114,7 +129,7 @@ public class Division {
 
     /**
      * Returns the begin of the operating year.
-     * 
+     *
      * @return the begin of the operating year
      */
     public String getYearBegin() {

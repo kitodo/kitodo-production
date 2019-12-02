@@ -615,14 +615,13 @@ public class RulesetManagementIT {
         // Also the divisions structuring by date are to come out in the total
         // list:
         assertThat(underTest.getStructuralElements(ENGL).keySet(),
-            containsInAnyOrder("newspaper", "newspaperYear", "newspaperMonth", "newspaperDay", "newspaperIssue",
-                "newspaperLimitedTest", "newspaperYearLimitedTest", "newspaperMonthLimitedTest",
-                "newspaperDayLimitedTest"));
+            containsInAnyOrder("newspaper", "newspaperYear", "newspaperMonth", "newspaperLimitedTest",
+                "newspaperYearLimitedTest", "newspaperMonthLimitedTest"));
         assertThat(underTest.getStructuralElements(ENGL).values(),
             containsInAnyOrder("Newspaper ‹complete edition›", "Year’s issues ‹newspaper›",
-                "Month’s issues ‹newspaper›", "Day’s issues ‹newspaper›", "Issue ‹newspaper›",
+                "Month’s issues ‹newspaper›",
                 "Newspaper ‹complete edition›—limited test", "Year’s issues ‹newspaper›—limited test",
-                "Month’s issues ‹newspaper›—limited test", "Day’s issues ‹newspaper›—limited test"));
+                "Month’s issues ‹newspaper›—limited test"));
 
         // It should always come the right children:
         StructuralElementViewInterface newspaperSevi = underTest.getStructuralElementView("newspaper", "", ENGL);
@@ -985,7 +984,7 @@ public class RulesetManagementIT {
     /**
      * The method provides a simple access to a metadata key in a list of
      * MetadataViewWithValuesInterface.
-     * 
+     *
      * @param mvwviList
      *            list of MetadataViewWithValuesInterface to extract from
      * @param keyId
@@ -1000,7 +999,7 @@ public class RulesetManagementIT {
     /**
      * The method provides a simple access to a metadata key in a list of
      * MetadataViewWithValuesInterface.
-     * 
+     *
      * @param metadataViewWithValuesInterfaceList
      *            list of MetadataViewWithValuesInterface to extract from
      * @param keyId
@@ -1019,7 +1018,7 @@ public class RulesetManagementIT {
     /**
      * Returns the IDs of the metadata keys in a collection of metadata view
      * interfaces.
-     * 
+     *
      * @param mviColl
      *            collection of metadata view interfaces to return the IDs of
      *            the metadata keys from
@@ -1032,7 +1031,7 @@ public class RulesetManagementIT {
     /**
      * Returns the IDs of the metadata keys in a metadata view with values
      * interface list.
-     * 
+     *
      * @param metadataViewWithValuesInterfaceList
      *            metadata view with values interface list to return the IDs of
      *            the metadata keys from

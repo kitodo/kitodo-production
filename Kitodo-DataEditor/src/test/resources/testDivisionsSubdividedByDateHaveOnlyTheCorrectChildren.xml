@@ -15,31 +15,36 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ruleset.xsd">
     <declaration>
-        <division id="newspaper">
+        <division id="newspaper" processTitle="shelfMark">
             <label>Newspaper ‹complete edition›</label>
             <label lang="de">Zeitung ‹Gesamtausgabe›</label>
             <subdivisionByDate>
-                <division id="newspaperYear" dates="ORDERLABEL" scheme="yyyy">
+                <division id="newspaperYear" dates="ORDERLABEL"
+                    scheme="yyyy" processTitle="shelfMark+'_'+#YEAR">
                     <label>Year’s issues ‹newspaper›</label>
                     <label lang="de">Jahrgang ‹Zeitung›</label>
                 </division>
-                <division id="newspaperMonth" dates="ORDERLABEL" scheme="M">
+                <division id="newspaperMonth" dates="ORDERLABEL" scheme="M"
+                    processTitle="shelfMark+'_'+#YEAR+#MONTH+#DAY+#ISSU">
                     <label>Month’s issues ‹newspaper›</label>
                     <label lang="de">Monat ‹Zeitung›</label>
                 </division>
-                <division id="newspaperDay" dates="ORDERLABEL" scheme="d">
+                <division id="newspaperDay" dates="ORDERLABEL"
+                    scheme="d">
                     <label>Day’s issues ‹newspaper›</label>
                     <label lang="de">Tag ‹Zeitung›</label>
                 </division>
             </subdivisionByDate>
         </division>
-        <division id="newspaperLimitedTest">
+        <division id="newspaperLimitedTest" processTitle="shelfMark">
             <label>Newspaper ‹complete edition›—limited test</label>
             <subdivisionByDate>
-                <division id="newspaperYearLimitedTest" dates="ORDERLABEL" scheme="yyyy">
+                <division id="newspaperYearLimitedTest" dates="ORDERLABEL"
+                    scheme="yyyy" processTitle="shelfMark+'_'+#YEAR">
                     <label>Year’s issues ‹newspaper›—limited test</label>
                 </division>
-                <division id="newspaperMonthLimitedTest" dates="ORDERLABEL" scheme="M">
+                <division id="newspaperMonthLimitedTest" dates="ORDERLABEL" scheme="M"
+                    processTitle="shelfMark+'_'+#YEAR+#MONTH+#DAY+#ISSU">
                     <label>Month’s issues ‹newspaper›—limited test</label>
                 </division>
                 <division id="newspaperDayLimitedTest" dates="ORDERLABEL" scheme="d">

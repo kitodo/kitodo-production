@@ -37,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -408,8 +409,12 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 }
                 processDetails = metadata.getRows();
                 try {
+                    StructuralElementViewInterface docTypeView = rulesetManagementInterface
+                            .getStructuralElementView(docType, acquisitionStage, priorityList);
+                    String processTitle = docTypeView.getProcessTitle().orElseThrow(
+                        () -> new ProcessGenerationException(docType + " does not declare a process title."));
                     String atstsl = ProcessService.generateProcessTitle("", processDetails,
-                            ServiceManager.getImportService().getTitleDefinition(), process);
+                        processTitle, process);
                     tiffHeader = ProcessService.generateTiffHeader(processDetails, atstsl,
                             ServiceManager.getImportService().getTiffDefinition(), docType);
                 } catch (ProcessGenerationException e) {

@@ -32,7 +32,6 @@
             Describes how the program should behave when editing the data.
 
             - possible member tags, in order as mentioned:
-                    compose             (optional, repeatable)
                     setting             (optional, repeatable)
                     acquisitionStage    (optional, repeatable)
     -->
@@ -44,7 +43,23 @@
                 - required attribute 'id':
                         Internal name of the division. This should be a
                         xsd:NMTOKEN (that is, do not include spaces).
-     
+
+                - optional attribute 'processTitle':
+                        Template for making process titles. Production offers
+                        the possibility to automatically form process titles
+                        according to a schema. This is a string of metadata
+                        keys and constants separated by plus signs. Constants
+                        are identified by enclosing them in single quotes. The
+                        special metadata value TSL_ATS is given by the system
+                        with the author title key or, if no author is
+                        specified, the title key (4/2/2/1).
+
+                        When templates are used to form process titles in a
+                        rule set, only those divisions that have a template for
+                        forming process titles are proposed as the top division
+                        types for new processes. Otherwise, all divisions are
+                        available as the highest division types.
+
                 - possible member tags, in order as mentioned:
                         label               (repeatable, min. quantity: 1)
                         subdivisionByDate   (optional, not repeatable)

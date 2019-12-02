@@ -146,21 +146,31 @@ public class Ruleset {
      * @param priorityList
      *            weighted list of user-preferred display languages. Return
      *            value of the function {@link LanguageRange#parse(String)}.
+     * @param all
+     *            whether to return all divisions, or only those capable to form
+     *            a process title
      * @param subdivisionsByDate
      *            whether subdivisions by date should be returned
      * @return all outline elements as map from IDs to labels
      */
-    public Map<String, String> getDivisions(List<LanguageRange> priorityList, boolean subdivisionsByDate) {
+    public Map<String, String> getDivisions(List<LanguageRange> priorityList, boolean all, boolean subdivisionsByDate) {
         Collection<UniversalDivision> universalDivisions = new LinkedList<>();
         for (Division division : declaration.getDivisions()) {
             UniversalDivision universalDivision = new UniversalDivision(this, division);
-            universalDivisions.add(universalDivision);
+            if (all || universalDivision.getProcessTitle().isPresent()) {
+                universalDivisions.add(universalDivision);
+            }
             if (subdivisionsByDate) {
-                universalDivisions.addAll(universalDivision.getUniversalDivisions());
+                for (UniversalDivision subdivision : universalDivision.getUniversalDivisions()) {
+                    if (all || subdivision.getProcessTitle().isPresent()) {
+                        universalDivisions.add(subdivision);
+                    }
+                }
             }
         }
-        return Labeled.listByTranslatedLabel(this, universalDivisions, UniversalDivision::getId,
-            UniversalDivision::getLabels, priorityList);
+        return all || !universalDivisions.isEmpty() ? Labeled.listByTranslatedLabel(this, universalDivisions,
+            UniversalDivision::getId, UniversalDivision::getLabels, priorityList)
+                : getDivisions(priorityList, true, subdivisionsByDate);
     }
 
     /**

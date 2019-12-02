@@ -81,4 +81,9 @@ public class DummyStructuralElementView implements StructuralElementViewInterfac
     public Optional<DatesSimpleMetadataViewInterface> getDatesSimpleMetadata() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public Optional<String> getProcessTitle() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -77,13 +77,28 @@ public class TitleGenerator extends Generator {
     }
 
     /**
-     * Create Atstsl.
+     * Forms the author title key, or the title key (4/2/2/1) if no author is
+     * given. The author title key is a librarian sort criteria, composed out of
+     * the first four letters of the first author’s last name, followed by the
+     * first four letters of the title of the works. The title key (4/2/2/1) a
+     * librarian sort criteria composed of the title of the works, taking the
+     * first four letters of the first word, each the first two letters of the
+     * second and third word, and the first letter of the fourth word of the
+     * title. Note that this implementation removes non-word characters (any
+     * characters except A-Z, such as letters with diacritics).
+     *
+     * <p>
+     * <u>Examples:</u><br>
+     * {@code createAtstsl("Twenty Thousand Leagues Under the Sea", "Verne")}:
+     * {@code VernTwen}<br>
+     * {@code createAtstsl("Oxford English Dictionary", null)}: {@code OxfoEnDi}
      *
      * @param title
-     *            String
+     *            the title of the works
      * @param author
-     *            String
-     * @return String
+     *            the last name of the (first) author, may be {@code null} or
+     *            empty
+     * @return the author title key, or the title key (4/2/2/1)
      */
     public static String createAtstsl(String title, String author) {
         StringBuilder result = new StringBuilder(8);

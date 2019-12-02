@@ -15,13 +15,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../../../../Kitodo-DataEditor/src/main/resources/ruleset.xsd">
     <declaration>
-        <division id="Monograph">
+        <division id="Monograph" processTitle="TSL_ATS+'_'+CatalogIDDigital">
             <label>Monograph</label>
         </division>
         <division id="something">
             <label>Outline element</label>
         </division>
-        <division id="ContainedWork">
+        <division id="ContainedWork" processTitle="TSL_ATS+'_'+CatalogIDDigital">
             <label>Beigefügtes Werk</label>
         </division>
         <key id="TitleDocMain" domain="source">
