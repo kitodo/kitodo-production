@@ -43,20 +43,16 @@
                 <h:form>
                     <h:link id="viewWorkflow"
                             outcome="workflowEdit"
-                            title="#{msgs.view}"
-                            disabled="#{item.status ne 'active'}"
-                            styleClass="#{item.status ne 'active' ? 'disabled' : ''}"
-                            rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow())}">
+                            title="#{msgs['view']}"
+                            rendered="#{(item.status ne 'draft') and ((SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow()))}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
                     <h:link id="editWorkflow"
                             outcome="workflowEdit"
-                            title="#{msgs.edit}"
-                            disabled="#{item.status ne 'draft'}"
-                            styleClass="#{item.status ne 'draft' ? 'disabled' : ''}"
-                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
+                            title="#{msgs['edit']}"
+                            rendered="#{item.status eq 'draft' and SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -67,18 +63,19 @@
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
 
-                    <p:commandLink id="archiveWorkflow"
-                                   action="#{WorkflowForm.archive}"
-                                   title="#{msgs.archive}"
-                                   disabled="#{item.status ne 'active'}"
-                                   styleClass="#{item.status ne 'active' ? 'disabled' : ''}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}"
-                                   update="workflowTable">
-                        <h:outputText title="#{msgs.archive}"><i class="fa fa-archive"/></h:outputText>
-                        <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
-                        <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmArchiveWorkflow}"
-                                   icon="ui-icon-alert"/>
-                    </p:commandLink>
+                    <h:panelGroup title="#{item.status eq 'active' ? msgs['archive'] : msgs['workflowUnableToArchive']}">
+                        <p:commandLink id="archiveWorkflow"
+                                       action="#{WorkflowForm.archive}"
+                                       disabled="#{item.status ne 'active'}"
+                                       styleClass="#{item.status ne 'active' ? 'disabled' : ''}"
+                                       rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}"
+                                       update="workflowTable">
+                            <h:outputText title="#{msgs.archive}"><i class="fa fa-archive"/></h:outputText>
+                            <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
+                            <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmArchiveWorkflow}"
+                                       icon="ui-icon-alert"/>
+                        </p:commandLink>
+                    </h:panelGroup>
 
                     <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteWorkflow()}"
