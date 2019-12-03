@@ -83,7 +83,7 @@ public class EditPagesDialog {
     public void addPage() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             for (View viewToAdd : getViewsToAdd(paginationSelectionSelectedItems)) {
-                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd);
+                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd, -1);
             }
             dataEditor.refreshStructurePanel();
             prepare();
@@ -213,7 +213,7 @@ public class EditPagesDialog {
     public void setPageStartAndEnd() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             for (View viewToAdd : getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem)) {
-                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd);
+                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd, -1);
             }
             dataEditor.refreshStructurePanel();
             prepare();

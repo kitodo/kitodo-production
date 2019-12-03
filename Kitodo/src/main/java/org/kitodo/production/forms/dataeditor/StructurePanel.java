@@ -1213,7 +1213,7 @@ public class StructurePanel implements Serializable {
             TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
             StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
             IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) structureTreeNodeSibling.getDataObject();
-            dataEditor.assignView(includedStructuralElement, view);
+            dataEditor.assignView(includedStructuralElement, view, 0);
             severalAssignments.add(view.getMediaUnit());
             preserveLogical();
             show();

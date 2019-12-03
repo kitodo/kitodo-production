@@ -106,7 +106,7 @@
                                 <p:panel id="structuredPagePanel"
                                          a:ondragstart="metadataEditor.handleDragStart(event)">
                                     <p:outputPanel styleClass="thumbnail-parent">
-                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
                                         <p:outputPanel styleClass="thumbnail-container"
                                                        deferred="true"
                                                        deferredMode="visible"
@@ -189,7 +189,7 @@
                                 <p:panel id="unstructuredMediaPanel"
                                          a:ondragstart="metadataEditor.handleDragStart(event)">
                                     <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
-                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'active' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
                                         <p:outputPanel styleClass="thumbnail-container"
                                                        deferred="true"
                                                        deferredMode="visible"
