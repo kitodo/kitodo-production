@@ -62,6 +62,7 @@ import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
+import org.primefaces.PrimeFaces;
 
 @Named("CreateProcessForm")
 @ViewScoped
@@ -261,12 +262,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     public String createNewProcess() {
         try {
             createProcessHierarchy();
+            PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
+                    + Helper.getTranslation("processSaving") + "','detail':'"
+                    + Helper.getTranslation( "youWillBeRedirected") + "','severity':'info'});");
             return processListPath;
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         } catch (IOException | ProcessGenerationException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+            logger.error(e.getLocalizedMessage());
         }
         return this.stayOnCurrentPage;
     }
@@ -370,7 +374,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             if (index < this.processes.size() - 1) {
                 ProcessService.setParentRelations(this.processes.get(index + 1).getProcess(), process);
             }
-            if (this.processes.indexOf(tempProcess) == 0) {
+            if (index == 0) {
                 processDetails = processMetadataTab.getProcessDetailsElements();
                 docType = processDataTab.getDocType();
                 tiffHeader = processDataTab.getTiffHeaderImageDescription();

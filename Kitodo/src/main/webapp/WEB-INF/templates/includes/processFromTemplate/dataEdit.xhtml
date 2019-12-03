@@ -26,7 +26,9 @@
                 <p:inputText id="processTitle"
                              value="#{CreateProcessForm.mainProcess.title}"
                              styleClass="input-with-button"
-                             required="#{not empty param['editForm:save']}"/>
+                             required="#{not empty param['editForm:save']}">
+                    <p:ajax event="change"/>
+                </p:inputText>
                 <p:commandButton id="generateTitleButton"
                                  actionListener="#{CreateProcessForm.processDataTab.generateProcessTitleAndTiffHeader}"
                                  icon="fa fa-cog" title="#{msgs.generate}"/>
@@ -78,7 +80,9 @@
                 <p:outputLabel for="tifHeaderDocumentName"
                                value="#{msgs.tifHeaderDocumentName}"/>
                 <p:inputText class="input" id="tifHeaderDocumentName"
-                             value="#{CreateProcessForm.processDataTab.tiffHeaderDocumentName}"/>
+                             value="#{CreateProcessForm.processDataTab.tiffHeaderDocumentName}">
+                    <p:ajax event="change"/>
+                </p:inputText>
             </div>
 
             <div>
@@ -86,7 +90,9 @@
                 <p:outputLabel for="tifHeaderImageDescription"
                                value="#{msgs.tifHeaderImageDescription}"/>
                 <p:inputText class="input" id="tifHeaderImageDescription"
-                             value="#{CreateProcessForm.processDataTab.tiffHeaderImageDescription}"/>
+                             value="#{CreateProcessForm.processDataTab.tiffHeaderImageDescription}">
+                    <p:ajax event="change"/>
+                </p:inputText>
             </div>
 
             <div>
@@ -94,7 +100,9 @@
                                value="#{msgs.guessImages}"/>
                 <p:inputText class="input"
                              id="guessImages"
-                             value="#{CreateProcessForm.processDataTab.guessedImages}"/>
+                             value="#{CreateProcessForm.processDataTab.guessedImages}">
+                    <p:ajax event="change"/>
+                </p:inputText>
             </div>
         </p:row>
 
