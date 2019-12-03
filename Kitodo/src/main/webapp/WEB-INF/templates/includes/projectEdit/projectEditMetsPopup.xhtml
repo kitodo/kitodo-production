@@ -59,7 +59,7 @@
                             <p:column>
                                 <p:outputLabel for="generator" value="#{msgs['editFolderDialog.generator']}"/>
                                 <p:selectOneMenu id="generator" value="#{ProjectForm.myFolder.generator.method}">
-                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItem itemLabel="" itemValue="#{msgs.notSelected}"/>
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.dpi']}"
                                                   itemValue="changeDpi"/>
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.derivative']}"
