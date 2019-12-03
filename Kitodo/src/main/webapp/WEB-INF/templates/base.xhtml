@@ -30,7 +30,7 @@
             <h:outputStylesheet name="css/pattern-library.css"/>
             <p:ajaxStatus onstart="$('html').addClass('progressCursor')"
                           oncomplete="$('html').removeClass('progressCursor')" />
-            <p:growl id="notifications" widgetVar="notifications" severity="info"/>
+            <p:growl id="notifications" widgetVar="notifications" severity="info" escape="false"/>
             <p:growl id="sticky-notifications" widgetVar="sticky-notifications" sticky="true" severity="info"/>
             <h:panelGroup id="indexErrorPanel" layout="block" rendered="#{empty indexingForm.serverInformation}">
                <p:ajax event="click" onclick="PF('sticky-notifications').renderMessage({'summary':'The elastic search server is not running.','detail':'Elastic Search','severity':'info'});"/>

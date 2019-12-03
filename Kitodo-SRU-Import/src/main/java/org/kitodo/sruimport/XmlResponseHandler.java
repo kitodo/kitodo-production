@@ -19,6 +19,9 @@ import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,28 +36,19 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-class ResponseHandler {
+abstract class XmlResponseHandler {
+
+    private static final String SRW_NAMESPACE = "http://www.loc.gov/zing/srw/";
+    private static final String SRW_RECORD_TAG = "record";
+    private static final String SRW_NUMBER_OF_RECORDS_TAG = "numberOfRecords";
 
     private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private static XMLOutputter xmlOutputter = new XMLOutputter();
+    private static XPath xPath = XPathFactory.newInstance().newXPath();
 
     static {
         documentBuilderFactory.setNamespaceAware(true);
         xmlOutputter.setFormat(Format.getPrettyFormat());
-    }
-
-    private static final String MODS_NAMESPACE = "http://www.loc.gov/mods/v3";
-    private static final String SRW_NAMESPACE = "http://www.loc.gov/zing/srw/";
-    private static final String SRW_RECORD_TAG = "record";
-    private static final String SRW_NUMBER_OF_RECORDS_TAG = "numberOfRecords";
-    private static final String MODS_TAG = "mods";
-    private static final String RECORD_ID_TAG = "recordIdentifier";
-    private static final String RECORD_TITLE_TAG = "title";
-
-    /**
-     * Private constructor.
-     */
-    private ResponseHandler() {
     }
 
     /**
@@ -62,7 +56,7 @@ class ResponseHandler {
      * @param response HttpResponse for which a SearchResult is created
      * @return SearchResult created from given HttpResponse
      */
-    static SearchResult getSearchResult(HttpResponse response) {
+    SearchResult getSearchResult(HttpResponse response) {
         SearchResult searchResult = new SearchResult();
         Document resultDocument = transformResponseToDocument(response);
         if (Objects.nonNull(resultDocument)) {
@@ -77,7 +71,7 @@ class ResponseHandler {
      * @param response HttpResponse that is transformed into a Document
      * @return Document into which given HttpResponse has been transformed
      */
-    static Document transformResponseToDocument(HttpResponse response) {
+    private static Document transformResponseToDocument(HttpResponse response) {
         HttpEntity entity = response.getEntity();
         if (Objects.nonNull(entity)) {
             try {
@@ -98,6 +92,16 @@ class ResponseHandler {
         }
     }
 
+    private LinkedList<SingleHit> extractHits(Document document) {
+        LinkedList<SingleHit> hits = new LinkedList<>();
+        NodeList records = document.getElementsByTagNameNS(SRW_NAMESPACE, SRW_RECORD_TAG);
+        for (int i = 0; i < records.getLength(); i++) {
+            Element recordElement = (Element) records.item(i);
+            hits.add(new SingleHit(getRecordTitle(recordElement), getRecordID(recordElement)));
+        }
+        return hits;
+    }
+
     private static int extractNumberOfRecords(Document document) {
         NodeList numberOfRecordNodes = document.getElementsByTagNameNS(SRW_NAMESPACE, SRW_NUMBER_OF_RECORDS_TAG);
         assert numberOfRecordNodes.getLength() == 1;
@@ -108,29 +112,15 @@ class ResponseHandler {
         return 0;
     }
 
-    private static LinkedList<SingleHit> extractHits(Document document) {
-        LinkedList<SingleHit> hits = new LinkedList<>();
-        NodeList records = document.getElementsByTagNameNS(SRW_NAMESPACE, SRW_RECORD_TAG);
-        for (int i = 0; i < records.getLength(); i++) {
-            Element recordElement = (Element) records.item(i);
-            hits.add(new SingleHit(getRecordTitle(recordElement), getRecordID(recordElement)));
+    static String getTextContent(Element element, String xpathString) {
+        try {
+            return xPath.evaluate(xpathString, element);
+        } catch (XPathExpressionException e) {
+            return "";
         }
-        return hits;
     }
 
-    private static String getRecordID(Element record) {
-        Element recordIdentifier = getXmlElement(record, RECORD_ID_TAG);
-        return recordIdentifier.getTextContent().trim();
-    }
+    abstract String getRecordTitle(Element record);
 
-    private static String getRecordTitle(Element record) {
-        Element modsElement = getXmlElement(record, MODS_TAG);
-        Element recordTitle = getXmlElement(modsElement, RECORD_TITLE_TAG);
-        return recordTitle.getTextContent().trim();
-    }
-
-    private static Element getXmlElement(Element parentNode, String elementTag) {
-        NodeList nodeList = parentNode.getElementsByTagNameNS(ResponseHandler.MODS_NAMESPACE, elementTag);
-        return (Element) nodeList.item(0);
-    }
+    abstract String getRecordID(Element record);
 }

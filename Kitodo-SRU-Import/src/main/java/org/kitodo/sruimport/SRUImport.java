@@ -49,6 +49,7 @@ import org.kitodo.config.OPACConfig;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.ParameterNotFoundException;
+import org.kitodo.exceptions.ResponseHandlerNotFoundException;
 
 public class SRUImport implements ExternalDataImportInterface {
 
@@ -76,6 +77,14 @@ public class SRUImport implements ExternalDataImportInterface {
     private static HashMap<String, String> searchFieldMapping = new HashMap<>();
     private static String equalsOperand = "=";
     private static HttpClient sruClient = HttpClientBuilder.create().build();
+
+    private static HashMap<String, XmlResponseHandler> formatHandlers;
+
+    static {
+        formatHandlers = new HashMap<>();
+        formatHandlers.put(MetadataFormat.MODS.name(), new ModsResponseHandler());
+        formatHandlers.put(MetadataFormat.MARC.name(), new MarcResponseHandler());
+    }
 
     @Override
     public DataRecord getFullRecordById(String catalogId, String identifier) throws NoRecordFoundException {
@@ -127,7 +136,7 @@ public class SRUImport implements ExternalDataImportInterface {
                 return performQuery(queryString
                                 + "&maximumRecords=" + numberOfRecords
                                 + "&query=" + createSearchFieldString(searchFieldMap));
-            } catch (URISyntaxException | UnsupportedEncodingException e) {
+            } catch (URISyntaxException | UnsupportedEncodingException | ResponseHandlerNotFoundException e) {
                 logger.error(e.getLocalizedMessage());
             }
         }
@@ -139,11 +148,16 @@ public class SRUImport implements ExternalDataImportInterface {
         return Collections.emptyList();
     }
 
-    private SearchResult performQuery(String queryURL) {
+    private SearchResult performQuery(String queryURL) throws ResponseHandlerNotFoundException {
         try {
             HttpResponse response = sruClient.execute(new HttpGet(queryURL));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
-                return ResponseHandler.getSearchResult(response);
+                if (formatHandlers.containsKey(metadataFormat)) {
+                    return formatHandlers.get(metadataFormat).getSearchResult(response);
+                } else {
+                    throw new ResponseHandlerNotFoundException("No ResponseHandler found for metadata format "
+                            + metadataFormat);
+                }
             }
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());
