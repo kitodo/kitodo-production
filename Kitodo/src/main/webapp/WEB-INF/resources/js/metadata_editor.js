@@ -13,42 +13,82 @@
 var metadataEditor = {
     dragging: false,
     handleMouseDown(event) {
-        if ($(event.currentTarget).closest(".thumbnail-parent").find(".active").length === 0) {
-            this.select(event);
+        let target = $(event.target);
+        if (target.closest(".stripe").length === 1) {
+            this.stripes.handleMouseDown(event);
+        } else if (target.closest(".thumbnail-container").length === 1) {
+            this.pages.handleMouseDown(event, target.closest(".thumbnail-container"));
         }
     },
     handleMouseUp(event) {
-        this.dragdrop.removeDragAmountIcon();
-        if (this.dragging) {
-            this.dragging = false;
-        } else {
-            this.select(event);
+        let target = $(event.target);
+        if (target.closest(".thumbnail-container").length === 1) {
+            this.pages.handleMouseUp(event, target.closest(".thumbnail-container"));
         }
     },
     handleDragStart(event) {
-        this.dragging = true;
-        this.dragdrop.addDragAmountIcon(event);
+        this.pages.handleDragStart(event);
     },
-    select(event) {
-        if (event.metaKey || event.ctrlKey) {
-            select([
-                {name: "page", value: event.currentTarget.dataset.order},
-                {name: "stripe", value: event.currentTarget.dataset.stripe},
-                {name: "selectionType", value: "multi"}
-            ]);
-        } else if (event.shiftKey) {
-            select([
-                {name: "page", value: event.currentTarget.dataset.order},
-                {name: "stripe", value: event.currentTarget.dataset.stripe},
-                {name: "selectionType", value: "range"}
-            ]);
-        } else {
-            select([
-                {name: "page", value: event.currentTarget.dataset.order},
-                {name: "stripe", value: event.currentTarget.dataset.stripe},
-                {name: "selectionType", value: "default"}
-            ]);
+    pages: {
+        handleMouseDown(event, target) {
+            if (target.closest(".thumbnail-parent").find(".active").length === 0) {
+                this.select(event, target);
+            }
+        },
+        handleMouseUp(event, target) {
+            metadataEditor.dragdrop.removeDragAmountIcon();
+            if (metadataEditor.dragging) {
+                metadataEditor.dragging = false;
+            } else if (event.button !== 2 || target.closest(".thumbnail-parent").find(".active").length === 0) {
+                this.select(event, target);
+            }
+        },
+        handleDragStart(event) {
+            metadataEditor.dragging = true;
+            metadataEditor.dragdrop.addDragAmountIcon(event);
+        },
+        select(event, target) {
+            if (event.metaKey || event.ctrlKey) {
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "multi");
+            } else if (event.shiftKey) {
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "range");
+            } else {
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "default");
+            }
         }
+    },
+    stripes: {
+        handleMouseDown(event) {
+            if (!$(event.target).hasClass("selected")) {
+                metadataEditor.select(null, event.target.dataset.stripe, "default");
+            }
+        },
+    },
+    select(pageIndex, stripeIndex, selectionType) {
+        // call the remoteCommand in gallery.xhtml
+        select([
+            {name: "page", value: pageIndex},
+            {name: "stripe", value: stripeIndex},
+            {name: "selectionType", value: selectionType}
+        ]);
+    }
+};
+
+metadataEditor.contextMenu = {
+    listen() {
+        document.oncontextmenu = function() {
+            return false;
+        };
+        $(document).on("mousedown.thumbnail", ".thumbnail-parent", function(event) {
+            if (event.originalEvent.button === 2) {
+                PF("mediaContextMenu").show(event);
+            }
+        });
+        $(document).on("mousedown.stripe", ".stripe", function(event) {
+            if (event.originalEvent.button === 2) {
+                PF("stripeContextMenu").show(event);
+            }
+        });
     }
 };
 
@@ -59,7 +99,7 @@ metadataEditor.dragdrop = {
             var element = document.createElement("div");
             element.id = "dragAmount";
             element.innerText = dragAmount;
-            event.currentTarget.appendChild(element);
+            event.target.appendChild(element);
         }
     },
     removeDragAmountIcon() {
@@ -117,4 +157,5 @@ metadataEditor.shortcuts = {
 
 $(document).ready(function () {
     metadataEditor.shortcuts.listen();
+    metadataEditor.contextMenu.listen();
 });

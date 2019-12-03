@@ -1620,6 +1620,12 @@ Column content
     position: relative;
 }
 
+#imagePreviewForm\:mediaContextMenu .ui-menuitem-link.ui-state-hover,
+#imagePreviewForm\:stripeContextMenu .ui-menuitem-link.ui-state-hover {
+    background: transparent;
+    color: var(--blue);
+}
+
 #imagePreviewForm\:tifFoldersLabel {
     color: var(--pure-white);
     line-height: var(--input-height);
@@ -1768,6 +1774,29 @@ Column content
     pointer-events: none;
 }
 
+.stripe {
+    background-color: var(--focused-blue);
+    border: solid calc(2 * var(--default-border-width)) transparent;
+    border-bottom: none;
+    border-top: solid var(--contrast-border-width) var(--blue);
+    color: var(--pure-white);
+    display: block;
+    font-weight: bold;
+    padding: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stripe + div {
+    border: solid calc(2 * var(--default-border-width)) transparent;
+    border-top: none;
+}
+
+.stripe.selected,
+.stripe.selected + div {
+    border-color: var(--green);
+}
+
 .thumbnail-parent {
     display: block;
     height: 104px;
@@ -1857,17 +1886,6 @@ Column content
 #imagePreviewForm div.ui-panel.ui-corner-all,
 #imagePreviewForm .ui-widget-content {
     background: transparent;
-}
-
-.gallery-stripe-header,
-#imagePreviewForm\:structuredPages dt.ui-datalist-item > span {
-    display: block;
-    background-color: var(--focused-blue);
-    color: var(--pure-white);
-    padding: 5px;
-    border-top: solid var(--contrast-border-width) var(--blue);
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 #imagePreviewForm\:structuredPages ul {

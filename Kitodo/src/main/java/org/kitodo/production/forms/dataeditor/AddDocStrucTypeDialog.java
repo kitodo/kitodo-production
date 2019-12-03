@@ -30,6 +30,8 @@ import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,6 +73,7 @@ public class AddDocStrucTypeDialog {
     private String selectFirstPageOnAddNodeSelectedItem;
     private String selectLastPageOnAddNodeSelectedItem;
     private List<SelectItem> selectPageOnAddNodeItems;
+    private List<View> preselectedViews;
     private AddDocStrucTypeDialogMode subdialog = AddDocStrucTypeDialogMode.ADD_MULTIPLE_LOGICAL_ELEMENTS;
     private String processNumber = "";
     private Process selectedProcess;
@@ -108,6 +111,10 @@ public class AddDocStrucTypeDialog {
             IncludedStructuralElement newStructure = MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
                     docStructPositionSelectionSelectedItem, getViewsToAdd());
+            dataEditor.getSelectedMedia().clear();
+            for (View view: getViewsToAdd()) {
+                dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getMediaUnit(), newStructure));
+            }
             dataEditor.refreshStructurePanel();
             TreeNode selectedLogicalTreeNode = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
                     this.dataEditor.getStructurePanel().getLogicalTree());
@@ -329,6 +336,9 @@ public class AddDocStrucTypeDialog {
     }
 
     private List<View> getViewsToAdd() {
+        if (Objects.nonNull(preselectedViews) && preselectedViews.size() > 0) {
+            return preselectedViews;
+        }
         try {
             int firstPage = Integer.parseInt(selectFirstPageOnAddNodeSelectedItem);
             int lastPage = Integer.parseInt(selectLastPageOnAddNodeSelectedItem);
@@ -485,6 +495,28 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
+     * Fill preselectedViews with the views matching the List of selectedMedia.
+     */
+    public void preparePreselectedViews() {
+        preselectedViews = new ArrayList<>();
+        List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = dataEditor.getSelectedMedia();
+        for (Pair pair : selectedMedia) {
+            for (View view : ((IncludedStructuralElement) pair.getValue()).getViews()) {
+                if (Objects.equals(view.getMediaUnit(), pair.getKey())) {
+                    preselectedViews.add(view);
+                }
+            }
+        }
+    }
+
+    /**
+     * Clear the List of preselected Views.
+     */
+    public void clearPreselectedViews() {
+        preselectedViews = Collections.emptyList();
+    }
+
+    /**
      * Returns the process number. The process number is an input field where
      * the user can enter the process number or the process title, and then it
      * is searched for. But search is only when the button is clicked (too much
@@ -568,6 +600,15 @@ public class AddDocStrucTypeDialog {
      */
     public List<ProcessDTO> getProcesses() {
         return processes;
+    }
+
+    /**
+     * Get preselectedViews.
+     *
+     * @return value of preselectedViews
+     */
+    public List<View> getPreselectedViews() {
+        return preselectedViews;
     }
 
     /**

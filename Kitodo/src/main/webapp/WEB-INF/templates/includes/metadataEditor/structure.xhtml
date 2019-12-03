@@ -36,7 +36,8 @@
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();initializeImage()"
-                    update="@(.thumbnail)
+                    update="@(.stripe)
+                            @(.thumbnail)
                             galleryHeadingWrapper
                             structureTreeForm:contextMenuLogicalTree
                             structureTreeForm:physicalTree
@@ -69,7 +70,8 @@
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
-                        actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
+                        action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
+                        actionListener="#{DataEditorForm.addDocStrucTypeDialog.clearPreselectedViews}"
                         oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeForm"/>
             <p:menuitem value="#{msgs.removeElement}"
