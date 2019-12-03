@@ -80,18 +80,20 @@
                                                rendered="#{ProjectForm.myFolder.generator.method =='getScaledWebImage'}"/>
                                 <p:outputLabel for="width" value="#{msgs['editFolderDialog.imageSize']}"
                                                rendered="#{ProjectForm.myFolder.generator.method == 'getSizedWebImage'}"/>
-                                <p:inputNumber id="dpi" value="#{ProjectForm.myFolder.generator.dpi}" decimalPlaces="0"
-                                               symbol=" DPI" symbolPosition="s"
-                                               rendered="#{ProjectForm.myFolder.generator.method == 'changeDpi'}"
-                                               styleClass="input editDialog"/>
-                                <p:inputNumber id="factor" value="#{ProjectForm.myFolder.generator.factor}"
-                                               decimalPlaces="1" symbol="%" symbolPosition="s"
-                                               rendered="#{ProjectForm.myFolder.generator.method == 'createDerivative' or ProjectForm.myFolder.generator.method == 'getScaledWebImage'}"
-                                               styleClass="input editDialog"/>
-                                <p:inputNumber id="width" value="#{ProjectForm.myFolder.generator.width}" decimalPlaces="0"
-                                               symbol=" px" symbolPosition="s"
-                                               rendered="#{ProjectForm.myFolder.generator.method == 'getSizedWebImage'}"
-                                               styleClass="input editDialog"/>
+                                <div>
+                                    <p:inputNumber id="dpi" value="#{ProjectForm.myFolder.generator.dpi}" decimalPlaces="0"
+                                                   symbol=" DPI" symbolPosition="s"
+                                                   rendered="#{ProjectForm.myFolder.generator.method == 'changeDpi'}"
+                                                   styleClass="input editDialog"/>
+                                    <p:inputNumber id="factor" value="#{ProjectForm.myFolder.generator.factor}"
+                                                   decimalPlaces="1" symbol="%" symbolPosition="s"
+                                                   rendered="#{ProjectForm.myFolder.generator.method == 'createDerivative' or ProjectForm.myFolder.generator.method == 'getScaledWebImage'}"
+                                                   styleClass="input editDialog"/>
+                                    <p:inputNumber id="width" value="#{ProjectForm.myFolder.generator.width}" decimalPlaces="0"
+                                                   symbol=" px" symbolPosition="s"
+                                                   rendered="#{ProjectForm.myFolder.generator.method == 'getSizedWebImage'}"
+                                                   styleClass="input editDialog"/>
+                                </div>
                             </p:column>
                         </p:row>
                         <p:row>
