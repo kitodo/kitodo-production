@@ -1905,7 +1905,7 @@ Column content
     width: 100%;
 }
 
-.thumbnail.active + .thumbnail-container img {
+.thumbnail.selected + .thumbnail-container img {
     border-color: var(--green);
 }
 

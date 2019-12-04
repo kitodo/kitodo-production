@@ -31,7 +31,7 @@ var metadataEditor = {
     },
     pages: {
         handleMouseDown(event, target) {
-            if (target.closest(".thumbnail-parent").find(".active").length === 0) {
+            if (target.closest(".thumbnail-parent").find(".selected").length === 0) {
                 this.select(event, target);
             }
         },
@@ -39,7 +39,7 @@ var metadataEditor = {
             metadataEditor.dragdrop.removeDragAmountIcon();
             if (metadataEditor.dragging) {
                 metadataEditor.dragging = false;
-            } else if (event.button !== 2 || target.closest(".thumbnail-parent").find(".active").length === 0) {
+            } else if (event.button !== 2 || target.closest(".thumbnail-parent").find(".selected").length === 0) {
                 this.select(event, target);
             }
         },
@@ -94,7 +94,7 @@ metadataEditor.contextMenu = {
 
 metadataEditor.dragdrop = {
     addDragAmountIcon(event) {
-        var dragAmount = document.querySelectorAll(".thumbnail.active").length;
+        var dragAmount = document.querySelectorAll(".thumbnail.selected").length;
         if (dragAmount > 1) {
             var element = document.createElement("div");
             element.id = "dragAmount";
