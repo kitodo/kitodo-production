@@ -1337,17 +1337,17 @@ Popup dialogs
 }
 
 /* Messages */
-#error-messages > div.ui-corner-all {
+.ui-messages-error.ui-corner-all {
     border: 0;
     border-radius: 0;
     color: var(--pure-white);
 }
 
-#error-messages span.ui-icon-close {
+.ui-messages-error.ui-corner-all span.ui-icon-close {
     background: none;
 }
 
-#error-messages span.ui-icon-close:before {
+.ui-messages-error.ui-corner-all span.ui-icon-close:before {
     color: var(--pure-white);
     content: "\f00d";
     display: inherit;
