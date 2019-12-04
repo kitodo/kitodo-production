@@ -19,11 +19,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Fptr;
@@ -147,11 +147,11 @@ public class FileXmlElementAccess {
             div.getFptr().add(fptr);
         }
         Optional<MdSecType> optionalDmdSec = DivXmlElementAccess.createMdSec(mediaUnit.getMetadata(), MdSec.DMD_SEC);
-        String metsReferrerId = UUID.randomUUID().toString();
+        String metsReferrerId = KitodoUUID.randomUUID();
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
             String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
-            dmdSec.setID(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)).toString());
+            dmdSec.setID(KitodoUUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)));
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
         }

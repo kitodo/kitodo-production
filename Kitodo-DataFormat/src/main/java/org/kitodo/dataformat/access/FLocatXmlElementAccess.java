@@ -13,10 +13,10 @@ package org.kitodo.dataformat.access;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.FileType.FLocat;
 
@@ -113,7 +113,7 @@ public class FLocatXmlElementAccess {
      */
     FileType toFile(String mimeType, String metsReferrerId) {
         FileType file = new FileType();
-        file.setID(metsReferrerId == null ? UUID.randomUUID().toString() : metsReferrerId);
+        file.setID(metsReferrerId == null ? KitodoUUID.randomUUID() : metsReferrerId);
         file.setMIMETYPE(mimeType);
         FLocat fLocat = new FLocat();
         fLocat.setLOCTYPE("URL");
