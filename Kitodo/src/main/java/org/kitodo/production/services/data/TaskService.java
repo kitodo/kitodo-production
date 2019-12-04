@@ -152,9 +152,6 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             query.must(getQueryForTypeAutomatic(false));
         }
 
-        List<Map<String, Object>> processes = ServiceManager.getProcessService().findForCurrentSessionClient();
-        query.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processes, true));
-
         return query;
     }
 

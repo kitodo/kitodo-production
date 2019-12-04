@@ -232,14 +232,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return query;
     }
 
-    private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks) throws DataException {
-        BoolQueryBuilder taskQuery = limitToUserAssignedTasks(onlyOpenTasks, onlyUserAssignedTasks);
-
-        if (onlyOpenTasks && onlyUserAssignedTasks) {
-            List<ProcessDTO> processDTOS = ServiceManager.getProcessService().findAll();
-            taskQuery.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true));
-        }
-        return taskQuery;
+    private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks) {
+        return limitToUserAssignedTasks(onlyOpenTasks, onlyUserAssignedTasks);
     }
 
     Set<Integer> collectIds(List<? extends BaseDTO> dtos) {
