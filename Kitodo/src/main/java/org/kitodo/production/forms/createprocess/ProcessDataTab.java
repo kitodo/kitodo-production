@@ -192,8 +192,7 @@ public class ProcessDataTab {
         try {
             StructuralElementViewInterface docTypeView = createProcessForm.getRuleset().getStructuralElementView(
                 docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
-            String processTitle = docTypeView.getProcessTitle()
-                    .orElseThrow(() -> new ProcessGenerationException(docType + " does not declare a process title."));
+            String processTitle = docTypeView.getProcessTitle().orElse("");
             this.atstsl = ProcessService.generateProcessTitle(this.atstsl, processDetails,
                 processTitle, process);
             // document name is generally equal to process title

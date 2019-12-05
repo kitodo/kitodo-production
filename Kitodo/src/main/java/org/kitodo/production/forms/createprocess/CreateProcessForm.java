@@ -411,8 +411,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 try {
                     StructuralElementViewInterface docTypeView = rulesetManagementInterface
                             .getStructuralElementView(docType, acquisitionStage, priorityList);
-                    String processTitle = docTypeView.getProcessTitle().orElseThrow(
-                        () -> new ProcessGenerationException(docType + " does not declare a process title."));
+                    String processTitle = docTypeView.getProcessTitle().orElse("");
                     String atstsl = ProcessService.generateProcessTitle("", processDetails,
                         processTitle, process);
                     tiffHeader = ProcessService.generateTiffHeader(processDetails, atstsl,
