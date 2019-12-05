@@ -89,6 +89,7 @@ public class ComposeFormattedRule extends DataCopyrule {
                         continue;
                     case 'x':
                         typecastedObjects[i] = Long.parseLong(elements.get(i));
+                    default:
                 }
             } catch (ArrayIndexOutOfBoundsException | ClassCastException | NumberFormatException e) {
                 logger.info(e);

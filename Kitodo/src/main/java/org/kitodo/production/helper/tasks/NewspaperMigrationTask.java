@@ -44,7 +44,7 @@ public class NewspaperMigrationTask extends EmptyTask {
          * to the overall process.
          */
         CREATE_YEARS
-    };
+    }
 
     /**
      * Migrator which is run by this thread.
