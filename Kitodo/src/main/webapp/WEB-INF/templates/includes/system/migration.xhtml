@@ -86,10 +86,10 @@
                 <f:selectItems value="#{MigrationForm.newspaperBatchesItems}"/>
             </p:selectManyCheckbox>
             <p:commandButton id="startNewspaperMigration" value="#{msgs.ok}"
-                action="#{MigrationForm.startNewspaperMigrationClick}"
+                action="#{MigrationForm.startNewspaperMigration}"
                 update="systemTabView:migrationForm" style="margin: 0 10px;" />
             <p:commandButton id="cancelNewspaperMigration" value="#{msgs.cancel}"
-                action="#{MigrationForm.cancelNewspaperMigrationClick}"
+                action="#{MigrationForm.hideNewspaperMigration}"
                 update="systemTabView:migrationForm"/>
         </h:panelGroup>
 

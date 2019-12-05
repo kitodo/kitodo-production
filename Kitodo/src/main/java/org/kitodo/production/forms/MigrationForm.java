@@ -482,7 +482,7 @@ public class MigrationForm extends BaseForm {
     /**
      * Action performed when the startNewspaperMigration button is clicked.
      */
-    public void startNewspaperMigrationClick() {
+    public void startNewspaperMigration() {
         try {
             for (Integer batchId : newspaperBatchesSelectedItems) {
                 NewspaperProcessesMigrator.initializeMigration(batchId);
@@ -497,7 +497,7 @@ public class MigrationForm extends BaseForm {
     /**
      * Action performed when the cancelNewspaperMigration button is clicked.
      */
-    public void cancelNewspaperMigrationClick() {
+    public void hideNewspaperMigration() {
         newspaperMigrationRendered = false;
     }
 }
