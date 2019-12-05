@@ -154,38 +154,48 @@ function initializeStructureTreeScrolling() {
     });
 }
 
+function scrollToPreviewThumbnail(thumbnail, scrollable) {
+    let thumbnailHeight = thumbnail.parent().parent().height();
+    let selectedIndex = scrollable.find(".thumbnail").index(thumbnail);
+    if (selectedIndex >= 0) {
+        scrollable.animate({
+            scrollTop: selectedIndex * thumbnailHeight - (scrollable.height()/2 - thumbnailHeight/2)
+        }, 180, null, null);
+    }
+}
+
 function scrollToSelectedPreviewThumbnail() {
-    var scrollableContent = $("#thumbnailStripeScrollableContent");
+    let scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
-        var selectedThumbnail = scrollableContent.find(".active.last-selection");
+        let selectedThumbnail = scrollableContent.find(".active.last-selection");
         if (selectedThumbnail.length) {
-            var thumbnailHeight = selectedThumbnail.first().parent().parent().height();
-            var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
-            if (selectedIndex >= 0) {
-                scrollableContent.animate({
-                    scrollTop: selectedIndex * thumbnailHeight - (scrollableContent.height()/2 - thumbnailHeight/2)
-                }, 180, null, null);
-            }
+            scrollToPreviewThumbnail(selectedThumbnail.first(), scrollableContent);
         }
     }
+}
+
+function scrollToStructureThumbnail(thumbnail, scrollable) {
+    let mediaPosition = thumbnail.closest(".media-position");
+    scrollable.animate({
+        scrollTop: mediaPosition[0].offsetTop
+    }, 180, null, null);
+}
+
+function scrollToSelectedStripe(selectedStripe, scrollable) {
+    scrollableContent.animate({
+        scrollTop: selectedStripe[0].offsetTop
+    }, 180, null, null);
 }
 
 function scrollToSelectedStructureThumbnail() {
     let scrollableContent = $("#imagePreviewForm\\:structuredPagesField");
     if (scrollableContent.length) {
         let selectedThumbnail = scrollableContent.find(".active.last-selection");
+        let selectedStripe = scrollableContent.find(".selected.stripe");
         if (selectedThumbnail.length) {
-            let mediaPosition = selectedThumbnail.first().closest(".media-position");
-            scrollableContent.animate({
-                scrollTop: mediaPosition[0].offsetTop
-            }, 180, null, null);
-        } else {
-            let selectedStripe = scrollableContent.find(".selected.stripe");
-            if (selectedStripe.length) {
-                scrollableContent.animate({
-                    scrollTop: selectedStripe[0].offsetTop
-                }, 180, null, null);
-            }
+            scrollToStructureThumbnail(selectedThumbnail.first(), scrollableContent);
+        } else if (selectedStripe.length) {
+            scrollToSelectedStripe(selectedStripe.first(), scrollableContent);
         }
     }
 }
