@@ -168,9 +168,10 @@ public class Ruleset {
                 }
             }
         }
-        return all || !universalDivisions.isEmpty() ? Labeled.listByTranslatedLabel(this, universalDivisions,
+        Map<String, String> map = all || !universalDivisions.isEmpty() ? Labeled.listByTranslatedLabel(this, universalDivisions,
             UniversalDivision::getId, UniversalDivision::getLabels, priorityList)
                 : getDivisions(priorityList, true, subdivisionsByDate);
+        return map;
     }
 
     /**
