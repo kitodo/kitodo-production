@@ -28,7 +28,7 @@ public class MigrationFormIT {
 
     /**
      * Setup Database and start elasticsearch.
-     * 
+     *
      * @throws Exception
      *             If databaseConnection failed.
      */
@@ -53,10 +53,10 @@ public class MigrationFormIT {
     @Test
     public void testShowPossibleProjects() {
         Assert.assertEquals("Projectslist should be empty", Collections.emptyList(), migrationForm.getAllProjects());
-        Assert.assertFalse("Projectslist should not be shown", migrationForm.isProjectListShown());
+        Assert.assertFalse("Projectslist should not be shown", migrationForm.isProjectListRendered());
         migrationForm.showPossibleProjects();
         Assert.assertEquals("Should get all Projects", 3, migrationForm.getAllProjects().size());
-        Assert.assertTrue("Projectslist should be shown", migrationForm.isProjectListShown());
+        Assert.assertTrue("Projectslist should be shown", migrationForm.isProjectListRendered());
     }
 
     @Test
