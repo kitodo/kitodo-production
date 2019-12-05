@@ -3132,23 +3132,22 @@ public class Metadaten {
         }
         for (Entry<String, List<MetadataGroup>> entry : displayGroups.entrySet()) {
             records = entry.getValue();
-            if (records != null) {
-                if (records.size() > 0) {
-                    for (MetadataGroup record : records) {
-                        result.add(new RenderableMetadataGroup(record, this, language, projectName));
-                    }
-                } else {
-                    for (MetadataGroupType groupType : myDocStruct.getType().getAllMetadataGroupTypes()) {
-                        if (groupType.getName().equals(entry.getKey())) {
-                            RenderableMetadataGroup newMetadataGroup = new RenderableMetadataGroup(groupType, language, projectName);
-                            result.add(newMetadataGroup);
-                            try {
-                                myDocStruct.addMetadataGroup(newMetadataGroup.toMetadataGroup());
-                            } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
-                                throw new IllegalStateException(e.getMessage(), e);
-                            }
-                            break;
+            if (records != null && records.size() > 0) {
+                for (MetadataGroup record : records) {
+                    result.add(new RenderableMetadataGroup(record, this, language, projectName));
+                }
+            } else if (records != null) {
+                for (MetadataGroupType groupType : myDocStruct.getType().getAllMetadataGroupTypes()) {
+                    if (groupType.getName().equals(entry.getKey())) {
+                        RenderableMetadataGroup newMetadataGroup = new RenderableMetadataGroup(groupType, language,
+                                projectName);
+                        result.add(newMetadataGroup);
+                        try {
+                            myDocStruct.addMetadataGroup(newMetadataGroup.toMetadataGroup());
+                        } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                            throw new IllegalStateException(e.getMessage(), e);
                         }
+                        break;
                     }
                 }
             }
