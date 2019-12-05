@@ -33,10 +33,11 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 
-public class CatalogImportTest {
+public class CatalogImportIT {
 
     private static StubServer server;
     private static final int PORT = 8888;
@@ -56,6 +57,7 @@ public class CatalogImportTest {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
     @AfterClass

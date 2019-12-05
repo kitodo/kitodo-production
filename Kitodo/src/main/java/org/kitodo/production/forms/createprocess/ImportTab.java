@@ -14,12 +14,15 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -27,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -47,9 +51,11 @@ public class ImportTab implements Serializable {
 
     private CreateProcessForm createProcessForm;
     private static final int ADDITIONAL_FIELDS_TAB_INDEX = 2;
+    private static final int TITLE_RECORD_LINK_TAB_INDEX = 4;
     private static final String ID_PARAMETER_NAME = "ID";
     private static final String FORM_CLIENTID = "editForm";
     private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
+    private static final String INSERTION_TREE = "editForm:processFromTemplateTabView:insertionTree";
     private static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
 
@@ -128,7 +134,24 @@ public class ImportTab implements Serializable {
     public void getSelectedRecord() {
         getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
         Ajax.update(FORM_CLIENTID);
-        this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
+        // if parent of imported document is already in DB, it will be the second process in the list and contain no metadata nodes
+        if (this.createProcessForm.getProcesses().size() > 1
+                && Objects.isNull(this.createProcessForm.getProcesses().get(1).getMetadataNodes())) {
+            this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
+            Process parentProcess = this.createProcessForm.getProcesses().get(1).getProcess();
+            ArrayList<SelectItem> parentCandidates = new ArrayList<>();
+            parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
+            this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
+            this.createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
+            this.createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
+            String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
+            String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
+                    Collections.singletonList(parentProcess.getTitle()));
+            showGrowMessage(summary, detail);
+            Ajax.update(INSERTION_TREE);
+        } else {
+            this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
+        }
         // if more than one exemplar record was found, display a selection dialog to the user
         if (ServiceManager.getImportService().getExemplarRecords().size() > 0) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
@@ -154,8 +177,10 @@ public class ImportTab implements Serializable {
                         this.createProcessForm.getAcquisitionStage(),
                         this.createProcessForm.getPriorityList());
             }
-
-            showGrowlMessage(processes, this.hitModel.getSelectedCatalog());
+            String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
+            String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
+                    Arrays.asList(String.valueOf(processes.size()), this.hitModel.getSelectedCatalog()));
+            showGrowMessage(summary, detail);
         } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                 | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException e) {
             Helper.setErrorMessage(e);
@@ -171,19 +196,7 @@ public class ImportTab implements Serializable {
         return this.hitModel;
     }
 
-    private void showGrowlMessage(LinkedList<TempProcess> processes, String opac) {
-        String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
-        String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
-                Arrays.asList(String.valueOf(processes.size()), opac));
-        String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
-                .replace("SEVERITY", "info");
-        PrimeFaces.current().executeScript(script);
-    }
-
-    private void showExemplarRecordSelectedMessage(ExemplarRecord record) {
-        String summary = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedSummary");
-        String detail = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedDetail",
-                Arrays.asList(record.getOwner(), record.getSignature()));
+    private void showGrowMessage(String summary, String detail) {
         String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
                 .replace("SEVERITY", "info");
         PrimeFaces.current().executeScript(script);
@@ -225,7 +238,10 @@ public class ImportTab implements Serializable {
         try {
             ImportService.setSelectedExemplarRecord(selectedExemplarRecord, this.hitModel.getSelectedCatalog(),
                     this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
-            showExemplarRecordSelectedMessage(selectedExemplarRecord);
+            String summary = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedSummary");
+            String detail = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedDetail",
+                    Arrays.asList(selectedExemplarRecord.getOwner(), selectedExemplarRecord.getSignature()));
+            showGrowMessage(summary, detail);
             Ajax.update(FORM_CLIENTID);
         } catch (ParameterNotFoundException e) {
             Helper.setErrorMessage("newProcess.catalogueSearch.exemplarRecordParameterNotFoundError",

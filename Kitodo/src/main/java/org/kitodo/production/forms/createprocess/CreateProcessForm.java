@@ -45,7 +45,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
@@ -54,7 +53,6 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
-import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
@@ -261,52 +259,16 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * Create the process and save the metadata.
      */
     public String createNewProcess() {
-        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
-            return attachMainProcessToExistingProcess();
-        } else {
-            try {
-                createProcessHierarchy();
-                return processListPath;
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                        logger, e);
-            } catch (IOException | ProcessGenerationException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage());
-            }
-            return this.stayOnCurrentPage;
+        try {
+            createProcessHierarchy();
+            return processListPath;
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
+        } catch (IOException | ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
         }
-    }
-
-    private String attachMainProcessToExistingProcess() {
-        if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
-                || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
-            FacesContext.getCurrentInstance().validationFailed();
-            Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
-            return stayOnCurrentPage;
-        } else {
-            User titleRecordOpenUser = DataEditorForm
-                    .getUserOpened(titleRecordLinkTab.getTitleRecordProcess().getId());
-            if (Objects.nonNull(titleRecordOpenUser)) {
-                FacesContext.getCurrentInstance().validationFailed();
-                Helper.setErrorMessage("createProcessForm.createNewProcess.titleRecordOpen",
-                        titleRecordOpenUser.getFullName());
-                return stayOnCurrentPage;
-            }
-            Process mainProcess = getMainProcess();
-            try {
-                mainProcess.setParent(titleRecordLinkTab.getTitleRecordProcess());
-                titleRecordLinkTab.getTitleRecordProcess().getChildren().add(mainProcess);
-                ServiceManager.getProcessService().save(mainProcess);
-                MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
-                        titleRecordLinkTab.getSelectedInsertionPosition(), mainProcess.getId());
-                return processListPath;
-
-            } catch (IOException | DataException exception) {
-                Helper.setErrorMessage("errorSaving", titleRecordLinkTab.getTitleRecordProcess().getTitle(), logger,
-                        exception);
-                return stayOnCurrentPage;
-            }
-        }
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -364,14 +326,21 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             ServiceManager.getProcessService().save(getMainProcess());
         }
         saveProcessHierarchyMetadata();
-        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
-            getMainProcess().setParent(titleRecordLinkTab.getTitleRecordProcess());
-            titleRecordLinkTab.getTitleRecordProcess().getChildren().add(getMainProcess());
-        }
         // add links between processes
         for (int i = 0; i < this.processes.size() - 1; i++) {
+            String insertionPosition = "0";
+            // for first process, we need to check if parent process already exists and insertion position is selected
+            if (i == 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+                if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
+                        || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
+                    Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
+                } else {
+                    insertionPosition = titleRecordLinkTab.getSelectedInsertionPosition();
+                }
+            }
             TempProcess tempProcess = this.processes.get(i);
-            MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
+            MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), insertionPosition,
+                    tempProcess.getProcess().getId());
         }
         ServiceManager.getProcessService().save(getMainProcess());
     }
@@ -382,7 +351,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             List<ProcessDetail> processDetails;
             String docType;
             String tiffHeader;
-            // set parent relations between all consecutive process pairs until the last process
+            // set parent relations between all consecutive process pairs
             int index = this.processes.indexOf(tempProcess);
             if (index < this.processes.size() - 1) {
                 ProcessService.setParentRelations(this.processes.get(index + 1).getProcess(), process);
@@ -396,6 +365,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid process content!");
                 }
                 processMetadataTab.preserve();
+            } else if (Objects.isNull(tempProcess.getMetadataNodes())) {
+                // skip processes already existing in Kitodo
+                continue;
             } else {
                 ProcessFieldedMetadata metadata = this.getProcessMetadataTab().initializeProcessDetails(
                         tempProcess.getWorkpiece().getRootElement());

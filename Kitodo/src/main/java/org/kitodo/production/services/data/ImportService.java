@@ -19,12 +19,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -39,6 +41,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.schemaconverter.DataRecord;
@@ -51,11 +54,14 @@ import org.kitodo.config.ConfigProject;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
+import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
@@ -84,6 +90,7 @@ public class ImportService {
     private static final String KITODO_STRING = "kitodo";
 
     private ProcessGenerator processGenerator;
+    private static final String IDENTIFIER_METADATA = "CatalogIDDigital";
     private static final String PARENT_XPATH = "//kitodo:metadata[@name='CatalogIDPredecessorPeriodical']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
     private String trimMode = "";
@@ -350,12 +357,31 @@ public class ImportService {
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
         String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId);
+
         int level = 1;
         while (Objects.nonNull(parentID) && level < importDepth) {
+            HashMap<String, String> parentIDMetadata = new HashMap<>();
+            parentIDMetadata.put(IDENTIFIER_METADATA, parentID);
+            List<ProcessDTO> parentProcesses = new LinkedList<>();
             try {
-                parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId);
-                level++;
-            } catch (SAXParseException e) {
+                try {
+                    parentProcesses = ServiceManager.getProcessService().findByMetadata(parentIDMetadata);
+                } catch (DataException e) {
+                    logger.error(e.getLocalizedMessage());
+                }
+                if (parentProcesses.isEmpty()) {
+                    parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId);
+                    level++;
+                } else {
+                    logger.info("Process with ID '" + parentID + "' already in database. Stop hierarchical " +
+                            "import and link current imported process to existing parent.");
+                    Process parentProcess = ServiceManager.getProcessService().getById(parentProcesses.get(0).getId());
+                    URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
+                    Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
+                    processes.add(new TempProcess(parentProcess, parentWorkpiece));
+                    break;
+                }
+            } catch (SAXParseException | DAOException e) {
                 // this happens for example if a document is part of a "Virtueller Bestand" in Kalliope for which a
                 // proper "record" is not returned from its SRU interface
                 logger.error(e.getLocalizedMessage());
@@ -634,7 +660,7 @@ public class ImportService {
      * @throws ParameterNotFoundException if a parameter required for exemplar record extraction is missing
      */
     public static void setSelectedExemplarRecord(ExemplarRecord exemplarRecord, String opac,
-                                                 List<ProcessDetail> metadata)  throws ParameterNotFoundException{
+                                                 List<ProcessDetail> metadata)  throws ParameterNotFoundException {
         String ownerMetadataName = OPACConfig.getExemplarFieldOwnerMetadata(opac);
         String signatureMetadataName = OPACConfig.getExemplarFieldSignatureMetadata(opac);
         if (StringUtils.isBlank(ownerMetadataName)) {

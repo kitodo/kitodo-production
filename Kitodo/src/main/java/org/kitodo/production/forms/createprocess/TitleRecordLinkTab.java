@@ -327,6 +327,15 @@ public class TitleRecordLinkTab {
     }
 
     /**
+     * Set possibleParentProcesses.
+     *
+     * @param possibleParentProcesses as java.util.List<javax.faces.model.SelectItem>
+     */
+    public void setPossibleParentProcesses(List<SelectItem> possibleParentProcesses) {
+        this.possibleParentProcesses = possibleParentProcesses;
+    }
+
+    /**
      * Returns the tree containing the root element of the selected parent
      * process and the possible insert positions.
      *

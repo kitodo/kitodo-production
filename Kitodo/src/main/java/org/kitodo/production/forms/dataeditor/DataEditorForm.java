@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
