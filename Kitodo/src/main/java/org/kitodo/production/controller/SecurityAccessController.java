@@ -321,6 +321,16 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to edit the task.
+     *
+     * @param taskId the specific taskId
+     * @return true if the current user has the authority to edit the task
+     */
+    public boolean hasAuthorityToEditTask(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToEditTask(taskId);
+    }
+
+    /**
      * Check if the current user has the authority to edit the batch.
      *
      * @return true if the current user has the authority to edit the batch

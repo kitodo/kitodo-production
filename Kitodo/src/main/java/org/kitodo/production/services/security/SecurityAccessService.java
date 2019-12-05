@@ -316,6 +316,16 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to edit the task.
+     *
+     * @param taskId the specific taskId
+     * @return true if the current user has the authority to edit the task
+     */
+    public boolean hasAuthorityToEditTask(int taskId) throws DataException {
+        return hasAuthorityForClient("editTask") && hasAuthorityForTask(taskId);
+    }
+
+    /**
      * Check if the current user has the authority to edit the batch.
      *
      * @return true if the current user has the authority to edit the batch
