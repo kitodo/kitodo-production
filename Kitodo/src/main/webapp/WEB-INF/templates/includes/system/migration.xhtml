@@ -37,7 +37,7 @@
                          styleClass="primary"
                          action="#{MigrationForm.showPossibleBatches()}"
                          immediate="true"/>
-        <h:panelGroup rendered="#{MigrationForm.isProjectListShown()}">
+        <h:panelGroup rendered="#{MigrationForm.projectListRendered}">
             <div style="margin: 0 10px;"><h:outputText value="#{msgs.projectsForMigration}:"/></div>
             <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}" style="margin: 10px;">
                 <f:selectItems value="#{MigrationForm.allProjects}" var="project" itemLabel="#{project.title}"
@@ -45,7 +45,7 @@
             </p:selectManyCheckbox>
             <p:commandButton value="#{msgs.migrateMetadataOfSelectedProjects}"
                              id="migrate"
-                             rendered="#{MigrationForm.metadataShown}"
+                             rendered="#{MigrationForm.metadataRendered}"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
                              style="margin: 0 10px;"
@@ -53,13 +53,13 @@
                              oncomplete="alert('#{msgs.migrateMetadataHint}');"/>
             <p:commandButton value="#{msgs.listProcesses}"
                              id="migrateProject"
-                             rendered="#{MigrationForm.workflowShown}"
+                             rendered="#{MigrationForm.workflowRendered}"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
                              style="margin: 0 10px 10px;"
                              action="#{MigrationForm.showAggregatedProcesses()}"/>
         </h:panelGroup>
-        <h:panelGroup rendered="#{MigrationForm.processListShown}">
+        <h:panelGroup rendered="#{MigrationForm.processListRendered}">
             <p:dataTable id="aggregatedTasksTable" var="tasks" value="#{MigrationForm.aggregatedTasks}">
                 <p:column style="width: 100%;">
                     <h:outputText value="#{tasks}"
