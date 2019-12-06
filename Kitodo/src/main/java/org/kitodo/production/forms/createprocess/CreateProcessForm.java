@@ -478,6 +478,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private boolean createProcessesLocation() {
         for (TempProcess tempProcess : this.processes) {
+            if (Objects.isNull(tempProcess.getMetadataNodes())) {
+                // skip creating directories for processes that already exist!
+                continue;
+            }
             try {
                 URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
                 tempProcess.getProcess().setProcessBaseUri(processBaseUri);
