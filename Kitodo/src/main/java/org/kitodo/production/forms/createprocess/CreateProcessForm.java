@@ -478,7 +478,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private boolean createProcessesLocation() {
         for (TempProcess tempProcess : this.processes) {
-            if (Objects.isNull(tempProcess.getMetadataNodes())) {
+            if (this.processes.indexOf(tempProcess) > 0 && Objects.isNull(tempProcess.getMetadataNodes())) {
                 // skip creating directories for processes that already exist!
                 continue;
             }
