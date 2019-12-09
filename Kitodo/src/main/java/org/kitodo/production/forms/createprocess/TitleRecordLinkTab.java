@@ -118,10 +118,9 @@ public class TitleRecordLinkTab {
                 createInsertionPositionSelectionTree();
             } catch (DAOException | IOException e) {
                 Helper.setErrorMessage("errorLoadingOne",
-                        new Object[] {chosenParentProcess,
-                                possibleParentProcesses.parallelStream()
-                                        .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
-                                        .orElse(new SelectItem(null, null)).getLabel() },
+                        new Object[] {possibleParentProcesses.parallelStream()
+                                .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
+                                .orElse(new SelectItem(null, null)).getLabel(), chosenParentProcess },
                         logger, e);
             }
         }
