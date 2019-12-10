@@ -15,9 +15,13 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
@@ -122,9 +126,13 @@ public class ExportMets {
                 StreamSource source = new StreamSource(byteArrayInputStream);
                 try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {
                     URI xslFile = XsltHelper.getXsltFileFromConfig(process);
+                    if (!Files.exists(Paths.get(xslFile))) {
+                        String message = Helper.getTranslation("xsltFileNotFound", Arrays.asList(xslFile.toString()));
+                        throw new FileNotFoundException(message);
+                    }
                     bufferedOutputStream.write(XsltHelper.transformXmlByXslt(source, xslFile).toByteArray());
-                } catch (TransformerException e) {
-                    logger.error("Writing Mets file failed!", e);
+                } catch (FileNotFoundException | TransformerException e) {
+                    Helper.setErrorMessage("Writing Mets file failed!", e.getLocalizedMessage(), logger, e);
                     return false;
                 }
             }
