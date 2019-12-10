@@ -158,6 +158,34 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     }
 
     /**
+     * Creates a RenderableMetadataGroup instance for a default display metadata
+     * group that still can be added to the currently selected level of the
+     * document structure hierarchy.
+     *
+     * @param type
+     *            type of metadata group
+     * @param language
+     *            display language to use
+     * @param projectName
+     *            project that the act whose metadata group is to edit belongs
+     *            to
+     * @throws ConfigurationException
+     *             if a single value metadata field is configured to show a
+     *             multi-select input
+     */
+    public RenderableMetadataGroup(MetadataGroupType type, String language, String projectName)
+            throws ConfigurationException {
+        super(type.getAllLanguages(), null);
+        this.possibleTypes = Collections.emptyMap();
+        this.type = type;
+        this.projectName = projectName;
+        this.metadataGroup = null;
+        this.container = null;
+        updateMembers(type);
+        setLanguage(language);
+    }
+
+    /**
      * Protected constructor for classes extending RenderableMetadataGroup,
      * creates a new RenderableMetadataGroup with exactly one type.
      *

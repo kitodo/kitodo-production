@@ -42,7 +42,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
     /**
      * Holds the content lines of the edit box.
      */
-    private List<String> value;
+    private List<String> value = new ArrayList<String>();
 
     /**
      * Constructor. Creates a RenderableLineEdit.
