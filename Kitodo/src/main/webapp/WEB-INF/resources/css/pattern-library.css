@@ -1337,17 +1337,20 @@ Popup dialogs
 }
 
 /* Messages */
-.ui-messages-error.ui-corner-all {
+.ui-messages-error.ui-corner-all,
+.ui-messages-info.ui-corner-all {
     border: 0;
     border-radius: 0;
     color: var(--pure-white);
 }
 
-.ui-messages-error.ui-corner-all span.ui-icon-close {
+.ui-messages-error.ui-corner-all span.ui-icon-close,
+.ui-messages-info.ui-corner-all span.ui-icon-close {
     background: none;
 }
 
-.ui-messages-error.ui-corner-all span.ui-icon-close:before {
+.ui-messages-error.ui-corner-all span.ui-icon-close:before,
+.ui-messages-info.ui-corner-all span.ui-icon-close:before {
     color: var(--pure-white);
     content: "\f00d";
     display: inherit;
