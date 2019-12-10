@@ -69,9 +69,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @Column(name = "useDmsImport")
     private boolean useDmsImport;
 
-    @Column(name = "dmsImportTimeOut")
-    private Integer dmsImportTimeOut;
-
     @Column(name = "dmsImportRootPath")
     private String dmsImportRootPath;
 
@@ -182,7 +179,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.users = new ArrayList<>();
         this.folders = new ArrayList<>();
         this.useDmsImport = true;
-        this.dmsImportTimeOut = 20000;
         this.dmsImportRootPath = "";
         this.dmsImportCreateProcessFolder = false;
         this.fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
@@ -261,14 +257,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     public void setDmsImportRootPath(String dmsImportRootPath) {
         this.dmsImportRootPath = dmsImportRootPath;
-    }
-
-    public Integer getDmsImportTimeOut() {
-        return this.dmsImportTimeOut;
-    }
-
-    public void setDmsImportTimeOut(Integer dmsImportTimeOut) {
-        this.dmsImportTimeOut = dmsImportTimeOut;
     }
 
     public boolean isUseDmsImport() {
