@@ -149,8 +149,9 @@ public class TemplateForm extends TemplateBaseForm {
 
             try {
                 ServiceManager.getTemplateService().save(this.template);
+                template = ServiceManager.getTemplateService().getById(this.template.getId());
                 new WorkflowControllerService().activateNextTasks(template.getTasks());
-            } catch (DataException | IOException e) {
+            } catch (DataException | IOException | DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;
