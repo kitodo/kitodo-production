@@ -147,7 +147,7 @@ public class ImportTab implements Serializable {
             String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
                     Collections.singletonList(parentProcess.getTitle()));
-            showGrowMessage(summary, detail);
+            showGrowlMessage(summary, detail);
             Ajax.update(INSERTION_TREE);
         } else {
             this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
@@ -180,7 +180,7 @@ public class ImportTab implements Serializable {
             String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
                     Arrays.asList(String.valueOf(processes.size()), this.hitModel.getSelectedCatalog()));
-            showGrowMessage(summary, detail);
+            showGrowlMessage(summary, detail);
         } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                 | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException e) {
             Helper.setErrorMessage(e);
@@ -196,7 +196,7 @@ public class ImportTab implements Serializable {
         return this.hitModel;
     }
 
-    private void showGrowMessage(String summary, String detail) {
+    private void showGrowlMessage(String summary, String detail) {
         String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
                 .replace("SEVERITY", "info");
         PrimeFaces.current().executeScript(script);
@@ -241,7 +241,7 @@ public class ImportTab implements Serializable {
             String summary = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedDetail",
                     Arrays.asList(selectedExemplarRecord.getOwner(), selectedExemplarRecord.getSignature()));
-            showGrowMessage(summary, detail);
+            showGrowlMessage(summary, detail);
             Ajax.update(FORM_CLIENTID);
         } catch (ParameterNotFoundException e) {
             Helper.setErrorMessage("newProcess.catalogueSearch.exemplarRecordParameterNotFoundError",
