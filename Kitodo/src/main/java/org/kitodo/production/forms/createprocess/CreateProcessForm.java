@@ -326,21 +326,28 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             ServiceManager.getProcessService().save(getMainProcess());
         }
         saveProcessHierarchyMetadata();
-        // add links between processes
-        for (int i = 0; i < this.processes.size() - 1; i++) {
-            String insertionPosition = "0";
-            // for first process, we need to check if parent process already exists and insertion position is selected
-            if (i == 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
-                if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
-                        || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
-                    Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
-                } else {
-                    insertionPosition = titleRecordLinkTab.getSelectedInsertionPosition();
-                }
+
+        // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
+        if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+            if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
+                    || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
+                Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
+            } else {
+                MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
+                        titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
+                ProcessService.setParentRelations(titleRecordLinkTab.getTitleRecordProcess(),
+                        this.processes.get(0).getProcess());
+                String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
+                String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
+                        Collections.singletonList(titleRecordLinkTab.getTitleRecordProcess().getTitle()));
+                this.importTab.showGrowlMessage(summary, detail);
             }
-            TempProcess tempProcess = this.processes.get(i);
-            MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), insertionPosition,
-                    tempProcess.getProcess().getId());
+        } else {
+            // add links between consecutive processes in list
+            for (int i = 0; i < this.processes.size() - 1; i++) {
+                TempProcess tempProcess = this.processes.get(i);
+                MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
+            }
         }
         ServiceManager.getProcessService().save(getMainProcess());
     }

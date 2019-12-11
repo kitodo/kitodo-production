@@ -110,6 +110,8 @@ public class ImportService {
     private String tiffDefinition;
     private boolean usingTemplates;
 
+    private TempProcess parentTempProcess;
+
     /**
      * Return singleton variable of type ImportService.
      *
@@ -363,8 +365,10 @@ public class ImportService {
             HashMap<String, String> parentIDMetadata = new HashMap<>();
             parentIDMetadata.put(IDENTIFIER_METADATA, parentID);
             List<ProcessDTO> parentProcesses = new LinkedList<>();
+            this.parentTempProcess = null;
             try {
                 try {
+                    // FIXME: this seems to return wrong processes!
                     parentProcesses = ServiceManager.getProcessService().findByMetadata(parentIDMetadata);
                 } catch (DataException e) {
                     logger.error(e.getLocalizedMessage());
@@ -373,12 +377,11 @@ public class ImportService {
                     parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId);
                     level++;
                 } else {
-                    logger.info("Process with ID '" + parentID + "' already in database. Stop hierarchical " +
-                            "import and link current imported process to existing parent.");
+                    logger.info("Process with ID '" + parentID + "' already in database. Stop hierarchical import.");
                     Process parentProcess = ServiceManager.getProcessService().getById(parentProcesses.get(0).getId());
                     URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
                     Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
-                    processes.add(new TempProcess(parentProcess, parentWorkpiece));
+                    this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
                     break;
                 }
             } catch (SAXParseException | DAOException e) {
@@ -675,5 +678,14 @@ public class ImportService {
                 ImportService.setProcessDetailValue(processDetail, exemplarRecord.getSignature());
             }
         }
+    }
+
+    /**
+     * Get parentTempProcess.
+     *
+     * @return value of parentTempProcess
+     */
+    public TempProcess getParentTempProcess() {
+        return parentTempProcess;
     }
 }

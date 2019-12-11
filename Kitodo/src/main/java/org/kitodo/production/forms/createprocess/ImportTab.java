@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -134,24 +133,43 @@ public class ImportTab implements Serializable {
     public void getSelectedRecord() {
         getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
         Ajax.update(FORM_CLIENTID);
-        // if parent of imported document is already in DB, it will be the second process in the list and contain no metadata nodes
-        if (this.createProcessForm.getProcesses().size() > 1
-                && Objects.isNull(this.createProcessForm.getProcesses().get(1).getMetadataNodes())) {
-            this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
-            Process parentProcess = this.createProcessForm.getProcesses().get(1).getProcess();
-            ArrayList<SelectItem> parentCandidates = new ArrayList<>();
-            parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
-            this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
-            this.createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
-            this.createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
-            String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
-            String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
-                    Collections.singletonList(parentProcess.getTitle()));
-            showGrowlMessage(summary, detail);
-            Ajax.update(INSERTION_TREE);
+
+        // if fewer processes are imported than configured in the frontend, it can mean that
+        // - the OPAC does not have as many processes in the hierarchy or
+        // - one process of the hierarchy was already in the DB
+        int numberOfProcesses = this.createProcessForm.getProcesses().size();
+
+        if (numberOfProcesses < 1) {
+            Helper.setErrorMessage("Error: list of processes is empty!");
+            return;
+        }
+
+        if (numberOfProcesses < this.importDepth) {
+            // check, if parent of last process in list is in DB
+            if (Objects.nonNull(ServiceManager.getImportService().getParentTempProcess())) {
+                Process parentProcess = ServiceManager.getImportService().getParentTempProcess().getProcess();
+                // case 1: only one process was imported => load parent into "TitleRecordLinkTab"
+                if (numberOfProcesses == 1) {
+                    this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
+                    ArrayList<SelectItem> parentCandidates = new ArrayList<>();
+                    parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
+                    this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
+                    this.createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
+                    this.createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
+                    Ajax.update(INSERTION_TREE);
+                }
+                // case 2: more than one process was imported => add parent to list
+                else {
+                    this.createProcessForm.getProcesses().add(ServiceManager.getImportService().getParentTempProcess());
+                    this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
+                }
+            } else {
+                this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
+            }
         } else {
             this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
         }
+
         // if more than one exemplar record was found, display a selection dialog to the user
         if (ServiceManager.getImportService().getExemplarRecords().size() > 0) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
@@ -196,7 +214,7 @@ public class ImportTab implements Serializable {
         return this.hitModel;
     }
 
-    private void showGrowlMessage(String summary, String detail) {
+    public void showGrowlMessage(String summary, String detail) {
         String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
                 .replace("SEVERITY", "info");
         PrimeFaces.current().executeScript(script);
