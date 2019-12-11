@@ -94,7 +94,7 @@ public class TitleGenerator extends Generator {
      * {@code createAtstsl("Oxford English Dictionary", null)}: {@code OxfoEnDi}
      *
      * @param title
-     *            the title of the works
+     *            the title of the work
      * @param author
      *            the last name of the (first) author, may be {@code null} or
      *            empty
