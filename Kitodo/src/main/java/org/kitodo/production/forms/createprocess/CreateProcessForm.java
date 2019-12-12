@@ -317,6 +317,13 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * Create process hierarchy.
      */
     private void createProcessHierarchy() throws DataException, ProcessGenerationException, IOException {
+        // discard all processes in hierarchy except the first if parent process in title record link tab is selected!
+        if (this.processes.size() > 1
+                && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
+                && Objects.nonNull(this.titleRecordLinkTab.getSelectedInsertionPosition())
+                && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
+            this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
+        }
         processProcessHierarchy();
         ServiceManager.getProcessService().save(getMainProcess());
         if (!createProcessesLocation()) {
