@@ -146,8 +146,9 @@ public class ImportTab implements Serializable {
 
         if (numberOfProcesses < this.importDepth) {
             // check, if parent of last process in list is in DB
-            if (Objects.nonNull(ServiceManager.getImportService().getParentTempProcess())) {
-                Process parentProcess = ServiceManager.getImportService().getParentTempProcess().getProcess();
+            TempProcess parentTempProcess = ServiceManager.getImportService().getParentTempProcess();
+            if (Objects.nonNull(parentTempProcess)) {
+                Process parentProcess = parentTempProcess.getProcess();
                 // case 1: only one process was imported => load parent into "TitleRecordLinkTab"
                 if (numberOfProcesses == 1) {
                     this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
@@ -160,7 +161,7 @@ public class ImportTab implements Serializable {
                 }
                 // case 2: more than one process was imported => add parent to list
                 else {
-                    this.createProcessForm.getProcesses().add(ServiceManager.getImportService().getParentTempProcess());
+                    this.createProcessForm.getProcesses().add(parentTempProcess);
                     this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
                 }
             } else {
