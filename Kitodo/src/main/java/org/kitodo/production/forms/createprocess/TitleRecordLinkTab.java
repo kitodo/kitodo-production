@@ -213,7 +213,7 @@ public class TitleRecordLinkTab {
             if (linkingAllowedHere) {
                 new InsertionPositionSelectionTreeNode(includedStructuralElementNode,
                         selectableInsertionPositions.size());
-                selectableInsertionPositions.add(new SelectItem(positionPrefix + index + 1, null));
+                selectableInsertionPositions.add(new SelectItem(positionPrefix + (index + 1), null));
             }
         }
     }

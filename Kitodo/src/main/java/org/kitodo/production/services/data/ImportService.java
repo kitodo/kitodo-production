@@ -368,7 +368,6 @@ public class ImportService {
             this.parentTempProcess = null;
             try {
                 try {
-                    // FIXME: this seems to return wrong processes!
                     parentProcesses = ServiceManager.getProcessService().findByMetadata(parentIDMetadata);
                 } catch (DataException e) {
                     logger.error(e.getLocalizedMessage());
