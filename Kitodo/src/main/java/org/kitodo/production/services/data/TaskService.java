@@ -293,7 +293,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
          * never-ending loops as the list of templates reads the list of tasks.
          */
         int process = TaskTypeField.PROCESS_ID.getIntValue(jsonObject);
-        if (process > 0) {
+        if (process > 0 && !related) {
             taskDTO.setProcess(ServiceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(ServiceManager.getProcessService()
                     .isProcessAssignedToOnlyOneBatch(taskDTO.getProcess().getBatches()));
