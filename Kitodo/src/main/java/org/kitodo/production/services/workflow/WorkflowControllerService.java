@@ -17,11 +17,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -114,11 +112,8 @@ public class WorkflowControllerService {
      *            object
      */
     public void setTasksStatusUp(Process process) throws DataException, IOException {
-        List<Task> tasks = new CopyOnWriteArrayList<>(process.getTasks());
-
-        for (Task task : tasks) {
-            setTaskStatusUp(task);
-        }
+        Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+        setTaskStatusUp(currentTask);
     }
 
     /**
@@ -127,17 +122,10 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void setTasksStatusDown(Process process) throws DataException {
-        List<Task> tasks = new CopyOnWriteArrayList<>(process.getTasks());
-        Collections.reverse(tasks);
-
-        for (Task task : tasks) {
-            // TODO: check if this behaviour is correct
-            if (process.getTasks().get(0) != task && task.getProcessingStatus() != TaskStatus.LOCKED) {
-                setTaskStatusDown(task);
-                taskService.save(task);
-                break;
-            }
+    public void setTasksStatusDown(Process process) {
+        Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+        if (currentTask.getProcessingStatus() != TaskStatus.LOCKED) {
+            setTaskStatusDown(currentTask);
         }
     }
 

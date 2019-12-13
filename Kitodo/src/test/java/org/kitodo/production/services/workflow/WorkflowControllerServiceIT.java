@@ -104,10 +104,10 @@ public class WorkflowControllerServiceIT {
         workflowService.setTasksStatusUp(process);
         for (Task task : process.getTasks()) {
             if (Objects.equals(task.getId(), 9)) {
-                assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.INWORK,
+                assertEquals("Task '" + task.getTitle() + "' status should not be set up!", TaskStatus.OPEN,
                     task.getProcessingStatus());
             } else if (Objects.equals(task.getId(), 10)) {
-                assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.OPEN,
+                assertEquals("Task '" + task.getTitle() + "' status should not be set up!", TaskStatus.LOCKED,
                     task.getProcessingStatus());
             } else {
                 assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.DONE,
