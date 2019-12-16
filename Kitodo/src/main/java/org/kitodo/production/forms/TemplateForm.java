@@ -15,11 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
@@ -28,7 +25,6 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -41,7 +37,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 
@@ -193,16 +188,6 @@ public class TemplateForm extends TemplateBaseForm {
             Helper.setErrorMessage("processAssignedError");
         } else {
             try {
-                for (Task templateTask : this.template.getTasks()) {
-                    templateTask.setTemplate(null);
-                }
-                this.template.getTasks().clear();
-
-                for (Project templateProject : this.template.getProjects()) {
-                    templateProject.getTemplates().remove(this.template);
-                }
-                this.template.getProjects().clear();
-
                 if (Objects.nonNull(this.template.getWorkflow())) {
                     this.template.getWorkflow().getTemplates().remove(this.template);
                     this.template.setWorkflow(null);
