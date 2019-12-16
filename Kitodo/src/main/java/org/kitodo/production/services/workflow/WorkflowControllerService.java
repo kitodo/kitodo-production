@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -80,14 +81,26 @@ public class WorkflowControllerService {
      *            to change status up
      */
     public void setTaskStatusUp(Task task) throws DataException, IOException {
-        if (task.getProcessingStatus() != TaskStatus.DONE) {
-            setProcessingStatusUp(task);
-            task.setEditType(TaskEditType.ADMIN);
-            if (task.getProcessingStatus() == TaskStatus.DONE) {
-                close(task);
-            } else {
-                task.setProcessingTime(new Date());
-                taskService.replaceProcessingUser(task, getCurrentUser());
+        setTaskStatusUp(Arrays.asList(task));
+    }
+
+    /**
+     * Set Task status up.
+     *
+     * @param tasks
+     *            to change status up
+     */
+    public void setTaskStatusUp(List<Task> tasks) throws DataException, IOException {
+        for (Task task : tasks) {
+            if (task.getProcessingStatus() != TaskStatus.DONE) {
+                setProcessingStatusUp(task);
+                task.setEditType(TaskEditType.ADMIN);
+                if (task.getProcessingStatus() == TaskStatus.DONE) {
+                    close(task);
+                } else {
+                    task.setProcessingTime(new Date());
+                    taskService.replaceProcessingUser(task, getCurrentUser());
+                }
             }
         }
     }
@@ -99,10 +112,29 @@ public class WorkflowControllerService {
      *            to change status down
      */
     public void setTaskStatusDown(Task task) {
-        task.setEditType(TaskEditType.ADMIN);
-        task.setProcessingTime(new Date());
-        taskService.replaceProcessingUser(task, getCurrentUser());
-        setProcessingStatusDown(task);
+        setTaskStatusDown(Arrays.asList());
+    }
+
+    /**
+     * Change Task status down.
+     *
+     * @param tasks
+     *            to change status down
+     */
+    public void setTaskStatusDown(List<Task> tasks) {
+        for (Task task : tasks) {
+            task.setEditType(TaskEditType.ADMIN);
+            task.setProcessingTime(new Date());
+            taskService.replaceProcessingUser(task, getCurrentUser());
+            if (task.getProcessingStatus() == TaskStatus.LOCKED) {
+                List<Task> previousTasks = getPreviousTasks(task);
+                for (Task previousTask : previousTasks) {
+                    setProcessingStatusDown(previousTask);
+                }
+            } else {
+                setProcessingStatusDown(task);
+            }
+        }
     }
 
     /**
@@ -112,7 +144,7 @@ public class WorkflowControllerService {
      *            object
      */
     public void setTasksStatusUp(Process process) throws DataException, IOException {
-        Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+        List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
         setTaskStatusUp(currentTask);
     }
 
@@ -123,10 +155,8 @@ public class WorkflowControllerService {
      *            object
      */
     public void setTasksStatusDown(Process process) {
-        Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
-        if (currentTask.getProcessingStatus() != TaskStatus.LOCKED) {
-            setTaskStatusDown(currentTask);
-        }
+        List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
+        setTaskStatusDown(currentTask);
     }
 
     private boolean validateMetadata(Task task) throws IOException, DataException {
@@ -512,6 +542,33 @@ public class WorkflowControllerService {
             }
         }
         return nextTasks;
+    }
+
+    private List<Task> getPreviousTasks(Task higherTask) {
+        List<Task> tasks = higherTask.getProcess().getTasks();
+
+        boolean isConcurrentOpenTask = false;
+        List<Task> previousTasks = new ArrayList<>();
+        List<Task> concurrentTasks = getConcurrentTasksForClose(tasks, higherTask);
+        for (Task concurrentTask : concurrentTasks) {
+            if (concurrentTask.getProcessingStatus().equals(TaskStatus.LOCKED)) {
+                isConcurrentOpenTask = true;
+            }
+        }
+        if (!isConcurrentOpenTask) {
+            boolean matched = false;
+            int ordering = higherTask.getOrdering() - 1;
+            for (Task task : tasks) {
+                if (task.getOrdering() > ordering && task.getOrdering() < higherTask.getOrdering() && !matched) {
+                    ordering = task.getOrdering();
+                }
+                if (ordering == task.getOrdering()) {
+                    previousTasks.add(task);
+                    matched = true;
+                }
+            }
+        }
+        return previousTasks;
     }
 
     /**

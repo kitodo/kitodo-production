@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
@@ -53,8 +53,8 @@ public class WorkflowControllerServiceIT {
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final WorkflowControllerService workflowService = new WorkflowControllerService();
 
-    @BeforeClass
-    public static void prepareDatabase() throws Exception {
+    @Before
+    public void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
@@ -69,8 +69,8 @@ public class WorkflowControllerServiceIT {
         }
     }
 
-    @AfterClass
-    public static void cleanDatabase() throws Exception {
+    @After
+    public void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
