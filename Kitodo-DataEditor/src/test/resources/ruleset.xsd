@@ -79,6 +79,7 @@
         </xs:sequence>
         <xs:attribute use="required" type="xs:NMTOKEN" name="id"/>
         <xs:attribute type="ruleset:DomainAttribute" name="domain" default="description"/>
+        <xs:attribute type="ruleset:UseAttribute" name="use"/>
     </xs:complexType>
 
     <xs:complexType name="Label">
@@ -175,4 +176,22 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="UseAttribute">
+        <xs:restriction>
+            <xs:simpleType>
+                <xs:list>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                            <xs:enumeration value="authorLastName"/>
+                            <xs:enumeration value="dataSource"/>
+                            <xs:enumeration value="higherlevelIdentifier"/>
+                            <xs:enumeration value="recordIdentifier"/>
+                            <xs:enumeration value="title"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:list>
+            </xs:simpleType>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

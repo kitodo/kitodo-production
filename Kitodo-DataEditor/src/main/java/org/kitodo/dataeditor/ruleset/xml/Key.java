@@ -43,6 +43,12 @@ public class Key {
     private Domain domain;
 
     /**
+     * The use of the key.
+     */
+    @XmlAttribute
+    private String use;
+
+    /**
      * The labels of the key in different languages.
      */
     @XmlElement(name = "label", namespace = "http://names.kitodo.org/ruleset/v2", required = true)
@@ -80,7 +86,7 @@ public class Key {
 
     /**
      * Returns the domain of the key.
-     * 
+     *
      * @return the domain
      */
     public Domain getDomain() {
@@ -89,7 +95,7 @@ public class Key {
 
     /**
      * Returns the ID of the relation.
-     * 
+     *
      * @return the ID of the relation
      */
     public String getId() {
@@ -98,7 +104,7 @@ public class Key {
 
     /**
      * Returns key relations from the target of the relation.
-     * 
+     *
      * @return key relations from the target of the relation
      */
     public List<Key> getKeys() {
@@ -107,7 +113,7 @@ public class Key {
 
     /**
      * Returns the slats.
-     * 
+     *
      * @return the slats
      */
     public List<Label> getLabels() {
@@ -116,7 +122,7 @@ public class Key {
 
     /**
      * Returns the namespace, if one has been set.
-     * 
+     *
      * @return the namespace, if annie
      */
     public Optional<String> getNamespace() {
@@ -128,7 +134,7 @@ public class Key {
 
     /**
      * Optionally returns a list.
-     * 
+     *
      * @return a list
      */
     public List<Option> getOptions() {
@@ -137,7 +143,7 @@ public class Key {
 
     /**
      * Returns the pattern.
-     * 
+     *
      * @return the knitting pattern
      */
     public String getPattern() {
@@ -146,7 +152,7 @@ public class Key {
 
     /**
      * Returns the presents.
-     * 
+     *
      * @return the presents
      */
     public List<String> getPresets() {
@@ -155,7 +161,7 @@ public class Key {
 
     /**
      * Returns the type.
-     * 
+     *
      * @return the type
      */
     public Type getType() {
@@ -169,8 +175,17 @@ public class Key {
     }
 
     /**
+     * Returns the use.
+     *
+     * @return the use
+     */
+    public String getUse() {
+        return use;
+    }
+
+    /**
      * Setter for all options.
-     * 
+     *
      * @param options
      *            all options to be set
      */
@@ -180,7 +195,7 @@ public class Key {
 
     /**
      * Setter for all keys.
-     * 
+     *
      * @param keys
      *            all keys to be set
      */

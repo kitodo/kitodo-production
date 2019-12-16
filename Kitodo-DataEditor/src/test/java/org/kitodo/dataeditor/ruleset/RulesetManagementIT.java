@@ -45,7 +45,9 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SpecialField;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 
 /**
@@ -702,6 +704,15 @@ public class RulesetManagementIT {
             Collections.emptyList());
 
         assertThat(ids(mvwviList), contains("test1", "test2", "test2", "test2options"));
+    }
+
+    @Test
+    public void testGettingOfSpecialFields() throws Exception {
+        RulesetManagementInterface underTest = new RulesetManagement();
+        underTest.load(new File("src/test/resources/testAnExtensiveRulesetCanBeLoaded.xml"));
+
+        assertThat(underTest.getIdsOfKeysForSpecialField(SpecialField.TITLE), contains("TitleDocMain"));
+        assertThat(underTest.getIdsOfKeysForSpecialField(SpecialField.AUTHOR_LAST_NAME), contains("Person/LastName"));
     }
 
     /**

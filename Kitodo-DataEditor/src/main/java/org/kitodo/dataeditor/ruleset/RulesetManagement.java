@@ -18,7 +18,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,6 +29,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SpecialField;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.dataeditor.ruleset.xml.AcquisitionStage;
 import org.kitodo.dataeditor.ruleset.xml.Division;
@@ -63,6 +66,32 @@ public class RulesetManagement implements RulesetManagementInterface {
             acquisitionStageNames.add(acquisitionStage.getName());
         }
         return acquisitionStageNames;
+    }
+
+    @Override
+    public List<String> getIdsOfKeysForSpecialField(SpecialField specialField) {
+        return getIdsOfKeysForSpecialField(ruleset.getKeys(), specialField);
+    }
+
+    private List<String> getIdsOfKeysForSpecialField(List<Key> keys, SpecialField specialField) {
+        ArrayList<String> idsOfKeysForSpecialField = new ArrayList<>(1);
+        for (Key key : keys) {
+            if (key.getKeys().isEmpty()) {
+                if (Objects.isNull(key.getUse())) {
+                    continue;
+                }
+                Set<SpecialField> uses = SpecialField.valuesOf(key.getUse());
+                if (uses.contains(specialField)) {
+                    idsOfKeysForSpecialField.add(key.getId());
+                }
+            } else {
+                List<String> idsOfKeysOfKey = getIdsOfKeysForSpecialField(key.getKeys(), specialField);
+                for (String idOfKeyOfKey : idsOfKeysOfKey) {
+                    idsOfKeysForSpecialField.add(key.getId() + '/' + idOfKeyOfKey);
+                }
+            }
+        }
+        return idsOfKeysForSpecialField;
     }
 
     /**

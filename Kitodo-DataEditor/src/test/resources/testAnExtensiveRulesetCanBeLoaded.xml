@@ -363,7 +363,7 @@
             <label>subtitle</label>
             <label lang="de">UnterTitel</label>
         </key>
-        <key id="TitleDocMain" domain="source">
+        <key id="TitleDocMain" use="title">
             <label>maint title</label>
             <label lang="de">HauptTitel</label>
         </key>
@@ -480,6 +480,8 @@
  
         <!-- persons as metadata group -->
         <key id="Person">
+            <label>contributor</label>
+            <label lang="de">Betragender</label>
             <key id="Role">
                 <label>role</label>
                 <label lang="de">Rolle</label>
@@ -514,7 +516,7 @@
                 <label>First name</label>
                 <label lang="de">Vorname</label>
             </key>
-            <key id="LastName">
+            <key id="LastName" use="authorLastName">
                 <label>Last name</label>
                 <label lang="de">Nachname</label>
             </key>

@@ -38,6 +38,15 @@ public interface RulesetManagementInterface {
     Collection<String> getAcquisitionStages();
 
     /**
+     * Returns all metadata keys that correspond to the specified special field.
+     *
+     * @param specialField
+     *            special field to search for
+     * @return all metadata keys that correspond to the special field
+     */
+    Collection<String> getIdsOfKeysForSpecialField(SpecialField specialField);
+
+    /**
      * Returns all outline elements. The result is a map whose keys are the ID
      * strings of the outline elements. The mapped values are the labels in the
      * language best suited to the given language priority list. This function
