@@ -15,10 +15,12 @@ public class Metadata {
     /**
      * In which conceptual area in the METS file this metadata entry is stored.
      */
-    private MdSec domain;
+    protected MdSec domain;
 
-    // The key of the metadata.
-    private String key;
+    /**
+     * The key of the metadata.
+     */
+    protected String key;
 
     /**
      * Returns the domain of the metadata.

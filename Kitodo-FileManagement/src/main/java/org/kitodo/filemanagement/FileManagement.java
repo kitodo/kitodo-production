@@ -223,8 +223,9 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean fileExist(URI uri) {
-        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return new File(uri).exists();
+        boolean exists = new File(fileMapper.mapUriToKitodoDataDirectoryUri(uri)).exists();
+        logger.trace(exists ? "Found {}" : "No such file: {}", uri);
+        return exists;
     }
 
     @Override

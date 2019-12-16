@@ -412,6 +412,7 @@ public class EmptyTask extends Thread implements INameableTask {
         if (exception instanceof InterruptedException) {
             Thread.currentThread().interrupt();
         }
+        logger.error(exception.getLocalizedMessage(), exception);
         if (Objects.isNull(this.exception) && (!isInterrupted() || !(exception instanceof InterruptedException))) {
             if (exception instanceof Exception) {
                 this.exception = (Exception) exception;

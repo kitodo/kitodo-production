@@ -70,7 +70,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     /**
      * Language for the ruleset. Since we run headless here, English only.
      */
-    private static final List<LanguageRange> ENGLISH = LanguageRange.parse("en");
+    public static final List<LanguageRange> ENGLISH = LanguageRange.parse("en");
 
     /**
      * Number of steps the long-running task has to go through for
@@ -334,7 +334,16 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         issueType = nextSubView(ruleset, dayDivisionView).getId();
     }
 
-    private static StructuralElementViewInterface nextSubView(RulesetManagementInterface ruleset,
+    /**
+     * Returns the next sub-view relative to given view from the ruleset.
+     *
+     * @param ruleset
+     *            ruleset to return the sub-view from
+     * @param superiorView
+     *            relative superior view
+     * @return the sub-view
+     */
+    public static StructuralElementViewInterface nextSubView(RulesetManagementInterface ruleset,
             StructuralElementViewInterface superiorView) {
 
         Map<String, String> allowedSubstructuralElements = superiorView.getAllowedSubstructuralElements();

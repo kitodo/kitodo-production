@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -36,10 +38,12 @@ import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.MigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
+import org.kitodo.production.migration.NewspaperProcessesMigrator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
@@ -53,16 +57,19 @@ public class MigrationForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(MigrationForm.class);
     private List<Project> allProjects = new ArrayList<>();
     private List<Project> selectedProjects = new ArrayList<>();
-    private boolean projectListShown;
-    private boolean processListShown;
+    private boolean projectListRendered;
+    private boolean processListRendered;
     private Map<String, List<Process>> aggregatedProcesses = new HashMap<>();
     private Workflow workflowToUse;
     private String currentTasks;
     private Map<Template, List<Process>> templatesToCreate = new HashMap<>();
     private Map<Template, Template> matchingTemplates = new HashMap<>();
     private MigrationService migrationService = ServiceManager.getMigrationService();
-    private boolean metadataShown;
-    private boolean workflowShown;
+    private boolean metadataRendered;
+    private boolean workflowRendered;
+    private boolean newspaperMigrationRendered = false;
+    private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
+    private List<BatchDTO> newspaperBatchesItems;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -72,9 +79,10 @@ public class MigrationForm extends BaseForm {
     public void migrateMetadata() {
         try {
             allProjects = ServiceManager.getProjectService().getAll();
-            projectListShown = true;
-            metadataShown = true;
-            workflowShown = false;
+            projectListRendered = true;
+            metadataRendered = true;
+            workflowRendered = false;
+            newspaperMigrationRendered = false;
         } catch (DAOException e) {
             Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
@@ -86,9 +94,10 @@ public class MigrationForm extends BaseForm {
     public void showPossibleProjects() {
         try {
             allProjects = ServiceManager.getProjectService().getAll();
-            projectListShown = true;
-            workflowShown = true;
-            metadataShown = false;
+            projectListRendered = true;
+            workflowRendered = true;
+            metadataRendered = false;
+            newspaperMigrationRendered = false;
         } catch (DAOException e) {
             Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
@@ -120,7 +129,7 @@ public class MigrationForm extends BaseForm {
                 addToAggregatedProcesses(aggregatedProcesses, process);
             }
         }
-        processListShown = true;
+        processListRendered = true;
     }
 
     /**
@@ -131,7 +140,7 @@ public class MigrationForm extends BaseForm {
         for (Project project : selectedProjects) {
             TaskManager.addTask(new MigrationTask(project));
         }
-        projectListShown = false;
+        projectListRendered = false;
     }
 
     private void addToAggregatedProcesses(Map<String, List<Process>> aggregatedProcesses, Process process) {
@@ -180,17 +189,17 @@ public class MigrationForm extends BaseForm {
      * @return whether the switch for starting the metadata migration should be
      *         displayed
      */
-    public boolean isMetadataShown() {
-        return metadataShown;
+    public boolean isMetadataRendered() {
+        return metadataRendered;
     }
 
     /**
-     * Get projectListShown.
+     * Get projectListRendered.
      *
-     * @return value of projectListShown
+     * @return value of projectListRendered
      */
-    public boolean isProjectListShown() {
-        return projectListShown;
+    public boolean isProjectListRendered() {
+        return projectListRendered;
     }
 
     /**
@@ -198,8 +207,8 @@ public class MigrationForm extends BaseForm {
      *
      * @return whether the switch for creating workflows should be displayed
      */
-    public boolean isWorkflowShown() {
-        return workflowShown;
+    public boolean isWorkflowRendered() {
+        return workflowRendered;
     }
 
     /**
@@ -212,12 +221,12 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Get processListShown.
+     * Get processListRendered.
      *
-     * @return value of processListShown
+     * @return value of processListRendered
      */
-    public boolean isProcessListShown() {
-        return processListShown;
+    public boolean isProcessListRendered() {
+        return processListRendered;
     }
 
     /**
@@ -414,5 +423,81 @@ public class MigrationForm extends BaseForm {
      */
     public void setWorkflowToUse(Workflow workflowToUse) {
         this.workflowToUse = workflowToUse;
+    }
+
+    /**
+     * Action performed when the migrateNewspaperBatches button is clicked.
+     */
+    public void showPossibleBatches() {
+        newspaperMigrationRendered = true;
+        projectListRendered = false;
+    }
+
+    /**
+     * Returns whether the newspaperMigration panel group is rendered.
+     *
+     * @return whether the newspaperMigration panel group is rendered
+     */
+
+    public boolean isNewspaperMigrationRendered() {
+        return newspaperMigrationRendered;
+    }
+
+    /**
+     * Returns the selected items of the newspaperBatches select box.
+     *
+     * @return the selected items of the newspaperBatches select box
+     */
+    public Collection<Integer> getNewspaperBatchesSelectedItems() {
+        return newspaperBatchesSelectedItems;
+    }
+
+    /**
+     * Sets the selected items of the newspaperBatches select box.
+     *
+     * @param selectedItems
+     *            elected items of the newspaperBatches select box to set
+     */
+    public void setNewspaperBatchesSelectedItems(Collection<Integer> selectedItems) {
+        newspaperBatchesSelectedItems = selectedItems;
+    }
+
+    /**
+     * Returns the items of the newspaperBatches select box.
+     *
+     * @return the items of the newspaperBatches select box
+     */
+    public List<BatchDTO> getNewspaperBatchesItems() {
+        if (Objects.isNull(newspaperBatchesItems)) {
+            try {
+                newspaperBatchesItems = NewspaperProcessesMigrator.getNewspaperBatches();
+            } catch (DataException | DAOException | IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                return Collections.emptyList();
+            }
+        }
+        return newspaperBatchesItems;
+    }
+
+    /**
+     * Action performed when the startNewspaperMigration button is clicked.
+     */
+    public void startNewspaperMigration() {
+        try {
+            for (Integer batchId : newspaperBatchesSelectedItems) {
+                NewspaperProcessesMigrator.initializeMigration(batchId);
+            }
+            newspaperMigrationRendered = false;
+            newspaperBatchesSelectedItems = new ArrayList<>();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Action performed when the cancelNewspaperMigration button is clicked.
+     */
+    public void hideNewspaperMigration() {
+        newspaperMigrationRendered = false;
     }
 }

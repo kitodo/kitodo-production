@@ -14,6 +14,8 @@ package org.kitodo.dataformat.access;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.FileType.FLocat;
@@ -23,6 +25,13 @@ import org.kitodo.dataformat.metskitodo.FileType.FLocat;
  * referenced by URI, it can also be in the world wide web.
  */
 public class FLocatXmlElementAccess {
+    /**
+     * Pattern used to identify (and subsequently correct) ill-formed URIs
+     * created with Production v. 2 under Windows. These may still be present in
+     * old, converted Production v. 2 processes.
+     */
+    private static final Pattern MALFORMED_WINDOWS_URI = Pattern.compile("file:/([C-Z]:\\\\.*)");
+
     /**
      * Some magic numbers that are used in the METS XML file representation of
      * this structure to describe relations between XML elements. They need to
@@ -47,22 +56,37 @@ public class FLocatXmlElementAccess {
 
     /**
      * Constructor for creating a new media file reference from METS F locat.
-     * 
+     *
      * @param file
      *            File to create a new media file reference from
      */
     FLocatXmlElementAccess(FileType file) {
         metsReferrerId = file.getID();
+        uri = getAndRepairUri(file);
+    }
+
+    private final URI getAndRepairUri(FileType file) {
+        String href = file.getFLocat().get(0).getHref();
         try {
-            uri = new URI(file.getFLocat().get(0).getHref());
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+            return new URI(href);
+        } catch (URISyntaxException exception) {
+            Matcher malformedWindowsUriMatcher = MALFORMED_WINDOWS_URI.matcher(href);
+            if (malformedWindowsUriMatcher.matches()) {
+                try {
+                    return new URI("file:///".concat(malformedWindowsUriMatcher.group(1).replace('\\', '/')));
+                } catch (URISyntaxException suppressed) {
+                    exception.addSuppressed(suppressed);
+                    throw new IllegalArgumentException(exception.getMessage(), exception);
+                }
+            } else {
+                throw new IllegalArgumentException(exception.getMessage(), exception);
+            }
         }
     }
 
     /**
      * Returns the METS file ID of the F locat XML element access.
-     * 
+     *
      * @return the ID
      */
     String getFileId() {
@@ -71,7 +95,7 @@ public class FLocatXmlElementAccess {
 
     /**
      * Returns the URI of the F locat XML element access.
-     * 
+     *
      * @return the URI
      */
     public URI getUri() {
@@ -81,7 +105,7 @@ public class FLocatXmlElementAccess {
     /**
      * Creates a new METS {@code <file>} element with this media file reference
      * in it.
-     * 
+     *
      * @param mimeType
      *            possible Internet MIME type of a computer file that can be
      *            obtained when the URI is downloaded

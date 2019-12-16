@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -125,15 +126,21 @@ public class MetsKitodoWrapper {
             mets.setFileSec(new FileSec(mets.getFileSec()));
         }
         if (!mets.getStructMap().isEmpty()) {
-            StructMapType physicalStructMap = MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL");
-            this.mets.getStructMap().remove(physicalStructMap);
-            this.physicalStructMapType = new PhysicalStructMapType(physicalStructMap);
-            this.mets.getStructMap().add(this.physicalStructMapType);
+            Optional<StructMapType> optionalPhysicalStructMap = MetsKitodoStructMapHandler.getMetsStructMapByType(mets,
+                "PHYSICAL");
+            if (optionalPhysicalStructMap.isPresent()) {
+                this.mets.getStructMap().remove(optionalPhysicalStructMap.get());
+                this.physicalStructMapType = new PhysicalStructMapType(optionalPhysicalStructMap.get());
+                this.mets.getStructMap().add(this.physicalStructMapType);
+            }
 
-            StructMapType logicalStructMap = MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL");
-            this.mets.getStructMap().remove(logicalStructMap);
-            this.logicalStructMapType = new LogicalStructMapType(logicalStructMap);
-            this.mets.getStructMap().add(this.logicalStructMapType);
+            Optional<StructMapType> optionalLogicalStructMap = MetsKitodoStructMapHandler.getMetsStructMapByType(mets,
+                "LOGICAL");
+            if (optionalLogicalStructMap.isPresent()) {
+                this.mets.getStructMap().remove(optionalLogicalStructMap.get());
+                this.logicalStructMapType = new LogicalStructMapType(optionalLogicalStructMap.get());
+                this.mets.getStructMap().add(this.logicalStructMapType);
+            }
         }
         if (!mets.getDmdSec().isEmpty()) {
             List<DmdSec> newDmdSecElements = new ArrayList<>();
@@ -196,7 +203,7 @@ public class MetsKitodoWrapper {
 
     /**
      * Returns the structLink of the wrapped mets document.
-     * 
+     *
      * @return The StructLink object.
      */
     public StructLink getStructLink() {
@@ -223,7 +230,7 @@ public class MetsKitodoWrapper {
     /**
      * Returns a list of divs from physical structMap which are linked by a given
      * div from logical structMap.
-     * 
+     *
      * @param logicalDiv
      *            The logical div which links to physical divs.
      * @return A list of physical divs.
@@ -235,7 +242,7 @@ public class MetsKitodoWrapper {
     /**
      * Adds smLinks to structLink section for a given logical div by checking the
      * linked physical divs of the logical child divs.
-     * 
+     *
      * @param logicalDiv
      *            The logical div.
      */

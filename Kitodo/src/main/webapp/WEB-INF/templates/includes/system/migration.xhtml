@@ -30,7 +30,14 @@
                          styleClass="primary"
                          action="#{MigrationForm.showPossibleProjects()}"
                          immediate="true"/>
-        <h:panelGroup rendered="#{MigrationForm.isProjectListShown()}">
+        <p:commandButton value="#{msgs.migrateNewspaperBatches}"
+                         id="migrateNewspaperBatches"
+                         update="systemTabView:migrationForm"
+                         style="margin: 10px;"
+                         styleClass="primary"
+                         action="#{MigrationForm.showPossibleBatches()}"
+                         immediate="true"/>
+        <h:panelGroup rendered="#{MigrationForm.projectListRendered}">
             <div style="margin: 0 10px;"><h:outputText value="#{msgs.projectsForMigration}:"/></div>
             <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}" style="margin: 10px;">
                 <f:selectItems value="#{MigrationForm.allProjects}" var="project" itemLabel="#{project.title}"
@@ -38,7 +45,7 @@
             </p:selectManyCheckbox>
             <p:commandButton value="#{msgs.migrateMetadataOfSelectedProjects}"
                              id="migrate"
-                             rendered="#{MigrationForm.metadataShown}"
+                             rendered="#{MigrationForm.metadataRendered}"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
                              style="margin: 0 10px;"
@@ -46,13 +53,13 @@
                              oncomplete="alert('#{msgs.migrateMetadataHint}');"/>
             <p:commandButton value="#{msgs.listProcesses}"
                              id="migrateProject"
-                             rendered="#{MigrationForm.workflowShown}"
+                             rendered="#{MigrationForm.workflowRendered}"
                              update="systemTabView:migrationForm"
                              styleClass="primary"
                              style="margin: 0 10px 10px;"
                              action="#{MigrationForm.showAggregatedProcesses()}"/>
         </h:panelGroup>
-        <h:panelGroup rendered="#{MigrationForm.processListShown}">
+        <h:panelGroup rendered="#{MigrationForm.processListRendered}">
             <p:dataTable id="aggregatedTasksTable" var="tasks" value="#{MigrationForm.aggregatedTasks}">
                 <p:column style="width: 100%;">
                     <h:outputText value="#{tasks}"
@@ -70,6 +77,22 @@
                 </p:column>
             </p:dataTable>
         </h:panelGroup>
+
+        <h:panelGroup id="newspaperMigration" rendered="#{MigrationForm.newspaperMigrationRendered}">
+            <div style="margin: 0 10px;"><h:outputText value="#{msgs.batchesForMigration}:"/></div>
+            <p:selectManyCheckbox id="newspaperBatches"
+                layout="grid" columns="1"
+                value="#{MigrationForm.newspaperBatchesSelectedItems}"  style="margin: 10px;">
+                <f:selectItems value="#{MigrationForm.newspaperBatchesItems}"/>
+            </p:selectManyCheckbox>
+            <p:commandButton id="startNewspaperMigration" value="#{msgs.ok}"
+                action="#{MigrationForm.startNewspaperMigration}"
+                update="systemTabView:migrationForm" style="margin: 0 10px;" />
+            <p:commandButton id="cancelNewspaperMigration" value="#{msgs.cancel}"
+                action="#{MigrationForm.hideNewspaperMigration}"
+                update="systemTabView:migrationForm"/>
+        </h:panelGroup>
+
     </h:form>
 
 </ui:composition>

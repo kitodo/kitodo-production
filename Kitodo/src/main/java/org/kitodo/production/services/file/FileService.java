@@ -66,8 +66,16 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class FileService {
 
     private static final Logger logger = LogManager.getLogger(FileService.class);
-    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
+    /**
+     * Attachment to filename for the overall anchor file in Production v. 2.
+     */
+    private static final String APPENDIX_ANCOR = "_anchor";
+    /**
+     * Attachment to filename for the year anchor file in Production v. 2.
+     */
+    private static final String APPENDIX_YEAR = "_year";
+    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
     private volatile FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
             FileManagementInterface.class).loadModule();
 
@@ -116,6 +124,18 @@ public class FileService {
             }
         }
         return directoryUri;
+    }
+
+    /**
+     * Generates the URI to the anchor file for Production v. 2 hierarchical
+     * processes. This should not be used except for migration of legacy data.
+     *
+     * @param metadataFilePath
+     *            path URI to meta XML file
+     * @return path URI to anchor XML file
+     */
+    public URI createAnchorFile(URI metadataFilePath) {
+        return insertIntoURI(metadataFilePath, ".xml", APPENDIX_ANCOR);
     }
 
     /**
@@ -234,6 +254,47 @@ public class FileService {
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
         return fileManagementModule.create(targetFolder, name, true);
+    }
+
+    /**
+     * Generates the URI to the year file for Production v. 2 newspaper
+     * processes. This should not be used except for migration of legacy data.
+     *
+     * @param metadataFilePath
+     *            path URI to meta XML file
+     * @return path URI to year XML file
+     */
+    public URI createYearFile(URI metadataFilePath) {
+        return insertIntoURI(metadataFilePath, ".xml", APPENDIX_YEAR);
+    }
+
+    /**
+     * Inserts a string before another substring in an URI.
+     *
+     * @param uri
+     *            URI to insert the string into
+     * @param tail
+     *            part of the URI before which the string is to be inserted
+     * @param insert
+     *            string to insert
+     * @return URI with string inserted
+     */
+    private static URI insertIntoURI(URI uri, String tail, String insert) {
+        String data = uri.toASCIIString();
+        int dataLength = data.length();
+        int questionMark = data.indexOf('?');
+        int resourceLength = questionMark >= 0 ? questionMark : dataLength;
+        if (questionMark < 0) {
+            int hash = data.indexOf('#');
+            resourceLength = hash >= 0 ? hash : dataLength;
+        }
+        int beforeTail = data.lastIndexOf(tail, resourceLength);
+        int cutPosition = beforeTail >= 0 ? beforeTail : resourceLength;
+        StringBuilder buffer = new StringBuilder(dataLength + insert.length());
+        buffer.append(data, 0, cutPosition);
+        buffer.append(insert);
+        buffer.append(data, cutPosition, dataLength);
+        return URI.create(buffer.toString());
     }
 
     /**
@@ -484,6 +545,20 @@ public class FileService {
      */
     public void moveFile(URI sourceUri, URI targetUri) throws IOException {
         fileManagementModule.move(sourceUri, targetUri);
+    }
+
+    /**
+     * Process owns year XML.
+     *
+     * @param process
+     *            whose metadata file path to use
+     * @return whether a year file was found
+     * @throws IOException
+     *             if Io failed
+     */
+    public boolean processOwnsYearXML(Process process) throws IOException {
+        URI yearFile = FileService.this.createYearFile(FileService.this.getMetadataFilePath(process, false, false));
+        return FileService.this.fileExist(yearFile);
     }
 
     /**
