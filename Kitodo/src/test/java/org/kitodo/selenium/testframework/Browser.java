@@ -182,6 +182,11 @@ public class Browser {
      *            The web element.
      */
     public static void hoverWebElement(WebElement webElement) {
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            logger.debug("interrupted sleeping");
+        }
         actions.moveToElement(webElement).pause(delayAfterHoverMenu).build().perform();
     }
 
