@@ -31,9 +31,16 @@ public interface StructuralElementViewInterface extends ComplexMetadataViewInter
     /**
      * Returns view on the metadata key that is used to store on which date the
      * division dates, if any.
-     * 
+     *
      * @return a view on the key that stores on which date the division dates,
      *         if any
      */
     Optional<DatesSimpleMetadataViewInterface> getDatesSimpleMetadata();
+
+    /**
+     * Returns a process title, if defined.
+     *
+     * @return a process title, if defined
+     */
+    public Optional<String> getProcessTitle();
 }

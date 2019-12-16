@@ -19,6 +19,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
@@ -189,8 +190,11 @@ public class ProcessDataTab {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Process process = this.createProcessForm.getMainProcess();
         try {
+            StructuralElementViewInterface docTypeView = createProcessForm.getRuleset().getStructuralElementView(
+                docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
+            String processTitle = docTypeView.getProcessTitle().orElse("");
             this.atstsl = ProcessService.generateProcessTitle(this.atstsl, processDetails,
-                    ServiceManager.getImportService().getTitleDefinition(), process);
+                processTitle, process);
             // document name is generally equal to process title
             this.tiffHeaderDocumentName = process.getTitle();
             this.tiffHeaderImageDescription = ProcessService.generateTiffHeader(

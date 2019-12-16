@@ -73,7 +73,7 @@ public class RulesetManagement implements RulesetManagementInterface {
      */
     @Override
     public Map<String, String> getStructuralElements(List<LanguageRange> priorityList) {
-        return ruleset.getDivisions(priorityList, true);
+        return ruleset.getDivisions(priorityList, false, true);
     }
 
     /**

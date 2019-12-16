@@ -57,7 +57,7 @@ class DivisionView extends NestedKeyView<UniversalDivision> implements Structura
     @Override
     public Map<String, String> getAllowedSubstructuralElements() {
         boolean hasSubdivisionByDate = universal.hasSubdivisionByDate();
-        Map<String, String> declaredDivisions = ruleset.getDivisions(priorityList, hasSubdivisionByDate);
+        Map<String, String> declaredDivisions = ruleset.getDivisions(priorityList, true, hasSubdivisionByDate);
         Map<String, String> filteredDivisions = universalRule.getAllowedSubdivisions(declaredDivisions);
         if (hasSubdivisionByDate) {
             return universal.getAllowedSubdivisions(filteredDivisions);
@@ -79,5 +79,10 @@ class DivisionView extends NestedKeyView<UniversalDivision> implements Structura
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<String> getProcessTitle() {
+        return universal.getProcessTitle();
     }
 }

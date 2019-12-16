@@ -109,6 +109,15 @@ public class UniversalDivision extends UniversalKey {
     }
 
     /**
+     * Returns the sequence description to form a process title.
+     *
+     * @return the key used to store the date
+     */
+    public Optional<String> getProcessTitle() {
+        return optionalDivision.isPresent() ? optionalDivision.get().getProcessTitle() : Optional.empty();
+    }
+
+    /**
      * Returns universal divisions for the subdivisions by date.
      *
      * @return universal divisions for the subdivisions by date
