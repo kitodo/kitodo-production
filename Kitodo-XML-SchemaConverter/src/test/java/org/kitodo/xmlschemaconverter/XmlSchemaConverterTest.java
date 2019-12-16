@@ -14,8 +14,10 @@ package org.kitodo.xmlschemaconverter;
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,6 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.api.schemaconverter.DataRecord;
@@ -41,8 +44,16 @@ public class XmlSchemaConverterTest {
     private static final String MODS_TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
     private static final String MARC_TEST_FILE_PATH = "src/test/resources/marcXmlTestRecord.xml";
 
+    @AfterClass
+    public static void tearDown() {
+        File xslt = new File ("src/main/resources/xslt/marc21slim2mods.xsl");
+        if (xslt.exists()) {
+            xslt.delete();
+        }
+    }
+
     @Test
-    public void shouldConvertModsToInternalFormat() throws IOException, ParserConfigurationException, SAXException {
+    public void shouldConvertModsToInternalFormat() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         DataRecord testRecord = new DataRecord();
         testRecord.setMetadataFormat(MetadataFormat.MODS);
         testRecord.setFileFormat(FileFormat.XML);
@@ -89,7 +100,7 @@ public class XmlSchemaConverterTest {
     }
 
     @Test
-    public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException {
+    public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         DataRecord testRecord = new DataRecord();
         testRecord.setMetadataFormat(MetadataFormat.MARC);
         testRecord.setFileFormat(FileFormat.XML);

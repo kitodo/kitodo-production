@@ -13,6 +13,7 @@ package org.kitodo.api.schemaconverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /** Enables the conversion of a DataRecord from one format to another. */
 public interface SchemaConverterInterface {
@@ -27,7 +28,7 @@ public interface SchemaConverterInterface {
      * @return The result of the conversion as a DataRecord.
      */
     DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat,
-                       File mappingFile) throws IOException;
+                       File mappingFile) throws IOException, URISyntaxException;
 
     /**
      * Check and return whether the current SchemaConverter supports the given MetadataFormat as a target format or not.
