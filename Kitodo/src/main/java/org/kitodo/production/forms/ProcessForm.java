@@ -1330,4 +1330,34 @@ public class ProcessForm extends TemplateBaseForm {
     public String getCurrentTaskTitles(ProcessDTO processDTO) {
         return ServiceManager.getProcessService().createProgressTooltip(processDTO);
     }
+
+    /**
+     * Get all parent processes recursively for the given process.
+     *
+     * @return List of Processes
+     */
+    public List<Process> getAllParentProcesses(int id) {
+        try {
+            return ProcessService.getAllParentProcesses(ServiceManager.getProcessService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Get number of direct child processes for the given process.
+     *
+     * @param id
+     *          process id for given process
+     * @return number of child processes
+     */
+    public int getNumberOfChildProcesses(int id) {
+        try {
+            return ServiceManager.getProcessService().getById(id).getChildren().size();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            return 0;
+        }
+    }
 }

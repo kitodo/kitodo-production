@@ -1084,6 +1084,14 @@ h3#headerText {
     margin-left: var(--default-full-size);
 }
 
+#processesTabView\:processesForm\:processesTable .hierarchy-info {
+    width: calc(var(--default-double-size) + var(--default-half-size));
+}
+
+#processesTabView\:processesForm\:processesTable .ui-row-toggler {
+    margin-right: 8px;
+}
+
 
 .kitodoScript button {
     margin: 0 0 5px 5px;

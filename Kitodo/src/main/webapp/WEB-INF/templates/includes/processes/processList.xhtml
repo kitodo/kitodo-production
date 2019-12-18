@@ -32,7 +32,28 @@
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                      paginatorPosition="bottom">
+
+            <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+
             <p:column styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
+            <p:column styleClass="hierarchy-info">
+                <p:rowToggler rendered="#{process.hasParent() or process.hasChildren()}"/>
+                <h:graphicImage name="images/icon-up.svg"
+                                alt="#{msgs.hierarchicalParents}"
+                                title="#{msgs.hierarchicalParents}"
+                                height="12"
+                                rendered="#{process.hasParent() and not process.hasChildren()}"/>
+                <h:graphicImage name="images/icon-down.svg"
+                                alt="#{msgs.hierarchicalChildren}"
+                                title="#{msgs.hierarchicalChildren}"
+                                height="12"
+                                rendered="#{not process.hasParent() and process.hasChildren()}"/>
+                <h:graphicImage name="images/icon-up-down.svg"
+                                alt="#{msgs.hierarchicalBoth}"
+                                title="#{msgs.hierarchicalBoth}"
+                                height="12"
+                                rendered="#{process.hasParent() and process.hasChildren()}"/>
+            </p:column>
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
                       sortBy="#{process.title.keyword}"
@@ -160,6 +181,23 @@
                     </p:commandLink>
                 </h:panelGroup>
             </p:column>
+
+            <p:rowExpansion styleClass="expansion-class">
+                <div class="row-expansion-wrapper">
+                    <p:panelGrid columns="2" columnClasses="label, value">
+                        <h:outputText value="#{msgs.hierarchicalParents}:"/>
+                        <p:repeat value="#{ProcessForm.getAllParentProcesses(process.getId())}" var="parentProcess" rendered="#{process.hasParent()}">
+                            <h:outputText value="#{parentProcess.getTitle()}"/>
+                            <br/>
+                        </p:repeat>
+                        <h:outputText value="#{msgs.none}" rendered="#{not process.hasParent()}"/>
+                        
+                        <h:outputText value="#{msgs.hierarchicalChildren}:"/>
+                        <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())}"/>
+                    </p:panelGrid>
+                </div>
+            </p:rowExpansion>
+
         </p:dataTable>
 
         <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
