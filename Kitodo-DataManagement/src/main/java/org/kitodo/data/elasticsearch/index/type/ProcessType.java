@@ -14,6 +14,7 @@ package org.kitodo.data.elasticsearch.index.type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
@@ -51,6 +52,8 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.BATCHES.getKey(), addObjectRelation(process.getBatches(), true));
         jsonObject.put(ProcessTypeField.COMMENTS.getKey(), addObjectRelation(process.getComments()));
         jsonObject.put(ProcessTypeField.COMMENTS_MESSAGE.getKey(), getProcessComments(process));
+        jsonObject.put(ProcessTypeField.HAS_CHILDREN.getKey(), process.getChildren().size() > 0);
+        jsonObject.put(ProcessTypeField.HAS_PARENT.getKey(), Objects.nonNull(process.getParent()));
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
         jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), addObjectRelation(process.getProperties(), true));
         jsonObject.put(ProcessTypeField.TEMPLATES.getKey(), addObjectRelation(process.getTemplates()));
