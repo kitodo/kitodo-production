@@ -17,8 +17,10 @@ import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,10 +44,13 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.api.schemaconverter.MetadataFormatConversion;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.exceptions.ConfigException;
 import org.xml.sax.InputSource;
 
@@ -56,12 +61,12 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
     Each value contains a list of paths to XSLT files to transform the source format to internal Kitodo format.
     The order of XSLT file paths will determine the order of execution.
      */
-    private static Map<MetadataFormat, List<String>> supportedSourceMetadataFormats = new HashMap<>();
+    private static Map<MetadataFormat, List<MetadataFormatConversion>> supportedSourceMetadataFormats = new HashMap<>();
 
     static {
-        supportedSourceMetadataFormats.put(MetadataFormat.MODS, Collections.singletonList("src/main/resources/xslt/mods2kitodo.xsl"));
-        supportedSourceMetadataFormats.put(MetadataFormat.MARC,
-                Arrays.asList("target/downloaded-sources/xslt/marc21slim2mods3-4.xsl", "src/main/resources/xslt/mods2kitodo.xsl"));
+        supportedSourceMetadataFormats.put(MetadataFormat.MODS, Collections.singletonList(MetadataFormatConversion.MODS_2_KITODO));
+        supportedSourceMetadataFormats.put(MetadataFormat.MARC, Arrays.asList(
+                MetadataFormatConversion.MARC_2_MODS, MetadataFormatConversion.MODS_2_KITODO));
     }
 
     private static MetadataFormat supportedTargetMetadataFormat = MetadataFormat.KITODO;
@@ -79,7 +84,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
      */
     @Override
     public DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat,
-                              File mappingFile) throws IOException {
+                              File mappingFile) throws IOException, URISyntaxException {
         if (!(supportsSourceMetadataFormat(record.getMetadataFormat())
                 && supportsSourceFileFormat(record.getFileFormat())
                 && supportsTargetMetadataFormat(targetMetadataFormat)
@@ -97,14 +102,16 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
                     conversionResult = transformXmlByXslt(xmlString, fileStream);
                 }
             } else {
-                List<String> xslFiles = supportedSourceMetadataFormats.get(record.getMetadataFormat());
-                for (String xsltFile : xslFiles) {
+                List<MetadataFormatConversion> xslFiles = supportedSourceMetadataFormats.get(record.getMetadataFormat());
+                URI xsltDir = Paths.get(KitodoConfig.getParameter("directory.xslt")).toUri();
+                for (MetadataFormatConversion metadataFormatConversion : xslFiles) {
+                    URI xsltFile = xsltDir.resolve(new URI(metadataFormatConversion.getFileName()));
+                    if (!new File(xsltFile).exists() && Objects.nonNull(metadataFormatConversion.getSource())) {
+                        downloadXSLTFile(new URL(metadataFormatConversion.getSource()), xsltFile);
+                    }
+
                     try (InputStream fileStream = Files.newInputStream(Paths.get(xsltFile))) {
                         xmlString = transformXmlByXslt(xmlString, fileStream);
-                    } catch (NoSuchFileException e) {
-                        try (InputStream alternativeFileStream = Files.newInputStream(Paths.get("Kitodo-XML-SchemaConverter/" + xsltFile))) {
-                            xmlString = transformXmlByXslt(xmlString, alternativeFileStream);
-                        }
                     }
                 }
                 conversionResult = xmlString;
@@ -163,6 +170,12 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             return stringWriter.toString();
         } catch (TransformerException e) {
             throw new ConfigException("Error in transforming the response in intern format : ", e);
+        }
+    }
+
+    private void downloadXSLTFile(URL source, URI target) throws IOException {
+        if (Objects.nonNull(source) && Objects.nonNull(target)) {
+            FileUtils.copyURLToFile(source, new File(target));
         }
     }
 }
