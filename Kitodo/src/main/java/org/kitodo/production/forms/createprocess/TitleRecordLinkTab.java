@@ -118,10 +118,9 @@ public class TitleRecordLinkTab {
                 createInsertionPositionSelectionTree();
             } catch (DAOException | IOException e) {
                 Helper.setErrorMessage("errorLoadingOne",
-                        new Object[] {chosenParentProcess,
-                                possibleParentProcesses.parallelStream()
-                                        .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
-                                        .orElse(new SelectItem(null, null)).getLabel() },
+                        new Object[] {possibleParentProcesses.parallelStream()
+                                .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
+                                .orElse(new SelectItem(null, null)).getLabel(), chosenParentProcess },
                         logger, e);
             }
         }
@@ -214,7 +213,7 @@ public class TitleRecordLinkTab {
             if (linkingAllowedHere) {
                 new InsertionPositionSelectionTreeNode(includedStructuralElementNode,
                         selectableInsertionPositions.size());
-                selectableInsertionPositions.add(new SelectItem(positionPrefix + index + 1, null));
+                selectableInsertionPositions.add(new SelectItem(positionPrefix + (index + 1), null));
             }
         }
     }
@@ -324,6 +323,15 @@ public class TitleRecordLinkTab {
      */
     public List<SelectItem> getPossibleParentProcesses() {
         return possibleParentProcesses;
+    }
+
+    /**
+     * Set possibleParentProcesses.
+     *
+     * @param possibleParentProcesses as java.util.List<javax.faces.model.SelectItem>
+     */
+    public void setPossibleParentProcesses(List<SelectItem> possibleParentProcesses) {
+        this.possibleParentProcesses = possibleParentProcesses;
     }
 
     /**

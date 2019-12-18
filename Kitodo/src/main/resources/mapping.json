@@ -399,19 +399,23 @@
                                                     "type": "nested",
                                                     "properties": {
                                                         "name": {
-                                                            "type": "text",
+                                                            "type": "string",
+                                                            "index" : "not_analyzed",
                                                             "fields": {
                                                                 "keyword": {
                                                                     "type": "keyword",
+                                                                    "index" : "not_analyzed",
                                                                     "ignore_above": 256
                                                                 }
                                                             }
                                                         },
                                                         "content": {
-                                                            "type": "text",
+                                                            "type": "string",
+                                                            "index" : "not_analyzed",
                                                             "fields": {
                                                                 "keyword": {
                                                                     "type": "keyword",
+                                                                    "index" : "not_analyzed",
                                                                     "ignore_above": 256
                                                                 }
                                                             }

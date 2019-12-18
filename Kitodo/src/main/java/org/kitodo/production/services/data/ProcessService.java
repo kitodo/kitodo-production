@@ -492,7 +492,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            key is metadata tag and value is metadata content
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
-    List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
+    public List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         for (Map.Entry<String, String> entry : metadata.entrySet()) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
