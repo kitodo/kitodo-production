@@ -92,12 +92,12 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
-        <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
-        <p:menuitem value="#{msgs.editWorkflow}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
-        <p:menuitem value="#{msgs.viewWorkflow}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs.editWorkflow}" rendered="#{isEditMode}" icon="fa fa-retweet"/>
+        <p:menuitem value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}" icon="fa fa-retweet"/>
+        <p:menuitem value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}" icon="fa fa-retweet"/>
+        <p:menuitem value="#{msgs.viewWorkflow}" rendered="#{isViewMode}" icon="fa fa-retweet"/>
     </ui:define>
 
 </ui:composition>

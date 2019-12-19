@@ -99,12 +99,12 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
-        <p:menuitem value="#{msgs.users}" url="users.jsf"/>
-        <p:menuitem value="#{msgs.editUser}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.userCreate}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.viewUser}" rendered="#{isViewMode}"/>
-        <p:menuitem value="#{msgs.userConfiguration}" rendered="#{isConfigMode}"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.users}" url="users.jsf" icon="fa fa-user"/>
+        <p:menuitem value="#{msgs.editUser}" rendered="#{isEditMode}" icon="fa fa-user"/>
+        <p:menuitem value="#{msgs.userCreate}" rendered="#{isCreateMode}" icon="fa fa-user"/>
+        <p:menuitem value="#{msgs.viewUser}" rendered="#{isViewMode}" icon="fa fa-user"/>
+        <p:menuitem value="#{msgs.userConfiguration}" rendered="#{isConfigMode}" icon="fa fa-user"/>
     </ui:define>
 
     <!-- add user groups dialog -->

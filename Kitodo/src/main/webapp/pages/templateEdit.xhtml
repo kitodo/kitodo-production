@@ -87,12 +87,12 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
-        <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
-        <p:menuitem value="#{msgs.newTemplate}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.duplicateTemplate}" rendered="#{isDuplicateMode}"/>
-        <p:menuitem value="#{msgs.editTemplate}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.viewTemplate}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs.newTemplate}" rendered="#{isCreateMode}" icon="fa fa-inbox"/>
+        <p:menuitem value="#{msgs.duplicateTemplate}" rendered="#{isDuplicateMode}" icon="fa fa-inbox"/>
+        <p:menuitem value="#{msgs.editTemplate}" rendered="#{isEditMode}" icon="fa fa-inbox"/>
+        <p:menuitem value="#{msgs.viewTemplate}" rendered="#{isViewMode}" icon="fa fa-inbox"/>
     </ui:define>
 
 </ui:composition>
