@@ -155,6 +155,10 @@ public class KitodoScriptServiceIT {
     @Test
     public void shouldGenerateDerivativeImages() throws Exception {
 
+        // Delete created and still running taskmanager tasks from other test suites because
+        // this test is assuming that there are no other taskmanager tasks running!
+        TaskManager.stopAndDeleteAllTasks();
+
         Folder generatorSource = new Folder();
         generatorSource.setMimeType("image/tiff");
         generatorSource.setPath("images/(processtitle)_media");
