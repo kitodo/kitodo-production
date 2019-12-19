@@ -193,6 +193,10 @@ public class ProcessDataTab {
             StructuralElementViewInterface docTypeView = createProcessForm.getRuleset().getStructuralElementView(
                 docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
             String processTitle = docTypeView.getProcessTitle().orElse("");
+            if (processTitle.isEmpty()) {
+                Helper.setErrorMessage("newProcess.titleGeneration.creationRuleNotFound",
+                        new Object[] {getDocTypeLabel(docType), createProcessForm.getMainProcess().getRuleset().getTitle()});
+            }
             this.atstsl = ProcessService.generateProcessTitle(this.atstsl, processDetails,
                 processTitle, process);
             // document name is generally equal to process title
@@ -204,6 +208,16 @@ public class ProcessDataTab {
         }
         Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
                 "editForm:processFromTemplateTabView:processMetadata");
+    }
+
+    private String getDocTypeLabel(String docType) {
+        for (int i = 0; i < this.allDocTypes.size(); i++) {
+            SelectItem docTypeItem = this.allDocTypes.get(0);
+            if (docTypeItem.getValue().equals(docType)) {
+                return docTypeItem.getLabel();
+            }
+        }
+        return docType;
     }
 
     /**
