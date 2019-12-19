@@ -183,7 +183,7 @@ public class Browser {
      */
     public static void hoverWebElement(WebElement webElement) {
         try {
-            Thread.sleep(4000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             logger.debug("interrupted sleeping");
         }
