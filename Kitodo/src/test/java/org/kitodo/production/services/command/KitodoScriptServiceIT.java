@@ -77,6 +77,10 @@ public class KitodoScriptServiceIT {
 
         assertTrue(max + ": There is no such directory!", max.isDirectory());
 
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
+        }
+
         TreeDeleter.deltree(processHome);
     }
 

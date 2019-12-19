@@ -84,6 +84,10 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
+
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
     }
 
     /**

@@ -15,15 +15,19 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.TreeDeleter;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
@@ -41,8 +45,15 @@ public class NewspaperMigrationTaskIT {
     private static final BatchService batchService = ServiceManager.getBatchService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
+    private static final File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+
         moveOriginMetadataDirectoryAside();
         FileUtils.copyDirectory(TEST_DATAFILES_DIRECTORY, METADATA_DIRECTORY);
         MockDatabase.startNode();
@@ -123,6 +134,10 @@ public class NewspaperMigrationTaskIT {
         MockDatabase.cleanDatabase();
         restoreMetadataDirectoryContents();
         SecurityTestUtils.cleanSecurityContext();
+
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
     }
 
     private static void restoreMetadataDirectoryContents() throws Exception {
