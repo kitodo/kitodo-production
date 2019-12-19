@@ -181,7 +181,7 @@ public class EmptyTask extends Thread implements INameableTask {
      */
     @Override
     public String getDisplayName() {
-        return Helper.getTranslation("EmptyTask");
+        return Helper.getTranslation(getClass().getSimpleName());
     }
 
     /**

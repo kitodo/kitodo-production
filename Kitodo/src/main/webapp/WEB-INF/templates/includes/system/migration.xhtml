@@ -51,6 +51,14 @@
                              style="margin: 0 10px;"
                              action="#{MigrationForm.convertMetadata()}"
                              oncomplete="alert('#{msgs.migrateMetadataHint}');"/>
+            <p:commandButton value="#{msgs.migrateSerialPublication}"
+                             id="migrateHierarchy"
+                             rendered="#{MigrationForm.metadataRendered}"
+                             update="systemTabView:migrationForm"
+                             styleClass="primary"
+                             style="margin: 0 10px;"
+                             action="#{MigrationForm.convertHierarchys()}"
+                             oncomplete="alert('#{msgs.migrateMetadataHint}');"/>
             <p:commandButton value="#{msgs.listProcesses}"
                              id="migrateProject"
                              rendered="#{MigrationForm.workflowRendered}"

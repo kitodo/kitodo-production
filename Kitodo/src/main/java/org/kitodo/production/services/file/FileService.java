@@ -548,6 +548,20 @@ public class FileService {
     }
 
     /**
+     * Process owns anchor XML.
+     *
+     * @param process
+     *            whose metadata file path to use
+     * @return whether an anchor file was found
+     * @throws IOException
+     *             if Io failed
+     */
+    public boolean processOwnsAnchorXML(Process process) throws IOException {
+        URI yearFile = FileService.this.createAnchorFile(FileService.this.getMetadataFilePath(process, false, false));
+        return FileService.this.fileExist(yearFile);
+    }
+
+    /**
      * Process owns year XML.
      *
      * @param process

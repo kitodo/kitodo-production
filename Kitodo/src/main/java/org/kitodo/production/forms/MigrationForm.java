@@ -41,6 +41,7 @@ import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.tasks.HierarchyMigrationTask;
 import org.kitodo.production.helper.tasks.MigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
@@ -130,6 +131,13 @@ public class MigrationForm extends BaseForm {
             }
         }
         processListRendered = true;
+    }
+
+    public void convertHierarchys() {
+        for (Project project : selectedProjects) {
+            TaskManager.addTask(new HierarchyMigrationTask(project));
+        }
+        projectListRendered = false;
     }
 
     /**
