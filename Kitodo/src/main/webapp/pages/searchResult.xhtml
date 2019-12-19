@@ -72,7 +72,7 @@
                                oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
                     <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
-                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
                 </p:commandLink>
                 <!-- else, open metadata editor directly -->
                 <h:link id="readXML"
@@ -81,7 +81,7 @@
                         rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                     <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
                     <f:param name="referrer" value="#{'searchResult'}"/>
-                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
                 </h:link>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"

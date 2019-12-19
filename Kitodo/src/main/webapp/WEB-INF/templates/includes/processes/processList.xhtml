@@ -78,7 +78,7 @@
                                oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
                     <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
-                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
                 </p:commandLink>
                 <!-- else, open metadata editor directly -->
                 <!--@elvariable id="currentTaskId" type="int"-->
@@ -88,7 +88,7 @@
                                title="#{msgs.metadataEdit}"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                     <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
-                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
                 </h:commandLink>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
