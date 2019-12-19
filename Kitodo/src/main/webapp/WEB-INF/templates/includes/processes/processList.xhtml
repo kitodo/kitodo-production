@@ -186,10 +186,39 @@
                 <div class="row-expansion-wrapper">
                     <p:panelGrid columns="2" columnClasses="label, value">
                         <h:outputText value="#{msgs.hierarchicalParents}:"/>
-                        <p:repeat value="#{ProcessForm.getAllParentProcesses(process.getId())}" var="parentProcess" rendered="#{process.hasParent()}">
-                            <h:outputText value="#{parentProcess.getTitle()}"/>
-                            <br/>
-                        </p:repeat>
+                        <table>
+                            <p:repeat value="#{ProcessForm.getAllParentProcesses(process.id)}" var="parentProcess" rendered="#{process.hasParent()}">
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{parentProcess.getTitle()}"/>
+                                    </td>
+                                    <td class="actionsColumn">
+                                        <h:link outcome="processEdit" title="#{msgs.view}"
+                                                rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                                            <i class="fa fa-eye fa-lg"/>
+                                            <f:param name="referer" value="processes"/>
+                                            <f:param name="id" value="#{parentProcess.id}"/>
+                                        </h:link>
+                                        <!--@elvariable id="taskOptions" type="java.util.List"-->
+                                        <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(parentProcess.id)}"/>
+                                        <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
+                                        <h:link outcome="processEdit" title="#{msgs.edit}"
+                                                rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                                            <i class="fa fa-pencil-square-o fa-lg"/>
+                                            <f:param name="referer" value="processes"/>
+                                            <f:param name="id" value="#{parentProcess.id}"/>
+                                        </h:link>
+                                        <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(parentProcess.id)}" />
+                                        <h:commandLink action="#{DataEditorForm.open(currentTaskId, 'processes')}"
+                                                       title="#{msgs.metadataEdit}"
+                                                       rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                                            <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
+                                            <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                                        </h:commandLink>
+                                    </td>
+                                </tr>
+                            </p:repeat>
+                        </table>
                         <h:outputText value="#{msgs.none}" rendered="#{not process.hasParent()}"/>
                         
                         <h:outputText value="#{msgs.hierarchicalChildren}:"/>

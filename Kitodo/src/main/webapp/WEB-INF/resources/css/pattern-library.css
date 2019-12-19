@@ -1040,10 +1040,6 @@ tr.ui-expanded-row-content tr.ui-widget-header,
     border-top: 1px solid var(--cloudy-gray);
 }
 
-.ui-expanded-row-content tr {
-    background-color: lightgray !important;
-}
-
 tr.ui-expanded-row.row-hover,
 tr.ui-expanded-row-content.row-hover {
     background: var(--trans-blue) !important;
