@@ -144,8 +144,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
         addUserToRoleButton.click();
 
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
-        wait.until(ExpectedConditions.elementToBeClickable(By.id(selectRoleTable.getAttribute("id"))));
-
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("roleForm:selectRoleTable:2:addRole")));
         List<WebElement> tableRows = Browser.getRowsOfTable(selectRoleTable);
         addRow(tableRows, roleTitle, addToRoleDialog);
 
@@ -156,7 +155,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
         addUserToClientButton.click();
 
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
-        wait.until(ExpectedConditions.elementToBeClickable(By.id(selectClientTable.getAttribute("id"))));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("userClientForm:selectClientTable:1:addUserClient")));
 
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
         addRow(tableRows, clientName, addToClientDialog);
