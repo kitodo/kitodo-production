@@ -84,6 +84,7 @@ public class SRUImport implements ExternalDataImportInterface {
         formatHandlers = new HashMap<>();
         formatHandlers.put(MetadataFormat.MODS.name(), new ModsResponseHandler());
         formatHandlers.put(MetadataFormat.MARC.name(), new MarcResponseHandler());
+        formatHandlers.put(MetadataFormat.PICA.name(), new PicaResponseHandler());
     }
 
     @Override

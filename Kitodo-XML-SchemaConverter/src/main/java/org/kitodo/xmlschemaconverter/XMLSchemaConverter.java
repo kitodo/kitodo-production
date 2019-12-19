@@ -67,6 +67,8 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
         supportedSourceMetadataFormats.put(MetadataFormat.MODS, Collections.singletonList(MetadataFormatConversion.MODS_2_KITODO));
         supportedSourceMetadataFormats.put(MetadataFormat.MARC, Arrays.asList(
                 MetadataFormatConversion.MARC_2_MODS, MetadataFormatConversion.MODS_2_KITODO));
+        supportedSourceMetadataFormats.put(MetadataFormat.PICA, Collections.singletonList(MetadataFormatConversion.PICA_2_KITODO));
+        System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
     }
 
     private static MetadataFormat supportedTargetMetadataFormat = MetadataFormat.KITODO;

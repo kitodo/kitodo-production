@@ -13,6 +13,7 @@ package org.kitodo.api.schemaconverter;
 
 public enum MetadataFormatConversion {
     MODS_2_KITODO("mods2kitodo.xsl", null),
+    PICA_2_KITODO("pica2kitodo.xsl", null),
     MARC_2_MODS("marc21slim2mods.xsl", "https://www.loc.gov/standards/mods/v3/MARC21slim2MODS3-4.xsl");
 
     private String fileName;
