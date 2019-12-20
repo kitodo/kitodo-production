@@ -55,12 +55,12 @@ public class Command implements CommandInterface {
                 outputMessage.addAll(errorMessage);
 
                 commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
-                if (!commandResult.isSuccessful()) {
+                if (commandResult.isSuccessful()) {
+                    logger.info(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
+                            + " was successful!: " + commandResult.getMessages());
+                } else {
                     logger.error(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
                             + " failed!: " + commandResult.getMessages());
-                } else {
-                    logger.info(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
-                        + " was successful!: " + commandResult.getMessages());
                 }
             }
         } catch (InterruptedException e) {

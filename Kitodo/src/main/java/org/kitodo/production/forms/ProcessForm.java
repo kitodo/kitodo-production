@@ -1281,7 +1281,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setProcessEditReferer(String referer) {
         if (!referer.isEmpty()) {
-            if (referer.equals("processes")) {
+            if ("processes".equals(referer)) {
                 this.processEditReferer = referer;
             } else if (!referer.contains("taskEdit") || this.processEditReferer.isEmpty()) {
                 this.processEditReferer = DEFAULT_LINK;

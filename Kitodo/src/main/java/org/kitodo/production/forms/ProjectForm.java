@@ -636,7 +636,7 @@ public class ProjectForm extends BaseForm {
      */
     public void setProjectEditReferer(String referer) {
         if (!referer.isEmpty()) {
-            if (referer.equals("projects")) {
+            if ("projects".equals(referer)) {
                 this.projectEditReferer = referer;
             } else {
                 this.projectEditReferer = DEFAULT_LINK;

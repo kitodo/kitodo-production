@@ -1001,7 +1001,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     private URI getImageDirectory(boolean useFallBack, URI directory, URI imageDirectory) {
-        if (Objects.nonNull(imageDirectory) && useFallBack && !SUFFIX.equals("")) {
+        if (Objects.nonNull(imageDirectory) && useFallBack && !SUFFIX.isEmpty()) {
             URI tif = imageDirectory;
             List<URI> files = fileService.getSubUris(tif);
             if (files.isEmpty()) {

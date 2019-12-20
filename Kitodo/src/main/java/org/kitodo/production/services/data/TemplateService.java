@@ -239,7 +239,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
      * @return diagram image file
      */
     public InputStream getTasksDiagram(String fileName) {
-        if (Objects.nonNull(fileName) && !fileName.equals("")) {
+        if (Objects.nonNull(fileName) && !fileName.isEmpty()) {
             File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName + ".svg");
             try {
                 return new FileInputStream(tasksDiagram);

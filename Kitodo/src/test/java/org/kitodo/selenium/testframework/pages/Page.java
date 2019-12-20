@@ -34,6 +34,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public abstract class Page<T> {
 
     private static final Logger logger = LogManager.getLogger(Page.class);
+    static final String DATA = "_data";
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")

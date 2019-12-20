@@ -44,7 +44,7 @@ public class DocketDAO extends BaseDAO<Docket> {
     }
 
     @Override
-    public void remove(Integer id) throws DAOException {
-        removeObject(Docket.class, id);
+    public void remove(Integer docketId) throws DAOException {
+        removeObject(Docket.class, docketId);
     }
 }

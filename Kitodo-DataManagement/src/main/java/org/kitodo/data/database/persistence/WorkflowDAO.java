@@ -20,8 +20,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class WorkflowDAO extends BaseDAO<Workflow> {
 
     @Override
-    public Workflow getById(Integer id) throws DAOException {
-        Workflow workflow = retrieveObject(Workflow.class, id);
+    public Workflow getById(Integer workflowId) throws DAOException {
+        Workflow workflow = retrieveObject(Workflow.class, workflowId);
         if (workflow == null) {
             throw new DAOException("Object cannot be found in database");
         }

@@ -22,8 +22,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class UserDAO extends BaseDAO<User> {
 
     @Override
-    public User getById(Integer id) throws DAOException {
-        User user = retrieveObject(User.class, id);
+    public User getById(Integer userId) throws DAOException {
+        User user = retrieveObject(User.class, userId);
         if (user == null) {
             throw new DAOException("Object cannot be found in database");
         }
@@ -52,8 +52,8 @@ public class UserDAO extends BaseDAO<User> {
     }
 
     @Override
-    public void remove(Integer id) throws DAOException {
-        User user = getById(id);
+    public void remove(Integer userId) throws DAOException {
+        User user = getById(userId);
         user.selfDestruct();
         save(user);
     }

@@ -31,7 +31,7 @@ public class TasksPage extends Page<TasksPage> {
     private static final String FILTER_FORM = TASKS_TAB_VIEW + ":filterForm";
 
     @SuppressWarnings("unused")
-    @FindBy(id = TASK_TABLE + "_data")
+    @FindBy(id = TASK_TABLE + DATA)
     private WebElement taskTable;
 
     private WebElement editTaskLink;

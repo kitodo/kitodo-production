@@ -44,7 +44,7 @@ public class PropertyDAO extends BaseDAO<Property> {
     }
 
     @Override
-    public void remove(Integer id) throws DAOException {
-        removeObject(Property.class, id);
+    public void remove(Integer propertyId) throws DAOException {
+        removeObject(Property.class, propertyId);
     }
 }

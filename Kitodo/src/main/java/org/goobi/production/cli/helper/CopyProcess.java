@@ -283,23 +283,23 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    private void addProperties(ImportObject io) {
+    private void addProperties(ImportObject importObject) {
         ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
         ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
                 this.tifHeaderImageDescription);
         ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
-        if (Objects.isNull(io)) {
+        if (Objects.isNull(importObject)) {
             addAdditionalFields(this.additionalFields, this.prozessKopie);
         } else {
-            for (Property processProperty : io.getProcessProperties()) {
+            for (Property processProperty : importObject.getProcessProperties()) {
                 ProcessGenerator.copyPropertyForProcess(this.prozessKopie, processProperty);
             }
-            for (Property workpieceProperty : io.getWorkProperties()) {
+            for (Property workpieceProperty : importObject.getWorkProperties()) {
                 ProcessGenerator.copyPropertyForWorkpiece(this.prozessKopie, workpieceProperty);
             }
 
-            for (Property templateProperty : io.getTemplateProperties()) {
+            for (Property templateProperty : importObject.getTemplateProperties()) {
                 ProcessGenerator.copyPropertyForTemplate(this.prozessKopie, templateProperty);
             }
             ProcessGenerator.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
@@ -397,11 +397,11 @@ public class CopyProcess extends ProzesskopieForm {
     private String calcProcessTitleCheck(String fieldName, String fieldValue) {
         String processTitleCheck = fieldValue;
 
-        if (fieldName.equals("Bandnummer")) {
+        if ("Bandnummer".equals(fieldName)) {
             try {
                 int bandInt = Integer.parseInt(fieldValue);
-                java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
-                processTitleCheck = df.format(bandInt);
+                java.text.DecimalFormat decimalFormat = new java.text.DecimalFormat("#0000");
+                processTitleCheck = decimalFormat.format(bandInt);
             } catch (NumberFormatException e) {
                 Helper.setErrorMessage(INCOMPLETE_DATA, "Bandnummer ist keine gültige Zahl", logger, e);
             }
@@ -432,7 +432,7 @@ public class CopyProcess extends ProzesskopieForm {
             // if the string begins and ends with ', then take over the content
             if (token.startsWith("'") && token.endsWith("'") && token.length() > 2) {
                 tifHeaderImageDescriptionBuilder.append(token, 1, token.length() - 1);
-            } else if (token.equals("$Doctype")) {
+            } else if ("$Doctype".equals(token)) {
                 tifHeaderImageDescriptionBuilder.append(this.docType);
             } else {
                 appendDataFromAdditionalFields(token, tifHeaderImageDescriptionBuilder);

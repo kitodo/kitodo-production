@@ -44,7 +44,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement processesTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = PROCESSES_TABLE + "_data")
+    @FindBy(id = PROCESSES_TABLE + DATA)
     private WebElement processesTable;
 
     @SuppressWarnings("unused")

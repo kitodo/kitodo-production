@@ -241,17 +241,17 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *
      * @param cls
      *            the class type to remove
-     * @param id
+     * @param objectId
      *            the id of the class type
      * @throws DAOException
      *             if a HibernateException is thrown
      */
     @SuppressWarnings("unchecked")
-    static void removeObject(Class cls, Integer id) throws DAOException {
+    static void removeObject(Class cls, Integer objectId) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
             Transaction transaction = session.beginTransaction();
             synchronized (lockObject) {
-                Object object = session.load(cls, id);
+                Object object = session.load(cls, objectId);
                 session.delete(object);
                 session.flush();
                 transaction.commit();
@@ -309,10 +309,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> retrieveObjects(String query, int first, int max) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.list();
+            Query sessionQuery = session.createQuery(query);
+            sessionQuery.setFirstResult(first);
+            sessionQuery.setMaxResults(max);
+            return sessionQuery.list();
         } catch (HibernateException e) {
             throw new DAOException(e);
         }

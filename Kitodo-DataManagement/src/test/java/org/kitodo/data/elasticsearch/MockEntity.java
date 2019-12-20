@@ -35,7 +35,13 @@ import org.kitodo.config.ConfigMain;
 public class MockEntity {
 
     private static final String HTTP_TRANSPORT_PORT = "9305";
-    private static final  String NODE_NAME = "indexernode";
+    private static final String NODE_NAME = "indexernode";
+    private static final String TITLE = "title";
+    private static final String TYPE = "type";
+    private static final String AMOUNT = "amount";
+    private static final String PROCESSES = "processes";
+    private static final String IDENTIFIER = "id";
+    private static final String TARGET = "target";
 
     @SuppressWarnings("unchecked")
     public static Node prepareNode() throws Exception {
@@ -61,10 +67,10 @@ public class MockEntity {
         Map settingsMap = new HashMap();
         settingsMap.put("node.name", NODE_NAME);
         // create all data directories under Maven build directory
-        settingsMap.put("path.conf", "target");
-        settingsMap.put("path.data", "target");
-        settingsMap.put("path.logs", "target");
-        settingsMap.put("path.home", "target");
+        settingsMap.put("path.conf", TARGET);
+        settingsMap.put("path.data", TARGET);
+        settingsMap.put("path.logs", TARGET);
+        settingsMap.put("path.home", TARGET);
         // set ports used by Elastic Search to something different than default
         settingsMap.put("http.type", "netty4");
         settingsMap.put("http.port", port);
@@ -85,39 +91,39 @@ public class MockEntity {
         HashMap<Integer, Map<String, Object>> documents = new HashMap<>();
 
         Map<String, Object> firstBatchMap = new HashMap<>();
-        firstBatchMap.put("title", "Batch1");
-        firstBatchMap.put("type", "LOGISTIC");
-        firstBatchMap.put("amount", 2);
+        firstBatchMap.put(TITLE, "Batch1");
+        firstBatchMap.put(TYPE, "LOGISTIC");
+        firstBatchMap.put(AMOUNT, 2);
         Map<String, Object> firstBatchProcesses = new HashMap<>();
-        firstBatchProcesses.put("id", Arrays.asList(1, 2));
-        firstBatchMap.put("processes", firstBatchProcesses);
+        firstBatchProcesses.put(IDENTIFIER, Arrays.asList(1, 2));
+        firstBatchMap.put(PROCESSES, firstBatchProcesses);
         documents.put(1, firstBatchMap);
 
         Map<String, Object> secondBatchMap = new HashMap<>();
-        secondBatchMap.put("title", "Sort");
-        secondBatchMap.put("type", "");
-        secondBatchMap.put("amount", 4);
+        secondBatchMap.put(TITLE, "Sort");
+        secondBatchMap.put(TYPE, "");
+        secondBatchMap.put(AMOUNT, 4);
         Map<String, Object> secondBatchMapProcesses = new HashMap<>();
-        secondBatchMapProcesses.put("id", Collections.emptyList());
-        secondBatchMap.put("processes", secondBatchMapProcesses);
+        secondBatchMapProcesses.put(IDENTIFIER, Collections.emptyList());
+        secondBatchMap.put(PROCESSES, secondBatchMapProcesses);
         documents.put(2, secondBatchMap);
 
         Map<String, Object> thirdBatchMap = new HashMap<>();
-        thirdBatchMap.put("title", "Batch2");
-        thirdBatchMap.put("type", "");
-        thirdBatchMap.put("amount", 0);
+        thirdBatchMap.put(TITLE, "Batch2");
+        thirdBatchMap.put(TYPE, "");
+        thirdBatchMap.put(AMOUNT, 0);
         Map<String, Object> thirdBatchMapProcesses = new HashMap<>();
-        thirdBatchMapProcesses.put("id", Collections.emptyList());
-        thirdBatchMap.put("processes", thirdBatchMapProcesses);
+        thirdBatchMapProcesses.put(IDENTIFIER, Collections.emptyList());
+        thirdBatchMap.put(PROCESSES, thirdBatchMapProcesses);
         documents.put(3, thirdBatchMap);
 
         Map<String, Object> fourthBatchMap = new HashMap<>();
-        fourthBatchMap.put("title", "Order");
-        fourthBatchMap.put("type", "");
-        fourthBatchMap.put("amount", 2);
+        fourthBatchMap.put(TITLE, "Order");
+        fourthBatchMap.put(TYPE, "");
+        fourthBatchMap.put(AMOUNT, 2);
         Map<String, Object> fourthBatchMapProcesses = new HashMap<>();
-        fourthBatchMapProcesses.put("id", Collections.emptyList());
-        fourthBatchMap.put("processes", fourthBatchMapProcesses);
+        fourthBatchMapProcesses.put(IDENTIFIER, Collections.emptyList());
+        fourthBatchMap.put(PROCESSES, fourthBatchMapProcesses);
         documents.put(4, fourthBatchMap);
 
         return documents;

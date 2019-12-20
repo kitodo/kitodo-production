@@ -23,7 +23,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;

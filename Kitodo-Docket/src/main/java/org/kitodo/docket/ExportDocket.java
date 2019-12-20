@@ -47,16 +47,16 @@ public class ExportDocket {
      * @throws IOException
      *             Throws IOException, when pdfGeneration fails
      */
-    void startExport(DocketData docketData, OutputStream os, File xsltFile) throws IOException {
+    void startExport(DocketData docketData, OutputStream outputStream, File xsltFile) throws IOException {
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         exl.startExport(docketData, out);
 
         byte[] pdfBytes = generatePdfBytes(out, xsltFile);
 
-        os.write(pdfBytes);
-        os.flush();
-        os.close();
+        outputStream.write(pdfBytes);
+        outputStream.flush();
+        outputStream.close();
     }
 
     /**

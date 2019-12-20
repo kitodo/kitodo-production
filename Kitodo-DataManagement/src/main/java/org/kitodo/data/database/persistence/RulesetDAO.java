@@ -44,7 +44,7 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
     }
 
     @Override
-    public void remove(Integer id) throws DAOException {
-        removeObject(Ruleset.class, id);
+    public void remove(Integer rulesetId) throws DAOException {
+        removeObject(Ruleset.class, rulesetId);
     }
 }

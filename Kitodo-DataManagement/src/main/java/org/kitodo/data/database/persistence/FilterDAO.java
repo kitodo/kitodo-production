@@ -22,8 +22,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class FilterDAO extends BaseDAO<Filter> {
 
     @Override
-    public Filter getById(Integer id) throws DAOException {
-        Filter filter = retrieveObject(Filter.class, id);
+    public Filter getById(Integer filterId) throws DAOException {
+        Filter filter = retrieveObject(Filter.class, filterId);
         if (filter == null) {
             throw new DAOException("Object cannot be found in database");
         }
@@ -47,7 +47,7 @@ public class FilterDAO extends BaseDAO<Filter> {
     }
 
     @Override
-    public void remove(Integer id) throws DAOException {
-        removeObject(Filter.class, id);
+    public void remove(Integer filterId) throws DAOException {
+        removeObject(Filter.class, filterId);
     }
 }
