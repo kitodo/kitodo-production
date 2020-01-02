@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor.handlers;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
@@ -39,7 +40,12 @@ public class MetsKitodoHeaderHandler {
      * @return The Mets object with added note.
      */
     public static Mets addNoteToMetsHeader(String noteMessage, Mets mets) {
-        List<MetsType.MetsHdr.Agent> agents = mets.getMetsHdr().getAgent();
+        MetsType.MetsHdr metsHdr = mets.getMetsHdr();
+        if (Objects.isNull(metsHdr)) {
+            return mets;
+        }
+
+        List<MetsType.MetsHdr.Agent> agents = metsHdr.getAgent();
         if (!agents.isEmpty()) {
             agents.get(0).getNote().add(noteMessage);
         }
