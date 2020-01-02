@@ -343,6 +343,9 @@
                         }
                     }
                 },
+                "hasChildren": {
+                    "type": "boolean"
+                },
                 "comments": {
                     "properties": {
                         "id": {
@@ -451,6 +454,9 @@
                             }
                         }
                     }
+                },
+                "hasParent": {
+                    "type": "boolean"
                 },
                 "properties": {
                     "properties": {

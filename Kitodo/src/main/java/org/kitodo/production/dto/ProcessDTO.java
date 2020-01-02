@@ -32,6 +32,8 @@ public class ProcessDTO extends BaseTemplateDTO {
     private String wikiField;
     private String processBaseUri;
     private String batchID;
+    private boolean hasParent;
+    private boolean hasChildren;
     private Integer sortHelperArticles;
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
@@ -266,6 +268,42 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setBatchID(String batchID) {
         this.batchID = batchID;
+    }
+
+    /**
+     * Get hasParent.
+     *
+     * @return value of hasParent
+     */
+    public boolean hasParent() {
+        return hasParent;
+    }
+
+    /**
+     * Set hasParent.
+     *
+     * @param hasParent as boolean
+     */
+    public void setHasParent(boolean hasParent) {
+        this.hasParent = hasParent;
+    }
+
+    /**
+     * Get hasChildren.
+     *
+     * @return value of hasChildren
+     */
+    public boolean hasChildren() {
+        return hasChildren;
+    }
+
+    /**
+     * Set hasChildren.
+     *
+     * @param hasChildren as boolean
+     */
+    public void setHasChildren(boolean hasChildren) {
+        this.hasChildren = hasChildren;
     }
 
     /**
