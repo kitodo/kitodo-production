@@ -108,7 +108,7 @@ public class ListColumn extends BaseBean {
 
     @Override
     public int hashCode() {
-        return title != null ? title.hashCode() : 0;
+        return Objects.isNull(title) ? 0 : title.hashCode();
     }
 
 }

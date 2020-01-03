@@ -44,7 +44,7 @@ public class IndexingST extends BaseTestSelenium {
 
         Predicate<String> isIndexingFinished = (d) -> {
             if (Objects.nonNull(d)) {
-                return d.equals("100%");
+                return "100%".equals(d);
             }
             return false;
         };

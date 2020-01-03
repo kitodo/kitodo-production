@@ -28,19 +28,19 @@ public class DesktopPage extends Page<DesktopPage> {
     private static final String STATISTICS_TABLE = "statisticsTable";
 
     @SuppressWarnings("unused")
-    @FindBy(id = PROCESS_TABLE + "_data")
+    @FindBy(id = PROCESS_TABLE + DATA)
     private WebElement processTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = PROJECTS_TABLE + "_data")
+    @FindBy(id = PROJECTS_TABLE + DATA)
     private WebElement projectsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TASKS_TABLE + "_data")
+    @FindBy(id = TASKS_TABLE + DATA)
     private WebElement tasksTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = STATISTICS_TABLE + "_data")
+    @FindBy(id = STATISTICS_TABLE + DATA)
     private WebElement statisticsTable;
 
     @SuppressWarnings("unused")

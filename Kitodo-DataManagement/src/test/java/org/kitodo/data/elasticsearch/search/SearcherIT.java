@@ -13,7 +13,6 @@ package org.kitodo.data.elasticsearch.search;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.Objects;
@@ -45,6 +44,12 @@ public class SearcherIT {
     private static String testIndexName;
     private static QueryBuilder query = QueryBuilders.matchAllQuery();
     private static Searcher searcher = new Searcher("testsearch");
+    private static final String TITLE = "title";
+    private static final String BATCH_ONE = "Batch1";
+    private static final String WRONG_AMOUNT = "Incorrect result - amount doesn't match to given number!";
+    private static final String WRONG_ID = "Incorrect result - id doesn't match to given int values!";
+    private static final String WRONG_SIZE = "Incorrect result - size doesn't match to given int value!";
+    private static final String WRONG_TITLE = "Incorrect result - title doesn't match to given plain text!";
 
     @BeforeClass
     public static void prepareIndex() throws Exception {
@@ -61,7 +66,7 @@ public class SearcherIT {
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(2), 2, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(3), 3, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(4), 4, false);
-        indexRestClient.enableSortingByTextField("testsearch", "title");
+        indexRestClient.enableSortingByTextField("testsearch", TITLE);
     }
 
     @AfterClass
@@ -80,11 +85,11 @@ public class SearcherIT {
     public void shouldAggregateDocumentsAccordingToQueryAmount() {
         AggregationBuilder aggregation = AggregationBuilders.sum("amount").field("amount");
 
-        await().untilAsserted(() -> assertTrue("Incorrect result - amount doesn't match to given number!",
-            ((Sum) searcher.aggregateDocuments(query, aggregation).get("amount")).getValue() == 8.0));
+        await().untilAsserted(() -> assertEquals(WRONG_AMOUNT, 8.0,
+                ((Sum) searcher.aggregateDocuments(query, aggregation).get("amount")).getValue(), 0.0));
 
         /*QueryBuilder matchQuery = QueryBuilders.matchQuery("type", "");
-        await().untilAsserted(() -> assertTrue("Incorrect result - amount doesn't match to given number!",
+        await().untilAsserted(() -> assertTrue(WRONG_AMOUNT,
             ((Sum) searcher.aggregateDocuments(matchQuery, aggregation).get("amount")).getValue() == 6.0));*/
     }
 
@@ -104,8 +109,7 @@ public class SearcherIT {
         await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given plain text!", 1,
             getIdFromJSONObject(searcher.findDocument(1)).longValue()));
 
-        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!",
-            "Batch1", searcher.findDocument(1).get("title")));
+        await().untilAsserted(() -> assertEquals(WRONG_TITLE, BATCH_ONE, searcher.findDocument(1).get(TITLE)));
     }
 
     @Test
@@ -113,78 +117,76 @@ public class SearcherIT {
         await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given number!", 1,
             getIdFromJSONObject(searcher.findDocument(query)).intValue()));
 
-        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!",
-            "Batch1", searcher.findDocument(query).get("title")));
+        await().untilAsserted(() -> assertEquals(WRONG_TITLE, BATCH_ONE, searcher.findDocument(query).get(TITLE)));
 
-        QueryBuilder queryMatch = QueryBuilders.matchQuery("title", "Batch1");
+        QueryBuilder queryMatch = QueryBuilders.matchQuery(TITLE, BATCH_ONE);
         await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given plain text!", 1,
             getIdFromJSONObject(searcher.findDocument(queryMatch)).intValue()));
 
-        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!",
-            "Batch1", searcher.findDocument(queryMatch).get("title")));
+        await().untilAsserted(() -> assertEquals(WRONG_TITLE, BATCH_ONE, searcher.findDocument(queryMatch).get(TITLE)));
 
-        QueryBuilder queryNonexistent = QueryBuilders.matchQuery("title", "Nonexistent");
+        QueryBuilder queryNonexistent = QueryBuilders.matchQuery(TITLE, "Nonexistent");
         await().untilAsserted(() -> assertEquals("Incorrect result - id has another value than null!",
             Integer.valueOf(0), getIdFromJSONObject(searcher.findDocument(queryNonexistent))));
     }
 
     @Test
     public void shouldFindDocumentByQueryAndSort() {
-        SortBuilder sort = new FieldSortBuilder("title").order(SortOrder.DESC);
+        SortBuilder sort = new FieldSortBuilder(TITLE).order(SortOrder.DESC);
         await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given number!", 2,
             getIdFromJSONObject(searcher.findDocument(query, sort)).intValue()));
 
-        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!", "Sort",
-            searcher.findDocument(query, sort).get("title")));
+        await().untilAsserted(() -> assertEquals(WRONG_TITLE, "Sort",
+            searcher.findDocument(query, sort).get(TITLE)));
     }
 
     @Test
     public void shouldFindDocumentsByQuery() {
         await().ignoreExceptions()
-                .untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 1,
+                .untilAsserted(() -> assertEquals(WRONG_ID, 1,
                     getIdFromJSONObject(searcher.findDocuments(query).get(0)).intValue()));
 
         await().ignoreExceptions()
-                .untilAsserted(() -> assertEquals("Incorrect result - size doesn't match to given int value!", 4,
+                .untilAsserted(() -> assertEquals(WRONG_SIZE, 4,
                     searcher.findDocuments(query).size()));
 
-        QueryBuilder queryMatch = QueryBuilders.matchQuery("title", "Batch1");
+        QueryBuilder queryMatch = QueryBuilders.matchQuery(TITLE, BATCH_ONE);
         await().ignoreExceptions()
-                .untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 1,
+                .untilAsserted(() -> assertEquals(WRONG_ID, 1,
                     getIdFromJSONObject(searcher.findDocuments(queryMatch).get(0)).intValue()));
 
         await().ignoreExceptions()
-                .untilAsserted(() -> assertEquals("Incorrect result - size doesn't match to given int value!", 1,
+                .untilAsserted(() -> assertEquals(WRONG_SIZE, 1,
                     searcher.findDocuments(queryMatch).size()));
 
-        QueryBuilder queryNonexistent = QueryBuilders.matchQuery("title", "Nonexistent");
+        QueryBuilder queryNonexistent = QueryBuilders.matchQuery(TITLE, "Nonexistent");
         await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - size is bigger than 0!", 0,
             searcher.findDocuments(queryNonexistent).size()));
     }
 
     @Test
     public void shouldFindDocumentsByQueryAndSort() {
-        SortBuilder sort = new FieldSortBuilder("title").order(SortOrder.DESC);
+        SortBuilder sort = new FieldSortBuilder(TITLE).order(SortOrder.DESC);
         await().ignoreExceptions()
-                .untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 2,
+                .untilAsserted(() -> assertEquals(WRONG_ID, 2,
                     getIdFromJSONObject(searcher.findDocuments(query, sort).get(0)).intValue()));
     }
 
     @Test
     public void shouldFindDocumentsByQueryAndPagination() {
         await().ignoreExceptions()
-                .untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 2,
+                .untilAsserted(() -> assertEquals(WRONG_ID, 2,
                     getIdFromJSONObject(searcher.findDocuments(query, 1, 2).get(0)).intValue()));
     }
 
     @Test
     public void shouldFindDocumentsByQuerySortAndPagination() {
-        SortBuilder sort = new FieldSortBuilder("title").order(SortOrder.DESC);
+        SortBuilder sort = new FieldSortBuilder(TITLE).order(SortOrder.DESC);
 
-        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 4,
+        await().untilAsserted(() -> assertEquals(WRONG_ID, 4,
             getIdFromJSONObject(searcher.findDocuments(query, sort, 1, 2).get(0)).intValue()));
 
-        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 3,
+        await().untilAsserted(() -> assertEquals(WRONG_ID, 3,
             getIdFromJSONObject(searcher.findDocuments(query, sort, 1, 2).get(1)).intValue()));
     }
 

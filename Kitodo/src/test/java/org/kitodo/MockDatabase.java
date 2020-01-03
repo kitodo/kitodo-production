@@ -97,6 +97,10 @@ public class MockDatabase {
     private static final String GLOBAL_ASSIGNABLE = "_globalAssignable";
     private static final String CLIENT_ASSIGNABLE = "_clientAssignable";
     private static final String HTTP_TRANSPORT_PORT = "9305";
+    private static final String TARGET = "target";
+    private static final String CHOICE = "choice";
+    private static final String TEST = "test";
+    private static final String FIRST_VALUE = "first value";
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static Server tcpServer;
     private static HashMap<String, Integer> removableObjectIDs;
@@ -244,10 +248,10 @@ public class MockDatabase {
         Map settingsMap = new HashMap();
         settingsMap.put("node.name", nodeName);
         // create all data directories under Maven build directory
-        settingsMap.put("path.conf", "target");
-        settingsMap.put("path.data", "target");
-        settingsMap.put("path.logs", "target");
-        settingsMap.put("path.home", "target");
+        settingsMap.put("path.conf", TARGET);
+        settingsMap.put("path.data", TARGET);
+        settingsMap.put("path.logs", TARGET);
+        settingsMap.put("path.home", TARGET);
         // set ports used by Elastic Search to something different than default
         settingsMap.put("http.type", "netty4");
         settingsMap.put("http.port", httpPort);
@@ -639,10 +643,10 @@ public class MockDatabase {
 
         Property firstProcessProperty = new Property();
         firstProcessProperty.setTitle("Process Property");
-        firstProcessProperty.setValue("first value");
+        firstProcessProperty.setValue(FIRST_VALUE);
         firstProcessProperty.setObligatory(true);
         firstProcessProperty.setDataType(PropertyType.STRING);
-        firstProcessProperty.setChoice("choice");
+        firstProcessProperty.setChoice(CHOICE);
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.getProcesses().add(firstProcess);
@@ -697,10 +701,10 @@ public class MockDatabase {
 
         Property firstProcessProperty = new Property();
         firstProcessProperty.setTitle("Process Property");
-        firstProcessProperty.setValue("first value");
+        firstProcessProperty.setValue(FIRST_VALUE);
         firstProcessProperty.setObligatory(true);
         firstProcessProperty.setDataType(PropertyType.STRING);
-        firstProcessProperty.setChoice("choice");
+        firstProcessProperty.setChoice(CHOICE);
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.getProcesses().add(firstProcess);
@@ -1067,10 +1071,10 @@ public class MockDatabase {
 
         Property firstTemplateProperty = new Property();
         firstTemplateProperty.setTitle("firstTemplate title");
-        firstTemplateProperty.setValue("first value");
+        firstTemplateProperty.setValue(FIRST_VALUE);
         firstTemplateProperty.setObligatory(true);
         firstTemplateProperty.setDataType(PropertyType.STRING);
-        firstTemplateProperty.setChoice("choice");
+        firstTemplateProperty.setChoice(CHOICE);
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
         firstTemplateProperty.getTemplates().add(template);
@@ -1109,7 +1113,7 @@ public class MockDatabase {
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
         firstUser.setLogin("kowal");
-        firstUser.setPassword(passwordEncoder.encrypt("test"));
+        firstUser.setPassword(passwordEncoder.encrypt(TEST));
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
@@ -1125,7 +1129,7 @@ public class MockDatabase {
         secondUser.setName("Adam");
         secondUser.setSurname("Nowak");
         secondUser.setLogin("nowak");
-        secondUser.setPassword(passwordEncoder.encrypt("test"));
+        secondUser.setPassword(passwordEncoder.encrypt(TEST));
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
@@ -1151,7 +1155,7 @@ public class MockDatabase {
         fourthUser.setName("Max");
         fourthUser.setSurname("Mustermann");
         fourthUser.setLogin("mmustermann");
-        fourthUser.setPassword(passwordEncoder.encrypt("test"));
+        fourthUser.setPassword(passwordEncoder.encrypt(TEST));
         fourthUser.setLdapLogin("mmustermann");
         fourthUser.setLocation("Dresden");
         fourthUser.setTableSize(20);
@@ -1163,7 +1167,7 @@ public class MockDatabase {
         fifthUser.setName("Last");
         fifthUser.setSurname("User");
         fifthUser.setLogin("user");
-        fifthUser.setPassword(passwordEncoder.encrypt("test"));
+        fifthUser.setPassword(passwordEncoder.encrypt(TEST));
         fifthUser.setLdapLogin("user");
         fifthUser.setLocation("Dresden");
         fifthUser.setTableSize(20);
@@ -1174,7 +1178,7 @@ public class MockDatabase {
         sixthUser.setName("Very last");
         sixthUser.setSurname("User");
         sixthUser.setLogin("verylast");
-        sixthUser.setPassword(passwordEncoder.encrypt("test"));
+        sixthUser.setPassword(passwordEncoder.encrypt(TEST));
         sixthUser.getClients().add(firstClient);
         sixthUser.getRoles().add(metadataRole);
         sixthUser.setMetadataLanguage("de");
@@ -1294,10 +1298,10 @@ public class MockDatabase {
 
         Property firstWorkpieceProperty = new Property();
         firstWorkpieceProperty.setTitle("FirstWorkpiece Property");
-        firstWorkpieceProperty.setValue("first value");
+        firstWorkpieceProperty.setValue(FIRST_VALUE);
         firstWorkpieceProperty.setObligatory(true);
         firstWorkpieceProperty.setDataType(PropertyType.STRING);
-        firstWorkpieceProperty.setChoice("choice");
+        firstWorkpieceProperty.setChoice(CHOICE);
         LocalDate localDate = new LocalDate(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
         firstWorkpieceProperty.getWorkpieces().add(workpiece);
@@ -1320,12 +1324,12 @@ public class MockDatabase {
     }
 
     public static void insertWorkflows() throws DAOException, DataException {
-        Workflow firstWorkflow = new Workflow("test");
+        Workflow firstWorkflow = new Workflow(TEST);
         firstWorkflow.setStatus(WorkflowStatus.ACTIVE);
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(firstWorkflow);
 
-        Workflow secondWorkflow = new Workflow("test");
+        Workflow secondWorkflow = new Workflow(TEST);
         secondWorkflow.setStatus(WorkflowStatus.DRAFT);
         secondWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(secondWorkflow);

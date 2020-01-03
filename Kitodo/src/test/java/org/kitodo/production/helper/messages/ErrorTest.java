@@ -12,7 +12,6 @@
 package org.kitodo.production.helper.messages;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Enumeration;
 import java.util.Locale;
 

@@ -138,26 +138,26 @@ public class User extends BaseBean {
             this.roles = new ArrayList<>();
         }
 
-        if (user.projects != null) {
-            this.projects = user.projects;
-        } else {
+        if (Objects.isNull(user.projects)) {
             this.projects = new ArrayList<>();
+        } else {
+            this.projects = user.projects;
         }
 
-        if (user.clients != null) {
-            this.clients = user.clients;
-        } else {
+        if (Objects.isNull(user.clients)) {
             this.clients = new ArrayList<>();
+        } else {
+            this.clients = user.clients;
         }
 
-        if (user.filters != null) {
-            this.filters = user.filters;
-        } else {
+        if (Objects.isNull(user.filters)) {
             this.filters = new ArrayList<>();
+        } else {
+            this.filters = user.filters;
         }
 
         // default values
-        if (user.tableSize != null) {
+        if (Objects.nonNull(user.tableSize)) {
             this.tableSize = user.tableSize;
         }
     }

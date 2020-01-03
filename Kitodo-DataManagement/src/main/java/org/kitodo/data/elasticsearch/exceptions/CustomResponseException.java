@@ -16,8 +16,8 @@ package org.kitodo.data.elasticsearch.exceptions;
  */
 public class CustomResponseException extends Exception {
 
-    public CustomResponseException(Exception e) {
-        super(e);
+    public CustomResponseException(Exception exception) {
+        super(exception);
     }
 
     public CustomResponseException(String message) {

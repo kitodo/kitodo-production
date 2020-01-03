@@ -35,7 +35,9 @@ public class RoleServiceIT {
 
     private static final RoleService roleService = ServiceManager.getRoleService();
 
-    private final int EXPECTED_ROLES_COUNT = 7;
+    private static final int EXPECTED_ROLES_COUNT = 7;
+
+    private static final String WRONG_NUMBER_OF_ROLES = "Amount of roles assigned to client is incorrect!";
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -169,20 +171,20 @@ public class RoleServiceIT {
     @Test
     public void shouldGetAllRolesByClientIds() {
         List<Role> roles = roleService.getAllRolesByClientId(1);
-        assertEquals("Amount of roles assigned to client is incorrect!", 6, roles.size());
+        assertEquals(WRONG_NUMBER_OF_ROLES, 6, roles.size());
 
         roles = roleService.getAllRolesByClientId(2);
-        assertEquals("Amount of roles assigned to client is incorrect!", 1, roles.size());
+        assertEquals(WRONG_NUMBER_OF_ROLES, 1, roles.size());
     }
 
     @Test
     public void shouldGetAllAvailableForAssignToUser() throws Exception {
         User user = ServiceManager.getUserService().getById(1);
         List<Role> roles = roleService.getAllAvailableForAssignToUser(user);
-        assertEquals("Amount of roles assigned to client is incorrect!", 3, roles.size());
+        assertEquals(WRONG_NUMBER_OF_ROLES, 3, roles.size());
 
         user = ServiceManager.getUserService().getById(2);
         roles = roleService.getAllAvailableForAssignToUser(user);
-        assertEquals("Amount of roles assigned to client is incorrect!", 5, roles.size());
+        assertEquals(WRONG_NUMBER_OF_ROLES, 5, roles.size());
     }
 }

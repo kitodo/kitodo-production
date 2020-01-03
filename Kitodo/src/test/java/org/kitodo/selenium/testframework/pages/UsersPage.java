@@ -41,19 +41,19 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement usersTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USERS_TABLE + "_data")
+    @FindBy(id = USERS_TABLE + DATA)
     private WebElement usersTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = ROLES_TABLE + "_data")
+    @FindBy(id = ROLES_TABLE + DATA)
     private WebElement rolesTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = CLIENTS_TABLE + "_data")
+    @FindBy(id = CLIENTS_TABLE + DATA)
     private WebElement clientsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = LDAP_GROUPS_TABLE + "_data")
+    @FindBy(id = LDAP_GROUPS_TABLE + DATA)
     private WebElement ldapGroupsTable;
 
     @SuppressWarnings("unused")

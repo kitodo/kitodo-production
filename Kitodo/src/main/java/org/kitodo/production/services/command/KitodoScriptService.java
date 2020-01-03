@@ -415,16 +415,16 @@ public class KitodoScriptService {
         String property = this.parameters.get("property");
         String value = this.parameters.get("value");
 
-        if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages")
-                && !property.equals("validate") && !property.equals("exportdms") && !property.equals("batch")
-                && !property.equals("automatic")) {
+        if (!("metadata".equals(property) || "readimages".equals(property) || "writeimages".equals(property)
+                || property.equals("validate") || property.equals("exportdms") || property.equals("batch")
+                || property.equals("automatic"))) {
             Helper.setErrorMessage(
                 "wrong parameter 'property'; possible values: metadata, readimages, writeimages, "
                         + "validate, exportdms");
             return;
         }
 
-        if (!value.equals("true") && !value.equalsIgnoreCase(String.valueOf(Boolean.FALSE))) {
+        if (!"true".equals(value) && !value.equalsIgnoreCase(String.valueOf(Boolean.FALSE))) {
             Helper.setErrorMessage("wrong parameter 'value'; possible " + "values: true, false");
             return;
         }

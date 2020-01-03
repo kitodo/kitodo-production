@@ -72,10 +72,10 @@ public class KitodoServiceLoader<T> {
     public KitodoServiceLoader(Class clazz) {
         String modulesDirectory = KitodoConfig.getKitodoModulesDirectory();
         this.clazz = clazz;
-        if (!new File(modulesDirectory).exists()) {
-            logger.error("Specified module folder does not exist: {}", modulesDirectory);
-        } else {
+        if (new File(modulesDirectory).exists()) {
             this.modulePath = modulesDirectory;
+        } else {
+            logger.error("Specified module folder does not exist: {}", modulesDirectory);
         }
     }
 
@@ -122,12 +122,12 @@ public class KitodoServiceLoader<T> {
 
                     if (hasFrontendFiles(jarFile)) {
 
-                        Enumeration<JarEntry> e = jarFile.entries();
+                        Enumeration<JarEntry> entries = jarFile.entries();
 
                         URL[] urls = {new URL("jar:file:" + f.toString() + "!/") };
                         try (URLClassLoader cl = URLClassLoader.newInstance(urls)) {
-                            while (e.hasMoreElements()) {
-                                JarEntry je = e.nextElement();
+                            while (entries.hasMoreElements()) {
+                                JarEntry je = entries.nextElement();
 
                                 /*
                                  * IMPORTANT: Naming convention: the name of the
@@ -149,14 +149,14 @@ public class KitodoServiceLoader<T> {
 
                                 String className = je.getName().substring(0, je.getName().length() - 6);
                                 className = className.replace('/', '.');
-                                Class c = cl.loadClass(className);
+                                Class aClass = cl.loadClass(className);
 
                                 String beanName = className.substring(className.lastIndexOf('.') + 1).trim();
 
                                 FacesContext facesContext = FacesContext.getCurrentInstance();
                                 HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
 
-                                session.getServletContext().setAttribute(beanName, c.newInstance());
+                                session.getServletContext().setAttribute(beanName, aClass.newInstance());
                             }
                         }
                     }
@@ -192,7 +192,10 @@ public class KitodoServiceLoader<T> {
                         extractFrontEndFiles(loc.getAbsolutePath(), tempDir);
 
                         String moduleName = extractModuleName(tempDir);
-                        if (!moduleName.isEmpty()) {
+                        if (moduleName.isEmpty()) {
+                            logger.info("No module found in JarFile '" + jarFile.getName() + "'.");
+
+                        } else {
                             FacesContext facesContext = FacesContext.getCurrentInstance();
                             HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
 
@@ -201,10 +204,8 @@ public class KitodoServiceLoader<T> {
                             FileUtils.deleteDirectory(new File(filePath));
 
                             String resourceFolder = String.join(File.separator,
-                                Arrays.asList(tempDir.getAbsolutePath(), META_INF_FOLDER, RESOURCES_FOLDER));
+                                    Arrays.asList(tempDir.getAbsolutePath(), META_INF_FOLDER, RESOURCES_FOLDER));
                             copyFrontEndFiles(resourceFolder, filePath);
-                        } else {
-                            logger.info("No module found in JarFile '" + jarFile.getName() + "'.");
                         }
                         FileUtils.deleteDirectory(tempDir);
                     }
@@ -282,10 +283,10 @@ public class KitodoServiceLoader<T> {
                         resourceFile.getParentFile().mkdirs();
                     }
 
-                    try (InputStream is = jar.getInputStream(currentJarEntry);
+                    try (InputStream inputStream = jar.getInputStream(currentJarEntry);
                             FileOutputStream fos = new FileOutputStream(resourceFile)) {
-                        while (is.available() > 0) {
-                            fos.write(is.read());
+                        while (inputStream.available() > 0) {
+                            fos.write(inputStream.read());
                         }
                     }
                 }
@@ -328,10 +329,10 @@ public class KitodoServiceLoader<T> {
      *
      */
     private File findFile(String name, File folder) throws FileNotFoundException {
-        Collection<File> s = FileUtils.listFiles(folder, null, true);
-        for (File f : s) {
-            if (f.getName().equals(name)) {
-                return f;
+        Collection<File> files = FileUtils.listFiles(folder, null, true);
+        for (File currentFile : files) {
+            if (currentFile.getName().equals(name)) {
+                return currentFile;
             }
         }
         throw new FileNotFoundException(

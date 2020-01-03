@@ -19,8 +19,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class ListColumnDAO extends BaseDAO<ListColumn> {
     @Override
-    public ListColumn getById(Integer id) throws DAOException {
-        ListColumn column = retrieveObject(ListColumn.class, id);
+    public ListColumn getById(Integer listColumnId) throws DAOException {
+        ListColumn column = retrieveObject(ListColumn.class, listColumnId);
         if (Objects.isNull(column)) {
             throw new DAOException("ListColumn cannot be found in database.");
         }
@@ -61,7 +61,7 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
     }
 
     @Override
-    public void remove(Integer id) throws DAOException {
-        removeObject(ListColumn.class, id);
+    public void remove(Integer listColumnId) throws DAOException {
+        removeObject(ListColumn.class, listColumnId);
     }
 }

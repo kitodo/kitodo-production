@@ -306,19 +306,19 @@ public class ConfigProject {
      * </dl>
      */
     private String findTitleDefinition(String title, String docType, String isDocType, String isNotDocType) {
-        if ((isDocType.equals("")
-                && (isNotDocType.equals("") || !StringUtils.containsIgnoreCase(isNotDocType, docType)))
-                || (!isDocType.equals("") && !isNotDocType.equals("")
+        if ((isDocType.isEmpty()
+                && (isNotDocType.isEmpty() || !StringUtils.containsIgnoreCase(isNotDocType, docType)))
+                || (!isDocType.isEmpty() && !isNotDocType.isEmpty()
                         && StringUtils.containsIgnoreCase(isDocType, docType)
                         && !StringUtils.containsIgnoreCase(isNotDocType, docType))
-                || (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType))) {
+                || (isNotDocType.isEmpty() && StringUtils.containsIgnoreCase(isDocType, docType))) {
             return title;
         }
         return "";
     }
 
     private boolean isTitleDefinitionFound(String titleDefinition) {
-        return !titleDefinition.equals("");
+        return !titleDefinition.isEmpty();
     }
 
     private String processNullValues(String value) {

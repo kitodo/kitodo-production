@@ -79,7 +79,7 @@ public class Searcher extends Index {
         SearchRestClient restClient = initiateRestClient();
 
         String response = restClient.countDocuments(this.type, query);
-        if (!response.equals("")) {
+        if (!response.isEmpty()) {
             try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
                 JsonObject result = jsonReader.readObject();
                 return result.getJsonNumber("count").longValue();

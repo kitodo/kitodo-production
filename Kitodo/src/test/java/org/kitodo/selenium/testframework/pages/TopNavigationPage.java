@@ -225,9 +225,6 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         if (!linkUsers.isDisplayed()) {
             return false;
         }
-        if (!linkProcesses.isDisplayed()) {
-            return false;
-        }
-        return true;
+        return linkProcesses.isDisplayed();
     }
 }

@@ -43,23 +43,23 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement projectsTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = PROJECTS_TABLE + "_data")
+    @FindBy(id = PROJECTS_TABLE + DATA)
     private WebElement projectsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TEMPLATE_TABLE + "_data")
+    @FindBy(id = TEMPLATE_TABLE + DATA)
     private WebElement templatesTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = WORKFLOW_TABLE + "_data")
+    @FindBy(id = WORKFLOW_TABLE + DATA)
     private WebElement workflowsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = DOCKET_TABLE + "_data")
+    @FindBy(id = DOCKET_TABLE + DATA)
     private WebElement docketsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = RULESET_TABLE + "_data")
+    @FindBy(id = RULESET_TABLE + DATA)
     private WebElement rulesetsTable;
 
     @SuppressWarnings("unused")

@@ -11,7 +11,32 @@
 
 package org.kitodo.selenium.testframework;
 
-import org.kitodo.selenium.testframework.pages.*;
+import org.kitodo.selenium.testframework.pages.ClientEditPage;
+import org.kitodo.selenium.testframework.pages.CurrentTasksEditPage;
+import org.kitodo.selenium.testframework.pages.DesktopPage;
+import org.kitodo.selenium.testframework.pages.DocketEditPage;
+import org.kitodo.selenium.testframework.pages.ExtendedSearchPage;
+import org.kitodo.selenium.testframework.pages.HelpPage;
+import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
+import org.kitodo.selenium.testframework.pages.LoginPage;
+import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
+import org.kitodo.selenium.testframework.pages.PostLoginChecksPage;
+import org.kitodo.selenium.testframework.pages.ProcessEditPage;
+import org.kitodo.selenium.testframework.pages.ProcessFromTemplatePage;
+import org.kitodo.selenium.testframework.pages.ProcessesPage;
+import org.kitodo.selenium.testframework.pages.ProjectEditPage;
+import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.RoleEditPage;
+import org.kitodo.selenium.testframework.pages.RulesetEditPage;
+import org.kitodo.selenium.testframework.pages.SearchResultPage;
+import org.kitodo.selenium.testframework.pages.StartPage;
+import org.kitodo.selenium.testframework.pages.SystemPage;
+import org.kitodo.selenium.testframework.pages.TasksPage;
+import org.kitodo.selenium.testframework.pages.TemplateEditPage;
+import org.kitodo.selenium.testframework.pages.TopNavigationPage;
+import org.kitodo.selenium.testframework.pages.UserEditPage;
+import org.kitodo.selenium.testframework.pages.UsersPage;
+import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 import org.openqa.selenium.support.PageFactory;
 
 public class Pages {
