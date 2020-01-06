@@ -535,6 +535,8 @@ Breadcrumb menu
 .breadcrumb-menu ul li .ui-menuitem-text,
 .breadcrumb-menu ul li .ui-menuitem-icon {
     display: inline-block;
+    height: var(--input-height);
+    line-height: var(--input-height);
 }
 
 .breadcrumb-menu ul li .ui-menuitem-text {
