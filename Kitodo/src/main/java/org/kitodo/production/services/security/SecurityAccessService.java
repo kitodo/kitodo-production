@@ -794,35 +794,11 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to edit the process metadata.
      *
-     * @param taskId
-     *            the specific taskId
-     * @return true if the current user has the authority to edit the process
-     *         metadata
-     */
-    public boolean hasAuthorityToEditProcessMetaData(int taskId) throws DataException {
-        return hasAuthorityForClient("editProcessMetaData") && hasAuthorityForTask(taskId);
-    }
-
-    /**
-     * Check if the current user has the authority to edit the process metadata.
-     *
      * @return true if the current user has the authority to edit the process
      *         metadata
      */
     public boolean hasAuthorityToEditProcessMetaData() {
         return hasAuthorityForClient("editProcessMetaData");
-    }
-
-    /**
-     * Check if the current user has the authority to view the process metadata.
-     *
-     * @param taskId
-     *            the specific taskId
-     * @return true if the current user has the authority to view the process
-     *         metadata
-     */
-    public boolean hasAuthorityToViewProcessMetaData(int taskId) throws DataException {
-        return hasAuthorityForClient("viewProcessMetaData") && hasAuthorityForTask(taskId);
     }
 
     /**
@@ -839,37 +815,11 @@ public class SecurityAccessService extends SecurityAccess {
      * Check if the current user has the authority to edit the process structure
      * data.
      *
-     * @param taskId
-     *            the specific taskId
-     * @return true if the current user has the authority to edit the process
-     *         structure data
-     */
-    public boolean hasAuthorityToEditProcessStructureData(int taskId) throws DataException {
-        return hasAuthorityForClient("editProcessStructureData") && hasAuthorityForTask(taskId);
-    }
-
-    /**
-     * Check if the current user has the authority to edit the process structure
-     * data.
-     *
      * @return true if the current user has the authority to edit the process
      *         structure data
      */
     public boolean hasAuthorityToEditProcessStructureData() {
         return hasAuthorityForClient("editProcessStructureData");
-    }
-
-    /**
-     * Check if the current user has the authority to view the process structure
-     * data.
-     *
-     * @param taskId
-     *            the specific taskId
-     * @return true if the current user has the authority to view the process
-     *         structure data
-     */
-    public boolean hasAuthorityToViewProcessStructureData(int taskId) throws DataException {
-        return hasAuthorityForClient("viewProcessStructureData") && hasAuthorityForTask(taskId);
     }
 
     /**
@@ -900,16 +850,6 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToEditProcessImages() {
         return hasAuthorityForClient("editProcessImages");
-    }
-
-    /**
-     * Check if the current user has the authority to view the process images.
-     *
-     * @param taskId the specific taskId
-     * @return true if the current user has the authority to view the process images
-     */
-    public boolean hasAuthorityToViewProcessImages(int taskId) throws DataException {
-        return hasAuthorityForClient("viewProcessImages") && hasAuthorityForTask(taskId);
     }
 
     /**

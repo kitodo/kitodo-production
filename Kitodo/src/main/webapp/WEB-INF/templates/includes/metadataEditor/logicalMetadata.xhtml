@@ -18,7 +18,7 @@
 
     <!--@elvariable id="readOnly" type="boolean"-->
     <ui:param name="readOnly"
-              value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData(taskId) and not SecurityAccessController.hasAuthorityToEditProcessMetaData(taskId)}"
+              value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"
     />
 
     <p:panel id="logicalMetadataWrapperPanel" styleClass="wrapperPanel">

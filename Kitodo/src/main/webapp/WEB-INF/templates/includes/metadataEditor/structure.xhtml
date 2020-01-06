@@ -19,7 +19,7 @@
     <h:panelGroup layout="block" id="scrollUpArea"/>
     <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
         <!--@elvariable id="readOnly" type="boolean"-->
-        <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData(taskId) and not SecurityAccessController.hasAuthorityToEditProcessStructureData(taskId)}"/>
+        <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
         <!-- Logical Tree -->
         <h:panelGroup layout="block"

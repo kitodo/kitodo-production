@@ -21,11 +21,11 @@
     <ui:define name="content">
 
         <!--@elvariable id="viewStructure" type="boolean"-->
-        <ui:param name="viewStructure" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData(taskId)}"/>
+        <ui:param name="viewStructure" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData()}"/>
         <!--@elvariable id="viewMetadata" type="boolean"-->
-        <ui:param name="viewMetadata" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData(taskId)}"/>
+        <ui:param name="viewMetadata" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData()}"/>
         <!--@elvariable id="viewImages" type="boolean"-->
-        <ui:param name="viewImages" value="#{SecurityAccessController.hasAuthorityToViewProcessImages(taskId)}"/>
+        <ui:param name="viewImages" value="#{SecurityAccessController.hasAuthorityToViewProcessImages()}"/>
 
         <p:panel id="metadataEditorContainer" style="margin: auto 16px; padding: 0;">
 
