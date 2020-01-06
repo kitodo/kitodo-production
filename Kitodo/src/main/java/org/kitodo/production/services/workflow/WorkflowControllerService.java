@@ -112,7 +112,7 @@ public class WorkflowControllerService {
      *            to change status down
      */
     public void setTaskStatusDown(Task task) {
-        setTaskStatusDown(Arrays.asList());
+        setTaskStatusDown(Arrays.asList(task));
     }
 
     /**
@@ -553,6 +553,7 @@ public class WorkflowControllerService {
         for (Task concurrentTask : concurrentTasks) {
             if (concurrentTask.getProcessingStatus().equals(TaskStatus.LOCKED)) {
                 isConcurrentOpenTask = true;
+                break;
             }
         }
         if (!isConcurrentOpenTask) {
