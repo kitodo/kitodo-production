@@ -1041,7 +1041,9 @@ tr.ui-expanded-row-content tr.ui-widget-header,
 }
 
 tr.ui-expanded-row.row-hover,
-tr.ui-expanded-row-content.row-hover {
+tr.ui-expanded-row-content.row-hover,
+tr.ui-expanded-row-content.row-hover .ui-datatable tbody,
+tr.ui-expanded-row-content:hover .ui-datatable tbody {
     background: var(--trans-blue) !important;
     color: var(--carbon-blue) !important;
 }

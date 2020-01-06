@@ -69,6 +69,7 @@ public class SearchForm {
     private String stepdoneuser = "";
 
     private String idin = "";
+    private String processParentId = "";
     private String processTitle = ""; // proc:
 
     private String projectOperand = "";
@@ -261,6 +262,14 @@ public class SearchForm {
         this.idin = idin;
     }
 
+    public String getProcessParentId() {
+        return processParentId;
+    }
+
+    public void setProcessParentId(String processParentId) {
+        this.processParentId = processParentId;
+    }
+
     public String getProject() {
         return this.project;
     }
@@ -376,6 +385,9 @@ public class SearchForm {
         }
         if (!this.idin.isEmpty()) {
             search += "\"" + FilterString.ID.getFilterEnglish() + this.idin + "\" ";
+        }
+        if (!this.processParentId.isEmpty()) {
+            search += "\"" + FilterString.PARENTPROCESSID.getFilterEnglish() + this.processParentId + "\" ";
         }
         if (!this.project.isEmpty()) {
             search += "\"" + this.projectOperand + FilterString.PROJECT.getFilterEnglish() + this.project + "\" ";

@@ -37,22 +37,22 @@
 
             <p:column styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
             <p:column styleClass="hierarchy-info">
-                <p:rowToggler rendered="#{process.hasParent() or process.hasChildren()}"/>
+                <p:rowToggler rendered="#{process.getParentID() ne 0 or process.hasChildren()}"/>
                 <h:graphicImage name="images/icon-up.svg"
                                 alt="#{msgs.hierarchicalParents}"
                                 title="#{msgs.hierarchicalParents}"
                                 height="12"
-                                rendered="#{process.hasParent() and not process.hasChildren()}"/>
+                                rendered="#{process.getParentID() ne 0 and not process.hasChildren()}"/>
                 <h:graphicImage name="images/icon-down.svg"
                                 alt="#{msgs.hierarchicalChildren}"
                                 title="#{msgs.hierarchicalChildren}"
                                 height="12"
-                                rendered="#{not process.hasParent() and process.hasChildren()}"/>
+                                rendered="#{process.getParentID() eq 0 and process.hasChildren()}"/>
                 <h:graphicImage name="images/icon-up-down.svg"
                                 alt="#{msgs.hierarchicalBoth}"
                                 title="#{msgs.hierarchicalBoth}"
                                 height="12"
-                                rendered="#{process.hasParent() and process.hasChildren()}"/>
+                                rendered="#{process.getParentID() ne 0 and process.hasChildren()}"/>
             </p:column>
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
@@ -186,43 +186,47 @@
                 <div class="row-expansion-wrapper">
                     <p:panelGrid columns="2" columnClasses="label, value">
                         <h:outputText value="#{msgs.hierarchicalParents}:"/>
-                        <table>
-                            <p:repeat value="#{ProcessForm.getAllParentProcesses(process.id)}" var="parentProcess" rendered="#{process.hasParent()}">
-                                <tr>
-                                    <td>
-                                        <h:outputText value="#{parentProcess.getTitle()}"/>
-                                    </td>
-                                    <td class="actionsColumn">
-                                        <h:link outcome="processEdit" title="#{msgs.view}"
-                                                rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
-                                            <i class="fa fa-eye fa-lg"/>
-                                            <f:param name="referer" value="processes"/>
-                                            <f:param name="id" value="#{parentProcess.id}"/>
-                                        </h:link>
-                                        <!--@elvariable id="taskOptions" type="java.util.List"-->
-                                        <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(parentProcess.id)}"/>
-                                        <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
-                                        <h:link outcome="processEdit" title="#{msgs.edit}"
-                                                rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
-                                            <i class="fa fa-pencil-square-o fa-lg"/>
-                                            <f:param name="referer" value="processes"/>
-                                            <f:param name="id" value="#{parentProcess.id}"/>
-                                        </h:link>
-                                        <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(parentProcess.id)}" />
-                                        <h:commandLink action="#{DataEditorForm.open(currentTaskId, 'processes')}"
-                                                       title="#{msgs.metadataEdit}"
-                                                       rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
-                                            <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
-                                            <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                                        </h:commandLink>
-                                    </td>
-                                </tr>
-                            </p:repeat>
-                        </table>
-                        <h:outputText value="#{msgs.none}" rendered="#{not process.hasParent()}"/>
+                        <p:dataTable var="parent"
+                                     value="#{ProcessForm.getAllParentProcesses(process.id)}"
+                                     rendered="#{process.getParentID() ne 0}">
+                            <p:column>
+                                <h:outputText value="#{parent.getTitle()}"/>
+                            </p:column>
+                            <p:column styleClass="actionsColumn">
+                                <h:link outcome="processEdit" title="#{msgs.view}"
+                                        rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                                    <i class="fa fa-eye fa-lg"/>
+                                    <f:param name="referer" value="processes"/>
+                                    <f:param name="id" value="#{parent.id}"/>
+                                </h:link>
+                                <!--@elvariable id="taskOptions" type="java.util.List"-->
+                                <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(parent.id)}"/>
+                                <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
+                                <h:link outcome="processEdit" title="#{msgs.edit}"
+                                        rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                                    <i class="fa fa-pencil-square-o fa-lg"/>
+                                    <f:param name="referer" value="processes"/>
+                                    <f:param name="id" value="#{parent.id}"/>
+                                </h:link>
+                                <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(parent.id)}" />
+                                <h:commandLink action="#{DataEditorForm.open(currentTaskId, 'processes')}"
+                                               title="#{msgs.metadataEdit}"
+                                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                                    <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
+                                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                                </h:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:outputText value="#{msgs.none}" rendered="#{process.getParentID() eq 0}"/>
                         
                         <h:outputText value="#{msgs.hierarchicalChildren}:"/>
-                        <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())}"/>
+                        <h:panelGroup>
+                            <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())}"/>
+                            <br/>
+                            <p:commandLink value="#{msgs.showHierarchicalChildren}"
+                                           action="#{ProcessForm.changeFilter('parentprocessid:'.concat(process.getId()))}"
+                                           rendered="#{process.hasChildren()}"/>
+                        </h:panelGroup>
                     </p:panelGrid>
                 </div>
             </p:rowExpansion>

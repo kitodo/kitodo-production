@@ -1092,6 +1092,14 @@ h3#headerText {
     margin-right: 8px;
 }
 
+#processesTabView\:processesForm\:processesTable .label {
+    vertical-align: top;
+}
+
+#processesTabView\:processesForm\:processesTable .value > .ui-datatable thead {
+    display: none;
+}
+
 
 .kitodoScript button {
     margin: 0 0 5px 5px;

@@ -192,6 +192,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 query.must(filterScanTemplate(tokenizedFilter, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.ID, null)) {
                 query.must(createProcessIdFilter(tokenizedFilter, objectType));
+            } else if (evaluateFilterString(tokenizedFilter, FilterString.PARENTPROCESSID, null)) {
+                query.must(createParentProcessIdFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PROCESS, null)) {
                 query.must(createProcessTitleFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, null)) {
@@ -464,6 +466,13 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         }
         historicFilter.must(createSimpleQuery(TaskTypeField.ORDERING.getKey(), taskOrdering, true));
         return historicFilter;
+    }
+
+    private QueryBuilder createParentProcessIdFilter(String filter, ObjectType objectType) {
+        if (objectType == ObjectType.PROCESS) {
+            return createSetQuery("parent.id", filterValuesAsIntegers(filter, FilterString.PARENTPROCESSID), true);
+        }
+        return new BoolQueryBuilder();
     }
 
     private QueryBuilder createProcessIdFilter(String filter, ObjectType objectType) {
