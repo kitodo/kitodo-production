@@ -262,7 +262,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     public String createNewProcess() {
         try {
             createProcessHierarchy();
-            if (Objects.nonNull(PrimeFaces.current())) {
+            if (Objects.nonNull(PrimeFaces.current())  && Objects.nonNull(FacesContext.getCurrentInstance()) {
                 PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
                         + Helper.getTranslation("processSaving") + "','detail':'"
                         + Helper.getTranslation( "youWillBeRedirected") + "','severity':'info'});");
