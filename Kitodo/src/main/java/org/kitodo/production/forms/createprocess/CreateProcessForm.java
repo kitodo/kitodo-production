@@ -262,9 +262,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     public String createNewProcess() {
         try {
             createProcessHierarchy();
-            PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
-                    + Helper.getTranslation("processSaving") + "','detail':'"
-                    + Helper.getTranslation( "youWillBeRedirected") + "','severity':'info'});");
+            if (Objects.nonNull(PrimeFaces.current())) {
+                PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
+                        + Helper.getTranslation("processSaving") + "','detail':'"
+                        + Helper.getTranslation( "youWillBeRedirected") + "','severity':'info'});");
+            }
             return processListPath;
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
