@@ -30,6 +30,7 @@ public class ProcessType extends BaseType<Process> {
         String processBaseUri = process.getProcessBaseUri() != null ? process.getProcessBaseUri().getRawPath() : "";
         boolean projectActive = process.getProject() != null && process.getProject().isActive();
         int projectClientId = process.getProject() != null ? getId(process.getProject().getClient()) : 0;
+        int processParentId = Objects.nonNull(process.getParent()) ? process.getParent().getId() : 0;
 
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(ProcessTypeField.TITLE.getKey(), preventNull(process.getTitle()));
@@ -53,7 +54,7 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.COMMENTS.getKey(), addObjectRelation(process.getComments()));
         jsonObject.put(ProcessTypeField.COMMENTS_MESSAGE.getKey(), getProcessComments(process));
         jsonObject.put(ProcessTypeField.HAS_CHILDREN.getKey(), process.getChildren().size() > 0);
-        jsonObject.put(ProcessTypeField.HAS_PARENT.getKey(), Objects.nonNull(process.getParent()));
+        jsonObject.put(ProcessTypeField.PARENT_ID.getKey(), processParentId);
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
         jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), addObjectRelation(process.getProperties(), true));
         jsonObject.put(ProcessTypeField.TEMPLATES.getKey(), addObjectRelation(process.getTemplates()));

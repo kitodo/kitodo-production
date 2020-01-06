@@ -35,7 +35,7 @@ public enum ProcessTypeField implements TypeInterface {
     COMMENTS("comments"),
     COMMENTS_MESSAGE("comments.message"),
     HAS_CHILDREN("hasChildren"),
-    HAS_PARENT("hasParent"),
+    PARENT_ID("parent.id"),
     TASKS("tasks"),
     PROPERTIES("properties"),
     TEMPLATES("templates"),

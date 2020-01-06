@@ -824,7 +824,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
             processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
             processDTO.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
-            processDTO.setHasParent(ProcessTypeField.HAS_PARENT.getBooleanValue(jsonObject));
+            processDTO.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
 
             if (!related) {
                 convertRelatedJSONObjects(jsonObject, processDTO);
