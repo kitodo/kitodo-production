@@ -22,61 +22,61 @@
         <f:viewAction action="#{ProjectForm.loadProject(id)}"/>
         <f:viewAction action="#{ProjectForm.setProjectEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
+        <ui:define name="contentHeader">
 
-    <ui:define name="contentHeader">
-        <h:outputScript name="js/save.js" target="body" />
-        <h:outputScript name="js/toggleLock.js" target="body"/>
-        <script>
-            window.onload = function () {
-                checkForm('editForm')
-            };
-        </script>
-        <h3 id="headerText">
-            <h:outputText value="#{msgs.editProject} (#{ProjectForm.project.title})"
-                          rendered="#{not empty ProjectForm.project.title}"/>
-            <h:outputText value="#{msgs.newProject}"
-                          rendered="#{empty ProjectForm.project.title and empty ProjectForm.project.folders}"/>
-            <h:outputText value="#{msgs.duplicateProject}"
-                          rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}"/>
-        </h3>
-        <p:commandButton id="save"
-                         widgetVar="save"
-                         value="#{msgs.save}"
-                         action="#{ProjectForm.save()}"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         disabled="#{ProjectForm.saveDisabled}"
-                         update="notifications"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{ProjectForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="#{ProjectForm.projectEditReferer}"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
-    </ui:define>
+            <h:outputScript name="js/save.js" target="body" />
+            <h:outputScript name="js/toggleLock.js" target="body"/>
+            <script>
+                window.onload = function () {
+                    checkForm('editForm')
+                };
+            </script>
+            <h3 id="headerText">
+                <h:outputText value="#{msgs.editProject} (#{ProjectForm.project.title})"
+                              rendered="#{not empty ProjectForm.project.title}"/>
+                <h:outputText value="#{msgs.newProject}"
+                              rendered="#{empty ProjectForm.project.title and empty ProjectForm.project.folders}"/>
+                <h:outputText value="#{msgs.duplicateProject}"
+                              rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}"/>
+            </h3>
+            <p:commandButton id="save"
+                             widgetVar="save"
+                             value="#{msgs.save}"
+                             action="#{ProjectForm.save()}"
+                             icon="fa fa-floppy-o fa-lg"
+                             iconPos="right"
+                             onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                             disabled="#{ProjectForm.saveDisabled}"
+                             update="notifications"/>
+            <p:commandButton id="saveButtonToggler"
+                             actionListener="#{ProjectForm.setSaveDisabled(false)}"
+                             update="save"
+                             style="display:none;"/>
+            <p:button value="#{msgs.cancel}"
+                      onclick="setConfirmUnload(false);"
+                      outcome="#{ProjectForm.projectEditReferer}"
+                      icon="fa fa-times fa-lg"
+                      iconPos="right"
+                      styleClass="secondary"/>
+        </ui:define>
 
-    <ui:define name="pageTabView">
-        <p:tabView id="projectTabView" activeIndex="#{ProjectForm.editActiveTabIndex}">
-            <p:ajax event="tabChange" listener="#{ProjectForm.onEditTabChange}"/>
-            <p:tab title="#{msgs.details}">
-                <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditDetail.xhtml"/>
-            </p:tab>
-            <p:tab title="#{msgs.technicalData}">
-                <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditSpecification.xhtml"/>
-            </p:tab>
-            <p:tab title="#{msgs.metsParameter}">
-                <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMets.xhtml"/>
-            </p:tab>
-            <p:tab title="#{msgs.templates}" id="templates">
-                <ui:include src="/WEB-INF/templates/includes/projectEdit/templateList.xhtml"/>
-            </p:tab>
-        </p:tabView>
-    </ui:define>
+        <ui:define name="pageTabView">
+                <p:tabView id="projectTabView" activeIndex="#{ProjectForm.editActiveTabIndex}" rendered="#{SecurityAccessController.hasAuthorityToEditProject(id)}">
+                    <p:ajax event="tabChange" listener="#{ProjectForm.onEditTabChange}"/>
+                    <p:tab title="#{msgs.details}">
+                        <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditDetail.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.technicalData}">
+                        <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditSpecification.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.metsParameter}">
+                        <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMets.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.templates}" id="templates">
+                        <ui:include src="/WEB-INF/templates/includes/projectEdit/templateList.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+        </ui:define>
 
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
@@ -88,9 +88,8 @@
                     rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}" icon="fa fa-archive"/>
     </ui:define>
 
-    <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMetsPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/projectEdit/templateAddPopup.xhtml"/>
-    </ui:define>
-
+        <ui:define name="dialog">
+            <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMetsPopup.xhtml"/>
+            <ui:include src="/WEB-INF/templates/includes/projectEdit/templateAddPopup.xhtml"/>
+        </ui:define>
 </ui:composition>
