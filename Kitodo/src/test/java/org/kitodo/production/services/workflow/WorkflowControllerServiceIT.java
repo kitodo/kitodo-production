@@ -100,11 +100,16 @@ public class WorkflowControllerServiceIT {
     @Test
     public void shouldSetTasksStatusUp() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
+        List<Task> tasks = process.getTasks();
+        assertEquals("Task '" + tasks.get(3).getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                tasks.get(3).getProcessingStatus());
+        assertEquals("Task '" + tasks.get(2).getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
+                tasks.get(2).getProcessingStatus());
 
         workflowService.setTasksStatusUp(process);
         for (Task task : process.getTasks()) {
             if (Objects.equals(task.getId(), 9)) {
-                assertEquals("Task '" + task.getTitle() + "' status should not be set up!", TaskStatus.OPEN,
+                assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.INWORK,
                     task.getProcessingStatus());
             } else if (Objects.equals(task.getId(), 10)) {
                 assertEquals("Task '" + task.getTitle() + "' status should not be set up!", TaskStatus.LOCKED,
@@ -114,29 +119,23 @@ public class WorkflowControllerServiceIT {
                     task.getProcessingStatus());
             }
         }
-
-        // set up task to previous state
-        Task task = taskService.getById(6);
-        workflowService.setTaskStatusDown(task);
-        taskService.save(task);
     }
 
     @Test
     public void shouldSetTasksStatusDown() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
+        List<Task> tasks = process.getTasks();
+        assertEquals("Task '" + tasks.get(3).getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+            tasks.get(3).getProcessingStatus());
+        assertEquals("Task '" + tasks.get(2).getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
+            tasks.get(2).getProcessingStatus());
 
         workflowService.setTasksStatusDown(process);
-        List<Task> tasks = process.getTasks();
-        // TODO: shouldn't be changed this status from done to in work?
-        // assertEquals("Task status was not set down for first task!",
-        // TaskStatus.INWORK, tasks.get(0).getProcessingStatusEnum());
-        assertEquals("Task '" + tasks.get(3).getTitle() + "' status was not set down!", TaskStatus.OPEN,
+        tasks = process.getTasks();
+        assertEquals("Task '" + tasks.get(3).getTitle() + "' status was not set down!", TaskStatus.LOCKED,
             tasks.get(3).getProcessingStatus());
-
-        // set up task to previous state
-        Task task = taskService.getById(8);
-        workflowService.setTaskStatusUp(task);
-        taskService.save(task);
+        assertEquals("Task '" + tasks.get(2).getTitle() + "' status was not set down!", TaskStatus.OPEN,
+            tasks.get(2).getProcessingStatus());
     }
 
     @Test
@@ -149,13 +148,6 @@ public class WorkflowControllerServiceIT {
         Task nextTask = taskService.getById(10);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
             nextTask.getProcessingStatus());
-
-        // set up tasks to previous states
-        workflowService.setTaskStatusDown(task);
-        workflowService.setTaskStatusDown(nextTask);
-
-        taskService.save(task);
-        taskService.save(nextTask);
     }
 
     @Test
@@ -386,10 +378,6 @@ public class WorkflowControllerServiceIT {
                     TaskStatus.LOCKED, task.getProcessingStatus());
             }
         }
-
-        // set up tasks to previous states
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesForWorkflowFull();
     }
 
     @Test
@@ -436,9 +424,5 @@ public class WorkflowControllerServiceIT {
 
         assertEquals("Solve of problem was incorrect - tasks from which correction was send was not set up to open!",
             TaskStatus.OPEN, correctionTask.getProcessingStatus());
-
-        // set up tasks to previous states
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesForWorkflowFull();
     }
 }
