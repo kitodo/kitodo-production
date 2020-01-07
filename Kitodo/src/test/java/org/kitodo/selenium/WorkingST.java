@@ -53,6 +53,7 @@ public class WorkingST extends BaseTestSelenium {
 
     @Before
     public void login() throws Exception {
+        System.out.println("login");
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
@@ -114,24 +115,24 @@ public class WorkingST extends BaseTestSelenium {
 
         task = ServiceManager.getTaskService().getById(20);
         assertEquals("Task '" + task.getTitle() + "' cannot be taken by user!", TaskStatus.OPEN,
-            task.getProcessingStatus());
+                task.getProcessingStatus());
         task = ServiceManager.getTaskService().getById(21);
         assertEquals("Task '" + task.getTitle() + "' can be taken by user!", TaskStatus.DONE,
-            task.getProcessingStatus());
+                task.getProcessingStatus());
         task = ServiceManager.getTaskService().getById(22);
         assertEquals("Task '" + task.getTitle() + "'  cannot be taken by user!", TaskStatus.OPEN,
-            task.getProcessingStatus());
+                task.getProcessingStatus());
 
         tasksPage.takeOpenTask("Task4", "Parallel");
         assertTrue("Redirection after click take task was not successful", currentTasksEditPage.isAt());
 
         task = ServiceManager.getTaskService().getById(22);
         assertEquals("Task '" + task.getTitle() + "' was not taken by user!", TaskStatus.INWORK,
-            task.getProcessingStatus());
+                task.getProcessingStatus());
 
         task = ServiceManager.getTaskService().getById(20);
         assertEquals("Task '" + task.getTitle() + "' was not blocked after concurrent task was taken by user!",
-            TaskStatus.LOCKED, task.getProcessingStatus());
+                TaskStatus.LOCKED, task.getProcessingStatus());
     }
 
     @Test
@@ -161,7 +162,7 @@ public class WorkingST extends BaseTestSelenium {
     public void downloadSearchResultAsExcelTest() throws Exception {
         processesPage.goTo().downloadSearchResultAsExcel();
         assertTrue("Search result excel file was not downloaded",
-            new File(Browser.DOWNLOAD_DIR + "search.xls").exists());
+                new File(Browser.DOWNLOAD_DIR + "search.xls").exists());
     }
 
     @Test

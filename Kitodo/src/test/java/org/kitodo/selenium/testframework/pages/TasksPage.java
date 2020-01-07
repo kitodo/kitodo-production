@@ -57,8 +57,8 @@ public class TasksPage extends Page<TasksPage> {
      */
     @Override
     public TasksPage goTo() throws Exception {
-        Pages.getTopNavigation().gotoTasks();
         System.out.println("goToTasksPage");
+        Pages.getTopNavigation().gotoTasks();
         await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
                 .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
                 .until(this::isAt);
