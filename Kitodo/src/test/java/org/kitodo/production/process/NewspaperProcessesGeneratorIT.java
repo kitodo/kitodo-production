@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.awaitility.Awaitility;
 import org.junit.AfterClass;
@@ -92,6 +93,11 @@ public class NewspaperProcessesGeneratorIT {
      */
     @Test
     public void shouldGenerateNewspaperProcesses() throws Exception {
+        // create backup of meta data file as this file is modified inside test
+        File metaFile = new File("src/test/resources/metadata/10/meta.xml");
+        File backupFile = new File("src/test/resources/metadata/10/meta.xml.1");
+        FileUtils.copyFile(metaFile, backupFile);
+
         Process completeEdition = ServiceManager.getProcessService().getById(10);
         Course course = NewspaperCourse.getCourse();
         course.splitInto(Granularity.DAYS);
@@ -101,6 +107,10 @@ public class NewspaperProcessesGeneratorIT {
         }
         Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
             underTest.getProgress());
+
+        // restore backuped meta data file
+        FileUtils.deleteQuietly(metaFile);
+        FileUtils.moveFile(backupFile, metaFile);
         cleanUp();
     }
 
