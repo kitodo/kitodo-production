@@ -459,8 +459,12 @@
                         }
                     }
                 },
-                "hasParent": {
-                    "type": "boolean"
+                "parent": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
                 },
                 "properties": {
                     "properties": {
