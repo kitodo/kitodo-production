@@ -1503,6 +1503,10 @@ Column content
     display: none;
 }
 
+#metadataAccordion .ui-accordion-content {
+    overflow-y: hidden;
+}
+
 #metadataAccordion.separateStructure .ui-accordion-header {
     display: block;
 }
