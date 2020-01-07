@@ -13,7 +13,6 @@ package org.kitodo.production.process;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,10 +42,8 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.file.FileService;
 
 public class NewspaperProcessesGeneratorIT {
-    private static final FileService fileService = new FileService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     private static final String firstProcess = "First process";
@@ -71,7 +68,6 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessForCalendarHierarchyTests();
         MockDatabase.setUpAwaitility();
-        fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
         Awaitility.await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
     }

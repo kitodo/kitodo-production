@@ -15,7 +15,6 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -31,10 +30,8 @@ import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.forms.createprocess.TitleRecordLinkTab;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.file.FileService;
 
 public class TitleRecordLinkTabIT {
-    private static FileService fileService = new FileService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     private static final String firstProcess = "First process";
@@ -48,15 +45,8 @@ public class TitleRecordLinkTabIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
-        fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        if (System.getProperty("java.class.path").contains("eclipse")) {
-            while (Objects.isNull(processService.findByTitle(firstProcess))) {
-                Thread.sleep(50);
-            }
-        } else {
-            await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
-        }
+        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
     }
 
     /**
@@ -66,7 +56,6 @@ public class TitleRecordLinkTabIT {
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
-        fileService.delete(URI.create("1"));
     }
 
     @Rule

@@ -58,15 +58,8 @@ public class CreateProcessFormIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
-        fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        if (System.getProperty("java.class.path").contains("eclipse")) {
-            while (Objects.isNull(processService.findByTitle(firstProcess))) {
-                Thread.sleep(50);
-            }
-        } else {
-            await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
-        }
+        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
     }
 
     /**
@@ -76,7 +69,6 @@ public class CreateProcessFormIT {
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
-        fileService.delete(URI.create("1"));
     }
 
     @Rule
