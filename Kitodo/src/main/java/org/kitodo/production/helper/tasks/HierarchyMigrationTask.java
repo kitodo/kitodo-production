@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.helper.tasks;
 
 import java.io.IOException;
@@ -37,7 +48,7 @@ public class HierarchyMigrationTask extends EmptyTask {
     /**
      * Service that contains the meta-data editor.
      */
-    private final static DataEditorService dataEditorService = ServiceManager.getDataEditorService();
+    private static final DataEditorService dataEditorService = ServiceManager.getDataEditorService();
 
     /**
      * Service to access files on the storage.
@@ -47,7 +58,7 @@ public class HierarchyMigrationTask extends EmptyTask {
     /**
      * Service to read and write METS file format.
      */
-    private final static MetsService metsService = ServiceManager.getMetsService();
+    private static final MetsService metsService = ServiceManager.getMetsService();
 
     /**
      * Service to generate processes.
@@ -141,10 +152,10 @@ public class HierarchyMigrationTask extends EmptyTask {
         migrateMetadataFiles(process);
         Optional<String> parentId = getParentRecordId(process);
         if (parentId.isPresent()) {
-            if (!parentProcesses.containsKey(parentId.get())) {
-                parentProcesses.put(parentId.get(), createParentProcess(process));
-            } else {
+            if (parentProcesses.containsKey(parentId.get())) {
                 linkProcessInParent(process, parentProcesses.get(parentId.get()));
+            } else {
+                parentProcesses.put(parentId.get(), createParentProcess(process));
             }
             renameAnchorFile(process);
         } else {
@@ -171,15 +182,18 @@ public class HierarchyMigrationTask extends EmptyTask {
         dataEditorService.readData(anchorFilePath);
     }
 
-    /** Reads the parent record identifier from the anchor file. */
+    /**
+     * Reads the parent record identifier from the anchor file.
+     */
     private static Optional<String> getParentRecordId(Process process) throws IOException {
         URI metadataFilePath = fileService.getMetadataFilePath(process);
         URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
         Workpiece anchorWorkpiece = metsService.loadWorkpiece(anchorFilePath);
-        return anchorWorkpiece.getRootElement().getMetadata().parallelStream()
+        Optional<String> parentRecordId = anchorWorkpiece.getRootElement().getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("CatalogIDDigital"))
                 .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast).map(MetadataEntry::getValue)
                 .findFirst();
+        return parentRecordId;
     }
 
     /**
@@ -198,6 +212,7 @@ public class HierarchyMigrationTask extends EmptyTask {
 
         processGenerator.generateProcess(childProcess.getTemplate().getId(), childProcess.getProject().getId());
         Process parentProcess = processGenerator.getGeneratedProcess();
+        processService.save(parentProcess);
         fileService.createProcessLocation(parentProcess);
         createParentMetsFile(childProcess);
         ArrayList<Integer> parentData = new ArrayList<>();

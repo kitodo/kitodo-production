@@ -134,9 +134,7 @@ public class MigrationForm extends BaseForm {
     }
 
     public void convertHierarchys() {
-        for (Project project : selectedProjects) {
-            TaskManager.addTask(new HierarchyMigrationTask(project));
-        }
+        TaskManager.addTask(new HierarchyMigrationTask(selectedProjects));
         projectListRendered = false;
     }
 
