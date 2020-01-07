@@ -87,6 +87,7 @@ public class WorkingST extends BaseTestSelenium {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         Task task = ServiceManager.getTaskService().getById(12);
+        System.out.println("editOwnedtaskTest, now trying tasksPage.goTo().editOwnedTask(task.getTitle(), task.getProcess().getTitle());");
         tasksPage.goTo().editOwnedTask(task.getTitle(), task.getProcess().getTitle());
         assertTrue("Redirection after click edit own task was not successful", currentTasksEditPage.isAt());
 
