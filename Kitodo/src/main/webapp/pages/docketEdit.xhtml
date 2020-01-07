@@ -92,11 +92,11 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
-        <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
-        <p:menuitem value="#{msgs.editDocket}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.newDocket}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.viewDocket}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs.editDocket}" rendered="#{isEditMode}" icon="fa fa-file-text"/>
+        <p:menuitem value="#{msgs.newDocket}" rendered="#{isCreateMode}" icon="fa fa-file-text"/>
+        <p:menuitem value="#{msgs.viewDocket}" rendered="#{isViewMode}" icon="fa fa-file-text"/>
     </ui:define>
 
 </ui:composition>

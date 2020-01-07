@@ -113,11 +113,11 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
-        <p:menuitem value="#{msgs.users}" url="users.jsf"/>
-        <p:menuitem value="#{msgs.editClient}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.clientNew}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.viewClient}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.users}" url="users.jsf" icon="fa fa-user"/>
+        <p:menuitem value="#{msgs.editClient}" rendered="#{isEditMode}" icon="fa fa-university"/>
+        <p:menuitem value="#{msgs.clientNew}" rendered="#{isCreateMode}" icon="fa fa-university"/>
+        <p:menuitem value="#{msgs.viewClient}" rendered="#{isViewMode}" icon="fa fa-university"/>
     </ui:define>
 
 </ui:composition>

@@ -198,11 +198,11 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
-        <p:menuitem value="#{msgs.users}" url="users.jsf"/>
-        <p:menuitem value="#{msgs.ldapServerNew}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.editLdapServer}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.viewLdapServer}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.users}" url="users.jsf" icon="fa fa-user"/>
+        <p:menuitem value="#{msgs.ldapServerNew}" rendered="#{isCreateMode}" icon="fa fa-server"/>
+        <p:menuitem value="#{msgs.editLdapServer}" rendered="#{isEditMode}" icon="fa fa-server"/>
+        <p:menuitem value="#{msgs.viewLdapServer}" rendered="#{isViewMode}" icon="fa fa-server"/>
     </ui:define>
 
 </ui:composition>

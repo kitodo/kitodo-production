@@ -515,7 +515,8 @@ Breadcrumb menu
     overflow: visible;
 }
 
-.breadcrumb-menu ul li .ui-menuitem-link {
+.breadcrumb-menu ul li .ui-menuitem-link,
+.breadcrumb-menu ul li .ui-menuitem-link.ui-icon-home {
     background-color: var(--focused-blue);
     background-image: none;
     border-radius: var(--default-border-radius);
@@ -527,7 +528,15 @@ Breadcrumb menu
     margin-top: 0;
     text-align: center;
     text-decoration: none;
+    text-indent: 0;
     width: var(--input-height);
+}
+
+.breadcrumb-menu ul li .ui-menuitem-text,
+.breadcrumb-menu ul li .ui-menuitem-icon {
+    display: inline-block;
+    height: var(--input-height);
+    line-height: var(--input-height);
 }
 
 .breadcrumb-menu ul li .ui-menuitem-text {
@@ -552,15 +561,6 @@ Breadcrumb menu
     width: 12px;
 }
 
-.breadcrumb-menu ul li:first-child .ui-menuitem-text::after {
-    content: '\f015';
-    font-family: 'FontAwesome';
-    left: 0;
-    position: absolute;
-    text-indent: 0;
-    width: 100%;
-}
-
 .breadcrumb-menu ul li:hover .ui-menuitem-link,
 .breadcrumb-menu ul li:hover .ui-menuitem-text::after,
 .breadcrumb-menu ul li:hover::before {
@@ -568,11 +568,15 @@ Breadcrumb menu
     color: var(--carbon-blue);
 }
 
-.breadcrumb-menu ul li:not(:first-child):hover .ui-menuitem-link {
+.breadcrumb-menu ul li:hover .ui-menuitem-icon {
+    padding-left: var(--default-half-size);
+}
+
+.breadcrumb-menu ul li:hover .ui-menuitem-link {
     width: auto;
 }
 
-.breadcrumb-menu ul li:not(:first-child):hover .ui-menuitem-text {
+.breadcrumb-menu ul li:hover .ui-menuitem-text {
     padding: 0 var(--default-half-size);
 }
 
