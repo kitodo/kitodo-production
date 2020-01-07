@@ -614,6 +614,11 @@ public enum ParameterCore implements ParameterInterface {
     DEFAULT_CLIENT_ID(new Parameter<>("defaultClientId", 0)),
 
     /**
+     * Parameter controlling whether each process in the system needs to have a unique name or not.
+     */
+    UNIQUE_PROCESS_TITLES(new Parameter<>("uniqueProcessTitles", true)),
+
+    /**
      * Task custom columns to display in current tasks list.
      */
     TASK_CUSTOM_COLUMNS(new Parameter<>("taskProcessPropertyColumns")),

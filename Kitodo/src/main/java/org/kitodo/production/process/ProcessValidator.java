@@ -39,7 +39,7 @@ public final class ProcessValidator {
 
     /**
      * Check if content of process is valid.
-     * 
+     *
      * @param title
      *            of process for validation
      * @param processDetailsList
@@ -67,7 +67,7 @@ public final class ProcessValidator {
 
     /**
      * Check if process title is correct.
-     * 
+     *
      * @param title
      *            of the process for validation
      * @return true or false
@@ -86,7 +86,7 @@ public final class ProcessValidator {
             Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
         }
 
-        if (valid) {
+        if (valid && preventProcessDuplicates()) {
             valid = isProcessTitleAvailable(title);
         }
 
@@ -95,7 +95,7 @@ public final class ProcessValidator {
 
     /**
      * Check if property already exists, if yes set value for it.
-     * 
+     *
      * @param properties
      *            existing for process
      * @param property
@@ -132,11 +132,20 @@ public final class ProcessValidator {
                 return false;
             }
             if (amount > 0) {
-                Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleAlreadyInUse");
+                Helper.setErrorMessage("processTitleAlreadyInUse");
                 return false;
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Read from configuration and return whether process titles must be unique or not.
+     *
+     * @return whether process titles must be unique or not.
+     */
+    private static boolean preventProcessDuplicates() {
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.UNIQUE_PROCESS_TITLES);
     }
 }
