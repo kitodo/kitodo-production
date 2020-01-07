@@ -22,11 +22,11 @@
         <f:viewAction action="#{ProcessForm.load(id)}" />
         <f:viewAction action="#{ProcessForm.setProcessEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
-        <!--@elvariable id="isEditMode" type="boolean"-->
-        <ui:param name="isEditMode"
-                  value="#{ProcessForm.process.id ne null and SecurityAccessController.hasAuthorityToEditProcess()}"/>
-        <!--@elvariable id="isViewMode" type="boolean"-->
-        <ui:param name="isViewMode" value="#{not isEditMode and SecurityAccessController.hasAuthorityToViewProcess()}"/>
+    <!--@elvariable id="isEditMode" type="boolean"-->
+    <ui:param name="isEditMode"
+              value="#{ProcessForm.process.id ne null and SecurityAccessController.hasAuthorityToEditProcess()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
+    <ui:param name="isViewMode" value="#{not isEditMode and SecurityAccessController.hasAuthorityToViewProcess()}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
@@ -61,40 +61,40 @@
                   styleClass="secondary"/>
     </ui:define>
 
-        <ui:define name="pageTabView">
-                <p:tabView id="processTabView" cache="false" rendered="#{SecurityAccessController.hasAuthorityToEditProcess(id)}">
-                    <p:tab title="#{msgs.processDetails}" id="details">
-                        <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml">
-                            <ui:param name="isEditMode" value="#{isEditMode}" />
-                            <ui:param name="isViewMode" value="#{isViewMode}" />
-                        </ui:include>
-                    </p:tab>
-                    <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProcessForm.process.title}">
-                        <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml">
-                            <ui:param name="isEditMode" value="#{isEditMode}" />
-                            <ui:param name="isViewMode" value="#{isViewMode}" />
-                        </ui:include>
-                    </p:tab>
-                    <p:tab title="#{msgs.templateProperties}" id="processTemplates">
-                        <ui:include src="/WEB-INF/templates/includes/processEdit/templateList.xhtml">
-                            <ui:param name="isEditMode" value="#{isEditMode}" />
-                            <ui:param name="isViewMode" value="#{isViewMode}" />
-                        </ui:include>
-                    </p:tab>
-                    <p:tab title="#{msgs.workpieceProperties}" id="workpieces">
-                        <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml">
-                            <ui:param name="isEditMode" value="#{isEditMode}" />
-                            <ui:param name="isViewMode" value="#{isViewMode}" />
-                        </ui:include>
-                    </p:tab>
-                    <p:tab title="#{msgs.properties}" id="properties">
-                        <ui:include src="/WEB-INF/templates/includes/processEdit/propertyList.xhtml">
-                            <ui:param name="isEditMode" value="#{isEditMode}" />
-                            <ui:param name="isViewMode" value="#{isViewMode}" />
-                        </ui:include>
-                    </p:tab>
-                </p:tabView>
-        </ui:define>
+    <ui:define name="pageTabView">
+        <p:tabView id="processTabView" cache="false" rendered="#{SecurityAccessController.hasAuthorityToEditProcess(id)}">
+            <p:tab title="#{msgs.processDetails}" id="details">
+                <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
+            </p:tab>
+            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProcessForm.process.title}">
+                <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
+            </p:tab>
+            <p:tab title="#{msgs.templateProperties}" id="processTemplates">
+                <ui:include src="/WEB-INF/templates/includes/processEdit/templateList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
+            </p:tab>
+            <p:tab title="#{msgs.workpieceProperties}" id="workpieces">
+                <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
+            </p:tab>
+            <p:tab title="#{msgs.properties}" id="properties">
+                <ui:include src="/WEB-INF/templates/includes/processEdit/propertyList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
 
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/processEdit/propertyEditPopup.xhtml"/>
@@ -102,10 +102,10 @@
         <ui:include src="/WEB-INF/templates/includes/processEdit/templateEditPopup.xhtml"/>
     </ui:define>
 
-        <ui:define name="breadcrumbs">
-            <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-            <p:menuitem value="#{msgs.processes}" url="processes.jsf"  icon="fa fa-clipboard"/>
-            <p:menuitem value="#{msgs.editProcess}" rendered="#{not empty ProcessForm.process.title}"/>
-            <p:menuitem value="#{msgs.createNewProcess}" rendered="#{empty ProcessForm.process.title}"/>
-        </ui:define>
+    <ui:define name="breadcrumbs">
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.processes}" url="processes.jsf" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.editProcess}" rendered="#{not empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.createNewProcess}" rendered="#{empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
+    </ui:define>
 </ui:composition>

@@ -22,34 +22,34 @@
         <f:viewAction action="#{ProcessForm.loadTask(id)}" />
         <f:viewAction action="#{ProcessForm.setTaskEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
-        <ui:define name="contentHeader">
-            <h:outputScript name="js/save.js" target="body" />
-            <script>
-                window.onload = function () {checkForm('editForm')};
-            </script>
-            <h3 id="headerText">
-                <h:outputText value="#{msgs.addTask}" rendered="#{empty ProcessForm.task.title}"/>
-                <h:outputText value="#{msgs.taskDetails} (#{ProcessForm.task.title})"
-                              rendered="#{not empty ProcessForm.task.title}"/>
-            </h3>
-            <p:commandButton id="save" value="#{msgs.save}"
-                             action="#{ProcessForm.saveTaskAndRedirect}"
-                             icon="fa fa-floppy-o fa-lg"
-                             iconPos="right"
-                             onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                             disabled="#{ProcessForm.saveDisabled}"
-                             update="notifications"/>
-            <p:commandButton id="saveButtonToggler"
-                             actionListener="#{ProcessForm.setSaveDisabled(false)}"
-                             update="save"
-                             style="display:none;"/>
-            <p:button id="cancel" value="#{msgs.cancel}"
-                      outcome="#{ProcessForm.taskEditReferer}"
-                      onclick="setConfirmUnload(false);"
-                      icon="fa fa-times fa-lg"
-                      iconPos="right"
-                      styleClass="secondary"/>
-        </ui:define>
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
+        <h3 id="headerText">
+            <h:outputText value="#{msgs.addTask}" rendered="#{empty ProcessForm.task.title}"/>
+            <h:outputText value="#{msgs.taskDetails} (#{ProcessForm.task.title})"
+                          rendered="#{not empty ProcessForm.task.title}"/>
+        </h3>
+        <p:commandButton id="save" value="#{msgs.save}"
+                         action="#{ProcessForm.saveTaskAndRedirect}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         disabled="#{ProcessForm.saveDisabled}"
+                         update="notifications"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{ProcessForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  outcome="#{ProcessForm.taskEditReferer}"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+    </ui:define>
 
     <ui:define name="pageTabView">
         <p:tabView id="tabs" rendered="#{SecurityAccessController.hasAuthorityToEditTask(id)}">
