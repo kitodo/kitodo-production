@@ -78,7 +78,7 @@
                                oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
                     <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
-                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
+                    <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                 </p:commandLink>
                 <!-- else, open metadata editor directly -->
                 <!--@elvariable id="currentTaskId" type="int"-->
@@ -88,19 +88,19 @@
                                title="#{msgs.metadataEdit}"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                     <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
-                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
+                    <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                 </h:commandLink>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
-                    <h:outputText><i class="fa fa-download"/></h:outputText>
+                    <h:outputText><i class="fa fa-download fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     <!-- TODO: add separate message in case it already exists and alert -->
                 </p:commandLink>
 
                 <p:commandLink id="upload" action="#{ProcessForm.uploadFromHome}" title="#{msgs.deleteLinkHomeDirectory}"
                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
-                    <h:outputText><i class="fa fa-upload"/></h:outputText>
+                    <h:outputText><i class="fa fa-upload fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
                                icon="ui-icon-alert"/>
@@ -108,38 +108,38 @@
 
                 <!-- TODO: could be used for adding text: http://blog.fontawesome.io/2014/05/19/stacking-text-and-icons/ -->
                 <p:commandLink id="exportLogXml" action="#{ProcessForm.createXML}" title="#{msgs.createXML}">
-                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </p:commandLink>
 
                 <p:commandLink id="downloadDocket" action="#{ProcessForm.downloadDocket}" title="#{msgs.docketPrint}"
                                ajax="false" rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
-                    <h:outputText><i class="fa fa-print"/></h:outputText>
+                    <h:outputText><i class="fa fa-print fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </p:commandLink>
 
                 <h:commandLink action="#{ProcessForm.exportMets}" id="exportMets" title="#{msgs.exportMets}"
                                rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
 
                 <h:commandLink action="#{ProcessForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}"
                                rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                    <h:outputText><i class="fa fa-file-pdf-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-file-pdf-o fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
 
                 <h:commandLink action="#{ProcessForm.exportDMS}" id="exportDms" title="#{msgs.exportDMS}"
                                rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                    <h:outputText><i class="fa fa-file-archive-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
 
                 <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                update="processesTabView:processesForm:processesTable">
-                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteProcess}"
                                icon="ui-icon-alert"/>
