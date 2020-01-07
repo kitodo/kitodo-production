@@ -117,40 +117,51 @@
 
         <p:rowExpansion styleClass="expansion-class">
             <div class="row-expansion-wrapper">
-                <p:panelGrid columns="2" columnClasses="label, value" id="projectDetailTable">
-                    <h:outputText value="#{msgs.internFileFormat}:"/>
-                    <h:outputText value="#{item.fileFormatInternal}"/>
+                <p:panelGrid columns="2">
+                    <p:panelGrid id="projectDetailTable"
+                                 styleClass="expansion-column"
+                                 columns="2"
+                                 columnClasses="label, value">
+                        <h:outputText value="#{msgs.internFileFormat}:"/>
+                        <h:outputText value="#{item.fileFormatInternal}"/>
 
-                    <h:outputText value="#{msgs.dmsExportFormat}:"/>
-                    <h:outputText value="#{item.fileFormatDmsExport}"/>
+                        <h:outputText value="#{msgs.dmsExportFormat}:"/>
+                        <h:outputText value="#{item.fileFormatDmsExport}"/>
 
-                    <h:outputText value="#{msgs.metsRightsOwner}:"/>
-                    <h:outputText value="#{item.metsRightsOwner}"/>
+                        <h:outputText value="#{msgs.metsRightsOwner}:"/>
+                        <h:outputText value="#{item.metsRightsOwner}"/>
+                    </p:panelGrid>
+                    <p:panelGrid id="projectTemplatesTable"
+                                 styleClass="expansion-column"
+                                 columns="2"
+                                 columnClasses="label, value">
+                        <h:outputText value="#{msgs.templates}:"/>
+                        <h:form id="createProcessForm">
+                            <p:repeat value="#{item.templates}" var="template" id="templates">
+                                <p:panelGrid id="projectActionDetailTable"
+                                             columns="2"
+                                             columnClasses="label, actionsColumn" >
+                                    <h:outputText value="#{template.title} "/>
 
-                    <h:outputText value="#{msgs.templates}:"/>
-                    <h:form id="createProcessForm">
-                        <p:repeat value="#{item.templates}" var="template" id="templates">
-                            <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
-                                <h:outputText value="#{template.title} "/>
+                                    <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                        <h:link id="createProcess"
+                                                outcome="/pages/processFromTemplate?faces-redirect=true"
+                                                title="#{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                            <f:param name="templateId" value="#{template.id}"/>
+                                            <f:param name="projectId" value="#{item.id}"/>
+                                            <f:param name="referrer" value="#{'projects'}"/>
+                                            <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
+                                        </h:link>
 
-                                <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                    <h:link id="createProcess"
-                                            outcome="/pages/processFromTemplate?faces-redirect=true"
-                                            title="#{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <f:param name="templateId" value="#{template.id}"/>
-                                        <f:param name="projectId" value="#{item.id}"/>
-                                        <f:param name="referrer" value="#{'projects'}"/>
-                                        <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
-                                    </h:link>
-
-                                    <h:commandLink action="#{MassImportForm.prepare(template.id,item.id)}" id="createMassProcess"
-                                                   title="#{msgs.massImport}: #{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
-                                    </h:commandLink>
-                                </h:outputText>
-                            </p:panelGrid>
-                        </p:repeat>
-                    </h:form>
+                                        <h:commandLink action="#{MassImportForm.prepare(template.id,item.id)}" id="createMassProcess"
+                                                       title="#{msgs.massImport}: #{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                            <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
+                                        </h:commandLink>
+                                    </h:outputText>
+                                </p:panelGrid>
+                            </p:repeat>
+                        </h:form>
+                    </p:panelGrid>
                 </p:panelGrid>
             </div>
         </p:rowExpansion>

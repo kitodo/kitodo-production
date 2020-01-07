@@ -954,20 +954,53 @@ tr.ui-widget-content,
 }
 
 .row-expansion-wrapper tr.ui-widget-content td.label {
-    width: 200px;
+    display: inline-block;
     padding-left: 0 !important;
+    vertical-align: top;
+    width: 200px;
+}
+
+.row-expansion-wrapper .ui-panelgrid-cell {
+    vertical-align: top;
+}
+
+.row-expansion-wrapper > table > tbody,
+.row-expansion-wrapper > table > tbody > tr {
+    display: inline-block;
+}
+
+.row-expansion-wrapper > table > tbody {
+    width: 70%;
+}
+
+.row-expansion-wrapper > table > tbody > tr {
+    width: 100%;
+}
+
+.row-expansion-wrapper > table > tbody > tr > td {
+    display: inline-block;
+    width: 40%;
+}
+
+.row-expansion-wrapper {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+.expansion-column > tbody > tr > td.label {
+    font-weight: bold;
 }
 
 tr.ui-expanded-row-content,
 tr.ui-expanded-row-content tr.ui-widget-header,
 .ui-dialog-content tr.ui-widget-header,
 .ui-panelgrid .ui-widget-header {
-    border-top: 0px none !important;
+    border-top: 0 none !important;
     background: transparent;
 }
 
-.ui-expanded-row-content table.ui-widget {
-    border-top: 1px solid var(--blue);
+.row-expansion-wrapper > table.ui-widget {
+    border-top: 1px solid var(--cloudy-gray);
 }
 
 .ui-expanded-row-content tr {
@@ -991,10 +1024,12 @@ tr.ui-expanded-row-content.row-hover {
     border: solid var(--default-border-width) var(--medium-gray);
 }
 
+.row-expansion-wrapper > table {
+    margin-left: 32px;
+}
 
 tr.ui-expanded-row-content .ui-panelgrid {
-    width: 70%;
-    margin-left: 48px;
+    display: block;
 }
 
 tr.ui-expanded-row-content > td {
@@ -1004,7 +1039,11 @@ tr.ui-expanded-row-content > td {
 tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-dialog-content .ui-panelgrid .ui-panelgrid-cell {
     border: 0;
-    padding: 8px 10px;
+    padding: 0 10px;
+}
+
+.workflow-diagram {
+    margin-left: var(--default-double-size);
 }
 
 /*----------------------------------------------------------------------
@@ -1100,11 +1139,14 @@ Popup dialogs
 }
 
 .ui-datatable .ui-column-resizer {
-    background-color: var(--medium-gray);
     margin-left: 4px;
     margin-right: 4px;
     opacity: .5;
     width: 1px;
+}
+
+.ui-datatable .ui-column-resizer:hover {
+    background-color: var(--medium-gray);
 }
 
 #deleteConfirmDialog .ui-dialog-content {

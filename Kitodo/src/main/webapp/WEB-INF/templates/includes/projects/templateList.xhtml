@@ -37,7 +37,8 @@
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="#{msgs.title}"
+        <p:column id="titleColumn"
+                  headerText="#{msgs.title}"
                   sortBy="#{item.title}"
                   rendered="#{ProjectForm.showColumn('template.title')}">
             <h:outputText value="#{item.title}"
@@ -98,43 +99,55 @@
 
         <p:rowExpansion styleClass="expansion-class">
             <div class="row-expansion-wrapper">
-                <p:panelGrid columns="2" columnClasses="label, value" id="templateDetailTable">
-                    <h:outputText value="#{msgs.workflow}:"/>
-                    <h:outputText value="#{item.workflow.title}"/>
+                <p:panelGrid columns="2">
+                    <p:panelGrid id="templateDetailTable"
+                                 styleClass="expansion-column"
+                                 columns="2"
+                                 columnClasses="label, value">
+                        <h:outputText value="#{msgs.workflow}:"/>
+                        <h:outputText value="#{item.workflow.title}"/>
 
-                    <h:outputText value="#{msgs.docket}:"/>
-                    <h:outputText value="#{item.docket.title}"/>
+                        <h:outputText value="#{msgs.docket}:"/>
+                        <h:outputText value="#{item.docket.title}"/>
 
-                    <h:outputText value="#{msgs.ruleset}:"/>
-                    <h:outputText value="#{item.ruleset.title}"/>
+                        <h:outputText value="#{msgs.ruleset}:"/>
+                        <h:outputText value="#{item.ruleset.title}"/>
+                    </p:panelGrid>
 
-                    <h:outputText value="#{msgs.projects}:"/>
-                    <h:form id="createProcessForm">
-                        <p:repeat value="#{item.projects}" var="project" id="projects">
-                            <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
-                                <h:outputText value="#{project.title} "/>
+                    <p:panelGrid id="templateProjectsTable"
+                                 styleClass="expansion-column"
+                                 columns="2"
+                                 columnClasses="label, value">
+                        <h:outputText value="#{msgs.projects}:"/>
+                        <h:form id="createProcessForm">
+                            <p:repeat value="#{item.projects}" var="project" id="projects">
+                                <p:panelGrid id="templateActionDetailTable"
+                                             columns="2"
+                                             columnClasses="label, actionsColumn" >
+                                    <h:outputText value="#{project.title} "/>
 
-                                <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                    <h:link id="createProcess"
-                                            outcome="/pages/processFromTemplate?faces-redirect=true"
-                                            title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <f:param name="templateId" value="#{item.id}"/>
-                                        <f:param name="projectId" value="#{project.id}"/>
-                                        <f:param name="referrer" value="#{'projects'}"/>
-                                        <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
-                                    </h:link>
+                                    <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                        <h:link id="createProcess"
+                                                outcome="/pages/processFromTemplate?faces-redirect=true"
+                                                title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                            <f:param name="templateId" value="#{item.id}"/>
+                                            <f:param name="projectId" value="#{project.id}"/>
+                                            <f:param name="referrer" value="#{'projects'}"/>
+                                            <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
+                                        </h:link>
 
-                                    <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
-                                                   title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
-                                    </h:commandLink>
-                                </h:outputText>
-                            </p:panelGrid>
-                        </p:repeat>
-                    </h:form>
+                                        <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
+                                                       title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                            <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
+                                        </h:commandLink>
+                                    </h:outputText>
+                                </p:panelGrid>
+                            </p:repeat>
+                        </h:form>
+                    </p:panelGrid>
                 </p:panelGrid>
 
-                <o:graphicImage rendered="#{item.workflow ne null}" value="#{item.diagramImage}" dataURI="true" />
+                <o:graphicImage styleClass="workflow-diagram" rendered="#{item.workflow ne null}" value="#{item.diagramImage}" dataURI="true" />
             </div>
         </p:rowExpansion>
 
