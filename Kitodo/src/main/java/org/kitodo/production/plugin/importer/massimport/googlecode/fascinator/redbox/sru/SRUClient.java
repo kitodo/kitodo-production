@@ -31,52 +31,49 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * A light-weight SRU client implementation. Originally written for the purpose
- * of searching the National Library of Australia's Party Infrastructure Project
- * (PIP) via GET (ie. not POST or SOAP, both of which PIP also supports).
- *
- * <p>
- * More information/documentation for PIP is
- * <a href="https://wiki.nla.gov.au/display/ARDCPIP/Documentation"> available on
- * the NLA wiki</a>.
+ * A light-weight SRU client implementation.
  *
  * @author Greg Pendlebury
  *
  * @author Credit for some of inspiration has to go to another light-weight
  *         implementation available under LGPL we looked at before we started
- *         coding: <a href=
- *         "http://code.google.com/p/sinciput/source/browse/trunk/sinciput/src/com/technosophos/sinciput/sru/SRUClient.java">
- *         SRUClient</a> from 'Sinciput'.
- *
+ *         coding: {@code SRUClient} from 'Sinciput'.
+ * @see "https://code.google.com/archive/p/sinciput/source"
  */
 public class SRUClient {
-    /** Logging. **/
-    private static Logger logger = LogManager.getLogger(SRUClient.class);
+    private static final Logger logger = LogManager.getLogger(SRUClient.class);
 
-    /** Default URL. **/
-    private final String baseUrl;
+    /**
+     * Request a particular response packing.
+     **/
+    private static final String RESPONSE_PACKING = "xml";
 
-    /** Default Schema is for EAC-CPF records from the NLA. **/
-    private final String recordSchema;
-
-    /** Version parameter for the query. **/
+    /**
+     * Version parameter for the query.
+     **/
     private static final String SRU_VERSION = "1.1";
 
-    /** Request a particular response packing. **/
-    private static final String RESPONSE_PACKING = "xml";
+    /**
+     * Default URL.
+     **/
+    private final String baseUrl;
+
+    /**
+     * Default Schema.
+     **/
+    private final String recordSchema;
 
     /**
      * Constructor indicating the base URL and metadata schema.
      *
      * @param baseUrl
      *            The Base URL for the SRU interface. Required.
-     * @param schema
-     *            The SRU 'recordSchema' to use. NULL values will default to
-     *            EAC-CPC ('urn:isbn:1-931666-33-4')
+     * @param recordSchema
+     *            The SRU 'recordSchema' to use.
      * @throws MalformedURLException
      *             Will be thrown if the 'baseUrl' provided is not well formed.
      */
-    public SRUClient(String baseUrl, String schema) throws MalformedURLException {
+    public SRUClient(String baseUrl, String recordSchema) throws MalformedURLException {
         // Make sure our URL is valid first
         try {
             @SuppressWarnings("unused")
@@ -87,7 +84,7 @@ public class SRUClient {
             throw ex;
         }
 
-        recordSchema = schema;
+        this.recordSchema = recordSchema;
     }
 
     /**
@@ -107,21 +104,13 @@ public class SRUClient {
     }
 
     /**
-     * Get the requested URL and return the GetMethod Object afterwards. To
-     * access more info use its method: eg. GetMethod.getStatusCode() and
-     * GetMethod.getResponseBodyAsString()
-     *
-     * <p>
-     * Internally wraps a Fascinator BasicHttpClient Object, so any configured
-     * proxy details from the system will be used automatically.
+     * Get the requested URL and return the GetMethod Object afterwards.
      *
      * @param url
      *            The URL to retrieve
      * @return GetMethod The instantiated and executed GetMethod Object.
      * @throws IOException
-     *             If any network errors occur accessing the URL. Note this does
-     *             not cover HTTP errors returned from the web server; use the
-     *             returned Object to check for these.
+     *             If any network errors occur accessing the URL.
      */
     private GetMethod getUrl(String url) throws IOException {
         HttpClient client = new HttpClient();
