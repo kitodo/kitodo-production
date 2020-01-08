@@ -221,11 +221,11 @@
                         
                         <h:outputText value="#{msgs.hierarchicalChildren}:"/>
                         <h:panelGroup>
-                            <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())}"/>
-                            <br/>
+                            <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())} " rendered="#{process.hasChildren()}"/>
                             <p:commandLink value="#{msgs.showHierarchicalChildren}"
                                            action="#{ProcessForm.changeFilter('parentprocessid:'.concat(process.getId()))}"
                                            rendered="#{process.hasChildren()}"/>
+                            <h:outputText value=" #{msgs.none}" rendered="#{not process.hasChildren()}"/>
                         </h:panelGroup>
                     </p:panelGrid>
                 </div>
