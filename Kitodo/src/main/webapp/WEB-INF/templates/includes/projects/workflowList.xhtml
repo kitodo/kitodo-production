@@ -17,6 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="workflowTable"
+                 styleClass="default-layout"
                  var="item"
                  value="#{WorkflowForm.lazyDTOModel}"
                  lazy="true"
@@ -42,7 +43,9 @@
                           title="#{msgs[item.status]}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:outputText>
                 <h:form>
                     <h:link id="viewWorkflow"

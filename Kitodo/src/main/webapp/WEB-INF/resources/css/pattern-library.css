@@ -355,7 +355,6 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     font: normal normal normal 20px FontAwesome;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    margin-right: var(--default-full-size);
     text-rendering: auto;
 }
 
@@ -957,7 +956,6 @@ tr.ui-widget-content,
     display: inline-block;
     padding-left: 0 !important;
     vertical-align: top;
-    width: 200px;
 }
 
 .row-expansion-wrapper .ui-panelgrid-cell {
@@ -989,6 +987,26 @@ tr.ui-widget-content,
 
 .expansion-column > tbody > tr > td.label {
     font-weight: bold;
+}
+
+.ui-panelgrid-cell .project-template-action {
+    height: var(--input-height);
+    margin-bottom: 0;
+}
+
+.expansion-list-item-title {
+    display: inline-block;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    width: 150px;
+}
+
+.expansion-list-item-actions {
+    vertical-align: top;
+}
+
+.expansion-list-item-actions a {
+    margin-left: var(--default-half-size);
 }
 
 tr.ui-expanded-row-content,
@@ -1145,8 +1163,30 @@ Popup dialogs
     width: 1px;
 }
 
+.ui-datatable th:nth-last-child(2) .ui-column-resizer {
+    display: none;
+}
+
 .ui-datatable .ui-column-resizer:hover {
     background-color: var(--medium-gray);
+}
+
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr,
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th,
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: default;
+}
+
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th.actionsColumn,
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td.actionsColumn {
+    width: 270px;
+}
+
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th.actionsColumn {
+    min-width: 70px;
 }
 
 #deleteConfirmDialog .ui-dialog-content {

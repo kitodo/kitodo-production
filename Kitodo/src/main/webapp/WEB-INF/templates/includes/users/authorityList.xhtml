@@ -18,6 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="authoritiesTable"
+                 styleClass="default-layout"
                  value="#{AuthorityForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
@@ -35,7 +36,9 @@
             <h:outputText value="#{HelperForm.getTranslated(item.type)}"
                           title="#{HelperForm.getTranslated(item.type)}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewAuthority" outcome="authorityEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewAuthority() and not SecurityAccessController.hasAuthorityToEditAuthority()}">

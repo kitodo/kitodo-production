@@ -17,6 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="docketTable"
+                 styleClass="default-layout"
                  var="item"
                  value="#{DocketForm.lazyDTOModel}"
                  lazy="true"
@@ -42,7 +43,9 @@
                           title="#{item.file}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewDocket" outcome="docketEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewDocket() and not SecurityAccessController.hasAuthorityToEditDocket()}">

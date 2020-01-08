@@ -16,6 +16,7 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="ldapServersTable"
+                 styleClass="default-layout"
                  value="#{LdapServerForm.ldapServers}"
                  lazy="true"
                  paginator="true"
@@ -35,7 +36,9 @@
             <h:outputText value="#{item.url}"
                           title="#{item.url}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="ldapserverEdit"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapServer')}">

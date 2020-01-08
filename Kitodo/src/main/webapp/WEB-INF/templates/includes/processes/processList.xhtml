@@ -20,6 +20,7 @@
     <h:form id="processesForm">
         <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO-->
         <p:dataTable id="processesTable"
+                     styleClass="default-layout"
                      var="process"
                      value="#{ProcessForm.lazyDTOModel}"
                      selection="#{ProcessForm.selectedProcesses}"
@@ -64,7 +65,9 @@
                 <h:outputText value="#{ProcessForm.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"
                               title="#{ProcessForm.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"/>
             </p:columns>
-            <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
+            <p:column styleClass="actionsColumn"
+                      resizable="false"
+                      headerText="#{msgs.actions}">
                 <h:panelGroup layout="block"
                               styleClass="actionsBlock">
                     <h:link id="viewProcess" outcome="processEdit" title="#{msgs.view}"

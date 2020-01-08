@@ -313,7 +313,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
 
     /**
      * Get query for finding projects for current user.
-     * 
+     *
      * @return query for finding projects for current user
      */
     public QueryBuilder getProjectsForCurrentUserQuery() {
@@ -349,5 +349,14 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         parameters.put("clientId", clientId);
         parameters.put("title", title);
         return getByQuery(query, parameters);
+    }
+
+    /**
+     * Create and return String containing the titles of all given projects joined by a ", "
+     * @param projects list of roles
+     * @return String containing project titles
+     */
+    public static String getProjectTitles(List<Project> projects) {
+        return projects.stream().map(Project::getTitle).collect(Collectors.joining(", "));
     }
 }

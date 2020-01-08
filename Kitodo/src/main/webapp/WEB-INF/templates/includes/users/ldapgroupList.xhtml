@@ -18,6 +18,7 @@
     xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="ldapGroupsTable"
+                 styleClass="default-layout"
                  value="#{LdapGroupForm.ldapGroups}"
                  lazy="true"
                  paginator="true"
@@ -45,7 +46,9 @@
             <h:outputText value="#{item.gidNumber}"
                           title="#{item.gidNumber}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="ldapgroupEdit"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapGroup')}">

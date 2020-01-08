@@ -18,6 +18,7 @@
         xmlns:o="http://omnifaces.org/ui"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="templateTable"
+                 styleClass="default-layout"
                  var="item"
                  value="#{TemplateForm.lazyDTOModel}"
                  lazy="true"
@@ -51,7 +52,9 @@
                           title="#{item.ruleset.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:outputText>
                 <h:form id="templateActionForm">
 
@@ -120,29 +123,34 @@
                                  columnClasses="label, value">
                         <h:outputText value="#{msgs.projects}:"/>
                         <h:form id="createProcessForm">
-                            <p:repeat value="#{item.projects}" var="project" id="projects">
-                                <p:panelGrid id="templateActionDetailTable"
-                                             columns="2"
-                                             columnClasses="label, actionsColumn" >
-                                    <h:outputText value="#{project.title} "/>
-
-                                    <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                        <h:link id="createProcess"
-                                                outcome="/pages/processFromTemplate?faces-redirect=true"
-                                                title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                            <f:param name="templateId" value="#{item.id}"/>
-                                            <f:param name="projectId" value="#{project.id}"/>
-                                            <f:param name="referrer" value="#{'projects'}"/>
-                                            <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
-                                        </h:link>
-
-                                        <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
-                                                       title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                            <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
-                                        </h:commandLink>
-                                    </h:outputText>
-                                </p:panelGrid>
-                            </p:repeat>
+                            <p:panelGrid id="templateActionDetailTable"
+                                         columns="2"
+                                         columnClasses="label, actionsColumn">
+                                <p:repeat id="projects"
+                                          value="#{item.projects}"
+                                          var="project">
+                                    <div class="project-template-action">
+                                        <h:outputText value="#{project.title}"
+                                                      styleClass="expansion-list-item-title"/>
+                                        <h:panelGroup class="expansion-list-item-actions">
+                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                                <h:link id="createProcess"
+                                                        outcome="/pages/processFromTemplate?faces-redirect=true"
+                                                        title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                                    <f:param name="templateId" value="#{item.id}"/>
+                                                    <f:param name="projectId" value="#{project.id}"/>
+                                                    <f:param name="referrer" value="#{'projects'}"/>
+                                                    <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
+                                                </h:link>
+                                                <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
+                                                               title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                                    <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
+                                                </h:commandLink>
+                                            </h:outputText>
+                                        </h:panelGroup>
+                                    </div>
+                                </p:repeat>
+                            </p:panelGrid>
                         </h:form>
                     </p:panelGrid>
                 </p:panelGrid>

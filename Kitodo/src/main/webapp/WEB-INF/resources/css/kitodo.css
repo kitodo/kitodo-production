@@ -2106,16 +2106,6 @@ footer {
     border-bottom: none;
 }
 
-.ui-datatable tr th.actionsColumn,
-.ui-datatable tr td.actionsColumn {
-    width: 280px;
-}
-
-.ui-datatable tr td.actionsColumn > div.actionsBlock,
-.ui-datatable tr td.actionsColumn > form {
-    float: right;
-}
-
 .ui-datatable tr td.actionsColumn > a,
 .ui-datatable tr td.actionsColumn > form > a,
 .ui-datatable tr td.actionsColumn > form > span,
@@ -2124,8 +2114,8 @@ footer {
     margin-right: 10px;
 }
 
-.ui-datatable tr td.actionsColumn > a:last-child,
-.ui-datatable tr td.actionsColumn > form > a:last-child {
+.ui-datatable tr td.actionsColumn > a:last-of-type,
+.ui-datatable tr td.actionsColumn > form > a:last-of-type {
     margin-right: 0;
 }
 

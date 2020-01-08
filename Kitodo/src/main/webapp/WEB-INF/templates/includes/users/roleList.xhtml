@@ -18,6 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="rolesTable"
+                 styleClass="default-layout"
                  value="#{RoleForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
@@ -39,7 +40,9 @@
             <h:outputText value="#{item.client.name}"
                           title="#{item.client.name}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewRole" outcome="roleEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewRole() and not SecurityAccessController.hasAuthorityToEditRole()}">
