@@ -708,7 +708,7 @@ public class RulesetManagementIT {
 
     @Test
     public void testGettingOfSpecialFields() throws Exception {
-        RulesetManagementInterface underTest = new RulesetManagement();
+        RulesetManagement rulesetManagement= new RulesetManagement();
         underTest.load(new File("src/test/resources/testAnExtensiveRulesetCanBeLoaded.xml"));
 
         assertThat(underTest.getIdsOfKeysForSpecialField(SpecialField.TITLE), contains("TitleDocMain"));
