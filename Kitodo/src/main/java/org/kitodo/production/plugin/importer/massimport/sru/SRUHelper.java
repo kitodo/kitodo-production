@@ -62,7 +62,7 @@ public class SRUHelper {
     public static String search(String ppn, String address) {
         SRUClient client;
         try {
-            client = new SRUClient("http://" + address, "picaxml", null, null);
+            client = new SRUClient("http://" + address, "picaxml");
             return client.getSearchResponse("pica.ppn=" + ppn);
         } catch (MalformedURLException e) {
             logger.error(e.getMessage(), e);
