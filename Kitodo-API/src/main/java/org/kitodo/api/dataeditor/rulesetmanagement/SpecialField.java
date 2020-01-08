@@ -58,7 +58,7 @@ public enum SpecialField {
 
     /**
      * This character string defines how the special field is to be marked in
-     * the rule set.
+     * the ruleset.
      */
     private final String mark;
 
