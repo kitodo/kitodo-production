@@ -20,7 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Certain fields in the rule set that have a special function.
+ * Certain fields in the ruleset that have a special function.
  */
 public enum SpecialField {
     /**
