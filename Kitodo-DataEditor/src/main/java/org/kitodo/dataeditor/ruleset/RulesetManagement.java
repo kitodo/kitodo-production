@@ -95,7 +95,7 @@ public class RulesetManagement implements RulesetManagementInterface {
     }
 
     /**
-     * Returns a translated list of divisions available in the rule set. The map
+     * Returns a translated list of divisions available in the ruleset. The map
      * maps from ID to label.
      *
      * @return the list of divisions
