@@ -28,8 +28,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.SpecialField;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.dataeditor.ruleset.xml.AcquisitionStage;
 import org.kitodo.dataeditor.ruleset.xml.Division;
@@ -69,25 +69,25 @@ public class RulesetManagement implements RulesetManagementInterface {
     }
 
     @Override
-    public List<String> getIdsOfKeysForSpecialField(SpecialField specialField) {
-        return getIdsOfKeysForSpecialField(ruleset.getKeys(), specialField);
+    public List<String> getFunctionalKeys(FunctionalMetadata functionalMetadata) {
+        return getIdsOfKeysForSpecialField(ruleset.getKeys(), functionalMetadata);
     }
 
-    private List<String> getIdsOfKeysForSpecialField(List<Key> keys, SpecialField specialField) {
+    private List<String> getIdsOfKeysForSpecialField(List<Key> keys, FunctionalMetadata functionalMetadata) {
         ArrayList<String> idsOfKeysForSpecialField = new ArrayList<>(1);
         for (Key key : keys) {
             if (key.getKeys().isEmpty()) {
                 if (Objects.isNull(key.getUse())) {
                     continue;
                 }
-                Set<SpecialField> uses = SpecialField.valuesOf(key.getUse());
-                if (uses.contains(specialField)) {
+                Set<FunctionalMetadata> uses = FunctionalMetadata.valuesOf(key.getUse());
+                if (uses.contains(functionalMetadata)) {
                     idsOfKeysForSpecialField.add(key.getId());
                 }
             } else {
-                List<String> idsOfKeysOfKey = getIdsOfKeysForSpecialField(key.getKeys(), specialField);
+                List<String> idsOfKeysOfKey = getIdsOfKeysForSpecialField(key.getKeys(), functionalMetadata);
                 for (String idOfKeyOfKey : idsOfKeysOfKey) {
-                    idsOfKeysForSpecialField.add(key.getId() + '/' + idOfKeyOfKey);
+                    idsOfKeysForSpecialField.add(key.getId() + '@' + idOfKeyOfKey);
                 }
             }
         }

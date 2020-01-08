@@ -20,9 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Certain fields in the ruleset that have a special function.
+ * Metadata that have a function.
  */
-public enum SpecialField {
+public enum FunctionalMetadata {
     /**
      * The author’s last name. This is used in the application to generate the
      * author-title key.
@@ -54,7 +54,7 @@ public enum SpecialField {
     /**
      * With the logger, text can be written to a log file or to the console.
      */
-    private static final Logger logger = LogManager.getLogger(SpecialField.class);
+    private static final Logger logger = LogManager.getLogger(FunctionalMetadata.class);
 
     /**
      * This character string defines how the special field is to be marked in
@@ -69,7 +69,7 @@ public enum SpecialField {
      * @param mark
      *            how the special field is to be marked
      */
-    private SpecialField(String mark) {
+    private FunctionalMetadata(String mark) {
         this.mark = mark;
     }
 
@@ -92,17 +92,17 @@ public enum SpecialField {
      *            string to be processed
      * @return fields
      */
-    public static Set<SpecialField> valuesOf(String marks) {
-        Set<SpecialField> values = new HashSet<>(7);
+    public static Set<FunctionalMetadata> valuesOf(String marks) {
+        Set<FunctionalMetadata> values = new HashSet<>(7);
         for (String mark : marks.split("\\s+", 0)) {
-            for (SpecialField candidate : SpecialField.values()) {
+            for (FunctionalMetadata candidate : FunctionalMetadata.values()) {
                 if (mark.equals(candidate.mark)) {
                     values.add(candidate);
                     break;
                 }
             }
             logger.warn("Ruleset declares undefined field use '{}', must be one of: {}", mark,
-                Arrays.stream(values()).map(SpecialField::toString).collect(Collectors.joining(", ")));
+                Arrays.stream(values()).map(FunctionalMetadata::toString).collect(Collectors.joining(", ")));
         }
         return values;
     }

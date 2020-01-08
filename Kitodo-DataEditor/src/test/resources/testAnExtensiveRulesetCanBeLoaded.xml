@@ -337,7 +337,7 @@
         <key id="datedigit" domain="digitalProvenance">
             <label>Date digitalization</label>
             <label lang="de">Datum Digitalisierung</label>
-            <codomain type="date"/>
+            <codomain type="date" />
         </key>
         <key id="pathimagefiles" domain="technical">
             <label>Path of image data</label>
@@ -463,7 +463,7 @@
             <label>size of source</label>
             <label lang="de">Größe der Vorlage</label>
         </key>
-        <key id="shelfmarksource" domain="source">
+        <key id="shelfmarksource" domain="source" use="recordIdentifier higherlevelIdentifier">
             <label lang="de">Signatur der Quelle</label>
         </key>
         <key id="shelfmark">

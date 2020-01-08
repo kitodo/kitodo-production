@@ -38,13 +38,14 @@ public interface RulesetManagementInterface {
     Collection<String> getAcquisitionStages();
 
     /**
-     * Returns all metadata keys that correspond to the specified special field.
+     * Returns all metadata keys that are used as the specified functional
+     * metadata.
      *
-     * @param specialField
-     *            special field to search for
-     * @return all metadata keys that correspond to the special field
+     * @param functionalMetadata
+     *            functional metadata to search for
+     * @return all keys used as the functional metadata
      */
-    Collection<String> getIdsOfKeysForSpecialField(SpecialField specialField);
+    Collection<String> getFunctionalKeys(FunctionalMetadata functionalMetadata);
 
     /**
      * Returns all outline elements. The result is a map whose keys are the ID

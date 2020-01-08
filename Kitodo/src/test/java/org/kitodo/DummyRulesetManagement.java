@@ -19,7 +19,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.SpecialField;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 
 public class DummyRulesetManagement implements RulesetManagementInterface {
@@ -30,7 +30,7 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     }
 
     @Override
-    public Collection<String> getIdsOfKeysForSpecialField(SpecialField specialField) {
+    public Collection<String> getFunctionalKeys(FunctionalMetadata functionalMetadata) {
         throw new UnsupportedOperationException();
     }
 

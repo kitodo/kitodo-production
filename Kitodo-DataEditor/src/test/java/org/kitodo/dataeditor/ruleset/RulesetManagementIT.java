@@ -14,6 +14,7 @@ package org.kitodo.dataeditor.ruleset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -42,12 +43,11 @@ import org.junit.Test;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.SpecialField;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 
 /**
@@ -709,10 +709,25 @@ public class RulesetManagementIT {
     @Test
     public void testGettingOfSpecialFields() throws Exception {
         RulesetManagement rulesetManagement= new RulesetManagement();
-        underTest.load(new File("src/test/resources/testAnExtensiveRulesetCanBeLoaded.xml"));
+        rulesetManagement.load(new File("src/test/resources/testAnExtensiveRulesetCanBeLoaded.xml"));
 
-        assertThat(underTest.getIdsOfKeysForSpecialField(SpecialField.TITLE), contains("TitleDocMain"));
-        assertThat(underTest.getIdsOfKeysForSpecialField(SpecialField.AUTHOR_LAST_NAME), contains("Person/LastName"));
+        assertThat("TitleDocMain was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.TITLE), contains("TitleDocMain"));
+        assertThat("Person@LastName was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.AUTHOR_LAST_NAME),
+            contains("Person@LastName"));
+
+        // not existing uses
+        assertThat("Something was found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.DATA_SOURCE), is(empty()));
+
+        // multiple uses of one key
+        assertThat("shelfmarksource was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER),
+            contains("shelfmarksource"));
+        assertThat("shelfmarksource was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER),
+            contains("shelfmarksource"));
     }
 
     /**
@@ -996,7 +1011,7 @@ public class RulesetManagementIT {
     /**
      * The method provides a simple access to a metadata key in a list of
      * MetadataViewWithValuesInterface.
-     * 
+     *
      * @param mvwviList
      *            list of MetadataViewWithValuesInterface to extract from
      * @param keyId
@@ -1011,7 +1026,7 @@ public class RulesetManagementIT {
     /**
      * The method provides a simple access to a metadata key in a list of
      * MetadataViewWithValuesInterface.
-     * 
+     *
      * @param metadataViewWithValuesInterfaceList
      *            list of MetadataViewWithValuesInterface to extract from
      * @param keyId
@@ -1030,7 +1045,7 @@ public class RulesetManagementIT {
     /**
      * Returns the IDs of the metadata keys in a collection of metadata view
      * interfaces.
-     * 
+     *
      * @param mviColl
      *            collection of metadata view interfaces to return the IDs of
      *            the metadata keys from
@@ -1043,7 +1058,7 @@ public class RulesetManagementIT {
     /**
      * Returns the IDs of the metadata keys in a metadata view with values
      * interface list.
-     * 
+     *
      * @param metadataViewWithValuesInterfaceList
      *            metadata view with values interface list to return the IDs of
      *            the metadata keys from
