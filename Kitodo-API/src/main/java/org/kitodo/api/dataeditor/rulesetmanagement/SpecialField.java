@@ -75,7 +75,7 @@ public enum SpecialField {
 
     /**
      * Returns a string which defines how the special field is to be marked in
-     * the rule set.
+     * the ruleset.
      *
      * @return how the special field is to be marked
      */
