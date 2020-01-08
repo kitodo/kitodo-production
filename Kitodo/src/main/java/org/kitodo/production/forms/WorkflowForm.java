@@ -40,6 +40,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -140,6 +141,10 @@ public class WorkflowForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
         try {
+            if (hasMultipleSructureTreeConfigurations()) {
+                Helper.setErrorMessage(Helper.getTranslation("errorMultipleConfigurations"));
+                return this.stayOnCurrentPage;
+            }
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
@@ -158,6 +163,26 @@ public class WorkflowForm extends BaseForm {
                 e);
             return this.stayOnCurrentPage;
         }
+    }
+
+    private boolean hasMultipleSructureTreeConfigurations() throws WorkflowException, IOException {
+        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap();
+        String xml = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
+        xml = StringUtils.substringBefore(xml, "kitodo-diagram-separator");
+        Converter converter = new Converter(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        List<Task> tasks = converter.validateWorkflowTaskList();
+        boolean separate = false;
+        boolean combined = false;
+        for (Task task : tasks) {
+            if (task.isSeparateStructure()) {
+                separate = true;
+            } else {
+                combined = true;
+            }
+        }
+
+        return separate && combined;
     }
 
     /**
