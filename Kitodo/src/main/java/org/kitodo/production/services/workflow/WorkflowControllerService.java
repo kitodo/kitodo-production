@@ -126,13 +126,12 @@ public class WorkflowControllerService {
             task.setEditType(TaskEditType.ADMIN);
             task.setProcessingTime(new Date());
             taskService.replaceProcessingUser(task, getCurrentUser());
+            setProcessingStatusDown(task);
             if (task.getProcessingStatus() == TaskStatus.LOCKED) {
                 List<Task> previousTasks = getPreviousTasks(task);
                 for (Task previousTask : previousTasks) {
                     setProcessingStatusDown(previousTask);
                 }
-            } else {
-                setProcessingStatusDown(task);
             }
         }
     }

@@ -124,6 +124,7 @@ public class WorkflowControllerServiceIT {
     @Test
     public void shouldSetTasksStatusDown() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
+        //Due to testszenario there are multiple current tasks, so task with id 2 is set down twice (inwork->open->locked)
         List<Task> tasks = process.getTasks();
         assertEquals("Task '" + tasks.get(3).getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
             tasks.get(3).getProcessingStatus());
@@ -134,7 +135,7 @@ public class WorkflowControllerServiceIT {
         tasks = process.getTasks();
         assertEquals("Task '" + tasks.get(3).getTitle() + "' status was not set down!", TaskStatus.LOCKED,
             tasks.get(3).getProcessingStatus());
-        assertEquals("Task '" + tasks.get(2).getTitle() + "' status was not set down!", TaskStatus.OPEN,
+        assertEquals("Task '" + tasks.get(2).getTitle() + "' status was not set down!", TaskStatus.LOCKED,
             tasks.get(2).getProcessingStatus());
     }
 
