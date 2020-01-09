@@ -77,6 +77,10 @@ public class KitodoScriptServiceIT {
 
         assertTrue(max + ": There is no such directory!", max.isDirectory());
 
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
+        }
+
         TreeDeleter.deltree(processHome);
     }
 
@@ -154,6 +158,10 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldGenerateDerivativeImages() throws Exception {
+
+        // Delete created and still running taskmanager tasks from other test suites because
+        // this test is assuming that there are no other taskmanager tasks running!
+        TaskManager.stopAndDeleteAllTasks();
 
         Folder generatorSource = new Folder();
         generatorSource.setMimeType("image/tiff");

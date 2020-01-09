@@ -13,7 +13,6 @@ package org.kitodo.production.process;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.awaitility.Awaitility;
 import org.junit.AfterClass;
@@ -43,10 +43,8 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.file.FileService;
 
 public class NewspaperProcessesGeneratorIT {
-    private static final FileService fileService = new FileService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     private static final String firstProcess = "First process";
@@ -71,7 +69,6 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessForCalendarHierarchyTests();
         MockDatabase.setUpAwaitility();
-        fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
         Awaitility.await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
     }
@@ -84,6 +81,10 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
+
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
     }
 
     /**
@@ -92,6 +93,11 @@ public class NewspaperProcessesGeneratorIT {
      */
     @Test
     public void shouldGenerateNewspaperProcesses() throws Exception {
+        // create backup of meta data file as this file is modified inside test
+        File metaFile = new File("src/test/resources/metadata/10/meta.xml");
+        File backupFile = new File("src/test/resources/metadata/10/meta.xml.1");
+        FileUtils.copyFile(metaFile, backupFile);
+
         Process completeEdition = ServiceManager.getProcessService().getById(10);
         Course course = NewspaperCourse.getCourse();
         course.splitInto(Granularity.DAYS);
@@ -101,6 +107,10 @@ public class NewspaperProcessesGeneratorIT {
         }
         Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
             underTest.getProgress());
+
+        // restore backuped meta data file
+        FileUtils.deleteQuietly(metaFile);
+        FileUtils.moveFile(backupFile, metaFile);
         cleanUp();
     }
 

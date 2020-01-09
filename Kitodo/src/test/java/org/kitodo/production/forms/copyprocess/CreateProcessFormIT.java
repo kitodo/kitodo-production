@@ -58,15 +58,8 @@ public class CreateProcessFormIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
-        fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        if (System.getProperty("java.class.path").contains("eclipse")) {
-            while (Objects.isNull(processService.findByTitle(firstProcess))) {
-                Thread.sleep(50);
-            }
-        } else {
-            await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
-        }
+        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
     }
 
     /**
@@ -76,7 +69,6 @@ public class CreateProcessFormIT {
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
-        fileService.delete(URI.create("1"));
     }
 
     @Rule
@@ -86,7 +78,10 @@ public class CreateProcessFormIT {
     public void shouldCreateNewProcess() throws Exception {
         CreateProcessForm underTest = new CreateProcessForm();
         underTest.getProcessDataTab().setDocType("Monograph");
-        underTest.setProcesses(new LinkedList<>(Collections.singletonList(new TempProcess(new Process(), new Workpiece()))));
+        Process newProcess = new Process();
+        Workpiece newWorkPiece = new Workpiece();
+        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
+        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");
@@ -98,6 +93,10 @@ public class CreateProcessFormIT {
         ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
         assertEquals("No process was created!", before + 1, after);
-        processService.remove((int) (after - 1));
+
+        // clean up database, index and file system
+        Integer processId = newProcess.getId();
+        processService.remove(processId);
+        fileService.delete(URI.create(processId.toString()));
     }
 }
