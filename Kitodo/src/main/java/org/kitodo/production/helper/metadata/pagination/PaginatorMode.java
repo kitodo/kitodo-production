@@ -77,32 +77,31 @@ public enum PaginatorMode {
     },
 
     /**
-     * Alternating a front side (“r”), then a back side (“v”) (1r, 1v, 2r, 2v, … /
-     * [1]r, [1]v, [2]r, [2]v, …).
-     */
-    RECTOVERSO(4) {
-        @Override
-        String format(String value, String next, boolean fictitious, String separator) {
-            if (fictitious) {
-                return '[' + value + "°]¡r¿v½";
-            } else {
-                return value.concat("°¡r¿v½");
-            }
-        }
-    },
-
-    /**
      * One back side (“v”) with the subsequent front side (“r”) on one image (1v␣2r,
      * 2v␣3r, 3v␣4r, 4v␣5r, … / [1]v␣[2]r, [2]v␣[3]r, [3]v␣[4]r, [4]v␣[5]r, …).
      */
-
-    RECTOVERSO_FOLIATION(5) {
+    RECTOVERSO(4) {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
                 return '[' + value + "`]v" + separator + "[`" + next + "°]r";
             } else {
                 return value + "`v" + separator + '`' + next + "°r";
+            }
+        }
+    },
+
+    /**
+     * Alternating a front side (“r”), then a back side (“v”) (1r, 1v, 2r, 2v, … /
+     * [1]r, [1]v, [2]r, [2]v, …).
+     */
+    RECTOVERSO_FOLIATION(5) {
+        @Override
+        String format(String value, String next, boolean fictitious, String separator) {
+            if (fictitious) {
+                return '[' + value + "°]¡r¿v½";
+            } else {
+                return value.concat("°¡r¿v½");
             }
         }
     };
