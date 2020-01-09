@@ -156,7 +156,7 @@ function initializeStructureTreeScrolling() {
 
 function scrollToPreviewThumbnail(thumbnail, scrollable) {
     let thumbnailHeight = thumbnail.parent().parent().height();
-    let selectedIndex = scrollable.find(".thumbnail").index(thumbnail);
+    let selectedIndex = scrollable.find(".thumbnail + .thumbnail-container").index(thumbnail);
     if (selectedIndex >= 0) {
         scrollable.animate({
             scrollTop: selectedIndex * thumbnailHeight - (scrollable.height()/2 - thumbnailHeight/2)
@@ -167,7 +167,7 @@ function scrollToPreviewThumbnail(thumbnail, scrollable) {
 function scrollToSelectedPreviewThumbnail() {
     let scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
-        let selectedThumbnail = scrollableContent.find(".active.last-selection");
+        let selectedThumbnail = scrollableContent.find(".active.last-selection + .thumbnail-container");
         if (selectedThumbnail.length) {
             scrollToPreviewThumbnail(selectedThumbnail.first(), scrollableContent);
         }
