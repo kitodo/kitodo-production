@@ -112,7 +112,7 @@
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel">
                                     <p:outputPanel styleClass="thumbnail-parent">
-                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
                                         <p:outputPanel styleClass="thumbnail-container"
                                                        deferred="true"
                                                        deferredMode="visible"
@@ -196,7 +196,7 @@
                                              styleClass="page-drop-area"/>
                                     <p:panel id="unstructuredMediaPanel">
                                         <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
                                             <p:outputPanel styleClass="thumbnail-container"
                                                            deferred="true"
                                                            deferredMode="visible"
@@ -268,7 +268,7 @@
                      a:ondragstart="metadataEditor.handleDragStart(event)">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
-                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"
+                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"
                                        deferred="true"
                                        deferredMode="visible">
                             <p:panel a:data-order="#{media.order}">
@@ -306,7 +306,7 @@
                                            var="media">
                                     <p:outputPanel>
                                         <h:panelGroup layout="block" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media) ? 'last-selection' : ''}"/>
+                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"/>
                                             <p:outputPanel layout="block"
                                                            deferred="true"
                                                            deferredMode="visible"

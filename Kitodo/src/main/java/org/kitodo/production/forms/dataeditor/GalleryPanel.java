@@ -128,8 +128,9 @@ public class GalleryPanel {
      * @param galleryMediaContent GalleryMediaContent to be checked
      * @return boolean
      */
-    public boolean isLastSelection(GalleryMediaContent galleryMediaContent) {
-        if (dataEditor.getSelectedMedia().size() > 0 && Objects.nonNull(galleryMediaContent)) {
+    public boolean isLastSelection(GalleryMediaContent galleryMediaContent, GalleryStripe galleryStripe) {
+        if (isSelected(galleryMediaContent, galleryStripe) && dataEditor.getSelectedMedia().size() > 0
+                && Objects.nonNull(galleryMediaContent)) {
             return Objects.equals(galleryMediaContent.getView().getMediaUnit(),
                     dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1).getKey());
         }
