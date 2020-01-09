@@ -108,13 +108,16 @@
                                  columns="2"
                                  columnClasses="label, value">
                         <h:outputText value="#{msgs.workflow}:"/>
-                        <h:outputText value="#{item.workflow.title}"/>
+                        <h:outputText title="#{item.workflow.title}"
+                                      value="#{item.workflow.title}"/>
 
                         <h:outputText value="#{msgs.docket}:"/>
-                        <h:outputText value="#{item.docket.title}"/>
+                        <h:outputText title="#{item.docket.title}"
+                                      value="#{item.docket.title}"/>
 
                         <h:outputText value="#{msgs.ruleset}:"/>
-                        <h:outputText value="#{item.ruleset.title}"/>
+                        <h:outputText title="#{item.ruleset.title}"
+                                      value="#{item.ruleset.title}"/>
                     </p:panelGrid>
 
                     <p:panelGrid id="templateProjectsTable"
@@ -131,6 +134,7 @@
                                           var="project">
                                     <div class="project-template-action">
                                         <h:outputText value="#{project.title}"
+                                                      title="#{project.title}"
                                                       styleClass="expansion-list-item-title"/>
                                         <h:panelGroup class="expansion-list-item-actions">
                                             <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
@@ -155,7 +159,11 @@
                     </p:panelGrid>
                 </p:panelGrid>
 
-                <o:graphicImage styleClass="workflow-diagram" rendered="#{item.workflow ne null}" value="#{item.diagramImage}" dataURI="true" />
+                <o:graphicImage title="#{item.workflow.title}"
+                                styleClass="workflow-diagram"
+                                rendered="#{item.workflow ne null}"
+                                value="#{item.diagramImage}"
+                                dataURI="true" />
             </div>
         </p:rowExpansion>
 

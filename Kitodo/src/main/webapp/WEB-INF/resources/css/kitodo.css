@@ -608,8 +608,8 @@ section#content-section {
     height: 500px;
 }
 
-#desktopGrid th.actionsColumn span,
-#desktopGrid td.actionsColumn form {
+th.actionsColumn span,
+td.actionsColumn form {
     float: right;
 }
 

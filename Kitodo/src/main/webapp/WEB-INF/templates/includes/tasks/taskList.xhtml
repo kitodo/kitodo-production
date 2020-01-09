@@ -21,6 +21,7 @@
         <p:dataTable id="taskTable"
                      var="item"
                      value="#{CurrentTaskForm.lazyDTOModel}"
+                     styleClass="default-layout"
                      lazy="true"
                      paginator="true"
                      resizableColumns="true"
@@ -42,7 +43,8 @@
                       filterBy="#{item.title}"
                       sortBy="#{item.title}"
                       rendered="#{CurrentTaskForm.showColumn('task.title')}">
-                <h:outputText value="#{item.title}"/>
+                <h:outputText title="#{item.title}"
+                              value="#{item.title}"/>
             </p:column>
 
             <!-- columns for tasks that have been configured in kitodo config file! -->
@@ -50,7 +52,8 @@
                        var="taskColumn"
                        headerText="#{fn:replace(taskColumn, 'task.', '')}"
                        rendered="#{CurrentTaskForm.showColumn(taskColumn)}">
-                <h:outputText value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
+                <h:outputText title="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"
+                              value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
             </p:columns>
 
             <p:column headerText="#{msgs.process}"
@@ -60,12 +63,14 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{item.process.id}"/>
                 </h:link>
-                <h:outputText value=" #{item.process.title}"/>
+                <h:outputText title="#{item.process.title}"
+                              value=" #{item.process.title}"/>
             </p:column>
 
             <p:column headerText="#{msgs.project}"
                       rendered="#{CurrentTaskForm.showColumn('task.project')}">
-                <h:outputText value="#{item.process.project.title}"/>
+                <h:outputText title="#{item.process.project.title}"
+                              value="#{item.process.project.title}"/>
             </p:column>
 
             <p:column headerText="#{msgs.status}"

@@ -1173,7 +1173,10 @@ Popup dialogs
 
 .ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr,
 .ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th,
-.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td {
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td,
+.ui-datatable.default-layout > div.ui-datatable-scrollable-body > table  > tbody > tr,
+.ui-datatable.default-layout > div.ui-datatable-scrollable-body > table  > thead > tr > th,
+.ui-datatable.default-layout > div.ui-datatable-scrollable-body > table  > tbody > tr > td {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

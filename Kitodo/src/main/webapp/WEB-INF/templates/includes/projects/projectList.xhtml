@@ -125,13 +125,16 @@
                                  columns="2"
                                  columnClasses="label, value">
                         <h:outputText value="#{msgs.internFileFormat}:"/>
-                        <h:outputText value="#{item.fileFormatInternal}"/>
+                        <h:outputText title="#{item.fileFormatInternal}"
+                                      value="#{item.fileFormatInternal}"/>
 
                         <h:outputText value="#{msgs.dmsExportFormat}:"/>
-                        <h:outputText value="#{item.fileFormatDmsExport}"/>
+                        <h:outputText title="#{item.fileFormatDmsExport}"
+                                      value="#{item.fileFormatDmsExport}"/>
 
                         <h:outputText value="#{msgs.metsRightsOwner}:"/>
-                        <h:outputText value="#{item.metsRightsOwner}"/>
+                        <h:outputText title="#{item.metsRightsOwner}"
+                                      value="#{item.metsRightsOwner}"/>
                     </p:panelGrid>
                     <p:panelGrid id="projectTemplatesTable"
                                  styleClass="expansion-column"
@@ -147,6 +150,7 @@
                                           var="template">
                                     <div class="project-template-action">
                                         <h:outputText value="#{template.title}"
+                                                      title="#{template.title}"
                                                       styleClass="expansion-list-item-title"/>
                                         <h:panelGroup class="expansion-list-item-actions">
                                             <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
