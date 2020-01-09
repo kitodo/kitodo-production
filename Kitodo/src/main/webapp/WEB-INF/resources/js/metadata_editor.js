@@ -115,10 +115,10 @@ metadataEditor.shortcuts = {
         HELP: ["Shift", "Minus"],
         STRUCTURED_VIEW: ["Control", "Shift", "Slash"],
         DETAIL_VIEW: ["Control", "Shift", "BracketRight"],
-        NEXT_IMAGE: ["Control", "Shift", "ArrowRight"],
-        PREVIOUS_IMAGE: ["Control", "Shift", "ArrowLeft"],
-        NEXT_IMAGE_MULTI: ["Control", "Shift", "ArrowUp"],
-        PREVIOUS_IMAGE_MULTI: ["Control", "Shift", "ArrowDown"]
+        NEXT_IMAGE: ["Control", "ArrowDown"],
+        PREVIOUS_IMAGE: ["Control", "ArrowUp"],
+        NEXT_IMAGE_MULTI: ["Control", "Shift", "ArrowDown"],
+        PREVIOUS_IMAGE_MULTI: ["Control", "Shift", "ArrowUp"]
     },
     getGalleryViewMode() {
         return $("#imagePreviewForm\\:galleryViewMode ").text().toUpperCase();
