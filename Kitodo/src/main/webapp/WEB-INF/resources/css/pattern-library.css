@@ -357,6 +357,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: auto;
+    vertical-align: middle;
 }
 
 .ui-row-toggler:hover {
