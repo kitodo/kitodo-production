@@ -732,7 +732,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 workflowControllerService.setTasksStatusDown(processForStatus);
                 ServiceManager.getProcessService().save(processForStatus);
-            } catch (DataException e) {
+            } catch (DataException | IOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
             }
