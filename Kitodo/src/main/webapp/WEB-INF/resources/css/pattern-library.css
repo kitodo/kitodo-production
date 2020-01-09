@@ -356,6 +356,8 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     font: normal normal normal 20px FontAwesome;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin-right: var(--default-full-size);
+    position: relative;
     text-rendering: auto;
     vertical-align: middle;
 }
@@ -364,12 +366,31 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     color: var(--focused-blue);
 }
 
-.ui-row-toggler.ui-icon-circle-triangle-e:before {
-    content: "\f13a";
+.ui-row-toggler.ui-icon-circle-triangle-e:before,
+.ui-row-toggler.ui-icon-circle-triangle-s:before {
+    content: "\f111";
 }
 
-.ui-row-toggler.ui-icon-circle-triangle-s:before {
-    content: "\f139";
+.ui-row-toggler.ui-icon:after {
+    color: var(--pure-white);
+    font-size: 13px;
+    height: 100%;
+    left: 0;
+    line-height: 19px;
+    position: absolute;
+    text-align: center;
+    text-indent: 0;
+    top: 0;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.ui-row-toggler.ui-icon-circle-triangle-e:after {
+    content: "\f078";
+}
+
+.ui-row-toggler.ui-icon-circle-triangle-s:after {
+    content: "\f077";
 }
 
 .ui-sortable-column-icon.ui-icon {
