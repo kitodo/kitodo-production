@@ -227,10 +227,11 @@ public class Ruleset {
      */
     public Settings getSettings(String acquisitionStage) {
         Settings settings = new Settings(this.getSettings());
-        Optional<AcquisitionStage> optionalAcquisitionStage = this.getAcquisitionStage(acquisitionStage);
-        if (optionalAcquisitionStage.isPresent()) {
-            settings.merge(optionalAcquisitionStage.get().getSettings());
+        if (Objects.isNull(acquisitionStage)) {
+            return settings;
         }
+        Optional<AcquisitionStage> optionalAcquisitionStage = this.getAcquisitionStage(acquisitionStage);
+        optionalAcquisitionStage.ifPresent(stage -> settings.merge(stage.getSettings()));
         return settings;
     }
 
