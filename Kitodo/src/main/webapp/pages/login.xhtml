@@ -11,76 +11,86 @@
  *
 -->
 
-<ui:composition template="/WEB-INF/templates/base.xhtml"
-                xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:sec="http://www.springframework.org/security/tags">
-    <f:metadata>
-        <f:viewAction action="#{LoginForm.redirectToDesktop()}"/>
-    </f:metadata>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/tags">
 
-    <ui:define name="search">
-        <div class="wrapper">
-            <section id="portal-logo" class="login-screen">
-                <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" height="36" id="kitodo-logo"/>
-                <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
-            </section>
-        </div>
-    </ui:define>
+    <f:view locale="#{LanguageForm.locale}">
+        <h:head>
+            <ui:insert name="head">
+                <ui:include src="/WEB-INF/templates/includes/head.xhtml" />
+            </ui:insert>
+        </h:head>
+        <f:metadata>
+            <f:viewAction action="#{LoginForm.redirectToDesktop()}"/>
+        </f:metadata>
+        <h:body styleClass="#{LoginForm.firstVisit ? 'first-visit' : ''}" lang="#{LanguageForm.locale}">
+            <h:outputStylesheet name="css/kitodo.css"/>
+            <h:outputStylesheet name="css/pattern-library.css"/>
+            <p:ajaxStatus onstart="$('html').addClass('progressCursor')"
+                          oncomplete="$('html').removeClass('progressCursor')" />
 
-    <ui:define name="breadcrumbs" />
+            <div class="wrapper">
+                <section id="portal-logo" class="login-screen">
+                    <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" height="36" id="kitodo-logo"/>
+                    <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
+                </section>
+            </div>
 
-    <ui:define name="navigation" />
+            <div class="wrapper">
+                <section id="login-section">
+                    <sec:authorize access="isAuthenticated()">
+                        <h:panelGrid columns="2" width="100%" style="margin-bottom:0;">
+                            <h:panelGroup>
+                                <h:outputText style="font-weight: normal;"
+                                              value="#{LoginForm.loggedUser.surname}, #{LoginForm.loggedUser.name}"/>
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <form action="${request.contextPath}/logout" method="post">
+                                    <input id="logout" type="submit" value="#{msgs.logout}"/>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                </form>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </sec:authorize>
 
-    <ui:define name="content">
-        <div class="wrapper">
-            <section id="login-section">
-                <sec:authorize access="isAuthenticated()">
-                    <h:panelGrid columns="2" width="100%" style="margin-bottom:0;">
-                        <h:panelGroup>
-                            <h:outputText style="font-weight: normal;"
-                                          value="#{LoginForm.loggedUser.surname}, #{LoginForm.loggedUser.name}"/>
-                        </h:panelGroup>
-                        <h:panelGroup>
-                            <form action="${request.contextPath}/logout" method="post">
-                                <input id="logout" type="submit" value="#{msgs.logout}"/>
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                            </form>
-                        </h:panelGroup>
-                    </h:panelGrid>
-                </sec:authorize>
+                    <sec:authorize access="isAnonymous()">
+                        <h3>#{msgs.pleaseSignIn}</h3>
+                        <form action="${request.contextPath}/login" method="post">
+                            <span style="color: red; ">
+                                <h:outputText value="${SPRING_SECURITY_LAST_EXCEPTION.localizedMessage}"/>
+                            </span>
+                            <div>
+                                <label for="username">#{msgs.username}</label>
+                                <input id="username" name="username" autocomplete="username"/>
+                            </div>
+                            <div>
+                                <label for="password">#{msgs.password}</label>
+                                <input id="password" type="password" name="password"/>
+                            </div>
+                            <button id="login" aria-disabled="false"><span class="button-text">#{msgs.signIn}</span> <span class="ui-icon ui-c fa fa-sign-in fa-lg"/></button>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        </form>
 
-                <sec:authorize access="isAnonymous()">
-                    <h3>#{msgs.pleaseSignIn}</h3>
-                    <form action="${request.contextPath}/login" method="post">
-                        <span style="color: red; ">
-                            <h:outputText value="${SPRING_SECURITY_LAST_EXCEPTION.localizedMessage}"/>
-                        </span>
-                        <div>
-                            <label for="username">#{msgs.username}</label>
-                            <input id="username" name="username" autocomplete="username"/>
+                        <div class="login-note">
+                            #{msgs.loginNoteText}
                         </div>
-                        <div>
-                            <label for="password">#{msgs.password}</label>
-                            <input id="password" type="password" name="password"/>
-                        </div>
-                        <button id="login" aria-disabled="false"><span class="button-text">#{msgs.signIn}</span> <span class="ui-icon ui-c fa fa-sign-in fa-lg"/></button>
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    </form>
 
-                    <div class="login-note">
-                        #{msgs.loginNoteText}
-                    </div>
+                        <h:panelGroup rendered="#{LoginForm.loggedUser == null and LoginForm.alreadyLoggedIn}">
+                            <h:outputText value="#{msgs.alreadyLoggedIn}"/>
+                            <br/>
+                        </h:panelGroup>
+                    </sec:authorize>
+                </section>
+            </div>
 
-                    <h:panelGroup rendered="#{LoginForm.loggedUser == null and LoginForm.alreadyLoggedIn}">
-                        <h:outputText value="#{msgs.alreadyLoggedIn}"/>
-                        <br/>
-                    </h:panelGroup>
-                </sec:authorize>
-            </section>
-        </div>
-    </ui:define>
+            <h:outputScript name="js/defaultScript.js"
+                            target="body" />
 
-</ui:composition>
+            <ui:include src="/WEB-INF/templates/includes/legal.xhtml"/>
+        </h:body>
+    </f:view>
+</html>

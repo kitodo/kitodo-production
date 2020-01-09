@@ -1589,6 +1589,15 @@ Popup dialogs
     padding: 0;
 }
 
+/* Helper classes for colors */
+.red {
+    color: var(--focused-orange);
+}
+
+.green {
+    color: var(--focused-green);
+}
+
 /* Messages */
 .ui-messages-error.ui-corner-all,
 .ui-messages-warn.ui-corner-all,

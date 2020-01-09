@@ -1,0 +1,47 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html">
+    <p:dialog id="systemMessageDialog"
+              widgetVar="systemMessageDialog"
+              closable="false"
+              width="500px"
+              showHeader="false"
+              dynamic="true"
+              resizable="false"
+              modal="true">
+        <h:form id="acknowledgeSystemWarningForm">
+            <h3>#{msgs['systemMessage']}</h3>
+            <p:outputPanel id="messageWrapper">
+                <p:autoUpdate/>
+                <h:outputLabel id="systemMessageLabel"
+                               value="#{SystemWarningForm.userName}: "/>
+                <h:outputText id="systemMessage"
+                              value="#{SystemWarningForm.warning}"/>
+            </p:outputPanel>
+            <p:commandButton
+                    id="okButton"
+                    value="#{msgs.ok}"
+                    styleClass="ui-confirmdialog-yes primary right"
+                    icon="fa fa-check fa-lg"
+                    iconPos="right"
+                    onclick="PF('systemMessageDialog').hide()"
+                    action="#{SystemWarningForm.acknowledge(LoginForm.loggedUser)}"
+                    immediate="true"/>
+        </h:form>
+    </p:dialog>
+</ui:composition>

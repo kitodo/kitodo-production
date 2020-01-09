@@ -1,0 +1,63 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="systemWarningForm">
+        <p:remoteCommand name="updateUserTable"
+                         update="systemTabView:systemWarningForm:loggedInUserTable"/>
+        <h:panelGroup layout="block">
+            <p:dataTable id="loggedInUserTable"
+                         widgetVar="loggedInUserTable"
+                         styleClass="default-layout"
+                         var="username"
+                         value="#{SystemWarningForm.currentUsers}">
+                <p:autoUpdate/>
+                <p:column headerText="#{msgs['loggedInUsers']}">
+                    <h:outputText value="#{username}"/>
+                </p:column>
+                <p:column headerText="#{msgs['acknowledged']}">
+                    <ui:fragment rendered="#{not empty SystemWarningForm.acknowledged(username)}">
+                        <i class="fa #{SystemWarningForm.acknowledged(username) ? 'fa-check green' : 'fa-times red'}"/>
+                    </ui:fragment>
+                </p:column>
+            </p:dataTable>
+        </h:panelGroup>
+
+        <p:separator/>
+
+        <h:panelGroup id="messageWrapper"
+                      layout="block">
+            <p:outputLabel for="warningText">#{msgs.systemMessage}</p:outputLabel>
+            <p/>
+            <p:inputTextarea id="warningText"
+                             styleClass="input"
+                             immediate="true"
+                             value="#{SystemWarningForm.warning}">
+                <p:ajax event="change"/>
+            </p:inputTextarea>
+            <p/>
+            <p:commandButton id="sendWarningButton"
+                             styleClass="primary"
+                             actionListener="#{SystemWarningForm.setUserName(LoginForm.loggedUser.login)}"
+                             action="#{SystemWarningForm.sendWarning}"
+                             update="systemMessageDialog"
+                             value="#{msgs.send}">
+            </p:commandButton>
+        </h:panelGroup>
+    </h:form>
+
+</ui:composition>

@@ -2653,6 +2653,39 @@ kbd {
 }
 
 /*----------------------------------------------------------------------
+System page
+----------------------------------------------------------------------*/
+
+#systemTabView\:systemWarningForm\:messageWrapper {
+    border: 1px solid var(--carbon-blue);
+    border-radius: var(--default-border-radius);
+    margin: auto;
+    padding: var(--default-double-size);
+    width: 50%;
+}
+
+#systemTabView\:systemWarningForm\:warningText {
+    height: 100px;
+}
+
+#systemTabView\:systemWarningForm\:sendWarningButton {
+    margin-top: var(--default-half-size);
+}
+
+#acknowledgeSystemWarningForm\:okButton {
+    margin-right: var(--default-double-size);
+}
+
+#acknowledgeSystemWarningForm\:systemMessageLabel {
+    font-style: italic;
+    font-weight: bold;
+}
+
+#acknowledgeSystemWarningForm\:messageWrapper {
+    padding: 0 var(--default-double-size);
+}
+
+/*----------------------------------------------------------------------
 Workflow Editor
 ----------------------------------------------------------------------*/
 

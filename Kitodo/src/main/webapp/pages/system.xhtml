@@ -25,6 +25,7 @@
         <!--@elvariable id="tabIndex" type="java.lang.String"-->
         <f:viewParam name="tabIndex"/>
         <f:viewAction action="#{MigrationForm.setActiveTabIndexFromTemplate(tabIndex)}"/>
+        <f:viewAction action="#{SystemWarningForm.loadCurrentUsers}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -49,6 +50,9 @@
             <p:tab id="migrationTab" title="#{msgs.migration}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewMigrationPage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/migration.xhtml" />
+            </p:tab>
+            <p:tab id="systemWarningTab" title="#{msgs.systemMessage}">
+                <ui:include src="/WEB-INF/templates/includes/system/message.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>

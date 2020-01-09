@@ -12,3 +12,15 @@
 $(document).ready(function() {
     $('#loadingScreen').hide();
 });
+
+function onWarning(message) {
+    if (message === "showWarning") {
+        updateSystemMessageDialog();
+    } else if (message === "updateUserTable" && typeof updateUserTable === "function") {
+        updateUserTable();
+    }
+}
+
+function onChannelClose(code, channel) {
+    channel = null;
+}
