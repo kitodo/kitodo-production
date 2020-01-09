@@ -11,8 +11,13 @@
 
 package org.kitodo.api.dataformat;
 
+import java.util.Collection;
 import java.util.List;
+
+import org.kitodo.api.Metadata;
 
 public interface Parent<T> {
     List<T> getChildren();
+
+    Collection<Metadata> getMetadata();
 }

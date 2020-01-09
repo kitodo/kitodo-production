@@ -17,164 +17,17 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
 
-    <!--@elvariable id="readOnly" type="boolean"-->
-    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"/>
+    <ui:param name="readOnly"
+              value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"
+    />
+
     <p:panel id="physicalMetadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="physicalMetadata">
-            <p:dataTable id="physicalMetadataTable"
-                         rendered="#{!empty DataEditorForm.metadataPanel.physicalMetadataRows}"
-                         styleClass="no-header"
-                         value="#{DataEditorForm.metadataPanel.physicalMetadataRows}"
-                         var="item">
-
-                <p:column style="width: 100%;">
-                    <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
-                    <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
-                                   title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}" />
-
-                    <p:inputText value="#{item.value}"
-                                 disabled="#{not item.editable or readOnly}"
-                                 styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
-                                 style="width:100%;"
-                                 rendered="#{item.input eq 'inputText'}">
-                        <p:ajax event="blur"/>
-                    </p:inputText>
-
-                    <p:inputTextarea value="#{item.value}"
-                                     rows="2"
-                                     disabled="#{not item.editable or readOnly}"
-                                     styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
-                                     style="width:100%;"
-                                     rendered="#{item.input eq 'inputTextarea'}">
-                        <p:ajax event="blur"/>
-                    </p:inputTextarea>
-                    <p:spinner value="#{item.value}"
-                               styleClass="full-width"
-                               disabled="#{not item.editable or readOnly}"
-                               rendered="#{item.input eq 'spinner'}">
-                        <p:ajax event="blur"/>
-                    </p:spinner>
-
-                    <p:calendar value="#{item.date}"
-                                pattern="yyyy-mm-dd"
-                                styleClass="input-with-button"
-                                showOn="button"
-                                disabled="#{not item.editable or readOnly}"
-                                rendered="#{item.input eq 'calendar'}">
-                        <p:ajax event="dateSelect"/>
-                    </p:calendar>
-                    <p:dataTable value="#{item.rows}"
-                                 var="entry"
-                                 rendered="#{item.input eq 'dataTable'}"
-                                 styleClass="no-header">
-                        <p:column style="width: 100%;">
-                            <p:outputLabel value="#{entry.label}:" rendered="#{not entry.undefined}"/>
-                            <p:outputLabel value="#{entry.label}: ⚠️" style="background-color: gold;"
-                                           title="#{msgs['dataEditor.undefinedKey']}" rendered="#{entry.undefined}"/>
-                            <p:inputText value="#{entry.value}"
-                                         disabled="#{not entry.editable or readOnly}"
-                                         styleClass="#{not entry.editable or readOnly ? 'disabled' : ''}"
-                                         style="width:90%;"
-                                         rendered="#{entry.input eq 'inputText'}">
-                                <p:ajax event="blur"/>
-                            </p:inputText>
-                            <p:inputTextarea value="#{entry.value}"
-                                             rows="2"
-                                             disabled="#{not entry.editable or readOnly}"
-                                             styleClass="#{not entry.editable or readOnly ? 'disabled' : ''}"
-                                             style="width:90%;"
-                                             rendered="#{entry.input eq 'inputTextarea'}">
-                                <p:ajax event="blur"/>
-                            </p:inputTextarea>
-                            <p:spinner value="#{entry.value}"
-                                       style="width:90%;"
-                                       disabled="#{not entry.editable or readOnly}"
-                                       rendered="#{entry.input eq 'spinner'}">
-                                <p:ajax event="blur"/>
-                            </p:spinner>
-
-                            <p:calendar value="#{entry.date}"
-                                        pattern="yyyy-mm-dd"
-                                        styleClass="input-with-button"
-                                        showOn="button"
-                                        disabled="#{not entry.editable or readOnly}"
-                                        rendered="#{entry.input eq 'calendar'}">
-                                <p:ajax event="dateSelect"/>
-                            </p:calendar>
-                            <p:selectOneMenu value="#{entry.selectedItem}"
-                                             style="width:90%;"
-                                             readonly="#{not entry.editable}"
-                                             rendered="#{entry.input eq 'oneMenu'}">
-                                <f:selectItems value="#{entry.items}"/>
-                                <p:ajax event="blur"/>
-                            </p:selectOneMenu>
-                            <p:selectManyMenu value="#{entry.selectedItems}"
-                                              readonly="#{not entry.editable}"
-                                              style="width:90%;"
-                                              rendered="#{entry.input eq 'manyMenu'}">
-                                <f:selectItems value="#{entry.items}"/>
-                                <p:ajax event="blur"/>
-                            </p:selectManyMenu>
-                            <p:selectOneRadio value="#{entry.selectedItem}"
-                                              readonly="#{not entry.editable}"
-                                              rendered="#{entry.input eq 'oneRadio'}">
-                                <f:selectItems value="#{entry.items}"/>
-                                <p:ajax event="blur"/>
-                            </p:selectOneRadio>
-                            <p:selectBooleanCheckbox value="#{entry.active}"
-                                                     rendered="#{entry.input eq 'toggleSwitch'}">
-                                <p:ajax event="blur"/>
-                            </p:selectBooleanCheckbox>
-                        </p:column>
-                    </p:dataTable>
-                    <p:selectManyMenu value="#{item.selectedItems}"
-                                      readonly="#{not item.editable}"
-                                      rendered="#{item.input eq 'manyMenu'}">
-                        <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur"/>
-                    </p:selectManyMenu>
-                    <p:selectOneMenu value="#{item.selectedItem}"
-                                     readonly="#{not item.editable}"
-                                     rendered="#{item.input eq 'oneMenu'}">
-                        <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur"/>
-                    </p:selectOneMenu>
-                    <p:selectOneRadio value="#{item.selectedItem}"
-                                      readonly="#{not item.editable}"
-                                      rendered="#{item.input eq 'oneRadio'}">
-                        <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur"/>
-                    </p:selectOneRadio>
-                    <p:selectBooleanCheckbox value="#{item.active}"
-                                             rendered="#{item.input eq 'toggleSwitch'}">
-                        <p:ajax event="blur"/>
-                    </p:selectBooleanCheckbox>
-                    <p:commandButton update="metadataAccordion:metadata:metadataTable"
-                                     id="deleteMetadata"
-                                     icon="fa fa-trash"
-                                     immediate="true"
-                                     tabindex="-1"
-                                     title="#{msgs.metadataDelete}"
-                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                     disabled="#{readOnly}"
-                                     onclick="$('#loadingScreen').show()"
-                                     oncomplete="$('#loadingScreen').hide()"
-                                     action="#{item.delete}">
-                    </p:commandButton>
-                    <p:commandButton update="metadataAccordion:metadata:metadataTable"
-                                     id="copyMetadata"
-                                     icon="fa fa-clipboard"
-                                     immediate="true"
-                                     tabindex="-1"
-                                     title="#{msgs.metadataCopy}"
-                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                     disabled="#{readOnly}"
-                                     onclick="$('#loadingScreen').show()"
-                                     oncomplete="$('#loadingScreen').hide()"
-                                     action="#{item.copy}">
-                    </p:commandButton>
-                </p:column>
-            </p:dataTable>
+            <ui:include src="../metadataTreeTable.xhtml">
+                <ui:param name="root" value="#{DataEditorForm.metadataPanel.physicalMetadataRows}" />
+                <ui:param name="readOnly" value="#{readOnly}" />
+                <ui:param name="buttonUpdate" value="metadataAccordion:metadata:metadataTable" />
+            </ui:include>
 
             <p:panelGrid style="margin-top:10px;" styleClass="ui-noborder full-width">
                 <p:row>

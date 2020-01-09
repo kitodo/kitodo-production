@@ -36,8 +36,8 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     private String value;
     private Date date;
 
-    ProcessTextMetadata(SimpleMetadataViewInterface settings, MetadataEntry value) {
-        super(settings);
+    ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry value) {
+        super(container, settings);
         if (Objects.nonNull(value)) {
             this.value = value.getValue();
         }

@@ -25,7 +25,7 @@ public class ProcessMetadataTab {
 
     private CreateProcessForm createProcessForm;
 
-    private ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata();
+    private ProcessFieldedMetadata processDetails = ProcessFieldedMetadata.EMPTY;
 
     public ProcessMetadataTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;

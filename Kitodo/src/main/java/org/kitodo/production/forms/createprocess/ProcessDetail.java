@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.EnumMap;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
@@ -25,6 +27,7 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 public abstract class ProcessDetail implements Serializable {
+    private static final Logger logger = LogManager.getLogger(ProcessDetail.class);
 
     /**
      * Describes the relationship between the domain in the rule set and the
@@ -41,6 +44,11 @@ public abstract class ProcessDetail implements Serializable {
     }
 
     /**
+     * Parental metadata group.
+     */
+    private ProcessFieldedMetadata container;
+
+    /**
      * The label of this row.
      */
     protected final String label;
@@ -51,8 +59,23 @@ public abstract class ProcessDetail implements Serializable {
      * @param label
      *            the label of this row
      */
-    ProcessDetail(String label) {
+    ProcessDetail(ProcessFieldedMetadata container, String label) {
+        this.container = container;
         this.label = label;
+    }
+
+    /**
+     * This method is triggered when the user clicks the copy metadata button.
+     */
+    public void copy() {
+        // TODO: implement
+    }
+
+    /**
+     * This method is triggered when the user clicks the delete metadata button.
+     */
+    public void delete() {
+        container.remove(this);
     }
 
     public abstract String getMetadataID();

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  ~
+  ~ This file is part of the Kitodo project.
+  ~
+  ~ It is licensed under GNU General Public License version 3 or later.
+  ~
+  ~ For the full copyright and license information, please read the
+  ~ GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+
+    <!-- parameters:
+           * root: table data tree (org.primefaces.model.TreeNode)
+           * readOnly: whether user can edit values (boolean)
+           * buttonUpdate: update action of copy/delete buttons (String); if empty, no buttons are rendered
+     -->
+
+    <p:treeTable value="#{root}" var="item" styleClass="no-header">
+        <p:column style="width: 100%;">
+            <!-- field label -->
+            <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
+            <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
+                           title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}" />
+
+            <!-- inputText -->
+            <p:inputText id="inputText"
+                         value="#{item.value}"
+                         disabled="#{not item.editable or readOnly}"
+                         required="#{item.required and not empty param['editForm:save']}"
+                         styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
+                         style="width:100%;"
+                         rendered="#{item.input eq 'inputText'}">
+                <p:ajax event="blur"/>
+            </p:inputText>
+
+            <!-- inputTextarea -->
+            <p:inputTextarea id="inputTextarea"
+                             value="#{item.value}"
+                             rows="2"
+                             disabled="#{not item.editable or readOnly}"
+                             required="#{item.required and not empty param['editForm:save']}"
+                             styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
+                             style="width:100%;"
+                             rendered="#{item.input eq 'inputTextarea'}">
+                <p:ajax event="blur"/>
+            </p:inputTextarea>
+
+            <!-- spinner -->
+            <p:spinner id="spinner"
+                       value="#{item.value}"
+                       style="width:100%"
+                       disabled="#{not item.editable or readOnly}"
+                       required="#{item.required and not empty param['editForm:save']}"
+                       styleClass="#{not item.editable ? 'disabled' : ''}"
+                       rendered="#{item.input eq 'spinner'}">
+                <p:ajax event="blur"/>
+            </p:spinner>
+
+            <!-- calendar -->
+            <p:calendar id="calendar"
+                        value="#{item.date}"
+                        pattern="yyyy-mm-dd"
+                        styleClass="input-with-button #{not item.editable ? 'disabled' : ''}"
+                        showOn="button"
+                        required="#{item.required and not empty param['editForm:save']}"
+                        disabled="#{not item.editable or readOnly}"
+                        rendered="#{item.input eq 'calendar'}">
+                <p:ajax event="dateSelect"/>
+            </p:calendar>
+
+            <!-- manyMenu -->
+            <p:selectManyMenu id="selectManyMenu"
+                              value="#{item.selectedItems}"
+                              readonly="#{not item.editable}"
+                              styleClass="#{not entry.editable ? 'disabled' : ''}"
+                              rendered="#{item.input eq 'manyMenu'}">
+                <f:selectItems value="#{item.items}"/>
+                <p:ajax event="blur"/>
+            </p:selectManyMenu>
+
+            <!-- oneMenu -->
+            <p:selectOneMenu id="selectOneMenu"
+                             value="#{item.selectedItem}"
+                             readonly="#{not item.editable}"
+                             rendered="#{item.input eq 'oneMenu'}">
+                <f:selectItems value="#{item.items}"/>
+                <p:ajax event="blur"/>
+            </p:selectOneMenu>
+
+            <!-- oneRadio -->
+            <p:selectOneRadio id="selectOneRadio"
+                              value="#{item.selectedItem}"
+                              readonly="#{not item.editable}"
+                              styleClass="#{not entry.editable ? 'disabled' : ''}"
+                              rendered="#{item.input eq 'oneRadio'}">
+                <f:selectItems value="#{item.items}"/>
+                <p:ajax event="blur"/>
+            </p:selectOneRadio>
+
+            <!-- toggleSwitch -->
+            <p:selectBooleanCheckbox id="selectBooleanCheckbox"
+                                     value="#{item.active}"
+                                     rendered="#{item.input eq 'toggleSwitch'}">
+                <p:ajax event="blur"/>
+            </p:selectBooleanCheckbox>
+
+            <!-- button to delete -->
+            <p:commandButton id="deleteMetadata"
+                             update="#{buttonUpdate}"
+                             icon="fa fa-trash"
+                             immediate="true"
+                             tabindex="-1"
+                             title="#{msgs.metadataDelete}"
+                             styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                             disabled="#{readOnly}"
+                             onclick="$('#loadingScreen').show()"
+                             oncomplete="$('#loadingScreen').hide()"
+                             action="#{item.delete}"
+                             rendered="#{not empty buttonUpdate}"
+            />
+
+            <!-- button to copy -->
+            <p:commandButton id="copyMetadata"
+                             update="#{buttonUpdate}"
+                             icon="fa fa-clipboard"
+                             immediate="true"
+                             tabindex="-1"
+                             title="#{msgs.metadataCopy}"
+                             styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                             disabled="#{readOnly}"
+                             onclick="$('#loadingScreen').show()"
+                             oncomplete="$('#loadingScreen').hide()"
+                             action="#{item.copy}"
+                             rendered="#{not empty buttonUpdate}"
+            />
+        </p:column>
+    </p:treeTable>
+</ui:composition>

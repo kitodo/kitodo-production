@@ -60,8 +60,9 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
      */
     private List<String> selectedItems = new ArrayList<>();
 
-    ProcessSelectMetadata(SimpleMetadataViewInterface settings, Collection<MetadataEntry> selected) {
-        super(settings);
+    ProcessSelectMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings,
+            Collection<MetadataEntry> selected) {
+        super(container, settings);
         this.items = toItems(settings.getSelectItems());
         for (MetadataEntry entry : selected) {
             selectedItems.add(entry.getValue());
