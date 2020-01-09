@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -141,7 +143,7 @@ public class WorkflowForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
         try {
-            if (hasMultipleSructureTreeConfigurations()) {
+            if (hasMultipleSructureTreeConfiguration()) {
                 Helper.setErrorMessage(Helper.getTranslation("errorMultipleConfigurations"));
                 return this.stayOnCurrentPage;
             }
@@ -165,24 +167,15 @@ public class WorkflowForm extends BaseForm {
         }
     }
 
-    private boolean hasMultipleSructureTreeConfigurations() throws WorkflowException, IOException {
+    private boolean hasMultipleSructureTreeConfiguration() throws WorkflowException, IOException {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
         String xml = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
         xml = StringUtils.substringBefore(xml, "kitodo-diagram-separator");
         Converter converter = new Converter(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-        List<Task> tasks = converter.validateWorkflowTaskList();
-        boolean separate = false;
-        boolean combined = false;
-        for (Task task : tasks) {
-            if (task.isSeparateStructure()) {
-                separate = true;
-            } else {
-                combined = true;
-            }
-        }
-
-        return separate && combined;
+        Set<Boolean> configurations = converter.validateWorkflowTaskList()
+                .stream().map(Task::isSeparateStructure).collect(Collectors.toSet());
+        return configurations.size() > 1;
     }
 
     /**
