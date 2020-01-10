@@ -873,7 +873,7 @@ public class SecurityAccessService extends SecurityAccess {
 
     private boolean hasAuthorityForProject(Integer projectId) {
         List<Project> projects = ServiceManager.getUserService().getCurrentUser().getProjects();
-        return projects.stream().anyMatch(project -> project.getId().equals(projectId));
+        return projects.stream().anyMatch(project -> project.getId().equals(projectId)) || projectId == 0;
     }
 
     /**

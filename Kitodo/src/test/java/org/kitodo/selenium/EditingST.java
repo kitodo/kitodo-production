@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -42,8 +41,6 @@ public class EditingST extends BaseTestSelenium {
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
-
-    private static final String EDIT_URL = "pages/processEdit.jsf?referer=desktop&id=6";
 
     @BeforeClass
     public static void setup() throws Exception {
