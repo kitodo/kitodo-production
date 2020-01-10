@@ -41,14 +41,6 @@
                 </p:inputText>
                 <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectForm.project.dmsImportRootPath}"/>
             </div>
-            <div>
-                <p:outputLabel for="timeout" value="#{msgs.timeout}" />
-                <p:inputText id="timeout" placeholder="#{msgs.timeout}" class="input" value="#{ProjectForm.project.dmsImportTimeOut}"
-                             disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:inputText>
-            </div>
         </p:row>
         <p:row>
         </p:row>
