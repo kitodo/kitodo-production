@@ -144,7 +144,7 @@ public class WorkflowControllerService {
      */
     public void setTasksStatusUp(Process process) throws DataException, IOException {
         List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
-        if(currentTask.isEmpty()){
+        if (currentTask.isEmpty()) {
             activateNextTasks(process.getTasks());
             return;
         }
@@ -157,9 +157,9 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void setTasksStatusDown(Process process) throws IOException, DataException {
+    public void setTasksStatusDown(Process process) {
         List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
-        if(currentTask.isEmpty()){
+        if (currentTask.isEmpty()) {
             currentTask = getLastClosedTask(process);
         }
         setTaskStatusDown(currentTask);
