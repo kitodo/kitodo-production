@@ -260,13 +260,12 @@ public class ImageGenerator implements Runnable {
         Folder imageProperties = destinationImage.getFolder();
         boolean isCreatingDerivative = imageProperties.getDerivative().isPresent();
         boolean isChangingDpi = imageProperties.getDpi().isPresent();
-        boolean isGettingScaledWebImage = imageProperties.getImageScale().isPresent();
         boolean isGettingSizedWebImage = imageProperties.getImageSize().isPresent();
 
         if (isCreatingDerivative && destinationImage.getFileFormat().getImageFileFormat().isPresent()) {
             createDerivative(sourceImage, imageProperties, destinationImage.getFileFormat().getImageFileFormat().get(),
                 destinationImage.getUri(canonical));
-        } else if (isChangingDpi || isGettingScaledWebImage || isGettingSizedWebImage) {
+        } else if (isChangingDpi || isGettingSizedWebImage) {
             createImageWithImageIO(sourceImage, imageProperties, destinationImage.getFileFormat(),
                 destinationImage.getUri(canonical));
         }
