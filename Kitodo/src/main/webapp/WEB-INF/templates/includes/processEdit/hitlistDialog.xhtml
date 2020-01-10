@@ -36,7 +36,7 @@
                          currentPageReportTemplate="#{msgs.currentPageReportTemplate}">
                 <p:column headerText="#{CreateProcessForm.importTab.hitModel.rowCount} #{msgs.hits}">
                     <p:commandLink id="selectRecord"
-                                   value="#{hit.title}"
+                                   value="#{not empty hit.title ? hit.title : msgs.hitWithoutTitle}"
                                    title="#{hit.title}"
                                    onclick="PF('hitlistDialog').hide()"
                                    update="editForm"
