@@ -92,14 +92,4 @@ public class TaskScriptThread extends EmptyTask {
     public TaskScriptThread replace() {
         return new TaskScriptThread(this);
     }
-
-    /**
-     * Returns the display name of the task to show to the user.
-     *
-     * @see org.kitodo.production.helper.tasks.INameableTask#getDisplayName()
-     */
-    @Override
-    public String getDisplayName() {
-        return Helper.getTranslation("automaticTask");
-    }
 }
