@@ -230,7 +230,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         parentData.add(parentProcess.getId());
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
         parentData.add(convertChildMetsFile(metadataFilePath));
-        linkInDatabase(parentProcess, childProcess);
+        linkParentProcessWithChildProcess(parentProcess, childProcess);
         return parentData;
     }
 
@@ -243,7 +243,9 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param childProcess
      *            child process to link
      */
-    private static void linkInDatabase(Process parentProcess, Process childProcess) throws DataException {
+    private static void linkParentProcessWithChildProcess(Process parentProcess, Process childProcess)
+            throws DataException {
+
         parentProcess.getChildren().add(childProcess);
         childProcess.setParent(parentProcess);
         processService.save(childProcess);
@@ -317,7 +319,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         int insertionPosition = calculateInsertionPosition(parentData, currentNo);
         MetadataEditor.addLink(parentProcess, Integer.toString(insertionPosition), childProcess.getId());
         parentData.add(insertionPosition + 1, currentNo);
-        linkInDatabase(parentProcess, childProcess);
+        linkParentProcessWithChildProcess(parentProcess, childProcess);
     }
 
     /**

@@ -557,8 +557,8 @@ public class FileService {
      *             if Io failed
      */
     public boolean processOwnsAnchorXML(Process process) throws IOException {
-        URI yearFile = FileService.this.createAnchorFile(FileService.this.getMetadataFilePath(process, false, false));
-        return FileService.this.fileExist(yearFile);
+        URI yearFile = createAnchorFile(getMetadataFilePath(process, false, false));
+        return fileExist(yearFile);
     }
 
     /**
@@ -571,8 +571,8 @@ public class FileService {
      *             if Io failed
      */
     public boolean processOwnsYearXML(Process process) throws IOException {
-        URI yearFile = FileService.this.createYearFile(FileService.this.getMetadataFilePath(process, false, false));
-        return FileService.this.fileExist(yearFile);
+        URI yearFile = createYearFile(getMetadataFilePath(process, false, false));
+        return fileExist(yearFile);
     }
 
     /**
