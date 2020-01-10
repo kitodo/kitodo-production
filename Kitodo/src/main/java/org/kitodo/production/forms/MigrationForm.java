@@ -133,6 +133,11 @@ public class MigrationForm extends BaseForm {
         processListRendered = true;
     }
 
+    /**
+     * Method for migrating hierarchical processes. This is done when the user
+     * clicks the button to migrate hierarchical processes under the projects
+     * selection.
+     */
     public void convertHierarchys() {
         TaskManager.addTask(new HierarchyMigrationTask(selectedProjects));
         projectListRendered = false;

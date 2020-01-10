@@ -73,8 +73,16 @@ public class HierarchyMigrationTask extends EmptyTask {
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     /**
-     * Parent processes have already been created. Key is the identifier, the
-     * value is the process ID, then the current numbers of child links.
+     * This map contains information about parent processes that have already
+     * been created. Key is the identifier, the value is the process ID, then
+     * the current numbers of child links already inserted. The current number
+     * should not be confused with the process ID. It is not the process ID, but
+     * a sort criterion that is read from the metadata. The background is that
+     * during the migration the issues or volumes are found in any order, but
+     * should be linked in ascending order according to their current number in
+     * the parent process. Therefore, the sequential numbers of the already
+     * linked children must be stored temporarily during the migration in order
+     * to be able to determine the correct insertion position of another link.
      */
     private Map<String, List<Integer>> parentProcesses = new HashMap<>();
 
@@ -286,7 +294,15 @@ public class HierarchyMigrationTask extends EmptyTask {
     }
 
     /**
-     * Extracts the CurrentNo from the metadata.
+     * Extracts the CurrentNo from the metadata. The current number is an
+     * integer sorting criterion, which specifies the order of the subordinate
+     * units within their superordinate entirety. In case of journal issues,
+     * this can be the same as the issue number if the issue number continues to
+     * be counted at the turn of the year. In the case of multi-volume works,
+     * this number can correspond to the part number, or (for lexica, for
+     * example) it is counted up according to the alphabetical order of the
+     * volumes, supplementary volumes are counted on afterwards (thus, in the
+     * order in which the books are usually placed on a shelf).
      *
      * @param includedStructualElement
      *            outline element with metadata
