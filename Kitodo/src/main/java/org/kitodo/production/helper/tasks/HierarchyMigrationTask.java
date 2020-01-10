@@ -34,6 +34,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
@@ -109,6 +110,16 @@ public class HierarchyMigrationTask extends EmptyTask {
         this.processesList = source.processesList;
         this.projects = source.projects;
         this.progress = source.progress;
+    }
+
+    /**
+     * Defines the display name of the task in the task manager. Usually this is
+     * the class name, but here it is different from the class name in lower
+     * case.
+     */
+    @Override
+    public String getDisplayName() {
+        return Helper.getTranslation(getClass().getSimpleName().toLowerCase());
     }
 
     /**
