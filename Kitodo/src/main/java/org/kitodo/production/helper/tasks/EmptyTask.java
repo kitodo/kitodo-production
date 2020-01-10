@@ -27,7 +27,7 @@ import org.kitodo.production.helper.Helper;
  * out that the task doesn’t do anything sensible yet. It is here to be
  * extended.
  */
-public class EmptyTask extends Thread implements INameableTask {
+public class EmptyTask extends Thread {
 
     private static final Logger logger = LogManager.getLogger(EmptyTask.class);
 
@@ -176,10 +176,7 @@ public class EmptyTask extends Thread implements INameableTask {
 
     /**
      * Returns the display name of the task to show to the user.
-     *
-     * @see org.kitodo.production.helper.tasks.INameableTask#getDisplayName()
      */
-    @Override
     public String getDisplayName() {
         return Helper.getTranslation("EmptyTask");
     }
