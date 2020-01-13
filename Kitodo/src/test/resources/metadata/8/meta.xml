@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:ns2="http://www.w3.org/1999/xlink" xmlns:ns3="http://meta.kitodo.org/v1/">
+    <metsHdr CREATEDATE="2020-01-06T12:27:30.634+01:00" LASTMODDATE="2020-01-06T12:27:31.158+01:00"/>
+    <fileSec/>
+    <structMap TYPE="PHYSICAL">
+        <div ID="ef7be248-b653-4172-8347-b1f0fb2b187f"/>
+    </structMap>
+    <structMap TYPE="LOGICAL">
+        <div ID="3822ef26-d1ea-4204-bac7-37b4596ef3d7"/>
+    </structMap>
+    <structLink/>
+</mets>

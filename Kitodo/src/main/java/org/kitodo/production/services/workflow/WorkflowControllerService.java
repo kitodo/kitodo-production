@@ -17,11 +17,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -82,14 +81,26 @@ public class WorkflowControllerService {
      *            to change status up
      */
     public void setTaskStatusUp(Task task) throws DataException, IOException {
-        if (task.getProcessingStatus() != TaskStatus.DONE) {
-            setProcessingStatusUp(task);
-            task.setEditType(TaskEditType.ADMIN);
-            if (task.getProcessingStatus() == TaskStatus.DONE) {
-                close(task);
-            } else {
-                task.setProcessingTime(new Date());
-                taskService.replaceProcessingUser(task, getCurrentUser());
+        setTaskStatusUp(Arrays.asList(task));
+    }
+
+    /**
+     * Set Task status up.
+     *
+     * @param tasks
+     *            to change status up
+     */
+    public void setTaskStatusUp(List<Task> tasks) throws DataException, IOException {
+        for (Task task : tasks) {
+            if (task.getProcessingStatus() != TaskStatus.DONE) {
+                setProcessingStatusUp(task);
+                task.setEditType(TaskEditType.ADMIN);
+                if (task.getProcessingStatus() == TaskStatus.DONE) {
+                    close(task);
+                } else {
+                    task.setProcessingTime(new Date());
+                    taskService.replaceProcessingUser(task, getCurrentUser());
+                }
             }
         }
     }
@@ -101,10 +112,28 @@ public class WorkflowControllerService {
      *            to change status down
      */
     public void setTaskStatusDown(Task task) {
-        task.setEditType(TaskEditType.ADMIN);
-        task.setProcessingTime(new Date());
-        taskService.replaceProcessingUser(task, getCurrentUser());
-        setProcessingStatusDown(task);
+        setTaskStatusDown(Arrays.asList(task));
+    }
+
+    /**
+     * Change Task status down.
+     *
+     * @param tasks
+     *            to change status down
+     */
+    public void setTaskStatusDown(List<Task> tasks) {
+        for (Task task : tasks) {
+            task.setEditType(TaskEditType.ADMIN);
+            task.setProcessingTime(new Date());
+            taskService.replaceProcessingUser(task, getCurrentUser());
+            setProcessingStatusDown(task);
+            if (task.getProcessingStatus() == TaskStatus.LOCKED) {
+                List<Task> previousTasks = getPreviousTasks(task);
+                for (Task previousTask : previousTasks) {
+                    setProcessingStatusDown(previousTask);
+                }
+            }
+        }
     }
 
     /**
@@ -114,11 +143,12 @@ public class WorkflowControllerService {
      *            object
      */
     public void setTasksStatusUp(Process process) throws DataException, IOException {
-        List<Task> tasks = new CopyOnWriteArrayList<>(process.getTasks());
-
-        for (Task task : tasks) {
-            setTaskStatusUp(task);
+        List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
+        if (currentTask.isEmpty()) {
+            activateNextTasks(process.getTasks());
+            return;
         }
+        setTaskStatusUp(currentTask);
     }
 
     /**
@@ -127,18 +157,26 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void setTasksStatusDown(Process process) throws DataException {
-        List<Task> tasks = new CopyOnWriteArrayList<>(process.getTasks());
-        Collections.reverse(tasks);
+    public void setTasksStatusDown(Process process) {
+        List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
+        if (currentTask.isEmpty()) {
+            currentTask = getLastClosedTask(process);
+        }
+        setTaskStatusDown(currentTask);
+    }
 
-        for (Task task : tasks) {
-            // TODO: check if this behaviour is correct
-            if (process.getTasks().get(0) != task && task.getProcessingStatus() != TaskStatus.LOCKED) {
-                setTaskStatusDown(task);
-                taskService.save(task);
-                break;
+    private List<Task> getLastClosedTask(Process process) {
+        List<Task> lastOpenTasks = new ArrayList<>();
+        int ordering = 0;
+        for (Task task : process.getTasks()) {
+            if (TaskStatus.DONE.equals(task.getProcessingStatus())) {
+                if (task.getOrdering() > ordering) {
+                    lastOpenTasks.clear();
+                }
+                lastOpenTasks.add(task);
             }
         }
+        return lastOpenTasks;
     }
 
     private boolean validateMetadata(Task task) throws IOException, DataException {
@@ -524,6 +562,34 @@ public class WorkflowControllerService {
             }
         }
         return nextTasks;
+    }
+
+    private List<Task> getPreviousTasks(Task higherTask) {
+        List<Task> tasks = higherTask.getProcess().getTasks();
+
+        boolean isConcurrentOpenTask = false;
+        List<Task> previousTasks = new ArrayList<>();
+        List<Task> concurrentTasks = getConcurrentTasksForClose(tasks, higherTask);
+        for (Task concurrentTask : concurrentTasks) {
+            if (concurrentTask.getProcessingStatus().equals(TaskStatus.LOCKED)) {
+                isConcurrentOpenTask = true;
+                break;
+            }
+        }
+        if (!isConcurrentOpenTask) {
+            boolean matched = false;
+            int ordering = higherTask.getOrdering() - 1;
+            for (Task task : tasks) {
+                if (task.getOrdering() > ordering && task.getOrdering() < higherTask.getOrdering() && !matched) {
+                    ordering = task.getOrdering();
+                }
+                if (ordering == task.getOrdering()) {
+                    previousTasks.add(task);
+                    matched = true;
+                }
+            }
+        }
+        return previousTasks;
     }
 
     /**

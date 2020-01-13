@@ -1141,6 +1141,24 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return null;
     }
 
+    /**
+     * Get current tasks.
+     *
+     * @param process
+     *            object
+     * @return current tasks
+     */
+    public List<Task> getCurrentTasks(Process process) {
+        List<Task> currentTasks = new ArrayList<>();
+        for (Task task : process.getTasks()) {
+            if (task.getProcessingStatus().equals(TaskStatus.OPEN)
+                    || task.getProcessingStatus().equals(TaskStatus.INWORK)) {
+                currentTasks.add(task);
+            }
+        }
+        return currentTasks;
+    }
+
     private List<TaskDTO> getOpenTasks(ProcessDTO process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.OPEN.equals(t.getProcessingStatus())).collect(Collectors.toList());

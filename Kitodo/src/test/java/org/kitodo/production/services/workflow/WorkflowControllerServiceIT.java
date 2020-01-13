@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
@@ -53,8 +53,8 @@ public class WorkflowControllerServiceIT {
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final WorkflowControllerService workflowService = new WorkflowControllerService();
 
-    @BeforeClass
-    public static void prepareDatabase() throws Exception {
+    @Before
+    public void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
@@ -69,8 +69,8 @@ public class WorkflowControllerServiceIT {
         }
     }
 
-    @AfterClass
-    public static void cleanDatabase() throws Exception {
+    @After
+    public void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
@@ -100,6 +100,11 @@ public class WorkflowControllerServiceIT {
     @Test
     public void shouldSetTasksStatusUp() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
+        List<Task> tasks = process.getTasks();
+        assertEquals("Task '" + tasks.get(3).getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                tasks.get(3).getProcessingStatus());
+        assertEquals("Task '" + tasks.get(2).getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
+                tasks.get(2).getProcessingStatus());
 
         workflowService.setTasksStatusUp(process);
         for (Task task : process.getTasks()) {
@@ -107,36 +112,31 @@ public class WorkflowControllerServiceIT {
                 assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.INWORK,
                     task.getProcessingStatus());
             } else if (Objects.equals(task.getId(), 10)) {
-                assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.OPEN,
+                assertEquals("Task '" + task.getTitle() + "' status should not be set up!", TaskStatus.LOCKED,
                     task.getProcessingStatus());
             } else {
                 assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.DONE,
                     task.getProcessingStatus());
             }
         }
-
-        // set up task to previous state
-        Task task = taskService.getById(6);
-        workflowService.setTaskStatusDown(task);
-        taskService.save(task);
     }
 
     @Test
     public void shouldSetTasksStatusDown() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
+        //Due to testszenario there are multiple current tasks, so task with id 2 is set down twice (inwork->open->locked)
+        List<Task> tasks = process.getTasks();
+        assertEquals("Task '" + tasks.get(3).getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+            tasks.get(3).getProcessingStatus());
+        assertEquals("Task '" + tasks.get(2).getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
+            tasks.get(2).getProcessingStatus());
 
         workflowService.setTasksStatusDown(process);
-        List<Task> tasks = process.getTasks();
-        // TODO: shouldn't be changed this status from done to in work?
-        // assertEquals("Task status was not set down for first task!",
-        // TaskStatus.INWORK, tasks.get(0).getProcessingStatusEnum());
-        assertEquals("Task '" + tasks.get(3).getTitle() + "' status was not set down!", TaskStatus.OPEN,
+        tasks = process.getTasks();
+        assertEquals("Task '" + tasks.get(3).getTitle() + "' status was not set down!", TaskStatus.LOCKED,
             tasks.get(3).getProcessingStatus());
-
-        // set up task to previous state
-        Task task = taskService.getById(8);
-        workflowService.setTaskStatusUp(task);
-        taskService.save(task);
+        assertEquals("Task '" + tasks.get(2).getTitle() + "' status was not set down!", TaskStatus.LOCKED,
+            tasks.get(2).getProcessingStatus());
     }
 
     @Test
@@ -149,13 +149,6 @@ public class WorkflowControllerServiceIT {
         Task nextTask = taskService.getById(10);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
             nextTask.getProcessingStatus());
-
-        // set up tasks to previous states
-        workflowService.setTaskStatusDown(task);
-        workflowService.setTaskStatusDown(nextTask);
-
-        taskService.save(task);
-        taskService.save(nextTask);
     }
 
     @Test
@@ -386,10 +379,6 @@ public class WorkflowControllerServiceIT {
                     TaskStatus.LOCKED, task.getProcessingStatus());
             }
         }
-
-        // set up tasks to previous states
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesForWorkflowFull();
     }
 
     @Test
@@ -436,9 +425,5 @@ public class WorkflowControllerServiceIT {
 
         assertEquals("Solve of problem was incorrect - tasks from which correction was send was not set up to open!",
             TaskStatus.OPEN, correctionTask.getProcessingStatus());
-
-        // set up tasks to previous states
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesForWorkflowFull();
     }
 }
