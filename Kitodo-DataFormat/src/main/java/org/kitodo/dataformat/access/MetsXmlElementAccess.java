@@ -145,7 +145,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             }
         }
         workpiece.setRootElement(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
+                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap, 1)).collect(Collectors.toList())
                 .iterator().next());
     }
 

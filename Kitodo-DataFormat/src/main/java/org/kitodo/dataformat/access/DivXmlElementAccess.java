@@ -11,6 +11,7 @@
 
 package org.kitodo.dataformat.access;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
@@ -94,8 +95,12 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      * @param mediaUnitsMap
      *            From this map, the media units are read, which must be
      *            referenced here by their ID.
+     * @param parentOrder
+     *            This represents the value of the parent's {@code ORDER} attribute. It is not required for logical elements by the
+     *            mets standard but is used in Kitodo internal data format. It helps to display logical and physical elements in an
+     *            advanced combined tree.
      */
-    DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> mediaUnitsMap) {
+    DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> mediaUnitsMap, int parentOrder) {
         super();
         super.setLabel(div.getLABEL());
         for (Object mdSecType : div.getDMDID()) {
@@ -105,9 +110,17 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
             super.getMetadata().addAll(readMetadata((MdSecType) mdSecType, amdSecTypeOf(mets, (MdSecType) mdSecType)));
         }
         metsReferrerId = div.getID();
+        BigInteger order = div.getORDER();
+        if (Objects.nonNull(order) && order.intValue() > 0) {
+            super.setOrder(order.intValue());
+        } else if (parentOrder > 0) {
+            super.setOrder(parentOrder);
+        } else {
+            super.setOrder(1);
+        }
         super.setOrderlabel(div.getORDERLABEL());
         for (DivType child : div.getDiv()) {
-            super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap));
+            super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, super.getOrder()));
         }
         super.setType(div.getTYPE());
         List<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
@@ -221,6 +234,9 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         DivType div = new DivType();
         div.setID(metsReferrerId);
         div.setLABEL(super.getLabel());
+        if (super.getOrder() > 0) {
+            div.setORDER(BigInteger.valueOf(super.getOrder()));
+        }
         div.setORDERLABEL(super.getOrderlabel());
         div.setTYPE(super.getType());
         smLinkData.addAll(super.getViews().stream().map(View::getMediaUnit).map(mediaUnitIDs::get)
