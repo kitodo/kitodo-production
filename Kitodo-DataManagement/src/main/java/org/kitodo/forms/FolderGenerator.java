@@ -28,11 +28,6 @@ public class FolderGenerator {
     private static final String CREATE_DERIVATIVE = "createDerivative";
 
     /**
-     * Generator method that scales an image.
-     */
-    private static final String GET_SCALED_WEB_IMAGE = "getScaledWebImage";
-
-    /**
      * Generator method that changes the size (in pixel) of the image.
      */
     private static final String GET_SIZED_WEB_IMAGE = "getSizedWebImage";
@@ -100,8 +95,6 @@ public class FolderGenerator {
             return CREATE_DERIVATIVE;
         } else if (folder.getDpi().isPresent()) {
             return CHANGE_DPI;
-        } else if (folder.getImageScale().isPresent()) {
-            return GET_SCALED_WEB_IMAGE;
         } else if (folder.getImageSize().isPresent()) {
             return GET_SIZED_WEB_IMAGE;
         } else {
@@ -149,7 +142,6 @@ public class FolderGenerator {
     public void setMethod(String method) {
         folder.setDerivative(method.equals(CREATE_DERIVATIVE) ? factor : null);
         folder.setDpi(method.equals(CHANGE_DPI) ? dpi : null);
-        folder.setImageScale(method.equals(GET_SCALED_WEB_IMAGE) ? factor : null);
         folder.setImageSize(method.equals(GET_SIZED_WEB_IMAGE) ? width : null);
     }
 
