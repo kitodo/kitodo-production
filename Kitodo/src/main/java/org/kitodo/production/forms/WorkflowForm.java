@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -40,6 +42,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -140,6 +143,10 @@ public class WorkflowForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
         try {
+            if (hasMultipleSructureTreeConfiguration()) {
+                Helper.setErrorMessage(Helper.getTranslation("errorMultipleConfigurations"));
+                return this.stayOnCurrentPage;
+            }
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
@@ -158,6 +165,17 @@ public class WorkflowForm extends BaseForm {
                 e);
             return this.stayOnCurrentPage;
         }
+    }
+
+    private boolean hasMultipleSructureTreeConfiguration() throws WorkflowException, IOException {
+        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap();
+        String xml = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
+        xml = StringUtils.substringBefore(xml, "kitodo-diagram-separator");
+        Converter converter = new Converter(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        Set<Boolean> configurations = converter.validateWorkflowTaskList()
+                .stream().map(Task::isSeparateStructure).collect(Collectors.toSet());
+        return configurations.size() > 1;
     }
 
     /**
