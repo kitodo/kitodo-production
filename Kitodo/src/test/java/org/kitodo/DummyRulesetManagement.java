@@ -19,12 +19,18 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 
 public class DummyRulesetManagement implements RulesetManagementInterface {
 
     @Override
     public Collection<String> getAcquisitionStages() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<String> getFunctionalKeys(FunctionalMetadata functionalMetadata) {
         throw new UnsupportedOperationException();
     }
 
@@ -43,5 +49,4 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     public void load(File rulesetFile) throws IOException {
         throw new UnsupportedOperationException();
     }
-
 }

@@ -38,6 +38,16 @@ public interface RulesetManagementInterface {
     Collection<String> getAcquisitionStages();
 
     /**
+     * Returns all metadata keys that are used as the specified functional
+     * metadata.
+     *
+     * @param functionalMetadata
+     *            functional metadata to search for
+     * @return all keys used as the functional metadata
+     */
+    Collection<String> getFunctionalKeys(FunctionalMetadata functionalMetadata);
+
+    /**
      * Returns all outline elements. The result is a map whose keys are the ID
      * strings of the outline elements. The mapped values are the labels in the
      * language best suited to the given language priority list. This function

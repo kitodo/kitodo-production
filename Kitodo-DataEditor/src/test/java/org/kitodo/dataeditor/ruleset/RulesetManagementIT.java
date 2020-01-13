@@ -14,6 +14,7 @@ package org.kitodo.dataeditor.ruleset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -42,6 +43,7 @@ import org.junit.Test;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
@@ -701,6 +703,30 @@ public class RulesetManagementIT {
             Collections.emptyList());
 
         assertThat(ids(mvwviList), contains("test1", "test2", "test2", "test2options"));
+    }
+
+    @Test
+    public void testGettingOfSpecialFields() throws Exception {
+        RulesetManagement rulesetManagement= new RulesetManagement();
+        rulesetManagement.load(new File("src/test/resources/testAnExtensiveRulesetCanBeLoaded.xml"));
+
+        assertThat("TitleDocMain was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.TITLE), contains("TitleDocMain"));
+        assertThat("Person@LastName was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.AUTHOR_LAST_NAME),
+            contains("Person@LastName"));
+
+        // not existing uses
+        assertThat("Something was found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.DATA_SOURCE), is(empty()));
+
+        // multiple uses of one key
+        assertThat("shelfmarksource was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER),
+            contains("shelfmarksource"));
+        assertThat("shelfmarksource was not found!",
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER),
+            contains("shelfmarksource"));
     }
 
     /**
