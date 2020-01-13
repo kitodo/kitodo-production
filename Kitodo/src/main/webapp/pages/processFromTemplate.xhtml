@@ -47,7 +47,8 @@
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
                          styleClass="secondary"/>
-        <p:button value="#{msgs.cancel}"
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
                   outcome="#{not empty param['referrer'] ? param['referrer'] : 'desktop'}"
                   icon="fa fa-times fa-lg"

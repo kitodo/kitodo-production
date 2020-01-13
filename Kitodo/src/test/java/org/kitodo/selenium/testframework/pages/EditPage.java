@@ -32,6 +32,10 @@ abstract class EditPage<T> extends Page<T> {
     WebElement saveButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = EDIT_FORM + ":cancel")
+    WebElement cancelButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = EDIT_FORM + ":error-messages")
     WebElement errorMessages;
 
