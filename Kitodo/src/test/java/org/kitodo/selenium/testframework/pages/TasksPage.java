@@ -57,12 +57,10 @@ public class TasksPage extends Page<TasksPage> {
      */
     @Override
     public TasksPage goTo() throws Exception {
-        System.out.println("goToTasksPage");
         Pages.getTopNavigation().gotoTasks();
         await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
                 .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
                 .until(this::isAt);
-        System.out.println("gone to taskPage");
         return this;
     }
 
@@ -94,9 +92,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     public void editOwnedTask(String taskTitle, String processTitle) throws Exception {
-        System.out.println("editOwnedTask TaskPage l. 95 with taskTitle: " + taskTitle + "and process: " + processTitle);
         if (isNotAt()) {
-            System.out.println("is not at");
             goTo();
         }
         setEditTaskLink(taskTitle, processTitle);
@@ -104,9 +100,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     private void setEditTaskLink(String taskTitle, String processTitle) {
-        System.out.println("setEditTaskLink TaskPAge l 105");
         int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
-        System.out.println("rowindex: " + index);
         editTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":editOwnTask");
     }
 
@@ -116,7 +110,6 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     private int getRowIndexForTask(WebElement dataTable, String searchedTaskTitle, String searchedProcessTitle) {
-        System.out.println("getRowIndexForTask");
         List<WebElement> tableRows = getRowsOfTable(dataTable);
 
         for (int i = 0; i < tableRows.size(); i++) {
