@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -403,9 +404,17 @@ public class CurrentTaskForm extends BaseForm {
      *            message displayed to the user (key for resourcebundle)
      */
     private void generateImages(GenerationMode mode, String messageKey) {
+        Folder generatorSource = myProcess.getProject().getGeneratorSource();
+        List<Folder> contentFolders = currentTask.getContentFolders();
+        if (Objects.isNull(generatorSource)) {
+            Helper.setErrorMessage("noSourceFolderConfiguredInProject");
+        }
+        if(Objects.isNull(contentFolders)){
+            Helper.setErrorMessage("noImageFolderConfiguredInProject");
+        }
         try {
-            Subfolder sourceFolder = new Subfolder(myProcess, myProcess.getProject().getGeneratorSource());
-            List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, currentTask.getContentFolders());
+            Subfolder sourceFolder = new Subfolder(myProcess, generatorSource);
+            List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, contentFolders);
             ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
             TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
             Helper.setMessage(messageKey);
