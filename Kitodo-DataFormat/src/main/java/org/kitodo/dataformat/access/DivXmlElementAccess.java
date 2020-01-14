@@ -112,15 +112,15 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         metsReferrerId = div.getID();
         BigInteger order = div.getORDER();
         if (Objects.nonNull(order) && order.intValue() > 0) {
-            super.setOrder(order.intValue());
+            setOrder(order.intValue());
         } else if (parentOrder > 0) {
-            super.setOrder(parentOrder);
+            setOrder(parentOrder);
         } else {
-            super.setOrder(1);
+            setOrder(1);
         }
         super.setOrderlabel(div.getORDERLABEL());
         for (DivType child : div.getDiv()) {
-            super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, super.getOrder()));
+            getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, getOrder()));
         }
         super.setType(div.getTYPE());
         List<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
@@ -234,8 +234,8 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         DivType div = new DivType();
         div.setID(metsReferrerId);
         div.setLABEL(super.getLabel());
-        if (super.getOrder() > 0) {
-            div.setORDER(BigInteger.valueOf(super.getOrder()));
+        if (getOrder() > 0) {
+            div.setORDER(BigInteger.valueOf(getOrder()));
         }
         div.setORDERLABEL(super.getOrderlabel());
         div.setTYPE(super.getType());
