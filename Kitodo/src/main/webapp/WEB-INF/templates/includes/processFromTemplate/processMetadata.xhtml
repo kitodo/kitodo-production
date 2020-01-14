@@ -19,7 +19,7 @@
     <p:panelGrid id="processMetadata" layout="grid" columns="2">
 
         <ui:include src="../metadataTreeTable.xhtml">
-            <ui:param name="root" value="#{CreateProcessForm.processMetadataTab.processDetailsElements}" />
+            <ui:param name="root" value="#{CreateProcessForm.processMetadataTab.logicalMetadataTree}" />
             <ui:param name="readOnly" value="#{false}" />
         </ui:include>
 

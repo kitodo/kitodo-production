@@ -48,19 +48,19 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement docTypeSelect;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":processDetailsTable:0:inputText")
+    @FindBy(id = TAB_VIEW + ":metadataTable:0:inputText")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":processDetailsTable:1:inputText")
+    @FindBy(id = TAB_VIEW + ":metadataTable:1:inputText")
     private WebElement titleSortInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":processDetailsTable:2:inputText")
+    @FindBy(id = TAB_VIEW + ":metadataTable:2:inputText")
     private WebElement ppnAnalogInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":processDetailsTable:3:inputText")
+    @FindBy(id = TAB_VIEW + ":metadataTable:3:inputText")
     private WebElement ppnDigitalInput;
 
     @SuppressWarnings("unused")

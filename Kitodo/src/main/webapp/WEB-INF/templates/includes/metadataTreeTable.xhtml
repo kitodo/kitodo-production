@@ -23,7 +23,7 @@
            * buttonUpdate: update action of copy/delete buttons (String); if empty, no buttons are rendered
      -->
 
-    <p:treeTable value="#{root}" var="item" styleClass="no-header">
+    <p:treeTable value="#{root}" var="item" styleClass="no-header" id="metadataTable">
         <p:column style="width: 100%;">
             <!-- field label -->
             <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>

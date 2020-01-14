@@ -11,9 +11,6 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,6 +25,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.list.UnmodifiableList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -364,16 +362,20 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @return the rows that JSF has to display
      */
     public List<ProcessDetail> getRows() {
-        Builder<ProcessDetail> rows = ImmutableList.builderWithExpectedSize(treeNode.getChildren().size());
+        List<ProcessDetail> rows = new ArrayList<>();
         for (TreeNode child : treeNode.getChildren()) {
             rows.add((ProcessDetail) child.getData());
         }
-        return rows.build();
+        return new UnmodifiableList<>(rows);
     }
 
     @Override
     Pair<Method, Object> getStructureFieldValue() {
         return null;
+    }
+
+    public TreeNode getTreeNode() {
+        return treeNode;
     }
 
     @Override

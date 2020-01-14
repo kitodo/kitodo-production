@@ -42,7 +42,7 @@
                                    var="step"
                                    itemLabel="#{step.localizedLabel}"
                                    itemValue="#{step.title}"/>
-                    <p:ajax event="change" update="editForm:processFromTemplateTabView:processDetailsTable"/>
+                    <p:ajax event="change" update="editForm:processFromTemplateTabView:metadataTable"/>
                 </p:selectOneMenu>
             </div>
 
@@ -58,7 +58,7 @@
                         <f:selectItems value="#{ProcessForm.rulesets}"/>
                         <p:ajax event="change"
                                 listener="#{CreateProcessForm.updateRulesetAndDocType(CreateProcessForm.mainProcess.ruleset.file)}"
-                                update="editForm:processFromTemplateTabView:docType,editForm:processFromTemplateTabView:processDetailsTable"/>
+                                update="editForm:processFromTemplateTabView:docType,editForm:processFromTemplateTabView:metadataTable"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
             </div>
