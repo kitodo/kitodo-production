@@ -441,24 +441,67 @@ public class StructurePanel implements Serializable {
         }
 
         Set<View> viewsShowingOnAChild = new HashSet<>();
-        for (IncludedStructuralElement child : structure.getChildren()) {
-            viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
-        }
-
         if (Boolean.FALSE.equals(this.isSeparateMedia())) {
-            for (View view : structure.getViews()) {
-                if (!viewsShowingOnAChild.contains(view) && Objects.nonNull(view.getMediaUnit())) {
-                    String order = view.getMediaUnit().getOrder() + " : ";
-                    if (Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
-                        addTreeNode(order + view.getMediaUnit().getOrderlabel(), false, false, view, parent);
-                    } else {
-                        addTreeNode(order + "uncounted", false, false, view, parent);
-                    }
-                    viewsShowingOnAChild.add(view);
-                }
+            orderChildrenAndViews(new ArrayList<>(structure.getChildren()), new ArrayList<>(structure.getViews()), parent,
+                    viewsShowingOnAChild);
+        } else {
+            for (IncludedStructuralElement child : structure.getChildren()) {
+                viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
             }
         }
         return viewsShowingOnAChild;
+    }
+
+    /**
+     * This method appends IncludedStructuralElement children and assigned views while considering the ORDER attribute to create the
+     * combined tree with the correct order of logical and physical elements.
+     * @param children List of IncludedStructuralElements which are children of the element represented by the DefaultTreeNode parent
+     * @param views List of Views assigned to the element represented by the DefaultTreeNode parent
+     * @param parent DefaultTreeNode representing the logical element where all new elements should be appended
+     * @param viewsShowingOnAChild Collection of Views displayed in the combined tree
+     */
+    private void orderChildrenAndViews(List<IncludedStructuralElement> children, List<View> views, DefaultTreeNode parent,
+                                       Set<View> viewsShowingOnAChild) {
+        List<IncludedStructuralElement> temporaryChildren = new ArrayList<>(children);
+        List<View> temporaryViews = new ArrayList<>(views);
+        temporaryChildren.removeAll(Collections.singletonList(null));
+        temporaryViews.removeAll(Collections.singletonList(null));
+        while (temporaryChildren.size() > 0 || temporaryViews.size() > 0) {
+            IncludedStructuralElement temporaryChild = null;
+            View temporaryView = null;
+
+            if (temporaryChildren.size() > 0) {
+                temporaryChild = temporaryChildren.get(0);
+            }
+            if (temporaryViews.size() > 0) {
+                temporaryView = temporaryViews.get(0);
+            }
+
+            if (Objects.isNull(temporaryChild) && Objects.isNull(temporaryView)) {
+                break;
+            }
+
+            if (Objects.nonNull(temporaryChild) && Objects.isNull(temporaryView)
+                    || Objects.nonNull(temporaryChild) && temporaryChild.getOrder() <= temporaryView.getMediaUnit().getOrder()) {
+                viewsShowingOnAChild.addAll(buildStructureTreeRecursively(temporaryChild, parent));
+                temporaryChildren.remove(0);
+            } else {
+                if (!viewsShowingOnAChild.contains(temporaryView)) {
+                    addTreeNode(buildViewLabel(temporaryView), false, false, temporaryView, parent);
+                    viewsShowingOnAChild.add(temporaryView);
+                }
+                temporaryViews.remove(0);
+            }
+        }
+    }
+
+    private String buildViewLabel(View view) {
+        String order = view.getMediaUnit().getOrder() + " : ";
+        if (Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
+            return order + view.getMediaUnit().getOrderlabel();
+        } else {
+            return order + "uncounted";
+        }
     }
 
     /**
