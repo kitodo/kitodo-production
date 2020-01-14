@@ -29,6 +29,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TopNavigationPage extends Page<TopNavigationPage> {
 
+    private static final String ARGUMENTS_CLICK = "arguments[0].click()";
+
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
     private WebElement userMenuButton;
@@ -105,7 +107,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click()", driver.findElement(By.id("logout-form:logout")));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("logout-form:logout")));
         WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
         webDriverWait.until(ExpectedConditions.urlContains(Pages.getLoginPage().getUrl()));
     }
@@ -148,7 +150,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoHelp() {
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click()", driver.findElement(By.id("linkHelp")));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkHelp")));
     }
 
     /**
@@ -156,7 +158,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
      void gotoTasks() {
          RemoteWebDriver driver = Browser.getDriver();
-         ((JavascriptExecutor) driver).executeScript("arguments[0].click()", driver.findElement(By.id("linkTasks")));
+         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkTasks")));
     }
 
     /**
@@ -164,7 +166,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoProcesses() {
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click()", driver.findElement(By.id("linkProcesses")));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkProcesses")));
     }
 
     /**
@@ -172,7 +174,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoProjects() {
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click()", driver.findElement(By.id("linkProjects")));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkProjects")));
     }
 
     /**
@@ -180,7 +182,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoUsers() {
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click()", driver.findElement(By.id("linkUsers")));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkUsers")));
     }
 
     /**
@@ -188,7 +190,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoSystem() {
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click()", driver.findElement(By.id("linkSystem")));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkSystem")));
     }
     
     /**
