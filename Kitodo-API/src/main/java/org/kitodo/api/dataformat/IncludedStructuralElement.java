@@ -45,6 +45,11 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
     private Collection<Metadata> metadata = new HashSet<>();
 
     /**
+     * Order of IncludedStructuralElements in relation to Views assigned to the parent.
+     */
+    private int order;
+
+    /**
      * The order label of this included structural element, used to store the
      * machine-readable value if the label contains a human-readable value that
      * can be mapped to a machine-readable value.
@@ -95,6 +100,7 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
         label = source.label;
         link = source.link;
         metadata = source.metadata;
+        order = source.order;
         orderlabel = source.orderlabel;
         subincludedStructuralElements = source.subincludedStructuralElements;
         type = source.type;
@@ -157,6 +163,24 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
      */
     public Collection<Metadata> getMetadata() {
         return metadata;
+    }
+
+    /**
+     * Get order.
+     *
+     * @return value of order
+     */
+    public int getOrder() {
+        return order;
+    }
+
+    /**
+     * Set order.
+     *
+     * @param order as int
+     */
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     /**
