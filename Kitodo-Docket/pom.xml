@@ -82,14 +82,9 @@
             <version>2.0.6</version>
         </dependency>
         <dependency>
-            <groupId>org.saxon</groupId>
+            <groupId>org.opengis.cite.saxon</groupId>
             <artifactId>saxon9</artifactId>
-            <version>${saxon.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.saxon</groupId>
-            <artifactId>saxon9-dom</artifactId>
-            <version>${saxon.version}</version>
+            <version>9.0.0.8</version>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
