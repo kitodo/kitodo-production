@@ -42,8 +42,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.CopyProcess;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.catalogue.CataloguePlugin;
 import org.goobi.production.plugin.catalogue.Hit;
 import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
@@ -132,31 +130,6 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
     private String atstsl = "";
     private Integer guessedImages = 0;
     private Process processForChoice;
-
-    /**
-     * The field hitlist holds some reference to the hitlist retrieved from a
-     * library catalog. The internals of this object are subject to the plug-in
-     * implementation and are not to be accessed directly.
-     */
-    private Object hitlist;
-
-    /**
-     * The field hitlistPage holds the zero-based index of the page of the
-     * hitlist currently showing. A negative value means that the hitlist is
-     * hidden, otherwise it is showing the respective page.
-     */
-    private long hitlistPage = -1;
-    /**
-     * The field hits holds the number of hits in the hitlist last retrieved
-     * from a library catalog.
-     */
-    private long hits;
-
-    /**
-     * The field importCatalogue holds the catalog plug-in used to access the
-     * library catalog.
-     */
-    private transient CataloguePlugin importCatalogue;
 
     private LegacyMetsModsDigitalDocumentHelper rdf;
     private String opacSuchfeld = "12";
@@ -270,50 +243,6 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
     }
 
     /**
-     * The function is executed if a user clicks the command link
-     * to start a catalog search. It performs the search and loads the hit if
-     * it is unique. Otherwise, it will cause a hit list to show up for the user
-     * to select a hit.
-     */
-    public void evaluateOpac() {
-        long timeout = CataloguePlugin.getTimeout();
-        clearValues();
-        PrimeFaces.current().ajax().update("hitlistForm");
-        try {
-            readProjectConfigs();
-            if (pluginAvailableFor(opacKatalog)) {
-                String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
-                query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
-
-                hitlist = importCatalogue.find(query, timeout);
-                hits = importCatalogue.getNumberOfHits(hitlist, timeout);
-
-                String message = MessageFormat.format(Helper.getTranslation("newProcess.catalogueSearch.results"),
-                    hits);
-
-                switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
-                    case 0:
-                        Helper.setErrorMessage(message);
-                        break;
-                    case 1:
-                        importHit(importCatalogue.getHit(hitlist, 0, timeout));
-                        Helper.setMessage(message);
-                        break;
-                    default:
-                        hitlistPage = 0; // show first page of hitlist
-                        Helper.setMessage(message);
-                        PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
-                        break;
-                }
-            } else {
-                Helper.setErrorMessage("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
-            }
-        } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {"OPAC " + opacKatalog }, logger, e);
-        }
-    }
-
-    /**
      * Read project configs for display in GUI.
      */
     protected void readProjectConfigs() {
@@ -337,36 +266,6 @@ public class ProzesskopieForm extends BaseForm implements RulesetSetupInterface,
 
         this.standardFields.putAll(cp.getHiddenFields());
         this.additionalFields = cp.getAdditionalFields();
-    }
-
-    /**
-     * The function pluginAvailableFor(catalog) verifies that a plugin suitable
-     * for accessing the library catalog identified by the given String is
-     * available in the global variable importCatalogue. If importCatalogue is
-     * empty or the current plug-in doesn’t support the given catalog, the
-     * function will try to load a suitable plug-in. Upon success the
-     * preferences and the catalog to use will be configured in the plug-in,
-     * otherwise an error message will be set to be shown.
-     *
-     * @param catalogue
-     *            identifier string for the catalog that the plug-in shall
-     *            support
-     * @return whether a plug-in is available in the global variable
-     *         importCatalogue
-     */
-    private boolean pluginAvailableFor(String catalogue) {
-        if (Objects.isNull(importCatalogue) || !importCatalogue.supportsCatalogue(catalogue)) {
-            importCatalogue = PluginLoader.getCataloguePluginForCatalogue(catalogue);
-        }
-        if (Objects.isNull(importCatalogue)) {
-            Helper.setErrorMessage("NoCataloguePluginForCatalogue", catalogue);
-            return false;
-        } else {
-            importCatalogue
-                    .setPreferences(ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset()));
-            importCatalogue.useCatalogue(catalogue);
-            return true;
-        }
     }
 
     /**

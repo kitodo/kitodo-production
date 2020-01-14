@@ -18,8 +18,6 @@ import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.enums.MetadataFormat;
@@ -70,16 +68,6 @@ public class HelperForm implements Serializable {
             }
         }
         return ffs;
-    }
-
-    /**
-     * Check if mass import is allowed.
-     *
-     * @return true or false
-     */
-    public boolean getMassImportAllowed() {
-        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.MASS_IMPORT_ALLOWED)
-                && !PluginLoader.getPluginList(PluginType.IMPORT).isEmpty();
     }
 
     /**

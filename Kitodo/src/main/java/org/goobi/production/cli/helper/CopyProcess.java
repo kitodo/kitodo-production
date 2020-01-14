@@ -112,7 +112,6 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * OpacAnfrage.
      */
-    @Override
     public void evaluateOpac() {
         clearValues();
         readProjectConfigs();
