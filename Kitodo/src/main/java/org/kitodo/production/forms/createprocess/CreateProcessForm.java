@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -458,9 +459,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private void addMetadataProperties(List<ProcessDetail> processDetailList, Process process) {
         try {
             for (ProcessDetail processDetail : processDetailList) {
-                if (!processDetail.getMetadata().isEmpty() && processDetail.getMetadata().toArray()[0] instanceof Metadata) {
+                Collection<Metadata> processMetadata = processDetail.getMetadata();
+                if (!processMetadata.isEmpty() && processMetadata.toArray()[0] instanceof Metadata) {
                     String metadataValue = ImportService.getProcessDetailValue(processDetail);
-                    Metadata metadata = (Metadata) processDetail.getMetadata().toArray()[0];
+                    Metadata metadata = (Metadata) processMetadata.toArray()[0];
                     if (Objects.nonNull(metadata.getDomain())) {
                         switch (metadata.getDomain()) {
                             case DMD_SEC:
