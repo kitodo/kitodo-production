@@ -461,20 +461,24 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 if (!processDetail.getMetadata().isEmpty() && processDetail.getMetadata().toArray()[0] instanceof Metadata) {
                     String metadataValue = ImportService.getProcessDetailValue(processDetail);
                     Metadata metadata = (Metadata) processDetail.getMetadata().toArray()[0];
-                    switch (metadata.getDomain()) {
-                        case DMD_SEC:
-                            ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
-                            break;
-                        case SOURCE_MD:
-                            ProcessGenerator.addPropertyForTemplate(process, processDetail.getLabel(), metadataValue);
-                            break;
-                        case TECH_MD:
-                            ProcessGenerator.addPropertyForProcess(process, processDetail.getLabel(), metadataValue);
-                            break;
-                        default:
-                            logger.info("Don't save metadata '" + processDetail.getMetadataID() + "' with domain '"
-                                    + metadata.getDomain() + "' to property.");
-                            break;
+                    if (Objects.nonNull(metadata.getDomain())) {
+                        switch (metadata.getDomain()) {
+                            case DMD_SEC:
+                                ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            case SOURCE_MD:
+                                ProcessGenerator.addPropertyForTemplate(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            case TECH_MD:
+                                ProcessGenerator.addPropertyForProcess(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            default:
+                                logger.info("Don't save metadata '" + processDetail.getMetadataID() + "' with domain '"
+                                        + metadata.getDomain() + "' to property.");
+                                break;
+                        }
+                    } else {
+                        ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
                     }
                 }
             }
