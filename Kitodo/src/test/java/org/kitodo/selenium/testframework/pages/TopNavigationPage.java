@@ -20,10 +20,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TopNavigationPage extends Page<TopNavigationPage> {
+
+    private static final String ARGUMENTS_CLICK = "arguments[0].click()";
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -100,11 +106,10 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     public void logout() throws Exception {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
-
-        hoverWebElement(userMenuButton);
-        hoverWebElement(logoutButton);
-
-        clickButtonAndWaitForRedirect(logoutButton, Pages.getLoginPage().getUrl());
+        RemoteWebDriver driver = Browser.getDriver();
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("logout-form:logout")));
+        WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
+        webDriverWait.until(ExpectedConditions.urlContains(Pages.getLoginPage().getUrl()));
     }
 
     public String getSessionClient() throws InterruptedException {
@@ -144,68 +149,53 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      * Hovers dashboard menu and clicks on link to help page.
      */
     void gotoHelp() {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkHelp);
-        linkHelp.click();
+        RemoteWebDriver driver = Browser.getDriver();
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkHelp")));
     }
 
     /**
      * Hovers dashboard menu and clicks on link to tasks page.
      */
      void gotoTasks() {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkTasks);
-        linkTasks.click();
+         RemoteWebDriver driver = Browser.getDriver();
+         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkTasks")));
     }
 
     /**
      * Hovers dashboard menu and clicks on link to processes page.
      */
     void gotoProcesses() {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkProcesses);
-        linkProcesses.click();
+        RemoteWebDriver driver = Browser.getDriver();
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkProcesses")));
     }
 
     /**
      * Hovers dashboard menu and clicks on link to projects page.
      */
     void gotoProjects() {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkProjects);
-        linkProjects.click();
+        RemoteWebDriver driver = Browser.getDriver();
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkProjects")));
     }
 
     /**
      * Hovers dashboard menu and clicks on link to users page.
      */
     void gotoUsers() {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkUsers);
-        linkUsers.click();
-    }
-
-    /**
-     * Hovers dashboard menu and clicks on link to modules page.
-     */
-    void gotoModules() {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkModules);
-        linkModules.click();
+        RemoteWebDriver driver = Browser.getDriver();
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkUsers")));
     }
 
     /**
      * Hovers dashboard menu and clicks on link to system page.
      */
     void gotoSystem() {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkSystem);
-        linkSystem.click();
+        RemoteWebDriver driver = Browser.getDriver();
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkSystem")));
     }
-
+    
     /**
      * Hovers dashboard menu and checks menu header if all buttons are displayed.
-     * 
+     *
      * @return True if "Admin" is displayed.
      */
     public boolean isShowingAllLinks() {

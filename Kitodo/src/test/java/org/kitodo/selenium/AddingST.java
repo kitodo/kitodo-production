@@ -155,7 +155,8 @@ public class AddingST extends BaseTestSelenium {
     public void addProcessAsChildNotPossible() throws Exception {
         projectsPage.createNewProcess();
         boolean errorMessageShowing = Pages.getProcessFromTemplatePage().createProcessAsChildNotPossible();
-        assertTrue("There was no errer!", errorMessageShowing);
+        assertTrue("There was no error!", errorMessageShowing);
+        Pages.getProcessFromTemplatePage().cancel();
     }
 
     @Ignore
@@ -171,7 +172,7 @@ public class AddingST extends BaseTestSelenium {
         boolean processAvailable = processesPage.getProcessTitles().contains(generatedTitle);
         assertTrue("Created Process was not listed at processes table!", processAvailable);
     }
-    
+
     @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();

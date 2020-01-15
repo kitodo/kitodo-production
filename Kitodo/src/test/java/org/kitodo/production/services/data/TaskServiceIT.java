@@ -216,8 +216,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetCurrentTasksOfBatch() {
-        List<Task> tasks = taskService.getCurrentTasksOfBatch("Task", 1);
-        System.out.println("shouldGetByTitleAndBatches: " + tasks.size());
+        taskService.getCurrentTasksOfBatch("Task", 1);
     }
 
     @Test

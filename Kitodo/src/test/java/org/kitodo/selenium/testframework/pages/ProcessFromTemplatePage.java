@@ -242,4 +242,9 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private void switchToTabByIndex(int index) throws Exception {
         switchToTabByIndex(index, processFromTemplateTabView);
     }
+
+    public ProcessesPage cancel() throws IllegalAccessException, InstantiationException {
+        clickButtonAndWaitForRedirect(cancelButton, Pages.getProjectsPage().getUrl());
+        return Pages.getProcessesPage();
+    }
 }
