@@ -35,7 +35,7 @@
             <p:column styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
-                      sortBy="#{process.title}"
+                      sortBy="#{process.title.keyword}"
                       filterBy="#{process.title}"
                       rendered="#{ProcessForm.showColumn('process.title')}">
                 <h:outputText value="#{process.title}"

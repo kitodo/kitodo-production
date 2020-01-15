@@ -38,7 +38,7 @@
         </p:column>
 
         <p:column headerText="#{msgs.title}"
-                  sortBy="#{item.title}"
+                  sortBy="#{item.title.keyword}"
                   rendered="#{ProjectForm.showColumn('project.title')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
@@ -52,6 +52,7 @@
 
         <p:column headerText="#{msgs.active}"
                   styleClass="checkboxColumn"
+                  sortBy="#{item.active}"
                   rendered="#{ProjectForm.showColumn('project.active')}">
             <h:outputText>
                 <ui:fragment rendered="#{item.isActive()}">

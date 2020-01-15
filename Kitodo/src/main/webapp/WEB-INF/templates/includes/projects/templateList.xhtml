@@ -40,7 +40,7 @@
 
         <p:column id="titleColumn"
                   headerText="#{msgs.title}"
-                  sortBy="#{item.title}"
+                  sortBy="#{item.title.keyword}"
                   rendered="#{ProjectForm.showColumn('template.title')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
