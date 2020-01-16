@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -458,23 +459,28 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private void addMetadataProperties(List<ProcessDetail> processDetailList, Process process) {
         try {
             for (ProcessDetail processDetail : processDetailList) {
-                if (!processDetail.getMetadata().isEmpty() && processDetail.getMetadata().toArray()[0] instanceof Metadata) {
+                Collection<Metadata> processMetadata = processDetail.getMetadata();
+                if (!processMetadata.isEmpty() && processMetadata.toArray()[0] instanceof Metadata) {
                     String metadataValue = ImportService.getProcessDetailValue(processDetail);
-                    Metadata metadata = (Metadata) processDetail.getMetadata().toArray()[0];
-                    switch (metadata.getDomain()) {
-                        case DMD_SEC:
-                            ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
-                            break;
-                        case SOURCE_MD:
-                            ProcessGenerator.addPropertyForTemplate(process, processDetail.getLabel(), metadataValue);
-                            break;
-                        case TECH_MD:
-                            ProcessGenerator.addPropertyForProcess(process, processDetail.getLabel(), metadataValue);
-                            break;
-                        default:
-                            logger.info("Don't save metadata '" + processDetail.getMetadataID() + "' with domain '"
-                                    + metadata.getDomain() + "' to property.");
-                            break;
+                    Metadata metadata = (Metadata) processMetadata.toArray()[0];
+                    if (Objects.nonNull(metadata.getDomain())) {
+                        switch (metadata.getDomain()) {
+                            case DMD_SEC:
+                                ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            case SOURCE_MD:
+                                ProcessGenerator.addPropertyForTemplate(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            case TECH_MD:
+                                ProcessGenerator.addPropertyForProcess(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            default:
+                                logger.info("Don't save metadata '" + processDetail.getMetadataID() + "' with domain '"
+                                        + metadata.getDomain() + "' to property.");
+                                break;
+                        }
+                    } else {
+                        ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
                     }
                 }
             }
