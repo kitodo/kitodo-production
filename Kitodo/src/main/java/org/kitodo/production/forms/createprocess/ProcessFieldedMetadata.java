@@ -447,4 +447,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
         }
     }
+
+    void setMetadata(Collection<Metadata> metadata) {
+        this.metadata.clear();
+        this.metadata.addAll(metadata);
+        this.treeNode = new DefaultTreeNode();
+        treeNode.setExpanded(true);
+        createMetadataTable();
+    }
 }
