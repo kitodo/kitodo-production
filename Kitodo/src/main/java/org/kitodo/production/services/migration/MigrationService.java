@@ -130,7 +130,7 @@ public class MigrationService {
                 template.setRuleset(process.getRuleset());
                 template.setWorkflow(workflowToUse);
                 template.setClient(process.getProject().getClient());
-                template.setProjects(Arrays.asList(process.getProject()));
+                template.setProjects(new ArrayList<>(Arrays.asList(process.getProject())));
                 newTemplates.put(template, new ArrayList<>(Arrays.asList(process)));
             }
         }
