@@ -17,18 +17,15 @@ import java.util.Collection;
 import java.util.EnumMap;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.helper.Helper;
 
 public abstract class ProcessDetail implements Serializable {
-    private static final Logger logger = LogManager.getLogger(ProcessDetail.class);
-
     /**
      * Describes the relationship between the domain in the rule set and the
      * mdSec in the METS.
@@ -68,7 +65,7 @@ public abstract class ProcessDetail implements Serializable {
      * This method is triggered when the user clicks the copy metadata button.
      */
     public void copy() {
-        // TODO: implement
+        Helper.setErrorMessage("notImplemented", (String) null);
     }
 
     /**
