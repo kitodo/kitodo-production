@@ -11,28 +11,10 @@
 
 package org.goobi.mq.processors;
 
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.jms.JMSException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.production.forms.copyprocess.ProzesskopieForm;
-import org.kitodo.production.process.field.AdditionalField;
-import org.kitodo.production.services.ServiceManager;
 
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to
@@ -75,7 +57,5 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     protected void process(MapMessageObjectReader args) {
       throw new UnsupportedOperationException();
     }
-
-
 
 }
