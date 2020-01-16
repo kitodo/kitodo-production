@@ -163,14 +163,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             if (optionalMetadataView.isPresent()) {
                 MetadataViewInterface metadataView = optionalMetadataView.get();
                 if (metadataView.isComplex()) {
-                    ProcessFieldedMetadata metadataGroupPanel = createMetadataGroupPanel(
-                        (ComplexMetadataViewInterface) metadataView, values);
-                    metadataGroupPanel.treeNode = new DefaultTreeNode(metadataGroupPanel, treeNode);
-                    metadataGroupPanel.createMetadataTable();
-                    metadataGroupPanel.treeNode.setExpanded(true);
+                    createMetadataGroupPanel((ComplexMetadataViewInterface) metadataView, values);
                 } else {
-                    new DefaultTreeNode(createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values),
-                            treeNode).setExpanded(true);
+                    createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values);
                 }
             } else {
                 hiddenMetadata = values;
@@ -216,7 +211,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            data for that group, must contain at most one element
      * @return a sub-panel for JSF to render
      */
-    public ProcessFieldedMetadata createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
+    public void createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
                                                            Collection<Metadata> values) {
         Collection<Metadata> value;
 
@@ -238,7 +233,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 throw new IllegalStateException("Too many (" + values.size() + ") complex metadata of type \""
                         + metadataView.getId() + "\" in a single row. Must be 0 or 1 per row.");
         }
-        return new ProcessFieldedMetadata(this, complexMetadataView, value);
+        ProcessFieldedMetadata metadata = new ProcessFieldedMetadata(this, complexMetadataView, value);
+        metadata.treeNode = new DefaultTreeNode(metadata, treeNode);
+        metadata.createMetadataTable();
+        metadata.treeNode.setExpanded(true);
     }
 
     /**
@@ -251,23 +249,28 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            the value(s) to be displayed
      * @return a backing bean for the row
      */
-    public ProcessDetail createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
+    public void createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
                                                  Collection<Metadata> values) {
+        ProcessSimpleMetadata data;
         switch (simpleMetadataView.getInputType()) {
             case MULTIPLE_SELECTION:
             case MULTI_LINE_SINGLE_SELECTION:
             case ONE_LINE_SINGLE_SELECTION:
-                return new ProcessSelectMetadata(this, simpleMetadataView, simpleValues(values));
+                data = new ProcessSelectMetadata(this, simpleMetadataView, simpleValues(values));
+                break;
             case BOOLEAN:
-                return new ProcessBooleanMetadata(this, simpleMetadataView, oneSimpleValue(values));
+                data = new ProcessBooleanMetadata(this, simpleMetadataView, oneSimpleValue(values));
+                break;
             case DATE:
             case INTEGER:
             case MULTI_LINE_TEXT:
             case ONE_LINE_TEXT:
-                return new ProcessTextMetadata(this, simpleMetadataView, oneSimpleValue(values));
+                data = new ProcessTextMetadata(this, simpleMetadataView, oneSimpleValue(values));
+                break;
             default:
                 throw new IllegalStateException("complete switch");
         }
+        new DefaultTreeNode(data, treeNode).setExpanded(true);
     }
 
     /**
