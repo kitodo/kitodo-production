@@ -106,7 +106,7 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     }
 
     /**
-     * Create and return String containing the names of all given clients joined by a ", "
+     * Create and return String containing the names of all given clients joined by a ", ".
      * @param clients list of roles
      * @return String containing client names
      */

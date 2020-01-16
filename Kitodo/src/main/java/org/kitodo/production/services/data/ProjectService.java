@@ -352,7 +352,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     }
 
     /**
-     * Create and return String containing the titles of all given projects joined by a ", "
+     * Create and return String containing the titles of all given projects joined by a ", ".
      * @param projects list of roles
      * @return String containing project titles
      */

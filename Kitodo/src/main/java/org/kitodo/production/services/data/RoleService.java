@@ -23,7 +23,6 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
-import org.kitodo.production.dto.RoleDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
 import org.primefaces.model.SortOrder;
@@ -156,7 +155,7 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
     }
 
     /**
-     * Create and return String containing the titles of all given roles joined by a ", "
+     * Create and return String containing the titles of all given roles joined by a ", ".
      * @param roles list of roles
      * @return String containing role titles
      */
