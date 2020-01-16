@@ -14,7 +14,6 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,10 +25,10 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
+import org.primefaces.model.TreeNode;
 
 /**
  * Backing bean for the metadata panel of the metadata editor.
@@ -90,8 +89,8 @@ public class MetadataPanel implements Serializable {
      *
      * @return the rows of logical metadata
      */
-    public List<ProcessDetail> getLogicalMetadataRows() {
-        return logicalMetadataTable.getRows();
+    public TreeNode getLogicalMetadataRows() {
+        return logicalMetadataTable.getTreeNode();
     }
 
     /**
@@ -99,8 +98,8 @@ public class MetadataPanel implements Serializable {
      *
      * @return the rows of physical metadata
      */
-    public List<ProcessDetail> getPhysicalMetadataRows() {
-        return physicalMetadataTable.getRows();
+    public TreeNode getPhysicalMetadataRows() {
+        return physicalMetadataTable.getTreeNode();
     }
 
     void showLogical(Optional<IncludedStructuralElement> optionalStructure) {
