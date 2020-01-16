@@ -164,10 +164,6 @@
                                                     <f:param name="referrer" value="#{'projects'}"/>
                                                     <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
                                                 </h:link>
-                                                <h:commandLink action="#{MassImportForm.prepare(template.id,item.id)}" id="createMassProcess"
-                                                               title="#{msgs.massImport}: #{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                                    <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
-                                                </h:commandLink>
                                             </h:outputText>
                                         </h:panelGroup>
                                     </div>
