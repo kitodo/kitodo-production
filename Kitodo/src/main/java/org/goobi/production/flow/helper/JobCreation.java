@@ -86,7 +86,6 @@ public class JobCreation {
         cp.prepare(importObject);
         cp.getProzessKopie().setTitle(processTitle);
         logger.trace("testing title");
-        if (cp.testTitle()) {
             logger.trace("title is valid");
             cp.evaluateOpac();
             try {
@@ -98,9 +97,6 @@ public class JobCreation {
                 Helper.setErrorMessage("errorSaving",
                     new Object[] {Helper.getTranslation("process") + " " + processTitle }, logger, e);
             }
-        } else {
-            logger.error("title {} is invalid", processTitle);
-        }
         return process;
     }
 

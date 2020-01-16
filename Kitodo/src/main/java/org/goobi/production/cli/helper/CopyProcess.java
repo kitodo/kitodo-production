@@ -223,18 +223,6 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * Test title correction.
-     *
-     * @return true if title is correct, false otherwise
-     */
-    public boolean testTitle() {
-        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.MASS_IMPORT_UNIQUE_TITLE)) {
-            return ProcessValidator.isProcessTitleCorrect(this.prozessKopie.getTitle());
-        }
-        return true;
-    }
-
-    /**
      * Create Process.
      *
      * @param io
