@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
@@ -177,15 +178,17 @@ public class MigrationService {
      */
     public void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
         int numberOfProcesses = processesToAddToTemplate.size();
+        HashMap<Project,String> projects = new HashMap<>();
         for (int currentProcess = 0; currentProcess < numberOfProcesses; currentProcess++) {
             Process process = processesToAddToTemplate.get(currentProcess);
             logger.trace("Assigning template \"{}\" to process \"{}\" ({}% complete)", template.getTitle(),
                 process.getTitle(), 100 * currentProcess / numberOfProcesses);
             process.setTemplate(template);
+            projects.put(process.getProject(),"");
             ServiceManager.getProcessService().save(process);
         }
+        template.getProjects().addAll(projects.keySet());
         template.getProcesses().addAll(processesToAddToTemplate);
-        template.getProjects().add(processesToAddToTemplate.get(0).getProject());
         ServiceManager.getTemplateService().save(template);
     }
 
