@@ -57,7 +57,8 @@
                             "type": "keyword",
                             "ignore_above": 256
                         }
-                    }
+                    },
+                    "fielddata": true
                 },
                 "title": {
                     "type": "text",

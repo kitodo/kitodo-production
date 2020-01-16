@@ -22,6 +22,7 @@
                  styleClass="default-layout"
                  var="process">
         <p:column headerText="#{msgs.title}"
+                  sortBy="#{process.title}"
                   rendered="#{ProcessForm.showColumn('process.title')}"
                   styleClass="process-table-column">
             <h:outputText title="#{process.title}"
