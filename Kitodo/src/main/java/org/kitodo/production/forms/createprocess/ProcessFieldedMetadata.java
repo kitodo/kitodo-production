@@ -209,7 +209,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            information about that group from the rule set
      * @param values
      *            data for that group, must contain at most one element
-     * @return a sub-panel for JSF to render
      */
     public void createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
                                                            Collection<Metadata> values) {
@@ -247,7 +246,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            ruleset
      * @param values
      *            the value(s) to be displayed
-     * @return a backing bean for the row
      */
     public void createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
                                                  Collection<Metadata> values) {
