@@ -13,6 +13,7 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.net.URI;
@@ -56,7 +57,7 @@ public class MigrationST extends BaseTestSelenium {
         ServiceManager.getProcessService().save(process);
         SystemPage systemPage = Pages.getSystemPage().goTo();
 
-        assertEquals("wrong template", null, process.getTemplate());
+        assertNull("wrong template", process.getTemplate());
         systemPage.startWorkflowMigration();
         systemPage.selectProjects();
         assertEquals("Finished, Closed, Progress, Open, Locked", systemPage.getAggregatedTasks(2));

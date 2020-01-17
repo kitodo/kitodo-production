@@ -151,26 +151,41 @@
 
             <p:rowExpansion styleClass="expansion-class">
                 <div class="row-expansion-wrapper">
-                    <p:panelGrid columns="2" columnClasses="label, value" id="currentTaskDetailTable">
-                        <h:outputText value="#{msgs.correction}:"/>
-                        <h:outputText value="#{item.correction}"/>
+                    <p:panelGrid id="taskRowExpansionTable"
+                                 columns="2">
+                        <p:panelGrid id="taskDetailTableFirst"
+                                     styleClass="expansion-column"
+                                     columns="2"
+                                     columnClasses="label, value">
+                            <h:outputText value="#{msgs.correction}:"/>
+                            <h:outputText title="#{item.correction}"
+                                          value="#{item.correction}"/>
 
-                        <h:outputText value="#{msgs.processingBegin}:"/>
-                        <h:outputText value="#{item.processingBegin}"/>
+                            <h:outputText value="#{msgs.processingBegin}:"/>
+                            <h:outputText title="#{item.processingBegin}"
+                                          value="#{item.processingBegin}"/>
+                        </p:panelGrid>
+                        <p:panelGrid id="taskDetailTableSecond"
+                                     styleClass="expansion-column"
+                                     columns="2"
+                                     columnClasses="label, value">
+                            <h:outputText value="#{msgs.lastEdited}:"/>
+                            <h:outputText title="#{item.processingTime}"
+                                          value="#{item.processingTime}"/>
 
-                        <h:outputText value="#{msgs.lastEdited}:"/>
-                        <h:outputText value="#{item.processingTime}"/>
+                            <h:outputText value="#{msgs.lastUpdatedBy}:"/>
+                            <h:outputText title="#{item.processingUser.fullName}"
+                                          value="#{item.processingUser.fullName}"/>
 
-                        <h:outputText value="#{msgs.lastUpdatedBy}:"/>
-                        <h:outputText value="#{item.processingUser.fullName}"/>
-
-                        <h:outputText value="#{msgs.editType}:"/>
-                        <h:outputText value="#{item.editTypeTitle}"/>
+                            <h:outputText value="#{msgs.editType}:"/>
+                            <h:outputText title="#{item.editTypeTitle}"
+                                          value="#{item.editTypeTitle}"/>
+                        </p:panelGrid>
                     </p:panelGrid>
                 </div>
             </p:rowExpansion>
         </p:dataTable>
-        </h:form>
+    </h:form>
 
     <h:panelGrid columns="1">
         <h:panelGroup>
@@ -179,26 +194,28 @@
             </h3>
 
             <h:form id="filterForm">
-                <h:panelGrid columns="2" style="margin-left:20px">
+                <h:panelGrid columns="2" style="margin-left:20px;">
                     <h:outputText value="#{msgs.showAutomaticTasks}:"/>
                     <h:selectBooleanCheckbox id="showAutomaticTasks" value="#{CurrentTaskForm.showAutomaticTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
 
                     <h:outputText value="#{msgs.hideCorrectionTasks}:"/>
                     <h:selectBooleanCheckbox id="hideCorrectionTasks" value="#{CurrentTaskForm.hideCorrectionTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
 
 
                     <h:outputText value="#{msgs.showOnlyOwnTasks}:"/>
                     <h:selectBooleanCheckbox id="onlyOwnTasks" value="#{CurrentTaskForm.onlyOwnTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
 
                     <h:outputText value="#{msgs.showOnlyOpenTasks}:"/>
                     <h:selectBooleanCheckbox id="onlyOpenTasks" value="#{CurrentTaskForm.onlyOpenTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
                 </h:panelGrid>
 
-                <h:commandLink id="applyFilter" update="tasksTabView:taskTable" style="margin-left:24px"
+                <h:commandLink id="applyFilter"
+                               update="tasksTabView:taskTable"
+                               style="margin-left:24px;"
                                title="#{msgs.apply}">
                     <h:outputText value="#{msgs.apply}"/>
                 </h:commandLink>

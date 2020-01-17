@@ -66,9 +66,13 @@ public class TasksPage extends Page<TasksPage> {
 
     public List<String> getTaskDetails() {
         int index = triggerRowToggle(taskTable, "Progress");
-        WebElement detailsTable = Browser.getDriver()
-                .findElementById(TASK_TABLE + ":" + index + ":currentTaskDetailTable");
-        return getTableDataByColumn(detailsTable, 1);
+        WebElement detailsTable1 = Browser.getDriver()
+                .findElementById(TASK_TABLE + ":" + index + ":taskDetailTableFirst");
+        WebElement detailsTable2 = Browser.getDriver()
+                .findElementById(TASK_TABLE + ":" + index + ":taskDetailTableSecond");
+        List<String> taskDetails = getTableDataByColumn(detailsTable1, 1);
+        taskDetails.addAll(getTableDataByColumn(detailsTable2, 1));
+        return taskDetails;
     }
 
     public void applyFilterShowOnlyOpenTasks() {

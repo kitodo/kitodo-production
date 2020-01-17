@@ -19,6 +19,7 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.kitodo.MockDatabase;
 import org.kitodo.production.enums.ObjectType;
@@ -246,10 +247,18 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return getTableDataByColumn(detailsTable, 1);
     }
 
+    public List<String> getProjectTemplates() {
+        int index = triggerRowToggle(projectsTable, "First project");
+        WebElement templatesTable = Browser.getDriver()
+                .findElement(By.id(PROJECTS_TABLE + ":" + index + ":projectTemplatesTable"));
+        return templatesTable.findElements(By.className("expansion-list-item-title"))
+                .stream().map(e -> e.getAttribute("innerText")).collect(Collectors.toList());
+    }
+
     public List<String> getTemplateDetails() {
         int index = triggerRowToggle(templatesTable, "First template");
         WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateDetailTable"));
+                .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateRowExpansionTable"));
         List<String> details = getTableDataByColumn(detailsTable, 1);
         details.addAll(getTableDataByColumn(detailsTable, 3));
         return details;

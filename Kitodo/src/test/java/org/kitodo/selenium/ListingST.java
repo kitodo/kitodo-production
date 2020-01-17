@@ -95,39 +95,39 @@ public class ListingST extends BaseTestSelenium {
         List<String> statistics = desktopPage.getStatistics();
 
         long countInDatabase = ServiceManager.getTaskService().countResults(null);
-        long countDisplayed = Long.valueOf(statistics.get(0));
+        long countDisplayed = Long.parseLong(statistics.get(0));
         assertEquals("Displayed wrong count for task statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getUserService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(1));
+        countDisplayed = Long.parseLong(statistics.get(1));
         assertEquals("Displayed wrong count for user statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getProcessService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(2));
+        countDisplayed = Long.parseLong(statistics.get(2));
         assertEquals("Displayed wrong count for process statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getDocketService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(3));
+        countDisplayed = Long.parseLong(statistics.get(3));
         assertEquals("Displayed wrong count for docket statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getProjectService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(4));
+        countDisplayed = Long.parseLong(statistics.get(4));
         assertEquals("Displayed wrong count for project statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getRulesetService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(5));
+        countDisplayed = Long.parseLong(statistics.get(5));
         assertEquals("Displayed wrong count for ruleset statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getTemplateService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(6));
+        countDisplayed = Long.parseLong(statistics.get(6));
         assertEquals("Displayed wrong count for template statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getRoleService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(7));
+        countDisplayed = Long.parseLong(statistics.get(7));
         assertEquals("Displayed wrong count for role statistics", countInDatabase, countDisplayed);
 
         countInDatabase = ServiceManager.getWorkflowService().countResults(null);
-        countDisplayed = Long.valueOf(statistics.get(8));
+        countDisplayed = Long.parseLong(statistics.get(8));
         assertEquals("Displayed wrong count for workflow statistics", countInDatabase, countDisplayed);
     }
 
@@ -172,16 +172,17 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
 
         List<String> detailsProject = projectsPage.getProjectDetails();
-        // TODO : check out how exactly columns and rows are calculated
-        assertEquals("Displayed wrong number of project's details", 5, detailsProject.size());
+        assertEquals("Displayed wrong number of project's details", 3, detailsProject.size());
         assertEquals("Displayed wrong project's save format", "Mets", detailsProject.get(0));
         assertEquals("Displayed wrong project's DMS export format", "Mets", detailsProject.get(1));
         assertEquals("Displayed wrong project's METS owner", "Test Owner", detailsProject.get(2));
-        assertEquals("Displayed wrong project's template", "First template", detailsProject.get(3));
+
+        List<String> templatesProject = projectsPage.getProjectTemplates();
+        assertEquals("Displayed wrong number of project's templates", 1, templatesProject.size());
+        assertEquals("Displayed wrong project's template", "First template", templatesProject.get(0));
 
         int templatesInDatabase = ServiceManager.getTemplateService().getAllForSelectedClient().size();
         int templatesDisplayed = projectsPage.countListedTemplates();
-        assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
 
         List<String> detailsTemplate =  projectsPage.getTemplateDetails();
         //TODO: find way to read this table without exception
