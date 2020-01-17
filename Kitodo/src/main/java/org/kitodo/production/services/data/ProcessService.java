@@ -2449,4 +2449,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         return parents;
     }
+
+    /**
+     * Get the number of direct children of the given process.
+     * @param processId id of the process
+     * @return number of direct children as int
+     * @throws DAOException when query to database fails
+     */
+    public int getNumberOfChildren(int processId) throws DAOException {
+        return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
+    }
 }

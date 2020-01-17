@@ -1354,7 +1354,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public int getNumberOfChildProcesses(int processId) {
         try {
-            return ServiceManager.getProcessService().getById(processId).getChildren().size();
+            return ServiceManager.getProcessService().getNumberOfChildren(processId);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
             return 0;
