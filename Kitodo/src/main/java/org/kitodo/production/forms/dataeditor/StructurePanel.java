@@ -441,13 +441,13 @@ public class StructurePanel implements Serializable {
         }
 
         Set<View> viewsShowingOnAChild = new HashSet<>();
-        if (Boolean.FALSE.equals(this.isSeparateMedia())) {
-            orderChildrenAndViews(new ArrayList<>(structure.getChildren()), new ArrayList<>(structure.getViews()), parent,
-                    viewsShowingOnAChild);
-        } else {
+        if (this.isSeparateMedia()) {
             for (IncludedStructuralElement child : structure.getChildren()) {
                 viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
             }
+        } else {
+            orderChildrenAndViews(new ArrayList<>(structure.getChildren()), new ArrayList<>(structure.getViews()), parent,
+                    viewsShowingOnAChild);
         }
         return viewsShowingOnAChild;
     }
