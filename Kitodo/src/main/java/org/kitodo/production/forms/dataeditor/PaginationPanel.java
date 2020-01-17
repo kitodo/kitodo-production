@@ -287,18 +287,17 @@ public class PaginationPanel {
 
     private void preparePaginationSelectionSelectedItem() {
         MediaUnit selectedMediaUnit = null;
-        if (Boolean.FALSE.equals(dataEditor.getStructurePanel().isSeparateMedia())) {
-            if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())) {
-                StructureTreeNode structureTreeNode =
-                        (StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData();
-                if (structureTreeNode.getDataObject() instanceof View) {
-                    View view = (View) structureTreeNode.getDataObject();
-                    selectedMediaUnit = view.getMediaUnit();
-                }
-            }
-        } else if (Objects.nonNull(dataEditor.getSelectedMediaUnit())
+        if (dataEditor.getStructurePanel().isSeparateMedia()
+                && Objects.nonNull(dataEditor.getSelectedMediaUnit())
+                && dataEditor.getSelectedMediaUnit().isPresent()
                 && "page".equals(dataEditor.getSelectedMediaUnit().get().getType())) {
             selectedMediaUnit = dataEditor.getSelectedMediaUnit().get();
+        } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                View view = (View) structureTreeNode.getDataObject();
+                selectedMediaUnit = view.getMediaUnit();
+            }
         }
         if (Objects.nonNull(selectedMediaUnit)) {
             List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnits();
