@@ -1336,11 +1336,11 @@ public class ProcessForm extends TemplateBaseForm {
      *
      * @return List of Processes
      */
-    public List<Process> getAllParentProcesses(int id) {
+    public List<Process> getAllParentProcesses(int processId) {
         try {
-            return ProcessService.getAllParentProcesses(ServiceManager.getProcessService().getById(id));
+            return ProcessService.getAllParentProcesses(ServiceManager.getProcessService().getById(processId));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1348,15 +1348,15 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Get number of direct child processes for the given process.
      *
-     * @param id
+     * @param processId
      *          process id for given process
      * @return number of child processes
      */
-    public int getNumberOfChildProcesses(int id) {
+    public int getNumberOfChildProcesses(int processId) {
         try {
-            return ServiceManager.getProcessService().getById(id).getChildren().size();
+            return ServiceManager.getProcessService().getById(processId).getChildren().size();
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
             return 0;
         }
     }
