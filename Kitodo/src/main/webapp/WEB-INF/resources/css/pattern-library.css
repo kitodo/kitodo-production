@@ -1031,7 +1031,7 @@ tr.ui-expanded-row-content,
 tr.ui-expanded-row-content tr.ui-widget-header,
 .ui-dialog-content tr.ui-widget-header,
 .ui-panelgrid .ui-widget-header {
-    border-top: 0 none !important;
+    border-top: 0 none;
     background: transparent;
 }
 
