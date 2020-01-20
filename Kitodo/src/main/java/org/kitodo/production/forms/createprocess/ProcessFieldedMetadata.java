@@ -315,6 +315,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
     }
 
+    /**
+     * Adds an additionally selected field.
+     *
+     * @param additionallySelectedField
+     *            additionally selected field to add
+     */
     public void addAdditionallySelectedField(String additionallySelectedField) throws NoSuchMetadataFieldException {
         additionallySelectedFields.add(additionallySelectedField);
         try {
@@ -438,7 +444,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
     }
 
-    void remove(ProcessDetail toDelete) {
+    /**
+     * Removes a process detail.
+     * 
+     * @param toDelete
+     *            process detail to delete
+     */
+    public void remove(ProcessDetail toDelete) {
         Iterator<TreeNode> treeNodesIterator = treeNode.getChildren().iterator();
         while (treeNodesIterator.hasNext()) {
             TreeNode treeNode = treeNodesIterator.next();
@@ -449,7 +461,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
     }
 
-    void setMetadata(Collection<Metadata> metadata) {
+    /**
+     * Overwrites the metadata of this process fielded metadata.
+     * 
+     * @param metadata
+     *            metadata to overwrite with
+     */
+    public void setMetadata(Collection<Metadata> metadata) {
         this.metadata.clear();
         this.metadata.addAll(metadata);
         this.treeNode = new DefaultTreeNode();

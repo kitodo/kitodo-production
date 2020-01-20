@@ -45,6 +45,11 @@ public class ProcessMetadataTab {
         return new ProcessFieldedMetadata(structure, divisionView);
     }
 
+    /**
+     * Returns the logical metadata tree.
+     * 
+     * @return the logical metadata tree
+     */
     public TreeNode getLogicalMetadataTree() {
         return processDetails.getTreeNode();
     }

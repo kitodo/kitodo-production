@@ -23,7 +23,7 @@
 
     <p:panel id="logicalMetadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
-            <ui:include src="../metadataTreeTable.xhtml">
+            <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
                 <ui:param name="root" value="#{DataEditorForm.metadataPanel.logicalMetadataRows}" />
                 <ui:param name="buttonUpdate" value="metadataAccordion:metadata:metadataTable" />
                 <ui:param name="readOnly" value="#{readOnly}" />
