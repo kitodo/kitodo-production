@@ -319,6 +319,7 @@ public class NewspaperProcessesMigrator {
         dataEditorService.readData(metadataFilePath);
 
         Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath);
+        workpiece.setId(process.getId().toString());
         IncludedStructuralElement newspaperIncludedStructuralElement = workpiece.getRootElement();
 
         if (Objects.isNull(title)) {
@@ -550,6 +551,7 @@ public class NewspaperProcessesMigrator {
         overallProcess.setTitle(getTitle());
         processService.save(overallProcess);
         ServiceManager.getFileService().createProcessLocation(overallProcess);
+        overallWorkpiece.setId(overallProcess.getId().toString());
         overallWorkpiece.getRootElement().getMetadata().addAll(overallMetadata);
         addToBatch(overallProcess);
 
@@ -595,6 +597,7 @@ public class NewspaperProcessesMigrator {
         ServiceManager.getFileService().createProcessLocation(yearProcess);
 
         Workpiece yearWorkpiece = new Workpiece();
+        yearWorkpiece.setId(yearProcess.getId().toString());
         yearWorkpiece.setRootElement(yearToCreate.getValue());
         metsService.saveWorkpiece(yearWorkpiece, fileService.getMetadataFilePath(yearProcess, false, false));
 
