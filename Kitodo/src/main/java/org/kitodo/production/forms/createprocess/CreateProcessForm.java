@@ -37,6 +37,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Workpiece;
@@ -76,6 +77,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private final ProcessMetadataTab processMetadataTab = new ProcessMetadataTab(this);
     private final SearchTab searchTab = new SearchTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
+
+    private static final String CATALOG_IDENTIFIER = "CatalogIDDigital";
 
     private RulesetManagementInterface rulesetManagementInterface;
     private List<Locale.LanguageRange> priorityList;
@@ -336,10 +339,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         if (!createProcessesLocation()) {
             throw new IOException("Unable to create directories for process hierarchy!");
         }
+
+        saveProcessHierarchyMetadata();
         if (ensureNonEmptyTitles()) {
             ServiceManager.getProcessService().save(getMainProcess());
         }
-        saveProcessHierarchyMetadata();
 
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
         if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
@@ -433,12 +437,21 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
     }
 
-    private boolean ensureNonEmptyTitles() {
+    private boolean ensureNonEmptyTitles() throws IOException {
         boolean changedTitle = false;
         for (TempProcess tempProcess : this.processes) {
             if (Objects.nonNull(tempProcess.getProcess()) && tempProcess.getProcess().getTitle().isEmpty()) {
                 Process process = tempProcess.getProcess();
-                process.setTitle("[" + Helper.getTranslation("process") + " " + process.getId() + "]");
+                URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
+                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+                Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
+                String processTitle ="[" + Helper.getTranslation("process") + " " + process.getId() + "]";
+                for (Metadata metadatum : metadata) {
+                    if (CATALOG_IDENTIFIER.equals(metadatum.getKey())){
+                        processTitle = ((MetadataEntry) metadatum).getValue();
+                    }
+                }
+                process.setTitle(processTitle);
                 changedTitle = true;
             }
         }
