@@ -182,10 +182,38 @@ public class Workpiece {
     }
 
     /**
+     * Recursively search for all logical elements.
+     *
+     * @return list of all logical elements
+     */
+    public List<IncludedStructuralElement> getAllIncludedStructuralElements() {
+        List<IncludedStructuralElement> includedStructuralElements = new LinkedList<>();
+        includedStructuralElements.add(rootElement);
+        includedStructuralElements.addAll(getAllIncludedStructuralElementsRecursive(rootElement));
+        return includedStructuralElements;
+    }
+
+    private List<IncludedStructuralElement> getAllIncludedStructuralElementsRecursive(IncludedStructuralElement parent) {
+        List<IncludedStructuralElement> includedStructuralElements = new LinkedList<>(parent.getChildren());
+        for (IncludedStructuralElement child : parent.getChildren()) {
+            if (Objects.nonNull(child)) {
+                includedStructuralElements.addAll(getAllIncludedStructuralElementsRecursive(child));
+            }
+        }
+        return includedStructuralElements;
+    }
+
+    /**
      * Recursively search for all media units with type "page".
      *
      * @return list of all media units with type "page", sorted by their "ORDER" attribute.
      */
+    public List<MediaUnit> getAllMediaUnitsSorted() {
+        List<MediaUnit> mediaUnits = getAllMediaUnits();
+        mediaUnits.sort(Comparator.comparing(MediaUnit::getOrder));
+        return mediaUnits.stream().filter(m -> m.getType().equals(PAGE)).collect(Collectors.toList());
+    }
+
     public List<MediaUnit> getAllMediaUnits() {
         List<MediaUnit> mediaUnits = new LinkedList<>(mediaUnit.getChildren());
         for (MediaUnit mediaUnit : mediaUnit.getChildren()) {
@@ -193,8 +221,7 @@ public class Workpiece {
                 mediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
             }
         }
-        mediaUnits.sort(Comparator.comparing(MediaUnit::getOrder));
-        return mediaUnits.stream().filter(m -> m.getType().equals(PAGE)).collect(Collectors.toList());
+        return mediaUnits;
     }
 
     private List<MediaUnit> getAllMediaUnitsRecursive(MediaUnit parent, List<MediaUnit> mediaUnits) {

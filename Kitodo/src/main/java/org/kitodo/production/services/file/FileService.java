@@ -1003,12 +1003,12 @@ public class FileService {
         }
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
-        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getAllMediaUnits(), canonicals);
+        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getAllMediaUnitsSorted(), canonicals);
         for (String canonical : canonicals) {
             mediaToAdd.remove(canonical);
         }
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
-        renumberMediaUnits(workpiece);
+        renumberMediaUnits(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
             repaginateMediaUnits(workpiece);
         }
@@ -1030,7 +1030,7 @@ public class FileService {
         if (!baseUriString.endsWith("/")) {
             baseUriString = baseUriString.concat("/");
         }
-        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
+        for (MediaUnit mediaUnit : workpiece.getAllMediaUnitsSorted()) {
             String unitCanonical = "";
             for (Entry<MediaVariant, URI> entry : mediaUnit.getMediaFiles().entrySet()) {
                 Subfolder subfolder = subfolders.get(entry.getKey().getUse());
@@ -1132,15 +1132,10 @@ public class FileService {
     /**
      * Renumbers the order of the media units.
      */
-    public void renumberMediaUnits(Workpiece workpiece) {
-        int minimum = 1;
-        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
-            if (mediaUnit.getOrder() > minimum) {
-                minimum = mediaUnit.getOrder() + 1;
-            } else {
-                mediaUnit.setOrder(minimum);
-                minimum++;
-            }
+    public void renumberMediaUnits(Workpiece workpiece, boolean sortByOrder) {
+        int order = 1;
+        for (MediaUnit mediaUnit : sortByOrder ? workpiece.getAllMediaUnitsSorted() : workpiece.getAllMediaUnits()) {
+            mediaUnit.setOrder(order++);
         }
     }
 
@@ -1150,7 +1145,7 @@ public class FileService {
      * intermediate places are marked uncounted.
      */
     private void repaginateMediaUnits(Workpiece workpiece) {
-        List<MediaUnit> mediaUnits = workpiece.getAllMediaUnits();
+        List<MediaUnit> mediaUnits = workpiece.getAllMediaUnitsSorted();
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {

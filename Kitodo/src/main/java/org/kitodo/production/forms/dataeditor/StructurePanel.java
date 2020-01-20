@@ -22,12 +22,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -96,6 +96,11 @@ public class StructurePanel implements Serializable {
      * List of all mediaUnits assigned to multiple IncludedStructuralElements.
      */
     private List<MediaUnit> severalAssignments = new LinkedList<>();
+
+    /**
+     * Variable used to set the correct order value when building the logical and physical trees from the PrimeFaces tree.
+     */
+    private int order = 1;
 
     /**
      * Creates a new structure panel.
@@ -282,9 +287,13 @@ public class StructurePanel implements Serializable {
         return physicalTree;
     }
 
-    void preserve() {
-        this.preserveLogical();
-        this.preservePhysical();
+    void preserve() throws Exception {
+        if (isSeparateMedia()) {
+            this.preserveLogical();
+            this.preservePhysical();
+        } else {
+            preserveLogicalAndPhysical();
+        }
     }
 
     /**
@@ -940,7 +949,7 @@ public class StructurePanel implements Serializable {
                         dragNode.getLabel(), dropNode.getLabel())));
                 show();
             }
-        } catch (ClassCastException exception) {
+        } catch (Exception exception) {
             logger.error(exception.getLocalizedMessage());
         }
     }
@@ -978,29 +987,18 @@ public class StructurePanel implements Serializable {
      * @param dragNode
      *          StructureTreeNode containing the View/Page that is moved
      */
-    private void movePageNode(TreeDragDropEvent event, StructureTreeNode dropNode, StructureTreeNode dragNode) {
+    private void movePageNode(TreeDragDropEvent event, StructureTreeNode dropNode, StructureTreeNode dragNode) throws Exception {
         TreeNode dragParent = event.getDragNode().getParent();
         if (dragParent.getData() instanceof StructureTreeNode) {
             StructureTreeNode dragParentTreeNode = (StructureTreeNode) dragParent.getData();
             if (dragParentTreeNode.getDataObject() instanceof IncludedStructuralElement) {
-                View view = (View) dragNode.getDataObject();
-                IncludedStructuralElement previousParent;
-                if (dataEditor.getWorkpiece().getRootElement().getViews().contains(view)) {
-                    previousParent = dataEditor.getWorkpiece().getRootElement();
-                } else {
-                    previousParent = getPageStructure(view, dataEditor.getWorkpiece().getRootElement());
-                }
-                if (Objects.nonNull(previousParent)) {
-                    IncludedStructuralElement element = (IncludedStructuralElement) dropNode.getDataObject();
-                    // TODO once PrimeFaces' tree drop index bug is fixed pass index where the pages should be inserted
-                    moveViews(element, Collections.singletonList(new ImmutablePair<>(view, previousParent)), -1);
-                    expandNode(event.getDropNode());
-                    this.dataEditor.getGalleryPanel().updateStripes();
-                    return;
-                } else {
-                    Helper.setErrorMessage(Helper.getTranslation("dataEditor.noParentsError",
-                            Collections.singletonList(dragNode.getLabel())));
-                }
+                // FIXME waiting for PrimeFaces' tree drop index bug to be fixed.
+                // Until fixed dropping nodes onto other nodes will produce random drop indices.
+                preserveLogicalAndPhysical();
+                show();
+                expandNode(event.getDropNode());
+                this.dataEditor.getGalleryPanel().updateStripes();
+                return;
             } else {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(
                         dragNode.getLabel(), dropNode.getLabel())));
@@ -1010,6 +1008,129 @@ public class StructurePanel implements Serializable {
                     dragNode.getLabel(), dropNode.getLabel())));
         }
         show();
+    }
+
+    /**
+     * Change the order of the MediaUnits in the workpiece.
+     * When structure is saved to METS this is represented by the order of DIV elements in the physical structMap.
+     * @param toElement logical element where to which the MediaUnits are assigned
+     * @param elementsToBeMoved List of MediaUnits which are moved
+     * @param insertionIndex index at which the MediaUnits are added to the existing List of MediaUnits. The value -1 represents the end
+     *                       of the list.
+     */
+    void reorderMediaUnits(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved, int insertionIndex) {
+        int physicalInsertionIndex;
+        List<MediaUnit> mediaUnitsToBeMoved = elementsToBeMoved.stream()
+                .map(e -> e.getLeft().getMediaUnit())
+                .collect(Collectors.toList());
+
+        if (insertionIndex > toElement.getViews().size()) {
+            Helper.setErrorMessage("Unsupported drag'n'drop operation: Insertion index exceeds list.");
+            insertionIndex = -1;
+        }
+
+        if (insertionIndex < 0 || toElement.getViews().size() == 0) {
+            // no insertion position was specified or the element does not contain any pages yet
+            physicalInsertionIndex = toElement.getOrder() - 1;
+        } else {
+            // if 'insertionIndex' equals the size of the list, it means we want to append the moved pages _behind_ the media unit of the last view in the list of views of the 'toElement'
+            if (insertionIndex == toElement.getViews().size()) {
+                physicalInsertionIndex = toElement.getViews().getLast().getMediaUnit().getOrder();
+            } else {
+                // insert at given index
+                physicalInsertionIndex = toElement.getViews().get(insertionIndex).getMediaUnit().getOrder() - 1;
+            }
+        }
+
+        if (physicalInsertionIndex > mediaUnitsToBeMoved.stream()
+                .map(MediaUnit::getOrder)
+                .collect(Collectors.summarizingInt(Integer::intValue))
+                .getMin() - 1) {
+            int finalInsertionIndex = physicalInsertionIndex;
+            physicalInsertionIndex -= (int) mediaUnitsToBeMoved.stream().filter(m -> m.getOrder() - 1 < finalInsertionIndex).count();
+        }
+        dataEditor.getWorkpiece().getMediaUnit().getChildren().removeAll(mediaUnitsToBeMoved);
+        int numberOfChildren = dataEditor.getWorkpiece().getMediaUnit().getChildren().size();
+        if (physicalInsertionIndex < numberOfChildren) {
+            dataEditor.getWorkpiece().getMediaUnit().getChildren().addAll(physicalInsertionIndex, mediaUnitsToBeMoved);
+        } else {
+            dataEditor.getWorkpiece().getMediaUnit().getChildren().addAll(mediaUnitsToBeMoved);
+            if (physicalInsertionIndex == numberOfChildren) {
+                Helper.setErrorMessage("Could not append media at correct position. Index exceeded list.");
+            }
+        }
+    }
+
+    /**
+     * Change order fields of physical elements. When saved to METS this is represented by the physical structMap divs' "ORDER" attribute.
+     * @param toElement Logical element to which the physical elements are assigned. The physical elements' order follows the order of the
+     *                  logical elements.
+     * @param elementsToBeMoved List of physical elements to be moved
+     */
+    void changePhysicalOrderFields(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
+        ServiceManager.getFileService().renumberMediaUnits(dataEditor.getWorkpiece(), false);
+    }
+
+    /**
+     * Change the order attribute of the logical elements that are affected by pages around them being moved.
+     * @param toElement logical element the pages will be assigned to
+     * @param elementsToBeMoved physical elements which are moved
+     */
+    void changeLogicalOrderFields(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
+        HashMap<Integer, List<IncludedStructuralElement>> logicalElementsByOrder = new HashMap<>();
+        for (IncludedStructuralElement logicalElement : dataEditor.getWorkpiece().getAllIncludedStructuralElements()) {
+            Integer order = logicalElement.getOrder();
+            if (logicalElementsByOrder.containsKey(order))  {
+                logicalElementsByOrder.get(order).add(logicalElement);
+            } else {
+                logicalElementsByOrder.put(order, new LinkedList<>(Collections.singletonList(logicalElement)));
+            }
+        }
+
+        // Order values of moved pages and target element. Logical elements located between these Order values are affected.
+        List<Integer> ordersAffectedByMove = elementsToBeMoved.stream()
+                .map(e -> e.getLeft().getMediaUnit().getOrder())
+                .collect(Collectors.toList());
+        if (!ordersAffectedByMove.contains(toElement.getOrder())) {
+            ordersAffectedByMove.add(toElement.getOrder());
+        }
+        Collections.sort(ordersAffectedByMove);
+
+        /* The new Order value for the logical elements can be calculated quite simple:
+        The Order values of elements located before the target element have to be modified by -i - 1.
+        The Order values of elements located after the target element have to be modified by the size of ordersAffectedByMove - i.
+        (ordersAffectedByMove equals to the number of moved pages + the target element.)
+         */
+
+        for (Map.Entry<Integer, List<IncludedStructuralElement>> entry : logicalElementsByOrder.entrySet()) {
+            for (int i = 0; i < ordersAffectedByMove.size() - 1; i++) {
+                if (ordersAffectedByMove.get(i) < entry.getKey() && entry.getKey() < ordersAffectedByMove.get(i + 1)) {
+                    if (ordersAffectedByMove.get(i) < toElement.getOrder()) {
+                        updateOrder(entry.getValue(), -i - 1);
+                    } else if (ordersAffectedByMove.get(i) > toElement.getOrder()) {
+                        updateOrder(entry.getValue(), ordersAffectedByMove.size() - i);
+                    }
+                }
+                // check if elements exist with the same order like toElement (the toElememt itself might be affected as well)
+                if (entry.getKey() == toElement.getOrder()) {
+                    List<IncludedStructuralElement> beforeToElement = entry.getValue().subList(0, entry.getValue().indexOf(toElement) + 1);
+                    List<IncludedStructuralElement> afterToElement = entry.getValue().subList(entry.getValue().indexOf(toElement) + 1, entry.getValue().size());
+                    /* i=0 means we're in an edge case:
+                    toElement is the first order which is affected (no pages with smaller order affected) and its order will not change,
+                    nor will other elements with the same order. */
+                    if (i > 0) {
+                        updateOrder(beforeToElement, -i - 1);
+                    }
+                    updateOrder(afterToElement, ordersAffectedByMove.size() - i);
+                }
+            }
+        }
+    }
+
+    private void updateOrder(List<IncludedStructuralElement> elementsToBeUpdated, int delta) {
+        for (IncludedStructuralElement element : elementsToBeUpdated) {
+            element.setOrder(element.getOrder() + delta);
+        }
     }
 
     /**
@@ -1044,7 +1165,7 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
+    private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) throws Exception {
 
         IncludedStructuralElement dragStructure = (IncludedStructuralElement) dragNode.getDataObject();
         IncludedStructuralElement dropStructure = (IncludedStructuralElement) dropNode.getDataObject();
@@ -1059,7 +1180,11 @@ public class StructurePanel implements Serializable {
             if (!dragParents.isEmpty()) {
                 IncludedStructuralElement parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
-                    preserveLogical();
+                    if (isSeparateMedia()) {
+                        preserveLogical();
+                    } else {
+                        preserveLogicalAndPhysical();
+                    }
                     this.dataEditor.getGalleryPanel().updateStripes();
                     return;
                 } else {
@@ -1106,6 +1231,43 @@ public class StructurePanel implements Serializable {
                     Arrays.asList(dragNode.getLabel(), dropNode.getLabel())));
         }
         show();
+    }
+
+    private void preserveLogicalAndPhysical() throws Exception {
+        if (!this.logicalTree.getChildren().isEmpty()) {
+            order = 1;
+            dataEditor.getWorkpiece().getMediaUnit().getChildren().clear();
+            preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(0));
+        }
+    }
+
+    private IncludedStructuralElement preserveLogicalAndPhysicalRecursive(TreeNode treeNode) throws Exception {
+        StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof IncludedStructuralElement)) {
+            return null;
+        }
+        IncludedStructuralElement structure = (IncludedStructuralElement) structureTreeNode.getDataObject();
+        structure.setOrder(order);
+        structure.getViews().clear();
+        structure.getChildren().clear();
+        for (TreeNode child : treeNode.getChildren()) {
+            if (!(child.getData() instanceof StructureTreeNode)) {
+                throw new Exception("TreeNode contains unexpected data!");
+            }
+            if (((StructureTreeNode) child.getData()).getDataObject() instanceof IncludedStructuralElement) {
+                IncludedStructuralElement possibleChildStructure = preserveLogicalAndPhysicalRecursive(child);
+                if (Objects.nonNull(possibleChildStructure)) {
+                    structure.getChildren().add(possibleChildStructure);
+                }
+            } else if (((StructureTreeNode) child.getData()).getDataObject() instanceof View) {
+                View view = (View) ((StructureTreeNode) child.getData()).getDataObject();
+                structure.getViews().add(view);
+                view.getMediaUnit().setOrder(order);
+                dataEditor.getWorkpiece().getMediaUnit().getChildren().add(view.getMediaUnit());
+                order++;
+            }
+        }
+        return structure;
     }
 
     /**
@@ -1280,7 +1442,6 @@ public class StructurePanel implements Serializable {
             IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) structureTreeNodeSibling.getDataObject();
             dataEditor.assignView(includedStructuralElement, view, 0);
             severalAssignments.add(view.getMediaUnit());
-            preserveLogical();
             show();
             dataEditor.getGalleryPanel().updateStripes();
         }
@@ -1303,7 +1464,6 @@ public class StructurePanel implements Serializable {
                     if (view.getMediaUnit().getIncludedStructuralElements().size() <= 1) {
                         severalAssignments.remove(view.getMediaUnit());
                     }
-                    preserveLogical();
                     show();
                     dataEditor.getGalleryPanel().updateStripes();
                 }
