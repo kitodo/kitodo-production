@@ -2267,7 +2267,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         while (keys.hasNext()) {
             String key = keys.next();
             Object value = xmlJSONObject.get(key);
-            if (value instanceof String) {
+            if (value instanceof String || value instanceof Integer) {
                 json.put(prepareKey(key), value);
             } else if (value instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) value;
