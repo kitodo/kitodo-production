@@ -563,7 +563,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     void refreshStructurePanel() {
-        structurePanel.show();
+        structurePanel.show(true);
         galleryPanel.updateStripes();
     }
 

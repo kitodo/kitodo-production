@@ -382,6 +382,36 @@ function toggleSecondSection() {
     }
 }
 
+function expandFirstColumn() {
+    if ($('#firstColumnWrapper .columnExpandButton').length && firstColumn.hasClass('collapsed')) {
+        toggleFirstColumn();
+    }
+}
+
+function expandSecondColumn() {
+    if (firstSectionToggler.length && secondColumn.hasClass('collapsed')) {
+        toggleSecondColumn();
+    }
+}
+
+function expandThirdColumn() {
+    if ($('#thirdColumnWrapper .columnExpandButton').length && thirdColumn.hasClass('collapsed')) {
+        toggleThirdColumn();
+    }
+}
+
+function updateMetadataEditorView(showMetadataColumn) {
+    PF('dialogAddDocStrucType').hide();
+    expandFirstColumn();
+    if (showMetadataColumn) {
+        expandSecondColumn();
+    }
+    expandThirdColumn();
+    scrollToSelectedThumbnail();
+    initializeImage();
+    scrollToSelectedTreeNode();
+}
+
 function resizeMap() {
     if (kitodo.map) {
         kitodo.map.updateSize();

@@ -371,8 +371,24 @@ public class StructurePanel implements Serializable {
             show();
             selectedLogicalNode = keepSelectedLogicalNode;
             selectedPhysicalNode = keepSelectedPhysicalNode;
+            restoreSelection(selectedLogicalNode, this.logicalTree);
         } else {
             show();
+        }
+    }
+
+    private void restoreSelection(TreeNode node, TreeNode parentNode) {
+        for (TreeNode childNode : parentNode.getChildren()) {
+            if (Objects.nonNull(node)
+                    && Objects.nonNull(childNode)
+                    && Objects.nonNull(node.getData())
+                    && Objects.equals(node.getData(), childNode.getData())) {
+                childNode.setSelected(true);
+                break;
+            } else {
+                childNode.setSelected(false);
+                restoreSelection(node, childNode);
+            }
         }
     }
 
