@@ -1108,6 +1108,7 @@ h3#headerText {
 
 #processesTabView\:processesForm\:processesTable .row-expansion-wrapper > table {
     margin-left: 112px;
+    width: calc(100% - 112px);
 }
 
 .kitodoScript button {

@@ -356,7 +356,6 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     font: normal normal normal 20px FontAwesome;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    margin-right: var(--default-full-size);
     position: relative;
     text-rendering: auto;
     vertical-align: middle;
@@ -1022,7 +1021,7 @@ tr.ui-widget-content,
 }
 
 .row-expansion-wrapper {
-    overflow-x: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
