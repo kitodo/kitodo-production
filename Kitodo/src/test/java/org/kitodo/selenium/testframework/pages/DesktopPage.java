@@ -11,14 +11,14 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
+
 import java.util.List;
 
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-
-import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
-import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 public class DesktopPage extends Page<DesktopPage> {
 

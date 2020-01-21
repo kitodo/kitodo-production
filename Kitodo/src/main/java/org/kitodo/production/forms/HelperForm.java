@@ -18,12 +18,12 @@ import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.enums.MetadataFormat;
+import org.kitodo.production.enums.PluginType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.plugin.PluginLoader;
 import org.kitodo.production.version.KitodoVersion;
 
 /**

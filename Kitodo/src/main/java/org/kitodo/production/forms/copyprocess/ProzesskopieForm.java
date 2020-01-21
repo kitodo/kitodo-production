@@ -11,9 +11,6 @@
 
 package org.kitodo.production.forms.copyprocess;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,11 +38,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.cli.helper.CopyProcess;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.catalogue.CataloguePlugin;
-import org.goobi.production.plugin.catalogue.Hit;
-import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
@@ -65,6 +57,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.cli.helper.CopyProcess;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.forms.createprocess.ProcessMetadataTab;
@@ -82,10 +75,16 @@ import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
+import org.kitodo.production.plugin.PluginLoader;
+import org.kitodo.production.plugin.catalogue.CataloguePlugin;
+import org.kitodo.production.plugin.catalogue.Hit;
+import org.kitodo.production.plugin.catalogue.QueryBuilder;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.process.field.AdditionalField;
+import org.kitodo.production.search.opac.ConfigOpac;
+import org.kitodo.production.search.opac.ConfigOpacDoctype;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.thread.TaskScriptThread;

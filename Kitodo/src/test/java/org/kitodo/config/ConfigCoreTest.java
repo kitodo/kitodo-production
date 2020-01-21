@@ -11,13 +11,13 @@
 
 package org.kitodo.config;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.concurrent.TimeUnit;
 
 import org.joda.time.Duration;
 import org.junit.Test;
 import org.kitodo.config.enums.ParameterCore;
-
-import static org.junit.Assert.assertEquals;
 
 public class ConfigCoreTest {
 

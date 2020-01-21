@@ -36,10 +36,10 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.mq.WebServiceResult;
 import org.kitodo.production.enums.ReportLevel;
 import org.kitodo.production.helper.messages.Error;
 import org.kitodo.production.helper.messages.Message;
+import org.kitodo.production.mq.WebServiceResult;
 
 /**
  * Extends Helper from Kitodo Data Management module.

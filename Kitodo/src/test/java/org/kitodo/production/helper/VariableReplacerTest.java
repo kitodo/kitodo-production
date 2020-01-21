@@ -11,9 +11,9 @@
 
 package org.kitodo.production.helper;
 
-import java.net.URI;
-
 import static org.junit.Assert.assertEquals;
+
+import java.net.URI;
 
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;

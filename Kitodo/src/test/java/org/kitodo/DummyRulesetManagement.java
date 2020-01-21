@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
 
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 
 public class DummyRulesetManagement implements RulesetManagementInterface {

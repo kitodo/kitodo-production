@@ -11,11 +11,11 @@
 
 package org.kitodo.production.services.data;
 
-import org.junit.Test;
-import org.kitodo.production.services.ServiceManager;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import org.kitodo.production.services.ServiceManager;
 
 public class UserServiceTest {
 

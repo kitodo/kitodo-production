@@ -143,7 +143,7 @@
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.goobi.webapi.resources; org.goobi.webapi.provider</param-value>
+            <param-value>org.kitodo.production.webapi.resources; org.kitodo.production.webapi.provider</param-value>
         </init-param>
         <!-- explanation of load-on-startup: http://stackoverflow.com/a/1298984 -->
         <load-on-startup>1</load-on-startup>

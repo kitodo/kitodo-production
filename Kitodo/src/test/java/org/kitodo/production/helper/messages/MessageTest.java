@@ -11,16 +11,16 @@
 
 package org.kitodo.production.helper.messages;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Locale;
 
 import org.junit.Test;
 import org.kitodo.FileLoader;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class MessageTest {
 

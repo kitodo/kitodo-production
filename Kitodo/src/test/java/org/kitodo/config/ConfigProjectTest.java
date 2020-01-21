@@ -11,6 +11,8 @@
 
 package org.kitodo.config;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -18,8 +20,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
-
-import static org.junit.Assert.assertEquals;
 
 public class ConfigProjectTest {
 

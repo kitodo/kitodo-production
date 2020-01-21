@@ -11,9 +11,6 @@
 
 package org.kitodo.production.process;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
 import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -23,6 +20,8 @@ import java.util.StringTokenizer;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.search.opac.ConfigOpac;
+import org.kitodo.production.search.opac.ConfigOpacDoctype;
 import org.kitodo.production.services.data.ImportService;
 
 public class TiffHeaderGenerator extends Generator {

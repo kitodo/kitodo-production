@@ -11,6 +11,10 @@
 
 package org.kitodo.production.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -22,10 +26,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.services.ServiceManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class TemplateServiceIT {
 

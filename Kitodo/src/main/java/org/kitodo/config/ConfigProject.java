@@ -11,8 +11,6 @@
 
 package org.kitodo.config;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.production.process.field.AdditionalField;
+import org.kitodo.production.search.opac.ConfigOpac;
 
 public class ConfigProject {
 

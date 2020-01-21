@@ -11,9 +11,6 @@
 
 package org.kitodo.production.process;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
@@ -55,6 +52,8 @@ import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.process.field.AdditionalField;
+import org.kitodo.production.search.opac.ConfigOpac;
+import org.kitodo.production.search.opac.ConfigOpacDoctype;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;

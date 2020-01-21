@@ -11,8 +11,6 @@
 
 package org.kitodo.production.forms;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -31,17 +29,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.enums.ImportFormat;
-import org.goobi.production.enums.ImportReturnValue;
-import org.goobi.production.enums.ImportType;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.flow.helper.JobCreation;
-import org.goobi.production.importer.DocstructElement;
-import org.goobi.production.importer.ImportObject;
-import org.goobi.production.importer.Record;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IImportPlugin;
-import org.goobi.production.properties.ImportProperty;
 import org.jdom.JDOMException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -54,8 +41,20 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.enums.ImportFormat;
+import org.kitodo.production.enums.ImportReturnValue;
+import org.kitodo.production.enums.ImportType;
+import org.kitodo.production.enums.PluginType;
+import org.kitodo.production.flow.helper.JobCreation;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.importer.DocstructElement;
+import org.kitodo.production.importer.ImportObject;
+import org.kitodo.production.importer.Record;
+import org.kitodo.production.plugin.PluginLoader;
+import org.kitodo.production.plugin.interfaces.IImportPlugin;
+import org.kitodo.production.properties.ImportProperty;
+import org.kitodo.production.search.opac.ConfigOpac;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.UploadedFile;
 

@@ -162,7 +162,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     /**
      * The variable {@code template} is populated from
-     * {@link org.goobi.webapi.resources.Projects} when calling
+     * {@link org.kitodo.production.webapi.resources.Projects} when calling
      * <code><i>${SERVLET_CONTEXT}</i>/rest/projects</code> to output the
      * templates available within a project as XML child nodes of the respective
      * project.

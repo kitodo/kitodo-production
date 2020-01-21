@@ -11,6 +11,9 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,9 +27,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.awaitility.Awaitility.await;
-import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
 public class UserEditPage extends EditPage<UserEditPage> {
 
