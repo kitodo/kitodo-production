@@ -327,7 +327,8 @@ public class BaseForm implements Serializable {
     }
 
     /**
-     * Create and return String containing the titles of all given roles joined by a ", "
+     * Create and return String containing the titles of all given roles joined by a ", ".
+     *
      * @param roles list of roles
      * @return String containing role titles
      */
@@ -336,7 +337,8 @@ public class BaseForm implements Serializable {
     }
 
     /**
-     * Create and return String containing the names of all given clients joined by a ", "
+     * Create and return String containing the names of all given clients joined by a ", ".
+     *
      * @param clients list of roles
      * @return String containing client names
      */
@@ -345,7 +347,8 @@ public class BaseForm implements Serializable {
     }
 
     /**
-     * Create and return String containing the titles of all given projects joined by a ", "
+     * Create and return String containing the titles of all given projects joined by a ", ".
+     *
      * @param projects list of roles
      * @return String containing project titles
      */
