@@ -448,7 +448,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
                 String processTitle = "[" + Helper.getTranslation("process") + " " + process.getId() + "]";
                 for (Metadata metadatum : metadata) {
-                    if (CATALOG_IDENTIFIER.equals(metadatum.getKey())){
+                    if (CATALOG_IDENTIFIER.equals(metadatum.getKey())) {
                         processTitle = ((MetadataEntry) metadatum).getValue();
                     }
                 }
