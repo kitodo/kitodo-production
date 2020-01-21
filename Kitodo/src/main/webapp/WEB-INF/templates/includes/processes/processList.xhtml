@@ -28,6 +28,7 @@
                      paginator="true"
                      resizableColumns="true"
                      liveResize="true"
+                     sortBy="#{process.properties.id}"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -41,6 +42,16 @@
                 <h:outputText rendered="#{process.getParentID() ne 0 and not process.hasChildren()}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
                 <h:outputText rendered="#{process.getParentID() eq 0 and process.hasChildren()}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
                 <h:outputText rendered="#{process.getParentID() ne 0 and process.hasChildren()}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
+            </p:column>
+            <p:column id="idColumn"
+                      width="50"
+                      styleClass="numeric"
+                      resizable="false"
+                      headerText="#{msgs.id}"
+                      sortBy="#{process.properties.id}"
+                      filterBy="#{process.properties.id}">
+                <h:outputText value="#{process.id}"
+                              title="#{process.id}"/>
             </p:column>
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
