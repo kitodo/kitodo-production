@@ -67,7 +67,7 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
      * and can be validated. The name of the file results from the settings of
      * the folder passed into the {@link #test(Subfolder)} function, and the
      * canonical name part and the variables.
-     * 
+     *
      * @param canonical
      *            the canonical part of the file name
      */
@@ -81,7 +81,7 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
      * canonical name part and the variables passed in the constructor. If there
      * is such a file, the long time preservation validation interface is
      * queried to check if the file is valid.
-     * 
+     *
      * @param folder
      *            folder where to find the file
      * @return true, if the picture needs to be generated
@@ -92,23 +92,22 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
         if (!imageURI.isPresent()) {
             logger.info(IMAGE_MISSING, canonical, folder);
             return true;
-        } else {
-            Optional<FileType> fileType = folder.getFileFormat().getFileType();
-            if (fileType.isPresent()) {
-                LongTermPreservationValidationService serviceLoader = new LongTermPreservationValidationService();
-                ValidationResult validated = serviceLoader.validate(imageURI.get(), fileType.get());
-                if (validated.getState().equals(State.SUCCESS)) {
-                    logger.info(VALIDATION_SUCCESS, canonical, folder, validated.getState());
-                    return false;
-                } else {
-                    logger.info(VALIDATION_NO_SUCCESS, canonical, folder, validated.getState());
-                    validated.getResultMessages().forEach(logger::debug);
-                    return true;
-                }
+        }
+        Optional<FileType> fileType = folder.getFileFormat().getFileType();
+        if (fileType.isPresent()) {
+            LongTermPreservationValidationService serviceLoader = new LongTermPreservationValidationService();
+            ValidationResult validated = serviceLoader.validate(imageURI.get(), fileType.get());
+            if (validated.getState().equals(State.SUCCESS)) {
+                logger.info(VALIDATION_SUCCESS, canonical, folder, validated.getState());
+                return false;
             } else {
-                logger.warn(NO_VALIDATOR_CONFIGURED, canonical, folder);
+                logger.info(VALIDATION_NO_SUCCESS, canonical, folder, validated.getState());
+                validated.getResultMessages().forEach(logger::debug);
                 return true;
             }
+        } else {
+            logger.warn(NO_VALIDATOR_CONFIGURED, canonical, folder);
+            return true;
         }
     }
 }

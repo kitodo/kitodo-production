@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
@@ -46,9 +47,10 @@ public class AddMediaUnitDialog {
      * Add a new MediaUnit.
      */
     public void addMediaUnit() {
-        if (dataEditor.getSelectedMediaUnit().isPresent()) {
+        Optional<MediaUnit> selectedMediaUnit = dataEditor.getSelectedMediaUnit();
+        if (selectedMediaUnit.isPresent()) {
             MediaUnit mediaUnit = MetadataEditor.addMediaUnit(selectedType, dataEditor.getWorkpiece(),
-                    dataEditor.getSelectedMediaUnit().get(),
+                    selectedMediaUnit.get(),
                     selectedPosition);
             dataEditor.refreshStructurePanel();
             dataEditor.getStructurePanel().selectMediaUnit(mediaUnit);
@@ -71,13 +73,14 @@ public class AddMediaUnitDialog {
     }
 
     private void preparePossiblePositions() {
-        if (dataEditor.getSelectedMediaUnit().isPresent()) {
+        Optional<MediaUnit> selectedMediaUnit = dataEditor.getSelectedMediaUnit();
+        if (selectedMediaUnit.isPresent()) {
             possiblePositions = new ArrayList<>();
             possiblePositions.add(new SelectItem(InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT,
                     Helper.getTranslation("dataEditor.position.asFirstChildOfCurrentElement")));
             possiblePositions.add(new SelectItem(InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT,
                     Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
-            List<MediaUnit> parents = MetadataEditor.getAncestorsOfMediaUnit(dataEditor.getSelectedMediaUnit().get(),
+            List<MediaUnit> parents = MetadataEditor.getAncestorsOfMediaUnit(selectedMediaUnit.get(),
                     dataEditor.getWorkpiece().getMediaUnit());
             if (parents.size() > 0) {
                 possiblePositions.add(new SelectItem(InsertionPosition.BEFORE_CURRENT_ELEMENT,
@@ -95,13 +98,14 @@ public class AddMediaUnitDialog {
     public void preparePossibleTypes() {
         possibleTypes = new ArrayList<>();
 
-        if (dataEditor.getSelectedMediaUnit().isPresent()) {
+        Optional<MediaUnit> selectedMediaUnit = dataEditor.getSelectedMediaUnit();
+        if (selectedMediaUnit.isPresent()) {
             StructuralElementViewInterface divisionView = null;
 
             if (InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT.equals(selectedPosition)
                     || InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT.equals(selectedPosition)) {
                 divisionView = dataEditor.getRuleset().getStructuralElementView(
-                        dataEditor.getSelectedMediaUnit().orElseThrow(IllegalStateException::new).getType(),
+                    selectedMediaUnit.orElseThrow(IllegalStateException::new).getType(),
                         dataEditor.getAcquisitionStage(),
                         dataEditor.getPriorityList()
                 );
@@ -109,7 +113,7 @@ public class AddMediaUnitDialog {
             } else if (InsertionPosition.BEFORE_CURRENT_ELEMENT.equals(selectedPosition)
                     || InsertionPosition.AFTER_CURRENT_ELEMENT.equals(selectedPosition)) {
                 LinkedList<MediaUnit> parents = MetadataEditor.getAncestorsOfMediaUnit(
-                        dataEditor.getSelectedMediaUnit().get(),
+                    selectedMediaUnit.get(),
                         dataEditor.getWorkpiece().getMediaUnit());
                 if (!parents.isEmpty()) {
                     divisionView = dataEditor.getRuleset().getStructuralElementView(

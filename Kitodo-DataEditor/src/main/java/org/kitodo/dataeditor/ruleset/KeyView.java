@@ -23,6 +23,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
@@ -241,10 +242,11 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          * tests can be combined with each other, then all conditions must
          * apply.
          */
-        if (!universal.getPattern().isPresent()) {
+        Optional<Pattern> optionalPattern = universal.getPattern();
+        if (!optionalPattern.isPresent()) {
             return true;
         }
-        return universal.getPattern().get().matcher(value).matches();
+        return optionalPattern.get().matcher(value).matches();
     }
 
     void setScheme(String scheme) {
