@@ -13,7 +13,6 @@ package org.kitodo.production.thread;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.image.ImageGenerator;
 
@@ -50,16 +49,6 @@ public class TaskImageGeneratorThread extends EmptyTask {
     public TaskImageGeneratorThread(TaskImageGeneratorThread master) {
         super(master);
         this.imageGenerator = master.imageGenerator;
-    }
-
-    /**
-     * Returns the display name of the task to show to the user.
-     *
-     * @see org.kitodo.production.helper.tasks.INameableTask#getDisplayName()
-     */
-    @Override
-    public String getDisplayName() {
-        return Helper.getTranslation("ImageGeneratorTask");
     }
 
     /**

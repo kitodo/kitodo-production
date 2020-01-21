@@ -15,7 +15,6 @@ import java.net.URI;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.export.ExportDms;
-import org.kitodo.production.helper.Helper;
 
 /**
  * The class ExportDmsTask accepts an {@link org.kitodo.export.ExportDms} for a
@@ -58,16 +57,6 @@ public class ExportDmsTask extends EmptyTask {
         this.exportDms = source.exportDms;
         this.process = source.process;
         this.userHome = source.userHome;
-    }
-
-    /**
-     * Returns the display name of the task to show to the user.
-     *
-     * @see org.kitodo.production.helper.tasks.INameableTask#getDisplayName()
-     */
-    @Override
-    public String getDisplayName() {
-        return Helper.getTranslation("exportDmsTask");
     }
 
     /**

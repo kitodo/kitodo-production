@@ -178,7 +178,9 @@ public class EmptyTask extends Thread {
      * Returns the display name of the task to show to the user.
      */
     public String getDisplayName() {
-        return Helper.getTranslation("EmptyTask");
+        StringBuilder title = new StringBuilder(getClass().getSimpleName());
+        title.setCharAt(0, (char) (title.charAt(0) | 32));
+        return Helper.getTranslation(title.toString());
     }
 
     /**

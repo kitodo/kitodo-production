@@ -72,14 +72,6 @@ public class MigrationTask extends EmptyTask {
     }
 
     /**
-     * This function displays the name in the task manager.
-     */
-    @Override
-    public String getDisplayName() {
-        return Helper.getTranslation("MigrationTask");
-    }
-
-    /**
      * The method to work the thread.
      */
     @Override

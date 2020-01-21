@@ -19,7 +19,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.dto.BatchDTO;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
 
 /**
@@ -92,14 +91,6 @@ public class NewspaperMigrationTask extends EmptyTask {
         this.numberOfProcesses = source.numberOfProcesses;
         this.part = source.part;
         this.step = source.step;
-    }
-
-    /**
-     * Defines the display name of the task in the task manager.
-     */
-    @Override
-    public String getDisplayName() {
-        return Helper.getTranslation("NewspaperMigrationTask");
     }
 
     /**
