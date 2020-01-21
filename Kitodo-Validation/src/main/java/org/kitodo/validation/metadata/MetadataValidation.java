@@ -181,7 +181,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         if (!treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
-                .anyMatch(workpiece.getMediaUnits()::contains)) {
+                .allMatch(workpiece.getMediaUnits()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
             error = true;
         }
