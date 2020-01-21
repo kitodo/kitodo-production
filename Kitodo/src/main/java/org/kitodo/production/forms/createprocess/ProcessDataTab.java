@@ -61,7 +61,7 @@ public class ProcessDataTab {
         if (!this.createProcessForm.getProcesses().isEmpty()) {
             this.createProcessForm.getProcesses().get(0).getWorkpiece().getRootElement().setType(this.docType);
             if (this.docType.isEmpty()) {
-                this.createProcessForm.getProcessMetadataTab().setProcessDetails(new ProcessFieldedMetadata());
+                this.createProcessForm.getProcessMetadataTab().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
                 ProcessFieldedMetadata metadata = this.createProcessForm.getProcessMetadataTab()
                         .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getRootElement());

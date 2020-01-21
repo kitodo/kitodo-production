@@ -394,13 +394,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                     MetadataEntry metadataEntry = new MetadataEntry();
                     metadataEntry.setValue(value);
                     if (filteredViews.get(0).isComplex()) {
-                        table.getRows().add(table.createMetadataGroupPanel(
-                                (ComplexMetadataViewInterface) filteredViews.get(0),
-                                Collections.singletonList(metadataEntry)));
+                        table.createMetadataGroupPanel((ComplexMetadataViewInterface) filteredViews.get(0),
+                            Collections.singletonList(metadataEntry));
                     } else {
-                        table.getRows().add(table.createMetadataEntryEdit(
-                                (SimpleMetadataViewInterface) filteredViews.get(0),
-                                Collections.singletonList(metadataEntry)));
+                        table.createMetadataEntryEdit((SimpleMetadataViewInterface) filteredViews.get(0),
+                            Collections.singletonList(metadataEntry));
                     }
                 }
             }

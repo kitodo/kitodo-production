@@ -802,6 +802,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-treetable tbody td:last-child,
 .ui-treetable tfoot td:last-child {
     padding-right: 16px;
+    white-space: normal;
 }
 
 .ui-panelgrid .ui-panelgrid-cell {

@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,8 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.data.database.beans.Process;
@@ -188,13 +191,9 @@ public class ImportTab implements Serializable {
             if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
                 TempProcess firstProcess = processes.getFirst();
                 this.createProcessForm.getProcessDataTab().setDocType(firstProcess.getWorkpiece().getRootElement().getType());
-                ProcessFieldedMetadata processDetails =
-                        createProcessForm.getProcessMetadataTab().getProcessDetails();
-                ImportService.fillProcessDetails(processDetails,
-                        firstProcess.getMetadataNodes(), this.createProcessForm.getRuleset(),
-                        this.createProcessForm.getProcessDataTab().getDocType(),
-                        this.createProcessForm.getAcquisitionStage(),
-                        this.createProcessForm.getPriorityList());
+                Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
+                    MdSec.DMD_SEC);
+                createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
             }
             String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",

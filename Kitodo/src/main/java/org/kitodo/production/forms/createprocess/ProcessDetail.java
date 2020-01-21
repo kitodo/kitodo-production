@@ -23,9 +23,9 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.helper.Helper;
 
 public abstract class ProcessDetail implements Serializable {
-
     /**
      * Describes the relationship between the domain in the rule set and the
      * mdSec in the METS.
@@ -41,6 +41,11 @@ public abstract class ProcessDetail implements Serializable {
     }
 
     /**
+     * Parental metadata group.
+     */
+    private ProcessFieldedMetadata container;
+
+    /**
      * The label of this row.
      */
     protected final String label;
@@ -51,8 +56,23 @@ public abstract class ProcessDetail implements Serializable {
      * @param label
      *            the label of this row
      */
-    ProcessDetail(String label) {
+    ProcessDetail(ProcessFieldedMetadata container, String label) {
+        this.container = container;
         this.label = label;
+    }
+
+    /**
+     * This method is triggered when the user clicks the copy metadata button.
+     */
+    public void copy() {
+        Helper.setErrorMessage("notImplemented", (String) null);
+    }
+
+    /**
+     * This method is triggered when the user clicks the delete metadata button.
+     */
+    public void delete() {
+        container.remove(this);
     }
 
     public abstract String getMetadataID();

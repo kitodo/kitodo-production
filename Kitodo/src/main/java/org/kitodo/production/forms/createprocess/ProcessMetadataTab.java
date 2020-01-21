@@ -19,13 +19,14 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.primefaces.model.TreeNode;
 
 public class ProcessMetadataTab {
     private static final Logger logger = LogManager.getLogger(ProcessMetadataTab.class);
 
     private CreateProcessForm createProcessForm;
 
-    private ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata();
+    private ProcessFieldedMetadata processDetails = ProcessFieldedMetadata.EMPTY;
 
     public ProcessMetadataTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
@@ -42,6 +43,15 @@ public class ProcessMetadataTab {
                 this.createProcessForm.getAcquisitionStage(),
                 this.createProcessForm.getPriorityList());
         return new ProcessFieldedMetadata(structure, divisionView);
+    }
+
+    /**
+     * Returns the logical metadata tree.
+     * 
+     * @return the logical metadata tree
+     */
+    public TreeNode getLogicalMetadataTree() {
+        return processDetails.getTreeNode();
     }
 
     /**

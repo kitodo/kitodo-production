@@ -32,8 +32,8 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      * @param settings
      *            the ruleset settings for this field.
      */
-    protected ProcessSimpleMetadata(SimpleMetadataViewInterface settings) {
-        super(settings.getLabel());
+    protected ProcessSimpleMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings) {
+        super(container, settings.getLabel());
         this.settings = settings;
     }
 

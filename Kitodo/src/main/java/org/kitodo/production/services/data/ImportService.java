@@ -17,12 +17,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,10 +34,10 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchResult;
@@ -57,7 +54,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.NoRecordFoundException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
@@ -430,63 +426,50 @@ public class ImportService {
     }
 
     /**
-     * Fill elements of given List of ProcessDetails 'processDetails' with values of given NodeList 'nodes'.
+     * Converts DOM node list of Kitodo metadata elements to metadata objects.
      *
-     * @param processDetails List of ProcessDetail instances whose values are set
-     * @param nodes NodeList used to fill set values of given ProcessDetail instances
+     * @param nodes
+     *            node list to convert to metadata
+     * @param domain
+     *            domain of metadata
+     * @return metadata from node list
      */
-    public static void fillProcessDetails(ProcessFieldedMetadata processDetails, NodeList nodes,
-                                   RulesetManagementInterface ruleset, String docType, String stage,
-                                   List<Locale.LanguageRange> languages) {
-        fillProcessDetailsElements(processDetails.getRows(), processDetails, nodes, ruleset, docType, stage, languages,
-                false);
-    }
-
-    private static void fillProcessDetailsElements(List<ProcessDetail> processDetailList,
-                                                   ProcessFieldedMetadata topLevelMetadata, NodeList nodes,
-                                                   RulesetManagementInterface ruleset, String docType, String stage,
-                                                   List<Locale.LanguageRange> languages, boolean isChild) {
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
+    public static List<Metadata> importMetadata(NodeList nodes, MdSec domain) {
+        List<Metadata> allMetadata = new ArrayList<>();
+        for (int index = 0; index < nodes.getLength(); index++) {
+            Node node = nodes.item(index);
+            if (!(node instanceof Element)) {
+                continue;
+            }
             Element element = (Element) node;
-            String nodeName = element.getAttribute("name");
-            boolean filled = false;
-            for (ProcessDetail detail : processDetailList) {
-                if (Objects.nonNull(detail.getMetadataID()) && detail.getMetadataID().equals(nodeName)) {
-                    if (isChild || StringUtils.isBlank(getProcessDetailValue(detail))) {
-                        filled = true;
-                        if (node.getLocalName().equals("metadataGroup")
-                                && detail instanceof ProcessFieldedMetadata) {
-                            fillProcessDetailsElements(((ProcessFieldedMetadata) detail).getRows(), topLevelMetadata,
-                                    element.getChildNodes(), ruleset, docType, stage, languages, true);
-                        } else if (node.getLocalName().equals("metadata")) {
-                            setProcessDetailValue(detail, element.getTextContent());
-                        }
-                    }
+            Metadata metadata;
+            switch (element.getLocalName()) {
+                case "metadata":
+                    MetadataEntry entry = new MetadataEntry();
+                    entry.setValue(element.getTextContent());
+                    metadata = entry;
+                    break;
+                case "metadataGroup": {
+                    MetadataGroup group = new MetadataGroup();
+                    group.setGroup(importMetadata(element.getChildNodes(), null));
+                    metadata = group;
                     break;
                 }
+                default:
+                    continue;
             }
-            if (!filled) {
-                try {
-                    ProcessDetail newDetail = addProcessDetail(nodeName, docType, stage, languages, ruleset, topLevelMetadata);
-                    topLevelMetadata.getRows().add(newDetail);
-                    if (newDetail instanceof ProcessFieldedMetadata) {
-                        fillProcessDetailsElements(((ProcessFieldedMetadata) newDetail).getRows(), topLevelMetadata,
-                                element.getChildNodes(), ruleset, docType, stage, languages,true);
-                    } else {
-                        setProcessDetailValue(newDetail, element.getTextContent());
-                    }
-                } catch (NoSuchMetadataFieldException e) {
-                    logger.error(e.getMessage());
-                }
-            }
+            metadata.setKey(element.getAttribute("name"));
+            metadata.setDomain(domain);
+            allMetadata.add(metadata);
         }
+        return allMetadata;
     }
 
     /**
-     *  Get the value of a specific processDetail in the processDetails.
+     * Get the value of a specific processDetail in the processDetails.
+     *
      * @param processDetail
-     *      as ProcessDetail
+     *            as ProcessDetail
      * @return the value as a java.lang.String
      */
     public static String getProcessDetailValue(ProcessDetail processDetail) {
@@ -519,39 +502,6 @@ public class ImportService {
         } else if (processDetail instanceof ProcessSelectMetadata) {
             ((ProcessSelectMetadata) processDetail).setSelectedItem(value);
         }
-    }
-
-    /**
-     * Add a new process detail to processDetails.
-     * @param metadataId
-     *              the key of the metadata want to be added
-     * @return the added process detail as a ProcessDetail.
-     *
-     * @throws NoSuchMetadataFieldException
-     *          if the metadataId is not allowed as a Metadata for the doctype.
-     */
-    private static ProcessDetail addProcessDetail(String metadataId, String docType, String stage,
-                                                  List<Locale.LanguageRange> languageRanges,
-                                                  RulesetManagementInterface ruleset, ProcessFieldedMetadata metadata)
-            throws NoSuchMetadataFieldException {
-        Collection<MetadataViewInterface> docTypeAddableDivisions = ruleset.getStructuralElementView(docType, stage,
-                languageRanges).getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
-
-        List<MetadataViewInterface> filteredViews = docTypeAddableDivisions
-                .stream()
-                .filter(metadataView -> metadataView.getId().equals(metadataId))
-                .collect(Collectors.toList());
-
-        if (!filteredViews.isEmpty()) {
-            if (filteredViews.get(0).isComplex()) {
-                return metadata.createMetadataGroupPanel((ComplexMetadataViewInterface) filteredViews.get(0),
-                        Collections.emptyList());
-            } else {
-                return metadata.createMetadataEntryEdit((SimpleMetadataViewInterface) filteredViews.get(0),
-                        Collections.emptyList());
-            }
-        }
-        throw new NoSuchMetadataFieldException(metadataId, "");
     }
 
     /**

@@ -36,6 +36,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -393,8 +394,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 ProcessFieldedMetadata metadata = this.getProcessMetadataTab().initializeProcessDetails(
                         tempProcess.getWorkpiece().getRootElement());
                 docType = tempProcess.getWorkpiece().getRootElement().getType();
-                ImportService.fillProcessDetails(metadata, tempProcess.getMetadataNodes(),
-                        this.rulesetManagementInterface, docType, this.acquisitionStage, this.priorityList);
+                metadata.setMetadata(ImportService.importMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
                 try {
                     metadata.preserve();
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
