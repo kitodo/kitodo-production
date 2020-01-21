@@ -1086,6 +1086,7 @@ h3#headerText {
 
 #processesTabView\:processesForm\:processesTable .hierarchy-info {
     width: calc(var(--default-double-size) + var(--default-full-size));
+    text-overflow: clip;
 }
 
 #processesTabView\:processesForm\:processesTable .hierarchy-info > i {
