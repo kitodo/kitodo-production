@@ -77,17 +77,6 @@
         <param-value>/WEB-INF/springsecurity.taglib.xml</param-value>
     </context-param>
 
-    <!-- TODO: include the following context-param and change the param value to 'kitodo' once we have a complete Kitodo Primefaces theme -->
-    <!--<context-param>-->
-        <!--<param-name>primefaces.THEME</param-name>-->
-        <!--<param-value>none</param-value>-->
-    <!--</context-param>-->
-
-    <context-param>
-        <param-name>org.richfaces.SKIN</param-name>
-        <param-value>blueSky</param-value>
-    </context-param>
-
     <!-- Faces Servlet -->
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
