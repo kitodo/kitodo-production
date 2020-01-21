@@ -182,7 +182,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         if (isNotAt()) {
             goTo();
         }
-        return getTableDataByColumn(processesTable, 1);
+        return getTableDataByColumn(processesTable, 2);
     }
 
     public void createNewBatch() throws Exception {
@@ -307,17 +307,17 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     private void setDownloadDocketLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE);
+        int index = getRowIndex(processesTable, PROCESS_TITLE, 2);
         downloadDocketLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":downloadDocket");
     }
 
     private void setEditMetadataLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE);
+        int index = getRowIndex(processesTable, PROCESS_TITLE, 2);
         editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML");
     }
 
     private void setDownloadLogLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE);
+        int index = getRowIndex(processesTable, PROCESS_TITLE, 2);
         downloadLogLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":exportLogXml");
     }
 

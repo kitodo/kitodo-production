@@ -128,7 +128,7 @@ public abstract class Page<T> {
     int triggerRowToggle(WebElement dataTable, String objectTitle) {
         List<WebElement> tableRows = getRowsOfTable(dataTable);
 
-        int index = getRowIndex(dataTable, objectTitle);
+        int index = getRowIndex(dataTable, objectTitle, 1);
         WebElement tableRow = tableRows.get(index);
         tableRow.findElement(By.className("ui-row-toggler")).click();
 
@@ -142,14 +142,16 @@ public abstract class Page<T> {
      *            table for search
      * @param objectTitle
      *            searched row
+     * @param columnIndex
+     *            index of cell used for identification
      * @return index of found row
      */
-    int getRowIndex(WebElement dataTable, String objectTitle) {
+    int getRowIndex(WebElement dataTable, String objectTitle, int columnIndex) {
         List<WebElement> tableRows = getRowsOfTable(dataTable);
 
         for (int i = 0; i < tableRows.size(); i++) {
             WebElement tableRow = tableRows.get(i);
-            if (Browser.getCellDataByRow(tableRow, 1).equals(objectTitle)) {
+            if (Browser.getCellDataByRow(tableRow, columnIndex).equals(objectTitle)) {
                 return i;
             }
         }

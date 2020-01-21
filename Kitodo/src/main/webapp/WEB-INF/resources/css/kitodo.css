@@ -1084,6 +1084,32 @@ h3#headerText {
     margin-left: var(--default-full-size);
 }
 
+#processesTabView\:processesForm\:processesTable .hierarchy-info {
+    width: calc(var(--default-double-size) + var(--default-full-size));
+}
+
+#processesTabView\:processesForm\:processesTable .hierarchy-info > i {
+    color: var(--blue);
+    transform: rotate(45deg);
+    vertical-align: middle;
+}
+
+#processesTabView\:processesForm\:processesTable .ui-row-toggler {
+    margin-right: 8px;
+}
+
+#processesTabView\:processesForm\:processesTable .label {
+    vertical-align: top;
+}
+
+#processesTabView\:processesForm\:processesTable .value > .ui-datatable thead {
+    display: none;
+}
+
+#processesTabView\:processesForm\:processesTable .row-expansion-wrapper > table {
+    margin-left: 112px;
+    width: calc(100% - 112px);
+}
 
 .kitodoScript button {
     margin: 0 0 5px 5px;
@@ -2165,6 +2191,11 @@ footer {
     width: 16px;
     height: 16px;
     border-radius: var(--default-border-radius);
+}
+
+tbody#projectsTable_data > tr.ui-widget-content > td {
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {

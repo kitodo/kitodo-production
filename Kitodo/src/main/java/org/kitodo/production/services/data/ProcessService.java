@@ -2435,4 +2435,28 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         childProcess.setParent(parentProcess);
         parentProcess.getChildren().add(childProcess);
     }
+
+    /**
+     * Get all parent processes of given Process recursively.
+     * @param process the Process to get the parent process for
+     * @return List of parent Processes
+     */
+    public static List<Process> getAllParentProcesses(Process process) {
+        List<Process> parents = new ArrayList<>();
+        while (Objects.nonNull(process.getParent())) {
+            parents.add(0, process.getParent());
+            process = process.getParent();
+        }
+        return parents;
+    }
+
+    /**
+     * Get the number of direct children of the given process.
+     * @param processId id of the process
+     * @return number of direct children as int
+     * @throws DAOException when query to database fails
+     */
+    public int getNumberOfChildren(int processId) throws DAOException {
+        return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
+    }
 }

@@ -24,6 +24,7 @@ public enum FilterString {
     PROJECT("project:", "projekt:"),
     TEMPLATE("template:", "vorlage:"),
     ID("id:", "id:"),
+    PARENTPROCESSID("parentprocessid:", "elternprozessid:"),
     PROCESS("process:", "prozess:"),
     WORKPIECE("workpiece:", "werkstueck:"),
     BATCH("batch:", "gruppe:"),

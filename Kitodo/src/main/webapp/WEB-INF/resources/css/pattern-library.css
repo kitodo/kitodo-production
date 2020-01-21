@@ -356,19 +356,40 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     font: normal normal normal 20px FontAwesome;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    position: relative;
     text-rendering: auto;
+    vertical-align: middle;
 }
 
 .ui-row-toggler:hover {
     color: var(--focused-blue);
 }
 
-.ui-row-toggler.ui-icon-circle-triangle-e:before {
-    content: "\f13a";
+.ui-row-toggler.ui-icon-circle-triangle-e:before,
+.ui-row-toggler.ui-icon-circle-triangle-s:before {
+    content: "\f111";
 }
 
-.ui-row-toggler.ui-icon-circle-triangle-s:before {
-    content: "\f139";
+.ui-row-toggler.ui-icon:after {
+    color: var(--pure-white);
+    font-size: 13px;
+    height: 100%;
+    left: 0;
+    line-height: 19px;
+    position: absolute;
+    text-align: center;
+    text-indent: 0;
+    top: 0;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.ui-row-toggler.ui-icon-circle-triangle-e:after {
+    content: "\f078";
+}
+
+.ui-row-toggler.ui-icon-circle-triangle-s:after {
+    content: "\f077";
 }
 
 .ui-sortable-column-icon.ui-icon {
@@ -1000,7 +1021,7 @@ tr.ui-widget-content,
 }
 
 .row-expansion-wrapper {
-    overflow-x: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
@@ -1040,12 +1061,10 @@ tr.ui-expanded-row-content tr.ui-widget-header,
     border-top: 1px solid var(--cloudy-gray);
 }
 
-.ui-expanded-row-content tr {
-    background-color: lightgray !important;
-}
-
 tr.ui-expanded-row.row-hover,
-tr.ui-expanded-row-content.row-hover {
+tr.ui-expanded-row-content.row-hover,
+tr.ui-expanded-row-content.row-hover .ui-datatable tbody,
+tr.ui-expanded-row-content:hover .ui-datatable tbody {
     background: var(--trans-blue) !important;
     color: var(--carbon-blue) !important;
 }
