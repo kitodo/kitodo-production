@@ -431,11 +431,6 @@
             <version>${saxon.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.j2ep</groupId>
-            <artifactId>j2ep</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
             <artifactId>classloader-leak-prevention-servlet3</artifactId>
             <version>2.6.1</version>
