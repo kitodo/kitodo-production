@@ -191,7 +191,7 @@ public class GalleryPanel {
     }
 
     /**
-     * Handle event of page being dragged and dropped.
+     * Handle event of page being dragged and dropped in gallery.
      *
      * @param event
      *            JSF drag'n'drop event description object
@@ -209,14 +209,17 @@ public class GalleryPanel {
 
         // move views
         List<Pair<View, IncludedStructuralElement>> viewsToBeMoved = new ArrayList<>();
-        for (Pair<MediaUnit, IncludedStructuralElement> selectedElememt : dataEditor.getSelectedMedia()) {
-            for (View view : selectedElememt.getValue().getViews()) {
-                if (Objects.equals(view.getMediaUnit(), selectedElememt.getKey())) {
-                    viewsToBeMoved.add(new ImmutablePair<>(view, selectedElememt.getValue()));
+        for (Pair<MediaUnit, IncludedStructuralElement> selectedElement : dataEditor.getSelectedMedia()) {
+            for (View view : selectedElement.getValue().getViews()) {
+                if (Objects.equals(view.getMediaUnit(), selectedElement.getKey())) {
+                    viewsToBeMoved.add(new ImmutablePair<>(view, selectedElement.getValue()));
                 }
             }
         }
+        dataEditor.getStructurePanel().changeLogicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
+        dataEditor.getStructurePanel().reorderMediaUnits(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
+        dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
         dataEditor.getStructurePanel().show();
         // update stripes
         for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
@@ -363,7 +366,7 @@ public class GalleryPanel {
     void show() {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsSorted();
 
         Folder previewSettings = project.getPreview();
         previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, mediaUnits) : null;
@@ -699,7 +702,7 @@ public class GalleryPanel {
 
     private void selectMedia(String mediaUnitOrder, String stripeIndex, String selectionType) {
         MediaUnit selectedMediaUnit = null;
-        for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnits()) {
+        for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnitsSorted()) {
             if (Objects.equals(mediaUnit.getOrder(), Integer.parseInt(mediaUnitOrder))) {
                 selectedMediaUnit = mediaUnit;
                 break;

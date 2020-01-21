@@ -318,12 +318,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public void save() {
         metadataPanel.preserve();
-        structurePanel.preserve();
-        try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
-            ServiceManager.getMetsService().save(workpiece, out);
-            PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
-                    + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
-        } catch (IOException e) {
+        try {
+            structurePanel.preserve();
+            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
+                ServiceManager.getMetsService().save(workpiece, out);
+                PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
+                        + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
@@ -337,11 +341,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String saveAndExit() {
         metadataPanel.preserve();
-        structurePanel.preserve();
-        try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
-            ServiceManager.getMetsService().save(workpiece, out);
-            return close();
-        } catch (IOException e) {
+        try {
+            structurePanel.preserve();
+            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
+                ServiceManager.getMetsService().save(workpiece, out);
+                return close();
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
