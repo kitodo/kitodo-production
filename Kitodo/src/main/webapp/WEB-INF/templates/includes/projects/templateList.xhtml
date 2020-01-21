@@ -18,10 +18,13 @@
         xmlns:o="http://omnifaces.org/ui"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="templateTable"
+                 styleClass="default-layout"
                  var="item"
                  value="#{TemplateForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -29,23 +32,29 @@
 
         <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 18px;"
+        <p:column style="width: 20px;"
+                  resizable="false"
                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewTemplate')}">
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="#{msgs.title}"
-                  sortBy="#{item.title}"
+        <p:column id="titleColumn"
+                  headerText="#{msgs.title}"
+                  sortBy="#{item.title.keyword}"
                   rendered="#{ProjectForm.showColumn('template.title')}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.ruleset}"
                   rendered="#{ProjectForm.showColumn('template.ruleset')}">
-            <h:outputText value="#{item.ruleset.title}"/>
+            <h:outputText value="#{item.ruleset.title}"
+                          title="#{item.ruleset.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:outputText>
                 <h:form id="templateActionForm">
 
@@ -93,43 +102,69 @@
 
         <p:rowExpansion styleClass="expansion-class">
             <div class="row-expansion-wrapper">
-                <p:panelGrid columns="2" columnClasses="label, value" id="templateDetailTable">
-                    <h:outputText value="#{msgs.workflow}:"/>
-                    <h:outputText value="#{item.workflow.title}"/>
+                <p:panelGrid id="templateRowExpansionTable"
+                             columns="2">
+                    <p:panelGrid id="templateDetailTable"
+                                 styleClass="expansion-column"
+                                 columns="2"
+                                 columnClasses="label, value">
+                        <h:outputText value="#{msgs.workflow}:"/>
+                        <h:outputText title="#{item.workflow.title}"
+                                      value="#{item.workflow.title}"/>
 
-                    <h:outputText value="#{msgs.docket}:"/>
-                    <h:outputText value="#{item.docket.title}"/>
+                        <h:outputText value="#{msgs.docket}:"/>
+                        <h:outputText title="#{item.docket.title}"
+                                      value="#{item.docket.title}"/>
 
-                    <h:outputText value="#{msgs.ruleset}:"/>
-                    <h:outputText value="#{item.ruleset.title}"/>
+                        <h:outputText value="#{msgs.ruleset}:"/>
+                        <h:outputText title="#{item.ruleset.title}"
+                                      value="#{item.ruleset.title}"/>
+                    </p:panelGrid>
 
-                    <h:outputText value="#{msgs.projects}:"/>
-                    <h:form id="createProcessForm">
-                        <p:repeat value="#{item.projects}" var="project" id="projects">
-                            <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
-                                <h:outputText value="#{project.title} "/>
-
-                                <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                    <h:link id="createProcess"
-                                            outcome="/pages/processFromTemplate?faces-redirect=true"
-                                            title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <f:param name="templateId" value="#{item.id}"/>
-                                        <f:param name="projectId" value="#{project.id}"/>
-                                        <f:param name="referrer" value="#{'projects'}"/>
-                                        <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
-                                    </h:link>
-
-                                    <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
-                                                   title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
-                                    </h:commandLink>
-                                </h:outputText>
+                    <p:panelGrid id="templateProjectsTable"
+                                 styleClass="expansion-column"
+                                 columns="2"
+                                 columnClasses="label, value">
+                        <h:outputText value="#{msgs.projects}:"/>
+                        <h:form id="createProcessForm">
+                            <p:panelGrid id="templateActionDetailTable"
+                                         columns="2"
+                                         columnClasses="label, actionsColumn">
+                                <p:repeat id="projects"
+                                          value="#{item.projects}"
+                                          var="project">
+                                    <div class="project-template-action">
+                                        <h:outputText value="#{project.title}"
+                                                      title="#{project.title}"
+                                                      styleClass="expansion-list-item-title"/>
+                                        <h:panelGroup class="expansion-list-item-actions">
+                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                                <h:link id="createProcess"
+                                                        outcome="/pages/processFromTemplate?faces-redirect=true"
+                                                        title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                                    <f:param name="templateId" value="#{item.id}"/>
+                                                    <f:param name="projectId" value="#{project.id}"/>
+                                                    <f:param name="referrer" value="#{'projects'}"/>
+                                                    <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
+                                                </h:link>
+                                                <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
+                                                               title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                                    <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
+                                                </h:commandLink>
+                                            </h:outputText>
+                                        </h:panelGroup>
+                                    </div>
+                                </p:repeat>
                             </p:panelGrid>
-                        </p:repeat>
-                    </h:form>
+                        </h:form>
+                    </p:panelGrid>
                 </p:panelGrid>
 
-                <o:graphicImage rendered="#{item.workflow ne null}" value="#{item.diagramImage}" dataURI="true" />
+                <o:graphicImage title="#{item.workflow.title}"
+                                styleClass="workflow-diagram"
+                                rendered="#{item.workflow ne null}"
+                                value="#{item.diagramImage}"
+                                dataURI="true" />
             </div>
         </p:rowExpansion>
 

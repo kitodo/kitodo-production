@@ -21,8 +21,11 @@
         <p:dataTable id="taskTable"
                      var="item"
                      value="#{CurrentTaskForm.lazyDTOModel}"
+                     styleClass="default-layout"
                      lazy="true"
                      paginator="true"
+                     resizableColumns="true"
+                     liveResize="true"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -30,15 +33,18 @@
 
             <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();"/>
 
-            <p:column style="width: var(--default-full-size);">
+            <p:column style="width: 20px;"
+                      resizable="false">
                 <p:rowToggler/>
             </p:column>
 
             <p:column id="titleColumn"
                       headerText="#{msgs.task}"
                       filterBy="#{item.title}"
+                      sortBy="#{item.title}"
                       rendered="#{CurrentTaskForm.showColumn('task.title')}">
-                <h:outputText value="#{item.title}"/>
+                <h:outputText title="#{item.title}"
+                              value="#{item.title}"/>
             </p:column>
 
             <!-- columns for tasks that have been configured in kitodo config file! -->
@@ -46,7 +52,8 @@
                        var="taskColumn"
                        headerText="#{fn:replace(taskColumn, 'task.', '')}"
                        rendered="#{CurrentTaskForm.showColumn(taskColumn)}">
-                <h:outputText value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
+                <h:outputText title="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"
+                              value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
             </p:columns>
 
             <p:column headerText="#{msgs.process}"
@@ -56,12 +63,14 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{item.process.id}"/>
                 </h:link>
-                <h:outputText value=" #{item.process.title}"/>
+                <h:outputText title="#{item.process.title}"
+                              value=" #{item.process.title}"/>
             </p:column>
 
             <p:column headerText="#{msgs.project}"
                       rendered="#{CurrentTaskForm.showColumn('task.project')}">
-                <h:outputText value="#{item.process.project.title}"/>
+                <h:outputText title="#{item.process.project.title}"
+                              value="#{item.process.project.title}"/>
             </p:column>
 
             <p:column headerText="#{msgs.status}"
@@ -86,77 +95,97 @@
                 <h:outputText value="#{CurrentTaskForm.getProcessDuration(item)}"/>
             </p:column>
 
-            <p:column headerText="#{msgs.actions}">
-                <!-- assign task -->
-                <h:commandLink id="take"
-                               action="#{CurrentTaskForm.takeOverTask}"
-                               rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
-                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-                    <i class="fa fa-bell-o"/>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
-                </h:commandLink>
-                <!-- already assigned task (this user) -->
-                <h:commandLink id="editOwnTask" action="#{CurrentTaskForm.editTask}"
-                               rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
-                               title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
-                    <i class="fa fa-bell"/>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
-                </h:commandLink>
-                <!-- already assigned task (different user) -->
-                <h:commandLink id="editOtherTask" action="#{CurrentTaskForm.editTask}"
-                               rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and (!item.batchStep || !item.batchAvailable)}"
-                               title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
-                    <i class="fa fa-bell-slash"/>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
-                </h:commandLink>
+            <p:column headerText="#{msgs.actions}"
+                      styleClass="actionsColumn">
 
-                <!-- take over batch -->
-                <h:commandLink id="batch" action="#{CurrentTaskForm.takeOverBatchTasks}"
-                               rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchAvailable}"
-                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-                    <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
-                </h:commandLink>
+                <h:panelGroup layout="block"
+                              styleClass="actionsBlock">
+                    <!-- assign task -->
+                    <h:commandLink id="take"
+                                   action="#{CurrentTaskForm.takeOverTask}"
+                                   rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
+                                   title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                        <i class="fa fa-bell-o"/>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    </h:commandLink>
+                    <!-- already assigned task (this user) -->
+                    <h:commandLink id="editOwnTask" action="#{CurrentTaskForm.editTask}"
+                                   rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
+                                   title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
+                        <i class="fa fa-bell"/>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    </h:commandLink>
+                    <!-- already assigned task (different user) -->
+                    <h:commandLink id="editOtherTask" action="#{CurrentTaskForm.editTask}"
+                                   rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and (!item.batchStep || !item.batchAvailable)}"
+                                   title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
+                        <i class="fa fa-bell-slash"/>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    </h:commandLink>
 
-                <!-- edit batch step (this user) -->
-                <h:commandLink id="batchInWork" action="#{CurrentTaskForm.editBatchTasks}"
-                               rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
-                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-                    <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
-                </h:commandLink>
+                    <!-- take over batch -->
+                    <h:commandLink id="batch" action="#{CurrentTaskForm.takeOverBatchTasks}"
+                                   rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchAvailable}"
+                                   title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                        <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    </h:commandLink>
 
-                <!-- edit batch step (different user) -->
-                <h:commandLink id="batchInWorkOther" action="#{CurrentTaskForm.editBatchTasks}"
-                               rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
-                               title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
-                    <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
-                </h:commandLink>
+                    <!-- edit batch step (this user) -->
+                    <h:commandLink id="batchInWork" action="#{CurrentTaskForm.editBatchTasks}"
+                                   rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
+                                   title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                        <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    </h:commandLink>
+
+                    <!-- edit batch step (different user) -->
+                    <h:commandLink id="batchInWorkOther" action="#{CurrentTaskForm.editBatchTasks}"
+                                   rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
+                                   title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
+                        <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    </h:commandLink>
+                </h:panelGroup>
             </p:column>
 
             <p:rowExpansion styleClass="expansion-class">
                 <div class="row-expansion-wrapper">
-                    <p:panelGrid columns="2" columnClasses="label, value" id="currentTaskDetailTable">
-                        <h:outputText value="#{msgs.correction}:"/>
-                        <h:outputText value="#{item.correction}"/>
+                    <p:panelGrid id="taskRowExpansionTable"
+                                 columns="2">
+                        <p:panelGrid id="taskDetailTableFirst"
+                                     styleClass="expansion-column"
+                                     columns="2"
+                                     columnClasses="label, value">
+                            <h:outputText value="#{msgs.correction}:"/>
+                            <h:outputText title="#{item.correction}"
+                                          value="#{item.correction}"/>
 
-                        <h:outputText value="#{msgs.processingBegin}:"/>
-                        <h:outputText value="#{item.processingBegin}"/>
+                            <h:outputText value="#{msgs.processingBegin}:"/>
+                            <h:outputText title="#{item.processingBegin}"
+                                          value="#{item.processingBegin}"/>
+                        </p:panelGrid>
+                        <p:panelGrid id="taskDetailTableSecond"
+                                     styleClass="expansion-column"
+                                     columns="2"
+                                     columnClasses="label, value">
+                            <h:outputText value="#{msgs.lastEdited}:"/>
+                            <h:outputText title="#{item.processingTime}"
+                                          value="#{item.processingTime}"/>
 
-                        <h:outputText value="#{msgs.lastEdited}:"/>
-                        <h:outputText value="#{item.processingTime}"/>
+                            <h:outputText value="#{msgs.lastUpdatedBy}:"/>
+                            <h:outputText title="#{item.processingUser.fullName}"
+                                          value="#{item.processingUser.fullName}"/>
 
-                        <h:outputText value="#{msgs.lastUpdatedBy}:"/>
-                        <h:outputText value="#{item.processingUser.fullName}"/>
-
-                        <h:outputText value="#{msgs.editType}:"/>
-                        <h:outputText value="#{item.editTypeTitle}"/>
+                            <h:outputText value="#{msgs.editType}:"/>
+                            <h:outputText title="#{item.editTypeTitle}"
+                                          value="#{item.editTypeTitle}"/>
+                        </p:panelGrid>
                     </p:panelGrid>
                 </div>
             </p:rowExpansion>
         </p:dataTable>
-        </h:form>
+    </h:form>
 
     <h:panelGrid columns="1">
         <h:panelGroup>
@@ -165,26 +194,28 @@
             </h3>
 
             <h:form id="filterForm">
-                <h:panelGrid columns="2" style="margin-left:20px">
+                <h:panelGrid columns="2" style="margin-left:20px;">
                     <h:outputText value="#{msgs.showAutomaticTasks}:"/>
                     <h:selectBooleanCheckbox id="showAutomaticTasks" value="#{CurrentTaskForm.showAutomaticTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
 
                     <h:outputText value="#{msgs.hideCorrectionTasks}:"/>
                     <h:selectBooleanCheckbox id="hideCorrectionTasks" value="#{CurrentTaskForm.hideCorrectionTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
 
 
                     <h:outputText value="#{msgs.showOnlyOwnTasks}:"/>
                     <h:selectBooleanCheckbox id="onlyOwnTasks" value="#{CurrentTaskForm.onlyOwnTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
 
                     <h:outputText value="#{msgs.showOnlyOpenTasks}:"/>
                     <h:selectBooleanCheckbox id="onlyOpenTasks" value="#{CurrentTaskForm.onlyOpenTasks}"
-                                             style="margin-right:20px"/>
+                                             style="margin-right:20px;"/>
                 </h:panelGrid>
 
-                <h:commandLink id="applyFilter" update="tasksTabView:taskTable" style="margin-left:24px"
+                <h:commandLink id="applyFilter"
+                               update="tasksTabView:taskTable"
+                               style="margin-left:24px;"
                                title="#{msgs.apply}">
                     <h:outputText value="#{msgs.apply}"/>
                 </h:commandLink>

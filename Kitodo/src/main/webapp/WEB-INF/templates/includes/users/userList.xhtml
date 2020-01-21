@@ -18,52 +18,55 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="usersTable"
+                 styleClass="default-layout"
                  value="#{UserForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.username}"
+                  sortBy="#{item.surname}"
                   rendered="#{UserForm.showColumn('user.username')}">
-            <h:outputText value="#{item.surname}, #{item.name}"/>
+            <h:outputText value="#{item.surname}, #{item.name}"
+                          title="#{item.surname}, #{item.name}"/>
         </p:column>
         <p:column headerText="#{msgs.location}"
+                  sortBy="#{item.location}"
                   rendered="#{UserForm.showColumn('user.location')}">
-            <h:outputText value="#{item.location}"/>
+            <h:outputText title="#{item.location}"
+                          value="#{item.location}"/>
         </p:column>
         <p:column headerText="#{msgs.roles}"
                   rendered="#{UserForm.showColumn('user.roles')}">
-            <ui:repeat var="role" value="#{item.roles}" varStatus="status">
-                <h:outputText value="#{role.title}"/>
-                <h:outputText value=", " rendered="#{not status.last}"/>
-            </ui:repeat>
+            <h:outputText value="#{UserForm.getRoleTitles(item.roles)}"
+                          title="#{UserForm.getRoleTitles(item.roles)}"/>
         </p:column>
         <p:column headerText="#{msgs.clients}"
                   rendered="#{UserForm.showColumn('user.clients')}">
-            <ui:repeat var="client" value="#{item.clients}" varStatus="status">
-                <h:outputText value="#{client.name}"/>
-                <h:outputText value=", " rendered="#{not status.last}"/>
-            </ui:repeat>
+            <h:outputText value="#{UserForm.getClientNames(item.clients)}"
+                          title="#{UserForm.getClientNames(item.clients)}"/>
         </p:column>
         <p:column headerText="#{msgs.projects}"
                   rendered="#{UserForm.showColumn('user.projects')}">
-            <ui:repeat var="project" value="#{item.projects}" varStatus="status">
-                <h:outputText value="#{project.title}"/>
-                <h:outputText value=", " rendered="#{not status.last}"/>
-            </ui:repeat>
+            <h:outputText value="#{UserForm.getProjectTitles(item.projects)}"
+                          title="#{UserForm.getProjectTitles(item.projects)}"/>
         </p:column>
         <p:column headerText="#{msgs.active}"
                   rendered="#{UserForm.showColumn('user.active')}"
                   styleClass="checkboxColumn">
-            <h:outputText>
-                <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
+            <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
+                <h:outputText title="#{msgs.active}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
-                </ui:fragment>
-            </h:outputText>
+                </h:outputText>
+            </ui:fragment>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewUser" outcome="userEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToEditUser()}">

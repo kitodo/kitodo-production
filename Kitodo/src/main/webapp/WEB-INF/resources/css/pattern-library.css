@@ -348,14 +348,14 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     vertical-align: bottom;
 }
 
-.ui-row-toggler.ui-icon {
+.ui-row-toggler.ui-icon,
+.ui-sortable-column-icon.ui-icon {
     background: none;
     color: var(--blue);
     display: inline;
     font: normal normal normal 20px FontAwesome;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    margin-right: var(--default-full-size);
     text-rendering: auto;
 }
 
@@ -369,6 +369,23 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .ui-row-toggler.ui-icon-circle-triangle-s:before {
     content: "\f139";
+}
+
+.ui-sortable-column-icon.ui-icon {
+    margin-left: var(--default-half-size);
+    vertical-align: text-bottom;
+}
+
+.ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s::before {
+    content: "\f0dc";
+}
+
+.ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-n::before {
+    content: "\f15d";
+}
+
+.ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-s::before {
+    content: "\f15e";
 }
 
 .ui-treenode-icon.ui-icon {
@@ -403,15 +420,15 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     content: "\f07b";
 }
 
-.ui-icon.ui-icon-triangle-1-e::after,
-.ui-icon.ui-icon-triangle-1-s::after {
+.ui-tree-toggler.ui-icon.ui-icon-triangle-1-e::after,
+.ui-tree-toggler.ui-icon.ui-icon-triangle-1-s::after {
     color: var(--blue);
     content: "\f107";
     transition: .3s;
     font-size: large;
 }
 
-.ui-icon.ui-icon-triangle-1-s::after {
+.ui-tree-toggler.ui-icon.ui-icon-triangle-1-s::after {
     transform: rotateX(180deg);
     transition: .3s;
 }
@@ -852,6 +869,11 @@ tbody.ui-widget-content {
     border-radius: 0;
 }
 
+.ui-datatable-tablewrapper th[role='columnheader'],
+.ui-datatable-tablewrapper td[role='gridcell'] {
+    text-overflow: ellipsis;
+}
+
 .ui-datatable-odd,
 .ui-datatable-even,
 tfoot td.ui-state-default,
@@ -949,20 +971,72 @@ tr.ui-widget-content,
 }
 
 .row-expansion-wrapper tr.ui-widget-content td.label {
-    width: 200px;
+    display: inline-block;
     padding-left: 0 !important;
+    vertical-align: top;
+}
+
+.row-expansion-wrapper .ui-panelgrid-cell {
+    vertical-align: top;
+}
+
+.row-expansion-wrapper > table > tbody,
+.row-expansion-wrapper > table > tbody > tr {
+    display: inline-block;
+}
+
+.row-expansion-wrapper > table > tbody {
+    width: 70%;
+}
+
+.row-expansion-wrapper > table > tbody > tr {
+    width: 100%;
+}
+
+.row-expansion-wrapper > table > tbody > tr > td {
+    display: inline-block;
+    width: 40%;
+}
+
+.row-expansion-wrapper {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+.expansion-column > tbody > tr > td.label {
+    font-weight: bold;
+}
+
+.ui-panelgrid-cell .project-template-action {
+    height: var(--input-height);
+    margin-bottom: 0;
+}
+
+.expansion-list-item-title {
+    display: inline-block;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    width: 150px;
+}
+
+.expansion-list-item-actions {
+    vertical-align: top;
+}
+
+.expansion-list-item-actions a {
+    margin-left: var(--default-half-size);
 }
 
 tr.ui-expanded-row-content,
 tr.ui-expanded-row-content tr.ui-widget-header,
 .ui-dialog-content tr.ui-widget-header,
 .ui-panelgrid .ui-widget-header {
-    border-top: 0px none !important;
+    border-top: 0 none;
     background: transparent;
 }
 
-.ui-expanded-row-content table.ui-widget {
-    border-top: 1px solid var(--blue);
+.row-expansion-wrapper > table.ui-widget {
+    border-top: 1px solid var(--cloudy-gray);
 }
 
 .ui-expanded-row-content tr {
@@ -986,10 +1060,12 @@ tr.ui-expanded-row-content.row-hover {
     border: solid var(--default-border-width) var(--medium-gray);
 }
 
+.row-expansion-wrapper > table {
+    margin-left: 32px;
+}
 
 tr.ui-expanded-row-content .ui-panelgrid {
-    width: 70%;
-    margin-left: 48px;
+    display: block;
 }
 
 tr.ui-expanded-row-content > td {
@@ -999,7 +1075,11 @@ tr.ui-expanded-row-content > td {
 tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-dialog-content .ui-panelgrid .ui-panelgrid-cell {
     border: 0;
-    padding: 8px 10px;
+    padding: 0 10px;
+}
+
+.workflow-diagram {
+    margin-left: var(--default-double-size);
 }
 
 /*----------------------------------------------------------------------
@@ -1092,6 +1172,42 @@ Popup dialogs
 
 .ui-dialog .ui-confirm-dialog-message {
     font-size: larger;
+}
+
+.ui-datatable .ui-column-resizer {
+    margin-left: 4px;
+    margin-right: 4px;
+    opacity: .5;
+    width: 1px;
+}
+
+.ui-datatable th:nth-last-child(2) .ui-column-resizer {
+    display: none;
+}
+
+.ui-datatable .ui-column-resizer:hover {
+    background-color: var(--medium-gray);
+}
+
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr,
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th,
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td,
+.ui-datatable.default-layout > div.ui-datatable-scrollable-body > table  > tbody > tr,
+.ui-datatable.default-layout > div.ui-datatable-scrollable-body > table  > thead > tr > th,
+.ui-datatable.default-layout > div.ui-datatable-scrollable-body > table  > tbody > tr > td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: default;
+}
+
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th.actionsColumn,
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td.actionsColumn {
+    width: 270px;
+}
+
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th.actionsColumn {
+    min-width: 70px;
 }
 
 #deleteConfirmDialog .ui-dialog-content {

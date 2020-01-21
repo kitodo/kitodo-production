@@ -608,8 +608,8 @@ section#content-section {
     height: 500px;
 }
 
-#desktopGrid th.actionsColumn span,
-#desktopGrid td.actionsColumn form {
+th.actionsColumn span,
+td.actionsColumn form {
     float: right;
 }
 
@@ -2024,6 +2024,14 @@ Workflow Editor
 }
 
 /*----------------------------------------------------------------------
+System page
+----------------------------------------------------------------------*/
+
+#systemTabView\:migrationForm\:aggregatedTasksTable > .ui-datatable-tablewrapper > table {
+    table-layout: auto;
+}
+
+/*----------------------------------------------------------------------
 Footer
 ----------------------------------------------------------------------*/
 
@@ -2099,25 +2107,23 @@ footer {
 
 .ui-datatable thead th.ui-state-default {
     background: var(--cloudy-gray);
+    position: relative;
 }
 
 .ui-datatable tbody tr:last-child td {
     border-bottom: none;
 }
 
-.ui-datatable tr th.actionsColumn,
-.ui-datatable tr td.actionsColumn {
-    width: 280px;
-}
-
 .ui-datatable tr td.actionsColumn > a,
 .ui-datatable tr td.actionsColumn > form > a,
-.ui-datatable tr td.actionsColumn > form > span {
+.ui-datatable tr td.actionsColumn > form > span,
+.ui-datatable tr td.actionsColumn > div.actionsBlock > a,
+.ui-datatable tr td.actionsColumn > div.actionsBlock > span {
     margin-right: 10px;
 }
 
-.ui-datatable tr td.actionsColumn > a:last-child,
-.ui-datatable tr td.actionsColumn > form > a:last-child {
+.ui-datatable tr td.actionsColumn > a:last-of-type,
+.ui-datatable tr td.actionsColumn > form > a:last-of-type {
     margin-right: 0;
 }
 
@@ -2160,12 +2166,6 @@ footer {
     height: 16px;
     border-radius: var(--default-border-radius);
 }
-
-tbody#projectsTable_data > tr.ui-widget-content > td {
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     color: var(--medium-gray);

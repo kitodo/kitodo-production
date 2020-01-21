@@ -19,11 +19,14 @@
     <p:dataTable id="processTable"
                  value="#{DesktopForm.processes}"
                  scrollable="true"
+                 styleClass="default-layout"
                  var="process">
         <p:column headerText="#{msgs.title}"
+                  sortBy="#{process.title}"
                   rendered="#{ProcessForm.showColumn('process.title')}"
                   styleClass="process-table-column">
-            <h:outputText value="#{process.title}"/>
+            <h:outputText title="#{process.title}"
+                          value="#{process.title}"/>
         </p:column>
         <p:column headerText="#{msgs.status}"
                   rendered="#{ProcessForm.showColumn('process.state')}"
@@ -33,7 +36,8 @@
         <p:column headerText="#{msgs.project}"
                   rendered="#{ProcessForm.showColumn('process.project')}"
                   styleClass="process-table-column">
-            <h:outputText value="#{process.project.title}"/>
+            <h:outputText title="#{process.project.title}"
+                          value="#{process.project.title}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">
             <h:form id="actionForm">

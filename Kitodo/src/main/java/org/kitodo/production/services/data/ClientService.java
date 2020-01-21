@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
@@ -102,5 +103,14 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
         List<Client> clients = getAll();
         clients.removeAll(user.getClients());
         return clients;
+    }
+
+    /**
+     * Create and return String containing the names of all given clients joined by a ", ".
+     * @param clients list of roles
+     * @return String containing client names
+     */
+    public static String getClientNames(List<Client> clients) {
+        return clients.stream().map(Client::getName).collect(Collectors.joining(", "));
     }
 }

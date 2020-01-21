@@ -17,10 +17,13 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="rulesetTable"
+                 styleClass="default-layout"
                  var="item"
                  value="#{RulesetForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -29,16 +32,18 @@
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"
                   rendered="#{ProjectForm.showColumn('ruleset.title')}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
                   sortBy="#{item.file.keyword}"
                   rendered="#{ProjectForm.showColumn('ruleset.filename')}">
-            <h:outputText value="#{item.file}"/>
+            <h:outputText value="#{item.file}"
+                          title="#{item.file}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.metadataSortByRuleset}" styleClass="checkboxColumn" style="width: initial"
+        <p:column headerText="#{msgs.metadataSortByRuleset}" styleClass="checkboxColumn" style="width: initial;"
                   sortBy="#{item.orderMetadataByRuleset}"
                   rendered="#{ProjectForm.showColumn('ruleset.sorting')}">
             <ui:fragment rendered="#{item.orderMetadataByRuleset}">
@@ -49,7 +54,9 @@
             </ui:fragment>
         </p:column>
 
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewRuleset" outcome="rulesetEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewRuleset() and not SecurityAccessController.hasAuthorityToEditRuleset()}">

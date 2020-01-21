@@ -18,22 +18,31 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="rolesTable"
+                 styleClass="default-layout"
                  value="#{RoleForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.role}"
+                  sortBy="#{item.title}"
                   rendered="#{UserForm.showColumn('role.role')}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.client}"
+                  sortBy="#{item.client.name}"
                   rendered="#{UserForm.showColumn('role.client')}">
-            <h:outputText value="#{item.client.name}"/>
+            <h:outputText value="#{item.client.name}"
+                          title="#{item.client.name}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewRole" outcome="roleEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewRole() and not SecurityAccessController.hasAuthorityToEditRole()}">

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Role;
@@ -151,5 +152,14 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
      */
     public List<Role> getAllRolesByClientId(int clientId) {
         return dao.getAllRolesByClientId(clientId);
+    }
+
+    /**
+     * Create and return String containing the titles of all given roles joined by a ", ".
+     * @param roles list of roles
+     * @return String containing role titles
+     */
+    public static String getRoleTitles(List<Role> roles) {
+        return roles.stream().map(Role::getTitle).collect(Collectors.joining(", "));
     }
 }
