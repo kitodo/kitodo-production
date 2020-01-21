@@ -618,14 +618,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                         && selectedStructure.isPresent()) {
                     // Logical structure element selected
                     IncludedStructuralElement structuralElement = selectedStructure.get();
+                    getSelectedMedia().clear();
                     if (!structuralElement.getViews().isEmpty()) {
                         ArrayList<View> views = new ArrayList<>(structuralElement.getViews());
                         if (Objects.nonNull(views.get(0))) {
-                            View firstView = views.get(0);
-                            updatePhysicalStructureTree(firstView);
-                            if (updateGallery) {
-                                updateGallery(firstView);
-                            }
+                            updatePhysicalStructureTree(views.get(0));
                         }
                     }
                 } else if (structureTreeNode.getDataObject() instanceof View) {
