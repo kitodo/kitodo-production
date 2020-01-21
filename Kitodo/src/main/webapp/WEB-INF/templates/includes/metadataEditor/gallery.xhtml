@@ -120,7 +120,10 @@
                                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                             rendered="#{media.showingInPreview}">
-                                                <f:param name="id" value="#{media.id}" />
+                                                <f:param name="id"
+                                                         value="#{media.id}" />
+                                                <f:param name="process"
+                                                         value="#{DataEditorForm.process.id}"/>
                                             </p:graphicImage>
                                             <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
                                                           rendered="#{media.assignedSeveralTimes}"
@@ -204,6 +207,8 @@
                                                                     rendered="#{media.showingInPreview}">
                                                         <f:param name="id"
                                                                  value="#{media.id}"/>
+                                                        <f:param name="process"
+                                                                 value="#{DataEditorForm.process.id}"/>
                                                     </p:graphicImage>
                                                     <h:panelGroup class="thumbnail-overlay">
                                                         #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
@@ -272,6 +277,8 @@
                                                         rendered="#{media.showingInPreview}">
                                             <f:param name="id"
                                                      value="#{media.id}"/>
+                                            <f:param name="process"
+                                                     value="#{DataEditorForm.process.id}"/>
                                         </p:graphicImage>
                                     <h:panelGroup styleClass="thumbnail-overlay">
                                         #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
@@ -307,7 +314,10 @@
                                                            a:data-order="#{media.order}">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                                               rendered="#{media.showingInPreview}">
-                                                    <f:param name="id" value="#{media.id}" />
+                                                    <f:param name="id"
+                                                             value="#{media.id}" />
+                                                    <f:param name="process"
+                                                             value="#{DataEditorForm.process.id}"/>
                                                 </p:graphicImage></h:outputText>
                                                 <h:panelGroup layout="block" styleClass="thumbnail-overlay">
                                                     #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
