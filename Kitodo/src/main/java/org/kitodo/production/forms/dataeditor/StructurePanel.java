@@ -1055,7 +1055,7 @@ public class StructurePanel implements Serializable {
             dataEditor.getWorkpiece().getMediaUnit().getChildren().addAll(physicalInsertionIndex, mediaUnitsToBeMoved);
         } else {
             dataEditor.getWorkpiece().getMediaUnit().getChildren().addAll(mediaUnitsToBeMoved);
-            if (physicalInsertionIndex == numberOfChildren) {
+            if (physicalInsertionIndex > numberOfChildren) {
                 Helper.setErrorMessage("Could not append media at correct position. Index exceeded list.");
             }
         }
@@ -1079,11 +1079,10 @@ public class StructurePanel implements Serializable {
     void changeLogicalOrderFields(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
         HashMap<Integer, List<IncludedStructuralElement>> logicalElementsByOrder = new HashMap<>();
         for (IncludedStructuralElement logicalElement : dataEditor.getWorkpiece().getAllIncludedStructuralElements()) {
-            Integer order = logicalElement.getOrder();
-            if (logicalElementsByOrder.containsKey(order))  {
-                logicalElementsByOrder.get(order).add(logicalElement);
+            if (logicalElementsByOrder.containsKey(logicalElement.getOrder()))  {
+                logicalElementsByOrder.get(logicalElement.getOrder()).add(logicalElement);
             } else {
-                logicalElementsByOrder.put(order, new LinkedList<>(Collections.singletonList(logicalElement)));
+                logicalElementsByOrder.put(logicalElement.getOrder(), new LinkedList<>(Collections.singletonList(logicalElement)));
             }
         }
 
@@ -1111,18 +1110,18 @@ public class StructurePanel implements Serializable {
                         updateOrder(entry.getValue(), ordersAffectedByMove.size() - i);
                     }
                 }
-                // check if elements exist with the same order like toElement (the toElememt itself might be affected as well)
-                if (entry.getKey() == toElement.getOrder()) {
-                    List<IncludedStructuralElement> beforeToElement = entry.getValue().subList(0, entry.getValue().indexOf(toElement) + 1);
-                    List<IncludedStructuralElement> afterToElement = entry.getValue().subList(entry.getValue().indexOf(toElement) + 1, entry.getValue().size());
-                    /* i=0 means we're in an edge case:
-                    toElement is the first order which is affected (no pages with smaller order affected) and its order will not change,
-                    nor will other elements with the same order. */
-                    if (i > 0) {
-                        updateOrder(beforeToElement, -i - 1);
-                    }
-                    updateOrder(afterToElement, ordersAffectedByMove.size() - i);
+            }
+            // check if elements exist with the same order like toElement (the toElememt itself might be affected as well)
+            if (entry.getKey() == toElement.getOrder()) {
+                List<IncludedStructuralElement> beforeToElement = entry.getValue().subList(0, entry.getValue().indexOf(toElement) + 1);
+                List<IncludedStructuralElement> afterToElement = entry.getValue().subList(entry.getValue().indexOf(toElement) + 1,
+                        entry.getValue().size());
+                /* toElement at index 0 means we're in an edge case: toElement is the first order which is affected (no pages with smaller
+                order affected) and its order will not change, nor will other elements with the same order before it. */
+                if (ordersAffectedByMove.indexOf(toElement.getOrder()) > 0) {
+                    updateOrder(beforeToElement, -ordersAffectedByMove.indexOf(entry.getKey()) - 1);
                 }
+                updateOrder(afterToElement, ordersAffectedByMove.size() - ordersAffectedByMove.indexOf(entry.getKey()));
             }
         }
     }
