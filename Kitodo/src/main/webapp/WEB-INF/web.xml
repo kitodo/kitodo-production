@@ -88,11 +88,6 @@
         <param-value>blueSky</param-value>
     </context-param>
 
-    <filter-mapping>
-        <filter-name>Proxy</filter-name>
-        <url-pattern>/gnd/*</url-pattern>
-    </filter-mapping>
-
     <!-- Faces Servlet -->
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
