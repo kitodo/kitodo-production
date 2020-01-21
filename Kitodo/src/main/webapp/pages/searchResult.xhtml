@@ -24,149 +24,123 @@
         </h3>
     </ui:define>
     <ui:define name="pageTabView">
-        <h:form id="searchResultForm">
-        <p:dataTable id="searchResultTable"
-                     var="process"
-                     value="#{SearchResultForm.filteredList}"
-                     paginator="true"
-                     rows="#{LoginForm.loggedUser.tableSize}"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
-                     currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
-                     paginatorPosition="bottom">
-            <p:column id="titleColumn"
-                      headerText="#{msgs.processTitle}"
-                      filterBy="#{process.title}"
-                      rendered="#{ProcessForm.showColumn('process.title')}">
-                <h:outputText value="#{process.title}"/>
-            </p:column>
-            <p:column id="progressColumn"
-                      styleClass="progressColumn"
-                      headerText="#{msgs.status}"
-                      rendered="#{ProcessForm.showColumn('process.state')}">
-                <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
-            </p:column>
-            <p:column headerText="#{msgs.project}"
-                      rendered="#{ProcessForm.showColumn('process.project')}">
-                <h:outputText value="#{process.project.title}"/>
-            </p:column>
-            <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                <h:link id="viewProcess" outcome="processEdit" title="#{msgs.view}"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
-                    <i class="fa fa-eye fa-lg"/>
-                    <f:param name="referer" value="processes"/>
-                    <f:param name="id" value="#{process.id}"/>
-                </h:link>
+        <p:tabView id="searchResultTabView"
+                   dynamic="true"
+                   activeIndex="#{ProcessForm.activeTabIndex}">
+        <p:tab title="#{msgs.processList}" id="processTab"
+               rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}">
+            <h:form id="searchResultForm">
+            <p:dataTable id="searchResultTable"
+                         styleClass="default-layout"
+                         var="process"
+                         value="#{SearchResultForm.filteredList}"
+                         paginator="true"
+                         rows="#{LoginForm.loggedUser.tableSize}"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
+                         paginatorPosition="bottom">
+                <p:column id="titleColumn"
+                          headerText="#{msgs.processTitle}"
+                          filterBy="#{process.title}"
+                          rendered="#{ProcessForm.showColumn('process.title')}">
+                    <h:outputText value="#{process.title}"/>
+                </p:column>
+                <p:column id="progressColumn"
+                          styleClass="progressColumn"
+                          headerText="#{msgs.status}"
+                          rendered="#{ProcessForm.showColumn('process.state')}">
+                    <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
+                </p:column>
+                <p:column headerText="#{msgs.project}"
+                          rendered="#{ProcessForm.showColumn('process.project')}">
+                    <h:outputText value="#{process.project.title}"/>
+                </p:column>
+                <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
+                    <h:panelGroup layout="block"
+                                  styleClass="actionsBlock">
+                        <h:link id="viewProcess" outcome="processEdit" title="#{msgs.view}"
+                                rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                            <i class="fa fa-eye fa-lg"/>
+                            <f:param name="referer" value="processes"/>
+                            <f:param name="id" value="#{process.id}"/>
+                        </h:link>
 
-                <h:link id="editProcess" outcome="processEdit" title="#{msgs.edit}"
-                        rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
-                    <i class="fa fa-pencil-square-o fa-lg"/>
-                    <f:param name="referer" value="processes"/>
-                    <f:param name="id" value="#{process.id}"/>
-                </h:link>
+                        <h:link id="editProcess" outcome="processEdit" title="#{msgs.edit}"
+                                rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                            <i class="fa fa-pencil-square-o fa-lg"/>
+                            <f:param name="referer" value="processes"/>
+                            <f:param name="id" value="#{process.id}"/>
+                        </h:link>
 
-                <!--@elvariable id="taskOptions" type="java.util.List"-->
-                <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(process.id)}"/>
-                <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
-                <p:commandLink id="openTaskSelectionDialogLink"
-                               title="#{msgs['dataEditor.selectMetadataTask']} (#{process.title})"
-                               oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
-                    <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
-                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
-                </p:commandLink>
-                <!-- else, open metadata editor directly -->
-                <h:link id="readXML"
-                        outcome="/pages/metadataEditor?faces-redirect=true"
-                        title="#{msgs.metadataEdit}"
-                        rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
-                    <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
-                    <f:param name="referrer" value="#{'searchResult'}"/>
-                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
-                </h:link>
+                        <!--@elvariable id="taskOptions" type="java.util.List"-->
+                        <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(process.id)}"/>
+                        <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
+                        <p:commandLink id="openTaskSelectionDialogLink"
+                                       title="#{msgs['dataEditor.selectMetadataTask']} (#{process.title})"
+                                       oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
+                                       rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
+                            <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
+                            <h:outputText><i class="fa fa-list-alt"/></h:outputText>
+                        </p:commandLink>
+                        <!-- else, open metadata editor directly -->
+                        <h:link id="readXML"
+                                outcome="/pages/metadataEditor?faces-redirect=true"
+                                title="#{msgs.metadataEdit}"
+                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                            <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
+                            <f:param name="referrer" value="#{'searchResult'}"/>
+                            <h:outputText><i class="fa fa-list-alt"/></h:outputText>
+                        </h:link>
 
-                <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
-                               rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
-                    <h:outputText><i class="fa fa-download"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                    <!-- TODO: add separate message in case it already exists and alert -->
-                </p:commandLink>
+                        <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
+                                       rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
+                            <h:outputText><i class="fa fa-download"/></h:outputText>
+                            <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                            <!-- TODO: add separate message in case it already exists and alert -->
+                        </p:commandLink>
 
-                <p:commandLink id="upload" action="#{ProcessForm.uploadFromHome}" title="#{msgs.deleteLinkHomeDirectory}"
-                               rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
-                    <h:outputText><i class="fa fa-upload"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
-                               icon="ui-icon-alert"/>
-                </p:commandLink>
-
-                <p:commandLink id="exportLogXml" action="#{ProcessForm.createXML}" title="#{msgs.createXML}">
-                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                </p:commandLink>
-
-                <p:commandLink id="downloadDocket" action="#{ProcessForm.downloadDocket}" title="#{msgs.docketPrint}"
-                               ajax="false" rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
-                    <h:outputText><i class="fa fa-print"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                </p:commandLink>
-
-                <h:commandLink action="#{ProcessForm.exportMets}" id="exportMets" title="#{msgs.exportMets}"
-                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                </h:commandLink>
-
-                <h:commandLink action="#{ProcessForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}"
-                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                    <h:outputText><i class="fa fa-file-pdf-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                </h:commandLink>
-
-                <h:commandLink action="#{ProcessForm.exportDMS}" id="exportDms" title="#{msgs.exportDMS}"
-                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                    <h:outputText><i class="fa fa-file-archive-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                </h:commandLink>
-
-                <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                               update="searchResultForm:searchResultTable">
-                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteProcess}"
-                               icon="ui-icon-alert"/>
-                </p:commandLink>
-            </p:column>
-        </p:dataTable>
-        </h:form>
-        <h:form id="configureFilters">
-            <h3 id="headerText" class="m-1em">
-                <h:outputText value="#{msgs.filter}"/>
-            </h3>
-            <div>
-                <p:outputLabel for="taskFilter" value="#{msgs.task}: " />
-                <p:selectOneMenu id="taskFilter" value="#{SearchResultForm.currentTaskFilter}">
-                    <f:selectItem value="#{null}" itemLabel="#{msgs.filterByTask}"/>
-                    <f:selectItems value="#{SearchResultForm.tasksForFiltering}" var="task" itemValue="#{task.title}" itemLabel="#{task.title}"/>
-                    <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
-                            update="searchResultForm"/>
-                </p:selectOneMenu>
-                <p:outputLabel for="taskStatusFilter" value="#{msgs.taskStatus}: " />
-                <p:selectOneMenu id="taskStatusFilter" value="#{SearchResultForm.currentTaskStatusFilter}">
-                    <f:selectItem value="#{null}" itemLabel="#{msgs.filterByTaskStatus}" />
-                    <f:selectItems value="#{SearchResultForm.taskStatusForFiltering}" var="status" itemValue="#{status.value}" itemLabel="#{HelperForm.getTranslated(status.title)}"/>
-                    <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
-                            update="searchResultForm"/>
-                </p:selectOneMenu>
-                <p:outputLabel for="projectfilter" value="#{msgs.project}: " />
-                <p:selectOneMenu id="projectfilter" value="#{SearchResultForm.currentProjectFilter}">
-                    <f:selectItem value="#{null}" itemLabel="#{msgs.filterByProject}" />
-                    <f:selectItems value="#{SearchResultForm.projectsForFiltering}" var="project" itemValue="#{project.id}" itemLabel="#{project.title}"/>
-                    <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
-                            update="searchResultForm"/>
-                </p:selectOneMenu>
-            </div>
-        </h:form>
+                        <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
+                                       rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
+                                       update="searchResultTabView:searchResultForm:searchResultTable">
+                            <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                            <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                            <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteProcess}"
+                                       icon="ui-icon-alert"/>
+                        </p:commandLink>
+                    </h:panelGroup>
+                </p:column>
+            </p:dataTable>
+            </h:form>
+            <h:form id="configureFilters">
+                <h3 id="headerText" class="m-1em">
+                    <h:outputText value="#{msgs.filter}"/>
+                </h3>
+                <div>
+                    <p:outputLabel for="taskFilter" value="#{msgs.task}: " />
+                    <p:selectOneMenu id="taskFilter" value="#{SearchResultForm.currentTaskFilter}">
+                        <f:selectItem value="#{null}" itemLabel="#{msgs.filterByTask}"/>
+                        <f:selectItems value="#{SearchResultForm.tasksForFiltering}" var="task" itemValue="#{task.title}" itemLabel="#{task.title}"/>
+                        <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
+                                update="searchResultTabView:searchResultForm"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel for="taskStatusFilter" value="#{msgs.taskStatus}: " />
+                    <p:selectOneMenu id="taskStatusFilter" value="#{SearchResultForm.currentTaskStatusFilter}">
+                        <f:selectItem value="#{null}" itemLabel="#{msgs.filterByTaskStatus}" />
+                        <f:selectItems value="#{SearchResultForm.taskStatusForFiltering}" var="status" itemValue="#{status.value}" itemLabel="#{HelperForm.getTranslated(status.title)}"/>
+                        <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
+                                update="searchResultTabView:searchResultForm"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel for="projectfilter" value="#{msgs.project}: " />
+                    <p:selectOneMenu id="projectfilter" value="#{SearchResultForm.currentProjectFilter}">
+                        <f:selectItem value="#{null}" itemLabel="#{msgs.filterByProject}" />
+                        <f:selectItems value="#{SearchResultForm.projectsForFiltering}" var="project" itemValue="#{project.id}" itemLabel="#{project.title}"/>
+                        <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
+                                update="searchResultTabView:searchResultForm"/>
+                    </p:selectOneMenu>
+                </div>
+            </h:form>
+        </p:tab>
+        </p:tabView>
     </ui:define>
 
     <ui:define name="breadcrumbs">
@@ -175,6 +149,7 @@
     </ui:define>
 
     <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/processes/deleteChildrenDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/selectCurrentTask.xhtml"/>
     </ui:define>
 
