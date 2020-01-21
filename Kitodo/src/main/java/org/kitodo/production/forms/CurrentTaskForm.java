@@ -409,9 +409,11 @@ public class CurrentTaskForm extends BaseForm {
         List<Folder> contentFolders = currentTask.getContentFolders();
         if (Objects.isNull(generatorSource)) {
             Helper.setErrorMessage("noSourceFolderConfiguredInProject");
+            return;
         }
         if(Objects.isNull(contentFolders)){
             Helper.setErrorMessage("noImageFolderConfiguredInProject");
+            return;
         }
         Integer numberOfFiles = 0;
         try {
