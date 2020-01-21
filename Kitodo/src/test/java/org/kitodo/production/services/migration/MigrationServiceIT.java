@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
@@ -197,8 +198,12 @@ public class MigrationServiceIT {
     @Test
     public void testAddToTemplate() throws DAOException, DataException {
         ProcessService processService = ServiceManager.getProcessService();
+        Project project = ServiceManager.getProjectService().getById(1);
         Process firstProcess = new Process();
         firstProcess.setTitle("firstMigrationProcess");
+        firstProcess.setProject(project);
+        project.getProcesses().add(firstProcess);
+        ServiceManager.getProjectService().save(project);
         processService.save(firstProcess);
         Process secondProcess = new Process();
         secondProcess.setTitle("secondMigrationProcess");
@@ -208,16 +213,18 @@ public class MigrationServiceIT {
         processes.add(firstProcess);
         processes.add(secondProcess);
 
-        Template template = ServiceManager.getTemplateService().getById(1);
-        Assert.assertEquals(2, template.getProcesses().size());
+        Template template = new Template();
+        template.setTitle("testTemplate");
+        ServiceManager.getTemplateService().save(template);
+        Assert.assertEquals(0, template.getProcesses().size());
         Assert.assertNull(firstProcess.getTemplate());
         Assert.assertNull(secondProcess.getTemplate());
 
         migrationService.addProcessesToTemplate(template, processes);
 
-        Assert.assertEquals(4, template.getProcesses().size());
-        Assert.assertEquals(1, (long) firstProcess.getTemplate().getId());
-        Assert.assertEquals(1, (long) secondProcess.getTemplate().getId());
+        Assert.assertEquals(2, template.getProcesses().size());
+        Assert.assertEquals(4, (long) firstProcess.getTemplate().getId());
+        Assert.assertEquals(4, (long) secondProcess.getTemplate().getId());
 
     }
 
