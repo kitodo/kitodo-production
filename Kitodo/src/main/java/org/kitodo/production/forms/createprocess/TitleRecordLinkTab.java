@@ -328,7 +328,7 @@ public class TitleRecordLinkTab {
     /**
      * Set possibleParentProcesses.
      *
-     * @param possibleParentProcesses as java.util.List<javax.faces.model.SelectItem>
+     * @param possibleParentProcesses as list
      */
     public void setPossibleParentProcesses(List<SelectItem> possibleParentProcesses) {
         this.possibleParentProcesses = possibleParentProcesses;

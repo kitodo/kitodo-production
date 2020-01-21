@@ -411,13 +411,14 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage("noSourceFolderConfiguredInProject");
             return;
         }
-        if(Objects.isNull(contentFolders)){
+        if (Objects.isNull(contentFolders)) {
             Helper.setErrorMessage("noImageFolderConfiguredInProject");
             return;
         }
         Integer numberOfFiles = 0;
         try {
-            String uri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(myProcess).toString() + myProcess.getProject().getGeneratorSource();
+            String uri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(myProcess).toString()
+                    + myProcess.getProject().getGeneratorSource();
             numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(new URI(uri));
             if (numberOfFiles > 0) {
                 Subfolder sourceFolder = new Subfolder(myProcess, generatorSource);
