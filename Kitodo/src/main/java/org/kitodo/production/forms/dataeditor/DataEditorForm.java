@@ -195,6 +195,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
             ruleset = openRuleset(process.getRuleset());
             openMetsFile();
+            if (!workpiece.getId().equals(process.getId().toString())) {
+                Helper.setErrorMessage("metadataConfusion", new Object[] {process.getId(), workpiece.getId() });
+                return referringView;
+            }
             selectedMedia = new LinkedList<>();
             init();
             openProcesses.put(process.getId(), user);
@@ -214,6 +218,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void openMetsFile() throws IOException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
+        if (Objects.isNull(workpiece.getId())) {
+            logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
+            workpiece.setId(process.getId().toString());
+        }
         ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 

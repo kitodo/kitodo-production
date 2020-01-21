@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -77,6 +78,9 @@ public class MigrationService {
         try {
             metadataFilePath = fileService.getMetadataFilePath(process, true, true);
             ServiceManager.getDataEditorService().readData(metadataFilePath);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+            workpiece.setId(process.getId().toString());
+            ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFilePath);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

@@ -113,7 +113,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             }
             MetsDocumentID metsDocumentID = metsHdr.getMetsDocumentID();
             if (Objects.nonNull(metsDocumentID)) {
-                workpiece.setId(metsDocumentID.getID());
+                workpiece.setId(metsDocumentID.getValue());
             }
         }
         FileSec fileSec = mets.getFileSec();
