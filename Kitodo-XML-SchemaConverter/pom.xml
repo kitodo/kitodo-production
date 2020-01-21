@@ -44,7 +44,8 @@
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>9.9.1-5</version>
+            <version>${saxon.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
