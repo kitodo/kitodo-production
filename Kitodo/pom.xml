@@ -416,25 +416,12 @@
 
         <!-- Libraries from Slub-Nexus repository -->
         <dependency>
-            <groupId>net.xeoh</groupId>
-            <artifactId>plugins-base</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.saxon</groupId>
-            <artifactId>saxon9</artifactId>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
             <version>${saxon.version}</version>
+            <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.saxon</groupId>
-            <artifactId>saxon9-dom</artifactId>
-            <version>${saxon.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.j2ep</groupId>
-            <artifactId>j2ep</artifactId>
-            <version>1.0</version>
-        </dependency>
+
         <dependency>
             <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
             <artifactId>classloader-leak-prevention-servlet3</artifactId>

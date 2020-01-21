@@ -400,22 +400,6 @@ public enum ParameterCore implements ParameterInterface {
      */
     VALIDATE_IDENTIFIER_REGEX(new Parameter<>("validateIdentifierRegex", "[\\w|-]")),
 
-    /*
-     * AUTOMATION
-     *
-     * Mass process generation
-     */
-
-    /**
-     * Boolean, defaults to {@code false}.
-     */
-    MASS_IMPORT_ALLOWED(new Parameter<>("massImportAllowed", false)),
-
-    /**
-     * Boolean, defaults to {@code true}.
-     */
-    MASS_IMPORT_UNIQUE_TITLE(new Parameter<>("MassImportUniqueTitle", true)),
-
     /**
      * Colours used to represent the issues in the calendar editor.
      */
