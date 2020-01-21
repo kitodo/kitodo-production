@@ -60,7 +60,7 @@
         <mysql.version>5.1.38</mysql.version>
         <poi.version>3.17</poi.version>
         <primefaces.version>7.0.2</primefaces.version>
-        <saxon.version>9.0.0.4</saxon.version>
+        <saxon.version>9.9.1-5</saxon.version>
         <log4j.version>2.12.1</log4j.version>
         <junit.version>5.5.2</junit.version>
         <elasticsearch.version>5.6.5</elasticsearch.version>
