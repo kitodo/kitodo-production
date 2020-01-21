@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -403,13 +405,30 @@ public class CurrentTaskForm extends BaseForm {
      *            message displayed to the user (key for resourcebundle)
      */
     private void generateImages(GenerationMode mode, String messageKey) {
+        Folder generatorSource = myProcess.getProject().getGeneratorSource();
+        List<Folder> contentFolders = currentTask.getContentFolders();
+        if (Objects.isNull(generatorSource)) {
+            Helper.setErrorMessage("noSourceFolderConfiguredInProject");
+            return;
+        }
+        if(Objects.isNull(contentFolders)){
+            Helper.setErrorMessage("noImageFolderConfiguredInProject");
+            return;
+        }
+        Integer numberOfFiles = 0;
         try {
-            Subfolder sourceFolder = new Subfolder(myProcess, myProcess.getProject().getGeneratorSource());
-            List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, currentTask.getContentFolders());
-            ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
-            TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
-            Helper.setMessage(messageKey);
-        } catch (RuntimeException e) {
+            String uri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(myProcess).toString() + myProcess.getProject().getGeneratorSource();
+            numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(new URI(uri));
+            if (numberOfFiles > 0) {
+                Subfolder sourceFolder = new Subfolder(myProcess, generatorSource);
+                List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, contentFolders);
+                ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
+                TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
+                Helper.setMessage(messageKey);
+            } else {
+                Helper.setErrorMessage("emptySourceFolder");
+            }
+        } catch (RuntimeException | URISyntaxException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
