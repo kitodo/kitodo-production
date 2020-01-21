@@ -130,16 +130,6 @@ public class Course extends ArrayList<Block> {
      * distinguish different blocks if needed and can be omitted if only one
      * block is used.
      */
-
-    /**
-     * Attribute {@code index="…"} used in the XML representation of a course of
-     * appearance.
-     *
-     * <p>
-     * The attribute {@code index="…"} is optional. It may be used to
-     * distinguish different blocks if needed and can be omitted if only one
-     * block is used.
-     */
     private static final String ATTRIBUTE_VARIANT = "index";
 
     /**
@@ -301,7 +291,8 @@ public class Course extends ArrayList<Block> {
         Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);
         String yearBegin = rootNode.getAttribute(ATTRIBUTE_YEAR_BEGIN);
         if (!yearBegin.isEmpty()) {
-            LocalDate dateTime = LocalDate.parse(yearBegin, DateTimeFormatter.ofPattern("--MM-dd").withLocale(DateTimeFormatter.ISO_DATE.getLocale()));
+            LocalDate dateTime = LocalDate.parse(yearBegin,
+                    DateTimeFormatter.ofPattern("--MM-dd").withLocale(DateTimeFormatter.ISO_DATE.getLocale()));
             yearStart = MonthDay.of(dateTime.getMonthValue(), dateTime.getDayOfMonth());
         }
         yearName = rootNode.getAttribute(ATTRIBUTE_YEAR_TERM);

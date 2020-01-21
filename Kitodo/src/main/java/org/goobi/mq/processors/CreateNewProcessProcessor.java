@@ -55,7 +55,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
     @Override
     protected void process(MapMessageObjectReader args) {
-      throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
 }
