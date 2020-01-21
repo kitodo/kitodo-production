@@ -37,6 +37,13 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
         this.settings = settings;
     }
 
+    /**
+     * Returns an independently mutable copy of this.
+     *
+     * @return an independently mutable copy
+     */
+    abstract ProcessSimpleMetadata getClone();
+
     protected Method getStructureFieldSetter(MetadataViewInterface field) throws NoSuchMetadataFieldException {
         String key = field.getId();
         for (Method method : IncludedStructuralElement.class.getDeclaredMethods()) {

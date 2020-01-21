@@ -12,15 +12,11 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Locale;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.api.MdSec;
-import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -30,26 +26,24 @@ import org.primefaces.model.TreeNode;
 
 public class ProcessDetailIT {
 
-    @Ignore
     @Test
     public void shouldCopyProcessDetail() throws Exception {
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
         ruleset.load(new File("src/test/resources/rulesets/ruleset_test.xml"));
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("Monograph", "edit",
             Locale.LanguageRange.parse("en"));
-        Collection<Metadata> metadata = new ArrayList<>();
+        IncludedStructuralElement division = new IncludedStructuralElement();
+        division.setType("Monograph");
         MetadataEntry titleDocMain = new MetadataEntry();
         titleDocMain.setDomain(MdSec.SOURCE_MD);
         titleDocMain.setKey("TitleDocMain");
         titleDocMain.setValue("Lorem Ipsum");
-        metadata.add(titleDocMain);
-        IncludedStructuralElement division = new IncludedStructuralElement();
-        division.setType("Monograph");
+        division.getMetadata().add(titleDocMain);
         ProcessFieldedMetadata processFieldedMetadata = new ProcessFieldedMetadata(division, divisionView);
         TreeNode treeNode = processFieldedMetadata.getTreeNode();
         ProcessDetail processDetail = (ProcessDetail) treeNode.getChildren().get(0).getData();
+        int beforeCopying = treeNode.getChildCount();
         processDetail.copy();
-        processFieldedMetadata.preserve();
-        Assert.assertEquals("Should have copied metadata", 2, processFieldedMetadata.getMetadata().size());
+        Assert.assertEquals("Should have copied metadata", beforeCopying + 1, treeNode.getChildCount());
     }
 }

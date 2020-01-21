@@ -60,6 +60,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     private Collection<String> additionallySelectedFields = new ArrayList<>();
 
+    private boolean copy;
+
     /**
      * The division this panel is related to, if it isn’t a sub-panel.
      */
@@ -143,6 +145,11 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         this.division = structure;
         this.metadata = metadata;
         this.metadataView = metadataView;
+    }
+
+    private ProcessFieldedMetadata(ProcessFieldedMetadata template) {
+        this(template.container, null, template.metadataView, new ArrayList<>(template.metadata));
+        copy = true;
     }
 
     /**
@@ -331,6 +338,43 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         createMetadataTable();
     }
 
+    /**
+     * Duplicates a process detail.
+     *
+     * @param processDetail
+     *            process detail to copy
+     */
+    public void copy(ProcessDetail processDetail) {
+        if (Objects.isNull(division)) {
+            container.copy(processDetail);
+        } else {
+            searchRecursiveAndCopy(treeNode, processDetail);
+        }
+    }
+
+    private static boolean searchRecursiveAndCopy(TreeNode treeNode, ProcessDetail processDetail) {
+        List<TreeNode> children = treeNode.getChildren();
+        for (int index = 0; index < children.size(); index++) {
+            TreeNode child = children.get(index);
+            Object childData = child.getData();
+            if (Objects.equals(childData, processDetail)) {
+                Object copyData = null;
+                if (childData instanceof ProcessSimpleMetadata) {
+                    copyData = ((ProcessSimpleMetadata) childData).getClone();
+                } else if (childData instanceof ProcessFieldedMetadata) {
+                    copyData = new ProcessFieldedMetadata((ProcessFieldedMetadata) childData);
+                }
+                TreeNode copy = new DefaultTreeNode(copyData);
+                copy.setParent(treeNode);
+                copy.setExpanded(child.isExpanded());
+                treeNode.getChildren().add(index + 1, copy);
+            } else if (searchRecursiveAndCopy(child, processDetail)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String getMetadataID() {
         return metadataView.getId();
@@ -442,11 +486,21 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
             throw invalidValueException;
         }
+        if (copy) {
+            MetadataGroup metadataGroup = new MetadataGroup();
+            Optional<Domain> optionalDomain = metadataView.getDomain();
+            if (optionalDomain.isPresent()) {
+                metadataGroup.setDomain(DOMAIN_TO_MDSEC.get(optionalDomain.get()));
+            }
+            metadataGroup.setGroup((ArrayList<Metadata>) metadata);
+            container.metadata.add(metadataGroup);
+            copy = false;
+        }
     }
 
     /**
      * Removes a process detail.
-     * 
+     *
      * @param toDelete
      *            process detail to delete
      */
@@ -463,7 +517,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
 
     /**
      * Overwrites the metadata of this process fielded metadata.
-     * 
+     *
      * @param metadata
      *            metadata to overwrite with
      */
