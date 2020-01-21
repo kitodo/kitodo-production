@@ -29,15 +29,16 @@
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode" value="#{not isEditMode and SecurityAccessController.hasAuthorityToViewProcess()}"/>
 
-
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <script>
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editProcess} (#{ProcessForm.process.title})" rendered="#{not empty ProcessForm.process.title}"/>
-            <h:outputText value="#{msgs.createNewProcess}" rendered="#{empty ProcessForm.process.title}"/>
+            <h:outputText value="#{msgs.editProcess} (#{ProcessForm.process.title}, #{msgs.id}: #{ProcessForm.process.id})"
+                          rendered="#{not empty ProcessForm.process.title}"/>
+            <h:outputText value="#{msgs.createNewProcess}"
+                          rendered="#{empty ProcessForm.process.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"

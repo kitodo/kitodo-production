@@ -409,6 +409,14 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     content: "\f15e";
 }
 
+.numeric .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-n::before {
+    content: "\f162";
+}
+
+.numeric .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-s::before {
+    content: "\f163";
+}
+
 .ui-treenode-icon.ui-icon {
     background-image: none;
     margin-right: 5px;

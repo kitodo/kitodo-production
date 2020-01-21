@@ -92,7 +92,7 @@ public class DesktopForm extends BaseForm {
     public List<ProcessDTO> getProcesses() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
-                processList =  ServiceManager.getProcessService().loadData(0, 10,SORT_TITLE, SortOrder.ASCENDING, null);
+                processList =  ServiceManager.getProcessService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
