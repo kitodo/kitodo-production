@@ -725,6 +725,7 @@ public class GalleryPanel {
 
     private void selectStructure(String stripeIndex) {
         IncludedStructuralElement includedStructuralElement = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
+        dataEditor.getSelectedMedia().clear();
         dataEditor.getStructurePanel().updateLogicalNodeSelection(includedStructuralElement);
     }
 
