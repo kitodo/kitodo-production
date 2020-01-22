@@ -171,7 +171,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         Collection<String> messages = new HashSet<>();
 
         Collection<String> structuresWithoutMedia = treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
-                .filter(structure -> structure.getViews().isEmpty())
+                .filter(structure -> structure.getViews().isEmpty() && structure.getChildren().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
         if (!structuresWithoutMedia.isEmpty()) {
