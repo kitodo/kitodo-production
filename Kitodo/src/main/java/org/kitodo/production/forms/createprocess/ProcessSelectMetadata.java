@@ -72,6 +72,17 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
         }
     }
 
+    private ProcessSelectMetadata(ProcessSelectMetadata template) {
+        super(template.container, template.settings);
+        this.items = template.items;
+        this.selectedItems = new ArrayList<>(template.selectedItems);
+    }
+
+    @Override
+    ProcessSelectMetadata getClone() {
+        return new ProcessSelectMetadata(this);
+    }
+
     /**
      * Whether the list is multi-select or not can be told from this.
      */

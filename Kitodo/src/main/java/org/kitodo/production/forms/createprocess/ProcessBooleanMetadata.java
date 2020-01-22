@@ -49,6 +49,16 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
         this.active = Objects.nonNull(data);
     }
 
+    private ProcessBooleanMetadata(ProcessBooleanMetadata template) {
+        super(template.container, template.settings);
+        this.active = template.active;
+    }
+
+    @Override
+    ProcessBooleanMetadata getClone() {
+        return new ProcessBooleanMetadata(this);
+    }
+
     @Override
     public String getMetadataID() {
         return settings.getId();

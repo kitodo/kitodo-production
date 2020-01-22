@@ -43,6 +43,17 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         }
     }
 
+    private ProcessTextMetadata(ProcessTextMetadata template) {
+        super(template.container, template.settings);
+        this.value = template.value;
+        this.date = Objects.isNull(template.date) ? null : new Date(template.date.getTime());
+    }
+
+    @Override
+    ProcessTextMetadata getClone() {
+        return new ProcessTextMetadata(this);
+    }
+
     @Override
     public String getMetadataID() {
         return settings.getId();
