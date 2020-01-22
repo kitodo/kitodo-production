@@ -21,16 +21,15 @@
                  scrollable="true"
                  styleClass="default-layout"
                  sortBy="#{process.id}"
+                 sortOrder="descending"
                  var="process">
         <p:column headerText="#{msgs.id}"
                   width="50"
-                  styleClass="numeric"
-                  sortBy="#{process.id}">
+                  styleClass="numeric">
             <h:outputText title="#{process.id}"
                           value="#{process.id}"/>
         </p:column>
         <p:column headerText="#{msgs.title}"
-                  sortBy="#{process.title}"
                   rendered="#{ProcessForm.showColumn('process.title')}"
                   styleClass="process-table-column">
             <h:outputText title="#{process.title}"
