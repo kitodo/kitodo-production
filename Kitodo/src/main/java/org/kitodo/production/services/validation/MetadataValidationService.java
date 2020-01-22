@@ -107,7 +107,7 @@ public class MetadataValidationService {
 
     /**
      * Loads the module for long-term archival validation.
-     * 
+     *
      * @return the loaded module
      */
     private MetadataValidationInterface getValidationModule() {
@@ -166,7 +166,7 @@ public class MetadataValidationService {
 
     /**
      * Validates a workpiece based on a rule set.
-     * 
+     *
      * @param workpiece
      *            METS file
      * @param ruleset
@@ -187,7 +187,7 @@ public class MetadataValidationService {
 
     /**
      * Verifies that the rules for the identifier are met.
-     * 
+     *
      * @param workpiece
      *            METS file
      * @return the validation result
@@ -204,11 +204,6 @@ public class MetadataValidationService {
             messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_MISSING));
             warning = true;
         } else {
-            if (!Pattern.matches(ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX),
-                workpieceId)) {
-                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Collections.singletonList(workpieceId)));
-                error = true;
-            }
             List<ProcessDTO> processDTOs = ServiceManager.getProcessService().findAll().parallelStream()
                     .filter(processDTO -> workpieceId.equals(String.valueOf(processDTO.getId())))
                     .collect(Collectors.toList());
@@ -216,6 +211,14 @@ public class MetadataValidationService {
                 messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_NOT_UNIQUE,
                     Arrays.asList(workpieceId, processDTOs.get(0).getTitle(), processDTOs.get(1).getTitle())));
                 error = true;
+            }
+            for (ProcessDTO processDTO : processDTOs) {
+                if (!Pattern.matches(ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX),
+                    processDTO.getTitle())) {
+                    messages.add(
+                        Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Collections.singletonList(workpieceId)));
+                    error = true;
+                }
             }
         }
 
@@ -226,7 +229,7 @@ public class MetadataValidationService {
 
     /**
      * Returns the metadata language for a user.
-     * 
+     *
      * @return the metadata language
      */
     private List<LanguageRange> getMetadataLanguage() {
@@ -250,7 +253,7 @@ public class MetadataValidationService {
 
     /**
      * Merges several individual validation results into one validation result.
-     * 
+     *
      * @param results
      *            individual validation results
      * @return merged validation result
