@@ -198,7 +198,6 @@ public class GalleryPanel {
      */
     public void onPageDrop(DragDropEvent event) {
         int toStripeIndex = getDropStripeIndex(event);
-        int toMediaIndex = getMediaIndex(event);
 
         if (toStripeIndex == -1 || !dragStripeIndexMatches(event)) {
             logger.error("Unsupported drag'n'drop event from {} to {}", event.getDragId(), event.getDropId());
@@ -216,6 +215,9 @@ public class GalleryPanel {
                 }
             }
         }
+
+        int toMediaIndex = getMediaIndex(event);
+
         dataEditor.getStructurePanel().changeLogicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
         dataEditor.getStructurePanel().reorderMediaUnits(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
@@ -679,27 +681,6 @@ public class GalleryPanel {
         return false;
     }
 
-    /**
-     * Update the media selection based on the page index, stripe index and pressed modifier keys passed as request parameter.
-     * This method should be called via remoteCommand.
-     */
-    public void select() {
-        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        String mediaUnitOrder = params.get("page");
-        String stripeIndex = params.get("stripe");
-        String selectionType = params.get("selectionType");
-
-        if (StringUtils.isNotBlank(mediaUnitOrder)) {
-            selectMedia(mediaUnitOrder, stripeIndex, selectionType);
-        } else if (StringUtils.isNotBlank(stripeIndex)) {
-            try {
-                selectStructure(stripeIndex);
-            } catch (NumberFormatException e) {
-                Helper.setErrorMessage("Could not select stripe: Stripe index \"" + stripeIndex + "\" could not be parsed.");
-            }
-        }
-    }
-
     private void selectMedia(String mediaUnitOrder, String stripeIndex, String selectionType) {
         MediaUnit selectedMediaUnit = null;
         for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnitsSorted()) {
@@ -730,6 +711,27 @@ public class GalleryPanel {
         IncludedStructuralElement includedStructuralElement = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
         dataEditor.getSelectedMedia().clear();
         dataEditor.getStructurePanel().updateLogicalNodeSelection(includedStructuralElement);
+    }
+
+    /**
+     * Update the media selection based on the page index, stripe index and pressed modifier keys passed as request parameter.
+     * This method should be called via remoteCommand.
+     */
+    public void select() {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String mediaUnitOrder = params.get("page");
+        String stripeIndex = params.get("stripe");
+        String selectionType = params.get("selectionType");
+
+        if (StringUtils.isNotBlank(mediaUnitOrder)) {
+            selectMedia(mediaUnitOrder, stripeIndex, selectionType);
+        } else if (StringUtils.isNotBlank(stripeIndex)) {
+            try {
+                selectStructure(stripeIndex);
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage("Could not select stripe: Stripe index \"" + stripeIndex + "\" could not be parsed.");
+            }
+        }
     }
 
     /**

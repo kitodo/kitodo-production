@@ -1018,7 +1018,8 @@ public class StructurePanel implements Serializable {
      * @param insertionIndex index at which the MediaUnits are added to the existing List of MediaUnits. The value -1 represents the end
      *                       of the list.
      */
-    void reorderMediaUnits(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved, int insertionIndex) {
+    void reorderMediaUnits(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved,
+                           int insertionIndex) {
         int physicalInsertionIndex;
         List<MediaUnit> mediaUnitsToBeMoved = elementsToBeMoved.stream()
                 .map(e -> e.getLeft().getMediaUnit())
@@ -1033,7 +1034,8 @@ public class StructurePanel implements Serializable {
             // no insertion position was specified or the element does not contain any pages yet
             physicalInsertionIndex = toElement.getOrder() - 1;
         } else {
-            // if 'insertionIndex' equals the size of the list, it means we want to append the moved pages _behind_ the media unit of the last view in the list of views of the 'toElement'
+            // if 'insertionIndex' equals the size of the list, it means we want to append the moved pages _behind_ the media unit of
+            // the last view in the list of views of the 'toElement'
             if (insertionIndex == toElement.getViews().size()) {
                 physicalInsertionIndex = toElement.getViews().getLast().getMediaUnit().getOrder();
             } else {
