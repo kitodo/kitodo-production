@@ -100,35 +100,43 @@ public class VariableReplacer {
 
         // replace paths and files
         try {
-            // TIFF writer scripts will have a path without an end slash
+
             String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process.getId(),
-                this.process.getTitle(), this.process.getProcessBaseUri()));
-            String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
-            String origPath = replaceSlashAndSeparator(processService.getImagesOriginDirectory(false, this.process));
-            String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
-            String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process, false, false));
-            String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
-            String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
-            String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
-            String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
-            String prefs = ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile();
-
+                    this.process.getTitle(), this.process.getProcessBaseUri()));
             inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
-            inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);
-            inString = replaceStringAccordingToOS(inString, "(imageurl)", imagePath);
-
             inString = replaceString(inString, "(tifpath)", tifPath);
+
+            String origPath = replaceSlashAndSeparator(processService.getImagesOriginDirectory(false, this.process));
+            inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);
             inString = replaceString(inString, "(origpath)", origPath);
+
+            String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
+            inString = replaceStringAccordingToOS(inString, "(imageurl)", imagePath);
             inString = replaceString(inString, "(imagepath)", imagePath);
+
+            String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
             inString = replaceString(inString, "(processpath)", processPath);
+
+            String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
             inString = replaceString(inString, "(importpath)", importPath);
+
+            String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
             inString = replaceString(inString, "(sourcepath)", sourcePath);
+
+            String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
             inString = replaceString(inString, "(ocrbasispath)", ocrBasisPath);
+
+            String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
             inString = replaceString(inString, "(ocrplaintextpath)", ocrPlaintextPath);
+
+            String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process, false, false));
+            inString = replaceString(inString, "(metaFile)", metaFile);
+
+            String prefs = ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile();
+            inString = replaceString(inString, "(prefs)", prefs);
+
             inString = replaceString(inString, "(processtitle)", this.process.getTitle());
             inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
-            inString = replaceString(inString, "(metaFile)", metaFile);
-            inString = replaceString(inString, "(prefs)", prefs);
 
             inString = replaceStringForTask(inString);
 

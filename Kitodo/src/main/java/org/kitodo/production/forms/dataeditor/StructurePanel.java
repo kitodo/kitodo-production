@@ -1015,10 +1015,11 @@ public class StructurePanel implements Serializable {
      * When structure is saved to METS this is represented by the order of DIV elements in the physical structMap.
      * @param toElement logical element where to which the MediaUnits are assigned
      * @param elementsToBeMoved List of MediaUnits which are moved
-     * @param insertionIndex index at which the MediaUnits are added to the existing List of MediaUnits. The value -1 represents the end
-     *                       of the list.
+     * @param insertionIndex index at which the MediaUnits are added to the existing List of MediaUnits.
+     *                       The value -1 represents the end of the list.
      */
-    void reorderMediaUnits(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved,
+    void reorderMediaUnits(IncludedStructuralElement toElement,
+                           List<Pair<View, IncludedStructuralElement>> elementsToBeMoved,
                            int insertionIndex) {
         int physicalInsertionIndex;
         List<MediaUnit> mediaUnitsToBeMoved = elementsToBeMoved.stream()
