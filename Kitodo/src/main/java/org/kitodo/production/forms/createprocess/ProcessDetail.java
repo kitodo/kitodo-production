@@ -23,7 +23,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.production.helper.Helper;
 
 public abstract class ProcessDetail implements Serializable {
     /**
@@ -59,13 +58,6 @@ public abstract class ProcessDetail implements Serializable {
     ProcessDetail(ProcessFieldedMetadata container, String label) {
         this.container = container;
         this.label = label;
-    }
-
-    /**
-     * This method is triggered when the user clicks the copy metadata button.
-     */
-    public void copy() {
-        Helper.setErrorMessage("notImplemented", (String) null);
     }
 
     /**

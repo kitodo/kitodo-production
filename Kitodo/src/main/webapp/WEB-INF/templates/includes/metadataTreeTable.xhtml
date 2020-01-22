@@ -126,21 +126,6 @@
                              action="#{item.delete}"
                              rendered="#{not empty buttonUpdate}"
             />
-
-            <!-- button to copy -->
-            <p:commandButton id="copyMetadata"
-                             update="#{buttonUpdate}"
-                             icon="fa fa-clipboard"
-                             immediate="true"
-                             tabindex="-1"
-                             title="#{msgs.metadataCopy}"
-                             styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                             disabled="#{readOnly}"
-                             onclick="$('#loadingScreen').show()"
-                             oncomplete="$('#loadingScreen').hide()"
-                             action="#{item.copy}"
-                             rendered="#{not empty buttonUpdate}"
-            />
         </p:column>
     </p:treeTable>
 </ui:composition>
