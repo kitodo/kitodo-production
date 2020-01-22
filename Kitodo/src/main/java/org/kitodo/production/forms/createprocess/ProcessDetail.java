@@ -11,18 +11,24 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.EnumMap;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jboss.weld.context.RequestContext;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.primefaces.PrimeFaces;
 
 public abstract class ProcessDetail implements Serializable {
     /**
@@ -63,15 +69,22 @@ public abstract class ProcessDetail implements Serializable {
     /**
      * This method is triggered when the user clicks the copy metadata button.
      */
-    public void copy() {
+    public void copy() throws IOException {
         container.copy(this);
+        refreshPage();
     }
 
     /**
      * This method is triggered when the user clicks the delete metadata button.
      */
-    public void delete() {
+    public void delete() throws IOException {
         container.remove(this);
+        refreshPage();
+    }
+
+    private void refreshPage() throws IOException {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
     }
 
     public abstract String getMetadataID();
