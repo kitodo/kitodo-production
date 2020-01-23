@@ -265,6 +265,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * Create the process and save the metadata.
      */
     public String createNewProcess() {
+        if (!canCreateProcess()) {
+            return this.stayOnCurrentPage;
+        }
         try {
             createProcessHierarchy();
             if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
@@ -288,12 +291,25 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @return path to reload current view
      */
     public String createNewProcessAndContinue() {
+        if (!canCreateProcess()) {
+            return this.stayOnCurrentPage;
+        }
         createNewProcess();
         return FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath()
                 + "?referrer=" + referringView
                 + "&templateId=" + template.getId()
                 + "&projectId=" + project.getId()
                 + "&faces-redirect=true";
+    }
+
+    private boolean canCreateProcess() {
+        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())
+                && (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
+                        || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty())) {
+            Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -348,19 +364,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
         if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
-            if (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
-                    || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
-                Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
-            } else {
-                MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
-                        titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
-                ProcessService.setParentRelations(titleRecordLinkTab.getTitleRecordProcess(),
-                        this.processes.get(0).getProcess());
-                String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
-                String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
-                        Collections.singletonList(titleRecordLinkTab.getTitleRecordProcess().getTitle()));
-                this.importTab.showGrowlMessage(summary, detail);
-            }
+            MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
+                titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
+            ProcessService.setParentRelations(titleRecordLinkTab.getTitleRecordProcess(),
+                processes.get(0).getProcess());
+            String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
+            String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
+                Collections.singletonList(titleRecordLinkTab.getTitleRecordProcess().getTitle()));
+            importTab.showGrowlMessage(summary, detail);
         } else {
             // add links between consecutive processes in list
             for (int i = 0; i < this.processes.size() - 1; i++) {
