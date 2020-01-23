@@ -13,6 +13,7 @@ package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
@@ -32,8 +33,9 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      * @param settings
      *            the ruleset settings for this field.
      */
-    protected ProcessSimpleMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings) {
-        super(container, settings.getLabel());
+    protected ProcessSimpleMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings,
+            String label) {
+        super(container, label);
         this.settings = settings;
     }
 
@@ -62,16 +64,16 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      * @return whether the field is editable
      */
     public boolean isEditable() {
-        return settings.isEditable();
+        return Objects.isNull(settings) || settings.isEditable();
     }
 
     @Override
     public boolean isUndefined() {
-        return settings.isUndefined();
+        return Objects.isNull(settings) || settings.isUndefined();
     }
 
     public boolean isRequired() {
-        return settings.getMinOccurs() > 0;
+        return Objects.nonNull(settings) && settings.getMinOccurs() > 0;
     }
 
 }
