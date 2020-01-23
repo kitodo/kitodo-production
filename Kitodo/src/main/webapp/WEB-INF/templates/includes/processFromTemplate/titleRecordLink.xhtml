@@ -83,8 +83,11 @@
                         <h:outputLabel for="insertionPositionRadioButton"
                                        value="#{msgs.insertHere}"
                                        rendered="#{node.possibleInsertionPosition}"/>
-                        <h:outputText value="#{node.label}"
-                                      rendered="#{not node.possibleInsertionPosition}"/>
+                        <h:outputText value="#{node.label}" id="treeNodeText"
+                                       rendered="#{not node.possibleInsertionPosition}"/>
+                        <p:tooltip id="treeNodeTooltip" for="treeNodeText" value="#{node.tooltip}"
+                                       position="right" showEffect="clip" hideEffect="explode"
+                                       rendered="#{not node.possibleInsertionPosition and not empty node.tooltip}"/>
                     </p:treeNode>
                 </p:tree>
             </h:panelGroup>
