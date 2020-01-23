@@ -132,7 +132,10 @@ public class TitleRecordLinkTab {
      * @throws IOException
      *             if the METS file cannot be read
      */
-    private void createInsertionPositionSelectionTree() throws DAOException, IOException {
+    public void createInsertionPositionSelectionTree() throws DAOException, IOException {
+        if (Objects.isNull(titleRecordProcess)) {
+            return;
+        }
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(titleRecordProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
 
