@@ -39,6 +39,25 @@
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                          currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                          paginatorPosition="bottom">
+                <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+
+                <p:column styleClass="hierarchy-info">
+                    <p:rowToggler rendered="#{process.getParentID() ne 0 or process.hasChildren()}"/>
+                    <h:outputText rendered="#{process.getParentID() ne 0 and not process.hasChildren()}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
+                    <h:outputText rendered="#{process.getParentID() eq 0 and process.hasChildren()}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
+                    <h:outputText rendered="#{process.getParentID() ne 0 and process.hasChildren()}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
+                </p:column>
+
+                <p:column id="idColumn"
+                          width="50"
+                          styleClass="numeric"
+                          resizable="false"
+                          headerText="#{msgs.id}"
+                          sortBy="#{process.properties.id}"
+                          filterBy="#{process.properties.id}">
+                    <h:outputText value="#{process.id}"
+                                  title="#{process.id}"/>
+                </p:column>
                 <p:column id="titleColumn"
                           headerText="#{msgs.processTitle}"
                           filterBy="#{process.title}"
@@ -99,9 +118,9 @@
                             <!-- TODO: add separate message in case it already exists and alert -->
                         </p:commandLink>
 
-                        <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
+                        <p:commandLink id="deleteProcess" action="#{SearchResultForm.delete(process)}" title="#{msgs.delete}"
                                        rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                                       update="searchResultTabView:searchResultForm:searchResultTable">
+                                       update="searchResultTabView:searchResultForm">
                             <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                             <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                             <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteProcess}"
@@ -109,6 +128,64 @@
                         </p:commandLink>
                     </h:panelGroup>
                 </p:column>
+                <p:rowExpansion styleClass="expansion-class">
+                    <div class="row-expansion-wrapper">
+                        <p:panelGrid id="processRowExpansionTable"
+                                     columns="2">
+                            <p:panelGrid id="processParentTable"
+                                         styleClass="expansion-column"
+                                         columns="2"
+                                         columnClasses="label, value">
+                                <h:outputText value="#{msgs.hierarchicalParents}:"/>
+                                <p:dataTable var="parent"
+                                             value="#{ProcessForm.getAllParentProcesses(process.id)}"
+                                             rendered="#{process.getParentID() ne 0}">
+                                    <p:column>
+                                        <h:outputText value="#{parent.getTitle()}"/>
+                                    </p:column>
+                                    <p:column styleClass="actionsColumn">
+                                        <h:link outcome="processEdit" title="#{msgs.view}"
+                                                rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                                            <i class="fa fa-eye fa-lg"/>
+                                            <f:param name="referer" value="processes"/>
+                                            <f:param name="id" value="#{parent.id}"/>
+                                        </h:link>
+                                        <!--@elvariable id="taskOptions" type="java.util.List"-->
+                                        <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(parent.id)}"/>
+                                        <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
+                                        <h:link outcome="processEdit" title="#{msgs.edit}"
+                                                rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                                            <i class="fa fa-pencil-square-o fa-lg"/>
+                                            <f:param name="referer" value="processes"/>
+                                            <f:param name="id" value="#{parent.id}"/>
+                                        </h:link>
+                                        <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(parent.id)}" />
+                                        <h:commandLink action="#{DataEditorForm.open(currentTaskId, 'processes')}"
+                                                       title="#{msgs.metadataEdit}"
+                                                       rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                                            <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
+                                            <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
+                                        </h:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                                <h:outputText value="#{msgs.none}" rendered="#{process.getParentID() eq 0}"/>
+                            </p:panelGrid>
+                            <p:panelGrid id="processChildrenTable"
+                                         styleClass="expansion-column"
+                                         columns="2"
+                                         columnClasses="label, value">
+                                <h:outputText value="#{msgs.hierarchicalChildren}:"/>
+                                <h:panelGroup>
+                                    <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())} " rendered="#{process.hasChildren()}"/>
+                                    <p:commandLink value="#{msgs.show}"
+                                                   action="#{ProcessForm.changeFilter('parentprocessid:'.concat(process.getId()))}"
+                                                   rendered="#{process.hasChildren()}"/>
+                                    <h:outputText value=" #{msgs.none}" rendered="#{not process.hasChildren()}"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </div>
+                </p:rowExpansion>
             </p:dataTable>
             </h:form>
             <h:form id="configureFilters">
