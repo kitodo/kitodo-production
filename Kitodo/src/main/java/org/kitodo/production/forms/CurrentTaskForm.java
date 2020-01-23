@@ -415,13 +415,13 @@ public class CurrentTaskForm extends BaseForm {
             return;
         }
         Subfolder sourceFolder = new Subfolder(myProcess, generatorSource);
-        if (!sourceFolder.listContents().isEmpty()) {
+        if (sourceFolder.listContents().isEmpty()) {
+            Helper.setErrorMessage("emptySourceFolder");
+        } else {
             List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, contentFolders);
             ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
             TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
             Helper.setMessage(messageKey);
-        } else {
-            Helper.setErrorMessage("emptySourceFolder");
         }
     }
 
