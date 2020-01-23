@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -37,14 +38,14 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     private Date date;
 
     ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry value) {
-        super(container, settings);
+        super(container, settings, Objects.isNull(settings) ? value.getKey() : settings.getLabel());
         if (Objects.nonNull(value)) {
             this.value = value.getValue();
         }
     }
 
     private ProcessTextMetadata(ProcessTextMetadata template) {
-        super(template.container, template.settings);
+        super(template.container, template.settings, template.label);
         this.value = template.value;
         this.date = Objects.isNull(template.date) ? null : new Date(template.date.getTime());
     }
@@ -61,7 +62,8 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
 
     @Override
     public String getInput() {
-        switch (settings.getInputType()) {
+        InputType inputType = Objects.isNull(settings) ? InputType.ONE_LINE_TEXT : settings.getInputType();
+        switch (inputType) {
             case DATE:
                 return "calendar";
             case INTEGER:

@@ -62,7 +62,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
 
     ProcessSelectMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings,
             Collection<MetadataEntry> selected) {
-        super(container, settings);
+        super(container, settings, settings.getLabel());
         this.items = toItems(settings.getSelectItems());
         for (MetadataEntry entry : selected) {
             selectedItems.add(entry.getValue());
@@ -73,7 +73,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     private ProcessSelectMetadata(ProcessSelectMetadata template) {
-        super(template.container, template.settings);
+        super(template.container, template.settings, template.label);
         this.items = template.items;
         this.selectedItems = new ArrayList<>(template.selectedItems);
     }
