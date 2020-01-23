@@ -16,19 +16,19 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.Objects;
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.jboss.weld.context.RequestContext;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.primefaces.PrimeFaces;
 
 public abstract class ProcessDetail implements Serializable {
     /**
@@ -83,8 +83,11 @@ public abstract class ProcessDetail implements Serializable {
     }
 
     private void refreshPage() throws IOException {
-        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+        FacesContext currentInstance = FacesContext.getCurrentInstance();
+        if (Objects.nonNull(currentInstance)) {
+            ExternalContext externalContext = currentInstance.getExternalContext();
+            externalContext.redirect(((HttpServletRequest) externalContext.getRequest()).getRequestURI());
+        }
     }
 
     public abstract String getMetadataID();
