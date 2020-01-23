@@ -213,10 +213,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public void save(Process process) throws DataException {
+        super.save(process);
         if (Objects.nonNull(process.getParent())) {
             save(process.getParent());
         }
-        super.save(process);
     }
 
     @Override
