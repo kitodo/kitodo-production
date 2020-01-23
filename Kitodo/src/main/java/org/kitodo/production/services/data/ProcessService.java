@@ -217,6 +217,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             save(process.getParent());
         }
         super.save(process);
+        if (Objects.nonNull(process.getParent())) {
+            save(process.getParent());
+        }
     }
 
     @Override
