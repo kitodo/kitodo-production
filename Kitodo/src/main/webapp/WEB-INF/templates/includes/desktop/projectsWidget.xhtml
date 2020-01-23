@@ -20,9 +20,9 @@
                  value="#{DesktopForm.projects}"
                  scrollable="true"
                  styleClass="default-layout"
+                 sortBy="#{project.title}"
                  var="project">
         <p:column headerText="#{msgs.title}"
-                  sortBy="#{project.title}"
                   rendered="#{ProjectForm.showColumn('project.title')}"
                   styleClass="project-table-column">
             <h:outputText title="#{project.title}"
