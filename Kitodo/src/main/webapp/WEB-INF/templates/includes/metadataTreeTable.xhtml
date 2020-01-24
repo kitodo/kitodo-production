@@ -81,9 +81,10 @@
                               value="#{item.selectedItems}"
                               readonly="#{not item.editable}"
                               styleClass="#{not entry.editable ? 'disabled' : ''}"
+                              showCheckbox="true"
                               rendered="#{item.input eq 'manyMenu'}">
                 <f:selectItems value="#{item.items}"/>
-                <p:ajax event="blur"/>
+                <p:ajax event="change"/>
             </p:selectManyMenu>
 
             <!-- oneMenu -->
@@ -92,7 +93,7 @@
                              readonly="#{not item.editable}"
                              rendered="#{item.input eq 'oneMenu'}">
                 <f:selectItems value="#{item.items}"/>
-                <p:ajax event="blur"/>
+                <p:ajax event="change"/>
             </p:selectOneMenu>
 
             <!-- oneRadio -->
