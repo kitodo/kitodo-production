@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
@@ -78,6 +79,8 @@ public class AddDocStrucTypeDialog {
     private Process selectedProcess;
     private List<Process> processes = Collections.emptyList();
     private boolean linkSubDialogVisible = false;
+    private static final String PREVIEW_MODE = "preview";
+    private static final String LIST_MODE = "list";
 
     /**
      * Backing bean for the add doc struc type dialog of the metadata editor.
@@ -115,13 +118,16 @@ public class AddDocStrucTypeDialog {
         } else {
             this.addSingleDocStruc();
         }
-        if (Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0) {
-            dataEditor.getGalleryPanel().setGalleryViewMode("preview");
+        if (!(StringUtils.isEmpty(selectFirstPageOnAddNodeSelectedItem)
+                || StringUtils.isEmpty(this.selectLastPageOnAddNodeSelectedItem))
+                || (Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0)) {
+            dataEditor.getGalleryPanel().setGalleryViewMode(PREVIEW_MODE);
         } else {
-            dataEditor.getGalleryPanel().setGalleryViewMode("list");
+            dataEditor.getGalleryPanel().setGalleryViewMode(LIST_MODE);
         }
         try {
             dataEditor.getStructurePanel().preserve();
+            dataEditor.refreshStructurePanel();
         } catch (Exception e) {
             Helper.setErrorMessage(e);
         }

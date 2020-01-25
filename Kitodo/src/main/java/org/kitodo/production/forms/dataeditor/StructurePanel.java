@@ -366,28 +366,38 @@ public class StructurePanel implements Serializable {
      */
     public void show(boolean keepSelection) {
         if (keepSelection) {
+            String logicalRowKey = null;
+            if (Objects.nonNull(selectedLogicalNode)) {
+                logicalRowKey = selectedLogicalNode.getRowKey();
+            }
+            String physicalRowKey = null;
+            if (Objects.nonNull(selectedPhysicalNode)) {
+                physicalRowKey = selectedPhysicalNode.getRowKey();
+            }
             TreeNode keepSelectedLogicalNode = selectedLogicalNode;
             TreeNode keepSelectedPhysicalNode = selectedPhysicalNode;
             show();
             selectedLogicalNode = keepSelectedLogicalNode;
             selectedPhysicalNode = keepSelectedPhysicalNode;
-            restoreSelection(selectedLogicalNode, this.logicalTree);
+            if (Objects.nonNull(logicalRowKey)) {
+                restoreSelection(logicalRowKey, this.logicalTree);
+            }
+            if (Objects.nonNull(physicalRowKey)) {
+                restoreSelection(physicalRowKey, this.physicalTree);
+            }
         } else {
             show();
         }
     }
 
-    private void restoreSelection(TreeNode node, TreeNode parentNode) {
+    private void restoreSelection(String rowKey, TreeNode parentNode) {
         for (TreeNode childNode : parentNode.getChildren()) {
-            if (Objects.nonNull(node)
-                    && Objects.nonNull(childNode)
-                    && Objects.nonNull(node.getData())
-                    && Objects.equals(node.getData(), childNode.getData())) {
+            if (Objects.nonNull(childNode) && rowKey.equals(childNode.getRowKey())) {
                 childNode.setSelected(true);
                 break;
             } else {
                 childNode.setSelected(false);
-                restoreSelection(node, childNode);
+                restoreSelection(rowKey, childNode);
             }
         }
     }
