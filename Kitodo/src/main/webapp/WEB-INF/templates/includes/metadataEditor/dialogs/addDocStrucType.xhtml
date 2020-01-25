@@ -91,25 +91,33 @@
                                 <p:outputLabel for="selectFirstPageOnAddNode"
                                                value="#{msgs.firstPage}:"/>
                                 <p:selectOneMenu id="selectFirstPageOnAddNode"
+                                                 title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
+                                                 disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
                                                  class="input"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem}"
                                                  filter="true"
                                                  filterMatchMode="startsWith">
                                     <f:selectItem itemLabel="#{msgs.firstPage}"
+                                                  noSelectionOption="true"
                                                   itemValue="" />
                                     <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
+                                    <p:ajax update="elementsToAddSpinner"/>
                                 </p:selectOneMenu>
 
-                                <p:outputLabel for="selectFirstPageOnAddNode"
+                                <p:outputLabel for="selectLastPageOnAddNode"
                                                 value="#{msgs.lastPage}:"/>
                                 <p:selectOneMenu id="selectLastPageOnAddNode"
+                                                 title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
+                                                 disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
                                                  class="input"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem}"
                                                  filter="true"
                                                  filterMatchMode="startsWith">
                                     <f:selectItem itemLabel="#{msgs.lastPage}"
+                                                  noSelectionOption="true"
                                                   itemValue="" />
                                     <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
+                                    <p:ajax update="elementsToAddSpinner"/>
                                 </p:selectOneMenu>
                             </p:row>
 
@@ -145,11 +153,15 @@
                                     <p:outputLabel value="#{msgs.count} #{msgs.docstructs}:"
                                                    for="elementsToAddSpinner"/>
                                     <p:spinner value="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue}"
+                                               title="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem ? msgs['dataEditor.addElement.createMultipleDocStrucWithoutPages'] : ''}"
+                                               disabled="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem}"
                                                id="elementsToAddSpinner"
                                                class="input"
                                                size="5"
                                                min="1">
-                                        <p:ajax update="addMetadata"/>
+                                        <p:ajax update="addMetadata
+                                                        selectFirstPageOnAddNode
+                                                        selectLastPageOnAddNode"/>
                                     </p:spinner>
                                 </p:column>
                             </p:row>
