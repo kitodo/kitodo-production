@@ -672,4 +672,20 @@ public class AddDocStrucTypeDialog {
         processNumber = "";
         processes = Collections.emptyList();
     }
+
+    /**
+     * Return the label of the currently selected structure.
+     *
+     * @return label of the currently selected structure
+     */
+    public String getCurrentStructureLabel() {
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+                    dataEditor.getSelectedStructure().get().getType(), dataEditor.getAcquisitionStage(),
+                    dataEditor.getPriorityList());
+            return divisionView.getLabel();
+        } else {
+            return " - ";
+        }
+    }
 }

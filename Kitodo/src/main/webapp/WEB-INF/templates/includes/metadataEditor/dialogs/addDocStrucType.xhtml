@@ -37,6 +37,13 @@
                           layout="block"
                           styleClass="dialogFieldWrapper">
 
+                <h:panelGroup id="parentElement"
+                              layout="block">
+                    <h:outputText value="Neue Strukturelemente werden hinzugefügt zu '#{DataEditorForm.addDocStrucTypeDialog.currentStructureLabel}'."/>
+                </h:panelGroup>
+
+                <br/>
+
                 <!-- option to link to existing process -->
                 <h:panelGrid>
                     <p:selectBooleanCheckbox itemLabel="#{msgs.link}"

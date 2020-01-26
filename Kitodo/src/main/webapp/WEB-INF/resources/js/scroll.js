@@ -158,8 +158,8 @@ function scrollToSelectedPreviewThumbnail() {
     var scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
         var selectedThumbnail = scrollableContent.find(".active");
-        if (selectedThumbnail.length === 1) {
-            var thumbnailHeight = selectedThumbnail.parent().parent().height();
+        if (selectedThumbnail.length) {
+            var thumbnailHeight = selectedThumbnail.first().parent().parent().height();
             var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
             if (selectedIndex >= 0) {
                 scrollableContent.animate({
