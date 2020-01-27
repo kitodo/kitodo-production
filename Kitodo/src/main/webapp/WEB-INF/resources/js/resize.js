@@ -44,6 +44,8 @@ $(document).ready(function() {
     $('#secondResizer').mousedown(function(e) {handleMouseDown(e)});
     $('#verticalResizer').mousedown(function(e) {handleMouseDown(e)});
     setSizes();
+    // hide second section (comments) by default
+    toggleSecondSection();
     $("#loadingScreen").hide();
 });
 
