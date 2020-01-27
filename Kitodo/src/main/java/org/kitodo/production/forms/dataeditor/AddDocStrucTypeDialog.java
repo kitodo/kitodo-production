@@ -19,7 +19,6 @@ import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -384,7 +383,7 @@ public class AddDocStrucTypeDialog {
             this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
                 dataEditor.getWorkpiece().getRootElement());
             prepareDocStructPositionSelectionItems(parents.isEmpty());
-            prepareSelectAddableMetadataTypesItems();
+            prepareSelectAddableMetadataTypesItems(true);
         } else {
             docStructPositionSelectionItems = Collections.emptyList();
             selectAddableMetadataTypesItems = Collections.emptyList();
@@ -472,12 +471,19 @@ public class AddDocStrucTypeDialog {
     /**
      *  Prepare the list of available Metadata that can be added to the currently selected structure element.
      */
-    public void prepareSelectAddableMetadataTypesItems() {
+    public void prepareSelectAddableMetadataTypesItems(boolean currentElement) {
         selectAddableMetadataTypesItems = new ArrayList<>();
         setSelectAddableMetadataTypesSelectedItem("");
-        Collection<MetadataViewInterface> addableMetadata = getStructuralElementView()
-                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
-        for (MetadataViewInterface keyView : addableMetadata) {
+        StructuralElementViewInterface structure;
+        if (currentElement) {
+            structure = getStructuralElementView();
+        } else {
+            structure = dataEditor.getRuleset()
+                    .getStructuralElementView(docStructAddTypeSelectionSelectedItem,
+                            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        }
+        for (MetadataViewInterface keyView : structure.getAddableMetadata(Collections.emptyMap(),
+                Collections.emptyList())) {
             selectAddableMetadataTypesItems.add(
                     new SelectItem(keyView.getId(), keyView.getLabel(),
                             keyView instanceof SimpleMetadataViewInterface

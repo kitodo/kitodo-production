@@ -86,6 +86,8 @@
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
                                                  style="width: 180px;">
                                     <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
+                                    <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(false)}"
+                                            update="dialogAddDocStrucTypeForm:addMetadata"/>
                                 </p:selectOneMenu>
                             </p:row>
                         </p:panelGrid>
