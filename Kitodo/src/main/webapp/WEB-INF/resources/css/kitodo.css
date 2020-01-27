@@ -1633,6 +1633,12 @@ Column content
     margin-right: var(--default-half-size);
 }
 
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio label,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-selectoneradio label {
+    display: inline-block;
+    overflow: hidden;
+}
+
 .correction {
     color: var(--focused-orange);
     font-weight: bold;

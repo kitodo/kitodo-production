@@ -100,7 +100,9 @@
                               value="#{item.selectedItem}"
                               readonly="#{not item.editable}"
                               styleClass="#{not entry.editable ? 'disabled' : ''}"
-                              rendered="#{item.input eq 'oneRadio'}">
+                              rendered="#{item.input eq 'oneRadio'}"
+                              layout="grid"
+                              columns="1">
                 <f:selectItems value="#{item.items}"/>
                 <p:ajax event="blur"/>
             </p:selectOneRadio>
