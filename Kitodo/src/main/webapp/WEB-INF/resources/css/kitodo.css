@@ -1243,6 +1243,10 @@ form#metadata div label,
     margin-left: 8px;
 }
 
+#metadataPanel .ui-inputfield.ui-selectmanymenu ~ .ui-button {
+    vertical-align: top;
+}
+
 .collapsibleWrapper {
     display: inline-block;
     height: 100%;
@@ -1873,6 +1877,10 @@ Column content
     border-color: var(--green);
 }
 
+.thumbnail.active.last-selection + .thumbnail-container img {
+    border-style: dashed;
+}
+
 .thumbnail-container {
     display: inline-block;
     height: 100%;
@@ -2135,7 +2143,7 @@ footer {
 }
 
 .ui-widget-content {
-    border: 0 none !important;
+    border: 0 none;
 }
 
 .ui-selectmanymenu.ui-widget-content, .ui-selectonelistbox.ui-widget-content {

@@ -174,11 +174,18 @@ function scrollToSelectedStructureThumbnail() {
     let scrollableContent = $("#imagePreviewForm\\:structuredPagesField");
     if (scrollableContent.length) {
         let selectedThumbnail = scrollableContent.find(".active");
-        if (selectedThumbnail.length === 1) {
-            let mediaPosition = selectedThumbnail.closest(".media-position");
+        if (selectedThumbnail.length) {
+            let mediaPosition = selectedThumbnail.first().closest(".media-position");
             scrollableContent.animate({
                 scrollTop: mediaPosition[0].offsetTop
             }, 180, null, null);
+        } else {
+            let selectedStripe = scrollableContent.find(".selected.stripe");
+            if (selectedStripe.length) {
+                scrollableContent.animate({
+                    scrollTop: selectedStripe[0].offsetTop
+                }, 180, null, null);
+            }
         }
     }
 }

@@ -245,7 +245,7 @@
                                   rendered="#{not DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
                         <p:commandButton id="addDocStruc"
                                          value="#{msgs.apply}"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc}"
+                                         action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(false)}"
                                          disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1}"
                                          styleClass="primary right"
                                          icon="fa fa-check fa-lg"
@@ -254,7 +254,7 @@
                                          oncomplete="updateMetadataEditorView(false);"/>
                         <p:commandButton id="addAndEditStruc"
                                          value="#{msgs.applyAndEdit}"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc}"
+                                         action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(true)}"
                                          disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1}"
                                          styleClass="secondary right"
                                          icon="fa fa-check fa-lg"

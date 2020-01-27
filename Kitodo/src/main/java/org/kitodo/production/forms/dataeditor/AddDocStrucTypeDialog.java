@@ -112,15 +112,15 @@ public class AddDocStrucTypeDialog {
     /**
      * Add structure element.
      */
-    public void addDocStruc() {
+    public void addDocStruc(boolean preview) {
         if (this.elementsToAddSpinnerValue > 1) {
             this.addMultiDocStruc();
         } else {
-            this.addSingleDocStruc();
+            this.addSingleDocStruc(preview);
         }
-        if (!(StringUtils.isEmpty(selectFirstPageOnAddNodeSelectedItem)
+        if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNodeSelectedItem)
                 || StringUtils.isEmpty(this.selectLastPageOnAddNodeSelectedItem))
-                || (Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0)) {
+                || (Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0))) {
             dataEditor.getGalleryPanel().setGalleryViewMode(PREVIEW_MODE);
         } else {
             dataEditor.getGalleryPanel().setGalleryViewMode(LIST_MODE);
@@ -151,14 +151,16 @@ public class AddDocStrucTypeDialog {
      * This method is invoked if the user clicks on the add single doc struc
      * submit btn command button.
      */
-    private void addSingleDocStruc() {
+    private void addSingleDocStruc(boolean selectViews) {
         if (dataEditor.getSelectedStructure().isPresent()) {
             IncludedStructuralElement newStructure = MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
                     docStructPositionSelectionSelectedItem, getViewsToAdd());
             dataEditor.getSelectedMedia().clear();
-            for (View view: getViewsToAdd()) {
-                dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getMediaUnit(), newStructure));
+            if (selectViews) {
+                for (View view : getViewsToAdd()) {
+                    dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getMediaUnit(), newStructure));
+                }
             }
             dataEditor.refreshStructurePanel();
             TreeNode selectedLogicalTreeNode = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
