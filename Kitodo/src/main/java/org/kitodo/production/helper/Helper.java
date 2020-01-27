@@ -59,8 +59,11 @@ public class Helper implements Observer, Serializable {
     @SuppressWarnings("rawtypes")
     public static String getRequestParameter(String parameter) {
         FacesContext context = FacesContext.getCurrentInstance();
-        Map requestParams = context.getExternalContext().getRequestParameterMap();
-        return (String) requestParams.get(parameter);
+        if (Objects.nonNull(context)) {
+            Map requestParams = context.getExternalContext().getRequestParameterMap();
+            return (String) requestParams.get(parameter);
+        }
+        return null;
     }
 
     /**

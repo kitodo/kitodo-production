@@ -14,7 +14,6 @@ package org.kitodo.production.services.validation;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +35,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
@@ -155,7 +154,7 @@ public class MetadataValidationService {
     public boolean validate(LegacyMetsModsDigitalDocumentHelper gdzfile, LegacyPrefsHelper prefs, Process process) {
         try {
             return !State.ERROR.equals(validate(gdzfile.getWorkpiece(), prefs.getRuleset()).getState());
-        } catch (DataException e) {
+        } catch (DAOException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
@@ -176,7 +175,7 @@ public class MetadataValidationService {
      *             if an error occurs while reading from the search engine
      */
     public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset)
-            throws DataException {
+            throws DAOException {
 
         Collection<ValidationResult> results = new ArrayList<>();
         results.add(checkTheIdentifier(workpiece));
@@ -194,7 +193,7 @@ public class MetadataValidationService {
      * @throws DataException
      *             if an error occurs while reading from the search engine
      */
-    private ValidationResult checkTheIdentifier(Workpiece workpiece) throws DataException {
+    private ValidationResult checkTheIdentifier(Workpiece workpiece) throws DAOException {
         boolean error = false;
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
@@ -204,21 +203,13 @@ public class MetadataValidationService {
             messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_MISSING));
             warning = true;
         } else {
-            List<ProcessDTO> processDTOs = ServiceManager.getProcessService().findAll().parallelStream()
-                    .filter(processDTO -> workpieceId.equals(String.valueOf(processDTO.getId())))
-                    .collect(Collectors.toList());
-            if (processDTOs.size() > 1) {
-                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_NOT_UNIQUE,
-                    Arrays.asList(workpieceId, processDTOs.get(0).getTitle(), processDTOs.get(1).getTitle())));
+            Process process = ServiceManager.getProcessService().getById(Integer.valueOf(workpieceId));
+            String parameterOrDefaultValue = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX);
+            String processTitle = process.getTitle();
+            boolean matches = Pattern.compile(parameterOrDefaultValue).matcher(processTitle).find();
+            if (!matches) {
+                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Collections.singletonList(workpieceId)));
                 error = true;
-            }
-            for (ProcessDTO processDTO : processDTOs) {
-                if (!Pattern.matches(ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX),
-                    processDTO.getTitle())) {
-                    messages.add(
-                        Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Collections.singletonList(workpieceId)));
-                    error = true;
-                }
             }
         }
 

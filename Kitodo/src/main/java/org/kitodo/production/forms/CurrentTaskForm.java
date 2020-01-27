@@ -264,7 +264,7 @@ public class CurrentTaskForm extends BaseForm {
     public String closeTaskByUser() {
         try {
             this.workflowControllerService.closeTaskByUser(this.currentTask);
-        } catch (DataException | IOException e) {
+        } catch (DataException | IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
