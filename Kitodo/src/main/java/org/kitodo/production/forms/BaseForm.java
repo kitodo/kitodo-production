@@ -56,6 +56,8 @@ public class BaseForm implements Serializable {
     public static final String ERROR_READING = "errorReading";
     protected static final String ERROR_RELOADING = "errorReloading";
     protected static final String ERROR_SAVING = "errorSaving";
+    protected static final String ERROR_CREATING = "errorCreating";
+    protected static final String EXPORT_FINISHED = "exportFinished";
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
     protected static final String DEFAULT_LINK = "desktop";

@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,9 @@ import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.primefaces.model.SortOrder;
 
 @Named("DesktopForm")
@@ -93,7 +96,7 @@ public class DesktopForm extends BaseForm {
     public List<ProcessDTO> getProcesses() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
-                processList =  ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
+                processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
@@ -117,6 +120,47 @@ public class DesktopForm extends BaseForm {
                 logger, e);
         }
         return projectList;
+    }
+
+    /**
+     * Delete given Process 'process'.
+     *
+     * @param processID ID of Process to delete
+     */
+    public void deleteProcess(int processID) {
+        try {
+            ProcessService.deleteProcess(processID);
+            emptyCache();
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
+        }
+    }
+
+    /**
+     * Export METS.
+     */
+    public void exportMets(int processId) {
+        try {
+            ProcessService.exportMets(processId);
+            Helper.setMessage(EXPORT_FINISHED);
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage("An error occurred while trying to export METS file for process "
+                    + processId, logger, e);
+        }
+    }
+
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     */
+    public void downloadToHome(int processId) {
+        try {
+            ProcessService.downloadToHome(new WebDav(), processId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
+        }
     }
 
     /**
