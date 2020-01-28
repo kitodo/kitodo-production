@@ -307,7 +307,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 }
                 return true;
             }
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return false;
         }

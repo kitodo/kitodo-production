@@ -18,6 +18,7 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -101,12 +102,15 @@ public class Subfolder {
      */
     private static Function<URI, String> createKeyMapperForPattern(final Pattern pattern) {
         return uri -> {
-            Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
-            if (!matcher.matches()) {
-                throw new IllegalStateException(
-                        "At this point may only arrive files where the pattern had already matched.");
+            if (Objects.nonNull(uri)) {
+                Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
+                if (!matcher.find()) {
+                    throw new IllegalStateException(
+                            "At this point may only arrive files where the pattern had already matched.");
+                }
+                return matcher.group(1);
             }
-            return matcher.group(1);
+            return null;
         };
     }
 

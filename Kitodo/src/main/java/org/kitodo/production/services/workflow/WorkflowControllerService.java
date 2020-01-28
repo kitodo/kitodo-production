@@ -179,7 +179,7 @@ public class WorkflowControllerService {
         return lastOpenTasks;
     }
 
-    private boolean validateMetadata(Task task) throws IOException, DataException {
+    private boolean validateMetadata(Task task) throws IOException, DAOException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(task.getProcess());
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
@@ -202,7 +202,7 @@ public class WorkflowControllerService {
      * @param task
      *            object
      */
-    public void closeTaskByUser(Task task) throws DataException, IOException {
+    public void closeTaskByUser(Task task) throws DataException, IOException, DAOException {
         // if the result of the task is to be verified first, then if necessary,
         // cancel the completion
         if (task.isTypeCloseVerify()) {
