@@ -42,7 +42,9 @@
                                    var="step"
                                    itemLabel="#{step.localizedLabel}"
                                    itemValue="#{step.title}"/>
-                    <p:ajax event="change" update="editForm:processFromTemplateTabView:metadataTable"/>
+                    <p:ajax event="change"
+                            listener="#{CreateProcessForm.titleRecordLinkTab.createInsertionPositionSelectionTree()}"
+                            update="editForm:processFromTemplateTabView:metadataTable,editForm:processFromTemplateTabView:insertionTree"/>
                 </p:selectOneMenu>
             </div>
 

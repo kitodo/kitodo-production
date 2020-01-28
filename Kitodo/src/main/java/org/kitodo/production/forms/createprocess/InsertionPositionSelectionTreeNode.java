@@ -22,6 +22,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
     private int itemIndex;
     private String label;
     private boolean possibleInsertionPosition;
+    private String tooltip;
 
     /**
      * Creates a new node for a radio button.
@@ -46,10 +47,11 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
      * @param label
      *            label for the included structural element
      */
-    InsertionPositionSelectionTreeNode(TreeNode parent, String label) {
+    InsertionPositionSelectionTreeNode(TreeNode parent, String label, String tooltip) {
         super(null, parent);
         this.label = label;
         this.possibleInsertionPosition = false;
+        this.tooltip = tooltip;
         super.setData(this);
         setExpanded(true);
     }
@@ -70,6 +72,15 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
      */
     public String getLabel() {
         return label;
+    }
+
+    /**
+     * Returns the tooltip for an existing included structural element.
+     *
+     * @return the tooltip
+     */
+    public String getTooltip() {
+        return tooltip;
     }
 
     /**

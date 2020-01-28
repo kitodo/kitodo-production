@@ -14,6 +14,7 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -132,7 +133,10 @@ public class TitleRecordLinkTab {
      * @throws IOException
      *             if the METS file cannot be read
      */
-    private void createInsertionPositionSelectionTree() throws DAOException, IOException {
+    public void createInsertionPositionSelectionTree() throws DAOException, IOException {
+        if (Objects.isNull(titleRecordProcess)) {
+            return;
+        }
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(titleRecordProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
 
@@ -179,6 +183,7 @@ public class TitleRecordLinkTab {
             RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException {
 
         String type;
+        String tooltip = "";
         if (Objects.isNull(currentIncludedStructuralElement.getLink())) {
             type = currentIncludedStructuralElement.getType();
         } else {
@@ -186,13 +191,14 @@ public class TitleRecordLinkTab {
             int linkedProcessUri = processService.processIdFromUri(currentIncludedStructuralElement.getLink().getUri());
             Process linkedProcess = processService.getById(linkedProcessUri);
             type = processService.getBaseType(linkedProcess);
+            tooltip = Helper.getTranslation("tooltip", Arrays.asList(Integer.toString(linkedProcessUri)));
         }
 
         StructuralElementViewInterface currentIncludedStructuralElementView = ruleset.getStructuralElementView(type,
             createProcessForm.getAcquisitionStage(), priorityList);
 
         TreeNode includedStructuralElementNode = new InsertionPositionSelectionTreeNode(parentNode,
-                currentIncludedStructuralElementView.getLabel());
+                currentIncludedStructuralElementView.getLabel(), tooltip);
 
         boolean linkingAllowedHere = Objects.isNull(currentIncludedStructuralElement.getLink())
                 && currentIncludedStructuralElementView.getAllowedSubstructuralElements()
