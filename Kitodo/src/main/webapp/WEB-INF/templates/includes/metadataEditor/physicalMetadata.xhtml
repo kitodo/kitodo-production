@@ -37,7 +37,7 @@
                                      style="vertical-align: top; margin-left: 10px;"
                                      disabled="#{readOnly}"
                                      title="#{msgs.neueMetadatenHinzufuegen}"
-                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems}"
+                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true)}"
                                      oncomplete="PF('addMetadataDialog').show();"
                                      update="addMetadataForm"/>
                 </p:row>

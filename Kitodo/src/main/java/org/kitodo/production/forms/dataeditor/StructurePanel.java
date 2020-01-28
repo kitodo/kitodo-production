@@ -39,6 +39,7 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.security.SecurityUserDetails;
@@ -289,7 +290,7 @@ public class StructurePanel implements Serializable {
         return physicalTree;
     }
 
-    void preserve() throws Exception {
+    void preserve() throws UnknownTreeNodeDataException {
         if (isSeparateMedia()) {
             this.preserveLogical();
             this.preservePhysical();
@@ -366,13 +367,39 @@ public class StructurePanel implements Serializable {
      */
     public void show(boolean keepSelection) {
         if (keepSelection) {
+            String logicalRowKey = null;
+            if (Objects.nonNull(selectedLogicalNode)) {
+                logicalRowKey = selectedLogicalNode.getRowKey();
+            }
+            String physicalRowKey = null;
+            if (Objects.nonNull(selectedPhysicalNode)) {
+                physicalRowKey = selectedPhysicalNode.getRowKey();
+            }
             TreeNode keepSelectedLogicalNode = selectedLogicalNode;
             TreeNode keepSelectedPhysicalNode = selectedPhysicalNode;
             show();
             selectedLogicalNode = keepSelectedLogicalNode;
             selectedPhysicalNode = keepSelectedPhysicalNode;
+            if (Objects.nonNull(logicalRowKey)) {
+                restoreSelection(logicalRowKey, this.logicalTree);
+            }
+            if (Objects.nonNull(physicalRowKey)) {
+                restoreSelection(physicalRowKey, this.physicalTree);
+            }
         } else {
             show();
+        }
+    }
+
+    private void restoreSelection(String rowKey, TreeNode parentNode) {
+        for (TreeNode childNode : parentNode.getChildren()) {
+            if (Objects.nonNull(childNode) && rowKey.equals(childNode.getRowKey())) {
+                childNode.setSelected(true);
+                break;
+            } else {
+                childNode.setSelected(false);
+                restoreSelection(rowKey, childNode);
+            }
         }
     }
 
@@ -1249,7 +1276,7 @@ public class StructurePanel implements Serializable {
         show();
     }
 
-    private void preserveLogicalAndPhysical() throws Exception {
+    private void preserveLogicalAndPhysical() throws UnknownTreeNodeDataException {
         if (!this.logicalTree.getChildren().isEmpty()) {
             order = 1;
             for (MediaUnit mediaUnit : dataEditor.getWorkpiece().getMediaUnit().getChildren()) {
@@ -1260,7 +1287,7 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private IncludedStructuralElement preserveLogicalAndPhysicalRecursive(TreeNode treeNode) throws Exception {
+    private IncludedStructuralElement preserveLogicalAndPhysicalRecursive(TreeNode treeNode) throws UnknownTreeNodeDataException {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
         if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof IncludedStructuralElement)) {
             return null;
@@ -1271,7 +1298,7 @@ public class StructurePanel implements Serializable {
         structure.getChildren().clear();
         for (TreeNode child : treeNode.getChildren()) {
             if (!(child.getData() instanceof StructureTreeNode)) {
-                throw new Exception("TreeNode contains unexpected data!");
+                throw new UnknownTreeNodeDataException(child.getData().getClass().getCanonicalName());
             }
             if (((StructureTreeNode) child.getData()).getDataObject() instanceof IncludedStructuralElement) {
                 IncludedStructuralElement possibleChildStructure = preserveLogicalAndPhysicalRecursive(child);

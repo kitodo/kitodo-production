@@ -19,17 +19,18 @@ import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
@@ -44,6 +45,7 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
@@ -74,10 +76,12 @@ public class AddDocStrucTypeDialog {
     private String selectLastPageOnAddNodeSelectedItem;
     private List<SelectItem> selectPageOnAddNodeItems;
     private List<View> preselectedViews;
-    private AddDocStrucTypeDialogMode subdialog = AddDocStrucTypeDialogMode.ADD_MULTIPLE_LOGICAL_ELEMENTS;
     private String processNumber = "";
     private Process selectedProcess;
-    private List<ProcessDTO> processes = Collections.emptyList();
+    private List<Process> processes = Collections.emptyList();
+    private boolean linkSubDialogVisible = false;
+    private static final String PREVIEW_MODE = "preview";
+    private static final String LIST_MODE = "list";
 
     /**
      * Backing bean for the add doc struc type dialog of the metadata editor.
@@ -89,10 +93,52 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
+     * Check and return if sub dialog is visible.
+     *
+     * @return sub dialog visibility
+     */
+    public boolean isLinkSubDialogVisible() {
+        return this.linkSubDialogVisible;
+    }
+
+    /**
+     * Set sub dialog visibility.
+     *
+     * @param visible whether sub dialog is visible or not
+     */
+    public void setLinkSubDialogVisible(boolean visible) {
+        this.linkSubDialogVisible = visible;
+    }
+
+    /**
+     * Add structure element.
+     */
+    public void addDocStruc(boolean preview) {
+        if (this.elementsToAddSpinnerValue > 1) {
+            this.addMultiDocStruc();
+        } else {
+            this.addSingleDocStruc(preview);
+        }
+        if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNodeSelectedItem)
+                || StringUtils.isEmpty(this.selectLastPageOnAddNodeSelectedItem))
+                || Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0)) {
+            dataEditor.getGalleryPanel().setGalleryViewMode(PREVIEW_MODE);
+        } else {
+            dataEditor.getGalleryPanel().setGalleryViewMode(LIST_MODE);
+        }
+        try {
+            dataEditor.getStructurePanel().preserve();
+            dataEditor.refreshStructurePanel();
+        } catch (UnknownTreeNodeDataException e) {
+            Helper.setErrorMessage(e.getMessage());
+        }
+    }
+
+    /**
      * This method is invoked if the user clicks on the add multi doc struc
      * submit btn command button.
      */
-    public void addMultiDocStruc() {
+    private void addMultiDocStruc() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                 dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
@@ -106,14 +152,16 @@ public class AddDocStrucTypeDialog {
      * This method is invoked if the user clicks on the add single doc struc
      * submit btn command button.
      */
-    public void addSingleDocStruc() {
+    private void addSingleDocStruc(boolean selectViews) {
         if (dataEditor.getSelectedStructure().isPresent()) {
             IncludedStructuralElement newStructure = MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
                     docStructPositionSelectionSelectedItem, getViewsToAdd());
             dataEditor.getSelectedMedia().clear();
-            for (View view: getViewsToAdd()) {
-                dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getMediaUnit(), newStructure));
+            if (selectViews) {
+                for (View view : getViewsToAdd()) {
+                    dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getMediaUnit(), newStructure));
+                }
             }
             dataEditor.refreshStructurePanel();
             TreeNode selectedLogicalTreeNode = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
@@ -122,6 +170,11 @@ public class AddDocStrucTypeDialog {
                 this.dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalTreeNode);
                 this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
             }
+            List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
+                    .sorted(Comparator.comparingInt(p -> p.getLeft().getOrder()))
+                    .collect(Collectors.toList());
+            Collections.reverse(selectedMedia);
+            this.dataEditor.setSelectedMedia(selectedMedia);
         }
     }
 
@@ -314,27 +367,6 @@ public class AddDocStrucTypeDialog {
         return selectPageOnAddNodeItems;
     }
 
-    /**
-     * Returns the number of the subdialog to be displayed. This dialog has
-     * several sub-dialogs for switching. Strictly speaking, there are three (1
-     * to 3).
-     *
-     * @return subdialog by number
-     */
-    public int getSubdialog() {
-        return Arrays.binarySearch(AddDocStrucTypeDialogMode.values(), subdialog) + 1;
-    }
-
-    /**
-     * Sets the subdialog selected by the user.
-     *
-     * @param subdialog
-     *            subdialog, from 1 to 3
-     */
-    public void setSubdialog(int subdialog) {
-        this.subdialog = AddDocStrucTypeDialogMode.values()[subdialog - 1];
-    }
-
     private List<View> getViewsToAdd() {
         if (Objects.nonNull(preselectedViews) && preselectedViews.size() > 0) {
             return preselectedViews;
@@ -358,7 +390,7 @@ public class AddDocStrucTypeDialog {
             this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
                 dataEditor.getWorkpiece().getRootElement());
             prepareDocStructPositionSelectionItems(parents.isEmpty());
-            prepareSelectAddableMetadataTypesItems();
+            prepareSelectAddableMetadataTypesItems(true);
         } else {
             docStructPositionSelectionItems = Collections.emptyList();
             selectAddableMetadataTypesItems = Collections.emptyList();
@@ -444,14 +476,25 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     *  Prepare the list of available Metadata that can be added to the currently selected structure element.
+     * Prepare the list of available Metadata that can be added to the currently selected structure element.
+     *
+     * @param currentElement flag controlling whether to return a list of metadata for the currently selected logical
+     *                       structure element (currentElement = true) or for a new element to be added to the structure
+     *                       (currentElement = false)
      */
-    public void prepareSelectAddableMetadataTypesItems() {
+    public void prepareSelectAddableMetadataTypesItems(boolean currentElement) {
         selectAddableMetadataTypesItems = new ArrayList<>();
         setSelectAddableMetadataTypesSelectedItem("");
-        Collection<MetadataViewInterface> addableMetadata = getStructuralElementView()
-                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
-        for (MetadataViewInterface keyView : addableMetadata) {
+        StructuralElementViewInterface structure;
+        if (currentElement) {
+            structure = getStructuralElementView();
+        } else {
+            structure = dataEditor.getRuleset()
+                    .getStructuralElementView(docStructAddTypeSelectionSelectedItem,
+                            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        }
+        for (MetadataViewInterface keyView : structure.getAddableMetadata(Collections.emptyMap(),
+                Collections.emptyList())) {
             selectAddableMetadataTypesItems.add(
                     new SelectItem(keyView.getId(), keyView.getLabel(),
                             keyView instanceof SimpleMetadataViewInterface
@@ -500,20 +543,28 @@ public class AddDocStrucTypeDialog {
     public void preparePreselectedViews() {
         preselectedViews = new ArrayList<>();
         List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = dataEditor.getSelectedMedia();
-        for (Pair pair : selectedMedia) {
-            for (View view : ((IncludedStructuralElement) pair.getValue()).getViews()) {
+        for (Pair<MediaUnit, IncludedStructuralElement> pair : selectedMedia) {
+            for (View view : pair.getValue().getViews()) {
                 if (Objects.equals(view.getMediaUnit(), pair.getKey())) {
                     preselectedViews.add(view);
                 }
             }
         }
+        preselectedViews.sort(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()));
     }
 
     /**
-     * Clear the List of preselected Views.
+     * Reset values.
      */
-    public void clearPreselectedViews() {
+    public void resetValues() {
         preselectedViews = Collections.emptyList();
+        processNumber = "";
+        processes = Collections.emptyList();
+        linkSubDialogVisible = false;
+        inputMetaDataValue = "";
+        elementsToAddSpinnerValue = 1;
+        selectFirstPageOnAddNodeSelectedItem = null;
+        selectLastPageOnAddNodeSelectedItem = null;
     }
 
     /**
@@ -552,10 +603,15 @@ public class AddDocStrucTypeDialog {
         try {
             Set<String> allowedSubstructuralElements = getStructuralElementView().getAllowedSubstructuralElements()
                     .keySet();
-            processes = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
-                dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements);
-            if (processes.isEmpty()) {
+            List<Integer> ids = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
+                dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements)
+                    .stream().map(ProcessDTO::getId).collect(Collectors.toList());
+            if (ids.isEmpty()) {
                 alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.noHits"));
+            }
+            processes = new LinkedList<>();
+            for (int processId : ids) {
+                processes.add(ServiceManager.getProcessService().getById(processId));
             }
         } catch (DataException | IOException | DAOException e) {
             logger.catching(e);
@@ -598,7 +654,7 @@ public class AddDocStrucTypeDialog {
      *
      * @return the list of processes
      */
-    public List<ProcessDTO> getProcesses() {
+    public List<Process> getProcesses() {
         return processes;
     }
 
@@ -635,5 +691,21 @@ public class AddDocStrucTypeDialog {
         }
         processNumber = "";
         processes = Collections.emptyList();
+    }
+
+    /**
+     * Return the label of the currently selected structure.
+     *
+     * @return label of the currently selected structure
+     */
+    public String getCurrentStructureLabel() {
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+                    dataEditor.getSelectedStructure().get().getType(), dataEditor.getAcquisitionStage(),
+                    dataEditor.getPriorityList());
+            return divisionView.getLabel();
+        } else {
+            return " - ";
+        }
     }
 }

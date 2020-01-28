@@ -609,6 +609,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .ui-inputfield.ui-selectonelistbox,
 .ui-inputfield.ui-selectmanymenu {
+    display: inline-block;
     height: auto;
     padding-top: .5em;
     padding-bottom: .5em;
@@ -1138,7 +1139,12 @@ Popup dialogs
     padding: 0;
 }
 
-.ui-dialog .ui-panelgrid-cell div {
+.ui-dialog-content .search-process-title {
+    margin-top: var(--default-double-size);
+}
+
+.ui-dialog .ui-panelgrid-cell div,
+.ui-dialog .ui-panelgrid-cell > input {
     margin-bottom: var(--default-full-size);
 }
 
@@ -1205,6 +1211,10 @@ Popup dialogs
 
 .ui-dialog .ui-confirm-dialog-message {
     font-size: larger;
+}
+
+.ui-dialog .input {
+    margin-right: var(--default-full-size);
 }
 
 .ui-datatable .ui-column-resizer {

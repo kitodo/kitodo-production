@@ -337,7 +337,8 @@
                     </h:panelGroup>
                 </h:panelGroup>
             </ui:fragment>
-            <p:button style="display:none" id="contextMenuHiddenTrigger"/>
+            <p:button id="contextMenuHiddenTrigger"
+                      style="display:none;"/>
             <p:contextMenu id="mediaContextMenu"
                            widgetVar="mediaContextMenu"
                            for="contextMenuHiddenTrigger">
@@ -347,7 +348,7 @@
                             disabled="#{readOnly}"
                             action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
                             oncomplete="PF('dialogAddDocStrucType').show()"
-                            update="dialogAddDocStrucTypeForm">
+                            update="dialogAddDocStrucTypeDialog">
                     <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
                     <f:actionListener binding="#{DataEditorForm.structurePanel.setSelectedLogicalNode(DataEditorForm.structurePanel.logicalTree.children.get(0))}"/>
                 </p:menuitem>
@@ -360,9 +361,9 @@
                             styleClass="plain"
                             disabled="#{readOnly}"
                             action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
-                            actionListener="#{DataEditorForm.addDocStrucTypeDialog.clearPreselectedViews}"
+                            actionListener="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
                             oncomplete="PF('dialogAddDocStrucType').show()"
-                            update="dialogAddDocStrucTypeForm"/>
+                            update="dialogAddDocStrucTypeDialog"/>
                 <p:menuitem value="#{msgs.removeElement}"
                             icon="fa fa-trash fa-sm"
                             styleClass="plain"

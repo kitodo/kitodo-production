@@ -8,6 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+// jshint unused:false
 
 var SEPARATOR_WIDTH = 3;
 var COLLAPSED_COL_WIDTH = 42;
@@ -380,6 +381,36 @@ function toggleSecondSection() {
         firstSection.height(firstSection.height() - secondSectionHeight);
         firstSectionToggler.prop('disabled', false);
     }
+}
+
+function expandFirstColumn() {
+    if ($('#firstColumnWrapper .columnExpandButton').length && firstColumn.hasClass('collapsed')) {
+        toggleFirstColumn();
+    }
+}
+
+function expandSecondColumn() {
+    if (firstSectionToggler.length && secondColumn.hasClass('collapsed')) {
+        toggleSecondColumn();
+    }
+}
+
+function expandThirdColumn() {
+    if ($('#thirdColumnWrapper .columnExpandButton').length && thirdColumn.hasClass('collapsed')) {
+        toggleThirdColumn();
+    }
+}
+
+function updateMetadataEditorView(showMetadataColumn) {
+    PF('dialogAddDocStrucType').hide();
+    expandFirstColumn();
+    if (showMetadataColumn) {
+        expandSecondColumn();
+    }
+    expandThirdColumn();
+    scrollToSelectedThumbnail();
+    initializeImage();
+    scrollToSelectedTreeNode();
 }
 
 function resizeMap() {

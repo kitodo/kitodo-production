@@ -157,9 +157,9 @@ function initializeStructureTreeScrolling() {
 function scrollToSelectedPreviewThumbnail() {
     var scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
-        var selectedThumbnail = scrollableContent.find(".active");
-        if (selectedThumbnail.length === 1) {
-            var thumbnailHeight = selectedThumbnail.parent().parent().height();
+        var selectedThumbnail = scrollableContent.find(".active.last-selection");
+        if (selectedThumbnail.length) {
+            var thumbnailHeight = selectedThumbnail.first().parent().parent().height();
             var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
             if (selectedIndex >= 0) {
                 scrollableContent.animate({
@@ -173,12 +173,19 @@ function scrollToSelectedPreviewThumbnail() {
 function scrollToSelectedStructureThumbnail() {
     let scrollableContent = $("#imagePreviewForm\\:structuredPagesField");
     if (scrollableContent.length) {
-        let selectedThumbnail = scrollableContent.find(".active");
-        if (selectedThumbnail.length === 1) {
-            let mediaPosition = selectedThumbnail.closest(".media-position");
+        let selectedThumbnail = scrollableContent.find(".active.last-selection");
+        if (selectedThumbnail.length) {
+            let mediaPosition = selectedThumbnail.first().closest(".media-position");
             scrollableContent.animate({
                 scrollTop: mediaPosition[0].offsetTop
             }, 180, null, null);
+        } else {
+            let selectedStripe = scrollableContent.find(".selected.stripe");
+            if (selectedStripe.length) {
+                scrollableContent.animate({
+                    scrollTop: selectedStripe[0].offsetTop
+                }, 180, null, null);
+            }
         }
     }
 }

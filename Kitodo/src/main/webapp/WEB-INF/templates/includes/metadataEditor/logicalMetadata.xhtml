@@ -36,7 +36,7 @@
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      style="vertical-align: top; margin-left: 10px;"
                                      disabled="#{readOnly}"
-                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems}"
+                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true)}"
                                      title="#{msgs.neueMetadatenHinzufuegen}"
                                      update="addMetadataForm"
                                      oncomplete="PF('addMetadataDialog').show();"/>

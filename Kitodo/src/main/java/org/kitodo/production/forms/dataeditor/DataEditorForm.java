@@ -563,7 +563,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     void refreshStructurePanel() {
-        structurePanel.show();
+        structurePanel.show(true);
         galleryPanel.updateStripes();
     }
 
@@ -592,6 +592,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     List<Pair<MediaUnit, IncludedStructuralElement>> getSelectedMedia() {
         return selectedMedia;
+    }
+
+    void setSelectedMedia(List<Pair<MediaUnit, IncludedStructuralElement>> media) {
+        this.selectedMedia = media;
     }
 
     /**

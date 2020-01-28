@@ -147,7 +147,7 @@ public class MetadataEditor {
             InsertionPosition position, String metadataKey, String metadataValue) {
 
         Paginator metadataValues = new Paginator(metadataValue);
-        for (int i = 1; i < number; i++) {
+        for (int i = 0; i < number; i++) {
             IncludedStructuralElement newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
             if (Objects.isNull(newStructure)) {
                 continue;
