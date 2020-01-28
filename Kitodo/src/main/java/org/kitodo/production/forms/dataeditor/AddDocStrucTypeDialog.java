@@ -531,8 +531,12 @@ public class AddDocStrucTypeDialog {
 
         for (TreeNode metadataNode : metadataTreeNodes) {
             if (metadataNode.getData() instanceof ProcessDetail) {
-                for (Metadata metadata : ((ProcessDetail) metadataNode.getData()).getMetadata()) {
-                    existingMetadataRows.put(metadata, metadata.getKey());
+                try {
+                    for (Metadata metadata : ((ProcessDetail) metadataNode.getData()).getMetadata()) {
+                        existingMetadataRows.put(metadata, metadata.getKey());
+                    }
+                } catch (NullPointerException e) {
+                    logger.error(e);
                 }
             }
         }
