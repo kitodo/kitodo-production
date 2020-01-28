@@ -19,11 +19,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataformat.mets.KitodoUUID;
 
 public class MediaUnit implements Parent<MediaUnit> {
     /**
@@ -177,7 +177,7 @@ public class MediaUnit implements Parent<MediaUnit> {
      */
     public String getDivId() {
         if (Objects.isNull(metsDivReferrerId)) {
-            metsDivReferrerId = UUID.randomUUID().toString();
+            metsDivReferrerId = KitodoUUID.randomUUID();
         }
         return metsDivReferrerId;
     }

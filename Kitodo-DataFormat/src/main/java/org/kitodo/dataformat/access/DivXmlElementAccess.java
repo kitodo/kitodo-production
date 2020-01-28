@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +35,7 @@ import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -70,7 +70,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      */
     public DivXmlElementAccess() {
         super();
-        metsReferrerId = UUID.randomUUID().toString();
+        metsReferrerId = KitodoUUID.randomUUID();
     }
 
     /**
@@ -80,7 +80,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         super(includedStructuralElement);
         metsReferrerId = includedStructuralElement instanceof DivXmlElementAccess
                 ? ((DivXmlElementAccess) includedStructuralElement).metsReferrerId
-                : UUID.randomUUID().toString();
+                : KitodoUUID.randomUUID();
     }
 
     /**
@@ -246,7 +246,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
             String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
-            dmdSec.setID(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)).toString());
+            dmdSec.setID(KitodoUUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)));
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
         }
@@ -348,7 +348,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         } else {
             MdSecType mdSec = optionalMdSec.get();
             String name = metsReferrerId + ':' + mdSecType.toString();
-            mdSec.setID(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)).toString());
+            mdSec.setID(KitodoUUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)));
             mdSecTypeGetter.apply(amdSec).add(mdSec);
             div.getADMID().add(mdSec);
             return true;
