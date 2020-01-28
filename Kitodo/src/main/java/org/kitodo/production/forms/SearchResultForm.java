@@ -22,7 +22,6 @@ import java.util.Objects;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -160,18 +159,19 @@ public class SearchResultForm extends BaseForm {
 
     /**
      * delete process.
-     * @param processDTO to delete
+     * 
+     * @param processDTO
+     *            to delete
      */
-    public void delete(ProcessDTO processDTO){
-       try {
-           ProcessForm processForm = new ProcessForm();
-           processForm.setProcess(ServiceManager.getProcessService().getById(processDTO.getId()));
-           processForm.delete();
-       }
-        catch (DAOException e) {
+    public void delete(ProcessDTO processDTO) {
+        try {
+            ProcessForm processForm = new ProcessForm();
+            processForm.setProcess(ServiceManager.getProcessService().getById(processDTO.getId()));
+            processForm.delete();
+            filteredList.remove(processDTO);
+        } catch (DAOException e) {
             Helper.setErrorMessage("errorOnSearch", searchQuery);
         }
-       filteredList.remove(processDTO);
     }
 
     /**
