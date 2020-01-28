@@ -30,7 +30,7 @@ public class SearchResultPage extends Page<SearchResultPage> {
 
 
     @SuppressWarnings("unused")
-    @FindBy(id = SEARCH_RESULT_TAB_VIEW + SEARCH_RESULT_FORM + ":" + SEARCH_RESULT_TABLE + "_data")
+    @FindBy(id = SEARCH_RESULT_TAB_VIEW + ":" + SEARCH_RESULT_FORM + ":" + SEARCH_RESULT_TABLE + "_data")
     private WebElement searchResultTable;
 
     @SuppressWarnings("unused")
