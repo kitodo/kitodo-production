@@ -617,6 +617,10 @@ td.actionsColumn form {
     margin-right: 0;
 }
 
+#desktopGrid #processTable td.actionsColumn form > a:last-of-type {
+    margin-right: 10px;
+}
+
 .task-table-column,
 .process-table-column {
     width: 25% !important;
