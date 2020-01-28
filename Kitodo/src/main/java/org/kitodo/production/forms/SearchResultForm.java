@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,19 +23,24 @@ import java.util.Objects;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 
 @Named("SearchResultForm")
 @SessionScoped
 public class SearchResultForm extends BaseForm {
+    private static final Logger logger = LogManager.getLogger(SearchResultForm.class);
 
     private String searchQuery;
     private List<ProcessDTO> filteredList = new ArrayList<>();
@@ -158,19 +164,44 @@ public class SearchResultForm extends BaseForm {
     }
 
     /**
-     * delete process.
-     * 
-     * @param processDTO
-     *            to delete
+     * Delete given Process 'process'.
+     *
+     * @param processDTO Process to delete
      */
-    public void delete(ProcessDTO processDTO) {
+    public void deleteProcess(ProcessDTO processDTO) {
         try {
-            ProcessForm processForm = new ProcessForm();
-            processForm.setProcess(ServiceManager.getProcessService().getById(processDTO.getId()));
-            processForm.delete();
+            ProcessService.deleteProcess(processDTO.getId());
             filteredList.remove(processDTO);
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
+        }
+    }
+
+
+    /**
+     * Export METS.
+     */
+    public void exportMets(int processId) {
+        try {
+            ProcessService.exportMets(processId);
+            Helper.setMessage(EXPORT_FINISHED);
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage("An error occurred while trying to export METS file for process "
+                    + processId, logger, e);
+        }
+    }
+
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     */
+    public void downloadToHome(int processId) {
+        try {
+            ProcessService.downloadToHome(new WebDav(), processId);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorOnSearch", searchQuery);
+            Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
         }
     }
 
