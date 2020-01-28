@@ -196,14 +196,16 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Delete Process.
-     * @param processDTO process to delete.
+     * 
+     * @param processDTO
+     *            process to delete.
      */
     public void delete(ProcessDTO processDTO) {
         try {
             this.process = ServiceManager.getProcessService().getById(processDTO.getId());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+                e);
         }
         delete();
     }

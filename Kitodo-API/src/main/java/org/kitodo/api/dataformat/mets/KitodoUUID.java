@@ -20,13 +20,16 @@ import java.util.UUID;
  * sequence of letters A-Z.
  */
 public class KitodoUUID {
+
+    private static final String UUID_PREFIX = "uuid-";
+
     /**
      * Returns a UUID code that represents a hash of the given bytes.
      *
      * @return a hash code
      */
     public static String nameUUIDFromBytes(byte[] bytes) {
-        return bigIntegerToLetters(uuidToBigInteger(UUID.nameUUIDFromBytes(bytes)));
+        return UUID_PREFIX.concat(UUID.nameUUIDFromBytes(bytes).toString());
     }
 
     /**
@@ -35,43 +38,6 @@ public class KitodoUUID {
      * @return a random code
      */
     public static String randomUUID() {
-        return bigIntegerToLetters(uuidToBigInteger(UUID.randomUUID()));
-    }
-
-    /**
-     * Converts a hypen-spaced UUID to a {@code BigInteger}.
-     *
-     * @param uuid
-     *            UUID to convert
-     * @return big integer with the value of the UUID
-     */
-    private static BigInteger uuidToBigInteger(UUID uuid) {
-        String glyphs = uuid.toString();
-        StringBuilder buffer = new StringBuilder(32);
-        buffer.append(glyphs, 0, 8);
-        buffer.append(glyphs, 9, 13);
-        buffer.append(glyphs, 14, 18);
-        buffer.append(glyphs, 19, 23);
-        buffer.append(glyphs, 24, 36);
-        return new BigInteger(buffer.toString(), 16);
-    }
-
-    /**
-     * Converts a big integer to a sequence of letters A-Z.
-     *
-     * @param toConvert
-     *            big intereg to convert
-     * @return letters for the integer value
-     */
-    private static String bigIntegerToLetters(BigInteger toConvert) {
-        String sequence = toConvert.toString(26);
-        StringBuilder buffer = new StringBuilder(sequence.length());
-        final int length = sequence.length();
-        for (int offset = 0; offset < length;) {
-            int codePoint = sequence.codePointAt(offset);
-            buffer.appendCodePoint(codePoint < 77 ? codePoint + 17 : codePoint - 22);
-            offset += Character.charCount(codePoint);
-        }
-        return buffer.toString();
+        return UUID_PREFIX.concat(UUID.randomUUID().toString());
     }
 }
