@@ -180,7 +180,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.folders = new ArrayList<>();
         this.useDmsImport = true;
         this.dmsImportRootPath = "";
-        this.dmsImportCreateProcessFolder = false;
+        this.dmsImportCreateProcessFolder = true;
         this.fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
         this.fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
     }

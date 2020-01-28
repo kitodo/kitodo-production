@@ -14,6 +14,7 @@ package org.kitodo.export;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
@@ -204,7 +205,7 @@ public class ExportDms extends ExportMets {
         if (exportWithImages) {
             try {
                 directoryDownload(process, destination);
-            } catch (IOException | InterruptedException | RuntimeException e) {
+            } catch (IOException | InterruptedException | RuntimeException | URISyntaxException e) {
                 if (Objects.nonNull(exportDmsTask)) {
                     exportDmsTask.setException(e);
                 } else {
@@ -219,9 +220,9 @@ public class ExportDms extends ExportMets {
          * folder or into the user's home, then start the import thread
          */
         if (process.getProject().isUseDmsImport()) {
-            asyncExportWithImport(process, gdzfile, userHome);
+            asyncExportWithImport(process, gdzfile, destination);
         } else {
-            exportWithoutImport(process, gdzfile, userHome);
+            exportWithoutImport(process, gdzfile, destination);
         }
         return true;
     }
@@ -441,14 +442,14 @@ public class ExportDms extends ExportMets {
      *             task
      *
      */
-    private void directoryDownload(Process process, URI destination) throws IOException, InterruptedException {
+    private void directoryDownload(Process process, URI destination) throws IOException, InterruptedException, URISyntaxException {
         Collection<Subfolder> processDirs = process.getProject().getFolders().parallelStream()
                 .filter(Folder::isCopyFolder).map(folder -> new Subfolder(process, folder))
                 .collect(Collectors.toList());
         VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
 
         for (Subfolder processDir : processDirs) {
-            URI dstDir = destination.resolve(variableReplacer.replace(processDir.getFolder().getRelativePath()));
+            URI dstDir = new URI(destination.toString() + "/" + variableReplacer.replace(processDir.getFolder().getRelativePath()));
             fileService.createDirectories(dstDir);
 
             Collection<URI> srcs = processDir.listContents().values();
