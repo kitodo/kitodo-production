@@ -102,7 +102,7 @@ public class Subfolder {
      */
     private static Function<URI, String> createKeyMapperForPattern(final Pattern pattern) {
         return uri -> {
-            if(Objects.nonNull(uri)) {
+            if (Objects.nonNull(uri)) {
                 Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
                 if (!matcher.find()) {
                     throw new IllegalStateException(
