@@ -157,7 +157,7 @@ function initializeStructureTreeScrolling() {
 function scrollToSelectedPreviewThumbnail() {
     var scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
-        var selectedThumbnail = scrollableContent.find(".active");
+        var selectedThumbnail = scrollableContent.find(".active.last-selection");
         if (selectedThumbnail.length) {
             var thumbnailHeight = selectedThumbnail.first().parent().parent().height();
             var selectedIndex = scrollableContent.find(".thumbnail").index(selectedThumbnail);
@@ -173,7 +173,7 @@ function scrollToSelectedPreviewThumbnail() {
 function scrollToSelectedStructureThumbnail() {
     let scrollableContent = $("#imagePreviewForm\\:structuredPagesField");
     if (scrollableContent.length) {
-        let selectedThumbnail = scrollableContent.find(".active");
+        let selectedThumbnail = scrollableContent.find(".active.last-selection");
         if (selectedThumbnail.length) {
             let mediaPosition = selectedThumbnail.first().closest(".media-position");
             scrollableContent.animate({

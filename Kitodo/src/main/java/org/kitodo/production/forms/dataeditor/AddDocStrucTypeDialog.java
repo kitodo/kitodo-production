@@ -20,6 +20,7 @@ import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -168,6 +169,11 @@ public class AddDocStrucTypeDialog {
                 this.dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalTreeNode);
                 this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
             }
+            List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
+                    .sorted(Comparator.comparingInt(p -> p.getLeft().getOrder()))
+                    .collect(Collectors.toList());
+            Collections.reverse(selectedMedia);
+            this.dataEditor.setSelectedMedia(selectedMedia);
         }
     }
 
@@ -539,6 +545,8 @@ public class AddDocStrucTypeDialog {
                 }
             }
         }
+        preselectedViews = preselectedViews.stream().sorted(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()))
+                .collect(Collectors.toList());
     }
 
     /**

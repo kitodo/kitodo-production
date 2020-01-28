@@ -594,6 +594,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return selectedMedia;
     }
 
+    void setSelectedMedia(List<Pair<MediaUnit, IncludedStructuralElement>> media) {
+        this.selectedMedia = media;
+    }
+
     /**
      * Check if the passed MediaUnit is selected.
      * @param mediaUnit MediaUnit object to check for selection
