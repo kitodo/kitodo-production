@@ -87,7 +87,7 @@
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
-                <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
+                <p:commandLink id="deleteProcess" action="#{ProcessForm.delete(process)}" title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                update="processTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
