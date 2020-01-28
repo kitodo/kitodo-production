@@ -45,6 +45,7 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
@@ -120,7 +121,7 @@ public class AddDocStrucTypeDialog {
         }
         if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNodeSelectedItem)
                 || StringUtils.isEmpty(this.selectLastPageOnAddNodeSelectedItem))
-                || (Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0))) {
+                || Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0)) {
             dataEditor.getGalleryPanel().setGalleryViewMode(PREVIEW_MODE);
         } else {
             dataEditor.getGalleryPanel().setGalleryViewMode(LIST_MODE);
@@ -128,8 +129,8 @@ public class AddDocStrucTypeDialog {
         try {
             dataEditor.getStructurePanel().preserve();
             dataEditor.refreshStructurePanel();
-        } catch (Exception e) {
-            Helper.setErrorMessage(e);
+        } catch (UnknownTreeNodeDataException e) {
+            Helper.setErrorMessage(e.getMessage());
         }
     }
 
@@ -475,7 +476,11 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     *  Prepare the list of available Metadata that can be added to the currently selected structure element.
+     * Prepare the list of available Metadata that can be added to the currently selected structure element.
+     *
+     * @param currentElement flag controlling whether to return a list of metadata for the currently selected logical
+     *                       structure element (currentElement = true) or for a new element to be added to the structure
+     *                       (currentElement = false)
      */
     public void prepareSelectAddableMetadataTypesItems(boolean currentElement) {
         selectAddableMetadataTypesItems = new ArrayList<>();
@@ -545,8 +550,7 @@ public class AddDocStrucTypeDialog {
                 }
             }
         }
-        preselectedViews = preselectedViews.stream().sorted(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()))
-                .collect(Collectors.toList());
+        preselectedViews.sort(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()));
     }
 
     /**

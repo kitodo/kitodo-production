@@ -39,7 +39,7 @@
 
                 <h:panelGroup id="parentElement"
                               layout="block">
-                    <h:outputText value="Neue Strukturelemente werden hinzugefügt zu '#{DataEditorForm.addDocStrucTypeDialog.currentStructureLabel}'."/>
+                    <h:outputText value="#{msgs['dataEditor.addElement.newStructureWillBeAddedTo']} '#{DataEditorForm.addDocStrucTypeDialog.currentStructureLabel}'."/>
                 </h:panelGroup>
 
                 <br/>
@@ -216,7 +216,9 @@
                             <p:commandButton id="searchButton"
                                              value="#{msgs['dialogAddDocStrucType.searchButton']}"
                                              action="#{DataEditorForm.addDocStrucTypeDialog.search}"
-                                             styleClass="primary" icon="fa fa-search fa-lg" iconPos="right">
+                                             styleClass="primary"
+                                             icon="fa fa-search fa-lg"
+                                             iconPos="right">
                                     <p:remoteCommand name="updateProcessSelect"
                                                      update="processSelect"/>
                                     <p:ajax update="processSelect"

@@ -8,6 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+// jshint unused:false
 
 var SEPARATOR_WIDTH = 3;
 var COLLAPSED_COL_WIDTH = 42;
