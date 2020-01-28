@@ -14,9 +14,9 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
 
+    <!--@elvariable id="readOnly" type="boolean"-->
     <ui:param name="readOnly"
               value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"
     />
@@ -35,11 +35,11 @@
                                      icon="fa fa-plus"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      style="vertical-align: top; margin-left: 10px;"
-                                     disabled="#{readOnly}"
-                                     actionListener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true)}"
-                                     title="#{msgs.neueMetadatenHinzufuegen}"
+                                     title="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems ? msgs['dataEditor.addMetadata.noMetadataAddable'] : msgs['dataEditor.addMetadata.newMetadata']}"
+                                     disabled="#{readOnly or empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"
                                      update="addMetadataForm"
-                                     oncomplete="PF('addMetadataDialog').show();"/>
+                                     oncomplete="PF('addMetadataDialog').show();">
+                    </p:commandButton>
                 </p:row>
             </p:panelGrid>
         </h:form>

@@ -27,7 +27,6 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.primefaces.model.TreeNode;
 
 /**
@@ -41,13 +40,13 @@ public class MetadataPanel implements Serializable {
 
     private Collection<Metadata> clipboard = new ArrayList<>();
 
-    private final RulesetSetupInterface rulesetSetup;
+    private final DataEditorForm dataEditorForm;
 
     private ProcessFieldedMetadata logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
     private ProcessFieldedMetadata physicalMetadataTable = ProcessFieldedMetadata.EMPTY;
 
-    MetadataPanel(RulesetSetupInterface rulesetSetup) {
-        this.rulesetSetup = rulesetSetup;
+    MetadataPanel(DataEditorForm dataEditor) {
+        this.dataEditorForm = dataEditor;
     }
 
     /**
@@ -104,9 +103,11 @@ public class MetadataPanel implements Serializable {
 
     void showLogical(Optional<IncludedStructuralElement> optionalStructure) {
         if (optionalStructure.isPresent()) {
-            StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
-                    optionalStructure.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+            StructuralElementViewInterface divisionView = dataEditorForm.getRuleset().getStructuralElementView(
+                    optionalStructure.get().getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             logicalMetadataTable = new ProcessFieldedMetadata(optionalStructure.get(), divisionView);
+            dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true,
+                    getLogicalMetadataRows().getChildren());
         } else {
             logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
         }
@@ -115,9 +116,11 @@ public class MetadataPanel implements Serializable {
 
     void showPageInLogical(MediaUnit mediaUnit) {
         if (Objects.nonNull(mediaUnit)) {
-            StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
-                    mediaUnit.getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+            StructuralElementViewInterface divisionView = dataEditorForm.getRuleset().getStructuralElementView(
+                    mediaUnit.getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             logicalMetadataTable = new ProcessFieldedMetadata(mediaUnit, divisionView);
+            dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true,
+                    getPhysicalMetadataRows().getChildren());
         } else {
             logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
         }
@@ -126,9 +129,10 @@ public class MetadataPanel implements Serializable {
 
     void showPhysical(Optional<MediaUnit> optionalMediaUnit) {
         if (optionalMediaUnit.isPresent() && Objects.nonNull(optionalMediaUnit.get().getType())) {
-            StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
-                    optionalMediaUnit.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+            StructuralElementViewInterface divisionView = dataEditorForm.getRuleset().getStructuralElementView(
+                    optionalMediaUnit.get().getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             physicalMetadataTable = new ProcessFieldedMetadata(optionalMediaUnit.get(), divisionView);
+            dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true);
         } else {
             physicalMetadataTable = ProcessFieldedMetadata.EMPTY;
         }

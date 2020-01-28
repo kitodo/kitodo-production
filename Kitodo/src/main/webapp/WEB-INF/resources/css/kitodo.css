@@ -1247,7 +1247,8 @@ form#metadata div label,
     margin-left: 8px;
 }
 
-#metadataPanel .ui-inputfield.ui-selectmanymenu ~ .ui-button {
+#metadataPanel .ui-inputfield.ui-selectmanymenu ~ .ui-button,
+#metadataPanel .ui-inputfield.ui-selectmanymenu ~ span > .ui-button {
     vertical-align: top;
 }
 

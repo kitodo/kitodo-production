@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
@@ -36,6 +38,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -45,8 +48,10 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -481,26 +486,58 @@ public class AddDocStrucTypeDialog {
      * @param currentElement flag controlling whether to return a list of metadata for the currently selected logical
      *                       structure element (currentElement = true) or for a new element to be added to the structure
      *                       (currentElement = false)
+     * @param metadataNodes list of TreeNodes containing the metadata that is already assigned to the structure element
      */
-    public void prepareSelectAddableMetadataTypesItems(boolean currentElement) {
+    public void prepareSelectAddableMetadataTypesItems(boolean currentElement, List<TreeNode> metadataNodes) {
         selectAddableMetadataTypesItems = new ArrayList<>();
         setSelectAddableMetadataTypesSelectedItem("");
+        Map<Metadata, String> existingMetadata = Collections.emptyMap();
         StructuralElementViewInterface structure;
-        if (currentElement) {
-            structure = getStructuralElementView();
-        } else {
-            structure = dataEditor.getRuleset()
-                    .getStructuralElementView(docStructAddTypeSelectionSelectedItem,
-                            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        try {
+            if (currentElement) {
+                structure = getStructuralElementView();
+                existingMetadata = getExistingMetadataRows(metadataNodes);
+            } else {
+                structure = dataEditor.getRuleset()
+                        .getStructuralElementView(docStructAddTypeSelectionSelectedItem,
+                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+            }
+            for (MetadataViewInterface keyView : structure.getAddableMetadata(existingMetadata,
+                    Collections.emptyList())) {
+                selectAddableMetadataTypesItems.add(
+                        new SelectItem(keyView.getId(), keyView.getLabel(),
+                                keyView instanceof SimpleMetadataViewInterface
+                                        ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
+                                        : "dataTable"));
+            }
+        } catch (InvalidMetadataValueException e) {
+            Helper.setErrorMessage(e);
         }
-        for (MetadataViewInterface keyView : structure.getAddableMetadata(Collections.emptyMap(),
-                Collections.emptyList())) {
-            selectAddableMetadataTypesItems.add(
-                    new SelectItem(keyView.getId(), keyView.getLabel(),
-                            keyView instanceof SimpleMetadataViewInterface
-                                    ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
-                                    : "dataTable"));
+    }
+
+    /**
+     * Convenience function to call metadata preparation with a single parameter.
+     *
+     * @param currentElement flag controlling whether to return a list of metadata for the currently selected logical
+     *                       structure element (currentElement = true) or for a new element to be added to the structure
+     *                       (currentElement = false)
+     */
+    public void prepareSelectAddableMetadataTypesItems(boolean currentElement) {
+        prepareSelectAddableMetadataTypesItems(currentElement, Collections.emptyList());
+    }
+
+    private Map<Metadata, String> getExistingMetadataRows(List<TreeNode> metadataTreeNodes) throws InvalidMetadataValueException {
+        Map<Metadata, String> existingMetadataRows = new HashMap<>();
+
+        for (TreeNode metadataNode : metadataTreeNodes) {
+            if (metadataNode.getData() instanceof ProcessDetail) {
+                for (Metadata metadata : ((ProcessDetail) metadataNode.getData()).getMetadata()) {
+                    existingMetadataRows.put(metadata, metadata.getKey());
+                }
+            }
         }
+
+        return existingMetadataRows;
     }
 
     private StructuralElementViewInterface getStructuralElementView() {
