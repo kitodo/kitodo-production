@@ -43,7 +43,6 @@ import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
-
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
@@ -197,14 +196,16 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Delete Process.
-     * @param processDTO process to delete.
+     * 
+     * @param processDTO
+     *            process to delete.
      */
-    public void delete(ProcessDTO processDTO){
+    public void delete(ProcessDTO processDTO) {
         try {
             this.process = ServiceManager.getProcessService().getById(processDTO.getId());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+                e);
         }
         delete();
     }

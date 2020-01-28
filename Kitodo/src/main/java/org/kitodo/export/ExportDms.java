@@ -449,7 +449,8 @@ public class ExportDms extends ExportMets {
         VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
 
         for (Subfolder processDir : processDirs) {
-            URI dstDir = new URI(destination.toString() + File.separator + variableReplacer.replace(processDir.getFolder().getRelativePath()));
+            URI dstDir = new URI(destination.toString() + File.separator
+                    + variableReplacer.replace(processDir.getFolder().getRelativePath()));
             fileService.createDirectories(dstDir);
 
             Collection<URI> srcs = processDir.listContents().values();
