@@ -1084,12 +1084,12 @@ h3#headerText {
     margin-left: var(--default-full-size);
 }
 
-#processesTabView\:processesForm\:processesTable .hierarchy-info {
+.hierarchy-info {
     width: calc(var(--default-double-size) + var(--default-full-size));
     text-overflow: clip;
 }
 
-#processesTabView\:processesForm\:processesTable .hierarchy-info > i {
+.hierarchy-info > i {
     color: var(--blue);
     transform: rotate(45deg);
     vertical-align: middle;

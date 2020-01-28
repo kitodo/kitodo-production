@@ -22,6 +22,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class SearchResultPage extends Page<SearchResultPage> {
 
+    private static final String SEARCH_RESULT_TAB_VIEW = "searchResultTabView";
     private static final String SEARCH_RESULT_TABLE = "searchResultTable";
     private static final String SEARCH_RESULT_FORM = "searchResultForm";
     private static final String FILTER_CONFIGURATION = "configureFilters";
@@ -29,7 +30,7 @@ public class SearchResultPage extends Page<SearchResultPage> {
 
 
     @SuppressWarnings("unused")
-    @FindBy(id = SEARCH_RESULT_FORM + ":" + SEARCH_RESULT_TABLE + "_data")
+    @FindBy(id = SEARCH_RESULT_TAB_VIEW + ":" + SEARCH_RESULT_FORM + ":" + SEARCH_RESULT_TABLE + "_data")
     private WebElement searchResultTable;
 
     @SuppressWarnings("unused")
