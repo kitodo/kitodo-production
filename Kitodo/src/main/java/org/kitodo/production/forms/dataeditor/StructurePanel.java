@@ -1039,6 +1039,9 @@ public class StructurePanel implements Serializable {
             // the last view in the list of views of the 'toElement'
             if (insertionIndex == toElement.getViews().size()) {
                 physicalInsertionIndex = toElement.getViews().getLast().getMediaUnit().getOrder();
+            } else if (insertionIndex == 0) {
+                // insert at first position directly after logical element
+                physicalInsertionIndex = toElement.getOrder() - 1;
             } else {
                 // insert at given index
                 physicalInsertionIndex = toElement.getViews().get(insertionIndex).getMediaUnit().getOrder() - 1;
@@ -1079,7 +1082,8 @@ public class StructurePanel implements Serializable {
      * @param toElement logical element the pages will be assigned to
      * @param elementsToBeMoved physical elements which are moved
      */
-    void changeLogicalOrderFields(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved) {
+    void changeLogicalOrderFields(IncludedStructuralElement toElement, List<Pair<View, IncludedStructuralElement>> elementsToBeMoved,
+                                  int insertionIndex) {
         HashMap<Integer, List<IncludedStructuralElement>> logicalElementsByOrder = new HashMap<>();
         for (IncludedStructuralElement logicalElement : dataEditor.getWorkpiece().getAllIncludedStructuralElements()) {
             if (logicalElementsByOrder.containsKey(logicalElement.getOrder()))  {
@@ -1090,13 +1094,7 @@ public class StructurePanel implements Serializable {
         }
 
         // Order values of moved pages and target element. Logical elements located between these Order values are affected.
-        List<Integer> ordersAffectedByMove = elementsToBeMoved.stream()
-                .map(e -> e.getLeft().getMediaUnit().getOrder())
-                .collect(Collectors.toList());
-        if (!ordersAffectedByMove.contains(toElement.getOrder())) {
-            ordersAffectedByMove.add(toElement.getOrder());
-        }
-        Collections.sort(ordersAffectedByMove);
+        List<Integer> ordersAffectedByMove = getOrdersAffectedByMove(elementsToBeMoved, toElement);
 
         /* The new Order value for the logical elements can be calculated quite simple:
         The Order values of elements located before the target element have to be modified by -i - 1.
@@ -1122,11 +1120,25 @@ public class StructurePanel implements Serializable {
                 /* toElement at index 0 means we're in an edge case: toElement is the first order which is affected (no pages with smaller
                 order affected) and its order will not change, nor will other elements with the same order before it. */
                 if (ordersAffectedByMove.indexOf(toElement.getOrder()) > 0) {
-                    updateOrder(beforeToElement, -ordersAffectedByMove.indexOf(entry.getKey()) - 1);
+                    updateOrder(beforeToElement, -ordersAffectedByMove.indexOf(entry.getKey()));
                 }
-                updateOrder(afterToElement, ordersAffectedByMove.size() - ordersAffectedByMove.indexOf(entry.getKey()));
+                /* Order of elements directly after toElement (with same order) only have to be update if the pages are inserted at the
+                first position. If they are inserted after any pages, the order of elements in afterToElement will not change. */
+                if (insertionIndex == 0) {
+                    updateOrder(afterToElement, elementsToBeMoved.size() - ordersAffectedByMove.indexOf(toElement.getOrder()));
+                }
             }
         }
+    }
+
+    private List<Integer> getOrdersAffectedByMove(List<Pair<View, IncludedStructuralElement>> views, IncludedStructuralElement toElement) {
+        Set<Integer> ordersAffectedByMove = views.stream()
+                .map(e -> e.getLeft().getMediaUnit().getOrder())
+                .collect(Collectors.toSet());
+        ordersAffectedByMove.add(toElement.getOrder());
+        return ordersAffectedByMove.stream()
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     private void updateOrder(List<IncludedStructuralElement> elementsToBeUpdated, int delta) {
@@ -1238,6 +1250,9 @@ public class StructurePanel implements Serializable {
     private void preserveLogicalAndPhysical() throws Exception {
         if (!this.logicalTree.getChildren().isEmpty()) {
             order = 1;
+            for (MediaUnit mediaUnit : dataEditor.getWorkpiece().getMediaUnit().getChildren()) {
+                mediaUnit.getIncludedStructuralElements().clear();
+            }
             dataEditor.getWorkpiece().getMediaUnit().getChildren().clear();
             preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(0));
         }
@@ -1265,6 +1280,9 @@ public class StructurePanel implements Serializable {
                 View view = (View) ((StructureTreeNode) child.getData()).getDataObject();
                 structure.getViews().add(view);
                 view.getMediaUnit().setOrder(order);
+                if (!view.getMediaUnit().getIncludedStructuralElements().contains(structure)) {
+                    view.getMediaUnit().getIncludedStructuralElements().add(structure);
+                }
                 dataEditor.getWorkpiece().getMediaUnit().getChildren().add(view.getMediaUnit());
                 order++;
             }
