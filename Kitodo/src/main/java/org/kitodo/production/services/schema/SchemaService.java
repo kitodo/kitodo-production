@@ -122,8 +122,10 @@ public class SchemaService {
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
             String canonical = useLocalSubfolder
                     .getCanonical(mediaUnit.getMediaFiles().get(LegacyInnerPhysicalDocStructHelper.LOCAL));
-            removeFLocatsForUnwantedUses(process, folders, mediaUnit, canonical);
-            addMissingUses(process, folders, mediaUnit, canonical);
+            if (Objects.nonNull(canonical)) {
+                removeFLocatsForUnwantedUses(process, folders, mediaUnit, canonical);
+                addMissingUses(process, folders, mediaUnit, canonical);
+            }
         }
     }
 
