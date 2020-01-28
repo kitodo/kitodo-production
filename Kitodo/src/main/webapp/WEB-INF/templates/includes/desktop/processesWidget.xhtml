@@ -90,16 +90,19 @@
                                rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                 </h:commandLink>
-                <p:commandLink id="deleteProcess"
-                               action="#{DesktopForm.deleteProcess(process.id)}"
-                               title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                               update="processTable">
-                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteProcess}"
-                               icon="ui-icon-alert"/>
-                </p:commandLink>
+                <h:panelGroup title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
+                    <p:commandLink id="deleteProcess"
+                                   action="#{DesktopForm.deleteProcess(process.id)}"
+                                   title="#{ process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
+                                   disabled="#{process.hasChildren()}"
+                                   update="processTable">
+                        <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                        <p:confirm header="#{msgs.confirmDelete}"
+                                   message="#{msgs.confirmDeleteProcess}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
+                </h:panelGroup>
             </h:form>
         </p:column>
     </p:dataTable>
