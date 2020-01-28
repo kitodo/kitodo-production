@@ -153,10 +153,9 @@
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     </p:commandLink>
 
-                    <h:commandLink action="#{ProcessForm.exportMets}" id="exportMets" title="#{msgs.exportMets}"
+                    <h:commandLink action="#{ProcessForm.exportMets(process.id)}" id="exportMets" title="#{msgs.exportMets}"
                                    rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                         <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
-                        <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     </h:commandLink>
 
                     <h:commandLink action="#{ProcessForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}"

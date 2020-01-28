@@ -52,6 +52,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -95,6 +96,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.IndexAction;
@@ -111,6 +113,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
@@ -119,6 +122,7 @@ import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -1521,7 +1525,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             DocketInterface module = initialiseDocketModule();
-            File file = module.generateMultipleDockets(ServiceManager.getProcessService().getDocketData(processes),
+            File file = module.generateMultipleDockets(getDocketData(processes),
                 xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
@@ -2461,5 +2465,114 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public int getNumberOfChildren(int processId) throws DAOException {
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
+    }
+
+    public static void deleteProcess(int processID) throws DAOException, DataException {
+        Process process = ServiceManager.getProcessService().getById(processID);
+        deleteProcess(process);
+    }
+
+    /**
+     * Delete given process.
+     *
+     * @param processToDelete process to delete
+     */
+    public static void deleteProcess(Process processToDelete) throws DataException {
+        deleteMetadataDirectory(processToDelete);
+
+        processToDelete.getProject().getProcesses().remove(processToDelete);
+        processToDelete.setProject(null);
+        processToDelete.getTemplate().getProcesses().remove(processToDelete);
+        processToDelete.setTemplate(null);
+        Process parent = processToDelete.getParent();
+        if (Objects.nonNull(parent)) {
+            parent.getChildren().remove(processToDelete);
+            processToDelete.setParent(null);
+            ServiceManager.getProcessService().save(processToDelete);
+            ServiceManager.getProcessService().save(parent);
+        }
+        List<Batch> batches = new CopyOnWriteArrayList<>(processToDelete.getBatches());
+        for (Batch batch : batches) {
+            batch.getProcesses().remove(processToDelete);
+            processToDelete.getBatches().remove(batch);
+            ServiceManager.getBatchService().save(batch);
+        }
+        ServiceManager.getProcessService().remove(processToDelete);
+    }
+
+    private static void deleteMetadataDirectory(Process process) {
+        for (Task task : process.getTasks()) {
+            deleteSymlinksFromUserHomes(task);
+        }
+        try {
+            FileService fileService = ServiceManager.getFileService();
+            fileService.delete(ServiceManager.getProcessService().getProcessDataDirectory(process));
+            URI ocrDirectory = fileService.getOcrDirectory(process);
+            if (fileService.fileExist(ocrDirectory)) {
+                fileService.delete(ocrDirectory);
+            }
+        } catch (IOException | RuntimeException e) {
+            Helper.setErrorMessage("errorDirectoryDeleting", new Object[] {Helper.getTranslation("metadata") }, logger,
+                    e);
+        }
+    }
+
+    /**
+     * Delete symlinks from user home directories.
+     *
+     * @param task Task for which symlinks are removed
+     */
+    public static void deleteSymlinksFromUserHomes(Task task) {
+        WebDav webDav = new WebDav();
+
+        for (Role role : task.getRoles()) {
+            for (User user : role.getUsers()) {
+                try {
+                    webDav.uploadFromHome(user, task.getProcess());
+                } catch (RuntimeException e) {
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Export METS.
+     */
+    public static void exportMets(int processId) throws IOException, DAOException {
+        Process process = ServiceManager.getProcessService().getById(processId);
+        ExportMets export = new ExportMets();
+        export.startExport(process);
+    }
+
+    public static void downloadToHome(List<Process> processes) throws DAOException {
+        WebDav webDav = new WebDav();
+        for (Process processForDownload : processes) {
+            downloadToHome(webDav, processForDownload.getId());
+        }
+    }
+
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     *
+     * @param webDav
+     *            for download
+     * @param processId
+     *            ID of process for which download is going to be performed
+     */
+    public static void downloadToHome(WebDav webDav, int processId) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(processId);
+        if (ServiceManager.getProcessService().isImageFolderInUse(process)) {
+            Helper.setMessage(
+                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
+                            + Helper.getTranslation("isInUse"),
+                    ServiceManager.getUserService()
+                            .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(process)));
+            webDav.downloadToHome(process, true);
+        } else {
+            webDav.downloadToHome(process, false);
+        }
     }
 }

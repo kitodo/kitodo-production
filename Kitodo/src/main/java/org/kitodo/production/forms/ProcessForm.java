@@ -34,18 +34,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
-import org.kitodo.export.ExportMets;
+
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
@@ -82,8 +80,6 @@ public class ProcessForm extends TemplateBaseForm {
     private transient FileService fileService = ServiceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private String doneDirectoryName;
-    private static final String ERROR_CREATING = "errorCreating";
-    private static final String EXPORT_FINISHED = "exportFinished";
     private List<Process> selectedProcesses = new ArrayList<>();
     final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
@@ -218,7 +214,12 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void delete() {
         if (this.process.getChildren().isEmpty()) {
-            deleteProcess(this.process);
+            try {
+                ProcessService.deleteProcess(this.process);
+            } catch (DataException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                        logger, e);
+            }
         } else {
             PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
@@ -229,12 +230,15 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void deleteWithChildren() {
         List<Process> children = new CopyOnWriteArrayList<>(this.process.getChildren());
-
-        for (Process child : children) {
-            deleteProcess(child);
+        try {
+            for (Process child : children) {
+                ProcessService.deleteProcess(child);
+            }
+            ProcessService.deleteProcess(this.process);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
         }
-
-        deleteProcess(this.process);
     }
 
     /**
@@ -248,12 +252,12 @@ public class ProcessForm extends TemplateBaseForm {
             child.setParent(null);
             try {
                 ServiceManager.getProcessService().save(child);
+                ProcessService.deleteProcess(this.process);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                         e);
             }
         }
-        deleteProcess(this.process);
     }
 
     /**
@@ -302,34 +306,6 @@ public class ProcessForm extends TemplateBaseForm {
 
         Helper.setMessage("Content deleted");
         return this.stayOnCurrentPage;
-    }
-
-    private void deleteProcess(Process processToDelete) {
-        deleteMetadataDirectory();
-
-        try {
-            processToDelete.getProject().getProcesses().remove(processToDelete);
-            processToDelete.setProject(null);
-            processToDelete.getTemplate().getProcesses().remove(processToDelete);
-            processToDelete.setTemplate(null);
-            Process parent = processToDelete.getParent();
-            if (Objects.nonNull(parent)) {
-                parent.getChildren().remove(processToDelete);
-                processToDelete.setParent(null);
-                ServiceManager.getProcessService().save(processToDelete);
-                ServiceManager.getProcessService().save(parent);
-            }
-            List<Batch> batches = new CopyOnWriteArrayList<>(processToDelete.getBatches());
-            for (Batch batch : batches) {
-                batch.getProcesses().remove(processToDelete);
-                processToDelete.getBatches().remove(batch);
-                ServiceManager.getBatchService().save(batch);
-            }
-            ServiceManager.getProcessService().remove(processToDelete);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
-        }
     }
 
     private boolean renameAfterProcessTitleChanged() {
@@ -406,23 +382,6 @@ public class ProcessForm extends TemplateBaseForm {
                     Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName() });
                 }
             }
-        }
-    }
-
-    private void deleteMetadataDirectory() {
-        for (Task task : this.process.getTasks()) {
-            this.task = task;
-            deleteSymlinksFromUserHomes();
-        }
-        try {
-            fileService.delete(ServiceManager.getProcessService().getProcessDataDirectory(this.process));
-            URI ocrDirectory = fileService.getOcrDirectory(this.process);
-            if (fileService.fileExist(ocrDirectory)) {
-                fileService.delete(ocrDirectory);
-            }
-        } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("errorDirectoryDeleting", new Object[] {Helper.getTranslation("metadata") }, logger,
-                e);
         }
     }
 
@@ -510,21 +469,7 @@ public class ProcessForm extends TemplateBaseForm {
         for (Role role : roles) {
             role.getTasks().remove(this.task);
         }
-        deleteSymlinksFromUserHomes();
-    }
-
-    private void deleteSymlinksFromUserHomes() {
-        WebDav webDav = new WebDav();
-
-        for (Role role : this.task.getRoles()) {
-            for (User user : role.getUsers()) {
-                try {
-                    webDav.uploadFromHome(user, this.task.getProcess());
-                } catch (RuntimeException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                }
-            }
-        }
+        ProcessService.deleteSymlinksFromUserHomes(this.task);
     }
 
     /**
@@ -535,11 +480,7 @@ public class ProcessForm extends TemplateBaseForm {
     public String deleteRole() {
         try {
             int roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Role role : this.task.getRoles()) {
-                if (role.getId().equals(roleId)) {
-                    this.task.getRoles().remove(role);
-                }
-            }
+            this.task.getRoles().removeIf(role -> role.getId().equals(roleId));
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -572,14 +513,13 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Export METS.
      */
-    public void exportMets() {
-        ExportMets export = new ExportMets();
+    public void exportMets(int processId) {
         try {
-            export.startExport(this.process);
+            ProcessService.exportMets(processId);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (IOException | RuntimeException | DAOException e) {
-            Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
-                logger, e);
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage("An error occurred while trying to export METS file for process "
+                    + processId, logger, e);
         }
     }
 
@@ -654,32 +594,24 @@ public class ProcessForm extends TemplateBaseForm {
      * Download to home for selected processes.
      */
     public void downloadToHomeForSelection() {
-        downloadToHome(this.selectedProcesses);
-        // TODO: fix message
-        Helper.setMessage("createdInUserHomeAll");
+        try {
+            ProcessService.downloadToHome(this.selectedProcesses);
+            // TODO: fix message
+            Helper.setMessage("createdInUserHomeAll");
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading processes to home directory!");
+        }
     }
 
     /**
      * Download to home for all found processes.
      */
     public void downloadToHomeForAll() {
-        downloadToHome(getProcessesForActions());
-        Helper.setMessage("createdInUserHomeAll");
-    }
-
-    /**
-     * Download to home for single process. First check if this volume is currently
-     * being edited by another user and placed in his home directory, otherwise
-     * download.
-     */
-    public void downloadToHome() {
-        downloadToHome(new WebDav(), this.process);
-    }
-
-    private void downloadToHome(List<Process> processes) {
-        WebDav webDav = new WebDav();
-        for (Process processForDownload : processes) {
-            downloadToHome(webDav, processForDownload);
+        try {
+            ProcessService.downloadToHome(getProcessesForActions());
+            Helper.setMessage("createdInUserHomeAll");
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading all processes to home directory!");
         }
     }
 
@@ -687,22 +619,12 @@ public class ProcessForm extends TemplateBaseForm {
      * Download to home for single process. First check if this volume is currently
      * being edited by another user and placed in his home directory, otherwise
      * download.
-     *
-     * @param webDav
-     *            for download
-     * @param processForDownload
-     *            process for which download is going to be performed
      */
-    private void downloadToHome(WebDav webDav, Process processForDownload) {
-        if (ServiceManager.getProcessService().isImageFolderInUse(processForDownload)) {
-            Helper.setMessage(
-                Helper.getTranslation("directory ") + " " + processForDownload.getTitle() + " "
-                        + Helper.getTranslation("isInUse"),
-                ServiceManager.getUserService()
-                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
-            webDav.downloadToHome(processForDownload, true);
-        } else {
-            webDav.downloadToHome(processForDownload, false);
+    public void downloadToHome(int processId) {
+        try {
+            ProcessService.downloadToHome(new WebDav(), processId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
         }
     }
 
@@ -764,7 +686,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setTaskStatusUp() throws DataException, IOException {
         workflowControllerService.setTaskStatusUp(this.task);
         save();
-        deleteSymlinksFromUserHomes();
+        ProcessService.deleteSymlinksFromUserHomes(this.task);
     }
 
     /**
@@ -773,7 +695,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setTaskStatusDown() {
         workflowControllerService.setTaskStatusDown(this.task);
         save();
-        deleteSymlinksFromUserHomes();
+        ProcessService.deleteSymlinksFromUserHomes(this.task);
     }
 
     /**
