@@ -217,34 +217,14 @@ public class GalleryPanel {
         }
 
         int toMediaIndex = getMediaIndex(event);
-        dataEditor.getStructurePanel().changeLogicalOrderFields(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
-        dataEditor.getStructurePanel().reorderMediaUnits(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
-        dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
-        dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
+        try {
+            updateData(toStripe, viewsToBeMoved, toMediaIndex);
+        } catch (Exception e) {
+            PrimeFaces.current().executeScript("$('#loadingScreen').hide();");
+            PrimeFaces.current().executeScript("PF('corruptDataWarning').show();");
+        }
         dataEditor.getStructurePanel().show();
-        // update stripes
-        for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
-            GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
-            if (Objects.nonNull(fromStripe)) {
-                fromStripe.getMedias().clear();
-                for (View remainingView : fromStripe.getStructure().getViews()) {
-                    fromStripe.getMedias().add(createGalleryMediaContent(remainingView));
-                }
-            }
-        }
-        toStripe.getMedias().clear();
-
-        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
-
-        dataEditor.getSelectedMedia().clear();
-
-        for (View toStripeView : toStripe.getStructure().getViews()) {
-            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(toStripeView);
-            toStripe.getMedias().add(galleryMediaContent);
-            if (movedViews.contains(toStripeView)) {
-                select(galleryMediaContent, toStripe, "multi");
-            }
-        }
+        updateAffectedStripes(toStripe, viewsToBeMoved);
     }
 
     private boolean dragStripeIndexMatches(DragDropEvent event) {
@@ -297,6 +277,37 @@ public class GalleryPanel {
             return Integer.parseInt(dropUnstructuredMediaLastAreaMatcher.group(1)) + 1;
         } else {
             return -1;
+        }
+    }
+
+    private void updateData(GalleryStripe toStripe, List<Pair<View, IncludedStructuralElement>> viewsToBeMoved, int toMediaIndex) {
+        dataEditor.getStructurePanel().changeLogicalOrderFields(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
+        dataEditor.getStructurePanel().reorderMediaUnits(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
+        dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
+        dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
+    }
+
+    private void updateAffectedStripes(GalleryStripe toStripe, List<Pair<View, IncludedStructuralElement>> viewsToBeMoved) {
+        for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
+            GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
+            if (Objects.nonNull(fromStripe)) {
+                fromStripe.getMedias().clear();
+                for (View remainingView : fromStripe.getStructure().getViews()) {
+                    fromStripe.getMedias().add(createGalleryMediaContent(remainingView));
+                }
+            }
+        }
+        toStripe.getMedias().clear();
+
+        dataEditor.getSelectedMedia().clear();
+
+        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
+        for (View toStripeView : toStripe.getStructure().getViews()) {
+            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(toStripeView);
+            toStripe.getMedias().add(galleryMediaContent);
+            if (movedViews.contains(toStripeView)) {
+                select(galleryMediaContent, toStripe, "multi");
+            }
         }
     }
 

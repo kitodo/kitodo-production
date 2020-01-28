@@ -747,4 +747,13 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
         return "";
     }
+
+    /**
+     * Get referringView.
+     *
+     * @return value of referringView
+     */
+    public String getReferringView() {
+        return referringView;
+    }
 }
