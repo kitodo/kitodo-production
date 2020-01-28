@@ -1116,6 +1116,10 @@ h3#headerText {
     margin: 0 0 5px 5px;
 }
 
+#editForm\:processFromTemplateTabView\:metadataTable textarea {
+    width: 100%;
+}
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/
@@ -1628,9 +1632,19 @@ Column content
     width: 100%;
 }
 
+#metadataAccordion textarea {
+    line-height: var(--input-height);
+}
+
 #metadataAccordion\:metadata\:metadataTable .ui-button:not(:last-child),
 #metadataAccordion\:physicalMetadata\:physicalMetadataTable .ui-button:not(:last-child) {
     margin-right: var(--default-half-size);
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio label,
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable_data .ui-selectoneradio label {
+    display: inline-block;
+    overflow: hidden;
 }
 
 .correction {

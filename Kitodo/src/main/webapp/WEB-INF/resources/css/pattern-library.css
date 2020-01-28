@@ -618,6 +618,11 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     text-align: left;
 }
 
+.ui-selectoneradio td > .ui-radiobutton,
+.ui-selectoneradio td > label {
+    display: inline-block;
+}
+
 .ui-slider {
     background: var(--cloudy-gray);
     box-shadow: 0 0 0 transparent;
