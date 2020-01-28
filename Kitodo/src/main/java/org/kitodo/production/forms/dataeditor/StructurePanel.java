@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -145,6 +146,7 @@ public class StructurePanel implements Serializable {
         Collection<View> subViews = new ArrayList<>();
         subViews = getAllSubViews(selectedStructure.get(), subViews);
         parent.getViews().addAll(subViews);
+        parent.getViews().sort(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()));
 
         parent.getChildren().remove(selectedStructure.get());
         show();
