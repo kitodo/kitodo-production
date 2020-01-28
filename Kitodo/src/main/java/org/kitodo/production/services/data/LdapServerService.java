@@ -64,7 +64,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.LdapServerDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.ldap.LdapUser;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
@@ -73,7 +72,6 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
     private static final Logger logger = LogManager.getLogger(LdapServerService.class);
     private static volatile LdapServerService instance = null;
-    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     /**
      * Return singleton variable of type LdapServerService.
@@ -130,11 +128,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         env.put(Context.PROVIDER_URL, ldapServer.getUrl());
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put(Context.SECURITY_PRINCIPAL, ldapServer.getManagerLogin());
-
-        String encryptedManagerPassword = ldapServer.getManagerPassword();
-        String decryptedManagerPassword = passwordEncoder.decrypt(encryptedManagerPassword);
-
-        env.put(Context.SECURITY_CREDENTIALS, decryptedManagerPassword);
+        env.put(Context.SECURITY_CREDENTIALS, ldapServer.getManagerPassword());
 
         if (ldapServer.isUseSsl()) {
             String keystorepath = ldapServer.getKeystore();
