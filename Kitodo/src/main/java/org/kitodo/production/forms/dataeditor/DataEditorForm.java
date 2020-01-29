@@ -745,7 +745,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             List<Metadata> titleMetadata = element.getMetadata().stream()
                     .filter(m -> DataEditorService.getTitleKeys().contains(m.getKey())).collect(Collectors.toList());
             for (Metadata metadata : titleMetadata) {
-                if (metadata instanceof MetadataEntry) {
+                if (metadata instanceof MetadataEntry && Objects.nonNull(((MetadataEntry) metadata).getValue())
+                        && !((MetadataEntry) metadata).getValue().isEmpty()) {
                     return " - " + ((MetadataEntry) metadata).getValue();
                 }
             }

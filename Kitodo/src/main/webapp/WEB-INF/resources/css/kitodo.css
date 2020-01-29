@@ -1491,6 +1491,34 @@ Column content
     bottom: 64px;
 }
 
+.ui-tree .ui-treenode.linked .ui-treenode-label::after {
+    content: '🔗';
+    margin-left: var(--default-half-size);
+}
+
+.ui-tree .ui-treenode.undefined .ui-treenode-label::after {
+    content: '⚠️';
+    margin-left: var(--default-half-size);
+}
+
+.ui-tree .ui-treenode.undefined.linked .ui-treenode-label::after {
+    content: '⚠️🔗';
+    margin-left: var(--default-half-size);
+}
+
+.ui-tree .ui-treenode.linked {
+    background: transparent;
+    cursor: not-allowed;
+}
+
+.ui-tree .ui-treenode.linked span span {
+    pointer-events: none;
+}
+
+.ui-tree .ui-treenode.undefined .ui-treenode-label span {
+    background-color: gold;
+}
+
 #structureTreeForm .ui-treenode-label .assigned-several-times {
     margin-left: 5px;
 }
