@@ -1573,16 +1573,18 @@ Column content
     margin-bottom: calc(var(--input-height) + var(--default-double-size));
 }
 
-#metadataAccordion\:metadata\:addMetadataButton,
-#metadataAccordion\:physicalMetadata\:addMetadataButton {
+#metadataAccordion\:metadata\:addMetadataButtonWrapper,
+#metadataAccordion\:physicalMetadata\:addMetadataButtonWrapper {
+    border-radius: var(--default-border-radius);
     bottom: var(--default-full-size);
     box-shadow: var(--second-level-shadow);
+    margin-left: 10px;
     position: absolute;
 }
 
 /* This fixes duplicate scrollbars in Firefox */
-#metadataAccordion\:metadata\:addMetadataButton + table,
-#metadataAccordion\:physicalMetadata\:addMetadataButton + table {
+#metadataAccordion\:metadata\:addMetadataButtonWrapper + table,
+#metadataAccordion\:physicalMetadata\:addMetadataButtonWrapper + table {
     margin-top: 0 !important;
 }
 

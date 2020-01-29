@@ -31,15 +31,15 @@
 
             <p:panelGrid style="margin-top:10px;" styleClass="ui-noborder full-width">
                 <p:row>
-                    <p:commandButton id="addMetadataButton"
-                                     icon="fa fa-plus"
-                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                     style="vertical-align: top; margin-left: 10px;"
-                                     title="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems ? msgs['dataEditor.addMetadata.noMetadataAddable'] : msgs['dataEditor.addMetadata.newMetadata']}"
-                                     disabled="#{readOnly or empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"
-                                     update="addMetadataForm"
-                                     oncomplete="PF('addMetadataDialog').show();">
-                    </p:commandButton>
+                    <h:panelGroup id="addMetadataButtonWrapper"
+                                  title="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems ? msgs['dataEditor.addMetadata.noMetadataAddable'] : msgs['dataEditor.addMetadata.newMetadata']}">
+                        <p:commandButton id="addMetadataButton"
+                                         icon="fa fa-plus"
+                                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                         disabled="#{readOnly or empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"
+                                         update="addMetadataForm"
+                                         oncomplete="PF('addMetadataDialog').show();"/>
+                    </h:panelGroup>
                 </p:row>
             </p:panelGrid>
         </h:form>
