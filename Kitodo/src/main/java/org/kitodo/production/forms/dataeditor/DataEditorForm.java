@@ -770,7 +770,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return whether the given ProcessDetail can be added or not
      */
     public boolean canBeAdded(ProcessDetail processDetail) {
-        return this.getAddDocStrucTypeDialog().getSelectAddableMetadataTypesItems().stream()
-                .map(SelectItem::getValue).collect(Collectors.toList()).contains(processDetail.getMetadataID());
+        if (Objects.nonNull(this.getAddDocStrucTypeDialog().getSelectAddableMetadataTypesItems())) {
+            return this.getAddDocStrucTypeDialog().getSelectAddableMetadataTypesItems().stream()
+                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(processDetail.getMetadataID());
+        }
+        else {
+            return true;
+        }
     }
 }

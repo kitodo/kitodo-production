@@ -135,7 +135,7 @@
             />
 
             <!-- button to duplicate -->
-            <h:panelGroup title="#{not DataEditorForm.canBeAdded(item) ? msgs['dataEditor.addMetadata.maximumNumberOfMetadata'] : msgs.metadataDuplicate}">
+            <h:panelGroup title="#{DataEditorForm.canBeAdded(item) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
                 <p:commandButton id="duplicateMetadata"
                                  update="#{buttonUpdate}"
                                  icon="fa fa-clone"
