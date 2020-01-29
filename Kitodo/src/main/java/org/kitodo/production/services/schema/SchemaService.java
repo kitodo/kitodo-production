@@ -137,10 +137,12 @@ public class SchemaService {
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
-                    if(folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())){
+                    if (folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())) {
                         int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf(File.separator);
-                        String lastSegment = mediaFileForMediaVariant.getValue().toString().substring(lastSeparator + 1);
-                        mediaFileForMediaVariant.setValue(new URI(replacePlaceholder(folder.getUrlStructure() + lastSegment,process)));
+                        String lastSegment = mediaFileForMediaVariant.getValue().toString()
+                                .substring(lastSeparator + 1);
+                        mediaFileForMediaVariant
+                                .setValue(new URI(replacePlaceholder(folder.getUrlStructure() + lastSegment, process)));
                     }
                 }
             }
