@@ -54,16 +54,15 @@
                     listener="#{DataEditorForm.structurePanel.onNodeExpand}"/>
             <p:treeNode expandedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-expanded'}"
                         collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}"
-                        styleClass="#{logicalNode.linked ? 'linked' : ''}">
+                        styleClass="#{logicalNode.linked ? 'linked' : ''} #{logicalNode.undefined ? 'undefined' : ''}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
-                <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.unknownType'] : logicalElementType}" style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.unknownType'] : logicalElementType}"
+                              title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"/>
                 <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"/>
                 <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
                               rendered="#{logicalNode.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
-                <h:outputText value=" 🔗" rendered="#{logicalNode.linked}"/>
-                <h:outputText value=" ⚠️" rendered="#{logicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
             </p:treeNode>
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree">
