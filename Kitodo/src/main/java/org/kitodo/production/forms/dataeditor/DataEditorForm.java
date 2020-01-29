@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -50,10 +51,10 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.services.ServiceManager;
@@ -759,5 +760,22 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String getReferringView() {
         return referringView;
+    }
+
+    /**
+     * Check and return whether the given ProcessDetail 'processDetail' is contained in the current list of addable
+     * metadata types in the addDocStrucTypeDialog.
+     *
+     * @param processDetail ProcessDetail to be added
+     * @return whether the given ProcessDetail can be added or not
+     */
+    public boolean canBeAdded(ProcessDetail processDetail) {
+        if (Objects.nonNull(this.getAddDocStrucTypeDialog().getSelectAddableMetadataTypesItems())) {
+            return this.getAddDocStrucTypeDialog().getSelectAddableMetadataTypesItems().stream()
+                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(processDetail.getMetadataID());
+        }
+        else {
+            return true;
+        }
     }
 }

@@ -23,7 +23,12 @@
            * buttonUpdate: update action of copy/delete buttons (String); if empty, no buttons are rendered
      -->
 
-    <p:treeTable value="#{root}" var="item" styleClass="no-header" id="metadataTable">
+    <!--@elvariable id="readOnly" type="boolean"-->
+    <!--@elvariable id="root" type="org.primefaces.model.TreeNode"-->
+    <p:treeTable value="#{root}"
+                 var="item"
+                 styleClass="no-header"
+                 id="metadataTable">
         <p:column style="width: 100%;">
             <!-- field label -->
             <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
@@ -55,7 +60,7 @@
             <!-- spinner -->
             <p:spinner id="spinner"
                        value="#{item.value}"
-                       style="width:100%"
+                       style="width:100%;"
                        disabled="#{not item.editable or readOnly}"
                        required="#{item.required and not empty param['editForm:save']}"
                        styleClass="#{not item.editable ? 'disabled' : ''}"
@@ -129,20 +134,21 @@
                              rendered="#{not empty buttonUpdate}"
             />
 
-            <!-- button to copy -->
-            <p:commandButton id="copyMetadata"
-                             update="#{buttonUpdate}"
-                             icon="fa fa-clipboard"
-                             immediate="true"
-                             tabindex="-1"
-                             title="#{msgs.metadataCopy}"
-                             styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                             disabled="#{readOnly}"
-                             onclick="$('#loadingScreen').show()"
-                             oncomplete="$('#loadingScreen').hide()"
-                             action="#{item.copy}"
-                             rendered="#{not empty buttonUpdate}"
-            />
+            <!-- button to duplicate -->
+            <h:panelGroup title="#{DataEditorForm.canBeAdded(item) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
+                <p:commandButton id="duplicateMetadata"
+                                 update="#{buttonUpdate}"
+                                 icon="fa fa-clone"
+                                 immediate="true"
+                                 tabindex="-1"
+                                 styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                 disabled="#{readOnly or not DataEditorForm.canBeAdded(item)}"
+                                 onclick="$('#loadingScreen').show()"
+                                 oncomplete="$('#loadingScreen').hide()"
+                                 action="#{item.copy}"
+                                 rendered="#{not empty buttonUpdate}"
+                />
+            </h:panelGroup>
         </p:column>
     </p:treeTable>
 </ui:composition>
