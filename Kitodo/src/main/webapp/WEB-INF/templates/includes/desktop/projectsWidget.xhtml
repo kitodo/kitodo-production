@@ -23,13 +23,11 @@
                  sortBy="#{project.title}"
                  var="project">
         <p:column headerText="#{msgs.title}"
-                  rendered="#{ProjectForm.showColumn('project.title')}"
                   styleClass="project-table-column">
             <h:outputText title="#{project.title}"
                           value="#{project.title}"/>
         </p:column>
         <p:column headerText="#{msgs.metsRightsOwner}"
-                  rendered="#{ProjectForm.showColumn('project.metsRightsOwner')}"
                   styleClass="project-table-column">
             <h:outputText title="#{project.metsRightsOwner}"
                           value="#{project.metsRightsOwner}"/>
