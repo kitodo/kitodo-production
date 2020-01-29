@@ -53,7 +53,8 @@
             <p:ajax event="expand"
                     listener="#{DataEditorForm.structurePanel.onNodeExpand}"/>
             <p:treeNode expandedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-expanded'}"
-                        collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
+                        collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}"
+                        styleClass="#{logicalNode.linked ? 'linked' : ''}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
                 <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.unknownType'] : logicalElementType}" style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>

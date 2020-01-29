@@ -1490,6 +1490,15 @@ Column content
     bottom: 64px;
 }
 
+.ui-tree .ui-treenode.linked {
+    background: transparent;
+    cursor: not-allowed;
+}
+
+.ui-tree .ui-treenode.linked span {
+    pointer-events: none;
+}
+
 #structureTreeForm .ui-treenode-label .assigned-several-times {
     margin-left: 5px;
 }
