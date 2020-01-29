@@ -11,8 +11,10 @@
 
 package org.kitodo.production.services.schema;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -57,7 +59,7 @@ public class SchemaService {
      *            object
      */
     public <T extends ExportMets> void tempConvert(Workpiece workpiece, T exportMets, LegacyPrefsHelper prefs,
-            Process process) throws IOException, DAOException {
+            Process process) throws IOException, DAOException, URISyntaxException {
         /*
          * wenn Filegroups definiert wurden, werden diese jetzt in die
          * Metsstruktur übernommen
@@ -69,6 +71,7 @@ public class SchemaService {
                 process, null);
 
         addVirtualFileGroupsToMetsMods(workpiece, process);
+        replaceFLocatForExport(workpiece, process);
 
         // Replace rights and digiprov entries.
         set(workpiece, MdSec.RIGHTS_MD, "owner", vp.replace(process.getProject().getMetsRightsOwner()));
@@ -127,6 +130,27 @@ public class SchemaService {
                 addMissingUses(process, folders, mediaUnit, canonical);
             }
         }
+    }
+
+    private void replaceFLocatForExport(Workpiece workpiece, Process process) throws URISyntaxException {
+        List<Folder> folders = process.getProject().getFolders();
+        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+            for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
+                for (Folder folder : folders) {
+                    if(folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())){
+                        int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf(File.separator);
+                        String lastSegment = mediaFileForMediaVariant.getValue().toString().substring(lastSeparator + 1);
+                        mediaFileForMediaVariant.setValue(new URI(replacePlaceholder(folder.getUrlStructure() + lastSegment,process)));
+                    }
+                }
+            }
+        }
+    }
+
+    private String replacePlaceholder(String uri, Process process) {
+        uri = uri.replaceAll("\\(processtitle\\)", process.getTitle());
+        uri = uri.replaceAll("\\(processid\\)", process.getId().toString());
+        return uri;
     }
 
     /**
