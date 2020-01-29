@@ -1088,9 +1088,12 @@ h3#headerText {
     margin-left: var(--default-full-size);
 }
 
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td.hierarchy-info {
+    text-overflow: clip;
+}
+
 .hierarchy-info {
     width: calc(var(--default-double-size) + var(--default-full-size));
-    text-overflow: clip;
 }
 
 .hierarchy-info > i {
