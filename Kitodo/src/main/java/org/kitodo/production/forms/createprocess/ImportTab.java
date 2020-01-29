@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.data.database.beans.Process;
@@ -184,7 +185,8 @@ public class ImportTab implements Serializable {
         try {
             LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(recordId,
                     this.hitModel.getSelectedCatalog(), this.createProcessForm.getProject().getId(),
-                    this.createProcessForm.getTemplate().getId(), this.importDepth);
+                    this.createProcessForm.getTemplate().getId(), this.importDepth,
+                    this.createProcessForm.getRuleset().getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
             this.createProcessForm.setProcesses(processes);
 
             // Fill metadata fields in metadata tab on successful import

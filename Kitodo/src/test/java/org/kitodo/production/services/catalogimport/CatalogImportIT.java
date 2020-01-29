@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import org.apache.commons.io.IOUtils;
@@ -70,7 +71,8 @@ public class CatalogImportIT {
     @Test
     public void shouldImportProcessHierarchy() throws Exception {
         LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(CHILD_RECORD_ID,
-                OPAC_NAME, PROJECT_ID, TEMPLATE_ID, IMPORT_DEPTH);
+                OPAC_NAME, PROJECT_ID, TEMPLATE_ID, IMPORT_DEPTH,
+                Collections.singleton("CatalogIDPredecessorPeriodical"));
         Assert.assertEquals(IMPORT_DEPTH, processes.size());
     }
 
