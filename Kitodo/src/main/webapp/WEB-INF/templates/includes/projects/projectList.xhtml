@@ -113,17 +113,20 @@
                     <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
                 </h:link>
 
-                <p:commandLink id="deleteProject"
-                               action="#{ProjectForm.delete}"
-                               title="#{msgs.delete}"
-                               update="projectsTable"
-                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}">
-                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteProject}"
-                               icon="ui-icon-alert"/>
-                </p:commandLink>
+                <h:panelGroup styleClass="action"
+                              title="#{item.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
+                    <p:commandLink id="deleteProject"
+                                   action="#{ProjectForm.delete}"
+                                   update="projectsTable"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}"
+                                   disabled="#{item.hasProcesses()}">
+                        <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
+                        <p:confirm header="#{msgs.confirmDelete}"
+                                   message="#{msgs.confirmDeleteProject}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
+                </h:panelGroup>
             </h:form>
         </p:column>
 
