@@ -111,14 +111,21 @@
                             <h:outputText><i class="fa fa-list-alt"/></h:outputText>
                         </h:link>
 
-                        <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
+                        <p:commandLink id="download"
+                                       action="#{SearchResultForm.downloadToHome(process.id)}"
+                                       title="#{msgs.linkHomeDirectory}"
                                        rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                             <h:outputText><i class="fa fa-download"/></h:outputText>
-                            <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                             <!-- TODO: add separate message in case it already exists and alert -->
                         </p:commandLink>
 
-                        <p:commandLink id="deleteProcess" action="#{SearchResultForm.delete(process)}" title="#{msgs.delete}"
+                        <h:commandLink action="#{SearchResultForm.exportMets(process.id)}"
+                                       id="exportMets"
+                                       title="#{msgs.exportMets}"
+                                       rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
+                            <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                        </h:commandLink>
+                        <p:commandLink id="deleteProcess" action="#{SearchResultForm.deleteProcess(process)}" title="#{msgs.delete}"
                                        rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                        update="searchResultTabView:searchResultForm">
                             <h:outputText><i class="fa fa-trash-o"/></h:outputText>
