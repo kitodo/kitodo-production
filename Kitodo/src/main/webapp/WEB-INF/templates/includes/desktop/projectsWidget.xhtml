@@ -50,7 +50,8 @@
                     <f:param name="referer" value="desktop"/>
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
-                <h:link rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
+                <h:link styleClass="action"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
                     <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
                 </h:link>
                 <h:panelGroup styleClass="action"
