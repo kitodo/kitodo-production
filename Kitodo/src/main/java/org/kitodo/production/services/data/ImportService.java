@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,6 +64,7 @@ import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.forms.createprocess.ProcessSelectMetadata;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.process.ProcessGenerator;
@@ -86,8 +88,9 @@ public class ImportService {
     private static final String KITODO_STRING = "kitodo";
 
     private ProcessGenerator processGenerator;
+    private static final String REPLACE_ME = "REPLACE_ME";
     private static final String IDENTIFIER_METADATA = "CatalogIDDigital";
-    private static final String PARENT_XPATH = "//kitodo:metadata[@name='CatalogIDPredecessorPeriodical']";
+    private static String parentXpath = "//kitodo:metadata[@name='" + REPLACE_ME + "']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
     private String trimMode = "";
     private LinkedList<ExemplarRecord> exemplarRecords;
@@ -284,7 +287,7 @@ public class ImportService {
     private String getParentID(Document document) throws XPathExpressionException {
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
-        NodeList nodeList = (NodeList) parentIDXpath.compile(PARENT_XPATH)
+        NodeList nodeList = (NodeList) parentIDXpath.compile(parentXpath)
                 .evaluate(document, XPathConstants.NODESET);
         if (nodeList.getLength() == 1) {
             Node parentIDNode = nodeList.item(0);
@@ -345,15 +348,25 @@ public class ImportService {
      * @param projectId the ID of the project for which a process is created
      * @param templateId the ID of the template from which a process is created
      * @param importDepth the number of hierarchical processes that will be imported from the catalog
+     * @param parentIdMetadata names of Metadata types holding parent IDs of structure elements in internal format
      * @return List of TempProcess
      */
     public LinkedList<TempProcess> importProcessHierarchy(String recordId, String opac, int projectId,
-                                                          int templateId, int importDepth)
+                                                          int templateId, int importDepth,
+                                                          Collection<String> parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
+
+        if (importDepth > 1 && parentIdMetadata.isEmpty()) {
+            Helper.setErrorMessage("newProcess.catalogueSearch.parentIDMetadataMissing");
+            importDepth = 1;
+        } else {
+            parentXpath = parentXpath.replace(REPLACE_ME, parentIdMetadata.toArray()[0].toString());
+        }
+
         String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId);
 
         int level = 1;
