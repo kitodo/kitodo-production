@@ -51,15 +51,21 @@
                   styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="ldapgroupEdit"
+                        styleClass="action"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapGroup')}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}" title="#{msgs.duplicateLdapGroup}"
+                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}"
+                               styleClass="action"
+                               title="#{msgs.duplicateLdapGroup}"
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}">
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:commandLink>
-                <p:commandLink id="deleteLdapgroup" action="#{LdapGroupForm.delete}" title="#{msgs.delete}"
+                <p:commandLink id="deleteLdapgroup"
+                               action="#{LdapGroupForm.delete}"
+                               styleClass="action"
+                               title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('deleteLdapGroup')}"
                                update="usersTabView:ldapGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>

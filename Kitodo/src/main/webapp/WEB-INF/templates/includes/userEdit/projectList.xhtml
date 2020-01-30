@@ -24,6 +24,7 @@
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromProject"
                            action="#{UserForm.deleteFromProject}"
+                           styleClass="action"
                            title="#{msgs.deleteFromProject}"
                            rendered="#{isEditMode || isCreateMode}"
                            immediate="true"

@@ -825,19 +825,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-treetable tfoot td {
     border: 0;
     line-height: 36px;
-    padding: 0 0 0 16px;
-}
-
-.ui-datatable thead th:last-child,
-.ui-datatable tbody td:last-child,
-.ui-datatable tfoot td:last-child,
-.ui-datatable tfoot th:last-child,
-.ui-treetable head th:last-child,
-.ui-treetable tfoot th:last-child,
-.ui-treetable tbody td:last-child,
-.ui-treetable tfoot td:last-child {
-    padding-right: 16px;
-    white-space: normal;
+    padding: 0 16px;
 }
 
 .ui-panelgrid .ui-panelgrid-cell {

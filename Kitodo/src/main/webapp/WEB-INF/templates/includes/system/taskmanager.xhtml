@@ -31,33 +31,43 @@
             </p:column>
             <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
                 <!-- move up -->
-                <p:commandLink action="#{TaskManagerForm.moveTaskUp}" title="#{msgs.up}">
+                <p:commandLink action="#{TaskManagerForm.moveTaskUp}"
+                               styleClass="action"
+                               title="#{msgs.up}">
                     <h:outputText><i class="fa fa-long-arrow-up fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{TaskManagerForm.task}"
                                                  value="#{item}"/>
                 </p:commandLink>
                 <!-- move down -->
-                <p:commandLink action="#{TaskManagerForm.moveTaskDown}" title="#{msgs.down}">
+                <p:commandLink action="#{TaskManagerForm.moveTaskDown}"
+                               styleClass="action"
+                               title="#{msgs.down}">
                     <h:outputText><i class="fa fa-long-arrow-down"/></h:outputText>
                     <f:setPropertyActionListener target="#{TaskManagerForm.task}"
                                                  value="#{item}"/>
                 </p:commandLink>
                 <!-- start -->
-                <p:commandLink action="#{TaskManagerForm.executeTask}" title="#{msgs.start}"
+                <p:commandLink action="#{TaskManagerForm.executeTask}"
+                               styleClass="action"
+                               title="#{msgs.start}"
                                rendered="#{item.startable}">
                     <h:outputText><i class="fa fa-play fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{TaskManagerForm.task}"
                                                  value="#{item}"/>
                 </p:commandLink>
                 <!-- stop -->
-                <p:commandLink action="#{TaskManagerForm.cancelTask}" title="#{msgs.stop}"
+                <p:commandLink action="#{TaskManagerForm.cancelTask}"
+                               styleClass="action"
+                               title="#{msgs.stop}"
                                rendered="#{item.stoppable}">
                     <h:outputText><i class="fa fa-stop fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{TaskManagerForm.task}"
                                                  value="#{item}"/>
                 </p:commandLink>
                 <!-- delete -->
-                <p:commandLink action="#{TaskManagerForm.removeTask}" title="#{msgs.delete}">
+                <p:commandLink action="#{TaskManagerForm.removeTask}"
+                               styleClass="action"
+                               title="#{msgs.delete}">
                     <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{TaskManagerForm.task}"
                                                  value="#{item}"/>

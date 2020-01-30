@@ -38,6 +38,7 @@
             <p:commandLink id="deleteTemplate"
                            disabled="#{ProjectForm.locked}"
                            action="#{ProjectForm.deleteTemplate}"
+                           styleClass="action"
                            title="#{msgs.deleteTemplate}"
                            immediate="true"
                            oncomplete="toggleSave()"

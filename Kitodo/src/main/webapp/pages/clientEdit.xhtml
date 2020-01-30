@@ -85,6 +85,7 @@
                                 <p:column styleClass="actionsColumn">
                                     <p:commandLink id="deleteFromClient"
                                                    action="#{ClientForm.deleteRoleFromClient(role)}"
+                                                   styleClass="action"
                                                    title="#{msgs.clientDeleteFrom}"
                                                    rendered="#{role.id==null}"
                                                    immediate="true"

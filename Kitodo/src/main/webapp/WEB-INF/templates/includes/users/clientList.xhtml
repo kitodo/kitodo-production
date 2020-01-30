@@ -36,17 +36,25 @@
                   resizable="false"
                   styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewClient" outcome="clientEdit" title="#{msgs.view}"
+                <h:link id="viewClient"
+                        outcome="clientEdit"
+                        styleClass="action"
+                        title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewClient() and not SecurityAccessController.hasAuthorityToEditClient()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
-                <h:link outcome="clientEdit" title="#{msgs.edit}"
+                <h:link outcome="clientEdit"
+                        styleClass="action"
+                        title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditClient()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteClient" action="#{ClientForm.delete}" title="#{msgs.delete}"
+                <p:commandLink id="deleteClient"
+                               action="#{ClientForm.delete}"
+                               styleClass="action"
+                               title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteClient()}"
                                update="usersTabView:clientsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>

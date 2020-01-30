@@ -43,28 +43,37 @@
         <p:column headerText="#{msgs.actions}" id="taskActions"
                   styleClass="actionsColumn task-table-column">
             <h:form id="actionForm">
-                <h:link outcome="taskEdit" id="editTask"
+                <h:link id="editTask"
+                        outcome="taskEdit"
+                        styleClass="action"
                         rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                         title="#{msgs.detailsDesSchritts}">
                     <f:param name="referer" value="desktop"/>
                     <f:param name="id" value="#{task.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
+                <p:commandLink id="download"
+                               action="#{ProcessForm.downloadToHome}"
+                               styleClass="action"
+                               title="#{msgs.linkHomeDirectory}"
                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                     <h:outputText><i class="fa fa-download"/></h:outputText>
                     <f:setPropertyActionListener value="#{task.process.id}" target="#{ProcessForm.processByID}"/>
                     <!-- TODO: add separate message in case it already exists and alert -->
                 </p:commandLink>
                 <!-- assign task -->
-                <h:commandLink id="take" action="#{CurrentTaskForm.takeOverTask}"
+                <h:commandLink id="take"
+                               action="#{CurrentTaskForm.takeOverTask}"
+                               styleClass="action"
                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}" icon="fa fa-bell-o">
                     <h:outputText><i class="fa fa-bell-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
-                <h:commandLink id="editOwnTask" action="#{CurrentTaskForm.editTask}"
+                <h:commandLink id="editOwnTask"
+                               action="#{CurrentTaskForm.editTask}"
+                               styleClass="action"
                                rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
                     <h:outputText><i class="fa fa-bell"/></h:outputText>
@@ -72,7 +81,9 @@
                     <f:param name="id" value="#{task.id}"/>
                 </h:commandLink>
                 <!-- already assigned task (different user) -->
-                <h:commandLink id="editOtherTask" action="#{CurrentTaskForm.editTask}"
+                <h:commandLink id="editOtherTask"
+                               action="#{CurrentTaskForm.editTask}"
+                               styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                     <h:outputText><i class="fa fa-bell-slash"/></h:outputText>
@@ -80,7 +91,9 @@
                 </h:commandLink>
 
                 <!-- take over batch -->
-                <h:commandLink id="batch" action="#{CurrentTaskForm.takeOverBatchTasks}"
+                <h:commandLink id="batch"
+                               action="#{CurrentTaskForm.takeOverBatchTasks}"
+                               styleClass="action"
                                rendered="#{task.processingStatus == 'OPEN' and task.batchStep and task.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
@@ -88,7 +101,9 @@
                 </h:commandLink>
 
                 <!-- edit batch step (this user) -->
-                <h:commandLink id="batchInWork" action="#{CurrentTaskForm.editBatchTasks}"
+                <h:commandLink id="batchInWork"
+                               action="#{CurrentTaskForm.editBatchTasks}"
+                               styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and task.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
@@ -96,7 +111,9 @@
                 </h:commandLink>
 
                 <!-- edit batch step (different user) -->
-                <h:commandLink id="batchInWorkOther" action="#{CurrentTaskForm.editBatchTasks}"
+                <h:commandLink id="batchInWorkOther"
+                               action="#{CurrentTaskForm.editBatchTasks}"
+                               styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and task.batchStep and task.batchAvailable}"
                                title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                     <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>

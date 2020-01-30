@@ -44,6 +44,7 @@
                     <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
                         <p:commandLink id="addTemplate"
                                        action="#{ProjectForm.addTemplate}"
+                                       styleClass="action"
                                        title="#{msgs.addTemplate}"
                                        update="editForm:projectTabView:templateTable"
                                        oncomplete="toggleSave()">

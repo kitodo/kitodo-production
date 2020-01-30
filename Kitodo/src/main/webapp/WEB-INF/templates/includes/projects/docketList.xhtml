@@ -46,19 +46,28 @@
                   resizable="false"
                   styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewDocket" outcome="docketEdit" title="#{msgs.view}"
+                <h:link id="viewDocket"
+                        outcome="docketEdit"
+                        styleClass="action"
+                        title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewDocket() and not SecurityAccessController.hasAuthorityToEditDocket()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
-                <h:link id="editDocket" outcome="docketEdit" title="#{msgs.edit}"
+                <h:link id="editDocket"
+                        outcome="docketEdit"
+                        styleClass="action"
+                        title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditDocket()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 
-                <p:commandLink id="deleteDocket" action="#{DocketForm.delete}" title="#{msgs.delete}"
+                <p:commandLink id="deleteDocket"
+                               action="#{DocketForm.delete}"
+                               styleClass="action"
+                               title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteDocket()}"
                                update="docketTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>

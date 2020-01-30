@@ -34,7 +34,8 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
             <h:form id="projectActionForm">
-                <h:panelGroup title="#{project.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
+                <h:panelGroup styleClass="action"
+                              title="#{project.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="createProcessFromTemplate"
                                    action="#{SelectTemplateDialogView.createProcessForProject()}"
                                    disabled="#{project.templates.size() lt 1}"
@@ -44,13 +45,15 @@
                         <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
                     </p:commandLink>
                 </h:panelGroup>
-                <h:link rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
+                <h:link styleClass="action"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.edit}">
                     <f:param name="id" value="#{project.id}" />
                     <f:param name="referer" value="desktop"/>
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
-                <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
+                <h:commandLink styleClass="action"
+                               rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
                                action="#{ProjectForm.duplicate(project.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
@@ -58,6 +61,7 @@
                 </h:link>
                 <p:commandLink id="deleteProject"
                                action="#{ProjectForm.delete}"
+                               styleClass="action"
                                title="#{msgs.delete}"
                                update="projectTable"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}">

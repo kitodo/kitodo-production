@@ -78,7 +78,9 @@
                                   styleClass="full-width"/>
                 </p:column>
                 <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-                    <h:commandLink id="createWorkflowActionButton" action="#{MigrationForm.convertTasksToWorkflow(tasks)}"
+                    <h:commandLink id="createWorkflowActionButton"
+                                   action="#{MigrationForm.convertTasksToWorkflow(tasks)}"
+                                   styleClass="action"
                                    title="#{msgs.createNewWorkflow}">
                         <h:outputText><i class="fa fa-random fa-lg"/></h:outputText>
                     </h:commandLink>
