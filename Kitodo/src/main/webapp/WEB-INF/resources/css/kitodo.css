@@ -1496,7 +1496,7 @@ Column content
     cursor: not-allowed;
 }
 
-.ui-tree .ui-treenode.linked span span {
+.ui-tree .ui-treenode.linked span {
     pointer-events: none;
 }
 
