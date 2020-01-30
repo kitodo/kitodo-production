@@ -134,6 +134,7 @@ public class SchemaService {
 
     private void replaceFLocatForExport(Workpiece workpiece, Process process) throws URISyntaxException {
         List<Folder> folders = process.getProject().getFolders();
+        VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
@@ -142,17 +143,11 @@ public class SchemaService {
                         String lastSegment = mediaFileForMediaVariant.getValue().toString()
                                 .substring(lastSeparator + 1);
                         mediaFileForMediaVariant
-                                .setValue(new URI(replacePlaceholder(folder.getUrlStructure() + lastSegment, process)));
+                                .setValue(new URI(variableReplacer.replace(folder.getUrlStructure() + lastSegment)));
                     }
                 }
             }
         }
-    }
-
-    private String replacePlaceholder(String uri, Process process) {
-        uri = uri.replaceAll("\\(processtitle\\)", process.getTitle());
-        uri = uri.replaceAll("\\(processid\\)", process.getId().toString());
-        return uri;
     }
 
     /**
