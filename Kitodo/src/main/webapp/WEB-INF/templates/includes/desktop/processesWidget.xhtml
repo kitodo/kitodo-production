@@ -29,21 +29,18 @@
             <h:outputText title="#{process.id}"
                           value="#{process.id}"/>
         </p:column>
-        <p:column headerText="#{msgs.title}"
-                  styleClass="process-table-column">
+        <p:column headerText="#{msgs.title}">
             <h:outputText title="#{process.title}"
                           value="#{process.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.status}"
-                  styleClass="process-table-column">
+        <p:column headerText="#{msgs.status}">
             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
         </p:column>
-        <p:column headerText="#{msgs.project}"
-                  styleClass="process-table-column">
+        <p:column headerText="#{msgs.project}">
             <h:outputText title="#{process.project.title}"
                           value="#{process.project.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="editProcess"
                         outcome="/pages/processEdit"

@@ -22,17 +22,15 @@
                  styleClass="default-layout"
                  sortBy="#{project.title}"
                  var="project">
-        <p:column headerText="#{msgs.title}"
-                  styleClass="project-table-column">
+        <p:column headerText="#{msgs.title}">
             <h:outputText title="#{project.title}"
                           value="#{project.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.metsRightsOwner}"
-                  styleClass="project-table-column">
+        <p:column headerText="#{msgs.metsRightsOwner}">
             <h:outputText title="#{project.metsRightsOwner}"
                           value="#{project.metsRightsOwner}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
                 <h:panelGroup styleClass="action"
                               title="#{project.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">

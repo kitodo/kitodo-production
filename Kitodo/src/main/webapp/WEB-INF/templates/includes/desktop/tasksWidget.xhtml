@@ -24,24 +24,22 @@
                  sortOrder="descending"
                  var="task">
         <p:column headerText="#{msgs.title}"
-                  id="taskTitle"
-                  styleClass="task-table-column">
+                  id="taskTitle">
             <h:outputText title="#{task.title}"
                           value="#{task.title}"/>
         </p:column>
         <p:column headerText="#{msgs.process}"
-                  id="taskProcess"
-                  styleClass="task-table-column">
+                  id="taskProcess">
             <h:outputText title="#{task.process.title}"
                           value="#{task.process.title}"/>
         </p:column>
         <p:column headerText="#{msgs.project}"
-                  id="taskProject" styleClass="task-table-column">
+                  id="taskProject">
             <h:outputText title="#{task.process.project.title}"
                           value="#{task.process.project.title}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" id="taskActions"
-                  styleClass="actionsColumn task-table-column">
+                  styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="editTask"
                         outcome="taskEdit"

@@ -619,19 +619,6 @@ td.actionsColumn {
     padding-right: calc(var(--default-full-size) - 10px);
 }
 
-.task-table-column,
-.process-table-column {
-    width: 25% !important;
-}
-
-.project-table-column {
-    width: 33% !important;
-}
-
-.statistic-table-column {
-    width: 50% !important;
-}
-
 #desktopGrid .ui-datatable-scrollable-header-box {
     border-top: solid var(--contrast-border-width) var(--medium-gray);
     background: var(--cloudy-gray);
