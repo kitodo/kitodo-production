@@ -32,6 +32,7 @@ public class ProjectDTO extends BaseDTO {
     private List<ProcessDTO> processes = new ArrayList<>();
     private List<TemplateDTO> templates = new ArrayList<>();
     private List<UserDTO> users = new ArrayList<>();
+    private boolean hasProcesses;
 
     /**
      * Get title.
@@ -277,5 +278,23 @@ public class ProjectDTO extends BaseDTO {
      */
     public void setUsers(List<UserDTO> users) {
         this.users = users;
+    }
+
+    /**
+     * Get whether project has processes.
+     *
+     * @return value of hasProcesses
+     */
+    public boolean hasProcesses() {
+        return hasProcesses;
+    }
+
+    /**
+     * Set whether project has processes.
+     *
+     * @param hasProcesses as boolean
+     */
+    public void setHasProcesses(boolean hasProcesses) {
+        this.hasProcesses = hasProcesses;
     }
 }
