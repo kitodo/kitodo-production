@@ -225,7 +225,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             if (Objects.nonNull(((IncludedStructuralElement) division).getOrderlabel())) {
                 MetadataEntry label = new MetadataEntry();
                 label.setKey("ORDERLABEL");
-                label.setValue(((IncludedStructuralElement) division).getLabel());
+                label.setValue(((IncludedStructuralElement) division).getOrderlabel());
                 displayMetadata.add(label);
             }
         }
