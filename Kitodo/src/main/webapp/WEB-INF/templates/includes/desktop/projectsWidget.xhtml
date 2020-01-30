@@ -50,22 +50,17 @@
                     <f:param name="referer" value="desktop"/>
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
-                <h:commandLink styleClass="action"
-                               rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
-                               action="#{ProjectForm.duplicate(project.id)}" immediate="true"
-                               title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
                     <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
                 </h:link>
                 <h:panelGroup styleClass="action"
                               title="#{project.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
                     <p:commandLink id="deleteProject"
-                                   action="#{ProjectForm.delete}"
+                                   action="#{DesktopForm.deleteProject(project.id)}"
                                    update="projectTable"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}"
                                    disabled="#{project.hasProcesses()}">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                        <f:setPropertyActionListener value="#{project.id}" target="#{ProjectForm.projectById}"/>
                         <p:confirm header="#{msgs.confirmDelete}"
                                    message="#{msgs.confirmDeleteProject}"
                                    icon="ui-icon-alert"/>
