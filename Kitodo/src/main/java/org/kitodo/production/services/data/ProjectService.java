@@ -41,6 +41,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
@@ -359,5 +360,22 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      */
     public static String getProjectTitles(List<Project> projects) {
         return projects.stream().map(Project::getTitle).collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Delete project with ID 'projectID'.
+     *
+     * @param projectID ID of project to be deleted
+     */
+    public static void delete(int projectID) throws DAOException, DataException, ProjectDeletionException {
+        Project project = ServiceManager.getProjectService().getById(projectID);
+        if (project.getProcesses().size() > 0) {
+            throw new ProjectDeletionException("cannotDeleteProject");
+        }
+        for (User user : project.getUsers()) {
+            user.getProjects().remove(project);
+            ServiceManager.getUserService().saveToDatabase(user);
+        }
+        ServiceManager.getProjectService().remove(project);
     }
 }

@@ -41,12 +41,14 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProjectService;
 
 @Named("ProjectForm")
 @SessionScoped
@@ -284,20 +286,14 @@ public class ProjectForm extends BaseForm {
     /**
      * Remove.
      */
-    public void delete() {
-        if (this.project.getProcesses().size() > 0) {
-            Helper.setErrorMessage("cannotDeleteProject");
-            return;
-        }
+    public void delete(int projectId) {
         try {
-            for (User user : this.project.getUsers()) {
-                user.getProjects().remove(this.project);
-                ServiceManager.getUserService().saveToDatabase(user);
-            }
-            ServiceManager.getProjectService().remove(this.project);
+            ProjectService.delete(projectId);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
                 e);
+        } catch (ProjectDeletionException e) {
+            Helper.setErrorMessage(e.getMessage());
         }
     }
 

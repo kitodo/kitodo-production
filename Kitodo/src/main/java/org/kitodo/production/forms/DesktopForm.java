@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
@@ -33,6 +34,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.data.ProjectService;
 import org.primefaces.model.SortOrder;
 
 @Named("DesktopForm")
@@ -134,6 +136,23 @@ public class DesktopForm extends BaseForm {
         } catch (DataException | DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
+        }
+    }
+
+    /**
+     * Delete project by ID.
+     *
+     * @param projectID ID of project to be deleted
+     */
+    public void deleteProject(int projectID) {
+        try {
+            ProjectService.delete(projectID);
+            emptyCache();
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
+                    e);
+        } catch (ProjectDeletionException e) {
+            Helper.setErrorMessage(e.getMessage());
         }
     }
 

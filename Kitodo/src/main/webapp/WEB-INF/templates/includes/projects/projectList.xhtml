@@ -116,12 +116,11 @@
                 <h:panelGroup styleClass="action"
                               title="#{item.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
                     <p:commandLink id="deleteProject"
-                                   action="#{ProjectForm.delete}"
+                                   action="#{ProjectForm.delete(item.id)}"
                                    update="projectsTable"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}"
                                    disabled="#{item.hasProcesses()}">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                        <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
                         <p:confirm header="#{msgs.confirmDelete}"
                                    message="#{msgs.confirmDeleteProject}"
                                    icon="ui-icon-alert"/>
