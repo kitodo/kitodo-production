@@ -67,9 +67,6 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
         for (MetadataEntry entry : selected) {
             selectedItems.add(entry.getValue());
         }
-        if (selectedItems.isEmpty() && !this.items.isEmpty()) {
-            selectedItems.add(this.items.get(0).getValue().toString());
-        }
     }
 
     private ProcessSelectMetadata(ProcessSelectMetadata template) {

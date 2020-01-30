@@ -96,6 +96,7 @@
                              value="#{item.selectedItem}"
                              readonly="#{not item.editable}"
                              rendered="#{item.input eq 'oneMenu'}">
+                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                 <f:selectItems value="#{item.items}"/>
                 <p:ajax event="change"/>
             </p:selectOneMenu>
