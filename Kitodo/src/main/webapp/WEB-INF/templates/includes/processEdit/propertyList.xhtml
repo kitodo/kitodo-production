@@ -25,17 +25,23 @@
             <h:outputLink title="#{item.value}" value="#{item.value}" rendered="#{item.dataType.name eq 'link'}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn" rendered="#{isEditMode}">
-            <p:commandLink id="editProperty" title="#{msgs.edit}"
+            <p:commandLink id="editProperty"
+                           styleClass="action"
+                           title="#{msgs.edit}"
                            oncomplete="PF('editPropertyDialog').show()"
                            update="@(.editDialog)">
                 <i class="fa fa-pencil-square-o fa-lg"/>
                 <f:setPropertyActionListener target="#{ProcessForm.property}" value="#{item}"/>
             </p:commandLink>
-            <p:commandLink id="duplicateProperty" title="#{msgs.duplicate}" action="#{ProcessForm.duplicateProperty}">
+            <p:commandLink id="duplicateProperty"
+                           styleClass="action"
+                           title="#{msgs.duplicate}"
+                           action="#{ProcessForm.duplicateProperty}">
                 <h:outputText><i class="fa fa-files-o fa-lg"/></h:outputText>
                 <f:setPropertyActionListener target="#{ProcessForm.property}" value="#{item}"/>
             </p:commandLink>
             <p:commandLink id="deleteProperty"
+                           styleClass="action"
                            title="#{msgs.delete}"
                            oncomplete="toggleSave()"
                            update="propertyTable"

@@ -29,6 +29,7 @@
             <p:commandLink id="deleteFromRole"
                            rendered="#{isEditMode || isCreateMode}"
                            action="#{UserForm.deleteFromRole}"
+                           styleClass="action"
                            title="#{msgs.ausGruppeLoeschen}"
                            immediate="true"
                            oncomplete="toggleSave()"

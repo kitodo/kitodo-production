@@ -25,6 +25,7 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn" rendered="#{isEditMode}">
             <p:commandLink id="editTemplateProperty"
+                           styleClass="action"
                            title="#{msgs.edit}"
                            oncomplete="PF('editTemplateDialog').show()"
                            update="@(.editDialog)">
@@ -32,6 +33,7 @@
                 <f:setPropertyActionListener target="#{ProcessForm.templateProperty}" value="#{property}"/>
             </p:commandLink>
             <p:commandLink id="deleteTemplateProperty"
+                           styleClass="action"
                            title="#{msgs.delete}"
                            oncomplete="toggleSave()"
                            update="templatePropertyTable"

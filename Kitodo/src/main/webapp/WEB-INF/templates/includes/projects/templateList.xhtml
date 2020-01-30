@@ -58,7 +58,8 @@
             <h:outputText>
                 <h:form id="templateActionForm">
 
-                    <h:panelGroup title="#{item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
+                    <h:panelGroup styleClass="action"
+                                  title="#{item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
                         <p:commandLink id="createProcessFromTemplate"
                                        actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
                                        action="#{SelectProjectDialogView.createProcessFromTemplate()}"
@@ -69,25 +70,36 @@
                         </p:commandLink>
                     </h:panelGroup>
 
-                    <h:link id="viewTemplate" outcome="templateEdit" title="#{msgs.view}"
+                    <h:link id="viewTemplate"
+                            outcome="templateEdit"
+                            styleClass="action"
+                            title="#{msgs.view}"
                             rendered="#{SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate()}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:link id="editTemplate" outcome="templateEdit" title="#{msgs.edit}"
+                    <h:link id="editTemplate"
+                            outcome="templateEdit"
+                            styleClass="action"
+                            title="#{msgs.edit}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditTemplate()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:commandLink action="#{TemplateForm.duplicate(item.id)}" immediate="true"
+                    <h:commandLink action="#{TemplateForm.duplicate(item.id)}"
+                                   immediate="true"
+                                   styleClass="action"
                                    title="#{msgs.duplicateTemplate}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
 
-                    <p:commandLink id="deleteTemplate" action="#{TemplateForm.delete}" title="#{msgs.delete}"
+                    <p:commandLink id="deleteTemplate"
+                                   action="#{TemplateForm.delete}"
+                                   styleClass="action"
+                                   title="#{msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteTemplate()}"
                                    update="templateTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
@@ -141,6 +153,7 @@
                                             <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                                                 <h:link id="createProcess"
                                                         outcome="/pages/processFromTemplate?faces-redirect=true"
+                                                        styleClass="action"
                                                         title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
                                                     <f:param name="templateId" value="#{item.id}"/>
                                                     <f:param name="projectId" value="#{project.id}"/>

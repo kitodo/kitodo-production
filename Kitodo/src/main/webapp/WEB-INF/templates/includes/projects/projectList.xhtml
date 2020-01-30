@@ -69,7 +69,8 @@
                   styleClass="actionsColumn">
             <h:form id="projectActionForm">
 
-                <h:panelGroup title="#{item.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
+                <h:panelGroup styleClass="action"
+                              title="#{item.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="createProcessFromTemplate"
                                    action="#{SelectTemplateDialogView.createProcessForProject()}"
                                    disabled="#{item.templates.size() lt 1}"
@@ -80,41 +81,52 @@
                     </p:commandLink>
                 </h:panelGroup>
 
-                <h:link id="viewProject" rendered="#{SecurityAccessController.hasAuthorityToViewProject() and not SecurityAccessController.hasAuthorityToEditProject()}"
-                        outcome="projectEdit" title="#{msgs.view}">
+                <h:link styleClass="action"
+                        id="viewProject"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewProject() and not SecurityAccessController.hasAuthorityToEditProject()}"
+                        outcome="projectEdit"
+                        title="#{msgs.view}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                 </h:link>
 
-                <h:link id="editProject" rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
-                        outcome="projectEdit" title="#{msgs.edit}">
+                <h:link styleClass="action"
+                        id="editProject"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
+                        outcome="projectEdit"
+                        title="#{msgs.edit}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
 
-                <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
+                <h:commandLink styleClass="action"
+                               rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
                                action="#{ProjectForm.duplicate(item.id)}" immediate="true"
                                title="#{msgs.duplicateProject}">
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:commandLink>
 
-                <h:link rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
+                <h:link styleClass="action"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
                     <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
                 </h:link>
 
-                <p:commandLink id="deleteProject"
-                               action="#{ProjectForm.delete}"
-                               title="#{msgs.delete}"
-                               update="projectsTable"
-                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}">
-                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteProject}"
-                               icon="ui-icon-alert"/>
-                </p:commandLink>
+                <h:panelGroup styleClass="action"
+                              title="#{item.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
+                    <p:commandLink id="deleteProject"
+                                   action="#{ProjectForm.delete}"
+                                   update="projectsTable"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}"
+                                   disabled="#{item.hasProcesses()}">
+                        <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
+                        <p:confirm header="#{msgs.confirmDelete}"
+                                   message="#{msgs.confirmDeleteProject}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
+                </h:panelGroup>
             </h:form>
         </p:column>
 
@@ -158,6 +170,7 @@
                                             <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                                                 <h:link id="createProcess"
                                                         outcome="/pages/processFromTemplate?faces-redirect=true"
+                                                        styleClass="action"
                                                         title="#{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
                                                     <f:param name="templateId" value="#{template.id}"/>
                                                     <f:param name="projectId" value="#{item.id}"/>

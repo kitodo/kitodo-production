@@ -609,29 +609,14 @@ section#content-section {
 }
 
 th.actionsColumn span,
-td.actionsColumn form {
+td.actionsColumn form,
+td.actionsColumn {
     float: right;
+    text-align: right;
 }
 
-#desktopGrid td.actionsColumn form a:last-of-type {
-    margin-right: 0;
-}
-
-#desktopGrid #processTable td.actionsColumn form > a:last-of-type {
-    margin-right: 10px;
-}
-
-.task-table-column,
-.process-table-column {
-    width: 25% !important;
-}
-
-.project-table-column {
-    width: 33% !important;
-}
-
-.statistic-table-column {
-    width: 50% !important;
+.ui-datatable tbody td.actionsColumn {
+    padding-right: calc(var(--default-full-size) - 10px);
 }
 
 #desktopGrid .ui-datatable-scrollable-header-box {
@@ -2201,17 +2186,8 @@ footer {
     border-bottom: none;
 }
 
-.ui-datatable tr td.actionsColumn > a,
-.ui-datatable tr td.actionsColumn > form > a,
-.ui-datatable tr td.actionsColumn > form > span,
-.ui-datatable tr td.actionsColumn > div.actionsBlock > a,
-.ui-datatable tr td.actionsColumn > div.actionsBlock > span {
+.ui-datatable tr td.actionsColumn .action {
     margin-right: 10px;
-}
-
-.ui-datatable tr td.actionsColumn > a:last-of-type,
-.ui-datatable tr td.actionsColumn > form > a:last-of-type {
-    margin-right: 0;
 }
 
 .ui-datatable tr th.checkboxListColumn {
@@ -2252,11 +2228,6 @@ footer {
     width: 16px;
     height: 16px;
     border-radius: var(--default-border-radius);
-}
-
-tbody#projectsTable_data > tr.ui-widget-content > td {
-    padding-top: 6px;
-    padding-bottom: 6px;
 }
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {

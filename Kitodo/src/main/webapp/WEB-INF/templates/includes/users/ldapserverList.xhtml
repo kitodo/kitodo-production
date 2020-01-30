@@ -41,11 +41,15 @@
                   styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="ldapserverEdit"
+                        styleClass="action"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapServer')}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteLdapserver" action="#{LdapServerForm.delete}" title="#{msgs.delete}"
+                <p:commandLink id="deleteLdapserver"
+                               action="#{LdapServerForm.delete}"
+                               styleClass="action"
+                               title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('deleteLdapServer')}"
                                update="usersTabView:ldapServersTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>

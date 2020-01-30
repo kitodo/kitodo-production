@@ -42,6 +42,7 @@
                               styleClass="actionsColumn">
                         <p:commandLink id="addUserClient"
                                        action="#{UserForm.addToClient}"
+                                       styleClass="action"
                                        title="add to client"
                                        update="editForm:userTabView:clientDatatable userClientForm:selectClientTable"
                                        oncomplete="toggleSave()">

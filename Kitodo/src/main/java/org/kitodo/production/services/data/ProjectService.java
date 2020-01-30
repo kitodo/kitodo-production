@@ -209,6 +209,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         clientDTO.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
         clientDTO.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
         projectDTO.setClient(clientDTO);
+        projectDTO.setHasProcesses(ProjectTypeField.PROCESSES.getSizeOfProperty(jsonObject) > 0);
         if (!related) {
             convertRelatedJSONObjects(jsonObject, projectDTO);
         } else {

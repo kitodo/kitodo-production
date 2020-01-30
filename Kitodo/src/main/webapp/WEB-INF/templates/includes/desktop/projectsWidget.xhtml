@@ -22,19 +22,18 @@
                  styleClass="default-layout"
                  sortBy="#{project.title}"
                  var="project">
-        <p:column headerText="#{msgs.title}"
-                  styleClass="project-table-column">
+        <p:column headerText="#{msgs.title}">
             <h:outputText title="#{project.title}"
                           value="#{project.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.metsRightsOwner}"
-                  styleClass="project-table-column">
+        <p:column headerText="#{msgs.metsRightsOwner}">
             <h:outputText title="#{project.metsRightsOwner}"
                           value="#{project.metsRightsOwner}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
-                <h:panelGroup title="#{project.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
+                <h:panelGroup styleClass="action"
+                              title="#{project.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="createProcessFromTemplate"
                                    action="#{SelectTemplateDialogView.createProcessForProject()}"
                                    disabled="#{project.templates.size() lt 1}"
@@ -44,29 +43,34 @@
                         <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
                     </p:commandLink>
                 </h:panelGroup>
-                <h:link rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
+                <h:link styleClass="action"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.edit}">
                     <f:param name="id" value="#{project.id}" />
                     <f:param name="referer" value="desktop"/>
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
-                <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
+                <h:commandLink styleClass="action"
+                               rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
                                action="#{ProjectForm.duplicate(project.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
                     <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
                 </h:link>
-                <p:commandLink id="deleteProject"
-                               action="#{ProjectForm.delete}"
-                               title="#{msgs.delete}"
-                               update="projectTable"
-                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}">
-                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{project.id}" target="#{ProjectForm.projectById}"/>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteProject}"
-                               icon="ui-icon-alert"/>
-                </p:commandLink>
+                <h:panelGroup styleClass="action"
+                              title="#{project.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
+                    <p:commandLink id="deleteProject"
+                                   action="#{ProjectForm.delete}"
+                                   update="projectTable"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}"
+                                   disabled="#{project.hasProcesses()}">
+                        <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                        <f:setPropertyActionListener value="#{project.id}" target="#{ProjectForm.projectById}"/>
+                        <p:confirm header="#{msgs.confirmDelete}"
+                                   message="#{msgs.confirmDeleteProject}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
+                </h:panelGroup>
             </h:form>
         </p:column>
     </p:dataTable>

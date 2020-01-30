@@ -50,6 +50,7 @@
                 <h:form>
                     <h:link id="viewWorkflow"
                             outcome="workflowEdit"
+                            styleClass="action"
                             title="#{msgs['view']}"
                             rendered="#{(item.status ne 'draft') and ((SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow()))}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
@@ -58,6 +59,7 @@
 
                     <h:link id="editWorkflow"
                             outcome="workflowEdit"
+                            styleClass="action"
                             title="#{msgs['edit']}"
                             rendered="#{item.status eq 'draft' and SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
@@ -65,12 +67,14 @@
                     </h:link>
 
                     <h:commandLink action="#{WorkflowForm.duplicate(item.id)}"
+                                   styleClass="action"
                                    title="#{msgs.duplicateWorkflow}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
 
-                    <h:panelGroup title="#{item.status eq 'active' ? msgs['archive'] : msgs['workflowUnableToArchive']}">
+                    <h:panelGroup styleClass="action"
+                                  title="#{item.status eq 'active' ? msgs['archive'] : msgs['workflowUnableToArchive']}">
                         <p:commandLink id="archiveWorkflow"
                                        action="#{WorkflowForm.archive}"
                                        disabled="#{item.status ne 'active'}"
@@ -84,7 +88,10 @@
                         </p:commandLink>
                     </h:panelGroup>
 
-                    <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
+                    <p:commandLink id="deleteWorkflow"
+                                   action="#{WorkflowForm.delete}"
+                                   styleClass="action"
+                                   title="#{msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteWorkflow()}"
                                    update="workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>

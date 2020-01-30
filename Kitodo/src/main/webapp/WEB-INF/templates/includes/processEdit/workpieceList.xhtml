@@ -25,6 +25,7 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn" rendered="#{isEditMode}">
             <p:commandLink id="editWorkpieceProperty"
+                           styleClass="action"
                            title="#{msgs.edit}"
                            oncomplete="PF('editWorkpieceDialog').show()"
                            update="@(.editDialog)">
@@ -32,6 +33,7 @@
                 <f:setPropertyActionListener target="#{ProcessForm.workpieceProperty}" value="#{property}"/>
             </p:commandLink>
             <p:commandLink id="deleteWorkpieceProperty"
+                           styleClass="action"
                            title="#{msgs.delete}"
                            action="#{ProcessForm.deleteWorkpieceProperty}"
                            oncomplete="toggleSave()"

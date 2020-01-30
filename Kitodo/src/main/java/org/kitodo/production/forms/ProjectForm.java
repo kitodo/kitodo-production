@@ -285,6 +285,10 @@ public class ProjectForm extends BaseForm {
      * Remove.
      */
     public void delete() {
+        if (this.project.getProcesses().size() > 0) {
+            Helper.setErrorMessage("cannotDeleteProject");
+            return;
+        }
         try {
             for (User user : this.project.getUsers()) {
                 user.getProjects().remove(this.project);

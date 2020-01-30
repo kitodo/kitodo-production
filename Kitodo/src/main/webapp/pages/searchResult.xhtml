@@ -77,14 +77,20 @@
                 <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                     <h:panelGroup layout="block"
                                   styleClass="actionsBlock">
-                        <h:link id="viewProcess" outcome="processEdit" title="#{msgs.view}"
+                        <h:link styleClass="action"
+                                id="viewProcess"
+                                outcome="processEdit"
+                                title="#{msgs.view}"
                                 rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                             <i class="fa fa-eye fa-lg"/>
                             <f:param name="referer" value="processes"/>
                             <f:param name="id" value="#{process.id}"/>
                         </h:link>
 
-                        <h:link id="editProcess" outcome="processEdit" title="#{msgs.edit}"
+                        <h:link styleClass="action"
+                                id="editProcess"
+                                outcome="processEdit"
+                                title="#{msgs.edit}"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                             <i class="fa fa-pencil-square-o fa-lg"/>
                             <f:param name="referer" value="processes"/>
@@ -95,6 +101,7 @@
                         <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(process.id)}"/>
                         <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
                         <p:commandLink id="openTaskSelectionDialogLink"
+                                       styleClass="action"
                                        title="#{msgs['dataEditor.selectMetadataTask']} (#{process.title})"
                                        oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
                                        rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
@@ -104,6 +111,7 @@
                         <!-- else, open metadata editor directly -->
                         <h:link id="readXML"
                                 outcome="/pages/metadataEditor?faces-redirect=true"
+                                styleClass="action"
                                 title="#{msgs.metadataEdit}"
                                 rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                             <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
@@ -113,6 +121,7 @@
 
                         <p:commandLink id="download"
                                        action="#{SearchResultForm.downloadToHome(process.id)}"
+                                       styleClass="action"
                                        title="#{msgs.linkHomeDirectory}"
                                        rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                             <h:outputText><i class="fa fa-download"/></h:outputText>
@@ -125,7 +134,10 @@
                                        rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                             <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                         </h:commandLink>
-                        <p:commandLink id="deleteProcess" action="#{SearchResultForm.deleteProcess(process)}" title="#{msgs.delete}"
+                        <p:commandLink id="deleteProcess"
+                                       action="#{SearchResultForm.deleteProcess(process)}"
+                                       styleClass="action"
+                                       title="#{msgs.delete}"
                                        rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                        update="searchResultTabView:searchResultForm">
                             <h:outputText><i class="fa fa-trash-o"/></h:outputText>
@@ -151,7 +163,9 @@
                                         <h:outputText value="#{parent.getTitle()}"/>
                                     </p:column>
                                     <p:column styleClass="actionsColumn">
-                                        <h:link outcome="processEdit" title="#{msgs.view}"
+                                        <h:link outcome="processEdit"
+                                                styleClass="action"
+                                                title="#{msgs.view}"
                                                 rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                                             <i class="fa fa-eye fa-lg"/>
                                             <f:param name="referer" value="processes"/>
@@ -160,7 +174,9 @@
                                         <!--@elvariable id="taskOptions" type="java.util.List"-->
                                         <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(parent.id)}"/>
                                         <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
-                                        <h:link outcome="processEdit" title="#{msgs.edit}"
+                                        <h:link outcome="processEdit"
+                                                styleClass="action"
+                                                title="#{msgs.edit}"
                                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                                             <i class="fa fa-pencil-square-o fa-lg"/>
                                             <f:param name="referer" value="processes"/>
@@ -168,6 +184,7 @@
                                         </h:link>
                                         <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(parent.id)}" />
                                         <h:commandLink action="#{DataEditorForm.open(currentTaskId, 'processes')}"
+                                                       styleClass="action"
                                                        title="#{msgs.metadataEdit}"
                                                        rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                                             <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>

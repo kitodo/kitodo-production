@@ -91,14 +91,20 @@
                       headerText="#{msgs.actions}">
                 <h:panelGroup layout="block"
                               styleClass="actionsBlock">
-                    <h:link id="viewProcess" outcome="processEdit" title="#{msgs.view}"
+                    <h:link id="viewProcess"
+                            outcome="processEdit"
+                            styleClass="action"
+                            title="#{msgs.view}"
                             rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                         <i class="fa fa-eye fa-lg"/>
                         <f:param name="referer" value="processes"/>
                         <f:param name="id" value="#{process.id}"/>
                     </h:link>
 
-                    <h:link id="editProcess" outcome="processEdit" title="#{msgs.edit}"
+                    <h:link id="editProcess"
+                            outcome="processEdit"
+                            styleClass="action"
+                            title="#{msgs.edit}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="referer" value="processes"/>
@@ -109,6 +115,7 @@
                     <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(process.id)}"/>
                     <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
                     <p:commandLink id="openTaskSelectionDialogLink"
+                                   styleClass="action"
                                    title="#{msgs['dataEditor.selectMetadataTask']} (#{process.title})"
                                    oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
                                    rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
@@ -120,20 +127,27 @@
                     <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}" />
                     <h:commandLink id="readXML"
                                    action="#{DataEditorForm.open(currentTaskId, 'processes')}"
+                                   styleClass="action"
                                    title="#{msgs.metadataEdit}"
                                    rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                         <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
                         <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                     </h:commandLink>
 
-                    <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
+                    <p:commandLink id="download"
+                                   action="#{ProcessForm.downloadToHome}"
+                                   styleClass="action"
+                                   title="#{msgs.linkHomeDirectory}"
                                    rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                         <h:outputText><i class="fa fa-download fa-lg"/></h:outputText>
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                         <!-- TODO: add separate message in case it already exists and alert -->
                     </p:commandLink>
 
-                    <p:commandLink id="upload" action="#{ProcessForm.uploadFromHome}" title="#{msgs.deleteLinkHomeDirectory}"
+                    <p:commandLink id="upload"
+                                   action="#{ProcessForm.uploadFromHome}"
+                                   styleClass="action"
+                                   title="#{msgs.deleteLinkHomeDirectory}"
                                    rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                         <h:outputText><i class="fa fa-upload fa-lg"/></h:outputText>
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
@@ -142,35 +156,51 @@
                     </p:commandLink>
 
                     <!-- TODO: could be used for adding text: http://blog.fontawesome.io/2014/05/19/stacking-text-and-icons/ -->
-                    <p:commandLink id="exportLogXml" action="#{ProcessForm.createXML}" title="#{msgs.createXML}">
+                    <p:commandLink id="exportLogXml"
+                                   action="#{ProcessForm.createXML}"
+                                   styleClass="action"
+                                   title="#{msgs.createXML}">
                         <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     </p:commandLink>
 
-                    <p:commandLink id="downloadDocket" action="#{ProcessForm.downloadDocket}" title="#{msgs.docketPrint}"
+                    <p:commandLink id="downloadDocket"
+                                   action="#{ProcessForm.downloadDocket}"
+                                   styleClass="action"
+                                   title="#{msgs.docketPrint}"
                                    ajax="false" rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
                         <h:outputText><i class="fa fa-print fa-lg"/></h:outputText>
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     </p:commandLink>
 
-                    <h:commandLink action="#{ProcessForm.exportMets(process.id)}" id="exportMets" title="#{msgs.exportMets}"
+                    <h:commandLink id="exportMets"
+                                   action="#{ProcessForm.exportMets(process.id)}"
+                                   styleClass="action"
+                                   title="#{msgs.exportMets}"
                                    rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                         <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{ProcessForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}"
+                    <h:commandLink id="exportPdf"
+                                   action="#{ProcessForm.exportPdf}"
+                                   styleClass="action"
+                                   title="#{msgs.exportPdf}"
                                    rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                         <h:outputText><i class="fa fa-file-pdf-o fa-lg"/></h:outputText>
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     </h:commandLink>
 
-                    <h:commandLink action="#{ProcessForm.exportDMS}" id="exportDms" title="#{msgs.exportDMS}"
+                    <h:commandLink id="exportDms"
+                                   action="#{ProcessForm.exportDMS}"
+                                   styleClass="action"
+                                   title="#{msgs.exportDMS}"
                                    rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                         <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     </h:commandLink>
 
-                    <h:panelGroup title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
+                    <h:panelGroup styleClass="action"
+                                  title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
                         <p:commandLink id="deleteProcess"
                                        action="#{ProcessForm.delete(process)}"
                                        title="#{ process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}"
@@ -203,7 +233,9 @@
                                     <h:outputText value="#{parent.getTitle()}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
-                                    <h:link outcome="processEdit" title="#{msgs.view}"
+                                    <h:link outcome="processEdit"
+                                            styleClass="action"
+                                            title="#{msgs.view}"
                                             rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-eye fa-lg"/>
                                         <f:param name="referer" value="processes"/>
@@ -212,7 +244,9 @@
                                     <!--@elvariable id="taskOptions" type="java.util.List"-->
                                     <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(parent.id)}"/>
                                     <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
-                                    <h:link outcome="processEdit" title="#{msgs.edit}"
+                                    <h:link outcome="processEdit"
+                                            styleClass="action"
+                                            title="#{msgs.edit}"
                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-pencil-square-o fa-lg"/>
                                         <f:param name="referer" value="processes"/>
@@ -220,6 +254,7 @@
                                     </h:link>
                                     <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(parent.id)}" />
                                     <h:commandLink action="#{DataEditorForm.open(currentTaskId, 'processes')}"
+                                                   styleClass="action"
                                                    title="#{msgs.metadataEdit}"
                                                    rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
                                         <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
