@@ -391,18 +391,6 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private void restoreSelection(String rowKey, TreeNode parentNode) {
-        for (TreeNode childNode : parentNode.getChildren()) {
-            if (Objects.nonNull(childNode) && rowKey.equals(childNode.getRowKey())) {
-                childNode.setSelected(true);
-                break;
-            } else {
-                childNode.setSelected(false);
-                restoreSelection(rowKey, childNode);
-            }
-        }
-    }
-
     /**
      * Loads the tree(s) into the panel and sets the selected element to the
      * root element of the structure tree.
@@ -423,6 +411,18 @@ public class StructurePanel implements Serializable {
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
         this.previouslySelectedPhysicalNode = selectedPhysicalNode;
+    }
+
+    private void restoreSelection(String rowKey, TreeNode parentNode) {
+        for (TreeNode childNode : parentNode.getChildren()) {
+            if (Objects.nonNull(childNode) && rowKey.equals(childNode.getRowKey())) {
+                childNode.setSelected(true);
+                break;
+            } else {
+                childNode.setSelected(false);
+                restoreSelection(rowKey, childNode);
+            }
+        }
     }
 
     /**
