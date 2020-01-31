@@ -155,16 +155,16 @@
                             <p:commandLink id="cancel" action="#{CurrentTaskForm.batchHelper.openBatchTasksByUser}"
                                            title="#{msgs.releaseTask}">
                                 <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
-                                                style="margin-right:3px;vertical-align:middle"/>
+                                                style="margin-right:3px;vertical-align:middle;"/>
                                 <h:outputText value="#{msgs.releaseTask}"/>
-                                <p:confirm header="#{msgs.confirmRelease}" message="#{msgs.reallyReleaseTask}}"
+                                <p:confirm header="#{msgs.confirmRelease}" message="#{msgs.reallyReleaseTask}"
                                            icon="ui-icon-alert"/>
                             </p:commandLink>
                             <!-- Abschliessen-Schaltknopf -->
                             <p:commandLink id="close" action="#{CurrentTaskForm.batchHelper.closeBatchTasksByUser}"
                                            title="#{msgs.closeTask}">
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
-                                                style="margin-right:3px;vertical-align:middle"/>
+                                                style="margin-right:3px;vertical-align:middle;"/>
                                 <h:outputText value="#{msgs.closeTask}"/>
                                 <p:confirm header="#{msgs.confirmClose}" message="#{msgs.closeTask}"
                                            icon="ui-icon-alert"/>
