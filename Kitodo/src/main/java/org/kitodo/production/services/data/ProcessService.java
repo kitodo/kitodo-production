@@ -729,8 +729,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                         .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput)))
                 .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-        List<ProcessDTO> linkableParentProcesses = findByQuery(query, false);
-        return linkableParentProcesses;
+        return findByQuery(query, false);
     }
 
     /**

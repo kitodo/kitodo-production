@@ -52,6 +52,7 @@ import org.kitodo.config.ConfigProject;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -89,7 +90,8 @@ public class ImportService {
 
     private ProcessGenerator processGenerator;
     private static final String REPLACE_ME = "REPLACE_ME";
-    private static final String IDENTIFIER_METADATA = "CatalogIDDigital";
+    // default value for identifierMetadata if no OPAC specific metadata has been configured in kitodo_opac.xml
+    private static String identifierMetadata = "CatalogIDDigital";
     private static String parentXpath = "//kitodo:metadata[@name='" + REPLACE_ME + "']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
     private String trimMode = "";
@@ -135,6 +137,11 @@ public class ImportService {
             OPACConfig.getOPACConfiguration(catalogName);
             try {
                 trimMode = OPACConfig.getParentIDTrimMode(catalogName);
+            } catch (NoSuchElementException e) {
+                logger.debug(e.getLocalizedMessage());
+            }
+            try {
+                identifierMetadata = OPACConfig.getIdentifierMetadata(catalogName);
             } catch (NoSuchElementException e) {
                 logger.debug(e.getLocalizedMessage());
             }
@@ -355,7 +362,7 @@ public class ImportService {
                                                           int templateId, int importDepth,
                                                           Collection<String> parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
-            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
@@ -369,15 +376,20 @@ public class ImportService {
 
         String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId);
 
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+
         int level = 1;
         while (Objects.nonNull(parentID) && level < importDepth) {
             HashMap<String, String> parentIDMetadata = new HashMap<>();
-            parentIDMetadata.put(IDENTIFIER_METADATA, parentID);
+            parentIDMetadata.put(identifierMetadata, parentID);
             List<ProcessDTO> parentProcesses = new LinkedList<>();
             this.parentTempProcess = null;
             try {
                 try {
-                    parentProcesses = ServiceManager.getProcessService().findByMetadata(parentIDMetadata);
+                    parentProcesses = ServiceManager.getProcessService().findByMetadata(parentIDMetadata).stream()
+                            .filter(p -> p.getProject().getId() == projectId
+                                    && p.getRuleset().getId().equals(template.getRuleset().getId()))
+                            .collect(Collectors.toList());
                 } catch (DataException e) {
                     logger.error(e.getLocalizedMessage());
                 }

@@ -116,6 +116,16 @@ public class OPACConfig {
     }
 
     /**
+     * Load the name of the metadata type that is used to store the catalog ID
+     * of a specific record in the internal metadata format.
+     * @param catalogName String identifying the catalog by its title
+     * @return HierarchicalConfiguration for catalog's "identifierMetadata"
+     */
+    public static String getIdentifierMetadata(String catalogName) {
+        return getCatalog(catalogName).getString("identifierMetadata[@value]");
+    }
+
+    /**
      * Load the "exemplarField" of the catalog used to retrieve exemplar record information
      * from individual records of that catalog.
      * @param catalogName String identifying the catalog by its title

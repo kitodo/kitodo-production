@@ -146,6 +146,7 @@
             <param name="path" value="/sru" />
         </config>
         <identifierParameter value="ead.id" />
+        <identifierMetadata value="CatalogIDDigital" />
         <urlParameters>
             <param name="version" value="1.2" />
             <param name="operation" value="searchRetrieve" />
