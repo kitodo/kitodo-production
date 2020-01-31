@@ -362,7 +362,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * @return the initialized title generator
      */
     private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
-                                                           Collection<MetadataViewInterface> addableDivisions) throws DoctypeMissingException {
+                                                           Collection<MetadataViewInterface> addableDivisions)
+            throws DoctypeMissingException {
 
         IncludedStructuralElement rootElement = workpiece.getRootElement();
         Map<String, Map<String, String>> metadata = new HashMap<>(4);
