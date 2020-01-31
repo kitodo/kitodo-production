@@ -1672,8 +1672,8 @@ Column content
     line-height: var(--input-height);
 }
 
-#metadataAccordion\:metadata\:metadataTable .ui-button:not(:last-child),
-#metadataAccordion\:physicalMetadata\:physicalMetadataTable .ui-button:not(:last-child) {
+#metadataAccordion\:metadata\:metadataTable .ui-button:not(:last-child):not(.ui-spinner-button),
+#metadataAccordion\:physicalMetadata\:physicalMetadataTable .ui-button:not(:last-child):not(.ui-spinner-button) {
     margin-right: var(--default-half-size);
 }
 
