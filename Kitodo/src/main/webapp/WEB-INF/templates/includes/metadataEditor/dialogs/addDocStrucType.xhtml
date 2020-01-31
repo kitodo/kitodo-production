@@ -84,10 +84,16 @@
                                 <p:selectOneMenu id="docStructAddTypeSelection"
                                                  class="input"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
+                                                 required="true"
+                                                 immediate="true"
                                                  style="width: 180px;">
+                                    <f:selectItem itemValue="#{null}"
+                                                  itemLabel="#{msgs.notSelected}"
+                                                  itemDisabled="true"
+                                                  noSelectionOption="true"/>
                                     <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
                                     <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(false)}"
-                                            update="dialogAddDocStrucTypeForm:addMetadata"/>
+                                            update="dialogAddDocStrucTypeForm"/>
                                 </p:selectOneMenu>
                             </p:row>
                         </p:panelGrid>
@@ -251,7 +257,7 @@
                         <p:commandButton id="addDocStruc"
                                          value="#{msgs.apply}"
                                          action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(false)}"
-                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1}"
+                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1 or DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem eq null}"
                                          styleClass="primary right"
                                          icon="fa fa-check fa-lg"
                                          iconPos="right"
@@ -260,7 +266,7 @@
                         <p:commandButton id="addAndEditStruc"
                                          value="#{msgs.applyAndEdit}"
                                          action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(true)}"
-                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1}"
+                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1 or DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem eq null}"
                                          styleClass="secondary right"
                                          icon="fa fa-check fa-lg"
                                          iconPos="right"
