@@ -168,7 +168,8 @@
                                                class="input"
                                                size="5"
                                                min="1">
-                                        <p:ajax update="addMetadata
+                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(false)}"
+                                                update="addMetadata
                                                         selectFirstPageOnAddNode
                                                         selectLastPageOnAddNode"/>
                                     </p:spinner>
