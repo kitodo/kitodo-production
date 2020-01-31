@@ -141,7 +141,10 @@ public class ImportService {
                 logger.debug(e.getLocalizedMessage());
             }
             try {
-                identifierMetadata = OPACConfig.getIdentifierMetadata(catalogName);
+                String idMetadta = OPACConfig.getIdentifierMetadata(catalogName);
+                if (StringUtils.isNotBlank(idMetadta)) {
+                    identifierMetadata = idMetadta;
+                }
             } catch (NoSuchElementException e) {
                 logger.debug(e.getLocalizedMessage());
             }
