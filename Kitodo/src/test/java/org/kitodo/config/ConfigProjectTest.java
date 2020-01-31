@@ -18,6 +18,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
+import org.kitodo.exceptions.DoctypeMissingException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,17 +56,17 @@ public class ConfigProjectTest {
     }
 
     @Test
-    public void shouldGetDocType() {
+    public void shouldGetDocType() throws DoctypeMissingException {
         assertEquals("Document type is incorrect!", "monograph", configProject.getDocType());
     }
 
     @Test
-    public void shouldGetTifDefinition() {
+    public void shouldGetTifDefinition() throws DoctypeMissingException {
         assertEquals("Tif definition is incorrect!", "kitodo", configProject.getTifDefinition());
     }
 
     @Test
-    public void shouldGetTitleDefinition() {
+    public void shouldGetTitleDefinition() throws DoctypeMissingException {
         String titleDefinition = configProject.getTitleDefinition();
         String expected = "TSL_ATS+'_'+CatalogIDDigital";
         assertEquals("Title definition is incorrect!", expected, titleDefinition);
