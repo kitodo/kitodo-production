@@ -34,6 +34,8 @@ import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -202,7 +204,8 @@ public class ImportTab implements Serializable {
                     Arrays.asList(String.valueOf(processes.size()), this.hitModel.getSelectedCatalog()));
             showGrowlMessage(summary, detail);
         } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
-                | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException e) {
+                | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException
+                | DAOException | ConfigException e) {
             Helper.setErrorMessage(e);
         }
     }
