@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -226,7 +227,7 @@ public class ProcessDataTab {
     public void prepare() {
         try {
             ServiceManager.getImportService().prepare(createProcessForm.getProject().getTitle());
-        } catch (IOException e) {
+        } catch (IOException | DoctypeMissingException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }

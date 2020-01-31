@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.production.process.field.AdditionalField;
 
 public class ConfigProject {
@@ -89,8 +90,13 @@ public class ConfigProject {
      *
      * @return value of docType
      */
-    public String getDocType() {
-        return getParamString(CREATE_NEW_PROCESS + ".defaultdoctype", ConfigOpac.getAllDoctypes().get(0).getTitle());
+    public String getDocType() throws DoctypeMissingException {
+        try {
+            String paramString = getParamString(CREATE_NEW_PROCESS + ".defaultdoctype", ConfigOpac.getAllDoctypes().get(0).getTitle());
+            return paramString;
+        } catch (IndexOutOfBoundsException e) {
+            throw new DoctypeMissingException("No doctypes configured in opac.xml");
+        }
     }
 
     /**
@@ -125,7 +131,7 @@ public class ConfigProject {
      *
      * @return tif definition as String
      */
-    public String getTifDefinition() {
+    public String getTifDefinition() throws DoctypeMissingException {
         return getParamString("tifheader." + getDocType(), "kitodo");
     }
 
@@ -134,7 +140,7 @@ public class ConfigProject {
      *
      * @return title definition as String
      */
-    public String getTitleDefinition() {
+    public String getTitleDefinition() throws DoctypeMissingException {
         int count = getParamList(ITEM_LIST_PROCESS_TITLE).size();
         String titleDefinition = "";
 
@@ -175,7 +181,7 @@ public class ConfigProject {
      *
      * @return list of AdditionalField objects
      */
-    public List<AdditionalField> getAdditionalFields() {
+    public List<AdditionalField> getAdditionalFields() throws DoctypeMissingException {
         List<AdditionalField> additionalFields = new ArrayList<>();
 
         int count = getParamList(ITEM_LIST_ITEM).size();

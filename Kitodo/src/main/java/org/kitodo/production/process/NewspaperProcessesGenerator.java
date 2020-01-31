@@ -49,6 +49,7 @@ import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -262,7 +263,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             but its value cannot be evaluated to an integer
      */
     public void nextStep()
-            throws ConfigurationException, DAOException, DataException, IOException, ProcessGenerationException {
+            throws ConfigurationException, DAOException, DataException, IOException, ProcessGenerationException, DoctypeMissingException {
 
         if (currentStep == 0) {
             initialize();
@@ -283,7 +284,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      */
-    private void initialize() throws ConfigurationException, IOException {
+    private void initialize() throws ConfigurationException, IOException, DoctypeMissingException {
         final long begin = System.nanoTime();
 
         overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
@@ -361,7 +362,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * @return the initialized title generator
      */
     private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
-                                                           Collection<MetadataViewInterface> addableDivisions) {
+                                                           Collection<MetadataViewInterface> addableDivisions) throws DoctypeMissingException {
 
         IncludedStructuralElement rootElement = workpiece.getRootElement();
         Map<String, Map<String, String>> metadata = new HashMap<>(4);

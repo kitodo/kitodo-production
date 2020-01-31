@@ -51,6 +51,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
