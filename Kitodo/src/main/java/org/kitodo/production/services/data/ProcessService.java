@@ -2536,7 +2536,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Export METS.
+     * Export Mets.
+     *
+     * @param processId Id of which process should be exported
+     * @throws IOException Thrown on IO error
+     * @throws DAOException Thrown on database like error
      */
     public static void exportMets(int processId) throws IOException, DAOException {
         Process process = ServiceManager.getProcessService().getById(processId);
@@ -2544,6 +2548,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         export.startExport(process);
     }
 
+    /**
+     * Link a list of given processes to user home directory.
+     *
+     * @param processes List of processes
+     * @throws DAOException Thrown on database like error
+     */
     public static void downloadToHome(List<Process> processes) throws DAOException {
         WebDav webDav = new WebDav();
         for (Process processForDownload : processes) {
