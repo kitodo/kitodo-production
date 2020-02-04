@@ -29,7 +29,7 @@
     </p:panel>
 
     <p:dataTable id="templateTable" var="template" value="#{ProjectForm.project.templates}" sortBy="#{template.title}">
-        <p:column headerText="#{msgs.task}" id="taskTitle">
+        <p:column headerText="#{msgs.template}" id="taskTitle">
             <p:rowToggler />
             <h:outputText value="#{template.title}"/>
         </p:column>
