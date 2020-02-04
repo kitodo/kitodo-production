@@ -93,12 +93,14 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilt
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -2449,6 +2451,56 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             webDav.downloadToHome(process, true);
         } else {
             webDav.downloadToHome(process, false);
+        }
+    }
+
+    /**
+     * Check and return whether the process with the ID 'processId' has any correction comments or not.
+     *
+     * @param processID
+     *          ID of process to check
+     * @return 0, if process has no correction comment
+     *         1, if process has correction comments that are all corrected
+     *         2, if process has at least one open correction comment
+     */
+    public static int hasCorrectionComment(int processID) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(processID);
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        if (correctionComments.size() < 1) {
+            return 0;
+        } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * Check and return whether the given task has any correction comments or not.
+     *
+     * @param task
+     *          TaskDTO to check
+     * @return 0, if process has no correction comment
+     *         1, if process has correction comments that are all corrected
+     *         2, if process has at least one open correction comment
+     */
+    public static int hasCorrectionComment(TaskDTO task) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(task.getProcess().getId());
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        List<Comment> currentTaskComments = correctionComments.stream()
+                .filter(c -> c.getCurrentTask().getId().equals(task.getId())).collect(Collectors.toList());
+        List<Comment> correctionTaskComments = correctionComments.stream()
+                .filter(c -> c.getCorrectionTask().getId().equals(task.getId())).collect(Collectors.toList());
+        if (correctionTaskComments.size() < 1) {
+            if (currentTaskComments.size() < 1) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            return 2;
         }
     }
 }

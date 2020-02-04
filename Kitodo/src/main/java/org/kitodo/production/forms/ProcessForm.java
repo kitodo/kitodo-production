@@ -1563,4 +1563,23 @@ public class ProcessForm extends TemplateBaseForm {
     public List<ProcessMetadataStatistic> getProcessMetadataStatistics() {
         return processMetadataStatistics;
     }
+
+    /**
+     * Check and return whether the process with the ID 'processId' has any correction comments or not.
+     *
+     * @param processId
+     *          ID of process to check
+     * @return 0, if process has no correction comment
+     *         1, if process has correction comments that are all corrected
+     *         2, if process has at least one open correction comment
+     */
+    public int hasCorrectionTask(int processId) {
+        try {
+            return ProcessService.hasCorrectionComment(processId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
+                processId }, logger, e);
+            return 0;
+        }
+    }
 }

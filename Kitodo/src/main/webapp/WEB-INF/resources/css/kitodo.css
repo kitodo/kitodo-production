@@ -1176,6 +1176,17 @@ Import form
     padding: 0 var(--default-double-size);
 }
 
+.correction-marker {
+    color: var(--focused-orange);
+    font-size: xx-large;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.corrected {
+    color: var(--medium-gray);
+}
+
 /*----------------------------------------------------------------------
 Calendar
 ----------------------------------------------------------------------*/

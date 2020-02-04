@@ -791,4 +791,23 @@ public class CurrentTaskForm extends BaseForm {
     public void setFilter(String filter) {
         super.filter = filter;
     }
+
+    /**
+     * Check and return whether the given task has any correction comments or not.
+     *
+     * @param task
+     *          TaskDTO to check
+     * @return 0, if task has no correction comment
+     *         1, if task has correction comments that are all corrected
+     *         2, if task has at least one open correction comment
+     */
+    public int hasCorrectionComment(TaskDTO task) {
+        try {
+            return ProcessService.hasCorrectionComment(task);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
+                    task.getProcess().getId() }, logger, e);
+            return 0;
+        }
+    }
 }
