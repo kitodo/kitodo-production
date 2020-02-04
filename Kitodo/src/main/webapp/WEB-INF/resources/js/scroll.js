@@ -182,7 +182,7 @@ function scrollToStructureThumbnail(thumbnail, scrollable) {
 }
 
 function scrollToSelectedStripe(selectedStripe, scrollable) {
-    scrollableContent.animate({
+    scrollable.animate({
         scrollTop: selectedStripe[0].offsetTop
     }, 180, null, null);
 }
