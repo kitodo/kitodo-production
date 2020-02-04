@@ -219,6 +219,12 @@ public class ImportTab implements Serializable {
         return this.hitModel;
     }
 
+    /**
+     * Show growl message.
+     *
+     * @param summary General message
+     * @param detail Message detail
+     */
     public void showGrowlMessage(String summary, String detail) {
         String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
                 .replace("SEVERITY", "info");

@@ -214,6 +214,11 @@ public class Workpiece {
         return mediaUnits.stream().filter(m -> m.getType().equals(PAGE)).collect(Collectors.toList());
     }
 
+    /**
+     * Recursively search for all media units with type "page".
+     *
+     * @return list of all media units with type "page".
+     */
     public List<MediaUnit> getAllMediaUnits() {
         List<MediaUnit> mediaUnits = new LinkedList<>(mediaUnit.getChildren());
         for (MediaUnit mediaUnit : mediaUnit.getChildren()) {
