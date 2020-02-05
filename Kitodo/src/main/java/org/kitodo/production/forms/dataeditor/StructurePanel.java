@@ -770,8 +770,8 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    void updateNodeSelection(GalleryMediaContent galleryMediaContent) {
-        this.updateLogicalNodeSelection(galleryMediaContent);
+    void updateNodeSelection(GalleryMediaContent galleryMediaContent, IncludedStructuralElement structure) {
+        this.updateLogicalNodeSelection(galleryMediaContent, structure);
         this.updatePhysicalNodeSelection(galleryMediaContent);
     }
 
@@ -796,12 +796,12 @@ public class StructurePanel implements Serializable {
 
     void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
         if (Objects.nonNull(physicalTree)) {
-            TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, physicalTree);
+            TreeNode selectedTreeNode = updatePhysicalNodeSelectionRecursive(galleryMediaContent, physicalTree);
             updatePhysicalNodeSelection(selectedTreeNode);
         }
     }
 
-    void updateLogicalNodeSelection(GalleryMediaContent galleryMediaContent) {
+    void updateLogicalNodeSelection(GalleryMediaContent galleryMediaContent, IncludedStructuralElement structure) {
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
             previouslySelectedLogicalNode.setSelected(false);
         }
@@ -809,14 +809,18 @@ public class StructurePanel implements Serializable {
             selectedLogicalNode.setSelected(false);
         }
         if (Objects.nonNull(this.logicalTree)) {
-            GalleryStripe matchingGalleryStripe = this.dataEditor.getGalleryPanel().getLogicalStructureOfMedia(galleryMediaContent);
-            if (Objects.nonNull(matchingGalleryStripe) && Objects.nonNull(matchingGalleryStripe.getStructure())) {
+            if (Objects.isNull(structure)) {
+                GalleryStripe matchingGalleryStripe = this.dataEditor.getGalleryPanel().getLogicalStructureOfMedia(galleryMediaContent);
+                if (Objects.nonNull(matchingGalleryStripe)) {
+                    structure = matchingGalleryStripe.getStructure();
+                }
+            }
+            if (Objects.nonNull(structure)) {
                 TreeNode selectedTreeNode;
                 if (this.isSeparateMedia()) {
-                    selectedTreeNode = updateLogicalNodeSelectionRecursive(matchingGalleryStripe.getStructure(),
-                            logicalTree);
+                    selectedTreeNode = updateLogicalNodeSelectionRecursive(structure, logicalTree);
                 } else {
-                    selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, logicalTree);
+                    selectedTreeNode = updatePhysSelectionInLogTreeRecursive(galleryMediaContent.getView().getMediaUnit(), structure, logicalTree);
                 }
                 if (Objects.nonNull(selectedTreeNode)) {
                     setSelectedLogicalNode(selectedTreeNode);
@@ -876,7 +880,7 @@ public class StructurePanel implements Serializable {
         return matchingTreeNode;
     }
 
-    private TreeNode updateNodeSelectionRecursive(GalleryMediaContent galleryMediaContent, TreeNode treeNode) {
+    private TreeNode updatePhysicalNodeSelectionRecursive(GalleryMediaContent galleryMediaContent, TreeNode treeNode) {
         TreeNode matchingTreeNode = null;
         for (TreeNode currentTreeNode : treeNode.getChildren()) {
             if (currentTreeNode.getChildCount() < 1 && treeNodeMatchesGalleryMediaContent(galleryMediaContent, currentTreeNode)) {
@@ -884,7 +888,29 @@ public class StructurePanel implements Serializable {
                 matchingTreeNode = currentTreeNode;
             } else {
                 currentTreeNode.setSelected(false);
-                matchingTreeNode = updateNodeSelectionRecursive(galleryMediaContent, currentTreeNode);
+                matchingTreeNode = updatePhysicalNodeSelectionRecursive(galleryMediaContent, currentTreeNode);
+            }
+            if (Objects.nonNull(matchingTreeNode)) {
+                break;
+            }
+        }
+        return matchingTreeNode;
+    }
+
+    private TreeNode updatePhysSelectionInLogTreeRecursive(MediaUnit selectedMediaUnit, IncludedStructuralElement parentElement,
+                                                           TreeNode treeNode) {
+        TreeNode matchingTreeNode = null;
+        for (TreeNode currentTreeNode : treeNode.getChildren()) {
+            if (treeNode.getData() instanceof StructureTreeNode
+                    && ((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
+                    && currentTreeNode.getData() instanceof StructureTreeNode
+                    && ((StructureTreeNode) currentTreeNode.getData()).getDataObject() instanceof View
+                    && ((View) ((StructureTreeNode) currentTreeNode.getData()).getDataObject()).getMediaUnit().equals(selectedMediaUnit)) {
+                currentTreeNode.setSelected(true);
+                matchingTreeNode = currentTreeNode;
+            } else {
+                currentTreeNode.setSelected(false);
+                matchingTreeNode = updatePhysSelectionInLogTreeRecursive(selectedMediaUnit, parentElement, currentTreeNode);
             }
             if (Objects.nonNull(matchingTreeNode)) {
                 break;
@@ -990,7 +1016,7 @@ public class StructurePanel implements Serializable {
      *          View for which the IncludedStructuralElement is determined
      * @return the IncludedStructuralElement to which the given View is assigned
      */
-    private IncludedStructuralElement getPageStructure(View view, IncludedStructuralElement parent) {
+    IncludedStructuralElement getPageStructure(View view, IncludedStructuralElement parent) {
         IncludedStructuralElement resultElement = null;
         for (IncludedStructuralElement child : parent.getChildren()) {
             if (child.getViews().contains(view)) {
@@ -1484,13 +1510,15 @@ public class StructurePanel implements Serializable {
     public void assign() {
         if (isAssignableSeveralTimes()) {
             View view = (View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject();
+            View viewToAssign = new View();
+            viewToAssign.setMediaUnit(view.getMediaUnit());
             List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
             int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
             TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
             StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
             IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) structureTreeNodeSibling.getDataObject();
-            dataEditor.assignView(includedStructuralElement, view, 0);
-            severalAssignments.add(view.getMediaUnit());
+            dataEditor.assignView(includedStructuralElement, viewToAssign, 0);
+            severalAssignments.add(viewToAssign.getMediaUnit());
             show();
             dataEditor.getGalleryPanel().updateStripes();
         }

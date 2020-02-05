@@ -343,21 +343,23 @@ public class GalleryPanel {
     /**
      * Update the selected TreeNode in the physical structure tree.
      */
-    private void updateStructure(GalleryMediaContent galleryMediaContent) {
-        dataEditor.getStructurePanel().updateNodeSelection(galleryMediaContent);
+    private void updateStructure(GalleryMediaContent galleryMediaContent, IncludedStructuralElement structure) {
+        dataEditor.getStructurePanel().updateNodeSelection(galleryMediaContent, structure);
     }
 
-    void updateSelection(MediaUnit mediaUnit) {
+    void updateSelection(MediaUnit mediaUnit, IncludedStructuralElement structuralElement) {
         if (mediaUnit.getMediaFiles().size() > 0) {
 
             // Update structured view
             if (this.galleryViewMode.equals(GalleryViewMode.LIST)) {
                 for (GalleryStripe galleryStripe : getStripes()) {
-                    for (GalleryMediaContent galleryMediaContent : galleryStripe.getMedias()) {
-                        if (Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit())) {
-                            dataEditor.getSelectedMedia().clear();
-                            dataEditor.getSelectedMedia().add(new ImmutablePair<>(mediaUnit, galleryStripe.getStructure()));
-                            break;
+                    if (Objects.isNull(structuralElement) || Objects.equals(structuralElement, galleryStripe.getStructure())) {
+                        for (GalleryMediaContent galleryMediaContent : galleryStripe.getMedias()) {
+                            if (Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit())) {
+                                dataEditor.getSelectedMedia().clear();
+                                dataEditor.getSelectedMedia().add(new ImmutablePair<>(mediaUnit, galleryStripe.getStructure()));
+                                break;
+                            }
                         }
                     }
                 }
@@ -676,6 +678,7 @@ public class GalleryPanel {
     /**
      * Check whether the passed GalleryMediaContent is selected.
      * @param galleryMediaContent the GalleryMediaContent to be checked
+     * @param galleryStripe the GalleryStripe where the GalleryMediaContent is located
      * @return Boolean whether passed GalleryMediaContent is selected
      */
     public boolean isSelected(GalleryMediaContent galleryMediaContent, GalleryStripe galleryStripe) {
@@ -774,7 +777,7 @@ public class GalleryPanel {
                 break;
         }
 
-        updateStructure(currentSelection);
+        updateStructure(currentSelection, parentStripe.getStructure());
     }
 
     private void defaultSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {

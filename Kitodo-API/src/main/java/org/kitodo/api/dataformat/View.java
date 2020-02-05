@@ -49,23 +49,4 @@ public class View {
         hashCode = prime * hashCode + ((mediaUnit == null) ? 0 : mediaUnit.hashCode());
         return hashCode;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        View other = (View) obj;
-        if (mediaUnit == null) {
-            return other.mediaUnit == null;
-        } else {
-            return mediaUnit.equals(other.mediaUnit);
-        }
-    }
 }
