@@ -29,7 +29,6 @@ public class ProjectDTO extends BaseDTO {
     private Integer numberOfVolumes;
     private Boolean active = true;
     private ClientDTO client;
-    private List<ProcessDTO> processes = new ArrayList<>();
     private List<TemplateDTO> templates = new ArrayList<>();
     private List<UserDTO> users = new ArrayList<>();
     private boolean hasProcesses;
@@ -221,25 +220,6 @@ public class ProjectDTO extends BaseDTO {
      */
     public void setClient(ClientDTO client) {
         this.client = client;
-    }
-
-    /**
-     * Get list of processes.
-     *
-     * @return list of processes as ProcessDTO
-     */
-    public List<ProcessDTO> getProcesses() {
-        return processes;
-    }
-
-    /**
-     * Set list of processes.
-     *
-     * @param processes
-     *            as list of ProcessDTO
-     */
-    public void setProcesses(List<ProcessDTO> processes) {
-        this.processes = processes;
     }
 
     /**
