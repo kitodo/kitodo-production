@@ -20,6 +20,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.data.base.SearchService;
 
 public class IndexWorker implements Runnable {
@@ -61,6 +62,7 @@ public class IndexWorker implements Runnable {
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         try {
+            this.searchService.removeLooseIndexData(searchService.findAll());
             int amountToIndex = getAmountToIndex();
 
             if (amountToIndex < batchSize) {
@@ -77,7 +79,7 @@ public class IndexWorker implements Runnable {
                     indexChunks(batchSize);
                 }
             }
-        } catch (CustomResponseException | DAOException | HibernateException e) {
+        } catch (CustomResponseException | DAOException | DataException | HibernateException e) {
             logger.error(e.getMessage(), e);
         }
     }
@@ -91,7 +93,7 @@ public class IndexWorker implements Runnable {
     }
 
     @SuppressWarnings("unchecked")
-    private void indexChunks(int batchSize) throws CustomResponseException, DAOException {
+    private void indexChunks(int batchSize) throws CustomResponseException, DAOException, DataException {
         List<Object> objectsToIndex;
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         while (this.indexedObjects < indexLimit) {
