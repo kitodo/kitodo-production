@@ -597,6 +597,19 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
+     * Find processes by template id.
+     *
+     * @param templateId
+     *          id of template for search
+     * @return list of JSON objects with processes for specific template id
+     * @throws DataException if documents cannot be retrieved
+     */
+    public List<Map<String, Object>> findByTemplate(int templateId) throws DataException {
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.TEMPLATE_ID.getKey(), templateId, true);
+        return findDocuments(query);
+    }
+
+    /**
      * Find processes by ruleset id.
      *
      * @param rulesetId

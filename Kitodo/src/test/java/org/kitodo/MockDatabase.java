@@ -636,6 +636,18 @@ public class MockDatabase {
         thirdTemplate.setRuleset(ServiceManager.getRulesetService().getById(1));
         thirdTemplate.setInChoiceListShown(true);
         ServiceManager.getTemplateService().save(thirdTemplate);
+
+        Template fourthTemplate = new Template();
+        fourthTemplate.setTitle("Fourth template");
+        localDate = new LocalDate(2016, 10, 20);
+        fourthTemplate.setCreationDate(localDate.toDate());
+        fourthTemplate.setInChoiceListShown(true);
+        fourthTemplate.setClient(project.getClient());
+        fourthTemplate.setDocket(ServiceManager.getDocketService().getById(2));
+        fourthTemplate.getProjects().add(project);
+        fourthTemplate.getProjects().add(thirdProject);
+        fourthTemplate.setRuleset(ServiceManager.getRulesetService().getById(2));
+        ServiceManager.getTemplateService().save(fourthTemplate);
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {

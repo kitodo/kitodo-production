@@ -112,7 +112,7 @@ public class AddingST extends BaseTestSelenium {
             Pages.getTemplateEditPage().getHeaderText());
 
         Pages.getTemplateEditPage().insertTemplateData(template).save();
-        await().untilTrue(new AtomicBoolean(projectsPage.countListedTemplates()==2));
+        await().untilTrue(new AtomicBoolean(projectsPage.countListedTemplates()==3));
         boolean templateAvailable = projectsPage.getTemplateTitles().contains(template.getTitle());
         assertTrue("Created Template was not listed at templates table!", templateAvailable);
     }

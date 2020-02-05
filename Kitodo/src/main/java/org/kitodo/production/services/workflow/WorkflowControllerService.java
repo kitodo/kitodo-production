@@ -66,7 +66,7 @@ import org.xml.sax.SAXException;
 public class WorkflowControllerService {
 
     private final MetadataLock metadataLock = new MetadataLock();
-    private List<Task> automaticTasks;
+    private List<Task> automaticTasks = new ArrayList<>();
     private List<Task> tasksToFinish;
     private boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();

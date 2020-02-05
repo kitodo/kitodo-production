@@ -178,8 +178,8 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Displayed wrong project's METS owner", "Test Owner", detailsProject.get(2));
 
         List<String> templatesProject = projectsPage.getProjectTemplates();
-        assertEquals("Displayed wrong number of project's templates", 1, templatesProject.size());
-        assertEquals("Displayed wrong project's template", "First template", templatesProject.get(0));
+        assertEquals("Displayed wrong number of project's templates", 2, templatesProject.size());
+        assertEquals("Displayed wrong project's template", "Fourth template", templatesProject.get(0));
 
         int templatesInDatabase = ServiceManager.getTemplateService().getAllForSelectedClient().size();
         int templatesDisplayed = projectsPage.countListedTemplates();

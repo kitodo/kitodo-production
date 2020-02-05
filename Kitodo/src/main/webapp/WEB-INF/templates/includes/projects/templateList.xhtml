@@ -74,7 +74,7 @@
                             outcome="templateEdit"
                             styleClass="action"
                             title="#{msgs.view}"
-                            rendered="#{SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate()}">
+                            rendered="#{TemplateForm.isTemplateUsed(item.id) or (SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate())}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -83,7 +83,7 @@
                             outcome="templateEdit"
                             styleClass="action"
                             title="#{msgs.edit}"
-                            rendered="#{SecurityAccessController.hasAuthorityToEditTemplate()}">
+                            rendered="#{not TemplateForm.isTemplateUsed(item.id) and SecurityAccessController.hasAuthorityToEditTemplate()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -96,18 +96,21 @@
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
 
-                    <p:commandLink id="deleteTemplate"
-                                   action="#{TemplateForm.delete}"
-                                   styleClass="action"
-                                   title="#{msgs.delete}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteTemplate()}"
-                                   update="templateTable">
-                        <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                        <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
-                        <p:confirm header="#{msgs.confirmDelete}"
-                                   message="#{msgs.confirmDeleteTemplate}"
-                                   icon="ui-icon-alert"/>
-                    </p:commandLink>
+                    <h:panelGroup styleClass="action"
+                                  title="#{TemplateForm.isTemplateUsed(item.id) ? msgs.cannotDeleteTemplate : msgs.delete}">
+                        <p:commandLink id="deleteTemplate"
+                                       action="#{TemplateForm.delete}"
+                                       disabled="#{TemplateForm.isTemplateUsed(item.id)}"
+                                       title="#{msgs.delete}"
+                                       rendered="#{SecurityAccessController.hasAuthorityToDeleteTemplate()}"
+                                       update="templateTable">
+                            <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                            <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
+                            <p:confirm header="#{msgs.confirmDelete}"
+                                       message="#{msgs.confirmDeleteTemplate}"
+                                       icon="ui-icon-alert"/>
+                        </p:commandLink>
+                    </h:panelGroup>
                 </h:form>
             </h:outputText>
         </p:column>

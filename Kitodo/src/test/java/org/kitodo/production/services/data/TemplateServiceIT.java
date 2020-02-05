@@ -47,13 +47,13 @@ public class TemplateServiceIT {
     @Test
     public void shouldCountAllTemplates() throws Exception {
         Long amount = templateService.count();
-        assertEquals("Templates were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Templates were not counted correctly!", Long.valueOf(4), amount);
     }
 
     @Test
     public void shouldFindAll() throws Exception {
         List<TemplateDTO> templates = templateService.findAll();
-        assertEquals("Found incorrect amount of templates!", 3, templates.size());
+        assertEquals("Found incorrect amount of templates!", 4, templates.size());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class TemplateServiceIT {
     @Test
     public void shouldGetTemplates() throws Exception {
         List<Template> templates = templateService.getAll();
-        assertEquals("Found incorrect amount of templates!", 3, templates.size());
+        assertEquals("Found incorrect amount of templates!", 4, templates.size());
     }
 
     @Test
