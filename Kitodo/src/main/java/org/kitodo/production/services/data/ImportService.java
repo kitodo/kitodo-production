@@ -382,27 +382,38 @@ public class ImportService {
 
         Template template = ServiceManager.getTemplateService().getById(templateId);
 
+        if (Objects.isNull(template.getRuleset())) {
+            throw new ProcessGenerationException("Ruleset of template " + template.getId() + " is null!");
+        }
+
         int level = 1;
         while (Objects.nonNull(parentID) && level < importDepth) {
             HashMap<String, String> parentIDMetadata = new HashMap<>();
             parentIDMetadata.put(identifierMetadata, parentID);
-            List<ProcessDTO> parentProcesses = new LinkedList<>();
+            Process parentProcess = null;
             this.parentTempProcess = null;
             try {
                 try {
-                    parentProcesses = ServiceManager.getProcessService().findByMetadata(parentIDMetadata).stream()
-                            .filter(p -> p.getProject().getId() == projectId
-                                    && p.getRuleset().getId().equals(template.getRuleset().getId()))
-                            .collect(Collectors.toList());
+                    for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata)) {
+                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                        if (Objects.isNull(process.getRuleset() ) || Objects.isNull(process.getRuleset().getId())) {
+                            throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
+                                    + process.getId() + " is null!");
+                        }
+                        if (process.getProject().getId() == projectId
+                                && process.getRuleset().getId().equals(template.getRuleset().getId())) {
+                            parentProcess = process;
+                            break;
+                        }
+                    }
                 } catch (DataException e) {
                     logger.error(e.getLocalizedMessage());
                 }
-                if (parentProcesses.isEmpty()) {
+                if (Objects.isNull(parentProcess)) {
                     parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId);
                     level++;
                 } else {
                     logger.info("Process with ID '" + parentID + "' already in database. Stop hierarchical import.");
-                    Process parentProcess = ServiceManager.getProcessService().getById(parentProcesses.get(0).getId());
                     URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
                     Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
                     this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
