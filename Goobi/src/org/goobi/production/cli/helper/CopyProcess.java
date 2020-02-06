@@ -97,7 +97,7 @@ public class CopyProcess extends ProzesskopieForm {
     private static final String atstsl = "";
     private List<String> possibleDigitalCollection;
 
-    public final static String DIRECTORY_SUFFIX = "_tif";
+    public final static String DIRECTORY_SUFFIX = "_".concat(ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif"));
 
     /* =============================================================== */
 

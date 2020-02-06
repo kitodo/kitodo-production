@@ -66,7 +66,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      */
     private EmptyTask task;
 
-    public final static String DIRECTORY_SUFFIX = "_tif";
+    public final static String DIRECTORY_SUFFIX = "_".concat(ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif"));
 
     public AutomaticDmsExportWithoutHibernate() {
     }

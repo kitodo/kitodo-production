@@ -31,6 +31,7 @@ import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -67,7 +68,7 @@ import ugh.exceptions.WriteException;
 public class GoobiScript {
     HashMap<String, String> myParameters;
     private static final Logger logger = Logger.getLogger(GoobiScript.class);
-    public final static String DIRECTORY_SUFFIX = "_tif";
+    public final static String DIRECTORY_SUFFIX = "_".concat(ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif"));
 
     /**
      * Starten des Scripts ================================================================
