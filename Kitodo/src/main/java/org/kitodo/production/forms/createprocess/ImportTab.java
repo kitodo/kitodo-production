@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +49,7 @@ import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
 public class ImportTab implements Serializable {
@@ -111,12 +113,17 @@ public class ImportTab implements Serializable {
      * Call search method of ImportService.
      */
     public void search() {
-        try {
-            DataTable hits = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME);
-            hits.reset();
-            PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
-        } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        List<?> hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
+        if (hits.size() == 1) {
+            getRecordById(((SingleHit) hits.get(0)).getIdentifier());
+            showRecord();
+        } else {
+            try {
+                ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
+                PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
+            } catch (IllegalArgumentException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
         }
     }
 
@@ -138,6 +145,10 @@ public class ImportTab implements Serializable {
      */
     public void getSelectedRecord() {
         getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
+        showRecord();
+    }
+
+    private void showRecord() {
         Ajax.update(FORM_CLIENTID);
 
         // if fewer processes are imported than configured in the frontend, it can mean that
