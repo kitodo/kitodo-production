@@ -190,7 +190,7 @@ public class IndexingService {
      * Return the number of all objects processed during the current indexing
      * progress.
      *
-     * @return int number of all currently indexed objects
+     * @return long number of all currently indexed objects
      * @throws ArithmeticException
      *             if the value will not fit in a {@code long}
      */
