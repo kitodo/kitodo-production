@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -144,9 +145,10 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     private void addMultiDocStruc() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
             MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
-                dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
+                dataEditor.getWorkpiece(), selectedStructure.get(),
                 docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
                     inputMetaDataValue);
             dataEditor.refreshStructurePanel();
@@ -158,9 +160,10 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     private void addSingleDocStruc(boolean selectViews) {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
             IncludedStructuralElement newStructure = MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem,
-                    dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
+                    dataEditor.getWorkpiece(), selectedStructure.get(),
                     docStructPositionSelectionSelectedItem, getViewsToAdd());
             dataEditor.getSelectedMedia().clear();
             if (selectViews) {
@@ -391,8 +394,9 @@ public class AddDocStrucTypeDialog {
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
     public void prepare() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
-            this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
+            this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(),
                 dataEditor.getWorkpiece().getRootElement());
             prepareDocStructPositionSelectionItems(parents.isEmpty());
             prepareSelectAddableMetadataTypesItems(true);
@@ -409,8 +413,9 @@ public class AddDocStrucTypeDialog {
      * currently selected position.
      */
     public void prepareDocStructTypes() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
-            this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
+            this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(),
                     dataEditor.getWorkpiece().getRootElement());
             if (parents.isEmpty()) {
                 docStructAddTypeSelectionItemsForParent = Collections.emptyList();
@@ -545,10 +550,11 @@ public class AddDocStrucTypeDialog {
     }
 
     private StructuralElementViewInterface getStructuralElementView() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
             return dataEditor.getRuleset()
                     .getStructuralElementView(
-                            dataEditor.getSelectedStructure().get().getType(),
+                            selectedStructure.get().getType(),
                             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         } else {
             TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
@@ -591,7 +597,7 @@ public class AddDocStrucTypeDialog {
                 }
             }
         }
-        preselectedViews.sort(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()));
+        preselectedViews.sort(Comparator.comparingInt(view -> view.getMediaUnit().getOrder()));
     }
 
     /**

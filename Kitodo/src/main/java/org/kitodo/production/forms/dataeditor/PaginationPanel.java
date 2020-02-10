@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
@@ -287,11 +288,10 @@ public class PaginationPanel {
 
     private void preparePaginationSelectionSelectedItem() {
         MediaUnit selectedMediaUnit = null;
-        if (dataEditor.getStructurePanel().isSeparateMedia()
-                && Objects.nonNull(dataEditor.getSelectedMediaUnit())
-                && dataEditor.getSelectedMediaUnit().isPresent()
-                && "page".equals(dataEditor.getSelectedMediaUnit().get().getType())) {
-            selectedMediaUnit = dataEditor.getSelectedMediaUnit().get();
+        Optional<MediaUnit> optionalSelectedMediaUnit = dataEditor.getSelectedMediaUnit();
+        if (dataEditor.getStructurePanel().isSeparateMedia() && Objects.nonNull(optionalSelectedMediaUnit)
+                && optionalSelectedMediaUnit.isPresent() && "page".equals(optionalSelectedMediaUnit.get().getType())) {
+            selectedMediaUnit = optionalSelectedMediaUnit.get();
         } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData();
             if (structureTreeNode.getDataObject() instanceof View) {

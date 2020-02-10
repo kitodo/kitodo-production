@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -35,7 +36,6 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.production.enums.GenerationMode;
@@ -135,30 +135,6 @@ public class ImageGenerator implements Runnable {
     }
 
     /**
-     * Invokes the image management interface method that creates a derivative.
-     * What kind of derivative should be created is determined from the folder
-     * configuration.
-     *
-     * @param sourceImage
-     *            address of the source image from which the derivative is to be
-     *            calculated.
-     * @param imageProperties
-     *            configuration for the target image
-     * @param imageFileFormat
-     *            image file format to create
-     * @param destinationImage
-     *            image file to write
-     * @throws IOException
-     *             if an underlying disk operation fails
-     */
-    private void createDerivative(URI sourceImage, Folder imageProperties, ImageFileFormat imageFileFormat,
-            URI destinationImage) throws IOException {
-
-        imageService.createDerivative(sourceImage, imageProperties.getDerivative().get(), destinationImage,
-            imageFileFormat);
-    }
-
-    /**
      * Generates a set of derivatives.
      *
      * @param instruction
@@ -204,8 +180,9 @@ public class ImageGenerator implements Runnable {
 
         try (OutputStream outputStream = fileService.write(destinationImage)) {
             Image image = retrieveJavaImage(sourceImage, imageProperties);
-            if (fileFormat.getFormatName().isPresent()) {
-                ImageIO.write((RenderedImage) image, fileFormat.getFormatName().get(), outputStream);
+            Optional<String> optionalFormatName = fileFormat.getFormatName();
+            if (optionalFormatName.isPresent()) {
+                ImageIO.write((RenderedImage) image, optionalFormatName.get(), outputStream);
             }
         }
     }
@@ -258,13 +235,13 @@ public class ImageGenerator implements Runnable {
             throws IOException {
 
         Folder imageProperties = destinationImage.getFolder();
-        boolean isCreatingDerivative = imageProperties.getDerivative().isPresent();
         boolean isChangingDpi = imageProperties.getDpi().isPresent();
         boolean isGettingSizedWebImage = imageProperties.getImageSize().isPresent();
 
-        if (isCreatingDerivative && destinationImage.getFileFormat().getImageFileFormat().isPresent()) {
-            createDerivative(sourceImage, imageProperties, destinationImage.getFileFormat().getImageFileFormat().get(),
-                destinationImage.getUri(canonical));
+        Optional<Double> optionalDerivative = imageProperties.getDerivative();
+        if (optionalDerivative.isPresent() && destinationImage.getFileFormat().getImageFileFormat().isPresent()) {
+            imageService.createDerivative(sourceImage, optionalDerivative.get(), destinationImage.getUri(canonical),
+                destinationImage.getFileFormat().getImageFileFormat().orElseThrow(IllegalStateException::new));
         } else if (isChangingDpi || isGettingSizedWebImage) {
             createImageWithImageIO(sourceImage, imageProperties, destinationImage.getFileFormat(),
                 destinationImage.getUri(canonical));
@@ -345,12 +322,15 @@ public class ImageGenerator implements Runnable {
      *             if an underlying disk operation fails
      */
     private Image retrieveJavaImage(URI sourceImage, Folder imageProperties) throws IOException {
-        if (imageProperties.getDpi().isPresent()) {
-            return imageService.changeDpi(sourceImage, imageProperties.getDpi().get());
-        } else if (imageProperties.getImageScale().isPresent()) {
-            return imageService.getScaledWebImage(sourceImage, imageProperties.getImageScale().get());
-        } else if (imageProperties.getImageSize().isPresent()) {
-            return imageService.getSizedWebImage(sourceImage, imageProperties.getImageSize().get());
+        Optional<Integer> optionalDpi = imageProperties.getDpi();
+        Optional<Double> optionalImageScale = imageProperties.getImageScale();
+        Optional<Integer> optionalImageSize = imageProperties.getImageSize();
+        if (optionalDpi.isPresent()) {
+            return imageService.changeDpi(sourceImage, optionalDpi.get());
+        } else if (optionalImageScale.isPresent()) {
+            return imageService.getScaledWebImage(sourceImage, optionalImageScale.get());
+        } else if (optionalImageSize.isPresent()) {
+            return imageService.getSizedWebImage(sourceImage, optionalImageSize.get());
         }
         throw new IllegalArgumentException(imageProperties + " does not give any method to create a java image");
     }

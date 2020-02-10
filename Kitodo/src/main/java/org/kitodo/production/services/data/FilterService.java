@@ -1048,19 +1048,20 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return
      *      the only Entry's value as java.lang.String
      */
-    String parsePrimeFacesFilter(Map filters) {
-        if (Objects.nonNull(filters) && filters.entrySet().size() == 1) {
-            Map.Entry filter = (Map.Entry) filters.entrySet().stream().findAny().get();
-            if (filter.getValue() instanceof String) {
-                return (String) filter.getValue();
-            } else {
-                logger.warn("Given filter is not a String. Ignoring filter.");
+    String parsePrimeFacesFilter(Map<?, ?> filters) {
+        if (Objects.nonNull(filters)) {
+            int count = filters.size();
+            if (count == 1) {
+                Object value = filters.entrySet().iterator().next().getValue();
+                if (value instanceof String) {
+                    return (String) value;
+                } else {
+                    logger.warn("Given filter is not a String. Ignoring filter.");
+                }
+            } else if (count > 1) {
+                logger.warn("Filter map contains too many entries (only 0 or 1 allowed). Ignoring filter map.");
             }
-        } else if (Objects.nonNull(filters) && filters.entrySet().size() > 1) {
-            logger.warn("Filter map contains to many entries (only 0 or 1 allowed). Ignoring filter map.");
         }
         return "";
     }
-
-
 }

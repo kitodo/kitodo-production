@@ -543,8 +543,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return boolean representing selection status
      */
     public boolean isStripeSelected(IncludedStructuralElement structure) {
-        if (Objects.nonNull(getSelectedStructure()) && getSelectedStructure().isPresent()) {
-            return Objects.equals(structure, getSelectedStructure().get());
+        Optional<IncludedStructuralElement> selectedStructure = structurePanel.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
+            return Objects.equals(structure, selectedStructure.get());
         } else {
             return false;
         }

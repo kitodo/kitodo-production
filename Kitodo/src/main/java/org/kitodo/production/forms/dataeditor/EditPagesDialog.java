@@ -15,12 +15,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.faces.model.SelectItem;
 
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -81,9 +83,10 @@ public class EditPagesDialog {
      * button.
      */
     public void addPage() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
             for (View viewToAdd : getViewsToAdd(paginationSelectionSelectedItems)) {
-                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd, -1);
+                dataEditor.assignView(selectedStructure.get(), viewToAdd, -1);
             }
             dataEditor.refreshStructurePanel();
             prepare();
@@ -211,9 +214,10 @@ public class EditPagesDialog {
      * btn command button.
      */
     public void setPageStartAndEnd() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
             for (View viewToAdd : getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem)) {
-                dataEditor.assignView(dataEditor.getSelectedStructure().get(), viewToAdd, -1);
+                dataEditor.assignView(selectedStructure.get(), viewToAdd, -1);
             }
             dataEditor.refreshStructurePanel();
             prepare();
@@ -238,8 +242,9 @@ public class EditPagesDialog {
             Integer id = i;
             SelectItem selectItem = new SelectItem(id, label);
             selectPageItems.add(selectItem);
-            boolean assigned = dataEditor.getSelectedStructure().isPresent()
-                    && dataEditor.getSelectedStructure().get().getViews().contains(view);
+            Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+            boolean assigned = selectedStructure.isPresent()
+                    && selectedStructure.get().getViews().contains(view);
             (assigned ? paginationSubSelectionItems : paginationSelectionItems).add(selectItem);
             (assigned ? assigneds : unassigneds).add(id);
         }
@@ -260,9 +265,10 @@ public class EditPagesDialog {
      * button.
      */
     public void removePage() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
             for (View viewToRemove : getViewsToAdd(paginationSubSelectionSelectedItems)) {
-                dataEditor.unassignView(dataEditor.getSelectedStructure().get(), viewToRemove, false);
+                dataEditor.unassignView(selectedStructure.get(), viewToRemove, false);
             }
             dataEditor.refreshStructurePanel();
             prepare();

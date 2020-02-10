@@ -164,8 +164,9 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
         for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
-            if (entryView.getMetadata().isPresent()) {
-                MetadataViewInterface key = entryView.getMetadata().get();
+            Optional<MetadataViewInterface> optionalMetadata = entryView.getMetadata();
+            if (optionalMetadata.isPresent()) {
+                MetadataViewInterface key = optionalMetadata.get();
                 for (Metadata value : entryView.getValues()) {
                     if (value instanceof MetadataEntry) {
                         allMetadata.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
@@ -187,7 +188,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
         for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
             if (entryView.getMetadata().isPresent()) {
-                MetadataViewInterface key = entryView.getMetadata().get();
+                Optional<MetadataViewInterface> optionalMetadata = entryView.getMetadata();
+                MetadataViewInterface key = optionalMetadata.get();
                 if (key.getId().equals(metadataType.getName())) {
                     for (Metadata value : entryView.getValues()) {
                         if (value instanceof MetadataEntry) {

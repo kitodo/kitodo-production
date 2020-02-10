@@ -153,8 +153,9 @@ public class RulesetManagement implements RulesetManagementInterface {
      */
     private void initializeNamespaces(List<Key> keys, File home) throws IOException {
         for (Key key : keys) {
-            if (key.getNamespace().isPresent()) {
-                String namespaceURI = key.getNamespace().get();
+            Optional<String> optionalNamespace = key.getNamespace();
+            if (optionalNamespace.isPresent()) {
+                String namespaceURI = optionalNamespace.get();
                 File file = new File(home, namespaceURI.replaceFirst("^.*?/([^/]*?)[#/]?$", "$1").concat(".xml"));
                 if (file.isFile()) {
                     try {

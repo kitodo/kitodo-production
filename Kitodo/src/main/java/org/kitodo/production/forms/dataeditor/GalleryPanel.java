@@ -414,11 +414,11 @@ public class GalleryPanel {
 
     private static MediaVariant getMediaVariant(Folder folderSettings, List<MediaUnit> mediaUnits) {
         String use = folderSettings.getFileGroup();
-        Optional<MediaVariant> maybeMediaVariant = mediaUnits.parallelStream().map(MediaUnit::getMediaFiles)
+        Optional<MediaVariant> optionalMediaVariant = mediaUnits.parallelStream().map(MediaUnit::getMediaFiles)
                 .flatMap(mediaFiles -> mediaFiles.entrySet().parallelStream()).map(Entry::getKey)
                 .filter(mediaVariant -> use.equals(mediaVariant.getUse())).findAny();
-        if (maybeMediaVariant.isPresent()) {
-            return maybeMediaVariant.get();
+        if (optionalMediaVariant.isPresent()) {
+            return optionalMediaVariant.get();
         } else {
             MediaVariant mediaVariant = new MediaVariant();
             mediaVariant.setMimeType(folderSettings.getMimeType());

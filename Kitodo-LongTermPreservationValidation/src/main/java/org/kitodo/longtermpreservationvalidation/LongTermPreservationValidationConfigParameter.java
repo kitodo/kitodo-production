@@ -98,7 +98,7 @@ enum LongTermPreservationValidationConfigParameter implements ParameterInterface
     /**
      * Returns the name of the long term preservation validation config
      * parameter.
-     * 
+     *
      * @return the name
      */
     @Override
@@ -108,7 +108,7 @@ enum LongTermPreservationValidationConfigParameter implements ParameterInterface
 
     /**
      * Retrieves the parameter interface element for a validation result state.
-     * 
+     *
      * @param state
      *            input status
      * @return one of the above possibilities
@@ -118,7 +118,8 @@ enum LongTermPreservationValidationConfigParameter implements ParameterInterface
                 .of(LongTermPreservationValidationConfigParameter.values()).parallel();
         String result = state.toString().replace(TernaryValue.MAYBE.toString(), UNDETERMINED).replace('/', '.');
         LongTermPreservationValidationConfigParameter constant = constants
-                .filter(member -> member.getName().endsWith(result)).findFirst().get();
+                .filter(member -> member.getName().endsWith(result)).findFirst()
+                .orElseThrow(IllegalStateException::new);
         return constant;
     }
 }
