@@ -1110,15 +1110,27 @@ h3#headerText {
 
 #editForm\:processFromTemplateTabView\:metadataTable td {
     line-height: initial;
-    padding: var(--default-full-size);
+    padding: 0;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable textarea {
+    line-height: var(--input-height);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable textarea,
+#editForm\:processFromTemplateTabView\:metadataTable input,
+#editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu {
     width: 100%;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel {
     display: block;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) .ui-inputfield,
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) label {
+    margin-left: var(--default-double-size);
+    width: calc(100% - var(--default-double-size));
 }
 
 /*----------------------------------------------------------------------
