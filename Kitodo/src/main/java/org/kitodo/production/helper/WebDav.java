@@ -168,10 +168,10 @@ public class WebDav implements Serializable {
 
             // for mass download, the project and directory must exist
             if (currentUser.isWithMassDownload()) {
-                URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
+                URI project = Paths.get(userHome.getPath() + process.getProject().getTitle()).toUri();
                 fileService.createDirectoryForUser(project, currentUser.getLogin());
 
-                project = Paths.get(userHome + doneDirectoryName).toUri();
+                project = Paths.get(userHome.getPath() + doneDirectoryName).toUri();
                 fileService.createDirectoryForUser(project, currentUser.getLogin());
             }
 
