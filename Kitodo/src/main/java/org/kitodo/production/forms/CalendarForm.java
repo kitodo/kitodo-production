@@ -43,7 +43,6 @@ import org.kitodo.production.model.bibliography.course.Cell;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.Issue;
-import org.kitodo.production.model.bibliography.course.IssueController;
 import org.kitodo.production.model.bibliography.course.IssueOption;
 import org.primefaces.model.UploadedFile;
 import org.w3c.dom.Document;
@@ -194,16 +193,16 @@ public class CalendarForm implements Serializable {
      * Creates a list of issueOptions for a
      * given date.
      *
-     * @param issueControllers
-     *            the list of issue controllers in question
+     * @param issues
+     *            the list of issues in question
      * @param date
      *            the date in question
      * @return a list of issue options for the date
      */
-    protected List<IssueOption> buildIssueOptions(List<IssueController> issueControllers, LocalDate date) {
+    protected List<IssueOption> buildIssueOptions(List<Issue> issues, LocalDate date) {
         List<IssueOption> issueOptions = new ArrayList<>();
-        for (IssueController controller : issueControllers) {
-            issueOptions.add(new IssueOption(controller, date));
+        for (Issue issue : issues) {
+            issueOptions.add(new IssueOption(issue, issueColours[issues.indexOf(issue) % issueColours.length], date));
         }
         return issueOptions;
     }
@@ -414,33 +413,6 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * Returns the list of issues held by the block
-     * currently showing as read-only property "issues".
-     *
-     * @return the list of issues
-     */
-    public List<IssueController> getIssues() {
-        return Objects.nonNull(blockShowing) ? getIssues(blockShowing) : new ArrayList<>();
-    }
-
-    /**
-     * Returns the list of issues for a given block.
-     *
-     * @param block
-     *            block whose issues are to be returned
-     * @return the list of issues
-     */
-    private List<IssueController> getIssues(Block block) {
-        List<IssueController> issues = new ArrayList<>();
-        if (Objects.nonNull(block)) {
-            for (Issue issue : block.getIssues()) {
-                issues.add(new IssueController(issue, issues.size()));
-            }
-        }
-        return issues;
-    }
-
-    /**
      * Returns the date of last appearance of
      * the block currently showing as read-write property "lastAppearance".
      *
@@ -604,7 +576,7 @@ public class CalendarForm implements Serializable {
      *            calendar sheet to populate
      */
     protected void populateByCalendar(List<List<Cell>> sheet) {
-        Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<>();
+        Map<Integer, List<Issue>> issuesMap = new HashMap<>();
         Block currentBlock = null;
         LocalDate nextYear = LocalDate.of(yearShowing + 1, Month.JANUARY, 1);
         for (LocalDate date = LocalDate.of(yearShowing, Month.JANUARY, 1); date
@@ -618,10 +590,10 @@ public class CalendarForm implements Serializable {
                 cell.setOnBlock(false);
             } else {
                 Integer hashCode = currentBlock.hashCode();
-                if (!issueControllersCreatedOnce.containsKey(hashCode)) {
-                    issueControllersCreatedOnce.put(hashCode, getIssues(currentBlock));
+                if (!issuesMap.containsKey(hashCode)) {
+                    issuesMap.put(hashCode, currentBlock.getIssues());
                 }
-                cell.setIssues(buildIssueOptions(issueControllersCreatedOnce.get(hashCode), date));
+                cell.setIssues(buildIssueOptions(issuesMap.get(hashCode), date));
             }
         }
     }
