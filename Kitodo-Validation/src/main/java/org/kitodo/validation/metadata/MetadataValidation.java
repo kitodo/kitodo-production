@@ -303,7 +303,6 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean error = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> result = new ArrayList<>();
         List<MetadataViewWithValuesInterface<Metadata>> metadataViewsWithValues = containingMetadataView
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
         for (MetadataViewWithValuesInterface<Metadata> metadataViewWithValues : metadataViewsWithValues) {
@@ -314,7 +313,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                         && metadataView instanceof SimpleMetadataViewInterface) {
                     String value = ((MetadataEntry) metadata).getValue();
                     if (!((SimpleMetadataViewInterface) metadataView).isValid(value)) {
-                        result.add(MessageFormat.format(translations.get(MESSAGE_VALUE_INVALID),
+                        messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_INVALID),
                             Arrays.asList(value, location + metadataView.getLabel())));
                         error = true;
                     }
