@@ -49,7 +49,7 @@ public class DmsImportThread extends Thread {
             this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + File.separator + inAts + ".xml");
         }
 
-        this.folderImages = new SafeFile(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_tif");
+        this.folderImages = new SafeFile(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_" + ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif"));
 
         if (this.fileError.exists()) {
             this.timeFileError = this.fileError.getAbsoluteFile().lastModified();

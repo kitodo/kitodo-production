@@ -106,8 +106,8 @@ public class Prozess implements Serializable {
     private final MetadatenSperrung msp = new MetadatenSperrung();
     Helper help = new Helper();
 
-    public static String DIRECTORY_PREFIX = "orig";
-    public static String DIRECTORY_SUFFIX = "images";
+    private static final String DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+    public static final String DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 
     private String wikifield = "";
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
@@ -369,8 +369,7 @@ public class Prozess implements Serializable {
 
     public String getImagesTifDirectory(boolean useFallBack) throws IOException, InterruptedException, SwapException, DAOException {
         SafeFile dir = new SafeFile(getImagesDirectory());
-        DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-        DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
@@ -462,8 +461,7 @@ public class Prozess implements Serializable {
     public String getImagesOrigDirectory(boolean useFallBack) throws IOException, InterruptedException, SwapException, DAOException {
         if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
             SafeFile dir = new SafeFile(getImagesDirectory());
-            DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-            DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
             FilenameFilter filterVerz = new FilenameFilter() {
                 @Override

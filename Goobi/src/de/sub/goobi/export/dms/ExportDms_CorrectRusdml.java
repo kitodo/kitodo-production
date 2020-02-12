@@ -29,6 +29,7 @@ import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
@@ -74,7 +75,7 @@ public class ExportDms_CorrectRusdml {
          * die Metadaten prüfen --------------------------------
          */
         RusdmlDocStructPagesAuswerten(logicalTopstruct);
-        RusdmlPathImageFilesKorrigieren(mydocument.getPhysicalDocStruct(), "./" + atsPpnBand + "_tif");
+        RusdmlPathImageFilesKorrigieren(mydocument.getPhysicalDocStruct(), "./" + atsPpnBand + "_" + ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif"));
         RusdmlAddMissingMetadata(logicalTopstruct, myProzess);
 
         return atsPpnBand;
