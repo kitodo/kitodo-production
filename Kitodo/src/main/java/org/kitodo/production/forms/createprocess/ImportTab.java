@@ -66,7 +66,7 @@ public class ImportTab implements Serializable {
     private static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
 
-    private int importDepth = 2;
+    private int importDepth = 1;
 
     /**
      * Standard constructor.
