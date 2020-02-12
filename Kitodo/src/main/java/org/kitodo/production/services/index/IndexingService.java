@@ -190,12 +190,14 @@ public class IndexingService {
      * Return the number of all objects processed during the current indexing
      * progress.
      *
-     * @return int number of all currently indexed objects
+     * @return long number of all currently indexed objects
+     * @throws ArithmeticException
+     *             if the value will not fit in a {@code long}
      */
-    public int getAllIndexed() throws DataException {
-        int allIndexed = 0;
+    public long getAllIndexed() throws DataException {
+        long allIndexed = 0;
         for (ObjectType objectType : objectTypes) {
-            allIndexed += getNumberOfIndexedObjects(objectType);
+            allIndexed = Math.addExact(allIndexed, getNumberOfIndexedObjects(objectType));
         }
         return allIndexed;
     }

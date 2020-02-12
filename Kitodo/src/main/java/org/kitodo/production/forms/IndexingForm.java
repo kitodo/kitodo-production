@@ -120,12 +120,12 @@ public class IndexingForm {
      * Return the number of all objects processed during the current indexing
      * progress.
      *
-     * @return int number of all currently indexed objects
+     * @return long number of all currently indexed objects
      */
-    public int getAllIndexed() {
+    public long getAllIndexed() {
         try {
             return ServiceManager.getIndexingService().getAllIndexed();
-        } catch (DataException e) {
+        } catch (DataException | ArithmeticException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return 0;
         }
