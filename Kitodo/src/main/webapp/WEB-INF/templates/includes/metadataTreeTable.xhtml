@@ -29,7 +29,7 @@
                  var="item"
                  styleClass="no-header"
                  id="metadataTable">
-        <p:column style="width: 100%;">
+        <p:column>
             <!-- field label -->
             <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
             <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
@@ -41,7 +41,6 @@
                          disabled="#{not item.editable or readOnly}"
                          required="#{item.required and not empty param['editForm:save']}"
                          styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
-                         style="width:100%;"
                          rendered="#{item.input eq 'inputText'}">
                 <p:ajax event="blur"/>
             </p:inputText>
@@ -60,7 +59,6 @@
             <!-- spinner -->
             <p:spinner id="spinner"
                        value="#{item.value}"
-                       style="width:100%;"
                        disabled="#{not item.editable or readOnly}"
                        required="#{item.required and not empty param['editForm:save']}"
                        styleClass="#{not item.editable ? 'disabled' : ''}"
