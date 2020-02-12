@@ -21,6 +21,9 @@
         <p:column headerText="#{msgs.projectList}">
             <h:outputText value="#{item.title}"/>
         </p:column>
+        <p:column headerText="#{msgs.client}">
+            <h:outputText value="#{item.client.name}"/>
+        </p:column>
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromProject"
                            action="#{UserForm.deleteFromProject}"
@@ -33,9 +36,6 @@
                 <i class="fa fa-trash-o fa-lg"/>
                 <f:param name="ID" value="#{item.id}"/>
             </p:commandLink>
-        </p:column>
-        <p:column headerText="#{msgs.client}">
-                <h:outputText value="#{item.client.name}"/>
         </p:column>
     </p:dataTable>
     <p:commandButton onclick="PF('addProjectDialog').show()"
