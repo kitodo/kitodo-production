@@ -8,7 +8,8 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF */
+/* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF, scrollToStructureThumbnail,
+    scrollToPreviewThumbnail */
 
 var metadataEditor = {
     dragging: false,
@@ -189,11 +190,11 @@ metadataEditor.shortcuts = {
                 metadataEditor.shortcuts.jumpToSelectedImage(-20);
                 break;
             default:
-                console.warn("Shortcut '" + shortcut + "' not implemented.");
+                // This default case is only reached when shortcuts exist which are not implemented.
         }
     },
     evaluateKeys(event) {
-        Object.keys(metadataEditor.shortcuts.KEYS).forEach(key => {
+        Object.keys(metadataEditor.shortcuts.KEYS).forEach((key) => {
             let keyCombination = metadataEditor.shortcuts.KEYS[key];
             if (event.ctrlKey === keyCombination.includes("Control")
                 && event.shiftKey === keyCombination.includes("Shift")

@@ -820,7 +820,8 @@ public class StructurePanel implements Serializable {
                 if (this.isSeparateMedia()) {
                     selectedTreeNode = updateLogicalNodeSelectionRecursive(structure, logicalTree);
                 } else {
-                    selectedTreeNode = updatePhysSelectionInLogTreeRecursive(galleryMediaContent.getView().getMediaUnit(), structure, logicalTree);
+                    selectedTreeNode = updatePhysSelectionInLogTreeRecursive(galleryMediaContent.getView().getMediaUnit(), structure,
+                            logicalTree);
                 }
                 if (Objects.nonNull(selectedTreeNode)) {
                     setSelectedLogicalNode(selectedTreeNode);
