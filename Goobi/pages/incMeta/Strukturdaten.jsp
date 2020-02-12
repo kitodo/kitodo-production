@@ -261,7 +261,7 @@
                     </h:panelGroup>--%>
 
                     <%-- Knoten löschen --%>
-                    <h:commandLink rendered="#{Metadaten.isNotRootElement}" action="#{Metadaten.KnotenDelete}" title="#{msgs.strukturelementLoeschen}" target="links">
+                    <h:commandLink rendered="#{Metadaten.isNotRootElement}" onclick="if(!confirm('#{msgs.knotenDeleteQuery}'))return false;" action="#{Metadaten.KnotenDelete}" title="#{msgs.strukturelementLoeschen}" target="links">
                         <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:4px;margin-right:7px;vertical-align:middle" />
                         <h:outputText value="#{msgs.strukturelementLoeschen}" />
                     </h:commandLink>
