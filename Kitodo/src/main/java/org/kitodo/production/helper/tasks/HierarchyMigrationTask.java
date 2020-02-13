@@ -311,8 +311,8 @@ public class HierarchyMigrationTask extends EmptyTask {
     private static Integer getCurrentNo(IncludedStructuralElement includedStructualElement) {
         Integer currentNo = includedStructualElement.getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("CurrentNo")).filter(MetadataEntry.class::isInstance)
-                .map(MetadataEntry.class::cast).map(MetadataEntry::getValue).map(Integer::valueOf).findFirst()
-                .orElse(null);
+                .map(MetadataEntry.class::cast).map(MetadataEntry::getValue).filter(value -> value.matches("\\d+"))
+                .map(Integer::valueOf).findFirst().orElse(null);
         return currentNo;
     }
 
