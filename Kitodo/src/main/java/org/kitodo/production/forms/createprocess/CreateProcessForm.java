@@ -14,6 +14,7 @@ package org.kitodo.production.forms.createprocess;
 import com.sun.jersey.api.NotFoundException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -51,10 +52,10 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
@@ -105,12 +106,12 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * Update ruleset and docType.
      * @param rulesetFileName as String
      */
-    public void updateRulesetAndDocType(String rulesetFileName) {
+    public void updateRulesetAndDocType(String rulesetFileName) throws RulesetNotFoundException {
         setRulesetManagementInterface(rulesetFileName);
         processDataTab.setAllDocTypes(getAllRulesetDivisions());
     }
 
-    private void setRulesetManagementInterface(String rulesetFileName) {
+    private void setRulesetManagementInterface(String rulesetFileName) throws RulesetNotFoundException {
         try {
             this.rulesetManagementInterface = openRulesetFile(rulesetFileName);
         } catch (IOException e) {
@@ -336,7 +337,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 updateRulesetAndDocType(getMainProcess().getRuleset().getFile());
                 processDataTab.prepare();
             }
-        } catch (ProcessGenerationException e) {
+        } catch (ProcessGenerationException | RulesetNotFoundException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -550,12 +551,17 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         return true;
     }
 
-    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
+    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException, RulesetNotFoundException {
         final long begin = System.nanoTime();
         String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
         priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+        try {
+            ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+        } catch (FileNotFoundException e) {
+            throw new RulesetNotFoundException("Ruleset " + fileName + " not found");
+        }
+
         if (logger.isTraceEnabled()) {
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
