@@ -15,7 +15,7 @@ public class Cell {
     /**
      * The field issues holds the possible issues for that day.
      */
-    protected List<IssueOption> issues = Collections.emptyList();
+    protected List<Issue> issues = Collections.emptyList();
 
     /**
      * The field onBlock contains the statement, whether the day is covered
@@ -46,7 +46,7 @@ public class Cell {
      *
      * @return the issues optionally appeared that day
      */
-    public List<IssueOption> getIssues() {
+    public List<Issue> getIssues() {
         return issues;
     }
 
@@ -100,7 +100,7 @@ public class Cell {
      * @param issues
      *            the list of issues possible in this cell
      */
-    public void setIssues(List<IssueOption> issues) {
+    public void setIssues(List<Issue> issues) {
         this.issues = issues;
     }
 

@@ -43,7 +43,6 @@ import org.kitodo.production.model.bibliography.course.Cell;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.Issue;
-import org.kitodo.production.model.bibliography.course.IssueOption;
 import org.primefaces.model.UploadedFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -187,24 +186,6 @@ public class CalendarForm implements Serializable {
      */
     public void backwardClick() {
         yearShowing -= 1;
-    }
-
-    /**
-     * Creates a list of issueOptions for a
-     * given date.
-     *
-     * @param issues
-     *            the list of issues in question
-     * @param date
-     *            the date in question
-     * @return a list of issue options for the date
-     */
-    protected List<IssueOption> buildIssueOptions(List<Issue> issues, LocalDate date) {
-        List<IssueOption> issueOptions = new ArrayList<>();
-        for (Issue issue : issues) {
-            issueOptions.add(new IssueOption(issue, issueColours[issues.indexOf(issue) % issueColours.length], date));
-        }
-        return issueOptions;
     }
 
     /**
@@ -593,7 +574,7 @@ public class CalendarForm implements Serializable {
                 if (!issuesMap.containsKey(hashCode)) {
                     issuesMap.put(hashCode, currentBlock.getIssues());
                 }
-                cell.setIssues(buildIssueOptions(issuesMap.get(hashCode), date));
+                cell.setIssues(issuesMap.get(hashCode));
             }
         }
     }
