@@ -70,7 +70,7 @@
         <h:panelGroup rendered="#{MigrationForm.processListRendered}">
             <p:dataTable id="aggregatedTasksTable" var="tasks" value="#{MigrationForm.aggregatedTasks}">
                 <p:column style="width: 100%;">
-                    <h:outputText value="#{tasks}"
+                    <h:outputText value="#{MigrationForm.tasksWithoutHashCode(tasks)}"
                                   styleClass="full-width"/>
                 </p:column>
                 <p:column style="width: 100%;">
