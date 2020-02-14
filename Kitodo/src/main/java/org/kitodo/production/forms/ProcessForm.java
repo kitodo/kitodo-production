@@ -1578,8 +1578,24 @@ public class ProcessForm extends TemplateBaseForm {
             return ProcessService.hasCorrectionComment(processId);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                processId }, logger, e);
+                processId}, logger, e);
             return 0;
+        }
+    }
+
+    /**
+     * Retrieve correction comments of given process and return them as a tooltip String.
+     *
+     * @param processDTO
+     *          process for which comment tooltip is created and returned
+     * @return String containing correction comment messages for given process
+     */
+    public String getCorrectionMessages(ProcessDTO processDTO) {
+        try {
+            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(processDTO);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+            return "";
         }
     }
 }

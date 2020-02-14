@@ -2484,23 +2484,63 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return 0, if process has no correction comment
      *         1, if process has correction comments that are all corrected
      *         2, if process has at least one open correction comment
+     *
+     * @throws DAOException thrown when process cannot not be loaded from database
      */
     public static int hasCorrectionComment(TaskDTO task) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(task.getProcess().getId());
         List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
                 .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
-        List<Comment> currentTaskComments = correctionComments.stream()
-                .filter(c -> c.getCurrentTask().getId().equals(task.getId())).collect(Collectors.toList());
         List<Comment> correctionTaskComments = correctionComments.stream()
                 .filter(c -> c.getCorrectionTask().getId().equals(task.getId())).collect(Collectors.toList());
-        if (correctionTaskComments.size() < 1) {
-            if (currentTaskComments.size() < 1) {
-                return 0;
-            } else {
-                return 1;
-            }
+        if (correctionTaskComments.isEmpty()) {
+            return 0;
+        } else if (correctionTaskComments.stream().allMatch(Comment::isCorrected)) {
+            return 1;
         } else {
             return 2;
         }
+    }
+
+    /**
+     * Create and return String used as tooltip for a given process. Tooltip contains authors, timestamps and messages
+     * of correction comments associated with tasks of the given process.
+     *
+     * @param processDTO
+     *          process for which the tooltip is created
+     * @return tooltip containing correction messages
+     *
+     * @throws DAOException thrown when process cannot be loaded from database
+     */
+    public String createCorrectionMessagesTooltip(ProcessDTO processDTO) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        return createCommentTooltip(correctionComments);
+    }
+
+    /**
+     * Create and return String used as tooltip for a given task. Tooltip contains authors, timestamps and messages
+     * of correction comments associated with the given task.
+     *
+     * @param taskDTO
+     *          task for which the tooltip is created
+     * @return tooltip containing correction messages
+     *
+     * @throws DAOException thrown when tasks process cannot be loaded from database
+     */
+    public String createCorrectionMessagesTooltip(TaskDTO taskDTO) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(taskDTO.getProcess().getId());
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType()) && !c.isCorrected()
+                        && c.getCorrectionTask().getId().equals(taskDTO.getId())).collect(Collectors.toList());
+        return createCommentTooltip(correctionComments);
+    }
+
+    private String createCommentTooltip(List<Comment> comments) {
+        return comments.stream()
+                .map(c -> " - [" + c.getCreationDate() + "] " + c.getAuthor().getFullName() + ": " + c.getMessage()
+                        + " (" + Helper.getTranslation("fixed") + ": " + c.isCorrected() + ")")
+                .collect(Collectors.joining(NEW_LINE_ENTITY));
     }
 }

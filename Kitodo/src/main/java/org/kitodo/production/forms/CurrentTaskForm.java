@@ -810,4 +810,20 @@ public class CurrentTaskForm extends BaseForm {
             return 0;
         }
     }
+
+    /**
+     * Retrieve correction comments of given task and return them as a tooltip String.
+     *
+     * @param taskDTO
+     *          task for which comment tooltip is created and returned
+     * @return String containing correction comment messages for given task
+     */
+    public String getCorrectionMessages(TaskDTO taskDTO) {
+        try {
+            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(taskDTO);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+            return "";
+        }
+    }
 }
