@@ -116,7 +116,8 @@ public class MigrationService {
     public String createTaskString(List<Task> processTasks) {
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
         String taskString = processTasks.stream().map(Task::getTitle).collect(Collectors.joining(", "));
-        return taskString;
+        String hashCode = Integer.toHexString(processTasks.parallelStream().mapToInt(TaskComparator::hashCode).sum());
+        return taskString + " (" + hashCode + ')';
     }
 
     /**
