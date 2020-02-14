@@ -1,0 +1,54 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseListView.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <!--@elvariable id="templateId" type="java.lang.Integer"-->
+        <f:viewParam name="templateId"/>
+        <!--@elvariable id="projectId" type="java.lang.Integer"-->
+        <f:viewParam name="projectId"/>
+        <f:viewAction action="#{MassImportForm.prepareMassImport(templateId, projectId)}"/>
+    </f:metadata>
+
+    <ui:define name="pageTabView">
+        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}"
+                   prependId="false"
+                   id="projectsTabView"
+                   widgetVar="projectsTabView">
+            <p:ajax event="tabChange" listener="#{MassImportForm.onTabChange}"/>
+            <p:tab title="#{msgs.fileMassImport}"
+                   id="fileMassImportTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                <ui:include src="/WEB-INF/templates/includes/massImport/fileMassImport.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.textMassImport}"
+                   id="textMassImportTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                <ui:include src="/WEB-INF/templates/includes/massImport/textMassImport.xhtml"/>
+            </p:tab>
+
+        </p:tabView>
+        <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.massImport}" icon="fa fa-align-center"/>
+    </ui:define>
+
+</ui:composition>
