@@ -241,12 +241,19 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Get aggregatedTasks.
+     * Get aggregatedTasks. Sorts them in descending order by count,
+     * alphabetically for the same count.
      *
-     * @return keyset of aggregatedProcesses
+     * @return sorted keyset of aggregatedProcesses
      */
     public List<String> getAggregatedTasks() {
-        return new ArrayList<>(aggregatedProcesses.keySet());
+        ArrayList<String> aggregatedTasks = new ArrayList<>(aggregatedProcesses.keySet());
+        Collections.sort(aggregatedTasks, (one, another) -> {
+            int oneSize = aggregatedProcesses.get(one).size();
+            int anotherSize = aggregatedProcesses.get(another).size();
+            return oneSize == anotherSize ? one.compareTo(another) : anotherSize - oneSize;
+        });
+        return aggregatedTasks;
     }
 
     /**
