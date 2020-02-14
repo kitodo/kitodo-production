@@ -44,6 +44,7 @@ import org.kitodo.production.services.file.FileService;
 public class MigrationService {
 
     private static final Logger logger = LogManager.getLogger(MigrationService.class);
+    public static final char SEPARATOR = 0x1F;
     private static volatile MigrationService instance = null;
 
     /**
@@ -117,7 +118,7 @@ public class MigrationService {
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
         String taskString = processTasks.stream().map(Task::getTitle).collect(Collectors.joining(", "));
         String hashCode = Integer.toHexString(processTasks.parallelStream().mapToInt(TaskComparator::hashCode).sum());
-        return taskString + " (" + hashCode + ')';
+        return taskString + SEPARATOR + hashCode;
     }
 
     /**

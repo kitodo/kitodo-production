@@ -255,7 +255,7 @@ public class MigrationForm extends BaseForm {
      * @return tasks without hash code
      */
     public String tasksWithoutHashCode(String tasks) {
-        return tasks.substring(0, tasks.lastIndexOf("( "));
+        return tasks.substring(0, tasks.lastIndexOf(MigrationService.SEPARATOR));
     }
 
     /**
