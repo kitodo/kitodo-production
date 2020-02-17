@@ -260,15 +260,15 @@ public class MigrationServiceIT {
 
     @Test
     public void testCreateTaskString() throws DAOException {
-        Assert.assertEquals("Finished, Closed, Progress, Open, Locked",
+        Assert.assertEquals("Finished, Closed, Progress, Open, Locked" + MigrationService.SEPARATOR + "9c43055e",
             migrationService.createTaskString(ServiceManager.getProcessService().getById(1).getTasks()));
         List<Task> secondTasks = ServiceManager.getProcessService().getById(2).getTasks();
-        Assert.assertEquals("Additional, Processed and Some, Next Open",
+        Assert.assertEquals("Additional, Processed and Some, Next Open" + MigrationService.SEPARATOR + "848a8483",
             migrationService.createTaskString(secondTasks));
         secondTasks.get(0).setTitle("test/test");
-        Assert.assertEquals("test/test, Processed and Some, Next Open",
+        Assert.assertEquals("test/test, Processed and Some, Next Open" + MigrationService.SEPARATOR + "56f49a2b",
                 migrationService.createTaskString(secondTasks));
-        Assert.assertEquals("",
+        Assert.assertEquals(MigrationService.SEPARATOR + "0",
             migrationService.createTaskString(ServiceManager.getProcessService().getById(3).getTasks()));
     }
 

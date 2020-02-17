@@ -250,6 +250,15 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
+     * Get tasksWithoutHashCode.
+     *
+     * @return tasks without hash code
+     */
+    public String tasksWithoutHashCode(String tasks) {
+        return tasks.substring(0, tasks.lastIndexOf(MigrationService.SEPARATOR));
+    }
+
+    /**
      * Get numberOfProcesses.
      *
      * @return size of aggregatedProcesses

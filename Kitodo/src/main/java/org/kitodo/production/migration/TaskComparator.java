@@ -61,4 +61,22 @@ public class TaskComparator implements Comparator<Task> {
         }
         return 0;
     }
+
+    /**
+     * Returns a hash value for which holds that is the same for two tasks if
+     * the above comparator returns 0, otherwise different.
+     *
+     * @param task
+     *            task to return hash value for
+     * @return hash value
+     */
+    public static int hashCode(Task task) {
+        if (Objects.isNull(task)) {
+            return 0;
+        }
+        int hashCode = Objects.hash(task.getTitle(), task.getOrdering(), task.isTypeAutomatic(), task.isTypeMetadata(),
+            task.isTypeImagesRead(), task.isTypeImagesWrite(), task.isTypeExportDMS(), task.isTypeAcceptClose(),
+            task.isTypeCloseVerify(), task.getScriptPath(), task.isBatchStep());
+        return hashCode;
+    }
 }
