@@ -11,24 +11,26 @@
 
 package org.kitodo.api;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Metadata grouped together to describe something more complex using subfields.
+ */
 public class MetadataGroup extends Metadata {
-
     /**
-     * The value of the metadata is a list of metadata objects.
+     * The contents of the metadata group.
      */
-    private List<Metadata> group = new ArrayList<>();
+    private Collection<Metadata> group = new HashSet<>();
 
     /**
      * Get the grouped metadata.
      *
-     * @return The grouped metadata.
+     * @return The grouped metadata
      */
-    public List<Metadata> getGroup() {
+    public Collection<Metadata> getGroup() {
         return group;
     }
 
@@ -36,9 +38,9 @@ public class MetadataGroup extends Metadata {
      * Set the grouped metadata.
      *
      * @param group
-     *            the grouped metadata.
+     *            the grouped metadata
      */
-    public void setGroup(List<Metadata> group) {
+    public void setGroup(Collection<Metadata> group) {
         this.group = group;
     }
 
