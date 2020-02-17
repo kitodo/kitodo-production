@@ -88,6 +88,45 @@ public class MetadataEditor {
     }
 
     /**
+     * Remove link to process with ID 'childProcessId' from workpiece of Process 'parentProcess'.
+     *
+     * @param parentProcess Process from which link is removed
+     * @param childProcessId ID of process whose link will be remove from workpiece of parent process
+     * @throws IOException thrown if meta.xml could not be loaded
+     */
+    public static void removeLink(Process parentProcess, int childProcessId) throws IOException {
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        if (removeLinkRecursive(workpiece.getRootElement(), childProcessId)) {
+            ServiceManager.getFileService().createBackupFile(parentProcess);
+            ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFileUri);
+        } else {
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("link") });
+        }
+    }
+
+    private static boolean removeLinkRecursive(IncludedStructuralElement element, int childId) {
+        IncludedStructuralElement parentElement = null;
+        IncludedStructuralElement linkElement = null;
+        for (IncludedStructuralElement structuralElement : element.getChildren()) {
+            if (Objects.nonNull(structuralElement.getLink()) && Objects.nonNull(structuralElement.getLink().getUri())
+                && structuralElement.getLink().getUri().toString().endsWith("process.id=" + childId)) {
+                parentElement = element;
+                linkElement = structuralElement;
+                break;
+            } else {
+                return removeLinkRecursive(structuralElement, childId);
+            }
+        }
+        // no need to check if 'linkElement' is Null since it is set in the same place as 'parentElement'!
+        if (Objects.nonNull(parentElement)) {
+            parentElement.getChildren().remove(linkElement);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Connects two processes by means of a link. The link is sorted as a linked
      * included structural element in a included structural element of the
      * parent process. The order is based on the order number specified by the

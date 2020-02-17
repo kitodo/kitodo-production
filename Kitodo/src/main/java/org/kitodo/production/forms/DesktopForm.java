@@ -133,7 +133,7 @@ public class DesktopForm extends BaseForm {
         try {
             ProcessService.deleteProcess(processID);
             emptyCache();
-        } catch (DataException | DAOException e) {
+        } catch (DataException | DAOException | IOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         }
