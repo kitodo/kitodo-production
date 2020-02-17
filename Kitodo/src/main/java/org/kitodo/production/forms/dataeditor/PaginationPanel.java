@@ -23,6 +23,7 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.helper.metadata.pagination.PaginatorMode;
@@ -64,7 +65,11 @@ public class PaginationPanel {
      * This method is invoked if the create pagination button is clicked.
      */
     public void createPagination() {
-        ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
+        try {
+            ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
+        } catch (InvalidImagesException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
         Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsSorted();
         for (int i = 1; i < mediaUnits.size(); i++) {

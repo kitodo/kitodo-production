@@ -51,6 +51,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
@@ -986,7 +987,7 @@ public class FileService {
      * @param workpiece
      *            Workpiece to which the media are to be added
      */
-    public void searchForMedia(Process process, Workpiece workpiece) {
+    public void searchForMedia(Process process, Workpiece workpiece) throws InvalidImagesException {
         final long begin = System.nanoTime();
         List<Folder> folders = process.getProject().getFolders();
         int mapCapacity = (int) Math.ceil(folders.size() / 0.75);
@@ -1023,7 +1024,7 @@ public class FileService {
      * absolute URIs are converted to relative URIs.
      */
     private List<String> getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(Workpiece workpiece,
-            Map<String, Subfolder> subfolders, URI processBaseUri) {
+            Map<String, Subfolder> subfolders, URI processBaseUri) throws InvalidImagesException {
 
         List<String> canonicals = new LinkedList<>();
         String baseUriString = processBaseUri.toString();
@@ -1048,12 +1049,12 @@ public class FileService {
                 if ("".equals(unitCanonical)) {
                     unitCanonical = fileCanonical;
                 } else if (!unitCanonical.equals(fileCanonical)) {
-                    throw new IllegalArgumentException("Ambiguous canonical file name part in the same media unit: \""
+                    throw new InvalidImagesException("Ambiguous canonical file name part in the same media unit: \""
                             + unitCanonical + "\" and \"" + fileCanonical + "\"!");
                 }
             }
             if (mediaUnit.getMediaFiles().size() > 0 && "".equals(unitCanonical)) {
-                throw new IllegalArgumentException("Missing canonical file name part in media unit " + mediaUnit);
+                throw new InvalidImagesException("Missing canonical file name part in media unit " + mediaUnit);
             }
             canonicals.add(unitCanonical);
         }
