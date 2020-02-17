@@ -275,6 +275,9 @@ public class KitodoServiceLoader<T> {
                 if (currentJarEntry.getName().contains(RESOURCES_FOLDER)
                         || currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
                     File resourceFile = new File(destinationFolder + File.separator + currentJarEntry.getName());
+                    if (!resourceFile.toPath().normalize().startsWith(destinationFolder.toPath())) {
+                        throw new IOException("ZIP file damaged! Invalid entry: " + currentJarEntry.getName());
+                    }
                     if (currentJarEntry.isDirectory()) {
                         resourceFile.mkdirs();
                         continue;
