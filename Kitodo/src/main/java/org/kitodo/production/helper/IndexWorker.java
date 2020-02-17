@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -76,7 +77,7 @@ public class IndexWorker implements Runnable {
                     indexChunks(batchSize);
                 }
             }
-        } catch (CustomResponseException | DAOException e) {
+        } catch (CustomResponseException | DAOException | HibernateException e) {
             logger.error(e.getMessage(), e);
         }
     }
