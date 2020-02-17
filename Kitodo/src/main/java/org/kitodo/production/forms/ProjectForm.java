@@ -652,4 +652,27 @@ public class ProjectForm extends BaseForm {
     public String getProjectEditReferer() {
         return this.projectEditReferer;
     }
+
+    /**
+     * Getting the first template of the given project. This is just a hack
+     * until the "choose-template" dialoge will be implemented.
+     * 
+     * @param projectDTO
+     *            the project to get the template from
+     * @return the id of the first template
+     */
+    public int getFirstTemplate(ProjectDTO projectDTO) {
+        Integer templateId = 0;
+        List<Template> templates = null;
+        try {
+            templates = ServiceManager.getProjectService().getById(projectDTO.getId()).getTemplates();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        if (Objects.nonNull(templates) && !templates.isEmpty()) {
+            templateId = templates.get(0).getId();
+
+        }
+        return templateId;
+    }
 }

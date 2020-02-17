@@ -108,6 +108,14 @@
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:commandLink>
 
+                <h:link id="massImport"
+                        outcome="/pages/massImport?faces-redirect=true"
+                        styleClass="action">
+                    <f:param name="templateId" value="#{ProjectForm.getFirstTemplate(item)}"/>
+                    <f:param name="projectId" value="#{item.id}"/>
+                    <h:outputText><i class="fa fa-align-center"/></h:outputText>
+                </h:link>
+
                 <h:link styleClass="action"
                         rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
                     <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
