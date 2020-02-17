@@ -51,6 +51,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
@@ -203,7 +204,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             selectedMedia = new LinkedList<>();
             init();
             openProcesses.put(process.getId(), user);
-        } catch (IOException | DAOException e) {
+        } catch (IOException | DAOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
         }
@@ -216,7 +217,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private void openMetsFile() throws IOException {
+    private void openMetsFile() throws IOException, InvalidImagesException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         if (Objects.isNull(workpiece.getId())) {

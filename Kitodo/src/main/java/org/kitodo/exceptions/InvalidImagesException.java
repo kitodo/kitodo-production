@@ -16,4 +16,14 @@ public class InvalidImagesException extends Exception {
     public InvalidImagesException(Exception e) {
         super(e);
     }
+    
+    /**
+     * Constructor with given exception message.
+     *
+     * @param exceptionMessage
+     *            as String
+     */
+    public InvalidImagesException(String exceptionMessage) {
+        super(exceptionMessage);
+    }
 }
