@@ -217,7 +217,7 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.process.getChildren().isEmpty()) {
             try {
                 ProcessService.deleteProcess(this.process);
-            } catch (DataException e) {
+            } catch (DataException | IOException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                         logger, e);
             }
@@ -236,7 +236,7 @@ public class ProcessForm extends TemplateBaseForm {
                 ProcessService.deleteProcess(child);
             }
             ProcessService.deleteProcess(this.process);
-        } catch (DataException e) {
+        } catch (DataException | IOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         }
@@ -254,7 +254,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 ServiceManager.getProcessService().save(child);
                 ProcessService.deleteProcess(this.process);
-            } catch (DataException e) {
+            } catch (DataException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                         e);
             }

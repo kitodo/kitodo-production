@@ -130,6 +130,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
@@ -2479,7 +2480,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
     }
 
-    public static void deleteProcess(int processID) throws DAOException, DataException {
+    public static void deleteProcess(int processID) throws DAOException, DataException, IOException {
         Process process = ServiceManager.getProcessService().getById(processID);
         deleteProcess(process);
     }
@@ -2489,7 +2490,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param processToDelete process to delete
      */
-    public static void deleteProcess(Process processToDelete) throws DataException {
+    public static void deleteProcess(Process processToDelete) throws DataException, IOException {
         deleteMetadataDirectory(processToDelete);
 
         processToDelete.getProject().getProcesses().remove(processToDelete);
@@ -2500,6 +2501,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (Objects.nonNull(parent)) {
             parent.getChildren().remove(processToDelete);
             processToDelete.setParent(null);
+            MetadataEditor.removeLink(parent, processToDelete.getId());
             ServiceManager.getProcessService().save(processToDelete);
             ServiceManager.getProcessService().save(parent);
         }
