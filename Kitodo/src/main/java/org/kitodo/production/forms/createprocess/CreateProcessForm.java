@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -559,7 +560,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         try {
             ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
         } catch (FileNotFoundException e) {
-            throw new RulesetNotFoundException("Ruleset " + fileName + " not found");
+            List<String> param = new ArrayList<>();
+            param.add(fileName);
+            throw new RulesetNotFoundException(Helper.getTranslation("rulesetNotFound", param));
         }
 
         if (logger.isTraceEnabled()) {
