@@ -50,7 +50,7 @@ public class ProcessGeneratorIT {
     @Test
     public void shouldGenerateProcess() throws Exception {
         ProcessGenerator processGenerator = new ProcessGenerator();
-        boolean generated = processGenerator.generateProcess(4, 1);
+        boolean generated = processGenerator.generateProcess(5, 1);
         assertTrue("Process was not generated!", generated);
 
         Process process = processGenerator.getGeneratedProcess();

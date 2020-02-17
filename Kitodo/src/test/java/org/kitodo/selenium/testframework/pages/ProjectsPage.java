@@ -92,7 +92,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement editProjectLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/templateEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/templateEdit.jsf?id=4']")
     private WebElement editTemplateLink;
 
     @SuppressWarnings("unused")
@@ -256,7 +256,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     public List<String> getTemplateDetails() {
-        int index = triggerRowToggle(templatesTable, "First template");
+        int index = triggerRowToggle(templatesTable, "Fourth template");
         WebElement detailsTable = Browser.getDriver()
                 .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateRowExpansionTable"));
         List<String> details = getTableDataByColumn(detailsTable, 1);

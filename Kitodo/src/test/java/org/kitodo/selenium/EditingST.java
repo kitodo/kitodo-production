@@ -124,7 +124,7 @@ public class EditingST extends BaseTestSelenium {
             templateDetails.stream().anyMatch(listString -> listString.contains("Second project")));
 
         TemplateEditPage editTemplatePage = projectsPage.editTemplate();
-        assertEquals("Header for edit template is incorrect", "Produktionsvorlage bearbeiten (First template)",
+        assertEquals("Header for edit template is incorrect", "Produktionsvorlage bearbeiten (Fourth template)",
             Pages.getTemplateEditPage().getHeaderText());
 
         editTemplatePage.addSecondProject();

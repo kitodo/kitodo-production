@@ -69,7 +69,7 @@ public class MigrationST extends BaseTestSelenium {
         String newTemplateTitle = "newTemplate";
         systemPage.createNewTemplateFromPopup(newTemplateTitle);
         await().pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
-                .ignoreExceptions().untilAsserted(() -> assertEquals("template of process should have changed", 4,
+                .ignoreExceptions().untilAsserted(() -> assertEquals("template of process should have changed", 5,
             (long) ServiceManager.getProcessService().getById(1).getTemplate().getId()));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         Workflow workflow = workflowService.getById(4);
@@ -78,7 +78,7 @@ public class MigrationST extends BaseTestSelenium {
         String processTemplateTitle = ServiceManager.getProcessService().getById(1).getTemplate().getTitle();
 
         assertEquals("only one template should be assigned", 1, numberOfTemplates);
-        assertEquals("wrong template", 4, workflowTemplateId);
+        assertEquals("wrong template", 5, workflowTemplateId);
         assertEquals("wrong title for template", newTemplateTitle, processTemplateTitle);
     }
 }

@@ -400,4 +400,33 @@ public class TemplateForm extends TemplateBaseForm {
         Converter converter = new Converter(this.template.getWorkflow().getTitle());
         converter.convertWorkflowToTemplate(this.template);
     }
+
+    /**
+     * Check and return whether the template with the provided ID 'templateId' is used by any processes.
+     *
+     * @param templateId
+     *          ID of template to check
+     * @return whether template is used by any processes or not
+     */
+    public boolean isTemplateUsed(int templateId) {
+        try {
+            return !ServiceManager.getProcessService().findByTemplate(templateId).isEmpty();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e);
+            return false;
+        }
+    }
+
+    /**
+     * Check and return whether the current template is used by any processes.
+     *
+     * @return whether the current template is used by any processes or not
+     */
+    public boolean isCurrentTemplateInUse() {
+        if (Objects.nonNull(this.template) && Objects.nonNull(this.template.getId()) && this.template.getId() > 0) {
+            return isTemplateUsed(this.template.getId());
+        } else {
+            return false;
+        }
+    }
 }

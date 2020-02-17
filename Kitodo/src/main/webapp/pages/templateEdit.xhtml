@@ -17,6 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <!--@elvariable id="id" type="java.lang.Integer"-->
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{TemplateForm.loadTemplate(id)}" />
@@ -30,7 +31,7 @@
               value="#{TemplateForm.template.title eq '' and not empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{TemplateForm.template.title ne '' and not empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToEditTemplate()}"/>
+              value="#{not TemplateForm.currentTemplateInUse and TemplateForm.template.title ne '' and not empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToEditTemplate()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewTemplate()}"/>
@@ -53,6 +54,7 @@
                          action="#{TemplateForm.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
+                         rendered="#{not isViewMode}"
                          disabled="#{TemplateForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.templateSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"
@@ -62,7 +64,7 @@
                          update="save"
                          style="display:none;"/>
         <p:button id="cancel"
-                  value="#{msgs.cancel}"
+                  value="#{isViewMode ? msgs.close : msgs.cancel}"
                   outcome="#{'projects'}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
@@ -73,7 +75,9 @@
     <ui:define name="pageTabView">
         <p:tabView id="templateTabView" cache="false">
             <p:tab title="#{msgs.templateDetails}" id="details">
-                <ui:include src="/WEB-INF/templates/includes/templateEdit/details.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/templateEdit/details.xhtml">
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
             <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty TemplateForm.template.title}">
                 <ui:include src="/WEB-INF/templates/includes/templateEdit/taskList.xhtml">

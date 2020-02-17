@@ -182,9 +182,9 @@ public class MigrationServiceIT {
 
         List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
 
-        HashSet newTemplates = new HashSet<>();
+        HashSet<Template> newTemplates = new HashSet<>();
         newTemplates.add(template);
-        Map matchingTemplates = migrationService.getMatchingTemplates(newTemplates);
+        Map<Template, Template> matchingTemplates = migrationService.getMatchingTemplates(newTemplates);
 
         Assert.assertNotNull(matchingTemplates.get(template));
         Assert.assertEquals(existingTemplates.get(0), matchingTemplates.get(template));
@@ -223,9 +223,8 @@ public class MigrationServiceIT {
         migrationService.addProcessesToTemplate(template, processes);
 
         Assert.assertEquals(2, template.getProcesses().size());
-        Assert.assertEquals(4, (long) firstProcess.getTemplate().getId());
-        Assert.assertEquals(4, (long) secondProcess.getTemplate().getId());
-
+        Assert.assertEquals(5, (long) firstProcess.getTemplate().getId());
+        Assert.assertEquals(5, (long) secondProcess.getTemplate().getId());
     }
 
     @Test

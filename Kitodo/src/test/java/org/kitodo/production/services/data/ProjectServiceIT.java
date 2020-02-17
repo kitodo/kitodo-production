@@ -86,7 +86,7 @@ public class ProjectServiceIT {
         assertTrue(projectNotFound,
             projectService.findById(1).getTitle().equals(firstProject) && projectService.findById(1).getId().equals(1));
         assertTrue(projectNotFound, projectService.findById(1).isActive());
-        assertEquals(projectNotFound, 1, projectService.findById(1).getTemplates().size());
+        assertEquals(projectNotFound, 2, projectService.findById(1).getTemplates().size());
 
         assertFalse(projectNotFound, projectService.findById(3).isActive());
     }
@@ -102,7 +102,7 @@ public class ProjectServiceIT {
         boolean condition = project.getTitle().equals(firstProject) && project.getId().equals(1);
         assertTrue("Project was not found in database!", condition);
 
-        assertEquals("Project was found but templates were not inserted!", 1, project.getTemplates().size());
+        assertEquals("Project was found but templates were not inserted!", 2, project.getTemplates().size());
         assertEquals("Project was found but templates were not inserted!", 2, project.getProcesses().size());
     }
 
