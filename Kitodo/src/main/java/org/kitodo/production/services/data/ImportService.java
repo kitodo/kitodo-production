@@ -362,53 +362,33 @@ public class ImportService {
      * @param parentIdMetadata names of Metadata types holding parent IDs of structure elements in internal format
      * @return List of TempProcess
      */
-    public LinkedList<TempProcess> importProcessHierarchy(String recordId, String opac, int projectId,
-                                                          int templateId, int importDepth,
-                                                          Collection<String> parentIdMetadata)
+    public LinkedList<TempProcess> importProcessHierarchy(String recordId, String opac, int projectId, int templateId,
+                                                          int importDepth, Collection<String> parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
-
-        if (importDepth > 1 && parentIdMetadata.isEmpty()) {
-            Helper.setErrorMessage("newProcess.catalogueSearch.parentIDMetadataMissing");
-            importDepth = 1;
-        } else {
-            parentXpath = parentXpath.replace(REPLACE_ME, parentIdMetadata.toArray()[0].toString());
+        if (importDepth > 1) {
+            if (parentIdMetadata.isEmpty()) {
+                Helper.setErrorMessage("newProcess.catalogueSearch.parentIDMetadataMissing");
+                importDepth = 1;
+            } else {
+                parentXpath = parentXpath.replace(REPLACE_ME, parentIdMetadata.toArray()[0].toString());
+            }
         }
-
         String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId);
-
         Template template = ServiceManager.getTemplateService().getById(templateId);
-
         if (Objects.isNull(template.getRuleset())) {
             throw new ProcessGenerationException("Ruleset of template " + template.getId() + " is null!");
         }
-
         int level = 1;
         while (Objects.nonNull(parentID) && level < importDepth) {
             HashMap<String, String> parentIDMetadata = new HashMap<>();
             parentIDMetadata.put(identifierMetadata, parentID);
-            Process parentProcess = null;
             this.parentTempProcess = null;
             try {
-                try {
-                    for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata)) {
-                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                        if (Objects.isNull(process.getRuleset() ) || Objects.isNull(process.getRuleset().getId())) {
-                            throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                                    + process.getId() + " is null!");
-                        }
-                        if (process.getProject().getId() == projectId
-                                && process.getRuleset().getId().equals(template.getRuleset().getId())) {
-                            parentProcess = process;
-                            break;
-                        }
-                    }
-                } catch (DataException e) {
-                    logger.error(e.getLocalizedMessage());
-                }
+                Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
                 if (Objects.isNull(parentProcess)) {
                     parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId);
                     level++;
@@ -676,5 +656,27 @@ public class ImportService {
      */
     public TempProcess getParentTempProcess() {
         return parentTempProcess;
+    }
+
+    private Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
+            throws ProcessGenerationException, DAOException {
+        Process parentProcess = null;
+        try {
+            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata)) {
+                Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                if (Objects.isNull(process.getRuleset() ) || Objects.isNull(process.getRuleset().getId())) {
+                    throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
+                            + process.getId() + " is null!");
+                }
+                if (process.getProject().getId() == projectId
+                        && process.getRuleset().getId().equals(rulesetId)) {
+                    parentProcess = process;
+                    break;
+                }
+            }
+        } catch (DataException e) {
+            logger.error(e.getLocalizedMessage());
+        }
+        return parentProcess;
     }
 }
