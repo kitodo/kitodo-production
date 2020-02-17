@@ -16,27 +16,17 @@
 /*!40000 ALTER TABLE `benutzer` DISABLE KEYS */;
 INSERT INTO `ldapgruppen` (
   `ldapgruppenID`, `titel`) VALUES 
-  (2, 'test'); /* id 2 has to be inserted to match users (benutzer)*/
+  (2, 'Example LDAP group'); /* id 2 has to be inserted to match users (benutzer)*/
 /*!40000 ALTER TABLE `benutzer` ENABLE KEYS */;
 
 --
--- Password for test users is "test"
--- NOTICE: Disable those users in production environment!
+-- Password for admin user is "kitodo"
+-- NOTICE: Disable this user in production environment!
 --
 
 /*!40000 ALTER TABLE `benutzer` DISABLE KEYS */;
 INSERT INTO `benutzer` (`BenutzerID`,`Login`,`Passwort`,`Vorname`,`Nachname`,`IstAktiv`,`Standort`,`mitMassendownload`,`Tabellengroesse`,`ldapgruppenID`,`metadatensprache`,`confVorgangsdatumAnzeigen`) VALUES
- (1,'testAdmin','OvEJ00yyYZQ=','test','Admin',1,'Göttingen',0,10,2,'de',0);
-INSERT INTO `benutzer` (`BenutzerID`,`Login`,`Passwort`,`Vorname`,`Nachname`,`IstAktiv`,`Standort`,`mitMassendownload`,`Tabellengroesse`,`ldapgruppenID`,`metadatensprache`,`confVorgangsdatumAnzeigen`) VALUES
- (2,'testScanning','OvEJ00yyYZQ=','test','Scanning',1,'Göttingen',0,10,2,'de',0);
-INSERT INTO `benutzer` (`BenutzerID`,`Login`,`Passwort`,`Vorname`,`Nachname`,`IstAktiv`,`Standort`,`mitMassendownload`,`Tabellengroesse`,`ldapgruppenID`,`metadatensprache`,`confVorgangsdatumAnzeigen`) VALUES
- (3,'testQC','OvEJ00yyYZQ=','test','QC',1,'Göttingen',0,10,2,'de',0);
-INSERT INTO `benutzer` (`BenutzerID`,`Login`,`Passwort`,`Vorname`,`Nachname`,`IstAktiv`,`Standort`,`mitMassendownload`,`Tabellengroesse`,`ldapgruppenID`,`metadatensprache`,`confVorgangsdatumAnzeigen`) VALUES
- (4,'testImaging','OvEJ00yyYZQ=','test','Imaging',1,'Göttingen',0,10,2,'de',0);
-INSERT INTO `benutzer` (`BenutzerID`,`Login`,`Passwort`,`Vorname`,`Nachname`,`IstAktiv`,`Standort`,`mitMassendownload`,`Tabellengroesse`,`ldapgruppenID`,`metadatensprache`,`confVorgangsdatumAnzeigen`) VALUES
- (5,'testMetaData','OvEJ00yyYZQ=','test','MetaData',1,'Göttingen',0,10,2,'de',0);
-INSERT INTO `benutzer` (`BenutzerID`,`Login`,`Passwort`,`Vorname`,`Nachname`,`IstAktiv`,`Standort`,`mitMassendownload`,`Tabellengroesse`,`ldapgruppenID`,`metadatensprache`,`confVorgangsdatumAnzeigen`) VALUES
- (6,'testProjectmanagement','OvEJ00yyYZQ=','test','Projectmanagement',1,'Göttingen',0,10,2,'de',0);
+ (1,'admin','8prs6Rpk7Qg=','kitodo','Admin',1,'Göttingen',0,10,2,'de',0);
 /*!40000 ALTER TABLE `benutzer` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `benutzergruppen` DISABLE KEYS */;
@@ -57,16 +47,6 @@ INSERT INTO `benutzergruppen` (`BenutzerGruppenID`,`Titel`,`Berechtigung`) VALUE
 /*!40000 ALTER TABLE `benutzergruppenmitgliedschaft` DISABLE KEYS */;
 INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) VALUES
  (1,1);
-INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) VALUES
- (2,2);
-INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) VALUES
- (3,3);
-INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) VALUES
- (4,4);
-INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) VALUES
- (5,5);
-INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) VALUES
- (6,6);
 /*!40000 ALTER TABLE `benutzergruppenmitgliedschaft` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `metadatenkonfigurationen` DISABLE KEYS */;
@@ -87,12 +67,7 @@ INSERT INTO `projekte` (`ProjekteID`, `Titel`, `useDmsImport`, `dmsImportTimeOut
 
 /*!40000 ALTER TABLE `projektbenutzer` DISABLE KEYS */;
 INSERT INTO `projektbenutzer` (`BenutzerID`, `ProjekteID`) VALUES
-(1, 1),
-(2, 1),
-(3, 1),
-(4, 1),
-(5, 1),
-(6, 1);
+(1, 1);
 /*!40000 ALTER TABLE `projektbenutzer` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `projectfilegroups` DISABLE KEYS */;
