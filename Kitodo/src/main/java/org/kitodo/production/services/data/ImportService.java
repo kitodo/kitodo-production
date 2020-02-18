@@ -383,10 +383,10 @@ public class ImportService {
             throw new ProcessGenerationException("Ruleset of template " + template.getId() + " is null!");
         }
         int level = 1;
+        this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
             HashMap<String, String> parentIDMetadata = new HashMap<>();
             parentIDMetadata.put(identifierMetadata, parentID);
-            this.parentTempProcess = null;
             try {
                 Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
                 if (Objects.isNull(parentProcess)) {
