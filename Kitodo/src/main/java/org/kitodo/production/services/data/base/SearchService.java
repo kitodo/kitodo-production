@@ -358,7 +358,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public List<Map<String, Object>> findAllDocuments() throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         try {
-            return searcher.findDocuments(queryBuilder);
+            return searcher.findDocuments(queryBuilder, null, null, Math.toIntExact(count()));
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
@@ -853,6 +853,22 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.DESC);
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Removes all objects from index, which are no longer in Database.
+     * @param baseIndexedBeans the list of beans to check for missing db eintries.
+     * 
+     */
+    public void removeLooseIndexData(List<S> baseIndexedBeans) throws DataException, CustomResponseException {
+        for (S baseIndexedBean : baseIndexedBeans) {
+            Integer baseIndexedBeanId = baseIndexedBean.getId();
+            try {
+                getById(baseIndexedBeanId);
+            } catch (DAOException e) {
+                removeFromIndex(baseIndexedBeanId,true);
+            }
         }
     }
 }
