@@ -1,24 +1,33 @@
 site_name: Kitodo.Production
-pages:
+nav:
 - Home: 'index.md'
-- Getting started:
-    - 'Building': 'gettingstarted/README.md'
-    - 'Build integrated demo': 'gettingstarted/demo.md'
-    - 'Build development version': 'gettingstarted/development-version.md'
-    - 'Eclipse on Windows': 'gettingstarted/eclipse-windows.md'
-    - 'Create VirtualBox Appliance': 'gettingstarted/virtualbox.md'
-- 'Guidelines': 'guidelines/README.md'
-- 'System architecture': 'architecture/README.md'
-- Workflow:
-    - 'Overview': 'architecture/workflow/README.md'
-    - 'Modeler': 'architecture/workflow/Modeler/README.md'
-    - 'Diagram template processing': 'architecture/workflow/Diagram_template_processing/README.md'
-    - 'Create process out of template': 'architecture/workflow/Template_process_creation/README.md'
-- API documentation:
-    - 'Application Programming Interface (API)': 'api/README.md'
-    - 'Active MQ webservices': 'api/activemq_jms_api.md'
-    - 'Jersey WebAPI': 'api/jersey_jaxrs_api.md'
-- Tests: 'tests/README.md'
-- Javadoc: 'javadoc/README.md'
-theme: readthedocs
+- Developer:
+    - 'Getting started':
+        - 'Building': 'developer/gettingstarted/README.md'
+        - 'Build integrated demo': 'developer/gettingstarted/demo.md'
+        - 'Build development version': 'developer/gettingstarted/development-version.md'
+        - 'Eclipse on Windows': 'developer/gettingstarted/eclipse-windows.md'
+        - 'Create VirtualBox Appliance': 'developer/gettingstarted/virtualbox.md'
+    - 'Guidelines': 'developer/guidelines/README.md'
+    - 'System architecture': 'developer/architecture/README.md'
+    - Workflow:
+        - 'Overview': 'developer/architecture/workflow/README.md'
+        - 'Modeler': 'developer/architecture/workflow/Modeler/README.md'
+        - 'Diagram template processing': 'developer/architecture/workflow/Diagram_template_processing/README.md'
+        - 'Create process out of template': 'developer/architecture/workflow/Template_process_creation/README.md'
+    - API documentation:
+        - 'Application Programming Interface (API)': 'developer/api/README.md'
+        - 'Active MQ webservices': 'developer/api/activemq_jms_api.md'
+        - 'Jersey WebAPI': 'developer/api/jersey_jaxrs_api.md'
+    - Tests: 'developer/tests/README.md'
+    - Javadoc: 'developer/javadoc/README.md'
+- User:
+    - 'BestPractice': 
+        - 'Das erste mal mit Kitodo arbeiten': 'user/introduction/index.md'
+        - 'Anwendungshinweise und Weiteres': 'user/introduction/application_notes.md'
+        - 'Dokumentationen der Anwenderbibliotheken': 'user/introduction/user_documentation.md'
+    - 'Getting Started': 'user/introduction/gettingstarteduser.md'
+    - 'Using': 
+        - 'Anwenderdokumentation': 'user/introduction/using.md' 
+theme: mkdocs
 repo_url: https://github.com/kitodo/kitodo-production

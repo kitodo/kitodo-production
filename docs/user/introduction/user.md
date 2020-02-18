@@ -1,0 +1,2 @@
+# Benutzer
+Um Kitodo.Production nutzen zu können, muss eine Person als Benutzer im System registriert sein. Jedem Benutzer muss zudem mindestens ein Projekt und mindestens eine Benutzergruppe (Scanner, Prozessverwaltung, Metadaten, …) zugewiesen werden, damit er im System aktiv sein kann.
