@@ -159,6 +159,7 @@
             <searchField label="Creation date" value="ead.creationdate.normal" />
             <searchField label="Genre" value="ead.genre" />
             <searchField label="Keyword" value="ead.keyword" />
+            <searchField label="ParentID" value="context.ead.id" parentElement="true" hide="true"/>
         </searchFields>
     </catalogue>
 </opacCatalogues>

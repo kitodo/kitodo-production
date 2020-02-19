@@ -33,9 +33,15 @@
                     <p:ajax update="editForm:processFromTemplateTabView:fieldSelectMenu,
                                     editForm:processFromTemplateTabView:searchTerm,
                                     editForm:processFromTemplateTabView:importDepth,
+                                    editForm:processFromTemplateTabView:importChildren,
                                     editForm:processFromTemplateTabView:catalogSearchButton"/>
                 </p:selectOneMenu>
             </div>
+        </p:row>
+    </p:panelGrid>
+
+    <p:panelGrid layout="grid" columns="2" cellpadding="10">
+        <p:row>
             <div>
                 <p:outputLabel for="fieldSelectMenu"
                                value="#{msgs.field}"/>
@@ -49,8 +55,6 @@
                     <f:selectItems value="#{CreateProcessForm.importTab.searchFields}" var="field"/>
                 </p:selectOneMenu>
             </div>
-        </p:row>
-        <p:row>
             <div>
                 <p:outputLabel for="importDepth"
                                value="#{msgs.importDepth}"/>
@@ -61,6 +65,8 @@
                            min="1"
                            max="5"/>
             </div>
+        </p:row>
+        <p:row>
             <div>
                 <p:outputLabel for="searchTerm"
                                value="#{msgs.value}"/>
@@ -71,6 +77,18 @@
                              class="input"
                              placeholder="#{msgs['newProcess.catalogueSearch.searchTerm']}"
                              required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"/>
+            </div>
+            <div>
+                <p:outputLabel id="importChildrenLabel"
+                               for="importChildren"
+                               value="#{msgs.importChildren}"/>
+                <p:selectBooleanCheckbox id="importChildren"
+                                         class="input"
+                                         title="#{CreateProcessForm.importTab.parentElementConfigured ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
+                                         disabled="#{empty CreateProcessForm.importTab.hitModel.selectedCatalog or not CreateProcessForm.importTab.isParentElementConfigured()}"
+                                         value="#{CreateProcessForm.importTab.importChildren}">
+                    <p:ajax listener="#{CreateProcessForm.importTab.isParentElementConfigured()}"/>
+                </p:selectBooleanCheckbox>
             </div>
         </p:row>
         <h:panelGroup layout="block"
