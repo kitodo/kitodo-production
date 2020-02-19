@@ -15,12 +15,22 @@ import com.opencsv.CSVReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
+import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.UnsupportedFormatException;
+import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.UploadedFile;
+import org.xml.sax.SAXException;
 
 public class MassImportService {
 
@@ -47,13 +57,13 @@ public class MassImportService {
 
     /**
      * Import from csvFile.
-     * 
-     * @param selectedCatalog
+     *  @param selectedCatalog
      *            the catalog to import from.
-     * @param file
-     *            the file with given pnns.
+     * @param file the file to parse.
+     * @param projectId the project id.
+     * @param templateId the template id.
      */
-    public void importFromCSV(String selectedCatalog, UploadedFile file) throws IOException {
+    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId) throws IOException {
         CSVReader reader = null;
         List<String> ppns = new ArrayList<>();
         reader = new CSVReader(new InputStreamReader(file.getInputstream()));
@@ -61,25 +71,28 @@ public class MassImportService {
         while ((line = reader.readNext()) != null) {
             ppns.add(line[0]);
         }
-        importPPNs(selectedCatalog, ppns);
+        importPPNs(selectedCatalog, ppns, projectId, templateId);
     }
 
     /**
      * Import Processes from given commaseparated text.
-     * 
-     * @param selectedCatalog
+     *  @param selectedCatalog
      *            the catalog to import from
-     * @param ppnString
-     *            the commaseparated String containing the ppns.
+     * @param ppnString the ppn string from textfield.
+     * @param projectId the project id.
+     * @param templateId the template id.
      */
-    public void importFromText(String selectedCatalog, String ppnString) {
+    public void importFromText(String selectedCatalog, String ppnString, int projectId, int templateId) {
         List<String> ppns = Arrays.asList(ppnString.split(","));
-        importPPNs(selectedCatalog, ppns);
+        importPPNs(selectedCatalog, ppns, projectId, templateId);
 
     }
 
-    private void importPPNs(String selectedCatalog, List<String> ppns) {
-        // import ppn from given catalog
+    private void importPPNs(String selectedCatalog, List<String> ppns, int projectId, int templateId) {
+        ImportService importService = ServiceManager.getImportService();
+        for (String ppn : ppns) {
+            // import
+        }
     }
 
 }

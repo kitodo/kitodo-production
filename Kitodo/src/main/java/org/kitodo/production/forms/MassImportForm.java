@@ -11,15 +11,16 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
+
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.MassImportService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-
-import java.io.IOException;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
 
 @Named("MassImportForm")
 @SessionScoped
@@ -39,12 +40,14 @@ public class MassImportForm extends BaseForm {
 
     /**
      * import from csv file.
-     * @param event the file upload event
+     * 
+     * @param event
+     *            the file upload event
      */
     public void handleFileUpload(FileUploadEvent event) {
+        UploadedFile file = event.getFile();
         try {
-            UploadedFile file = event.getFile();
-            massImportService.importFromCSV(selectedCatalog, file);
+            massImportService.importFromCSV(selectedCatalog, file, projectId, templateId);
         } catch (IOException e) {
             Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
         }
@@ -54,8 +57,9 @@ public class MassImportForm extends BaseForm {
      * Import processes from textField.
      */
     public void importFromText() {
-        massImportService.importFromText(selectedCatalog, ppnString);
+        massImportService.importFromText(selectedCatalog, ppnString, projectId, templateId);
     }
+
     /**
      * Get projectId.
      *
@@ -106,7 +110,8 @@ public class MassImportForm extends BaseForm {
     /**
      * Set selectedCatalog.
      *
-     * @param selectedCatalog as java.lang.String
+     * @param selectedCatalog
+     *            as java.lang.String
      */
     public void setSelectedCatalog(String selectedCatalog) {
         this.selectedCatalog = selectedCatalog;
@@ -124,7 +129,8 @@ public class MassImportForm extends BaseForm {
     /**
      * Set file.
      *
-     * @param file as org.primefaces.model.UploadedFile
+     * @param file
+     *            as org.primefaces.model.UploadedFile
      */
     public void setFile(UploadedFile file) {
         this.file = file;
@@ -142,7 +148,8 @@ public class MassImportForm extends BaseForm {
     /**
      * Set ppnString.
      *
-     * @param ppnString as java.lang.String
+     * @param ppnString
+     *            as java.lang.String
      */
     public void setPpnString(String ppnString) {
         this.ppnString = ppnString;
