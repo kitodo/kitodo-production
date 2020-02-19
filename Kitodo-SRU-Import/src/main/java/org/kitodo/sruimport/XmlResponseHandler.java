@@ -13,6 +13,7 @@ package org.kitodo.sruimport;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -48,6 +49,11 @@ abstract class XmlResponseHandler {
 
     static {
         documentBuilderFactory.setNamespaceAware(true);
+        try {
+            documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        } catch (ParserConfigurationException parserConfigurationException) {
+            throw new UndeclaredThrowableException(parserConfigurationException);
+        }
         xmlOutputter.setFormat(Format.getPrettyFormat());
     }
 
