@@ -214,6 +214,7 @@
                     <h:panelGroup styleClass="action"
                                   title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
                         <p:commandLink id="deleteProcess"
+                                       process="@this"
                                        action="#{ProcessForm.delete(process)}"
                                        title="#{ process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}"
                                        rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"

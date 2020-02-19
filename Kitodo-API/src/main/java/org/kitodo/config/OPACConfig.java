@@ -96,6 +96,23 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve the "parentElement" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by its title
+     * @return HierarchicalConfiguration for catalog's "parentElement"
+     */
+    public static String getParentIDElement(String catalogName) {
+        for (HierarchicalConfiguration field : getSearchFields(catalogName).configurationsAt("searchField")) {
+            if ("true".equals(field.getString("[@parentElement]"))) {
+                String parentIDElement = field.getString("[@label]");
+                if (StringUtils.isNotBlank(parentIDElement)) {
+                    return parentIDElement;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Retrieve 'trimMode' attribute value of the "parentElement" node for
      * the OPAC with the given name 'catalogName' from the OPAC configuration file.
      * @param catalogName String identifying the catalog by its title

@@ -56,6 +56,9 @@ public class LazyHitModel extends LazyDataModel<Object> {
         searchResult = ServiceManager.getImportService().performSearch(
                 this.selectedField, this.searchTerm, this.selectedCatalog, first, resultSize);
 
+        if (Objects.isNull(searchResult) || Objects.isNull(searchResult.getHits())) {
+            return Collections.emptyList();
+        }
         return searchResult.getHits().stream().map(r -> (Object)r).collect(Collectors.toList());
     }
 

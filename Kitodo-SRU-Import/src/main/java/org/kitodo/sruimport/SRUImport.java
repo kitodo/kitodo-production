@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -46,6 +47,7 @@ import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.OPACConfig;
+import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.ParameterNotFoundException;
@@ -152,21 +154,27 @@ public class SRUImport implements ExternalDataImportInterface {
     private SearchResult performQuery(String queryURL) throws ResponseHandlerNotFoundException {
         try {
             HttpResponse response = sruClient.execute(new HttpGet(queryURL));
-            if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
+            int responseStatusCode = response.getStatusLine().getStatusCode();
+            if (Objects.equals(responseStatusCode, SC_OK)) {
                 if (formatHandlers.containsKey(metadataFormat)) {
                     return formatHandlers.get(metadataFormat).getSearchResult(response);
                 } else {
                     throw new ResponseHandlerNotFoundException("No ResponseHandler found for metadata format "
                             + metadataFormat);
                 }
+            } else {
+                throw new CatalogException(response.getStatusLine().getReasonPhrase() + " (Http status code "
+                        + responseStatusCode + ")");
             }
+        } catch (UnknownHostException e) {
+            throw new CatalogException("Unknown host: " + e.getMessage());
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());
         }
         return new SearchResult();
     }
 
-    private DataRecord  performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
+    private DataRecord performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
         String fullUrl = queryURL + "&maximumRecords=1&query=" + idParameter + equalsOperand + identifier;
         try {
             HttpResponse response = sruClient.execute(new HttpGet(fullUrl));
