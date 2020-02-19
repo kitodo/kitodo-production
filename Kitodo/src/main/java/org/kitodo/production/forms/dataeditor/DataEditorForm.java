@@ -665,12 +665,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         metadataPanel.showPhysical(selectedMediaUnit);
         if (selectedMediaUnit.isPresent()) {
             // update gallery
-            galleryPanel.updateSelection(selectedMediaUnit.get());
+            galleryPanel.updateSelection(selectedMediaUnit.get(), null);
             // update logical tree
             for (GalleryMediaContent galleryMediaContent : galleryPanel.getMedias()) {
                 if (Objects.nonNull(galleryMediaContent.getView())
                         && Objects.equals(selectedMediaUnit.get(), galleryMediaContent.getView().getMediaUnit())) {
-                    structurePanel.updateLogicalNodeSelection(galleryMediaContent);
+                    structurePanel.updateLogicalNodeSelection(galleryMediaContent, null);
                     break;
                 }
             }
@@ -687,7 +687,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void updateGallery(View view) {
         MediaUnit mediaUnit = view.getMediaUnit();
         if (Objects.nonNull(mediaUnit)) {
-            galleryPanel.updateSelection(mediaUnit);
+            galleryPanel.updateSelection(mediaUnit, structurePanel.getPageStructure(view, workpiece.getRootElement()));
         }
     }
 
