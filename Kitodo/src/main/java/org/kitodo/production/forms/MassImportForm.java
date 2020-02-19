@@ -11,11 +11,13 @@
 
 package org.kitodo.production.forms;
 
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.MassImportService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
+import java.io.IOException;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
@@ -27,14 +29,32 @@ public class MassImportForm extends BaseForm {
     private int templateId;
     private String selectedCatalog;
     private UploadedFile file;
+    private String ppnString;
+    private MassImportService massImportService = ServiceManager.getMassImportService();
 
     public void prepareMassImport(int templateId, int projectId) {
         this.projectId = projectId;
         this.templateId = templateId;
     }
+
+    /**
+     * import from csv file.
+     * @param event the file upload event
+     */
     public void handleFileUpload(FileUploadEvent event) {
-        MassImportService massImportService = ServiceManager.getMassImportService();
-        massImportService.importFromCSV(selectedCatalog, event.getFile());
+        try {
+            UploadedFile file = event.getFile();
+            massImportService.importFromCSV(selectedCatalog, file);
+        } catch (IOException e) {
+            Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
+        }
+    }
+
+    /**
+     * Import processes from textField.
+     */
+    public void importFromText() {
+        massImportService.importFromText(selectedCatalog, ppnString);
     }
     /**
      * Get projectId.
@@ -108,5 +128,23 @@ public class MassImportForm extends BaseForm {
      */
     public void setFile(UploadedFile file) {
         this.file = file;
+    }
+
+    /**
+     * Get ppnString.
+     *
+     * @return value of ppnString
+     */
+    public String getPpnString() {
+        return ppnString;
+    }
+
+    /**
+     * Set ppnString.
+     *
+     * @param ppnString as java.lang.String
+     */
+    public void setPpnString(String ppnString) {
+        this.ppnString = ppnString;
     }
 }

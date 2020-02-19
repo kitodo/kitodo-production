@@ -15,6 +15,9 @@ import com.opencsv.CSVReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.primefaces.model.UploadedFile;
@@ -44,25 +47,39 @@ public class MassImportService {
 
     /**
      * Import from csvFile.
-     * @param selectedCatalog the catalog to import from.
-     * @param file the file with given pnns.
+     * 
+     * @param selectedCatalog
+     *            the catalog to import from.
+     * @param file
+     *            the file with given pnns.
      */
-    public void importFromCSV(String selectedCatalog, UploadedFile file){
+    public void importFromCSV(String selectedCatalog, UploadedFile file) throws IOException {
         CSVReader reader = null;
-        try {
-            reader = new CSVReader(new InputStreamReader(file.getInputstream()));
-            String[] line;
-            while ((line = reader.readNext()) != null) {
-                importPPN(selectedCatalog, line[0]);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<String> ppns = new ArrayList<>();
+        reader = new CSVReader(new InputStreamReader(file.getInputstream()));
+        String[] line;
+        while ((line = reader.readNext()) != null) {
+            ppns.add(line[0]);
         }
+        importPPNs(selectedCatalog, ppns);
+    }
+
+    /**
+     * Import Processes from given commaseparated text.
+     * 
+     * @param selectedCatalog
+     *            the catalog to import from
+     * @param ppnString
+     *            the commaseparated String containing the ppns.
+     */
+    public void importFromText(String selectedCatalog, String ppnString) {
+        List<String> ppns = Arrays.asList(ppnString.split(","));
+        importPPNs(selectedCatalog, ppns);
 
     }
 
-    private void importPPN(String selectedCatalog, String ppn) {
-        //import ppn from given catalog
+    private void importPPNs(String selectedCatalog, List<String> ppns) {
+        // import ppn from given catalog
     }
 
 }
