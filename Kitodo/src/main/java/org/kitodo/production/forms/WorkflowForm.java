@@ -147,6 +147,10 @@ public class WorkflowForm extends BaseForm {
                 Helper.setErrorMessage(Helper.getTranslation("errorMultipleConfigurations"));
                 return this.stayOnCurrentPage;
             }
+            if (StringUtils.isBlank(workflow.getTitle())) {
+                Helper.setErrorMessage(Helper.getTranslation("workflowTitleEmpty"));
+                return this.stayOnCurrentPage;
+            }
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
