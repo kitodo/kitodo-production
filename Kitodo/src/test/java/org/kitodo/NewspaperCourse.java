@@ -49,8 +49,8 @@ public class NewspaperCourse {
         Block block = new Block(course);
         block.setPublicationPeriod(LocalDate.of(1703, 8, 8), LocalDate.of(1703, 12, 31));
         Issue issue = new Issue(course);
-        issue.addMonday();
-        issue.addThursday();
+        issue.setMonday(true);
+        issue.setThursday(true);
         issue.addAddition(LocalDate.of(1703, 8, 8));
         issue.addExclusion(LocalDate.of(1703, 8, 9));
         issue.addExclusion(LocalDate.of(1703, 8, 16));
@@ -66,8 +66,8 @@ public class NewspaperCourse {
         Block block = new Block(course);
         block.setPublicationPeriod(LocalDate.of(1704, 12, 31), LocalDate.of(1713, 7, 22));
         Issue issue = new Issue(course);
-        issue.addWednesday();
-        issue.addSaturday();
+        issue.setWednesday(true);
+        issue.setSaturday(true);
         issue.addAddition(LocalDate.of(1705, 1, 27));
         issue.addExclusion(LocalDate.of(1705, 1, 28));
         issue.addAddition(LocalDate.of(1705, 4, 8));
@@ -107,8 +107,8 @@ public class NewspaperCourse {
         Block block = new Block(course);
         block.setPublicationPeriod(LocalDate.of(1713, 9, 13), LocalDate.of(1714, 2, 17));
         Issue issue = new Issue(course);
-        issue.addWednesday();
-        issue.addSaturday();
+        issue.setWednesday(true);
+        issue.setSaturday(true);
         issue.addAddition(LocalDate.of(1713, 10, 17));
         issue.addExclusion(LocalDate.of(1713, 10, 18));
         block.addIssue(issue);
@@ -147,8 +147,8 @@ public class NewspaperCourse {
         Block block = new Block(course);
         block.setPublicationPeriod(LocalDate.of(1715, 6, 1), LocalDate.of(1715, 7, 13));
         Issue issue = new Issue(course);
-        issue.addWednesday();
-        issue.addSaturday();
+        issue.setWednesday(true);
+        issue.setSaturday(true);
         issue.addExclusion(LocalDate.of(1715, 6, 8));
         issue.addExclusion(LocalDate.of(1715, 6, 15));
         issue.addExclusion(LocalDate.of(1715, 6, 26));
@@ -161,8 +161,8 @@ public class NewspaperCourse {
         Block block = new Block(course);
         block.setPublicationPeriod(LocalDate.of(1716, 8, 8), LocalDate.of(1716, 12, 26));
         Issue issue = new Issue(course);
-        issue.addWednesday();
-        issue.addSaturday();
+        issue.setWednesday(true);
+        issue.setSaturday(true);
         issue.addExclusion(LocalDate.of(1715, 8, 22));
         block.addIssue(issue);
         course.add(block);
@@ -172,8 +172,8 @@ public class NewspaperCourse {
         Block block = new Block(course);
         block.setPublicationPeriod(LocalDate.of(1719, 1, 1), LocalDate.of(1720, 12, 31));
         Issue issue = new Issue(course);
-        issue.addWednesday();
-        issue.addSaturday();
+        issue.setWednesday(true);
+        issue.setSaturday(true);
         issue.addExclusion(LocalDate.of(1719, 9, 9));
         block.addIssue(issue);
         course.add(block);

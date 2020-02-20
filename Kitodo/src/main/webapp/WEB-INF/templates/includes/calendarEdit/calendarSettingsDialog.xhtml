@@ -1,0 +1,62 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <p:dialog id="calendarSettingsDialog"
+              widgetVar="calendarSettingsDialog"
+              resizable="false"
+              width="480"
+              showHeader="false"
+              dynamic="true"
+              modal="true">
+        <h:form id="yearSettingsForm">
+            <p:panelGrid columns="1" layout="grid">
+                <h3>#{msgs['calendar.year.settings']}</h3>
+                <h:panelGroup layout="block"
+                              styleClass="dialogFieldWrapper">
+                    <div>
+                        <h:outputLabel value="#{msgs['calendar.year.begin']}"
+                                       for="calendarYearBegin"/>
+                        <p:datePicker id="calendarYearBegin"
+                                      value="#{CalendarForm.yearStart}"
+                                      yearRange="#{CalendarForm.today.year}:#{CalendarForm.today.year}"
+                                      pattern="dd.MM">
+                            <p:ajax event="dateSelect"/>
+                        </p:datePicker>
+                    </div>
+                    <div>
+                        <h:outputLabel value="#{msgs['calendar.year.name']}"
+                                       for="calendarYearName"/>
+                        <p:inputText id="calendarYearName"
+                                     value="#{CalendarForm.yearName}"
+                                     styleClass="input">
+                            <p:ajax event="change"/>
+                        </p:inputText>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup layout="block"
+                              styleClass="dialogButtonWrapper">
+                    <p:commandButton id="close"
+                                     onclick="PF('calendarSettingsDialog').hide()"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times"
+                                     iconPos="right"
+                                     styleClass="right"/>
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>

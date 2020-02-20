@@ -1,0 +1,174 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <!-- Blocks -->
+    <p:dataView id="blockList"
+                var="block"
+                value="#{CalendarForm.course}">
+        <p:dataViewListItem>
+            <h:outputText value="#{msgs['calendar.block']} #{CalendarForm.course.indexOf(block)+1}" styleClass="block-label"/>
+            <h:panelGrid columns="2" columnClasses="block-layout">
+                <h:panelGroup>
+                    <div>
+                        <p:outputLabel value="#{msgs['calendar.block.firstAppearance']}"
+                                       styleClass="input" for="blockFirstAppearance"/>
+                        <p:datePicker id="blockFirstAppearance"
+                                      value="#{block.firstAppearanceDate}"
+                                      yearNavigator="true"
+                                      yearRange="1605:2025"
+                                      pattern="dd.MM.yyyy"
+                                      required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                            <p:ajax event="dateSelect"
+                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
+                        </p:datePicker>
+                    </div>
+                    <div>
+                        <p:outputLabel value="#{msgs['calendar.block.lastAppearance']}"
+                                       styleClass="input"
+                                       for="blockLastAppearance"/>
+                        <p:datePicker id="blockLastAppearance"
+                                      value="#{block.lastAppearanceDate}"
+                                      yearNavigator="true"
+                                      yearRange="1605:2025"
+                                      pattern="dd.MM.yyyy"
+                                      required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                            <p:ajax event="dateSelect"
+                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
+                        </p:datePicker>
+                    </div>
+                    <h:outputText value="#{msgs['granularity.issueCount']} #{block.countIndividualIssues()}"
+                                  styleClass="number-of-issues"/>
+                    <p:commandButton id="removeBlock"
+                                     action="#{CalendarForm.removeBlock(block)}"
+                                     icon="fa fa-trash-o"
+                                     iconPos="right"
+                                     value="#{msgs['calendar.block.remove']}"
+                                     title="#{msgs['calendar.block.remove']}"
+                                     styleClass="remove-block"
+                                     update="editForm:calendarTabView:calendarDetailsLayout"/>
+                    <p:commandButton id="copyBlock"
+                                     action="#{CalendarForm.copyBlock(block)}"
+                                     value="#{msgs['calendar.block.add']}"
+                                     icon="fa fa-plus"
+                                     iconPos="right"
+                                     styleClass="callto"
+                                     title="#{msgs['calendar.block.add']}"
+                                     rendered="#{CalendarForm.course.size() gt 0}"
+                                     update="editForm:calendarTabView:calendarDetailsLayout"/>
+
+                </h:panelGroup>
+                <h:panelGroup>
+                    <div>
+                        <!-- Issues -->
+                        <p:dataTable id="issueList"
+                                     var="issue"
+                                     value="#{block.issues}">
+                            <p:column>
+                                <p:inputText value="#{issue.heading}"
+                                             placeholder="#{msgs['calendar.issue']} #{block.issues.indexOf(issue)+1}">
+                                    <p:ajax event="change"/>
+                                </p:inputText>
+                                <span class="issue-badge"
+                                      style="background-color: #{CalendarForm.getIssueColor(block.issues.indexOf(issue))};
+                                             border-color: #{CalendarForm.getIssueColor(block.issues.indexOf(issue))};"/>
+                            </p:column>
+                            <p:column headerText="#{msgs['calendar.issue.monday']}"
+                                      width="30">
+                                <p:selectBooleanCheckbox value="#{issue.monday}"
+                                                         title="#{msgs['calendar.issue.monday']}">
+                                    <p:ajax event="change"
+                                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column headerText="#{msgs['calendar.issue.tuesday']}"
+                                      width="30">
+                                <p:selectBooleanCheckbox value="#{issue.tuesday}"
+                                                         title="#{msgs['calendar.issue.tuesday']}">
+                                    <p:ajax event="change"
+                                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column headerText="#{msgs['calendar.issue.wednesday']}"
+                                      width="30">
+                                <p:selectBooleanCheckbox value="#{issue.wednesday}"
+                                                         title="#{msgs['calendar.issue.wednesday']}">
+                                    <p:ajax event="change"
+                                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column headerText="#{msgs['calendar.issue.thursday']}"
+                                      width="30">
+                                <p:selectBooleanCheckbox value="#{issue.thursday}"
+                                                         title="#{msgs['calendar.issue.thursday']}">
+                                    <p:ajax event="change"
+                                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column headerText="#{msgs['calendar.issue.friday']}"
+                                      width="30">
+                                <p:selectBooleanCheckbox value="#{issue.friday}"
+                                                         title="#{msgs['calendar.issue.friday']}">
+                                    <p:ajax event="change"
+                                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column headerText="#{msgs['calendar.issue.saturday']}"
+                                      width="30">
+                                <p:selectBooleanCheckbox value="#{issue.saturday}"
+                                                         title="#{msgs['calendar.issue.saturday']}">
+                                    <p:ajax event="change"
+                                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column headerText="#{msgs['calendar.issue.sunday']}"
+                                      width="30">
+                                <p:selectBooleanCheckbox value="#{issue.sunday}"
+                                                         title="#{msgs['calendar.issue.sunday']}">
+                                    <p:ajax event="change"
+                                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column width="50">
+                                <p:commandButton action="#{block.removeIssue(issue)}"
+                                                 icon="fa fa-trash-o"
+                                                 title="#{msgs['calendar.issue.delete']}"
+                                                 update="editForm:calendarTabView:calendarDetailsLayout"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton action="#{block.addIssue()}"
+                                         value="#{msgs['calendar.issue.add']}"
+                                         icon="fa fa-plus"
+                                         iconPos="right"
+                                         title="#{msgs['calendar.issue.add']}"
+                                         update="editForm:calendarTabView:calendarDetailsLayout"/>
+                    </div>
+                </h:panelGroup>
+            </h:panelGrid>
+        </p:dataViewListItem>
+    </p:dataView>
+    <p:commandButton id="addBlock"
+                     action="#{CalendarForm.addBlock}"
+                     value="#{msgs['calendar.block.addFirst']}"
+                     icon="fa fa-plus"
+                     iconPos="right"
+                     styleClass="callto"
+                     title="#{msgs['calendar.block.addFirst']}"
+                     rendered="#{CalendarForm.course.size() eq 0}"
+                     update="editForm:calendarTabView:calendarDetailsLayout"/>
+</ui:composition>

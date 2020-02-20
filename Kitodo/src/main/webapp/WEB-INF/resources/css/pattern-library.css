@@ -32,6 +32,7 @@
     --default-double-size: 32px;
     --default-full-size: 16px;
     --default-half-size: 8px;
+    --group-margin: 3px;
     --input-height: 36px;
     --input-padding: 10px;
     --input-padding-none: 0;
@@ -50,6 +51,13 @@ body {
 
 .full-width {
     width: 100%;
+}
+
+hr {
+    border: solid 0 var(--cloudy-gray);
+    border-top-width: var(--default-border-width);
+    margin: var(--default-double-size) var(--default-double-size);
+    width: calc(100% - var(--default-double-size)*2);
 }
 
 a,
@@ -540,6 +548,29 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background: var(--pure-white);
     border-color: var(--focused-blue);
     color: var(--focused-blue);
+}
+
+.ui-selectonebutton .ui-button-text {
+    background: var(--pure-white);
+    border: solid var(--default-border-width) var(--blue);
+    border-right-width: 0;
+    color: var(--blue);
+    height: 100%;
+    line-height: var(--input-height);
+}
+
+.ui-selectonebutton .ui-button:first-child .ui-button-text {
+    border-radius: var(--default-border-radius) 0  0 var(--default-border-radius);
+}
+
+.ui-selectonebutton .ui-button:last-child .ui-button-text {
+    border-radius: 0 var(--default-border-radius) var(--default-border-radius) 0;
+    border-right-width: var(--default-border-width);
+}
+
+.ui-selectonebutton input[checked] + .ui-button-text {
+    background: var(--blue);
+    color: var(--pure-white);
 }
 
 
@@ -1242,8 +1273,9 @@ Popup dialogs
 }
 
 #deleteConfirmDialog .ui-dialog-content {
-    text-align: center;
+    max-width: 500px;
     padding: var(--default-double-size);
+    text-align: left;
 }
 
 #deleteConfirmDialog .ui-confirm-dialog-severity.ui-icon-alert {

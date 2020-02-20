@@ -102,7 +102,7 @@ public class IndividualIssue {
     /**
      * Returns an integer which, for a given Granularity, shall indicate for two
      * neighboring individual issues whether they form the same process (break
-     * mark is equal) or to different processes (break mark differs).
+     * mark is equal) or two different processes (break mark differs).
      *
      * @param mode
      *            how the course shall be broken into processes

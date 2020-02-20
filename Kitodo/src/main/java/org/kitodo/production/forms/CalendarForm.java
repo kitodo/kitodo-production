@@ -11,13 +11,19 @@
 
 package org.kitodo.production.forms;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.production.helper.DateUtils;
-import org.kitodo.production.helper.FacesUtils;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.model.bibliography.course.Block;
@@ -43,6 +47,8 @@ import org.kitodo.production.model.bibliography.course.Cell;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.Issue;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -54,25 +60,24 @@ import org.xml.sax.SAXException;
 @Named("CalendarForm")
 @SessionScoped
 public class CalendarForm implements Serializable {
+    private static final Logger logger = LogManager.getLogger(CalendarForm.class);
+
     private static final String BLOCK = "calendar.block.";
     private static final String BLOCK_NEGATIVE = BLOCK + "negative";
     private static final String UPLOAD_ERROR = "calendar.upload.error";
+    private static final String DEFAULT_REFERER = "processes";
+    private static final Integer[] MONTHS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
     /**
-     * The constant field issueColours holds a regular expression to parse date
-     * inputs in a flexible way.
+     * This is a regular expression to parse date inputs in a flexible way.
      */
     private static final Pattern FLEXIBLE_DATE = Pattern.compile("\\D*(\\d+)\\D+(\\d+)\\D+(\\d+)\\D*");
 
     /**
      * The constant field issueColours holds the colors used to represent the
-     * issues in the calendar editor. It is populated on form bean creation, so
-     * changing the configuration should take effect without need to restart the
-     * servlet container.
+     * issues in the calendar editor.
      */
     private static String[] issueColours;
-
-    private static final Logger logger = LogManager.getLogger(CalendarForm.class);
 
     /**
      * The constant field START_RELATION hold the date the course of publication
@@ -82,34 +87,11 @@ public class CalendarForm implements Serializable {
      */
     private static final LocalDate START_RELATION = LocalDate.of(1605, 9, 12);
 
-    /**
-     * The Map blockChangerResolver is populated with the IDs used in the block
-     * changer drop down element and the references to the block objects
-     * referenced by the IDs for easily looking them up upon change.
-     */
-    private transient Map<String, Block> blockChangerResolver;
-
-    /**
-     * The field blockChangerUnchanged is of importance during the update model
-     * values phase of the JSF life-cycle. During that phase several setter
-     * methods are sequentially called. The first method called is
-     * setBlockChangerSelected(). If the user chose a different block to be
-     * displayed, blockShowing will be altered. This would cause the subsequent
-     * calls to other setter methods to overwrite the values in the newly
-     * selected block with the values of the previously displayed block which
-     * come back in in the form that is submitted by the browser if this is not
-     * blocked. Therefore setBlockChangerSelected() sets blockChangerUnchanged
-     * to control whether the other setter methods shall or shall not write the
-     * incoming data into the respective fields.
-     */
-    private boolean blockChangerUnchanged = true;
-
-    /**
-     * The field blockShowing holds the block currently showing in this calendar
-     * instance. The block held in blockShowing must be part of the course
-     * object, too.
-     */
-    private transient Block blockShowing;
+    private String referer = DEFAULT_REFERER;
+    private Granularity granularity = Granularity.ISSUES;
+    private int numberOfPagesPerIssue = 0;
+    protected int yearShowing = 1979;
+    private UploadedFile uploadedFile;
 
     /**
      * The field course holds the course of appearance currently under edit by
@@ -118,43 +100,11 @@ public class CalendarForm implements Serializable {
     protected Course course;
 
     /**
-     * The field firstAppearanceInToChange is set in the setter method
-     * setFirstAppearance to notify the setter method setLastAppearance that the
-     * date of first appearance has to be changed. Java Server Faces tries to
-     * update the data model by sequentially calling two setter methods. By
-     * allowing the user to alter both fields at one time this may lead to an
-     * illegal intermediate state in the data model which the latter
-     * successfully rejects (which it should). Imagine the case that one block
-     * is from March until September and the second one from October to
-     * November. Now the second block shall be moved to January until February.
-     * Setting the start date from October to January will cause an overlapping
-     * state with the other block which is prohibited by definition. Therefore
-     * changing the beginning date must be forwarded to the setter method to
-     * change the end date to allow this change, which is allowed, if taken
-     * atomically.
-     */
-    private LocalDate firstAppearanceIsToChange = null;
-
-    /**
      * The constant field today hold the date of today. Reading the system clock
      * requires much synchronisation throughout the JVM and is therefore only
      * done once on form creation.
      */
     private final LocalDate today = LocalDate.now();
-
-    private UploadedFile uploadedFile;
-
-    /**
-     * The field uploadShowing indicates whether the dialogue box to upload a
-     * course of appearance XML description is showing or not.
-     */
-    protected boolean uploadShowing = false;
-
-    /**
-     * The field yearShowing tells the year currently showing in this calendar
-     * instance.
-     */
-    protected int yearShowing = 1979; // Cf. 42
 
     /**
      * Empty constructor. Creates a new form without yet any data.
@@ -168,33 +118,142 @@ public class CalendarForm implements Serializable {
     public CalendarForm() {
         issueColours = ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";");
         course = new Course();
-        blockChangerResolver = new HashMap<>();
-        blockShowing = null;
     }
 
     /**
-     * Adds a new issue to the set of issues held by
-     * the block currently showing.
+     * Get referer.
+     *
+     * @return value of referer
      */
-    public void addIssueClick() {
-        blockShowing.addIssue(new Issue(course));
+    public String getReferer() {
+        return referer;
     }
 
     /**
-     * Flips the calendar sheet back one year in
-     * time.
+     * Set referer.
+     *
+     * @param referer as java.lang.String
      */
-    public void backwardClick() {
+    public void setReferer(String referer) {
+        if (Objects.nonNull(referer) && !referer.isEmpty()) {
+            this.referer = referer;
+        }
+    }
+
+    /**
+     * Get all possible granularities.
+     *
+     * @return list of Granularity objects
+     */
+    public List<Granularity> getGranularities() {
+        return Arrays.asList(Granularity.values());
+    }
+
+    /**
+     * Get granularity.
+     *
+     * @return value of granularity
+     */
+    public Granularity getGranularity() {
+        return granularity;
+    }
+
+    /**
+     * Set granularity.
+     *
+     * @param granularity as org.kitodo.production.model.bibliography.course.Granularity
+     */
+    public void setGranularity(Granularity granularity) {
+        this.granularity = granularity;
+        course.splitInto(granularity);
+    }
+
+    /**
+     * Get array representing the months of a year.
+     *
+     * @return value of MONTHS
+     */
+    public static Integer[] getMonths() {
+        return MONTHS;
+    }
+
+    /**
+     * Get the currently displayed year.
+     *
+     * @return the year to be displayed as java.lang.String
+     */
+    public String getYear() {
+        return Integer.toString(yearShowing);
+    }
+
+    /**
+     * Set the currently displayed year.
+     *
+     * @param year to be displayed as java.lang.String
+     */
+    public void setYear(String year) {
+        yearShowing = Integer.parseInt(year);
+    }
+
+    /**
+     * Display the previous year in the calendar.
+     */
+    public void previousYear() {
         yearShowing -= 1;
+    }
+
+    /**
+     * Display the next year in the calendar.
+     */
+    public void nextYear() {
+        yearShowing += 1;
+    }
+
+    /**
+     * Get estimated number of pages per issue.
+     *
+     * @return value of numberOfPagesPerIssue
+     */
+    public int getNumberOfPagesPerIssue() {
+        return numberOfPagesPerIssue;
+    }
+
+    /**
+     * Set estimated number of pages per issue.
+     *
+     * @param numberOfPagesPerIssue as int
+     */
+    public void setNumberOfPagesPerIssue(int numberOfPagesPerIssue) {
+        this.numberOfPagesPerIssue = numberOfPagesPerIssue;
+    }
+
+    /**
+     * Get the number of pages of every process for the chosen granularity.
+     * Formatted as String with one decimal place.
+     *
+     * @return number of images as java.lang.String
+     */
+    public String getNumberOfPagesPerProcessFormatted() {
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+        return decimalFormat.format(getNumberOfPagesPerProcess());
+    }
+
+    /**
+     * Get the number of pages of every process for the chosen granularity.
+     *
+     * @return number of pages as long
+     */
+    public double getNumberOfPagesPerProcess() {
+        return course.countIndividualIssues() / ((double) Math.max(course.getNumberOfProcesses(), 1)) * numberOfPagesPerIssue;
     }
 
     /**
      * The function checkBlockPlausibility compares the dates entered against
      * some plausibility assumptions and sets hints otherwise.
      */
-    private void checkBlockPlausibility() {
-        LocalDate firstAppearance = blockShowing.getFirstAppearance();
-        LocalDate lastAppearance = blockShowing.getLastAppearance();
+    public void checkBlockPlausibility(Block block) {
+        LocalDate firstAppearance = block.getFirstAppearance();
+        LocalDate lastAppearance = block.getLastAppearance();
         if (Objects.nonNull(firstAppearance) && Objects.nonNull(lastAppearance)) {
             if (firstAppearance.plusYears(100).isBefore(lastAppearance)) {
                 Helper.setMessage(BLOCK + "long");
@@ -218,19 +277,37 @@ public class CalendarForm implements Serializable {
     }
 
     /**
+     * Change whether the selected issue appeared on the selected date.
+     * Depending on the regular interval of appearance this will change the additions and exclusions for this issue.
+     *
+     * @param selectedIssue issue to be modified
+     * @param selectedDate date for which the issue will be modified
+     */
+    public void changeMatch(Issue selectedIssue, LocalDate selectedDate) {
+        if (selectedIssue.isMatch(selectedDate) && selectedIssue.getAdditions().contains(selectedDate)) {
+            selectedIssue.removeAddition(selectedDate);
+        } else if (selectedIssue.isMatch(selectedDate) && !selectedIssue.getAdditions().contains(selectedDate)) {
+            selectedIssue.addExclusion(selectedDate);
+        } else if (!selectedIssue.isMatch(selectedDate) && selectedIssue.getExclusions().contains(selectedDate)) {
+            selectedIssue.removeExclusion(selectedDate);
+        } else if (!selectedIssue.isMatch(selectedDate) && !selectedIssue.getExclusions().contains(selectedDate)) {
+            selectedIssue.addAddition(selectedDate);
+        }
+    }
+
+    /**
      * Creates and adds a copy of the currently
      * showing block.
      */
-    public void copyBlockClick() {
-        Block copy = blockShowing.clone(course);
+    public void copyBlock(Block block) {
+        Block copy = block.clone(course);
         LocalDate lastAppearance = course.getLastAppearance();
         if (Objects.nonNull(lastAppearance)) {
             LocalDate firstAppearance = lastAppearance.plusDays(1);
             copy.setFirstAppearance(firstAppearance);
             copy.setLastAppearance(firstAppearance);
             course.add(copy);
-            blockShowing = copy;
-            navigate();
+            navigate(copy);
         }
     }
 
@@ -254,19 +331,21 @@ public class CalendarForm implements Serializable {
      * and—as to our knowledge in late 2014, when this was written—this is the
      * best option of all, this default has been chosen here.
      */
-    public void downloadClick() {
+    public StreamedContent download() {
         boolean granularityWasTemporarilyAdded = false;
         try {
             if (Objects.isNull(course) || course.countIndividualIssues() == 0) {
                 Helper.setErrorMessage("errorDataIncomplete", "calendar.isEmpty");
-                return;
+                return null;
             }
             if (course.getNumberOfProcesses() == 0) {
                 granularityWasTemporarilyAdded = true;
                 course.splitInto(Granularity.DAYS);
             }
+
             byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
-            FacesUtils.sendDownload(data, "course.xml");
+            return new DefaultStreamedContent(new ByteArrayInputStream(data), "application/xml", "newspaper.xml");
+            //FacesUtils.sendDownload(data, "course.xml");
         } catch (TransformerException e) {
             Helper.setErrorMessage("granularity.download.error", "errorTransformerException", logger, e);
         } catch (IOException e) {
@@ -276,14 +355,7 @@ public class CalendarForm implements Serializable {
                 course.clearProcesses();
             }
         }
-    }
-
-    /**
-     * Flips the calendar sheet forward one year in
-     * time.
-     */
-    public void forwardClick() {
-        yearShowing += 1;
+        return null;
     }
 
     /**
@@ -299,41 +371,6 @@ public class CalendarForm implements Serializable {
      */
     public boolean getBlank() {
         return course.isEmpty();
-    }
-
-    /**
-     * Returns the elements for the block
-     * changer drop down element as read only property "blockChangerOptions". It
-     * returns a List of Map with each two entries: "value" and "label". "value"
-     * is the hashCode() in hex of the block which will later be used if the
-     * field "blockChangerSelected" is altered to choose the currently selected
-     * block, "label" is the readable description to be shown to the user.
-     *
-     * @return the elements for the block changer drop down element
-     */
-    public List<Map<String, String>> getBlockChangerOptions() {
-        List<Map<String, String>> blockChangerOptions = new ArrayList<>();
-        for (Block block : course) {
-            String value = Integer.toHexString(block.hashCode());
-            blockChangerResolver.put(value, block);
-            Map<String, String> item = new HashMap<>();
-            item.put("value", value);
-            item.put("label", block.toString(DateUtils.DATE_FORMATTER));
-            blockChangerOptions.add(item);
-        }
-        return blockChangerOptions;
-    }
-
-    /**
-     * Returns the hashCode() value of
-     * the block currently selected as read-write property
-     * "blockChangerSelected". If a new block is under edit, returns the empty
-     * String.
-     *
-     * @return identifier of the selected block
-     */
-    public String getBlockChangerSelected() {
-        return Objects.isNull(blockShowing) ? "" : Integer.toHexString(blockShowing.hashCode());
     }
 
     /**
@@ -367,7 +404,7 @@ public class CalendarForm implements Serializable {
      *
      * @return an empty calendar sheet
      */
-    protected List<List<Cell>> getEmptySheet() {
+    private List<List<Cell>> getEmptySheet() {
         List<List<Cell>> emptySheet = new ArrayList<>(31);
         for (int day = 1; day <= 31; day++) {
             ArrayList<Cell> row = new ArrayList<>(12);
@@ -377,34 +414,6 @@ public class CalendarForm implements Serializable {
             emptySheet.add(row);
         }
         return emptySheet;
-    }
-
-    /**
-     * Returns the date of first appearance of
-     * the block currently showing as read-write property "firstAppearance".
-     *
-     * @return date of first appearance of currently showing block
-     */
-    public String getFirstAppearance() {
-        if (Objects.nonNull(blockShowing) && Objects.nonNull(blockShowing.getFirstAppearance())) {
-            return DateUtils.DATE_FORMATTER.format(blockShowing.getFirstAppearance());
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the date of last appearance of
-     * the block currently showing as read-write property "lastAppearance".
-     *
-     * @return date of last appearance of currently showing block
-     */
-    public String getLastAppearance() {
-        if (Objects.nonNull(blockShowing) && Objects.nonNull(blockShowing.getLastAppearance())) {
-            return DateUtils.DATE_FORMATTER.format(blockShowing.getLastAppearance());
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -418,82 +427,21 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * Returns whether the dialog to upload a
-     * course of appearance XML file shall be shown or not.
-     *
-     * @return whether the dialog to upload a course of appearance shows
-     */
-    public boolean getUploadShowing() {
-        return uploadShowing;
-    }
-
-    /**
-     * Returns the year to be shown in the calendar sheet
-     * as read-only property "year".
-     *
-     * @return the year to show on the calendar sheet
-     */
-    public String getYear() {
-        return Integer.toString(yearShowing);
-    }
-
-    /**
-     * The method will be called by Faces if the user clicks
-     * the cancel button leave the dialog to upload a course of appearance XML
-     * file.
-     */
-    public void hideUploadClick() {
-        neglectEmptyBlock();
-        uploadShowing = false;
-    }
-
-    /**
      * Alters the year the calendar sheet is shown for so
      * that something of the current block is visible to prevent the user from
      * needing to click through centuries manually to get there.
      */
-    protected void navigate() {
+    protected void navigate(Block block) {
         try {
-            if (yearShowing > blockShowing.getLastAppearance().getYear()) {
-                yearShowing = blockShowing.getLastAppearance().getYear();
+            if (yearShowing > block.getLastAppearance().getYear()) {
+                yearShowing = block.getLastAppearance().getYear();
             }
-            if (yearShowing < blockShowing.getFirstAppearance().getYear()) {
-                yearShowing = blockShowing.getFirstAppearance().getYear();
+            if (yearShowing < block.getFirstAppearance().getYear()) {
+                yearShowing = block.getFirstAppearance().getYear();
             }
         } catch (NullPointerException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    /**
-     * Removes an empty block. Usually, an
-     * empty block cannot be created. But if the user clicks the upload dialog
-     * button, the form must be submitted, which causes the setters of the form
-     * fields to create one prior to the function call. To stay consistent, it
-     * is removed here again.
-     */
-    protected void neglectEmptyBlock() {
-        if (Objects.nonNull(blockShowing) && blockShowing.isEmpty()) {
-            course.remove(blockShowing);
-            blockShowing = null;
-        }
-    }
-
-    /**
-     * The function is executed if the user clicks the button to go
-     * to the next screen. It returns either the String constant that indicates
-     * Faces the next screen, or sets an error message if the user didn’t yet
-     * input an issue and indicates Faces to stay on that screen by returning
-     * the empty string.
-     *
-     * @return the screen to show next
-     */
-    public String nextClick() {
-        if (Objects.isNull(course) || course.countIndividualIssues() < 1) {
-            Helper.setErrorMessage("errorDataIncomplete", "calendar.isEmpty");
-            return null;
-        }
-        return "/pages/granularity";
     }
 
     /**
@@ -543,7 +491,7 @@ public class CalendarForm implements Serializable {
                 }
             }
         }
-        if (!uploadShowing && !value.contains("\u00A0")) {
+        if (!value.contains("\u00A0")) {
             Helper.setErrorMessage(BLOCK + input + ".invalid");
         }
         return null;
@@ -580,163 +528,41 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * Deletes the currently selected block from
-     * the course of appearance. If there is only one block left, the editor
-     * will instead be reset.
-     *
-     * @throws IndexOutOfBoundsException
-     *             if the block referenced by “blockShowing” isn’t contained in
-     *             the course of appearance
+     * Add a block to the course.
      */
-    public void removeBlockClick() {
-        if (course.size() < 2) {
-            course.clear();
-            blockChangerResolver.clear();
-            blockShowing = null;
-        } else {
-            int index = course.indexOf(blockShowing);
-            course.remove(index);
-            if (index > 0) {
-                index--;
-            }
-            blockShowing = course.get(index);
-            navigate();
+    public void addBlock() {
+        course.add(new Block(course));
+    }
+
+    /**
+     * Remove block.
+     *
+     * @param block
+     *          The Block to be removed from the course.
+     */
+    public void removeBlock(Block block) {
+        int index = course.indexOf(block);
+        course.remove(block);
+        if (index > 0) {
+            index--;
+        }
+        if (course.size() > 0) {
+            navigate(course.get(index));
         }
     }
 
     /**
-     * The method will be called by Faces to store a
-     * new value of the read-write property "blockChangerSelected". If it is
-     * different from the current one, this means that the user selected a
-     * different Block in the block changer drop down element. The event will be
-     * used to alter the “blockShowing” field which keeps the block currently
-     * showing. “updateAllowed” will be set accordingly to update the contents
-     * of the current block or to prevent fields containing data from the
-     * previously displaying block to overwrite the data inside the newly
-     * selected one.
+     * Get the color from the list of defined colors for the given index.
+     * These colors are used to highlight and distinguish the different issues in the calendar.
      *
-     * @param value
-     *            hashCode() in hex of the block to be selected
+     * @param index index to retrieve color for from list of colors
+     * @return The color represented by a String containing the color's hex value
      */
-    public void setBlockChangerSelected(String value) {
-        if (Objects.isNull(value)) {
-            return;
+    public String getIssueColor(int index) {
+        if (index >= 0 && index < issueColours.length) {
+            return issueColours[index];
         }
-        blockChangerUnchanged = value.equals(Integer.toHexString(blockShowing.hashCode()));
-        if (!blockChangerUnchanged) {
-            blockShowing = blockChangerResolver.get(value);
-            checkBlockPlausibility();
-            navigate();
-        }
-    }
-
-    /**
-     * The method will be called by Faces to store a new
-     * value of the read-write property "firstAppearance", which represents the
-     * date of first appearance of the block currently showing. The event will
-     * be used to either alter the date of first appearance of the block defined
-     * by the “blockShowing” field or, in case that a new block is under edit,
-     * to initially set its the date of first appearance.
-     *
-     * @param firstAppearance
-     *            new date of first appearance
-     */
-    public void setFirstAppearance(String firstAppearance) {
-        LocalDate newFirstAppearance;
-        try {
-            newFirstAppearance = parseDate(firstAppearance, "firstAppearance");
-        } catch (IllegalArgumentException e) {
-            newFirstAppearance = Objects.nonNull(blockShowing) ? blockShowing.getFirstAppearance() : null;
-        }
-        try {
-            if (Objects.nonNull(blockShowing)) {
-                if (blockChangerUnchanged && (Objects.isNull(blockShowing.getFirstAppearance())
-                        || !blockShowing.getFirstAppearance().isEqual(newFirstAppearance))) {
-                    firstAppearanceIsToChange = newFirstAppearance;
-                }
-            } else {
-                if (Objects.nonNull(newFirstAppearance)) {
-                    blockShowing = new Block(course);
-                    blockShowing.setFirstAppearance(newFirstAppearance);
-                    course.add(blockShowing);
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(BLOCK + "firstAppearance.rejected", logger, e);
-        }
-    }
-
-    /**
-     * The method will be called by Faces to store a new
-     * value of the read-write property "lastAppearance", which represents the
-     * date of last appearance of the block currently showing. The event will be
-     * used to either alter the date of last appearance of the block defined by
-     * the “blockShowing” field or, in case that a new block is under edit, to
-     * initially set its the date of last appearance.
-     *
-     * @param lastAppearance
-     *            new date of last appearance
-     */
-    public void setLastAppearance(String lastAppearance) {
-        LocalDate newLastAppearance;
-        try {
-            newLastAppearance = parseDate(lastAppearance, "lastAppearance");
-        } catch (IllegalArgumentException e) {
-            newLastAppearance = Objects.nonNull(blockShowing) ? blockShowing.getLastAppearance() : null;
-        }
-        try {
-            if (Objects.nonNull(blockShowing)) {
-                if (blockChangerUnchanged) {
-                    if (Objects.isNull(firstAppearanceIsToChange)) {
-                        executeForFirstAppearanceToChangeNull(newLastAppearance);
-                    } else {
-                        executeForFirstAppearanceToChange(newLastAppearance);
-                    }
-                }
-            } else {
-                if (Objects.nonNull(newLastAppearance)) {
-                    blockShowing = new Block(course);
-                    blockShowing.setLastAppearance(newLastAppearance);
-                    course.add(blockShowing);
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(BLOCK + "lastAppearance.rejected", logger, e);
-        } finally {
-            firstAppearanceIsToChange = null;
-        }
-    }
-
-    private void executeForFirstAppearanceToChangeNull(LocalDate newLastAppearance) {
-        if (Objects.isNull(blockShowing.getLastAppearance()) || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
-            if (Objects.nonNull(blockShowing.getFirstAppearance())
-                    && newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
-                Helper.setErrorMessage(BLOCK_NEGATIVE);
-                return;
-            }
-            blockShowing.setLastAppearance(newLastAppearance);
-            checkBlockPlausibility();
-            navigate();
-        }
-    }
-
-    private void executeForFirstAppearanceToChange(LocalDate newLastAppearance) {
-        if (Objects.isNull(blockShowing.getLastAppearance()) || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
-            if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
-                Helper.setErrorMessage(BLOCK_NEGATIVE);
-                return;
-            }
-            blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
-        } else {
-            if (Objects.nonNull(blockShowing.getLastAppearance())
-                    && blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
-                Helper.setErrorMessage(BLOCK_NEGATIVE);
-                return;
-            }
-            blockShowing.setFirstAppearance(firstAppearanceIsToChange);
-        }
-        checkBlockPlausibility();
-        navigate();
+        return "";
     }
 
     /**
@@ -752,22 +578,11 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The method will be called by Faces if the user clicks
-     * the button to upload a course of appearance XML file.
+     * Upload an XML file to import a course of appearance.
+     * Overrides the existing contents of course with the contents
+     * of the XML file.
      */
-    public void showUploadClick() {
-        neglectEmptyBlock();
-        uploadShowing = true;
-    }
-
-    /**
-     * The method will be called by Faces if the user has selected
-     * a course of appearance XML file for upload in the window and clicks the
-     * button to upload it. Old values of the granularity picker are removed—if
-     * any—so that the screen is reinitialised with the current calendar state
-     * next time.
-     */
-    public void uploadClick() {
+    public void upload() {
         try {
             if (Objects.isNull(uploadedFile)) {
                 Helper.setMessage(UPLOAD_ERROR, "calendar.upload.isEmpty");
@@ -775,27 +590,88 @@ public class CalendarForm implements Serializable {
             }
             Document xml = XMLUtils.load(uploadedFile.getInputstream());
             course = new Course(xml);
-            blockShowing = course.get(0);
             Helper.removeManagedBean("GranularityForm");
-            navigate();
+            navigate(course.get(0));
         } catch (SAXException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, "errorSAXException", logger, e);
-            neglectEmptyBlock();
         } catch (IOException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, e.getLocalizedMessage(), logger, e);
-            neglectEmptyBlock();
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage("calendar.upload.overlappingDateRanges", logger, e);
-            neglectEmptyBlock();
         } catch (NoSuchElementException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, "calendar.upload.missingMandatoryElement", logger, e);
-            neglectEmptyBlock();
         } catch (NullPointerException e) {
             Helper.setErrorMessage("calendar.upload.missingMandatoryValue", logger, e);
-            neglectEmptyBlock();
         } finally {
             uploadedFile = null;
-            uploadShowing = false;
         }
+    }
+
+    /**
+     * Create processes for the modelled course of appearance and chosen granularity.
+     */
+    public void createProcesses() {
+        // TODO implement
+    }
+
+    public String formatString(String messageKey, String... replacements) {
+        return Helper.getTranslation(messageKey, Arrays.asList(replacements));
+    }
+
+    /**
+     * Get the first day of the year.
+     * This might differ from January 1st as business years might have a different range of time.
+     * The used PrimeFaces component requires a Date object including a specific year,
+     * however the year is irrelevant for yearStart itself.
+     *
+     * @return Date representing the first day of the year
+     */
+    public Date getYearStart() {
+        Calendar calendar = new GregorianCalendar(
+                today.getYear(), course.getYearStart().getMonth().ordinal(), course.getYearStart().getDayOfMonth());
+        return calendar.getTime();
+    }
+
+    /**
+     * Set the first day of the year.
+     * This might differ from January 1st as business years might have a different range of time.
+     * The used PrimeFaces component passes a Date object including a specific year,
+     * however the year is irrelevant for yearStart itself.
+     *
+     * @param date Date representing the first day of the year
+     */
+    public void setYearStart(Date date) {
+        if (Objects.nonNull(date)) {
+            course.setYearStart(MonthDay.of(date.getMonth() + 1, date.getDate()));
+        }
+    }
+
+    /**
+     * Returns the name of the year. The name of the year is optional and maybe
+     * empty. Typical values are “Business year”, “Fiscal year”, or “Season”.
+     *
+     * @return the name of the year
+     */
+    public String getYearName() {
+        return course.getYearName();
+    }
+
+    /**
+     * Sets the year name of the course.
+     *
+     * @param yearName
+     *            the yearName to set
+     */
+    public void setYearName(String yearName) {
+        course.setYearName(yearName);
+    }
+
+    /**
+     * Get today.
+     *
+     * @return value of today
+     */
+    public LocalDate getToday() {
+        return today;
     }
 }

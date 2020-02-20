@@ -1,0 +1,75 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html">
+    <h:panelGrid columns="2" id="granularity">
+        <h:panelGroup id="granularityLeftColumn">
+            <!-- display number of issues -->
+            <h:outputText value="#{CalendarForm.course.countIndividualIssues()} #{msgs['granularity.issues']}"
+                          styleClass="granularity-issues"/>
+
+            <hr/>
+
+            <!-- select granularity -->
+            <div>
+                <h:outputLabel value="#{msgs['granularity.pick']}"
+                               for="granularitySelect"/>
+                <p:selectOneButton id="granularitySelect"
+                                   value="#{CalendarForm.granularity}"
+                                   styleClass="input">
+                    <f:selectItems value="#{CalendarForm.granularities}"
+                                   var="granularity"
+                                   itemValue="#{granularity}"
+                                   itemLabel="#{msgs['granularity.'.concat(granularity.toString().toLowerCase())]}"/>
+                    <p:ajax event="change"
+                            update="editForm:calendarTabView:granularity"/>
+                </p:selectOneButton>
+            </div>
+
+            <hr/>
+
+            <!-- display number of processes -->
+            <h:outputText value="#{CalendarForm.formatString('granularity.info.full', CalendarForm.course.getNumberOfProcesses(), CalendarForm.getNumberOfPagesPerProcessFormatted())}"
+                          styleClass="granularity-processes"/>
+            <h:outputText value="#{msgs['granularity.info.largeNumberOfImagesWarning']}"
+                          rendered="#{CalendarForm.getNumberOfPagesPerProcess() gt 1000}"
+                          styleClass="granularity-processes-warning"/>
+        </h:panelGroup>
+        <h:panelGroup id="granularityRightColumn">
+            <!-- set number of pages per issue -->
+            <div>
+                <h:outputLabel value="#{msgs['granularity.numberOfPages']}"
+                               for="granularityNumberOfPages"/>
+                <p:inputNumber id="granularityNumberOfPages"
+                               value="#{CalendarForm.numberOfPagesPerIssue}"
+                               decimalPlaces="0"
+                               minValue="0">
+                    <p:ajax event="change"
+                            update="editForm:calendarTabView:granularity"/>
+                </p:inputNumber>
+            </div>
+
+            <!-- info for selected granularity -->
+            <h:panelGroup styleClass="granularity-description">
+                <h:outputText value="#{msgs['granularity.info.textbox.caption']}"
+                              styleClass="granularity-description-label"/>
+                <h:outputText value="#{msgs['granularity.info.textbox.'.concat(CalendarForm.getGranularity().toString().toLowerCase())]}"
+                              styleClass="granularity-description-text"/>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:panelGrid>
+</ui:composition>

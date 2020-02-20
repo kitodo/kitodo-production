@@ -1134,6 +1134,229 @@ h3#headerText {
 }
 
 /*----------------------------------------------------------------------
+Calendar
+----------------------------------------------------------------------*/
+
+h3#headerText.calendar-heading {
+    width: auto;
+}
+
+#editForm\:calendarTabView > .ui-tabs-panels {
+    overflow: hidden;
+}
+
+#editForm\:calendarTabView > .ui-tabs-panels > .ui-tabs-panel,
+#editForm\:calendarTabView\:calendarDetailsLayout,
+#editForm\:calendarTabView\:calendarDetailsLayout > tbody,
+#editForm\:calendarTabView\:calendarDetailsLayout > tbody > tr,
+#editForm\:calendarTabView\:calendarDetailsLayout > tbody > tr > td {
+    display: block;
+    height: 100%;
+}
+
+#editForm\:calendarTabView\:calendarDetailsLayout > tbody > tr > td {
+    display: inline-block;
+    overflow-y: scroll;
+    vertical-align: top;
+    width: calc(50% - 2px);
+}
+
+#editForm\:calendarTabView\:blockList {
+    margin-top: calc(var(--input-height) + var(--contrast-border-width));
+}
+
+#editForm\:calendarTabView\:blockList .ui-dataview-header {
+    display: none;
+}
+
+#editForm\:calendarTabView\:blockList .ui-dataview-content {
+    padding: 0;
+}
+
+#editForm\:calendarTabView\:blockList .ui-dataview-row {
+    border: solid var(--default-border-width) var(--carbon-blue);
+    margin: var(--default-full-size);
+    padding: var(--default-half-size);
+    position: relative;
+}
+
+#editForm\:calendarTabView\:blockList .block-label {
+    padding: var(--default-half-size);
+    background: var(--pure-white);
+    margin-top: -1em;
+    position: absolute;
+    top: 0;
+}
+
+#editForm\:calendarTabView\:blockList .block-layout:first-child {
+    width: 25%;
+}
+
+#editForm\:calendarTabView\:blockList .block-layout:last-child {
+    width: 75%;
+}
+
+#editForm\:calendarTabView\:blockList .input,
+#editForm\:calendarTabView\:blockList .number-of-issues,
+#editForm\:calendarTabView\:blockList .remove-block {
+    display: block;
+    margin: var(--default-half-size);
+}
+
+
+#editForm\:calendarTabView\:blockList .ui-datatable thead,
+#editForm\:calendarTabView\:blockList .ui-datatable th {
+    background: none;
+    border: none;
+}
+
+#editForm\:calendarTabView\:blockList .ui-datatable th,
+#editForm\:calendarTabView\:blockList .ui-datatable td {
+    padding: var(--default-half-size);
+}
+
+#editForm\:calendarTabView\:blockList .ui-calendar {
+    min-width: initial;
+}
+
+#editForm\:calendarTabView\:blockList .ui-datatable td  .ui-chkbox-box {
+    vertical-align: middle;
+}
+
+#editForm\:calendarTabView\:addBlock {
+    margin: 0 var(--default-full-size);
+}
+
+#editForm\:calendarTabView\:yearControls {
+    display: block;
+    margin-bottom: var(--contrast-border-width);
+    text-align: center;
+}
+
+#editForm\:calendarTabView\:yearInput {
+    margin-left: var(--group-margin);
+    margin-right: var(--group-margin);
+}
+
+#editForm\:calendarTabView\:yearInput input {
+    text-align: center;
+    width: 4em;
+}
+
+#editForm\:calendarTabView\:calendarTable td {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 var(--default-half-size);
+    position: relative;
+}
+
+#editForm\:calendarTabView\:calendarTable td.saturday,
+#editForm\:calendarTabView\:calendarTable td.saturdayNoBlock {
+    background: var(--light-gray);
+}
+
+#editForm\:calendarTabView\:calendarTable td.sunday,
+#editForm\:calendarTabView\:calendarTable td.sundayNoBlock {
+    background: var(--cloudy-gray);
+}
+
+#editForm\:calendarTabView\:calendarTable td > .calendar-date {
+    display: inline-block;
+    text-align: right;
+    vertical-align: middle;
+    width: 1.5em;
+}
+
+#editForm\:calendarTabView\:calendarTable td.weekdayNoBlock > .calendar-date,
+#editForm\:calendarTabView\:calendarTable td.saturdayNoBlock > .calendar-date,
+#editForm\:calendarTabView\:calendarTable td.sundayNoBlock > .calendar-date {
+    color: var(--medium-gray);
+}
+
+#editForm\:calendarTabView .issue-badge,
+#editForm\:calendarTabView\:calendarTable .issue {
+    background: var(--pure-white);
+    border: solid var(--default-border-width);
+    border-radius: var(--default-border-radius);
+    display: inline-block;
+    height: 18px;
+    margin: 2px;
+    vertical-align: middle;
+    width: var(--default-half-size);
+}
+
+.file-upload-info {
+    display: block;
+    margin: var(--default-full-size) 0;
+}
+
+#editForm\:calendarTabView\:granularity {
+    width: 100%;
+}
+
+#editForm\:calendarTabView\:granularityLeftColumn,
+#editForm\:calendarTabView\:granularityRightColumn {
+    display: block;
+    padding: var(--default-full-size);
+    text-align: center;
+}
+
+#editForm\:calendarTabView\:granularityLeftColumn > div,
+#editForm\:calendarTabView\:granularityLeftColumn > span {
+    display: inline-block;
+    margin: var(--default-full-size);
+}
+
+#editForm\:calendarTabView .granularity-issues {
+    background: var(--light-gray);
+    border-radius: var(--default-border-radius);
+    display: inline-block;
+    padding: var(--default-full-size);
+}
+
+#editForm\:calendarTabView .granularity-processes {
+    font-weight: bold;
+}
+
+#editForm\:calendarTabView .granularity-processes-warning {
+    color: var(--focused-orange);
+    display: block;
+    font-weight: bold;
+}
+
+#editForm\:calendarTabView\:granularityRightColumn label {
+    display: block;
+}
+
+#editForm\:calendarTabView .granularity-description {
+    border: solid var(--default-border-width) var(--carbon-blue);
+    display: inline-block;
+    margin: var(--default-double-size);
+    padding: var(--default-full-size);
+}
+
+#editForm\:calendarTabView .granularity-description-label {
+    display: block;
+    font-weight: bold;
+    margin: 0 var(--default-full-size) var(--default-full-size) var(--default-full-size);
+}
+
+#editForm\:calendarTabView .granularity-description-text {
+    display: block;
+    max-width: 500px;
+    text-align: justify;
+}
+
+#calendarSettingsDialog,
+#calendarSettingsDialog .ui-dialog-content {
+    overflow: visible;
+}
+
+#calendarSettingsDialog .ui-datepicker-header {
+    color: var(--carbon-blue);
+}
+
+/*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/
 

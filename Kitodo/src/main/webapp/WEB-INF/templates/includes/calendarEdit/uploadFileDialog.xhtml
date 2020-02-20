@@ -1,0 +1,55 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <p:dialog id="uploadFileDialog"
+              widgetVar="uploadFileDialog"
+              resizable="false"
+              width="480"
+              showHeader="false"
+              dynamic="true"
+              modal="true">
+        <h:form id="uploadFileForm">
+            <p:panelGrid columns="1" layout="grid">
+                <h3>#{msgs['calendar.upload']}</h3>
+                <h:panelGroup layout="block"
+                              styleClass="dialogFieldWrapper">
+                    <p:fileUpload value="#{CalendarForm.uploadedFile}"
+                                  label="#{msgs.uploadFile}"
+                                  mode="simple"/>
+                    <h:outputText value="#{msgs['calendar.upload.info']}"
+                                  styleClass="file-upload-info"/>
+                </h:panelGroup>
+                <h:panelGroup layout="block"
+                              styleClass="dialogButtonWrapper">
+                    <p:commandButton id="upload"
+                                     action="#{CalendarForm.upload}"
+                                     oncomplete="PF('uploadFileDialog').hide()"
+                                     value="#{msgs['calendar.upload.submit']}"
+                                     icon="fa fa-upload"
+                                     iconPos="right"
+                                     styleClass="primary right"/>
+                    <p:commandButton id="cancel"
+                                     onclick="PF('uploadFileDialog').hide()"
+                                     value="#{msgs.cancel}"
+                                     icon="fa fa-times"
+                                     iconPos="right"
+                                     styleClass="secondary right"/>
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>
