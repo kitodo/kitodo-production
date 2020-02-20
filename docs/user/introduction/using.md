@@ -12,7 +12,7 @@ In dieser Dokumentation werden alle relevanten Informationen für die Anwender v
 
 Die Hauptfunktion von Kitodo.Production ist die Bearbeitung der Digitalisate, so dass Images und Metadaten zusammengeführt werden, um eine sinnvolle Präsentation zu ermöglichen. Um diese Bearbeitung effektiv zu gestalten, sind administrative Funktionen wie zum Beispiel Nutzerverwaltung notwendig.
 
-Für bibliothekarische Anwender ist somit der Abschnitt <i>Anleitung Kitodo.Production</i>, in der alle Abläufe zur Metadatenanreicherung beschrieben sind das Kernstück dieser Anleitung. Für Personen, deren Aufgabe auch die administrative Betreuung von Kitodo.Production beinhaltet, ist der Abschnitt <ii>Administrative Aufgaben</i> zusätzlich von hoher Bedeutung. Beiden Gruppen dürften die beiden ersten Abschnitte dabei helfen, den grundsätzlichen Aufbau von Kitodo.Production und dessen grundsätzlichen Funktionalitäten zu verstehen.		
+Für bibliothekarische Anwender ist somit der Abschnitt <i>Anleitung Kitodo.Production</i>, in dem alle Abläufe zur Metadatenanreicherung beschrieben sind das Kernstück dieser Anleitung. Für Personen, deren Aufgabe auch die administrative Betreuung von Kitodo.Production beinhaltet, ist der Abschnitt <ii>Administrative Aufgaben</i> zusätzlich von hoher Bedeutung. Beiden Gruppen dürften die beiden ersten Abschnitte dabei helfen, den grundsätzlichen Aufbau von Kitodo.Production und dessen grundsätzlichen Funktionalitäten zu verstehen.		
 
 ## Grundlegende Eigenschaften
 

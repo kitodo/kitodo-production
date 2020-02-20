@@ -4,7 +4,7 @@ Aktionen sind in diesem Abschnitt definiert als Befehle, die ausgelöst werden k
 
 ## Globale Aktionen:
 
-Die globalten Aktionen erscheinen in allen Bereichen von Kitodo.Production und sollen im Folgenden dargestellt und beschrieben werden:
+Die globalen Aktionen erscheinen in allen Bereichen von Kitodo.Production und sollen im Folgenden dargestellt und beschrieben werden:
 
 * <img src= "/user/pictures/IconBearbeiten.png" alt="Bild" height= "35" width= "35"> Bearbeiten
 * <img src= "/user/pictures/IconLoeschen.png" alt="Bild" height= "35" width= "35"> Löschen

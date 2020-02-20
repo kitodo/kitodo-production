@@ -1,7 +1,7 @@
 # Aufgaben
 
 
-Eine wichtige Grundlage ist die Definition der Aktion, die innerhalb eines Workflows ausgeführt werden sollen. Dies wird in Kitodo.Production Aufgabe genannt und benennt zum einen die Aktion die erfüllt werden soll. Zum anderen kann über die Aufgaben auch geregelt werden, welche Benutzer bestimmte Aktionen durchführen dürfen/können. Zum Beispiel sollen bestimmte Benutzer nur für die Aufgaben Scannen zugelassen sein.
+Eine wichtige Grundlage ist die Definition der Aktionen, die innerhalb eines Workflows ausgeführt werden sollen. Dies wird in Kitodo.Production Aufgabe genannt und benennt zum einen die Aktion die erfüllt werden soll. Zum anderen kann über die Aufgaben auch geregelt werden, welche Benutzer bestimmte Aktionen durchführen dürfen/können. Zum Beispiel sollen bestimmte Benutzer nur für die Aufgaben Scannen zugelassen sein.
 
 Es können viele Aufgaben erstellt und zusammengestellt werden. Die wichtigsten sind:
 
@@ -35,5 +35,5 @@ In der SLUB werden hauptsächlich folgende Aufgaben verwendet:
 * OCR
 * Export / Import in das DMS
 
-OCR wird nur bei bei bestimmten Projekten verwendet. Wenn eine OCR nicht geplant ist (zum Beispiel bei Handschriften), wird die Aufgabe nicht vergeben.
+OCR wird nur bei bestimmten Projekten verwendet. Wenn eine OCR nicht geplant ist (zum Beispiel bei Handschriften), wird die Aufgabe nicht vergeben.
 
