@@ -37,6 +37,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 
@@ -125,7 +126,7 @@ public class TemplateForm extends TemplateBaseForm {
         if (isTitleValid()) {
             try {
                 prepareTasks();
-            } catch (DAOException e) {
+            } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("errorDiagramConvert", new Object[] {this.template.getWorkflow().getTitle() },
                     logger, e);
                 return this.stayOnCurrentPage;
@@ -390,12 +391,13 @@ public class TemplateForm extends TemplateBaseForm {
         this.task = task;
     }
 
-    private void prepareTasks() throws DAOException, IOException, WorkflowException {
-        if (!this.template.getTasks().isEmpty()) {
-            for (Task oldTask : this.template.getTasks()) {
-                oldTask.setTemplate(null);
-            }
+    private void prepareTasks() throws DAOException, IOException, WorkflowException, DataException {
+        List<Task> templateTasks = new ArrayList<>(this.template.getTasks());
+        if (!templateTasks.isEmpty()) {
             this.template.getTasks().clear();
+            TemplateService templateService = ServiceManager.getTemplateService();
+            templateService.save(template);
+            this.template = templateService.getById(template.getId());
         }
         Converter converter = new Converter(this.template.getWorkflow().getTitle());
         converter.convertWorkflowToTemplate(this.template);
