@@ -167,7 +167,7 @@ public class SystemPage extends Page<SystemPage> {
             throws IllegalAccessException, InstantiationException, InterruptedException {
         WebElement element = Browser.getDriver()
                 .findElement(By.xpath(
-                    "//*[@id=\"systemTabView:migrationForm:aggregatedTasksTable:0:createWorkflowActionButton\"]"));
+                    "//*[@id=\"systemTabView:migrationForm:aggregatedTasksTable:1:createWorkflowActionButton\"]"));
         element.click();
         clickButtonAndWaitForRedirect(createNewWorkflowButton, Pages.getWorkflowEditPage().getUrl());
         return Pages.getWorkflowEditPage();
