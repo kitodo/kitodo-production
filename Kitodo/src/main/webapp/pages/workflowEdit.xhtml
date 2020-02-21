@@ -64,8 +64,7 @@
                               'detail':'#{msgs.youWillBeRedirected}',
                               'severity':'info'});
                               saveDiagramFunctionCall();"
-                         disabled="#{WorkflowForm.saveDisabled}"
-                         immediate="true"/>
+                         disabled="#{WorkflowForm.saveDisabled}"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{WorkflowForm.setSaveDisabled(false)}"
                          update="save"
