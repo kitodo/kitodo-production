@@ -21,6 +21,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
@@ -45,7 +46,7 @@ public class WorkingST extends BaseTestSelenium {
         MockDatabase.cleanDatabase();
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
-        
+
         currentTasksEditPage = Pages.getCurrentTasksEditPage();
         processesPage = Pages.getProcessesPage();
         tasksPage = Pages.getTasksPage();
@@ -82,6 +83,7 @@ public class WorkingST extends BaseTestSelenium {
         assertEquals("Task was not released by user!", TaskStatus.OPEN, task.getProcessingStatus());
     }
 
+    @Ignore
     @Test
     public void editOwnedTaskTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
