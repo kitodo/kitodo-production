@@ -26,7 +26,7 @@
                 <p:inputText id="processTitle"
                              value="#{CreateProcessForm.mainProcess.title}"
                              styleClass="input-with-button"
-                             required="#{not empty param['editForm:save']}">
+                             required="#{not empty param['editForm:save'] or not empty param['editForm:saveContinue']}">
                     <p:ajax event="change"/>
                 </p:inputText>
                 <p:commandButton id="generateTitleButton"
