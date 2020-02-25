@@ -15,22 +15,13 @@ import com.opencsv.CSVReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
-import org.kitodo.exceptions.NoRecordFoundException;
-import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.UploadedFile;
-import org.xml.sax.SAXException;
 
 public class MassImportService {
 
