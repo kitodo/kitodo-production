@@ -679,7 +679,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of JSON objects with tasks for specific template id
      */
     List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
-        return findDocuments(getQueryForProcess(id));
+        return findDocuments(getQueryForTemplate(id));
     }
 
     /**
