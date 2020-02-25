@@ -151,6 +151,7 @@
                                                  update="editForm:calendarTabView:calendarDetailsLayout"/>
                             </p:column>
                         </p:dataTable>
+                        <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide();"/>
                         <p:commandButton action="#{block.addIssue()}"
                                          value="#{msgs['calendar.issue.add']}"
                                          icon="fa fa-plus"
