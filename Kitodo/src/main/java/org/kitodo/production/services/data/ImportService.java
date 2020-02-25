@@ -481,7 +481,6 @@ public class ImportService {
         SearchResult childSearchResult = searchChildRecords(opac, elementID, rows);
         LinkedList<TempProcess> childProcesses = new LinkedList<>();
         for (SingleHit hit : childSearchResult.getHits()) {
-            System.out.println("Creating TempProcess for " + (childSearchResult.getHits().indexOf(hit) + 1) + "/" + childSearchResult.getHits().size() + " child record...");
             Document childDocument = importDocument(opac, hit.getIdentifier(), false);
             childProcesses.add(createTempProcessFromDocument(childDocument, templateId, projectId));
         }
