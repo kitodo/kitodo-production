@@ -12,14 +12,17 @@
 package org.kitodo.production.model.bibliography.course;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 
 /**
@@ -118,6 +121,13 @@ public class Block {
     }
 
     /**
+     * Add a new issue to this block.
+     */
+    public void addIssue() {
+        addIssue(new Issue(course));
+    }
+
+    /**
      * Adds a metadata entry to this block.
      *
      * @param countableMetadata
@@ -172,7 +182,7 @@ public class Block {
         Block copy = new Block(course);
         copy.firstAppearance = firstAppearance;
         copy.lastAppearance = lastAppearance;
-        ArrayList<Issue> copiedIssues = new ArrayList<>(issues.size() > 10 ? issues.size() : 10);
+        ArrayList<Issue> copiedIssues = new ArrayList<>(Math.max(issues.size(), 10));
         for (Issue issue : issues) {
             copiedIssues.add(issue.clone(course));
         }
@@ -276,6 +286,20 @@ public class Block {
     }
 
     /**
+     * Get the date where this block first appeared.
+     * PrimeFaces 7 requires a java.util.Date object for the datePicker components.
+     *
+     * @return date of first appearance as java.util.Date
+     */
+    public Date getFirstAppearanceDate() {
+        if (Objects.nonNull(firstAppearance)) {
+            return Date.from(firstAppearance.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Returns the index of the issue.
      *
      * @param issue
@@ -293,6 +317,21 @@ public class Block {
      */
     public LocalDate getLastAppearance() {
         return lastAppearance;
+    }
+
+    /**
+     * Get the date where this block last appeared.
+     * PrimeFaces 7 requires a java.util.Date object for the datePicker components.
+     *
+     * @return date of last appearance as java.util.Date
+     */
+
+    public Date getLastAppearanceDate() {
+        if (Objects.nonNull(lastAppearance)) {
+            return Date.from(lastAppearance.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -377,6 +416,9 @@ public class Block {
      * @return whether the date is within the limits of this block
      */
     public boolean isMatch(LocalDate date) {
+        if (Objects.isNull(firstAppearance) || Objects.isNull(lastAppearance)) {
+            return false;
+        }
         try {
             return !date.isBefore(firstAppearance) && !date.isAfter(lastAppearance);
         } catch (IllegalArgumentException e) {
@@ -403,11 +445,10 @@ public class Block {
      *
      * @param issue
      *            Issue to be removed from the set
-     * @return true if the set was changed
      */
-    public boolean removeIssue(Issue issue) {
+    public void removeIssue(Issue issue) {
         clearProcessesIfNecessary(issue);
-        return issues.remove(issue);
+        issues.remove(issue);
     }
 
     /**
@@ -420,7 +461,11 @@ public class Block {
      *             if the date would overlap with another block
      */
     public void setFirstAppearance(LocalDate firstAppearance) {
-        prohibitOverlaps(firstAppearance, Objects.nonNull(lastAppearance) ? lastAppearance : firstAppearance);
+        try {
+            prohibitOverlaps(firstAppearance, Objects.nonNull(lastAppearance) ? lastAppearance : firstAppearance);
+        } catch (IllegalArgumentException e) {
+            Helper.setErrorMessage(e.getMessage());
+        }
         try {
             if (!this.firstAppearance.equals(firstAppearance)) {
                 course.clearProcesses();
@@ -431,6 +476,21 @@ public class Block {
             }
         }
         this.firstAppearance = firstAppearance;
+        if (Objects.isNull(lastAppearance)) {
+            lastAppearance = firstAppearance;
+        }
+    }
+
+    /**
+     * Set the date where this block first appeared.
+     * PrimeFaces 7 passes a java.util.Date object from the datePicker components.
+     *
+     * @param firstAppearance the first date of appearance as java.util.Date
+     */
+    public void setFirstAppearanceDate(Date firstAppearance) {
+        if (Objects.nonNull(firstAppearance)) {
+            setFirstAppearance(firstAppearance.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        }
     }
 
     /**
@@ -443,7 +503,11 @@ public class Block {
      *             if the date would overlap with another block
      */
     public void setLastAppearance(LocalDate lastAppearance) {
-        prohibitOverlaps(Objects.nonNull(firstAppearance) ? firstAppearance : lastAppearance, lastAppearance);
+        try {
+            prohibitOverlaps(Objects.nonNull(firstAppearance) ? firstAppearance : lastAppearance, lastAppearance);
+        } catch (IllegalArgumentException e) {
+            Helper.setErrorMessage(e.getMessage());
+        }
         try {
             if (!this.lastAppearance.equals(lastAppearance)) {
                 course.clearProcesses();
@@ -454,6 +518,21 @@ public class Block {
             }
         }
         this.lastAppearance = lastAppearance;
+        if (Objects.isNull(firstAppearance)) {
+            firstAppearance = lastAppearance;
+        }
+    }
+
+    /**
+     * Set the date where this block last appeared.
+     * PrimeFaces 7 passes a java.util.Date object from the datePicker components.
+     *
+     * @param lastAppearance the last date of appearance as java.util.Date
+     */
+    public void setLastAppearanceDate(Date lastAppearance) {
+        if (Objects.nonNull(lastAppearance)) {
+            setLastAppearance(lastAppearance.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        }
     }
 
     /**
@@ -508,8 +587,10 @@ public class Block {
      */
     private void prohibitOverlaps(LocalDate from, LocalDate until) {
         for (Block block : course) {
-            if (!block.equals(this) && (block.getFirstAppearance().isBefore(until)
-                    && !block.getLastAppearance().isBefore(from)
+            if (!block.equals(this)
+                    && (Objects.nonNull(from) && Objects.nonNull(until))
+                    && (Objects.nonNull(block.getFirstAppearance()) && Objects.nonNull(block.getLastAppearance()))
+                    && (block.getFirstAppearance().isBefore(until) && !block.getLastAppearance().isBefore(from)
                     || (block.getLastAppearance().isAfter(from) && !block.getFirstAppearance().isAfter(until)))) {
                 throw new IllegalArgumentException(
                         '(' + block.variant + ") " + block.firstAppearance + " - " + block.lastAppearance);

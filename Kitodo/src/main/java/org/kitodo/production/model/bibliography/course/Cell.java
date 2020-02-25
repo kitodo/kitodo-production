@@ -105,6 +105,15 @@ public class Cell {
     }
 
     /**
+     * Get date.
+     *
+     * @return value of date
+     */
+    public LocalDate getDate() {
+        return date;
+    }
+
+    /**
      * Sets the list of possible issues for the date
      * represented by this calendar sheet cell.
      *
@@ -116,9 +125,8 @@ public class Cell {
     }
 
     /**
-     * Can be used to change the piece of
-     * information whether the day is covered by the currently showing block
-     * or not.
+     * Set boolean onBlock.
+     * Shows whether the date of this cell is part of the given block's period of time.
      *
      * @param onBlock
      *            whether the day is covered by the currently showing block

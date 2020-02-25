@@ -1,0 +1,73 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:panelGrid id="calendarDetailsLayout"
+                 columns="2">
+        <h:panelGroup>
+            <ui:include src="/WEB-INF/templates/includes/calendarEdit/calendarBlocks.xhtml"/>
+        </h:panelGroup>
+        <h:panelGroup>
+            <!-- Calendar year controls -->
+            <h:panelGroup id="yearControls">
+                <p:commandButton title="#{msgs['calendar.year.previous']}"
+                                 action="#{CalendarForm.previousYear}"
+                                 icon="fa fa-arrow-left"
+                                 update="editForm:calendarTabView:calendarDetailsLayout"/>
+                <p:inputNumber id="yearInput"
+                               value="#{CalendarForm.year}"
+                               decimalPlaces="0"
+                               thousandSeparator="">
+                    <p:ajax event="change"
+                            update="editForm:calendarTabView:calendarDetailsLayout"/>
+                </p:inputNumber>
+                <p:commandButton title="#{msgs['calendar.year.next']}"
+                                 action="#{CalendarForm.nextYear}"
+                                 icon="fa fa-arrow-right"
+                                 update="editForm:calendarTabView:calendarDetailsLayout"/>
+                <p:commandButton title="#{msgs['calendar.year.settings']}"
+                          icon="fa fa-wrench"
+                          onclick="PF('calendarSettingsDialog').show()"
+                          type="button"
+                          styleClass="secondary right"/>
+            </h:panelGroup>
+            <!-- Calendar sheet -->
+            <p:dataTable id="calendarTable"
+                         var="calendar"
+                         value="#{CalendarForm.calendarSheet}">
+                <p:columns value="#{CalendarForm.getMonths()}"
+                           var="month"
+                           columnIndexVar="index"
+                           headerText="#{msgs['calendar.sheet.column.'.concat(month)]}"
+                           styleClass="#{calendar.get(index).styleClass}">
+                    <h:outputText value="#{calendar.get(index).day}"
+                                  styleClass="calendar-date"/>
+                    <p:repeat value="#{calendar.get(index).issues}"
+                              var="issue"
+                              varStatus="iteration">
+                        <p:commandButton action="#{CalendarForm.changeMatch(issue, calendar.get(index).date)}"
+                                         title="#{issue.isMatch(calendar.get(index).date) ? msgs['calendar.issue.delete'] : msgs['calendar.issue.add']}"
+                                         value=""
+                                         styleClass="#{issue.isMatch(calendar.get(index).date) ? 'issue match' : 'issue'}"
+                                         style="background-color: #{issue.isMatch(calendar.get(index).date) ? CalendarForm.getIssueColor(iteration.index) : 'white'};
+                                                border-color: #{CalendarForm.getIssueColor(iteration.index)}"
+                                         update="editForm:calendarTabView:calendarDetailsLayout"/>
+                    </p:repeat>
+                </p:columns>
+            </p:dataTable>
+        </h:panelGroup>
+    </h:panelGrid>
+</ui:composition>

@@ -149,69 +149,6 @@ public class Issue {
     }
 
     /**
-     * Adds Monday to the set of days of week of regular appearance.
-     *
-     * @return true if the set was changed
-     */
-    public boolean addMonday() {
-        return addDayOfWeek(DayOfWeek.MONDAY);
-    }
-
-    /**
-     * Adds Tuesday to the set of days of week of regular appearance.
-     *
-     * @return true if the set was changed
-     */
-    public boolean addTuesday() {
-        return addDayOfWeek(DayOfWeek.TUESDAY);
-    }
-
-    /**
-     * Adds Wednesday to the set of days of week of regular appearance.
-     *
-     * @return true if the set was changed
-     */
-    public boolean addWednesday() {
-        return addDayOfWeek(DayOfWeek.WEDNESDAY);
-    }
-
-    /**
-     * Adds Thursday to the set of days of week of regular appearance.
-     *
-     * @return true if the set was changed
-     */
-    public boolean addThursday() {
-        return addDayOfWeek(DayOfWeek.THURSDAY);
-    }
-
-    /**
-     * Adds Friday to the set of days of week of regular appearance.
-     *
-     * @return true if the set was changed
-     */
-    public boolean addFriday() {
-        return addDayOfWeek(DayOfWeek.FRIDAY);
-    }
-
-    /**
-     * Adds Saturday to the set of days of week of regular appearance.
-     *
-     * @return true if the set was changed
-     */
-    public boolean addSaturday() {
-        return addDayOfWeek(DayOfWeek.SATURDAY);
-    }
-
-    /**
-     * Adds Sunday to the set of days of week of regular appearance.
-     *
-     * @return true if the set was changed
-     */
-    public boolean addSunday() {
-        return addDayOfWeek(DayOfWeek.SUNDAY);
-    }
-
-    /**
      * Creates a copy of the object. All instance variables will be copied—this
      * is done in the getter methods—so that modifications to the copied object
      * will not impact to the copy master.
@@ -242,7 +179,7 @@ public class Issue {
      * @throws IllegalArgumentException
      *             if lastAppearance is null
      */
-    long countIndividualIssues(LocalDate firstAppearance, LocalDate lastAppearance) {
+    public long countIndividualIssues(LocalDate firstAppearance, LocalDate lastAppearance) {
         long numberOfIndividualIssues = 0;
         for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
             if (isMatch(day)) {
@@ -309,7 +246,7 @@ public class Issue {
      * @return whether the issue appeared that day
      */
     public boolean isMatch(LocalDate date) {
-        return daysOfWeek.contains(date.getDayOfWeek()) && !exclusions.contains(date) || additions.contains(date);
+        return daysOfWeek.contains(date.getDayOfWeek().getValue()) && !exclusions.contains(date) || additions.contains(date);
     }
 
     /**
@@ -441,14 +378,12 @@ public class Issue {
      *
      * @param dayOfWeek
      *            An int representing the day of week (1 = monday … 7 = sunday)
-     * @return true if the Set was changed
      */
-    private boolean removeDayOfWeek(DayOfWeek dayOfWeek) {
+    private void removeDayOfWeek(DayOfWeek dayOfWeek) {
         boolean modified = daysOfWeek.remove(dayOfWeek.getValue());
         if (modified) {
             course.clearProcesses();
         }
-        return modified;
     }
 
     /**
@@ -464,66 +399,87 @@ public class Issue {
     }
 
     /**
-     * Removes Monday from daysOfWeek.
-     *
-     * @return true if the Set was changed
+     * Set whether this issue appeared on mondays.
+     * @param isMonday boolean representing appearance
      */
-    public boolean removeMonday() {
-        return removeDayOfWeek(DayOfWeek.MONDAY);
+    public void setMonday(boolean isMonday) {
+        if (isMonday) {
+            addDayOfWeek(DayOfWeek.MONDAY);
+        } else {
+            removeDayOfWeek(DayOfWeek.MONDAY);
+        }
     }
 
     /**
-     * Removes Tuesday from daysOfWeek.
-     *
-     * @return true if the Set was changed
+     * Set whether this issue appeared on tuesdays.
+     * @param isTuesday boolean representing appearance
      */
-    public boolean removeTuesday() {
-        return removeDayOfWeek(DayOfWeek.TUESDAY);
+    public void setTuesday(boolean isTuesday) {
+        if (isTuesday) {
+            addDayOfWeek(DayOfWeek.TUESDAY);
+        } else {
+            removeDayOfWeek(DayOfWeek.TUESDAY);
+        }
     }
 
     /**
-     * Removes Wednesday from daysOfWeek.
-     *
-     * @return true if the Set was changed
+     * Set whether this issue appeared on wednesdays.
+     * @param isWednesday boolean representing appearance
      */
-    public boolean removeWednesday() {
-        return removeDayOfWeek(DayOfWeek.WEDNESDAY);
+    public void setWednesday(boolean isWednesday) {
+        if (isWednesday) {
+            addDayOfWeek(DayOfWeek.WEDNESDAY);
+        } else {
+            removeDayOfWeek(DayOfWeek.WEDNESDAY);
+        }
     }
 
     /**
-     * Removes Thursday from daysOfWeek.
-     *
-     * @return true if the Set was changed
+     * Set whether this issue appeared on thursdays.
+     * @param isThursday boolean representing appearance
      */
-    public boolean removeThursday() {
-        return removeDayOfWeek(DayOfWeek.THURSDAY);
+    public void setThursday(boolean isThursday) {
+        if (isThursday) {
+            addDayOfWeek(DayOfWeek.THURSDAY);
+        } else {
+            removeDayOfWeek(DayOfWeek.THURSDAY);
+        }
     }
 
     /**
-     * Removes Friday from daysOfWeek.
-     *
-     * @return true if the Set was changed
+     * Set whether this issue appeared on fridays.
+     * @param isFriday boolean representing appearance
      */
-    public boolean removeFriday() {
-        return removeDayOfWeek(DayOfWeek.FRIDAY);
+    public void setFriday(boolean isFriday) {
+        if (isFriday) {
+            addDayOfWeek(DayOfWeek.FRIDAY);
+        } else {
+            removeDayOfWeek(DayOfWeek.FRIDAY);
+        }
     }
 
     /**
-     * Removes Saturday from daysOfWeek.
-     *
-     * @return true if the Set was changed
+     * Set whether this issue appeared on saturdays.
+     * @param isSaturday boolean representing appearance
      */
-    public boolean removeSaturday() {
-        return removeDayOfWeek(DayOfWeek.SATURDAY);
+    public void setSaturday(boolean isSaturday) {
+        if (isSaturday) {
+            addDayOfWeek(DayOfWeek.SATURDAY);
+        } else {
+            removeDayOfWeek(DayOfWeek.SATURDAY);
+        }
     }
 
     /**
-     * Removes Sunday from daysOfWeek.
-     *
-     * @return true if the Set was changed
+     * Set whether this issue appeared on sundays.
+     * @param isSunday boolean representing appearance
      */
-    public boolean removeSunday() {
-        return removeDayOfWeek(DayOfWeek.SUNDAY);
+    public void setSunday(boolean isSunday) {
+        if (isSunday) {
+            addDayOfWeek(DayOfWeek.SUNDAY);
+        } else {
+            removeDayOfWeek(DayOfWeek.SUNDAY);
+        }
     }
 
     /**
