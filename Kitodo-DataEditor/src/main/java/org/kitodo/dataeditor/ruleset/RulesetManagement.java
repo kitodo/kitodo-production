@@ -28,6 +28,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -71,6 +72,26 @@ public class RulesetManagement implements RulesetManagementInterface {
     @Override
     public List<String> getFunctionalKeys(FunctionalMetadata functionalMetadata) {
         return getIdsOfKeysForSpecialField(ruleset.getKeys(), functionalMetadata);
+    }
+
+    @Override
+    public List<String> getFunctionalDivisions(FunctionalDivision functionalDivision) {
+        return getIdsOfDivisionsForSpecialField(ruleset.getDivisions(), functionalDivision);
+    }
+
+    private List<String> getIdsOfDivisionsForSpecialField(List<Division> divisions,
+            FunctionalDivision functionalDivision) {
+        ArrayList<String> idsOfDivisionsForSpecialField = new ArrayList<>();
+        for (Division division : divisions) {
+            if (Objects.isNull(division.getUse())) {
+                continue;
+            }
+            Set<FunctionalDivision> uses = FunctionalDivision.valuesOf(division.getUse());
+            if (uses.contains(functionalDivision)) {
+                idsOfDivisionsForSpecialField.add(division.getId());
+            }
+        }
+        return idsOfDivisionsForSpecialField;
     }
 
     private List<String> getIdsOfKeysForSpecialField(List<Key> keys, FunctionalMetadata functionalMetadata) {

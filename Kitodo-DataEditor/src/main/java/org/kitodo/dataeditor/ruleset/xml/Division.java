@@ -44,6 +44,12 @@ public class Division {
     private String dates;
 
     /**
+     * The use of the division.
+     */
+    @XmlAttribute
+    private String use;
+
+    /**
      * The schema in which the part of the date relevant to this division is
      * stored. Apart from the dates built into Java and interpreted by the
      * runtime, there is still the special string “{@code yyyy/yyyy}”, which
@@ -138,5 +144,15 @@ public class Division {
         } else {
             return subdivisionByDate.getYearBegin();
         }
+    }
+
+
+    /**
+     * Returns the use.
+     *
+     * @return the use
+     */
+    public String getUse() {
+        return use;
     }
 }
