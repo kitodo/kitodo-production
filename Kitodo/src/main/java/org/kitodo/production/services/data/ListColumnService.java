@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -107,11 +108,14 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
      */
     public List<ListColumn> getSelectedListColumnsForListAndClient(String listTitle) {
         Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        List<ListColumn> clientColumns = client.getListColumns();
-
-        return clientColumns.stream()
-                .filter(listColumn -> listColumn.getTitle().startsWith(listTitle + "."))
-                .collect(Collectors.toList());
+        if (Objects.nonNull(client)) {
+            List<ListColumn> clientColumns = client.getListColumns();
+            return clientColumns.stream()
+                    .filter(listColumn -> listColumn.getTitle().startsWith(listTitle + "."))
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     /**
