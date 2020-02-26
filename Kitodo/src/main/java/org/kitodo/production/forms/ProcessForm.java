@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,11 +33,13 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
@@ -240,6 +243,31 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         }
+    }
+
+    /**
+     * If processes are generated with calendar.
+     * 
+     * @param processDTO
+     *            the process dto to check.
+     * @return true if processes are created with calendar, false otherwise
+     */
+    public boolean createProcessesWithCalendar(ProcessDTO processDTO) {
+        try {
+            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+            String docType = ServiceManager.getMetsService()
+                    .getBaseType(ServiceManager.getProcessService().getMetadataFileUri(process));
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(process.getRuleset().getId());
+            Collection<String> functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
+            if (functionalDivisions.contains(docType)) {
+                return true;
+            }
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                e);
+        }
+        return false;
     }
 
     /**
