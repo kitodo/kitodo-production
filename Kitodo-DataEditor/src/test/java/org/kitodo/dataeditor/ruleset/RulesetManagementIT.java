@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
@@ -715,6 +716,9 @@ public class RulesetManagementIT {
         assertThat("Person@LastName was not found!",
             rulesetManagement.getFunctionalKeys(FunctionalMetadata.AUTHOR_LAST_NAME),
             contains("Person@LastName"));
+        assertThat("Periodical was not found!",
+                rulesetManagement.getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT),
+                contains("Periodical"));
 
         // not existing uses
         assertThat("Something was found!",

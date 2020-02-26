@@ -49,6 +49,7 @@
         <xs:attribute type="xs:string" name="processTitle"/>
         <xs:attribute type="xs:NMTOKEN" name="dates"/>
         <xs:attribute type="xs:string" name="scheme"/>
+        <xs:attribute type="ruleset:UseDivision" name="use"/>
     </xs:complexType>
 
     <xs:simpleType name="DomainAttribute">
@@ -188,6 +189,22 @@
                             <xs:enumeration value="higherlevelIdentifier"/>
                             <xs:enumeration value="recordIdentifier"/>
                             <xs:enumeration value="title"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:list>
+            </xs:simpleType>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="UseDivision">
+        <xs:restriction>
+            <xs:simpleType>
+                <xs:list>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                            <xs:enumeration value="createChildrenFromParent"/>
+                            <xs:enumeration value="createChildrenWithCalendar"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:list>

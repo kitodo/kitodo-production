@@ -107,7 +107,7 @@
             <label>Article</label>
             <label lang="de">Zeitschriften-Artikel</label>
         </division>
-        <division id="Periodical">
+        <division id="Periodical" use="createChildrenFromParent">
             <label>periodical</label>
             <label lang="de">Zeitschrift</label>
         </division>
