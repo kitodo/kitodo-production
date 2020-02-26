@@ -47,6 +47,7 @@ import org.kitodo.production.model.bibliography.course.Cell;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.Issue;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -272,6 +273,10 @@ public class CalendarForm implements Serializable {
             }
             if (lastAppearance.isAfter(today)) {
                 Helper.setMessage(BLOCK + "lastAppearance.fiction");
+            }
+            this.setYear(String.valueOf(firstAppearance.getYear()));
+            if (Objects.nonNull(PrimeFaces.current())) {
+                PrimeFaces.current().ajax().update("editForm:calendarTabView:calendarDetailsLayout");
             }
         }
     }
