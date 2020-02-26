@@ -40,13 +40,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
+import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Cell;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.Issue;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -615,8 +620,10 @@ public class CalendarForm implements Serializable {
     /**
      * Create processes for the modelled course of appearance and chosen granularity.
      */
-    public void createProcesses() {
-        // TODO implement
+    public void createProcesses() throws DAOException {
+        int processId = Integer.parseInt(Helper.getRequestParameter("ID"));
+        Process process = ServiceManager.getProcessService().getById(processId);
+        TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
     }
 
     public String formatString(String messageKey, String... replacements) {
