@@ -19,6 +19,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <f:metadata>
     <f:viewAction action="#{CalendarForm.setReferer(request.getParameter('referer'))}"/>
+    <f:viewAction action="#{CalendarForm.setParentId(request.getParameter('id'))}"/>
 </f:metadata>
 
     <ui:define name="contentHeader">
