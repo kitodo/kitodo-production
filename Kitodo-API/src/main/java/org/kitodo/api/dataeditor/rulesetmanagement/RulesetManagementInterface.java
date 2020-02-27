@@ -48,6 +48,16 @@ public interface RulesetManagementInterface {
     Collection<String> getFunctionalKeys(FunctionalMetadata functionalMetadata);
 
     /**
+     * Returns all metadata divisions that are used as the specified functional
+     * divisions.
+     *
+     * @param functionalDivision
+     *            functional division to search for
+     * @return all divisions used as the functional division
+     */
+    Collection<String> getFunctionalDivisions(FunctionalDivision functionalDivision);
+
+    /**
      * Returns all outline elements. The result is a map whose keys are the ID
      * strings of the outline elements. The mapped values are the labels in the
      * language best suited to the given language priority list. This function
