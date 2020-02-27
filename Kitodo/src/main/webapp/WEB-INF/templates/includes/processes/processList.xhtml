@@ -98,6 +98,7 @@
                             title="#{msgs.createProcessesWithCalendar}"
                             rendered="#{ProcessForm.createProcessesWithCalendar(process)}">
                         <i class="fa fa-plus-square fa-lg"/>
+                        <f:param name="id" value="#{process.id}"/>
                     </h:link>
                     
                     <h:link id="viewProcess"
