@@ -452,7 +452,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      */
     private static Map<String, String> getMetadataEntries(Collection<Metadata> metadata) {
         Map<String, String> metadataEntries = metadata.parallelStream().filter(MetadataEntry.class::isInstance)
-                .map(MetadataEntry.class::cast).collect(Collectors.toMap(Metadata::getKey, MetadataEntry::getValue));
+                .map(MetadataEntry.class::cast).collect(Collectors.toMap(Metadata::getKey, MetadataEntry::getValue,
+                    (one, another) -> one + ", " + another));
         return metadataEntries;
     }
 
