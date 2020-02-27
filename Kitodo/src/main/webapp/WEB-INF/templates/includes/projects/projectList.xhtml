@@ -109,6 +109,7 @@
                 </h:commandLink>
 
                 <h:link id="massImport"
+                        rendered="false"
                         outcome="/pages/massImport?faces-redirect=true"
                         styleClass="action">
                     <f:param name="templateId" value="#{ProjectForm.getFirstTemplate(item)}"/>
