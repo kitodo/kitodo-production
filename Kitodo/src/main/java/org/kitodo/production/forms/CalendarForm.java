@@ -632,9 +632,10 @@ public class CalendarForm implements Serializable {
     /**
      * Create processes for the modelled course of appearance and chosen granularity.
      */
-    public void createProcesses() throws DAOException {
+    public String createProcesses() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(parentId);
         TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
+        return DEFAULT_REFERER;
     }
 
     public String formatString(String messageKey, String... replacements) {
