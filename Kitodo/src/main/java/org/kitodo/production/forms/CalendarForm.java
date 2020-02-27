@@ -111,6 +111,7 @@ public class CalendarForm implements Serializable {
      * done once on form creation.
      */
     private final LocalDate today = LocalDate.now();
+    private Integer parentId;
 
     /**
      * Empty constructor. Creates a new form without yet any data.
@@ -143,6 +144,17 @@ public class CalendarForm implements Serializable {
     public void setReferer(String referer) {
         if (Objects.nonNull(referer) && !referer.isEmpty()) {
             this.referer = referer;
+        }
+    }
+
+    /**
+     * Set parent processId.
+     *
+     * @param parentId as java.lang.Integer
+     */
+    public void setParentId(Integer parentId) {
+        if (Objects.nonNull(parentId)) {
+            this.parentId = parentId;
         }
     }
 
@@ -621,8 +633,7 @@ public class CalendarForm implements Serializable {
      * Create processes for the modelled course of appearance and chosen granularity.
      */
     public void createProcesses() throws DAOException {
-        int processId = Integer.parseInt(Helper.getRequestParameter("ID"));
-        Process process = ServiceManager.getProcessService().getById(processId);
+        Process process = ServiceManager.getProcessService().getById(parentId);
         TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
     }
 
