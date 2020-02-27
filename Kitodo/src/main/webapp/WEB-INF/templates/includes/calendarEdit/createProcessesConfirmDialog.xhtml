@@ -1,0 +1,51 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:confirmDialog header="#{msgs['granularity.create']}"
+                     global="true"
+                     showEffect="fade"
+                     hideEffect="fade"
+                     styleClass="confirm-delete"
+                     id="createProcessesConfirmDialog"
+                     style="padding-left: var(--default-double-size); padding-right: var(--default-double-size);"
+                     message="#{CalendarForm.formatString('granularity.info.noNumberOfPages', CalendarForm.course.getNumberOfProcesses())}"
+                     widgetVar="createProcessesConfirmDialog">
+        <h:form>
+            <h:panelGroup styleClass="ui-confirm-dialog-message"
+                          style="display: block; margin-left: -6px; margin-top: -16px;">
+                <h:outputText value="#{msgs.confirm}"/>
+            </h:panelGroup>
+            <p:commandButton
+                    id="yesButton"
+                    value="#{msgs.yes}"
+                    styleClass="ui-confirmdialog-yes primary right"
+                    action="#{CalendarForm.createProcesses}"
+                    icon="fa fa-check fa-lg"
+                    iconPos="right"
+                    immediate="true"/>
+            <p:commandButton
+                    id="noButton"
+                    value="#{msgs.no}"
+                    type="button"
+                    styleClass="ui-confirmdialog-no secondary right"
+                    onclick="PF('createProcessesConfirmDialog').hide();"
+                    iconPos="right"
+                    icon="fa fa-times fa-lg" />
+        </h:form>
+    </p:confirmDialog>
+</ui:composition>

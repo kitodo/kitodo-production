@@ -1278,7 +1278,8 @@ Popup dialogs
     text-align: left;
 }
 
-#deleteConfirmDialog .ui-confirm-dialog-severity.ui-icon-alert {
+.ui-dialog.confirm-delete .ui-confirm-dialog-severity.ui-icon,
+.ui-dialog.confirm-delete .ui-confirm-dialog-severity.ui-icon-alert {
     display: none;
 }
 
