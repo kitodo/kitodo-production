@@ -20,7 +20,6 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,8 +261,14 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             Process process = ServiceManager.getProcessService().getById(processDTO.getId());
             Integer rulesetId = process.getRuleset().getId();
-            String docType = ServiceManager.getMetsService()
-                    .getBaseType(ServiceManager.getProcessService().getMetadataFileUri(process));
+            List<Property> workpieceProperties = process.getWorkpieces();
+            String docType = "";
+            for (Property workpieceProperty : workpieceProperties) {
+                if ("DocType".equals(workpieceProperty.getTitle())) {
+                    docType = workpieceProperty.getValue();
+                    break;
+                }
+            }
             if (rulesetCache.containsKey(rulesetId)) {
                 functionalDivisions = rulesetCache.get(rulesetId);
             } else {
