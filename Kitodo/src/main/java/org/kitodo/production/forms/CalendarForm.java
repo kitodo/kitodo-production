@@ -32,7 +32,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.xml.transform.TransformerException;
 
@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
  * enter the course of appearance of a newspaper.
  */
 @Named("CalendarForm")
-@SessionScoped
+@ViewScoped
 public class CalendarForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(CalendarForm.class);
 
@@ -184,6 +184,9 @@ public class CalendarForm implements Serializable {
     public void setGranularity(Granularity granularity) {
         this.granularity = granularity;
         course.splitInto(granularity);
+        if (Objects.nonNull(PrimeFaces.current())) {
+            PrimeFaces.current().ajax().update("createProcessesConfirmDialog");
+        }
     }
 
     /**
