@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -176,6 +177,13 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private List<List<IndividualIssue>> processesToCreate;
 
     /**
+     * Build statements for the process title, which can be interpreted by the
+     * title generator.
+     */
+    private Optional<String> yearTitleDefinition;
+    private Optional<String> issueTitleDefinition;
+
+    /**
      * The title generator is used to create the process titles.
      */
     private TitleGenerator titleGenerator;
@@ -318,6 +326,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, "", ENGLISH);
         StructuralElementViewInterface yearDivisionView = nextSubView(ruleset, newspaperView);
         yearSimpleMetadataView = yearDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
+        yearTitleDefinition = yearDivisionView.getProcessTitle();
         yearType = yearDivisionView.getId();
         StructuralElementViewInterface monthDivisionView = nextSubView(ruleset, yearDivisionView);
         monthSimpleMetadataView = monthDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
@@ -325,7 +334,9 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         StructuralElementViewInterface dayDivisionView = nextSubView(ruleset, monthDivisionView);
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         dayType = dayDivisionView.getId();
-        issueType = nextSubView(ruleset, dayDivisionView).getId();
+        StructuralElementViewInterface issueDivisionView = nextSubView(ruleset, dayDivisionView);
+        issueTitleDefinition = issueDivisionView.getProcessTitle();
+        issueType = issueDivisionView.getId();
     }
 
     /**
@@ -459,11 +470,13 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
 
         IndividualIssue firstIssue = individualIssuesForProcess.get(0);
-        prepareTheAppropriateYearProcess(dateMark(yearSimpleMetadataView.getScheme(), firstIssue.getDate()));
+        Map<String, String> genericFields = firstIssue.getGenericFields();
+        prepareTheAppropriateYearProcess(dateMark(yearSimpleMetadataView.getScheme(), firstIssue.getDate()),
+            genericFields);
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
-        String title = overallProcess.getTitle() + '_'
-                + titleGenerator.generateTitle("#YEAR+#MONTH+#DAY+#ISSU", firstIssue.getGenericFields());
+
+        String title = makeTitle(issueTitleDefinition.orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"), genericFields);
         getGeneratedProcess().setTitle(title);
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
@@ -476,6 +489,19 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             logger.trace("Creating newspaper process {} took {} ms", title,
                 TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+    }
+
+    private String makeTitle(String definition, Map<String, String> genericFields) throws ProcessGenerationException {
+        String title;
+        boolean prefixWithProcessTitle = definition.startsWith("+");
+        if (prefixWithProcessTitle) {
+            definition = definition.substring(1);
+        }
+        title = titleGenerator.generateTitle(definition, genericFields);
+        if (prefixWithProcessTitle) {
+            title = overallProcess.getTitle().concat(title);
+        }
+        return title;
     }
 
     private void createMetadataFileForProcess(List<IndividualIssue> individualIssues) throws IOException {
@@ -552,7 +578,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    private void prepareTheAppropriateYearProcess(String yearMark)
+    private void prepareTheAppropriateYearProcess(String yearMark, Map<String, String> genericFields)
             throws DAOException, DataException, ProcessGenerationException, IOException {
 
         if (yearMark.equals(currentYear)) {
@@ -561,7 +587,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             saveAndCloseCurrentYearProcess();
         }
         if (!openExistingYearProcess(yearMark)) {
-            createNewYearProcess(yearMark);
+            createNewYearProcess(yearMark, genericFields);
         }
     }
 
@@ -623,11 +649,13 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return couldOpenExistingProcess;
     }
 
-    private void createNewYearProcess(String yearMark) throws ProcessGenerationException, DataException, IOException {
+    private void createNewYearProcess(String yearMark, Map<String, String> genericFields)
+            throws ProcessGenerationException, DataException, IOException {
         final long begin = System.nanoTime();
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
-        getGeneratedProcess().setTitle(overallProcess.getTitle() + '_' + yearMark.replace('/', '-'));
+
+        getGeneratedProcess().setTitle(makeTitle(yearTitleDefinition.orElse("+'_'+#YEAR"), genericFields));
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
 
