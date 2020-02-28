@@ -20,7 +20,10 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -90,6 +93,8 @@ public class ProcessForm extends TemplateBaseForm {
     private String taskEditReferer = DEFAULT_LINK;
 
     private List<SelectItem> customColumns;
+
+    private Map<Integer, Collection<String>> rulesetCache = new HashMap<>();
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -253,13 +258,20 @@ public class ProcessForm extends TemplateBaseForm {
      * @return true if processes are created with calendar, false otherwise
      */
     public boolean createProcessesWithCalendar(ProcessDTO processDTO) {
+        Collection<String> functionalDivisions;
         try {
             Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+            Integer rulesetId = process.getRuleset().getId();
             String docType = ServiceManager.getMetsService()
                     .getBaseType(ServiceManager.getProcessService().getMetadataFileUri(process));
-            Ruleset ruleset = ServiceManager.getRulesetService().getById(process.getRuleset().getId());
-            Collection<String> functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
-                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
+            if (rulesetCache.containsKey(rulesetId)) {
+                functionalDivisions = rulesetCache.get(rulesetId);
+            } else {
+                Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+                functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                        .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
+                rulesetCache.put(rulesetId, functionalDivisions);
+            }
             if (functionalDivisions.contains(docType)) {
                 return true;
             }
