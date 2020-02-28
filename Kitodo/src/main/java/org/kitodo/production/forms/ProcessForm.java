@@ -261,9 +261,8 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             Process process = ServiceManager.getProcessService().getById(processDTO.getId());
             Integer rulesetId = process.getRuleset().getId();
-            List<Property> workpieceProperties = process.getWorkpieces();
             String docType = "";
-            for (Property workpieceProperty : workpieceProperties) {
+            for (Property workpieceProperty : process.getWorkpieces()) {
                 if ("DocType".equals(workpieceProperty.getTitle())) {
                     docType = workpieceProperty.getValue();
                     break;
