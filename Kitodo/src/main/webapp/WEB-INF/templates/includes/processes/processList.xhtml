@@ -92,15 +92,17 @@
                 <h:panelGroup layout="block"
                               styleClass="actionsBlock">
 
-                    <h:link id="calendarEdit"
-                            outcome="calendarEdit"
-                            styleClass="action #{ProcessForm.createProcessesWithCalendar(process) ? '' : 'ui-state-disabled'}"
-                            title="#{ProcessForm.createProcessesWithCalendar(process)? msgs.createProcessesWithCalendar : msgs.calendarNotConfigured}"
-                            disabled="#{not ProcessForm.createProcessesWithCalendar(process)}">
-                        <h:outputText><i class="fa fa-calendar fa-lg"/></h:outputText>
-                        <f:param name="id" value="#{process.id}"/>
-                    </h:link>
-                    
+                    <h:panelGroup styleClass="action"
+                                  title="#{ProcessForm.createProcessesWithCalendar(process)? msgs.createProcessesWithCalendar : msgs.calendarNotConfigured}">
+                        <h:link id="calendarEdit"
+                                outcome="calendarEdit"
+                                styleClass="#{ProcessForm.createProcessesWithCalendar(process) ? '' : 'ui-state-disabled'}"
+                                disabled="#{not ProcessForm.createProcessesWithCalendar(process)}">
+                            <h:outputText><i class="fa fa-calendar fa-lg"/></h:outputText>
+                            <f:param name="id" value="#{process.id}"/>
+                        </h:link>
+                    </h:panelGroup>
+
                     <h:link id="viewProcess"
                             outcome="processEdit"
                             styleClass="action"
