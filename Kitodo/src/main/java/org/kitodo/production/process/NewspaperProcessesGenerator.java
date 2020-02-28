@@ -176,12 +176,6 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private List<List<IndividualIssue>> processesToCreate;
 
     /**
-     * A build statement for the process title, which can be interpreted by the
-     * title generator.
-     */
-    private String titleDefinition;
-
-    /**
      * The title generator is used to create the process titles.
      */
     private TitleGenerator titleGenerator;
@@ -299,7 +293,6 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                 .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
 
         titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece , addableDivisions);
-        titleDefinition = configProject.getTitleDefinition();
 
         processesToCreate = course.getProcesses();
 
@@ -469,7 +462,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         prepareTheAppropriateYearProcess(dateMark(yearSimpleMetadataView.getScheme(), firstIssue.getDate()));
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
-        String title = titleGenerator.generateTitle(titleDefinition, firstIssue.getGenericFields());
+        String title = overallProcess.getTitle() + '_'
+                + titleGenerator.generateTitle("#YEAR+#MONTH+#DAY+#ISSU", firstIssue.getGenericFields());
         getGeneratedProcess().setTitle(title);
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
