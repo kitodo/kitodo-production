@@ -94,7 +94,7 @@
 
                     <h:link id="calendarEdit"
                             outcome="calendarEdit"
-                            styleClass="action"
+                            styleClass="action #{ProcessForm.createProcessesWithCalendar(process) ? '' : 'ui-state-disabled'}"
                             title="#{ProcessForm.createProcessesWithCalendar(process)? msgs.createProcessesWithCalendar : msgs.calendarNotConfigured}"
                             disabled="#{not ProcessForm.createProcessesWithCalendar(process)}">
                         <h:outputText><i class="fa fa-calendar fa-lg"/></h:outputText>
