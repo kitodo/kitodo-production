@@ -94,10 +94,10 @@
 
                     <h:link id="calendarEdit"
                             outcome="calendarEdit"
-                            styleClass="action"
-                            title="#{msgs.createProcessesWithCalendar}"
-                            rendered="#{ProcessForm.createProcessesWithCalendar(process)}">
-                        <i class="fa fa-plus-square fa-lg"/>
+                            styleClass="action #{ProcessForm.createProcessesWithCalendar(process) ? '' : 'ui-state-disabled'}"
+                            title="#{ProcessForm.createProcessesWithCalendar(process)? msgs.createProcessesWithCalendar : msgs.calendarNotConfigured}"
+                            disabled="#{not ProcessForm.createProcessesWithCalendar(process)}">
+                        <h:outputText><i class="fa fa-calendar fa-lg"/></h:outputText>
                         <f:param name="id" value="#{process.id}"/>
                     </h:link>
                     
@@ -106,7 +106,7 @@
                             styleClass="action"
                             title="#{msgs.view}"
                             rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
-                        <i class="fa fa-eye fa-lg"/>
+                        <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="referer" value="processes"/>
                         <f:param name="id" value="#{process.id}"/>
                     </h:link>
@@ -116,7 +116,7 @@
                             styleClass="action"
                             title="#{msgs.edit}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
-                        <i class="fa fa-pencil-square-o fa-lg"/>
+                        <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="referer" value="processes"/>
                         <f:param name="id" value="#{process.id}"/>
                     </h:link>

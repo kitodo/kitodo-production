@@ -1265,7 +1265,7 @@ Popup dialogs
 
 .ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th.actionsColumn,
 .ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td.actionsColumn {
-    width: 270px;
+    width: 310px;
 }
 
 .ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > thead > tr > th.actionsColumn {
