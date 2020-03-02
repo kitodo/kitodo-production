@@ -675,10 +675,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         IncludedStructuralElement rootElement = new IncludedStructuralElement();
         rootElement.setType(yearType);
-        MetadataEntry dateMetadataEntry = new MetadataEntry();
-        dateMetadataEntry.setKey(yearSimpleMetadataView.getId());
-        dateMetadataEntry.setValue(yearMark);
-        rootElement.getMetadata().add(dateMetadataEntry);
+        MetadataEditor.writeMetadataEntry(rootElement, yearSimpleMetadataView, yearMark);
         Workpiece workpiece = new Workpiece();
         workpiece.setRootElement(rootElement);
 
