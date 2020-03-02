@@ -1256,7 +1256,6 @@ public class StructurePanel implements Serializable {
                         preserveLogicalAndPhysical();
                     }
                     this.dataEditor.getGalleryPanel().updateStripes();
-                    return;
                 } else {
                     Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
                             Collections.singletonList(dragNode.getLabel())));
@@ -1290,7 +1289,6 @@ public class StructurePanel implements Serializable {
                 MediaUnit parentUnit = dragParents.get(dragParents.size() - 1);
                 if (parentUnit.getChildren().contains(dragUnit)) {
                     preservePhysical();
-                    return;
                 } else {
                     Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
                             Collections.singletonList(dragUnit.getType())));
