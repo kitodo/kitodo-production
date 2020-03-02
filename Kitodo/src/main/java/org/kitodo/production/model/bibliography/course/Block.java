@@ -489,6 +489,7 @@ public class Block {
      */
     public void setFirstAppearanceDate(Date firstAppearance) {
         if (Objects.nonNull(firstAppearance)) {
+            firstAppearance.setHours(5);
             setFirstAppearance(firstAppearance.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         }
     }
@@ -531,6 +532,7 @@ public class Block {
      */
     public void setLastAppearanceDate(Date lastAppearance) {
         if (Objects.nonNull(lastAppearance)) {
+            lastAppearance.setHours(5);
             setLastAppearance(lastAppearance.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         }
     }
