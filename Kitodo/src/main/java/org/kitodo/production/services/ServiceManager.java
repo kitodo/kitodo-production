@@ -25,6 +25,7 @@ import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.LdapGroupService;
 import org.kitodo.production.services.data.LdapServerService;
 import org.kitodo.production.services.data.ListColumnService;
+import org.kitodo.production.services.data.MassImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.PropertyService;
@@ -70,6 +71,7 @@ public class ServiceManager {
     private static ListColumnService listColumnService;
     private static LongTermPreservationValidationService longTermPreservationValidationService;
     private static MetadataValidationService metadataValidationService;
+    private static MassImportService massImportService;
     private static MetsService metsService;
     private static MigrationService migrationService;
     private static PropertyService propertyService;
@@ -156,6 +158,12 @@ public class ServiceManager {
     private static void initializeMetsService() {
         if (Objects.isNull(metsService)) {
             metsService = MetsService.getInstance();
+        }
+    }
+
+    private static void initializeMassImportService() {
+        if (Objects.isNull(massImportService)) {
+            massImportService = MassImportService.getInstance();
         }
     }
 
@@ -415,6 +423,16 @@ public class ServiceManager {
     public static MetsService getMetsService() {
         initializeMetsService();
         return metsService;
+    }
+
+    /**
+     * Initialize MassImportService if it is not yet initialized and next return it.
+     *
+     * @return MassImportService object
+     */
+    public static MassImportService getMassImportService() {
+        initializeMassImportService();
+        return massImportService;
     }
 
     /**

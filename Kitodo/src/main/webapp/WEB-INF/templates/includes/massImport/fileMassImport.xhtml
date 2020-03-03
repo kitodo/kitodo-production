@@ -16,7 +16,24 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
-    <h:outputText>FileMassImport</h:outputText>
-    <h:outputText>#{MassImportForm.projectId}</h:outputText>
-    <h:outputText>#{MassImportForm.templateId}</h:outputText>
+    <h:form id="fileMassImportForm">
+    <p:panelGrid layout="grid" columns="2" cellpadding="10">
+    <p:row>
+    <div>
+        <p:outputLabel for="catalogueSelect"
+                       value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+        <p:selectOneMenu id="catalogueSelect"
+                         immediate="true"
+                         value="#{MassImportForm.selectedCatalog}">
+            <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
+            <f:selectItems value="#{CreateProcessForm.importTab.catalogs}" var="step" itemLabel="#{step}"
+                           itemValue="#{step}"/>
+        </p:selectOneMenu>
+    </div>
+        <div>
+            <p:fileUpload value="#{MassImportForm.file}" fileUploadListener="#{MassImportForm.handleFileUpload}" allowTypes="/(\.|\/)(csv)$/" skinSimple="true"/>
+        </div>
+    </p:row>
+    </p:panelGrid>
+    </h:form>
 </ui:composition>
