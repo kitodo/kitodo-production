@@ -32,7 +32,11 @@
                 </div>
                 <div>
                     <p:inputTextarea id="ppnMassImport" value="#{MassImportForm.ppnString}" />
-                    <p:commandButton id="importFromText" value="#{msgs.massImport}" action="#{MassImportForm.importFromText}"/>
+                    <p:commandButton id="importFromText"
+                                     value="#{msgs.massImport}"
+                                     icon="fa fa-align-center"
+                                     iconPos="right"
+                                     action="#{MassImportForm.importFromText}"/>
                 </div>
             </p:row>
         </p:panelGrid>
