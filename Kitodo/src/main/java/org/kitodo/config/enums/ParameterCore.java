@@ -404,7 +404,7 @@ public enum ParameterCore implements ParameterInterface {
      * Colours used to represent the issues in the calendar editor.
      */
     ISSUE_COLOURS(new Parameter<>("issue.colours",
-            "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")),
+            "#f94a15;#0071bc;#42ba37;#ee7e5b;#1e3946;#ca2f00;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")),
 
     /**
      * Number of pages per process below which the features in the granularity
