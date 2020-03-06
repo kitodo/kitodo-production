@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -71,6 +73,7 @@ import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
@@ -329,7 +332,7 @@ public class ImportService {
         }
     }
 
-    private TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
+    public TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
             throws ProcessGenerationException {
         String docType = getRecordDocType(document);
         NodeList metadataNodes = extractMetadataNodeList(document);
@@ -346,8 +349,8 @@ public class ImportService {
         return new TempProcess(process, metadataNodes, docType);
     }
 
-    private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
-                                                  int projectID, int templateID)
+    public String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
+                                                 int projectID, int templateID)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
 
@@ -489,7 +492,7 @@ public class ImportService {
         return childProcesses;
     }
 
-    private Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
+    public Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
             UnsupportedFormatException, URISyntaxException, IOException, XPathExpressionException,
             ParserConfigurationException, SAXException {
         // ################ IMPORT #################
@@ -993,6 +996,30 @@ public class ImportService {
     }
 
     /**
+     * Opens the ruleset with the given fileName
+     * @param fileName the filname of the rulesetfile.
+     * @return an open ruleset
+     */
+    public RulesetManagementInterface openRulesetFile(String fileName) throws IOException, RulesetNotFoundException {
+        final long begin = System.nanoTime();
+        String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+        Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        try {
+            ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+        } catch (FileNotFoundException e) {
+            List<String> param = new ArrayList<>();
+            param.add(fileName);
+            throw new RulesetNotFoundException(Helper.getTranslation("rulesetNotFound", param));
+        }
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+        return ruleset;
+    }
+
+    /**
      * Save links between list of given child processes and given parent process.
      *
      * @param childProcesses List containing child processes to be linked to given parent process 'parent'
@@ -1007,5 +1034,15 @@ public class ImportService {
             MetadataEditor.addLink(parent, String.valueOf(i), childProcess.getId());
             ServiceManager.getProcessService().save(childProcess);
         }
+    }
+
+    public void importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws SAXException, NoRecordFoundException, UnsupportedFormatException, IOException, XPathExpressionException, URISyntaxException, ParserConfigurationException, ProcessGenerationException, DataException, DAOException, RulesetNotFoundException, InvalidMetadataValueException, NoSuchMetadataFieldException {
+        LinkedList<TempProcess> processList = new LinkedList<>();
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+        String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+        importProcessAndReturnParentID(ppn,processList,selectedCatalog,projectId,templateId);
+        processTempProcess(processList.get(0), template, openRulesetFile(template.getRuleset().getFile()), "create", priorityList);
+        ServiceManager.getProcessService().save(processList.get(0).getProcess());
     }
 }
