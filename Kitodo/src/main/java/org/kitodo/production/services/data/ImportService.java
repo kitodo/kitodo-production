@@ -81,6 +81,7 @@ import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
@@ -989,5 +990,22 @@ public class ImportService {
         Process process = tempProcess.getProcess();
         addProperties(tempProcess.getProcess(), template, processDetails, docType, tempProcess.getProcess().getTitle());
         updateTasks(process);
+    }
+
+    /**
+     * Save links between list of given child processes and given parent process.
+     *
+     * @param childProcesses List containing child processes to be linked to given parent process 'parent'
+     * @param parent process to which list of given child processes are linked
+     * @throws DataException thrown if child process could not be saved
+     * @throws IOException thrown if link between child and parent process could not be added
+     */
+    public static void saveChildProcessLinks(LinkedList<TempProcess> childProcesses, Process parent) throws IOException,
+            DataException {
+        for (int i = 0; i < childProcesses.size(); i++) {
+            Process childProcess = childProcesses.get(i).getProcess();
+            MetadataEditor.addLink(parent, String.valueOf(i), childProcess.getId());
+            ServiceManager.getProcessService().save(childProcess);
+        }
     }
 }
