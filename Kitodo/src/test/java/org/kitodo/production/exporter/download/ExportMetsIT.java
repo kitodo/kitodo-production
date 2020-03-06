@@ -100,7 +100,8 @@ public class ExportMetsIT {
             fileService.createDirectory(ConfigCore.getUriParameter(ParameterCore.DIR_USERS), userDirectory);
         }
 
-        exportMets.startExport(process, exportUri);
+        Assert.assertFalse("exportedFlag of process should be false", process.isExported());
+        exportMets.startExport(process);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
                 + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_mets.xml"));
         Assert.assertTrue("Export of metadata 'singleDigCollection' was wrong",
@@ -109,6 +110,7 @@ public class ExportMetsIT {
             strings.toString().contains("<ns3:metadata name=\"TitleDocMain\">test title</ns3:metadata>"));
         Assert.assertTrue("Export of metadata 'PublisherName' was wrong",
             strings.toString().contains("<ns3:metadata name=\"PublisherName\">Publisher test name</ns3:metadata>"));
+        Assert.assertTrue("exportedFlag of process should be true", process.isExported());
 
     }
 }
