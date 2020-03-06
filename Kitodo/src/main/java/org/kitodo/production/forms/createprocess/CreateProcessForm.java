@@ -384,11 +384,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
 
         // add links between child processes and main process
-        for (int i = 0; i < childProcesses.size(); i++) {
-            Process childProcess = childProcesses.get(i).getProcess();
-            MetadataEditor.addLink(getMainProcess(), String.valueOf(i), childProcess.getId());
-            ServiceManager.getProcessService().save(childProcess);
-        }
+        ImportService.saveChildProcessLinks(childProcesses, getMainProcess());
 
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
         if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
@@ -407,6 +403,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
+        ServiceManager.getProcessService().save(getMainProcess());
     }
 
     private void processChildren() {
