@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
@@ -51,10 +52,13 @@ public class ExportMets {
      * @param process
      *            Process object
      */
-    public boolean startExport(Process process) throws IOException, DAOException {
+    public void startExport(Process process) throws IOException, DAOException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
         URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
-        return startExport(process, userHome);
+        startExport(process, userHome);
+        if (Objects.nonNull(process.getParent())) {
+            startExport(process.getParent());
+        }
     }
 
     /**
