@@ -149,7 +149,7 @@ public class HierarchyMigrationTask extends EmptyTask {
                     setWorkDetail(process.getTitle());
                     migrate(process);
                 }
-                super.setProgress(++progress / processesList.size());
+                super.setProgress(100 * ++progress / processesList.size());
                 if (Thread.currentThread().isInterrupted()) {
                     return;
                 }
