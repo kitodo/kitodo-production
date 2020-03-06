@@ -106,7 +106,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private void setRulesetManagementInterface(String rulesetFileName) throws RulesetNotFoundException {
         try {
-            this.rulesetManagementInterface = openRulesetFile(rulesetFileName);
+            this.rulesetManagementInterface = ServiceManager.getImportService().openRulesetFile(rulesetFileName);
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());
         }
@@ -520,25 +520,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             }
         }
         return true;
-    }
-
-    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException, RulesetNotFoundException {
-        final long begin = System.nanoTime();
-        String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
-        priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        try {
-            ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
-        } catch (FileNotFoundException e) {
-            List<String> param = new ArrayList<>();
-            param.add(fileName);
-            throw new RulesetNotFoundException(Helper.getTranslation("rulesetNotFound", param));
-        }
-
-        if (logger.isTraceEnabled()) {
-            logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
-        }
-        return ruleset;
     }
 
     /**
