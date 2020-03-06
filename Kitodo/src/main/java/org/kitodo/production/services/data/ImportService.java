@@ -432,13 +432,13 @@ public class ImportService {
         return processes;
     }
 
-    private SearchResult searchChildRecords(String opac, String parentId, int numberOfrows) {
+    private SearchResult searchChildRecords(String opac, String parentId, int numberOfRows) {
         loadOpacConfiguration(opac);
         String parenIDSearchField = OPACConfig.getParentIDElement(opac);
         if (Objects.isNull(parenIDSearchField)) {
             throw new ConfigException("Unable to find parent ID search field for catalog '" + opac + "'!");
         }
-        return performSearch(parenIDSearchField, parentId, opac, 0, numberOfrows);
+        return performSearch(parenIDSearchField, parentId, opac, 0, numberOfRows);
     }
 
     /**
