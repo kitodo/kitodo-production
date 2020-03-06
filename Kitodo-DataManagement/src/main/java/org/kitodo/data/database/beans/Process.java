@@ -116,6 +116,9 @@ public class Process extends BaseTemplateBean {
     @ManyToMany(mappedBy = "processes")
     private List<Batch> batches = new ArrayList<>();
 
+    @Column(name = "exported")
+    private boolean exported;
+
     @Transient
     private User blockedUser;
 
@@ -470,6 +473,24 @@ public class Process extends BaseTemplateBean {
 
     public void setProperties(List<Property> properties) {
         this.properties = properties;
+    }
+
+    /**
+     * Get exported.
+     *
+     * @return value of exported
+     */
+    public boolean isExported() {
+        return exported;
+    }
+
+    /**
+     * Set exported.
+     *
+     * @param exported as boolean
+     */
+    public void setExported(boolean exported) {
+        this.exported = exported;
     }
 
     /**
