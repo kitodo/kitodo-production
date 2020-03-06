@@ -28,8 +28,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.kitodo.api.command.CommandResult;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -48,6 +46,7 @@ import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.GenerationMode;
@@ -547,21 +546,11 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore
-                .getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
-        boolean automaticExportWithOcr = ConfigCore
-                .getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
-        Process process = task.getProcess();
+        ExportDms export = new ExportDms();
         try {
-            boolean validate = ServiceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
-                automaticExportWithOcr);
-            if (validate) {
-                new WorkflowControllerService().close(task);
-            } else {
-                abortTask(task);
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            export.startExport(task.getProcess());
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage("errorExport", new Object[] {task.getProcess().getTitle() }, logger, e);
             abortTask(task);
         }
     }
