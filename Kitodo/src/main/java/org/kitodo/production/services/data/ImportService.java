@@ -739,7 +739,7 @@ public class ImportService {
             throws ProcessGenerationException, DAOException {
         Process parentProcess = null;
         try {
-            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata)) {
+            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
                 Process process = ServiceManager.getProcessService().getById(processDTO.getId());
                 if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
                     throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
