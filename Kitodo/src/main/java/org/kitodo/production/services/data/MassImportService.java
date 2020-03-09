@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
 
 public class MassImportService {
 
-    private static volatile MassImportService instance = null;
+    private static MassImportService instance = null;
 
     /**
      * Return singleton variable of type MassImportService.
@@ -97,7 +97,6 @@ public class MassImportService {
             DAOException {
         List<String> ppns = Arrays.asList(ppnString.split(","));
         importPPNs(selectedCatalog, ppns, projectId, templateId);
-
     }
 
     private void importPPNs(String selectedCatalog, List<String> ppns, int projectId, int templateId)
@@ -107,8 +106,6 @@ public class MassImportService {
         ImportService importService = ServiceManager.getImportService();
         for (String ppn : ppns) {
             importService.importProcess(ppn, projectId, templateId, selectedCatalog);
-
         }
     }
-
 }

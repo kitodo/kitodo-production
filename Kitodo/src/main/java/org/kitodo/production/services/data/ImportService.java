@@ -1036,7 +1036,15 @@ public class ImportService {
         }
     }
 
-    public void importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws SAXException, NoRecordFoundException, UnsupportedFormatException, IOException, XPathExpressionException, URISyntaxException, ParserConfigurationException, ProcessGenerationException, DataException, DAOException, RulesetNotFoundException, InvalidMetadataValueException, NoSuchMetadataFieldException {
+    /**
+     * Imports a process and saves it to database.
+     * @param ppn the ppn to import
+     * @param projectId the projectId
+     * @param templateId the templateId
+     * @param selectedCatalog the selected catalog to import from
+     * @return the importedProcess
+     */
+    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws SAXException, NoRecordFoundException, UnsupportedFormatException, IOException, XPathExpressionException, URISyntaxException, ParserConfigurationException, ProcessGenerationException, DataException, DAOException, RulesetNotFoundException, InvalidMetadataValueException, NoSuchMetadataFieldException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         Template template = ServiceManager.getTemplateService().getById(templateId);
         String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
@@ -1044,5 +1052,6 @@ public class ImportService {
         importProcessAndReturnParentID(ppn,processList,selectedCatalog,projectId,templateId);
         processTempProcess(processList.get(0), template, openRulesetFile(template.getRuleset().getFile()), "create", priorityList);
         ServiceManager.getProcessService().save(processList.get(0).getProcess());
+        return processList.get(0).getProcess();
     }
 }
