@@ -42,7 +42,7 @@ public class CountableMetadata {
     /**
      * Date and issue this counter does no longer appear on. May be null, indicating that no end issue has been set.
      */
-    private Pair<LocalDate, Issue> delelte;
+    private Pair<LocalDate, Issue> delete;
 
     /**
      * Metadata type to create with this counter.
@@ -90,7 +90,7 @@ public class CountableMetadata {
         if (creation == 0) {
             return MetadataEditMode.DEFINE;
         }
-        int deletion = new IssueComparator(block).compare(selectedIssue, delelte);
+        int deletion = new IssueComparator(block).compare(selectedIssue, delete);
         if (deletion < 0) {
             return MetadataEditMode.CONTINUE;
         } else if (deletion == 0) {
@@ -186,9 +186,9 @@ public class CountableMetadata {
     public boolean matches(String metadataType, Pair<LocalDate, Issue> issue, Boolean create) {
         return (metadataType == null || metadataType.equals(this.metadataType))
                 && (null == create && new IssueComparator(block).compare(this.create, issue) <= 0
-                        && (delelte == null || new IssueComparator(block).compare(issue, delelte) < 0)
+                        && (delete == null || new IssueComparator(block).compare(issue, delete) < 0)
                         || Boolean.TRUE.equals(create) && this.create.equals(issue) || Boolean.FALSE.equals(create)
-                                && (issue == null && this.delelte == null || issue.equals(this.delelte)));
+                                && (issue == null && this.delete == null || issue.equals(this.delete)));
     }
 
     /**
@@ -198,7 +198,7 @@ public class CountableMetadata {
      *            the delete to set
      */
     public void setDelete(Pair<LocalDate, Issue> delete) {
-        this.delelte = delete;
+        this.delete = delete;
     }
 
     /**
@@ -244,13 +244,13 @@ public class CountableMetadata {
         stringBuilder.append(DateTimeFormatter.ISO_DATE.format(create.getLeft()));
         stringBuilder.append(", ");
         stringBuilder.append(create.getRight().getHeading());
-        if (delelte == null) {
+        if (delete == null) {
             stringBuilder.append(" infinitely");
         } else {
             stringBuilder.append(" to ");
-            stringBuilder.append(DateTimeFormatter.ISO_DATE.format(delelte.getLeft()));
+            stringBuilder.append(DateTimeFormatter.ISO_DATE.format(delete.getLeft()));
             stringBuilder.append(", ");
-            stringBuilder.append(delelte.getRight().getHeading());
+            stringBuilder.append(delete.getRight().getHeading());
         }
         stringBuilder.append(", step size ");
         stringBuilder.append(stepSize);
