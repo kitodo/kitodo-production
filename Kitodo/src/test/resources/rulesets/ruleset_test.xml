@@ -39,6 +39,62 @@
         <key id="CatalogIDSource" domain="source">
             <label>PPN (Vorlage)</label>
         </key>
+        <key id="ContributorPerson">
+            <label>Contributing Person (group)</label>
+            <label lang="de">Mitwirkende Person (Gruppe)</label>
+            <key id="LastName">
+                <label>Last name</label>
+                <label lang="de">Familienname</label>
+            </key>
+            <key id="RoleText">
+                <label>Relationship designation (text)</label>
+                <label lang="de">Beziehungskennzeichnung (Text)</label>
+            </key>
+            <key id="IdentifierPPN">
+                <label>Identifier (PPN)</label>
+                <label lang="de">Identifier (PPN)</label>
+            </key>
+            <key id="FirstName">
+                <label>First name</label>
+                <label lang="de">Vorname</label>
+            </key>
+            <key id="DisplayForm">
+                <label>Display name</label>
+                <label lang="de">Anzeigename</label>
+            </key>
+            <key id="RoleCode">
+                <label>Relationship designation (code)</label>
+                <label lang="de">Beziehungskennzeichnung (Code)</label>
+            </key>
+            <key id="Prefix">
+                <label>Prefix</label>
+                <label lang="de">Präfix</label>
+            </key>
+            <key id="Authority">
+                <label>Authority</label>
+                <label lang="de">Quelle (Normdaten)</label>
+            </key>
+            <key id="IdentifierGND">
+                <label>Identifier (GND)</label>
+                <label lang="de">Identifier (GND)</label>
+            </key>
+            <key id="IdentifierGNDURI">
+                <label>GND-URI</label>
+                <label lang="de">GND-URI</label>
+            </key>
+            <key id="PersonalName">
+                <label>Personal name</label>
+                <label lang="de">Persönlicher Name</label>
+            </key>
+            <key id="Count">
+                <label>Count</label>
+                <label lang="de">Zählung</label>
+            </key>
+            <key id="AdditionalMetadataPerson">
+                <label>Surname, genus name, territory, title</label>
+                <label lang="de">Beiname, Gattungsname, Territorium, Titulatur</label>
+            </key>
+        </key>
         <key id="Person">
             <label>Person</label>
             <key id="Role">
@@ -69,6 +125,7 @@
             <permit key="CatalogIDDigital" minOccurs="1"/>
             <permit key="CatalogIDSource" minOccurs="1"/>
             <permit key="TSL_ATS"/>
+            <permit key="ContributorPerson"/>
             <permit key="Person">
                 <permit key="Role" unspecified="forbidden">
                     <permit value="Author"/>
