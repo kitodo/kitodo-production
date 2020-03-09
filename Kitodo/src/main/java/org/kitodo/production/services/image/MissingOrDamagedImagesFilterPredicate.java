@@ -33,26 +33,26 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
     /**
      * This message is written to the log if the image file could not be found.
      */
-    private static final String IMAGE_MISSING = "Image {0} not found in folder {1}: Marked for generation.";
+    private static final String IMAGE_MISSING = "Image {} not found in folder {}: Marked for generation.";
 
     /**
      * This message is written to the log if the image file cannot be validated
      * because no Validator is configured for the MIME type.
      */
     private static final String NO_VALIDATOR_CONFIGURED
-            = "Image {0} in folder {1} cannot be validated: No validator configured. Image marked for regeneration.";
+            = "Image {} in folder {} cannot be validated: No validator configured. Image marked for regeneration.";
 
     /**
      * This message is written to the log if the image file of the long term
      * preservation validation interface was not considered to be knot-clean.
      */
-    private static final String VALIDATION_NO_SUCCESS = "Image {0} in folder {1} was validated {2}. Image marked for regeneration.";
+    private static final String VALIDATION_NO_SUCCESS = "Image {} in folder {} was validated {}. Image marked for regeneration.";
 
     /**
      * This message is written to the log if the image file of the long term
      * preservation validation interface was considered to be knot-clean.
      */
-    private static final String VALIDATION_SUCCESS = "Image {0} in folder {1} was validated {2}.";
+    private static final String VALIDATION_SUCCESS = "Image {} in folder {} was validated {}.";
 
     /**
      * The canonical part of the filename. Usually this is the base name without

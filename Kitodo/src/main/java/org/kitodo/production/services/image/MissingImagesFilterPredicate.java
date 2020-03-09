@@ -23,12 +23,12 @@ public class MissingImagesFilterPredicate implements Predicate<Subfolder> {
     /**
      * This message is written to the logfile if the file was found.
      */
-    private static final String IMAGE_FOUND = "Image {0} was found in folder {1}.";
+    private static final String IMAGE_FOUND = "Image {} was found in folder {}.";
 
     /**
      * This message is written to the logfile if the file was not found.
      */
-    private static final String IMAGE_NOT_FOUND = "Image {0} not found in folder {1}: Marked for generation.";
+    private static final String IMAGE_NOT_FOUND = "Image {} not found in folder {}: Marked for generation.";
 
     /**
      * The canonical part of the filename. Usually this is the base name without
@@ -43,7 +43,7 @@ public class MissingImagesFilterPredicate implements Predicate<Subfolder> {
      * The name of the file results from the settings of the folder passed into
      * the {@link #test(Subfolder)} function, and the canonical name part and the
      * variables.
-     * 
+     *
      * @param canonical
      *            the canonical part of the file name
      */
@@ -55,7 +55,7 @@ public class MissingImagesFilterPredicate implements Predicate<Subfolder> {
      * Check if there is a corresponding file in the folder. The name of the
      * file results from the settings of the folder, and the canonical name part
      * and the variables passed in the constructor.
-     * 
+     *
      * @return true, if the picture needs to be generated
      */
     @Override
