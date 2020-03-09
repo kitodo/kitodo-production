@@ -2144,7 +2144,7 @@ Column content
     border-color: var(--green);
 }
 
-.thumbnail.active.last-selection + .thumbnail-container img {
+.thumbnail.selected.last-selection + .thumbnail-container img {
     border-style: dashed;
 }
 

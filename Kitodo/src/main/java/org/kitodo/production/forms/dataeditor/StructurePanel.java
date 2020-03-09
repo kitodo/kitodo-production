@@ -825,11 +825,6 @@ public class StructurePanel implements Serializable {
                 }
                 if (Objects.nonNull(selectedTreeNode)) {
                     setSelectedLogicalNode(selectedTreeNode);
-                    try {
-                        dataEditor.switchStructure(selectedTreeNode.getData(), false);
-                    } catch (NoSuchMetadataFieldException e) {
-                        logger.error(e.getLocalizedMessage());
-                    }
                 } else {
                     Helper.setErrorMessage("Unable to update node selection in logical structure!");
                 }
