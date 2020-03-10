@@ -86,9 +86,7 @@
                                          class="input"
                                          title="#{CreateProcessForm.importTab.parentElementConfigured ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
                                          disabled="#{empty CreateProcessForm.importTab.hitModel.selectedCatalog or not CreateProcessForm.importTab.isParentElementConfigured()}"
-                                         value="#{CreateProcessForm.importTab.importChildren}">
-                    <p:ajax listener="#{CreateProcessForm.importTab.isParentElementConfigured()}"/>
-                </p:selectBooleanCheckbox>
+                                         value="#{CreateProcessForm.importTab.importChildren}"/>
             </div>
         </p:row>
         <h:panelGroup layout="block"
@@ -98,6 +96,7 @@
                              action="#{CreateProcessForm.importTab.search}"
                              value="#{msgs.searchOPAC}"
                              title="#{msgs.searchOPAC}"
+                             process="@this importChildren searchTerm importDepth fieldSelectMenu catalogueSelectMenu"
                              onstart="$('#loadingScreen').show()"
                              oncomplete="$('#loadingScreen').hide()"
                              icon="fa fa-search" iconPos="right"
