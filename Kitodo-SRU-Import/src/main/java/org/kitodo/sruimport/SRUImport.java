@@ -14,6 +14,8 @@ package org.kitodo.sruimport;
 import static org.apache.http.HttpStatus.SC_OK;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,10 +27,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.IOUtils;
@@ -52,6 +65,11 @@ import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ResponseHandlerNotFoundException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class SRUImport implements ExternalDataImportInterface {
 
@@ -67,6 +85,7 @@ public class SRUImport implements ExternalDataImportInterface {
     private static final String SEARCHFIELD_TAG = "searchField";
     private static final String RETURN_FORMAT_TAG = "returnFormat";
     private static final String METADATA_FORMAT_TAG = "metadataFormat";
+    private static final String MODS_RECORD_TAG = "mods";
 
     private static String protocol;
     private static String host;
@@ -99,6 +118,34 @@ public class SRUImport implements ExternalDataImportInterface {
         } catch (URISyntaxException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
+    }
+
+    @Override
+    public List<DataRecord> getMultipleFullRecordsFromQuery(String catalogId, String field, String value, int rows) {
+        loadOPACConfiguration(catalogId);
+        HashMap<String, String> searchFields = new HashMap<>();
+        searchFields.put(field, value);
+        if (searchFieldMapping.keySet().containsAll(searchFields.keySet())) {
+            // Query parameters for HTTP request
+            LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
+
+            // Search fields and terms of query
+            LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
+            for (Map.Entry<String, String> entry : searchFields.entrySet()) {
+                searchFieldMap.put(searchFieldMapping.get(entry.getKey()), entry.getValue());
+            }
+            try {
+                URI queryURL = createQueryURI(queryParameters);
+                String queryString = queryURL.toString();
+                queryString = queryString + "&startRecord=0&maximumRecords=" + rows + "&query="
+                        + createSearchFieldString(searchFieldMap);
+                return performQueryToMultipleRecords(queryString);
+            } catch (URISyntaxException | IOException | ParserConfigurationException | SAXException
+                    | TransformerException e) {
+                logger.error(e.getLocalizedMessage());
+            }
+        }
+        return Collections.emptyList();
     }
 
     @Override
@@ -182,16 +229,36 @@ public class SRUImport implements ExternalDataImportInterface {
                 if (Objects.isNull(response.getEntity())) {
                     throw new NoRecordFoundException("No record with ID '" + identifier + "' found!");
                 }
-                DataRecord record = new DataRecord();
-                record.setMetadataFormat(MetadataFormat.getMetadataFormat(metadataFormat));
-                record.setFileFormat(FileFormat.getFileFormat(fileFormat));
-                record.setOriginalData(IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset()));
-                return record;
+                return createRecordFromXMLElement(IOUtils.toString(response.getEntity().getContent(),
+                        Charset.defaultCharset()));
             }
             throw new ConfigException("SRU Request Failed");
         } catch (IOException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
+    }
+
+    private List<DataRecord> performQueryToMultipleRecords(String queryURL) throws IOException,
+            ParserConfigurationException, SAXException, TransformerException {
+        List<DataRecord> records = new LinkedList<>();
+        HttpResponse response = sruClient.execute(new HttpGet(queryURL));
+        if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
+            String xmlContent = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
+            Document document = stringToDocument(xmlContent);
+            NodeList recordNodes = document.getElementsByTagName(MODS_RECORD_TAG);
+            for (int i = 0; i < recordNodes.getLength(); i++) {
+                records.add(createRecordFromXMLElement(nodeToString(recordNodes.item(i))));
+            }
+        }
+        return records;
+    }
+
+    private DataRecord createRecordFromXMLElement(String xmlContent) {
+        DataRecord record = new DataRecord();
+        record.setMetadataFormat(MetadataFormat.getMetadataFormat(metadataFormat));
+        record.setFileFormat(FileFormat.getFileFormat(fileFormat));
+        record.setOriginalData(xmlContent);
+        return record;
     }
 
     private URI createQueryURI(LinkedHashMap<String, String> searchFields) throws URISyntaxException {
@@ -254,5 +321,20 @@ public class SRUImport implements ExternalDataImportInterface {
         } catch (IllegalArgumentException | ParameterNotFoundException e) {
             logger.error(e.getLocalizedMessage());
         }
+    }
+
+    private Document stringToDocument(String xmlContent) throws ParserConfigurationException, IOException,
+            SAXException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        return documentBuilder.parse(new InputSource(new StringReader(xmlContent)));
+    }
+
+    private String nodeToString(Node node) throws TransformerException {
+        StringWriter writer = new StringWriter();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(new DOMSource(node), new StreamResult(writer));
+        return writer.toString();
     }
 }

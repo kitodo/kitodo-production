@@ -47,7 +47,6 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchResult;
-import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
@@ -81,7 +80,6 @@ import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
-import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
@@ -432,13 +430,12 @@ public class ImportService {
         return processes;
     }
 
-    private SearchResult searchChildRecords(String opac, String parentId, int numberOfRows) {
-        loadOpacConfiguration(opac);
+    private List<DataRecord> searchChildRecords(String opac, String parentId, int numberOfRows) {
         String parenIDSearchField = OPACConfig.getParentIDElement(opac);
         if (Objects.isNull(parenIDSearchField)) {
             throw new ConfigException("Unable to find parent ID search field for catalog '" + opac + "'!");
         }
-        return performSearch(parenIDSearchField, parentId, opac, 0, numberOfRows);
+        return importModule.getMultipleFullRecordsFromQuery(opac, parenIDSearchField, parentId, numberOfRows);
     }
 
     /**
@@ -477,16 +474,26 @@ public class ImportService {
      */
     public LinkedList<TempProcess> getChildProcesses(String opac, String elementID, int projectId, int templateId,
                                                      int rows)
-            throws SAXException, UnsupportedFormatException, XPathExpressionException, URISyntaxException,
-            ParserConfigurationException, NoRecordFoundException, IOException, ProcessGenerationException {
-        SearchResult childSearchResult = searchChildRecords(opac, elementID, rows);
+            throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
+            NoRecordFoundException, IOException, ProcessGenerationException {
+        loadOpacConfiguration(opac);
+        importModule = initializeImportModule();
+        List<DataRecord> childRecords = searchChildRecords(opac, elementID, rows);
         LinkedList<TempProcess> childProcesses = new LinkedList<>();
-        for (SingleHit hit : childSearchResult.getHits()) {
-            Document childDocument = importDocument(opac, hit.getIdentifier(), false);
-            childProcesses.add(createTempProcessFromDocument(childDocument, templateId, projectId));
+        if (!childRecords.isEmpty()) {
+            SchemaConverterInterface converter = getSchemaConverter(childRecords.get(0));
+            File mappingFile = getMappingFile(opac);
+            for (DataRecord childRecord : childRecords) {
+                DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
+                Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
+                childProcesses.add(createTempProcessFromDocument(childDocument, templateId, projectId));
+            }
+            // TODO: sort child processes (by what? catalog ID? Signature?)
+            return childProcesses;
+        } else {
+            throw new NoRecordFoundException("No child records found for data record with ID '" + elementID
+                    + "' in OPAC '" + opac + "'!");
         }
-        // TODO: sort child processes (by what? catalog ID? Signature?)
-        return childProcesses;
     }
 
     private Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
@@ -504,15 +511,9 @@ public class ImportService {
         // depending on metadata and return form, call corresponding schema converter module!
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
-        // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
-        File mappingFile = null;
+        File mappingFile = getMappingFile(opac);
 
-        String mappingFileName = OPACConfig.getXsltMappingFile(opac);
-        if (!StringUtils.isBlank(mappingFileName)) {
-            URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
-                    .resolve(new URI(mappingFileName));
-            mappingFile = ServiceManager.getFileService().getFile(xsltFile);
-        }
+        // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
         DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
 
         if (!(internalRecord.getOriginalData() instanceof String)) {
@@ -530,6 +531,18 @@ public class ImportService {
         }
         Node kitodoNode = kitodoNodes.item(0);
         return kitodoNode.getChildNodes();
+    }
+
+    private File getMappingFile(String opac) throws URISyntaxException {
+        File mappingFile = null;
+
+        String mappingFileName = OPACConfig.getXsltMappingFile(opac);
+        if (!StringUtils.isBlank(mappingFileName)) {
+            URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
+                    .resolve(new URI(mappingFileName));
+            mappingFile = ServiceManager.getFileService().getFile(xsltFile);
+        }
+        return mappingFile;
     }
 
     /**
@@ -881,10 +894,9 @@ public class ImportService {
                                               String acquisitionStage, List<Locale.LanguageRange> priorityList)
             throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
             ProcessGenerationException {
-        for (int i = 0; i < childProcesses.size(); i++) {
-            TempProcess tempProcess = childProcesses.get(i);
+        for (TempProcess tempProcess : childProcesses) {
             if (Objects.isNull(tempProcess) || Objects.isNull(tempProcess.getProcess())) {
-                logger.error("Child process " + i + " is null => Skip!");
+                logger.error("Child process " + (childProcesses.indexOf(tempProcess) + 1) + " is null => Skip!");
                 continue;
             }
             processTempProcess(tempProcess, template, managementInterface, acquisitionStage, priorityList);
@@ -990,22 +1002,5 @@ public class ImportService {
         Process process = tempProcess.getProcess();
         addProperties(tempProcess.getProcess(), template, processDetails, docType, tempProcess.getProcess().getTitle());
         updateTasks(process);
-    }
-
-    /**
-     * Save links between list of given child processes and given parent process.
-     *
-     * @param childProcesses List containing child processes to be linked to given parent process 'parent'
-     * @param parent process to which list of given child processes are linked
-     * @throws DataException thrown if child process could not be saved
-     * @throws IOException thrown if link between child and parent process could not be added
-     */
-    public static void saveChildProcessLinks(LinkedList<TempProcess> childProcesses, Process parent) throws IOException,
-            DataException {
-        for (int i = 0; i < childProcesses.size(); i++) {
-            Process childProcess = childProcesses.get(i).getProcess();
-            MetadataEditor.addLink(parent, String.valueOf(i), childProcess.getId());
-            ServiceManager.getProcessService().save(childProcess);
-        }
     }
 }

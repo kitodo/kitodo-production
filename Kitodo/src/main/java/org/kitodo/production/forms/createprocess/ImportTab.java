@@ -67,7 +67,7 @@ public class ImportTab implements Serializable {
     private static final String INSERTION_TREE = "editForm:processFromTemplateTabView:insertionTree";
     private static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
-    private static final int NUMBER_OF_CHILDREN_WARNING_THRESHOLD = 10;
+    private static final int NUMBER_OF_CHILDREN_WARNING_THRESHOLD = 5;
 
     private String currentRecordId = "";
     private int importDepth = 1;

@@ -12,6 +12,7 @@
 package org.kitodo.api.externaldatamanagement;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
@@ -35,6 +36,21 @@ public interface ExternalDataImportInterface {
      * @return The queried record as Record object.
      */
     DataRecord getFullRecordById(String catalogId, String identifier) throws NoRecordFoundException;
+
+    /**
+     * Get a list of full records from the query constructed by the given search parameters.
+     *
+     * @param catalogId
+     *            The ID of the catalog that will be queried.
+     * @param searchField
+     *            search field that will be queried
+     * @param searchValue
+     *            value of search field that will be queried
+     * @param rows
+     *            number of records to be returned
+     * @return list of DataRecords
+     */
+    List<DataRecord> getMultipleFullRecordsFromQuery(String catalogId, String searchField, String searchValue, int rows);
 
     /**
      * Perform search in catalog with given ID 'catalogId' with given search fields

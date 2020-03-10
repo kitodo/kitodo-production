@@ -82,6 +82,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private LinkedList<TempProcess> childProcesses = new LinkedList<>();
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String referringView = "";
+    private int progress;
 
     /**
      * Returns the ruleset management to access the ruleset.
@@ -384,7 +385,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
 
         // add links between child processes and main process
-        ImportService.saveChildProcessLinks(childProcesses, getMainProcess());
+        this.saveChildProcessLinks();
 
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
         if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
@@ -404,6 +405,33 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             }
         }
         ServiceManager.getProcessService().save(getMainProcess());
+    }
+
+    /**
+     * Save links between child processes and main process.
+     *
+     * @throws DataException thrown if child process could not be saved
+     * @throws IOException thrown if link between child and parent process could not be added
+     */
+    private void saveChildProcessLinks() throws IOException, DataException {
+        this.progress = 0;
+        if (Objects.nonNull(PrimeFaces.current())) {
+            PrimeFaces.current().executeScript("PF('progressDialog')");
+            PrimeFaces.current().ajax().update("progressForm:progressBar");
+        }
+        for (TempProcess childProcess : this.childProcesses) {
+            int currentIndex = childProcesses.indexOf(childProcess);
+            MetadataEditor.addLink(getMainProcess(), String.valueOf(currentIndex),
+                    childProcess.getProcess().getId());
+            ServiceManager.getProcessService().save(childProcess.getProcess());
+            this.progress = (currentIndex + 1) * 100 / this.childProcesses.size();
+            if (Objects.nonNull(PrimeFaces.current())) {
+                PrimeFaces.current().ajax().update("progressForm:progressBar");
+            }
+        }
+        if (Objects.nonNull(PrimeFaces.current())) {
+            PrimeFaces.current().executeScript("PF('progressDialog')");
+        }
     }
 
     private void processChildren() {
@@ -526,5 +554,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         } catch (ProcessGenerationException e) {
             logger.error(e.getLocalizedMessage());
         }
+    }
+
+    public int getProgress() {
+        return this.progress;
     }
 }

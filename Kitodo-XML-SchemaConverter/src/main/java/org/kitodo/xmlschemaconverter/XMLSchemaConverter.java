@@ -171,7 +171,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             xsltTransformer.transform(saxSource, saxResult);
             return stringWriter.toString();
         } catch (TransformerException e) {
-            throw new ConfigException("Error in transforming the response in intern format : ", e);
+            throw new ConfigException("Error in transforming the response to internal format: " + e.getMessage(), e);
         }
     }
 
