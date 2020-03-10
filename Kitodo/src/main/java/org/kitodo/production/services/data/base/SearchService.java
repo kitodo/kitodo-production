@@ -19,6 +19,7 @@ import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -139,6 +140,21 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public List<S> findAll() throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
+
+    /**
+     * Get all ids from index
+     *
+     * @return List of ids
+     */
+    public List<Integer> findAllIDs() throws DataException {
+        List<Map<String, Object>> allDocuments = findAllDocuments();
+        List<Integer> allIds = new ArrayList<>();
+        for (Map<String, Object> document : allDocuments) {
+            allIds.add(Integer.parseInt((String) document.get("id")));
+        }
+        return allIds;
+    }
+
 
     /**
      * Method saves document to the index of Elastic Search.

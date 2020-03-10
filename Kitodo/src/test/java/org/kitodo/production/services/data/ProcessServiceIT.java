@@ -22,6 +22,7 @@ import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -556,6 +558,14 @@ public class ProcessServiceIT {
             assertEquals("Child should have parent as parent", process, child.getParent());
         }
         assertEquals("Process to remove should have no parent", null, processService.getById(6).getParent());
+    }
+
+    @Test
+    public void testFindAllIDs() throws DataException {
+        List<Integer> allIDs = ServiceManager.getProcessService().findAllIDs();
+        System.out.println(allIDs);
+        Assert.assertEquals("Wrong amount of id's in index", 7, allIDs.size());
+        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 2, 6, 4, 1, 7, 3)));
     }
 
 }
