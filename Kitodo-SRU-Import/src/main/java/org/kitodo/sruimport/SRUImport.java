@@ -47,8 +47,10 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
@@ -241,15 +243,29 @@ public class SRUImport implements ExternalDataImportInterface {
     private List<DataRecord> performQueryToMultipleRecords(String queryURL) throws IOException,
             ParserConfigurationException, SAXException, TransformerException {
         List<DataRecord> records = new LinkedList<>();
-        HttpResponse response = sruClient.execute(new HttpGet(queryURL));
-        if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
-            String xmlContent = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
-            Document document = stringToDocument(xmlContent);
-            NodeList recordNodes = document.getElementsByTagName(MODS_RECORD_TAG);
-            for (int i = 0; i < recordNodes.getLength(); i++) {
-                records.add(createRecordFromXMLElement(nodeToString(recordNodes.item(i))));
+        HttpGet request = new HttpGet(queryURL);
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+        requestConfigBuilder.setConnectionRequestTimeout(3000);
+        requestConfigBuilder.setConnectTimeout(3000);
+        request.setConfig(requestConfigBuilder.build());
+        try {
+            HttpResponse response = sruClient.execute(request);
+            int responseStatusCode = response.getStatusLine().getStatusCode();
+            if (Objects.equals(responseStatusCode, SC_OK)) {
+                String xmlContent = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
+                Document document = stringToDocument(xmlContent);
+                NodeList recordNodes = document.getElementsByTagName(MODS_RECORD_TAG);
+                for (int i = 0; i < recordNodes.getLength(); i++) {
+                    records.add(createRecordFromXMLElement(nodeToString(recordNodes.item(i))));
+                }
+            } else {
+                throw new CatalogException(response.getStatusLine().getReasonPhrase() + " (Http status code "
+                        + responseStatusCode + ")");
             }
+        } catch (ConnectTimeoutException e) {
+            throw new CatalogException("Connection exception: OPAC did not respond within the configured time limit!");
         }
+
         return records;
     }
 
