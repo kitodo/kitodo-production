@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -225,18 +226,24 @@ public class SchemaService {
         mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
     }
 
-    private void convertChildrenLinksForExport(Workpiece workpiece, IncludedStructuralElement structure,
+    private boolean convertChildrenLinksForExport(Workpiece workpiece, IncludedStructuralElement structure,
                                                LegacyPrefsHelper prefs) throws DAOException, IOException {
 
         LinkedMetsResource link = structure.getLink();
         if (Objects.nonNull(link)) {
             int linkedProcessId = ServiceManager.getProcessService().processIdFromUri(link.getUri());
             Process process = ServiceManager.getProcessService().getById(linkedProcessId);
+            if (!process.isExported()) {
+                return true;
+            }
             setLinkForExport(structure, process, prefs, workpiece);
         }
-        for (IncludedStructuralElement child : structure.getChildren()) {
-            convertChildrenLinksForExport(workpiece, child, prefs);
+        for (Iterator<IncludedStructuralElement> iterator = structure.getChildren().iterator(); iterator.hasNext();) {
+            if (convertChildrenLinksForExport(workpiece, iterator.next(), prefs)) {
+                iterator.remove();
+            }
         }
+        return false;
     }
 
     private void addParentLinkForExport(LegacyPrefsHelper prefs, Workpiece workpiece, Process parent)
