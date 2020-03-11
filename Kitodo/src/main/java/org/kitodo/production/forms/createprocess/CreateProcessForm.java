@@ -415,7 +415,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     private void saveChildProcessLinks() throws IOException, DataException {
         this.progress = 0;
-        if (Objects.nonNull(PrimeFaces.current())) {
+        if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
             PrimeFaces.current().executeScript("PF('progressDialog')");
             PrimeFaces.current().ajax().update("progressForm:progressBar");
         }
@@ -425,11 +425,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                     childProcess.getProcess().getId());
             ServiceManager.getProcessService().save(childProcess.getProcess());
             this.progress = (currentIndex + 1) * 100 / this.childProcesses.size();
-            if (Objects.nonNull(PrimeFaces.current())) {
+            if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
                 PrimeFaces.current().ajax().update("progressForm:progressBar");
             }
         }
-        if (Objects.nonNull(PrimeFaces.current())) {
+        if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
             PrimeFaces.current().executeScript("PF('progressDialog')");
         }
     }
