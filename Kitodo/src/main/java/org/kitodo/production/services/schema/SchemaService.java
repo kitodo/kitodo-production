@@ -86,7 +86,7 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "purlUrl", vp.replace(process.getProject().getMetsPurl()));
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
-        convertChildrenLinksForExport(workpiece, workpiece.getRootElement(), prefs);
+        convertChildrenLinksForExportRecursive(workpiece, workpiece.getRootElement(), prefs);
         if (Objects.nonNull(process.getParent())) {
             addParentLinkForExport(prefs, workpiece, process.getParent());
         }
@@ -226,7 +226,21 @@ public class SchemaService {
         mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
     }
 
-    private boolean convertChildrenLinksForExport(Workpiece workpiece, IncludedStructuralElement structure,
+    /**
+     * Replaces internal links in child structure elements with a publicly
+     * resolvable link. Checks whether the linked process has not yet been
+     * exported, in which case false is returned to delete the link from the
+     * parental list.
+     *
+     * @param workpiece
+     *            current workpiece
+     * @param structure
+     *            current structure
+     * @param prefs
+     *            legacy ruleset wrapper
+     * @return whether the current structure shall not be deleted
+     */
+    private boolean convertChildrenLinksForExportRecursive(Workpiece workpiece, IncludedStructuralElement structure,
                                                LegacyPrefsHelper prefs) throws DAOException, IOException {
 
         LinkedMetsResource link = structure.getLink();
@@ -234,16 +248,16 @@ public class SchemaService {
             int linkedProcessId = ServiceManager.getProcessService().processIdFromUri(link.getUri());
             Process process = ServiceManager.getProcessService().getById(linkedProcessId);
             if (!process.isExported()) {
-                return true;
+                return false;
             }
             setLinkForExport(structure, process, prefs, workpiece);
         }
         for (Iterator<IncludedStructuralElement> iterator = structure.getChildren().iterator(); iterator.hasNext();) {
-            if (convertChildrenLinksForExport(workpiece, iterator.next(), prefs)) {
+            if (!convertChildrenLinksForExportRecursive(workpiece, iterator.next(), prefs)) {
                 iterator.remove();
             }
         }
-        return false;
+        return true;
     }
 
     private void addParentLinkForExport(LegacyPrefsHelper prefs, Workpiece workpiece, Process parent)
