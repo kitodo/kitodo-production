@@ -12,13 +12,14 @@
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+        xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog id="createTemplatePopup"
               widgetVar="createTemplatePopup"
               header="#{msgs.editTemplate}"
-              width="400px"
+              width="800px"
               modal="true"
               dynamic="true">
         <h:form id="createTemplateForm">
@@ -28,7 +29,10 @@
                 <p:column headerText="#{msgs.template}">
                     <p:panelGrid columns="2">
                         <h:outputText value="#{msgs.title}"/>
-                        <h:inputText id="templateTitle" value="#{template.title}" required="true"/>
+                        <h:inputText id="templateTitle"
+                                     value="#{template.title}"
+                                     style="width: 90%;"
+                                     required="#{empty param['createTemplateForm:close']}"/>
                         <h:outputText value="#{msgs.docket}"/>
                         <h:outputText value="#{template.docket.title}"/>
                         <h:outputText value="#{msgs.ruleset}"/>
