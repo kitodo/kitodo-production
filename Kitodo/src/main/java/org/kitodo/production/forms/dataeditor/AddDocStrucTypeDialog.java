@@ -515,6 +515,10 @@ public class AddDocStrucTypeDialog {
                                         ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
                                         : "dataTable"));
             }
+            if (!dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
+                Collections.sort(selectAddableMetadataTypesItems,
+                    (one, another) -> one.getLabel().compareTo(another.getLabel()));
+            }
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e);
         }
