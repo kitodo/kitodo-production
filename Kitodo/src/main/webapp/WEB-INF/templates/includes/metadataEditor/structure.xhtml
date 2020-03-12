@@ -16,7 +16,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <h:panelGroup layout="block" id="scrollUpArea"/>
+    <div id="scrollUpArea"></div>
     <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
         <!--@elvariable id="readOnly" type="boolean"-->
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
@@ -174,5 +174,5 @@
             </p:contextMenu>
         </h:panelGroup>
     </p:panel>
-    <h:panelGroup layout="block" id="scrollDownArea"/>
+    <div id="scrollDownArea"></div>
 </ui:composition>
