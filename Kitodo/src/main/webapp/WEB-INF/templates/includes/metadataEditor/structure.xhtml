@@ -35,10 +35,11 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
-                    oncomplete="scrollToSelectedThumbnail();initializeImage()"
+                    oncomplete="scrollToSelectedThumbnail();changeToMapView()"
                     update="@(.stripe)
                             @(.thumbnail)
                             galleryHeadingWrapper
+                            imagePreviewForm:mediaViewData
                             structureTreeForm:contextMenuLogicalTree
                             structureTreeForm:physicalTree
                             metadataAccordion:logicalMetadataWrapperPanel"/>
