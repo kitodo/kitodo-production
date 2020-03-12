@@ -874,12 +874,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Removes all objects from index, which are no longer in Database.
-     * @param baseIndexedBeans the list of beans to check for missing db eintries.
+     * @param baseIndexedBeansId the list of beans to check for missing db eintries.
      * 
      */
-    public void removeLooseIndexData(List<S> baseIndexedBeans) throws DataException, CustomResponseException {
-        for (S baseIndexedBean : baseIndexedBeans) {
-            Integer baseIndexedBeanId = baseIndexedBean.getId();
+    public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException, CustomResponseException {
+        for (Integer baseIndexedBeanId : baseIndexedBeansId) {
             try {
                 getById(baseIndexedBeanId);
             } catch (DAOException e) {

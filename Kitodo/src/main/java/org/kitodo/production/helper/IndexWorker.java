@@ -62,7 +62,7 @@ public class IndexWorker implements Runnable {
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         try {
-            this.searchService.removeLooseIndexData(searchService.findAll());
+            this.searchService.removeLooseIndexData(searchService.findAllIDs());
             int amountToIndex = getAmountToIndex();
 
             if (amountToIndex < batchSize) {
