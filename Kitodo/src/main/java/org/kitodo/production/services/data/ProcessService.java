@@ -494,18 +494,37 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Find processes by metadata.
+     * Find processes by metadata. Matches do not need to be exact.
      *
      * @param metadata
      *            key is metadata tag and value is metadata content
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
     public List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
+        return findByMetadata(metadata, false);
+    }
+
+    /**
+     * Find processes by metadata.
+     *
+     * @param metadata
+     *            key is metadata tag and value is metadata content
+     * @param exactMatch
+     *            online return exact matches
+     * @return list of ProcessDTO objects with processes for specific metadata tag
+     */
+    public List<ProcessDTO> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
+        String nameSearchKey = METADATA_SEARCH_KEY + ".name";
+        String contentSearchKey = METADATA_SEARCH_KEY + ".content";
+        if (exactMatch) {
+            nameSearchKey = nameSearchKey + ".keyword";
+            contentSearchKey = contentSearchKey + ".keyword";
+        }
         BoolQueryBuilder query = new BoolQueryBuilder();
         for (Map.Entry<String, String> entry : metadata.entrySet()) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".name", entry.getKey()));
-            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", entry.getValue()));
+            pairQuery.must(matchQuery(nameSearchKey, entry.getKey()));
+            pairQuery.must(matchQuery(contentSearchKey, entry.getValue()));
             query.must(pairQuery);
         }
 

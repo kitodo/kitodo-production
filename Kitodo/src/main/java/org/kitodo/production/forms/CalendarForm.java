@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.xml.transform.TransformerException;
@@ -184,7 +185,7 @@ public class CalendarForm implements Serializable {
     public void setGranularity(Granularity granularity) {
         this.granularity = granularity;
         course.splitInto(granularity);
-        if (Objects.nonNull(PrimeFaces.current())) {
+        if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
             PrimeFaces.current().ajax().update("createProcessesConfirmDialog");
         }
     }
@@ -295,7 +296,7 @@ public class CalendarForm implements Serializable {
                 Helper.setMessage(BLOCK + "lastAppearance.fiction");
             }
             this.setYear(String.valueOf(firstAppearance.getYear()));
-            if (Objects.nonNull(PrimeFaces.current())) {
+            if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
                 PrimeFaces.current().ajax().update("editForm:calendarTabView:calendarDetailsLayout");
             }
         }

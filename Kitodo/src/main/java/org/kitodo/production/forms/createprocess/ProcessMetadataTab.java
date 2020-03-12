@@ -15,10 +15,10 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.services.data.ImportService;
 import org.primefaces.model.TreeNode;
 
 public class ProcessMetadataTab {
@@ -38,16 +38,13 @@ public class ProcessMetadataTab {
      *          which its Metadata are wanted to be shown
      */
     public ProcessFieldedMetadata initializeProcessDetails(IncludedStructuralElement structure) {
-        StructuralElementViewInterface divisionView = this.createProcessForm.getRuleset().getStructuralElementView(
-                structure.getType(),
-                this.createProcessForm.getAcquisitionStage(),
-                this.createProcessForm.getPriorityList());
-        return new ProcessFieldedMetadata(structure, divisionView);
+        return ImportService.initializeProcessDetails(structure, this.createProcessForm.getRuleset(),
+                this.createProcessForm.getAcquisitionStage(), this.createProcessForm.getPriorityList());
     }
 
     /**
      * Returns the logical metadata tree.
-     * 
+     *
      * @return the logical metadata tree
      */
     public TreeNode getLogicalMetadataTree() {

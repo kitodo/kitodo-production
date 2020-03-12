@@ -18,9 +18,11 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,6 +41,9 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchResult;
@@ -52,11 +57,17 @@ import org.kitodo.config.ConfigProject;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.enums.TaskEditType;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
@@ -108,11 +119,12 @@ public class ImportService {
     private static final String VOLUME = "Volume";
     private static final String MULTI_VOLUME_WORK = "MultiVolumeWork";
 
-    private String titleDefinition;
     private String tiffDefinition;
     private boolean usingTemplates;
 
     private TempProcess parentTempProcess;
+
+    private static final String CATALOG_IDENTIFIER = "CatalogIDDigital";
 
     /**
      * Return singleton variable of type ImportService.
@@ -142,9 +154,9 @@ public class ImportService {
                 logger.debug(e.getLocalizedMessage());
             }
             try {
-                String idMetadta = OPACConfig.getIdentifierMetadata(catalogName);
-                if (StringUtils.isNotBlank(idMetadta)) {
-                    identifierMetadata = idMetadta;
+                String idMetadata = OPACConfig.getIdentifierMetadata(catalogName);
+                if (StringUtils.isNotBlank(idMetadata)) {
+                    identifierMetadata = idMetadata;
                 }
             } catch (NoSuchElementException e) {
                 logger.debug(e.getLocalizedMessage());
@@ -190,6 +202,9 @@ public class ImportService {
             HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opac);
             List<String> fields = new ArrayList<>();
             for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
+                if ("true".equals(searchField.getString("[@hide]"))) {
+                    continue;
+                }
                 fields.add(searchField.getString("[@label]"));
             }
             return fields;
@@ -312,37 +327,43 @@ public class ImportService {
         }
     }
 
+    private TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
+            throws ProcessGenerationException {
+        String docType = getRecordDocType(document);
+        NodeList metadataNodes = extractMetadataNodeList(document);
+
+        Process process = null;
+        // "processGenerator" needs to be initialized when function is called for the first time
+        if (Objects.isNull(processGenerator)) {
+            processGenerator = new ProcessGenerator();
+        }
+        if (processGenerator.generateProcess(templateID, projectID)) {
+            process = processGenerator.getGeneratedProcess();
+        }
+
+        return new TempProcess(process, metadataNodes, docType);
+    }
+
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
                                                   int projectID, int templateID)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
 
-        DataRecord internalRecord = importRecord(opac, recordId, allProcesses.isEmpty());
-        if (!(internalRecord.getOriginalData() instanceof String)) {
-            throw new UnsupportedFormatException("Original metadata of internal record has to be an XML String, '"
-                    + internalRecord.getOriginalData().getClass().getName() + "' found!");
-        }
-
-        Document internalDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
-        String docType = getRecordDocType(internalDocument);
+        Document internalDocument = importDocument(opac, recordId, allProcesses.isEmpty());
+        TempProcess tempProcess = createTempProcessFromDocument(internalDocument, templateID, projectID);
 
         // Workaround for classifying MultiVolumeWorks with insufficient information
         if (!allProcesses.isEmpty()) {
             String childDocType = allProcesses.getLast().getWorkpiece().getRootElement().getType();
-            if ((MONOGRAPH.equals(childDocType) || VOLUME.equals(childDocType)) && MONOGRAPH.equals(docType)) {
-                docType = MULTI_VOLUME_WORK;
-                allProcesses.getFirst().getWorkpiece().getRootElement().setType(VOLUME);
+            Workpiece workpiece = tempProcess.getWorkpiece();
+            if (Objects.nonNull(workpiece) && Objects.nonNull(workpiece.getRootElement())) {
+                String docType = workpiece.getRootElement().getType();
+                if ((MONOGRAPH.equals(childDocType) || VOLUME.equals(childDocType)) && MONOGRAPH.equals(docType)) {
+                    tempProcess.getWorkpiece().getRootElement().setType(MULTI_VOLUME_WORK);
+                    allProcesses.getFirst().getWorkpiece().getRootElement().setType(VOLUME);
+                }
             }
         }
-
-        NodeList metadataNodes = extractMetadataNodeList(internalDocument);
-
-        Process process = null;
-        if (processGenerator.generateProcess(templateID, projectID)) {
-            process = processGenerator.getGeneratedProcess();
-        }
-
-        TempProcess tempProcess = new TempProcess(process, metadataNodes, docType);
 
         allProcesses.add(tempProcess);
         return getParentID(internalDocument);
@@ -409,7 +430,73 @@ public class ImportService {
         return processes;
     }
 
-    private DataRecord importRecord(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
+    private List<DataRecord> searchChildRecords(String opac, String parentId, int numberOfRows) {
+        String parenIDSearchField = OPACConfig.getParentIDElement(opac);
+        if (Objects.isNull(parenIDSearchField)) {
+            throw new ConfigException("Unable to find parent ID search field for catalog '" + opac + "'!");
+        }
+        return importModule.getMultipleFullRecordsFromQuery(opac, parenIDSearchField, parentId, numberOfRows);
+    }
+
+    /**
+     * Get number of child records of record with ID 'parentId' from catalog 'opac'.
+     *
+     * @param opac name of the catalog
+     * @param parentId ID of the parent record
+     * @return number of child records
+     */
+    public int getNumberOfChildren(String opac, String parentId) {
+        loadOpacConfiguration(opac);
+        String parenIDSearchField = OPACConfig.getParentIDElement(opac);
+        if (Objects.isNull(parenIDSearchField)) {
+            throw new ConfigException("Unable to find parent ID search field for catalog '" + opac + "'!");
+        }
+        SearchResult searchResult = performSearch(parenIDSearchField, parentId, opac, 0, 0);
+        if (Objects.nonNull(searchResult)) {
+            return searchResult.getNumberOfHits();
+        } else {
+            Helper.setErrorMessage("Error retrieving number of children for record with ID " + parentId + " from OPAC "
+                    + opac + "!");
+            return 0;
+        }
+    }
+
+    /**
+     * Search child records of record with ID 'elementID' from catalog 'opac', transform them into a list of
+     * 'TempProcess' and return the list.
+     *
+     * @param opac name of catalog
+     * @param elementID ID of record for which child records are retrieved
+     * @param projectId ID of project for which processes are created
+     * @param templateId ID of template with which processes are created
+     * @param rows number of child records to retrieve from catalog
+     * @return list of TempProcesses containing the retrieved child records.
+     */
+    public LinkedList<TempProcess> getChildProcesses(String opac, String elementID, int projectId, int templateId,
+                                                     int rows)
+            throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
+            NoRecordFoundException, IOException, ProcessGenerationException {
+        loadOpacConfiguration(opac);
+        importModule = initializeImportModule();
+        List<DataRecord> childRecords = searchChildRecords(opac, elementID, rows);
+        LinkedList<TempProcess> childProcesses = new LinkedList<>();
+        if (!childRecords.isEmpty()) {
+            SchemaConverterInterface converter = getSchemaConverter(childRecords.get(0));
+            File mappingFile = getMappingFile(opac);
+            for (DataRecord childRecord : childRecords) {
+                DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
+                Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
+                childProcesses.add(createTempProcessFromDocument(childDocument, templateId, projectId));
+            }
+            // TODO: sort child processes (by what? catalog ID? Signature?)
+            return childProcesses;
+        } else {
+            throw new NoRecordFoundException("No child records found for data record with ID '" + elementID
+                    + "' in OPAC '" + opac + "'!");
+        }
+    }
+
+    private Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
             UnsupportedFormatException, URISyntaxException, IOException, XPathExpressionException,
             ParserConfigurationException, SAXException {
         // ################ IMPORT #################
@@ -424,16 +511,17 @@ public class ImportService {
         // depending on metadata and return form, call corresponding schema converter module!
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
-        // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
-        File mappingFile = null;
+        File mappingFile = getMappingFile(opac);
 
-        String mappingFileName = OPACConfig.getXsltMappingFile(opac);
-        if (!StringUtils.isBlank(mappingFileName)) {
-            URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
-                    .resolve(new URI(mappingFileName));
-            mappingFile = ServiceManager.getFileService().getFile(xsltFile);
+        // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
+        DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
+
+        if (!(internalRecord.getOriginalData() instanceof String)) {
+            throw new UnsupportedFormatException("Original metadata of internal record has to be an XML String, '"
+                    + internalRecord.getOriginalData().getClass().getName() + "' found!");
         }
-        return converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
+
+        return XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
     }
 
     private NodeList extractMetadataNodeList(Document document) throws ProcessGenerationException {
@@ -443,6 +531,18 @@ public class ImportService {
         }
         Node kitodoNode = kitodoNodes.item(0);
         return kitodoNode.getChildNodes();
+    }
+
+    private File getMappingFile(String opac) throws URISyntaxException {
+        File mappingFile = null;
+
+        String mappingFileName = OPACConfig.getXsltMappingFile(opac);
+        if (!StringUtils.isBlank(mappingFileName)) {
+            URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
+                    .resolve(new URI(mappingFileName));
+            mappingFile = ServiceManager.getFileService().getFile(xsltFile);
+        }
+        return mappingFile;
     }
 
     /**
@@ -567,12 +667,12 @@ public class ImportService {
      * @param projectTitle
      *      title of the project
      * @throws IOException when trying to create a 'ConfigProject' instance.
+     * @throws DoctypeMissingException when trying to load TifDefinition fails
      */
     public void prepare(String projectTitle) throws IOException, DoctypeMissingException {
         ConfigProject configProject = new ConfigProject(projectTitle);
         usingTemplates = configProject.isUseTemplates();
         tiffDefinition = configProject.getTifDefinition();
-        titleDefinition = configProject.getTitleDefinition();
     }
 
     /**
@@ -592,16 +692,6 @@ public class ImportService {
     public void setUsingTemplates(boolean usingTemplates) {
         this.usingTemplates = usingTemplates;
     }
-
-    /**
-     * Get titleDefinition.
-     *
-     * @return value of titleDefinition
-     */
-    public String getTitleDefinition() {
-        return titleDefinition;
-    }
-
 
     /**
      * Get tiffDefinition.
@@ -662,9 +752,9 @@ public class ImportService {
             throws ProcessGenerationException, DAOException {
         Process parentProcess = null;
         try {
-            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata)) {
+            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
                 Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                if (Objects.isNull(process.getRuleset() ) || Objects.isNull(process.getRuleset().getId())) {
+                if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
                     throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
                             + process.getId() + " is null!");
                 }
@@ -678,5 +768,239 @@ public class ImportService {
             logger.error(e.getLocalizedMessage());
         }
         return parentProcess;
+    }
+
+    /**
+     * Check and return whether 'parentElement' has been configured for OPAC with name 'catalogName'.
+     *
+     * @param catalogName name of the OPAC to check
+     * @return whether 'parentElement has been configured or not
+     * @throws ConfigException thrown if configuration for OPAC 'catalogName' could not be found
+     */
+    public boolean isParentElementConfigured(String catalogName) throws ConfigException {
+        loadOpacConfiguration(catalogName);
+        return Objects.nonNull(OPACConfig.getParentIDElement(catalogName));
+    }
+
+    /**
+     * Create and return a List of ProcessDetail objects for the given TempProcess 'tempProcess'.
+     *
+     * @param tempProcess the TempProcess for which the List of ProcessDetail objects is created
+     * @param managementInterface RulesetManagementInterface used to create the metadata of the process
+     * @param acquisitionStage String containing the acquisitionStage
+     * @param priorityList List of LanguageRange objects used as priority list
+     * @return List of ProcessDetail objects
+     * @throws InvalidMetadataValueException thrown if TempProcess contains invalid metadata
+     * @throws NoSuchMetadataFieldException thrown if TempProcess contains undefined metadata
+     */
+    public static List<ProcessDetail> transformToProcessDetails(TempProcess tempProcess,
+                                                         RulesetManagementInterface managementInterface,
+                                                         String acquisitionStage,
+                                                         List<Locale.LanguageRange> priorityList)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        ProcessFieldedMetadata metadata = initializeProcessDetails(tempProcess.getWorkpiece().getRootElement(),
+                managementInterface, acquisitionStage, priorityList);
+        metadata.setMetadata(ImportService.importMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
+        metadata.preserve();
+        return metadata.getRows();
+    }
+
+    /**
+     * Create a process title for the given TempProcess using the provided parameters.
+     *
+     * @param tempProcess the TempProcess for which the TifHeader is created
+     * @param rulesetManagementInterface RulesetManagementInterface used to create TifHeader
+     * @param acquisitionStage String containing name of acquisitionStage
+     * @param priorityList List of LanguageRange objects used as priority list
+     * @param processDetails List of ProcessDetail objects containing the metadata of the process
+     * @throws ProcessGenerationException thrown if generating the Process title or the TifHeader fails
+     */
+    public static void createProcessTitle(TempProcess tempProcess,
+                                            RulesetManagementInterface rulesetManagementInterface,
+                                            String acquisitionStage, List<Locale.LanguageRange> priorityList,
+                                            List<ProcessDetail> processDetails)
+            throws ProcessGenerationException {
+        String docType = tempProcess.getWorkpiece().getRootElement().getType();
+        StructuralElementViewInterface docTypeView = rulesetManagementInterface
+                .getStructuralElementView(docType, acquisitionStage, priorityList);
+        String processTitle = docTypeView.getProcessTitle().orElse("");
+        ProcessService.generateProcessTitle("", processDetails,
+                processTitle, tempProcess.getProcess());
+    }
+
+    /**
+     * Create and return an instance of 'ProcessFieldedMetadata' for the given IncludedStructuralElement 'structure',
+     * RulesetManagementInterface 'managementInterface', acquisition stage String 'stage' and List of LanguageRange
+     * 'priorityList'.
+     *
+     * @param structure IncludedStructuralElement for which to create a ProcessFieldedMetadata
+     * @param managementInterface RulesetManagementInterface used to create ProcessFieldedMetadata
+     * @param stage String containing acquisition stage used to create ProcessFieldedMetadata
+     * @param priorityList List of LanguageRange objects used to create ProcessFieldedMetadata
+     * @return the created ProcessFieldedMetadata
+     */
+    public static ProcessFieldedMetadata initializeProcessDetails(IncludedStructuralElement structure,
+                                                                  RulesetManagementInterface managementInterface,
+                                                                  String stage,
+                                                                  List<Locale.LanguageRange> priorityList) {
+        StructuralElementViewInterface divisionView = managementInterface.getStructuralElementView(structure.getType(),
+                stage, priorityList);
+        return new ProcessFieldedMetadata(structure, divisionView);
+    }
+
+    /**
+     * Ensure all processes in given list 'tempProcesses' have a non empty title.
+     *
+     * @param tempProcesses list of TempProcesses to be checked
+     * @return whether a title was changed or not
+     * @throws IOException if the meta.xml file of a process could not be loaded
+     */
+    public static boolean ensureNonEmptyTitles(LinkedList<TempProcess> tempProcesses) throws IOException {
+        boolean changedTitle = false;
+        for (TempProcess tempProcess : tempProcesses) {
+            Process process = tempProcess.getProcess();
+            if (Objects.nonNull(process) && StringUtils.isEmpty(process.getTitle())) {
+                // FIXME:
+                //  if metadataFileUri is null or no meta.xml can be found, the tempProcess has not
+                //  yet been saved to disk and contains the workpiece directly, instead!
+                URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
+                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+                Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
+                String processTitle = "[" + Helper.getTranslation("process") + " " + process.getId() + "]";
+                for (Metadata metadatum : metadata) {
+                    if (CATALOG_IDENTIFIER.equals(metadatum.getKey())) {
+                        processTitle = ((MetadataEntry) metadatum).getValue();
+                    }
+                }
+                process.setTitle(processTitle);
+                changedTitle = true;
+            }
+        }
+        return changedTitle;
+    }
+
+    /**
+     * Process list of child processes.
+     *
+     * @param mainProcess main process to which list of child processes are attached
+     * @param childProcesses list of child processes that are attached to the main process
+     * @throws DataException thrown if saving a process fails
+     * @throws InvalidMetadataValueException thrown if process workpiece contains invalid metadata
+     * @throws NoSuchMetadataFieldException thrown if process workpiece contains undefined metadata
+     * @throws ProcessGenerationException thrown if process title cannot be created
+     */
+    public static void processProcessChildren(Process mainProcess, LinkedList<TempProcess> childProcesses,
+                                              Template template, RulesetManagementInterface managementInterface,
+                                              String acquisitionStage, List<Locale.LanguageRange> priorityList)
+            throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
+            ProcessGenerationException {
+        for (TempProcess tempProcess : childProcesses) {
+            if (Objects.isNull(tempProcess) || Objects.isNull(tempProcess.getProcess())) {
+                logger.error("Child process " + (childProcesses.indexOf(tempProcess) + 1) + " is null => Skip!");
+                continue;
+            }
+            processTempProcess(tempProcess, template, managementInterface, acquisitionStage, priorityList);
+            Process childProcess = tempProcess.getProcess();
+            ServiceManager.getProcessService().save(childProcess);
+            ProcessService.setParentRelations(mainProcess, childProcess);
+        }
+    }
+
+    /**
+     * Add workpiece and template properties to given Process 'process'.
+     *
+     * @param process Process to which properties are added
+     * @param template Template of process
+     * @param processDetails metadata of process
+     * @param docType String containing document type
+     * @param imageDescription String containing image description
+     */
+    public static void addProperties(Process process, Template template, List<ProcessDetail> processDetails,
+                                     String docType, String imageDescription) {
+        addMetadataProperties(processDetails, process);
+        ProcessGenerator.addPropertyForWorkpiece(process, "DocType", docType);
+        ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderImagedescription", imageDescription);
+        ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderDocumentname", process.getTitle());
+        if (Objects.nonNull(template)) {
+            ProcessGenerator.addPropertyForProcess(process, "Template", template.getTitle());
+            ProcessGenerator.addPropertyForProcess(process, "TemplateID", String.valueOf(template.getId()));
+        }
+    }
+
+    private static void addMetadataProperties(List<ProcessDetail> processDetailList, Process process) {
+        try {
+            for (ProcessDetail processDetail : processDetailList) {
+                Collection<Metadata> processMetadata = processDetail.getMetadata();
+                if (!processMetadata.isEmpty() && processMetadata.toArray()[0] instanceof Metadata) {
+                    String metadataValue = ImportService.getProcessDetailValue(processDetail);
+                    Metadata metadata = (Metadata) processMetadata.toArray()[0];
+                    if (Objects.nonNull(metadata.getDomain())) {
+                        switch (metadata.getDomain()) {
+                            case DMD_SEC:
+                                ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            case SOURCE_MD:
+                                ProcessGenerator.addPropertyForTemplate(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            case TECH_MD:
+                                ProcessGenerator.addPropertyForProcess(process, processDetail.getLabel(), metadataValue);
+                                break;
+                            default:
+                                logger.info("Don't save metadata '" + processDetail.getMetadataID() + "' with domain '"
+                                        + metadata.getDomain() + "' to property.");
+                                break;
+                        }
+                    } else {
+                        ProcessGenerator.addPropertyForWorkpiece(process, processDetail.getLabel(), metadataValue);
+                    }
+                }
+            }
+        } catch (InvalidMetadataValueException e) {
+            logger.error(e.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Update tasks of given Process 'process'.
+     *
+     * @param process Process whose tasks are updated
+     */
+    public static void updateTasks(Process process) {
+        for (Task task : process.getTasks()) {
+            task.setProcessingTime(process.getCreationDate());
+            task.setEditType(TaskEditType.AUTOMATIC);
+            if (task.getProcessingStatus() == TaskStatus.DONE) {
+                task.setProcessingBegin(process.getCreationDate());
+                Date date = new Date();
+                task.setProcessingTime(date);
+                task.setProcessingEnd(date);
+            }
+        }
+    }
+
+    /**
+     * Process given TempProcess 'tempProcess' by creating the metadata, doc type and properties for the process and
+     * updating the process' tasks.
+     *
+     * @param tempProcess TempProcess that will be processed
+     * @param template Template of the process
+     * @param managementInterface RulesetManagementInterface to create metadata and tiff header
+     * @param acquisitionStage String containing the acquisition stage
+     * @param priorityList List of LanguageRange objects
+     * @throws InvalidMetadataValueException thrown if the process contains invalid metadata
+     * @throws NoSuchMetadataFieldException thrown if the process contains undefined metadata
+     * @throws ProcessGenerationException thrown if process title could not be generated
+     */
+    public static void processTempProcess(TempProcess tempProcess, Template template,
+                                          RulesetManagementInterface managementInterface, String acquisitionStage,
+                                          List<Locale.LanguageRange> priorityList)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException {
+        List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
+                acquisitionStage, priorityList);
+        String docType = tempProcess.getWorkpiece().getRootElement().getType();
+        createProcessTitle(tempProcess, managementInterface, acquisitionStage, priorityList, processDetails);
+        Process process = tempProcess.getProcess();
+        addProperties(tempProcess.getProcess(), template, processDetails, docType, tempProcess.getProcess().getTitle());
+        updateTasks(process);
     }
 }

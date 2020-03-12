@@ -132,7 +132,7 @@ public final class ProcessValidator {
                 return false;
             }
             if (amount > 0) {
-                Helper.setErrorMessage("processTitleAlreadyInUse");
+                Helper.setErrorMessage("processTitleAlreadyInUse", new Object[] {title});
                 return false;
             }
             return true;

@@ -1,0 +1,53 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="opacErrorDialog"
+              widgetVar="opacErrorDialog"
+              showHeader="false"
+              modal="true"
+              width="500px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <h:panelGroup id="messageWrapper">
+            <h3>
+                <h:outputFormat value="#{err['catalogError']}">
+                    <f:param value="#{CreateProcessForm.importTab.hitModel.selectedCatalog}"/>
+                </h:outputFormat>
+            </h3>
+            <div class="select-note ui-messages-error">
+                #{CreateProcessForm.importTab.opacErrorMessage}
+            </div>
+        </h:panelGroup>
+
+        <p:panelGrid>
+            <p:row>
+                <h:form>
+                    <p:commandButton id="closeButton"
+                                     icon="fa fa-close fa-lg"
+                                     iconPos="right"
+                                     value="#{msgs.close}"
+                                     onclick='PF("opacErrorDialog").hide();'
+                                     style="margin-right: var(--default-double-size);"
+                                     styleClass="secondary right"/>
+                </h:form>
+            </p:row>
+        </p:panelGrid>
+    </p:dialog>
+</ui:composition>

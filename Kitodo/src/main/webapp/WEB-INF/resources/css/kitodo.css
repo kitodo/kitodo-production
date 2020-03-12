@@ -26,8 +26,7 @@ body {
     font-weight: 400;
     font-size: 16px;
     line-height: 18px;
-    background: url("#{resource['/images/background-top.svg']}") no-repeat center top fixed;
-    background-color: var(--light-gray);
+    background: var(--light-gray) url("#{resource['/images/background-top.svg']}") no-repeat fixed center top;
     background-size: auto 300px;
 }
 
@@ -1108,6 +1107,10 @@ h3#headerText {
     margin: 0 0 5px 5px;
 }
 
+/*----------------------------------------------------------------------
+Import form
+----------------------------------------------------------------------*/
+
 #editForm\:processFromTemplateTabView\:metadataTable td {
     line-height: initial;
     padding: 0;
@@ -1131,6 +1134,16 @@ h3#headerText {
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) label {
     margin-left: var(--default-double-size);
     width: calc(100% - var(--default-double-size));
+}
+
+#progressDialog {
+    overflow-y: hidden;
+    padding: var(--default-full-size);
+}
+
+#progressHeader {
+    display: inline-block;
+    margin-bottom: var(--default-double-size);
 }
 
 /*----------------------------------------------------------------------
