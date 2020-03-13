@@ -244,7 +244,8 @@
                                          value="#{ProcessForm.getAllParentProcesses(process.id)}"
                                          rendered="#{process.getParentID() ne 0}">
                                 <p:column>
-                                    <h:outputText value="#{parent.getTitle()}"/>
+                                    <h:outputText value="#{parent.getTitle()}"
+                                                  title="#{parent.getTitle()}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
                                     <h:link outcome="processEdit"

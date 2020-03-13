@@ -390,14 +390,15 @@ public class ImportService {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
-        if (importDepth > 1) {
-            if (parentIdMetadata.isEmpty()) {
+        if (parentIdMetadata.isEmpty()) {
+            if (importDepth > 1) {
                 Helper.setErrorMessage("newProcess.catalogueSearch.parentIDMetadataMissing");
                 importDepth = 1;
-            } else {
-                parentXpath = parentXpath.replace(REPLACE_ME, parentIdMetadata.toArray()[0].toString());
             }
+        } else {
+            parentXpath = parentXpath.replace(REPLACE_ME, parentIdMetadata.toArray()[0].toString());
         }
+
         String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         if (Objects.isNull(template.getRuleset())) {
@@ -427,7 +428,25 @@ public class ImportService {
                 break;
             }
         }
+        // always try to find a parent for last imported process (e.g. level == importDepth) in the database!
+        if (Objects.nonNull(parentID) && level == importDepth) {
+            this.parentTempProcess = checkForParent(parentID, templateId, projectId);
+        }
         return processes;
+    }
+
+    private TempProcess checkForParent(String parentID, int templateID, int projectID) throws DAOException, IOException,
+            ProcessGenerationException {
+        HashMap<String, String> parentIDMetadata = new HashMap<>();
+        parentIDMetadata.put(identifierMetadata, parentID);
+        Process parentProcess = loadParentProcess(parentIDMetadata, templateID, projectID);
+        if (Objects.nonNull(parentProcess)) {
+            logger.info("Linking last imported process to parent process with ID " + parentID + " in database!");
+            URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
+            Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
+            return new TempProcess(parentProcess, parentWorkpiece);
+        }
+        return null;
     }
 
     private List<DataRecord> searchChildRecords(String opac, String parentId, int numberOfRows) {
