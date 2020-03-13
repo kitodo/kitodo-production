@@ -450,7 +450,8 @@ public class StructurePanel implements Serializable {
         if (Objects.isNull(structure.getLink())) {
             StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-            node = new StructureTreeNode(divisionView.getLabel(), divisionView.isUndefined(), false, structure);
+            node = new StructureTreeNode(divisionView.getLabel(),
+                    divisionView.isUndefined() && Objects.nonNull(structure.getType()), false, structure);
         } else {
             node = new StructureTreeNode(structure.getLink().getUri().toString(), true, true, structure);
             for (Process child : dataEditor.getCurrentChildren()) {
