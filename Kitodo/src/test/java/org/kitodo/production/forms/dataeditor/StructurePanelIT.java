@@ -13,7 +13,6 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.LinkedList;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,13 +31,13 @@ public class StructurePanelIT {
         Process child = new Process();
         child.setId(42);
         child.setParent(parent);
-        LinkedList<DefaultTreeNode> result = new LinkedList<>();
+        DefaultTreeNode result = new DefaultTreeNode();
 
         Method addParentLinksRecursive = StructurePanel.class.getDeclaredMethod("addParentLinksRecursive",
-            Process.class, LinkedList.class);
+            Process.class, DefaultTreeNode.class);
         addParentLinksRecursive.setAccessible(true);
         addParentLinksRecursive.invoke(underTest, child, result);
 
-        Assert.assertTrue(((StructureTreeNode) result.get(0).getChildren().get(0).getData()).isLinked());
+        Assert.assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
     }
 }
