@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.production.services.ServiceManager;
@@ -76,7 +77,13 @@ public class MetsService {
      *             not found)
      */
     public String getBaseType(URI uri) throws IOException {
-        return loadWorkpiece(uri).getRootElement().getType();
+        IncludedStructuralElement includedStructuralElement = loadWorkpiece(uri).getRootElement();
+        String type = includedStructuralElement.getType();
+        while (Objects.isNull(type) && !includedStructuralElement.getChildren().isEmpty()) {
+            includedStructuralElement = includedStructuralElement.getChildren().get(0);
+            type = includedStructuralElement.getType();
+        }
+        return type;
     }
 
     /**
