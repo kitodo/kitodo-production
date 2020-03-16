@@ -22,7 +22,6 @@ import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -563,7 +562,6 @@ public class ProcessServiceIT {
     @Test
     public void testFindAllIDs() throws DataException {
         List<Integer> allIDs = ServiceManager.getProcessService().findAllIDs();
-        System.out.println(allIDs);
         Assert.assertEquals("Wrong amount of id's in index", 7, allIDs.size());
         Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 2, 6, 4, 1, 7, 3)));
     }
