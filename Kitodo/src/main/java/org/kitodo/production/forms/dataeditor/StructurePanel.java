@@ -306,7 +306,7 @@ public class StructurePanel implements Serializable {
      */
     private void preserveLogical() {
         if (!this.logicalTree.getChildren().isEmpty()) {
-            preserveLogicalRecursive(this.logicalTree.getChildren().get(0));
+            preserveLogicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
         }
     }
 
@@ -397,17 +397,17 @@ public class StructurePanel implements Serializable {
      */
     public void show() {
         this.structure = dataEditor.getWorkpiece().getRootElement();
-        Pair<LinkedList<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
+        DefaultTreeNode result = buildStructureTree();
 
         this.previousExpansionStatesLogicalTree = getTreeNodeExpansionStates(this.logicalTree);
-        this.logicalTree = result.getLeft().getLast();
+        this.logicalTree = result;
         updateNodeExpansionStates(this.logicalTree, this.previousExpansionStatesLogicalTree);
 
         this.previousExpansionStatesPhysicalTree = getTreeNodeExpansionStates(this.getPhysicalTree());
         this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit());
         updateNodeExpansionStates(this.getPhysicalTree(), this.previousExpansionStatesPhysicalTree);
 
-        this.selectedLogicalNode = logicalTree.getChildren().get(0);
+        this.selectedLogicalNode = logicalTree.getChildren().get(logicalTree.getChildCount() - 1);
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
         this.previouslySelectedPhysicalNode = selectedPhysicalNode;
@@ -432,17 +432,12 @@ public class StructurePanel implements Serializable {
      * @return the structure tree(s) and the collection of views displayed in
      *         the tree
      */
-    private Pair<LinkedList<DefaultTreeNode>, Collection<View>> buildStructureTree() {
-        LinkedList<DefaultTreeNode> result = new LinkedList<>();
-
-        DefaultTreeNode main = new DefaultTreeNode();
-        if (nodeStateUnknown(this.previousExpansionStatesLogicalTree, main)) {
-            main.setExpanded(true);
-        }
-        Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, main);
-        result.add(main);
-        addParentLinksRecursive(dataEditor.getProcess(), result);
-        return Pair.of(result, viewsShowingOnAChild);
+    private DefaultTreeNode buildStructureTree() {
+        DefaultTreeNode invisibleRootNode = new DefaultTreeNode();
+        invisibleRootNode.setExpanded(true);
+        addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
+        buildStructureTreeRecursively(structure, invisibleRootNode);
+        return invisibleRootNode;
     }
 
     private Collection<View> buildStructureTreeRecursively(IncludedStructuralElement structure, TreeNode result) {
@@ -606,21 +601,19 @@ public class StructurePanel implements Serializable {
      *
      * @param child
      *            child process, calling recursion
-     * @param result
+     * @param tree
      *            list of structure trees, in this list the parent links are
      *            inserted on top, therefore LinkedList
      */
-    private void addParentLinksRecursive(Process child, LinkedList<DefaultTreeNode> result) {
+    private void addParentLinksRecursive(Process child, DefaultTreeNode tree) {
         Process parent = child.getParent();
         // Termination condition of recursion, if the process has no parent
         if (Objects.isNull(parent)) {
             return;
         }
+        // Process parent link of the parent recursively
+        addParentLinksRecursive(parent, tree);
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
-        DefaultTreeNode tree = new DefaultTreeNode();
-        if (nodeStateUnknown(this.previousExpansionStatesLogicalTree, tree)) {
-            tree.setExpanded(true);
-        }
         try {
             IncludedStructuralElement rootElement = ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement();
             List<IncludedStructuralElement> includedStructuralElementList
@@ -643,6 +636,7 @@ public class StructurePanel implements Serializable {
                         break;
                     } else {
                         parentNode = addTreeNode(includedStructuralElement.getType(), true, null, parentNode);
+                        parentNode.setExpanded(true);
                     }
                 }
             }
@@ -655,10 +649,6 @@ public class StructurePanel implements Serializable {
             Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
             addTreeNode(parent.getTitle(), true, true, parent, tree);
         }
-        // Insert the link representation above the existing tree.
-        result.addFirst(tree);
-        // Process parent link of the parent recursively.
-        addParentLinksRecursive(parent, result);
     }
 
     /**
@@ -1304,7 +1294,7 @@ public class StructurePanel implements Serializable {
                 mediaUnit.getIncludedStructuralElements().clear();
             }
             dataEditor.getWorkpiece().getMediaUnit().getChildren().clear();
-            preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(0));
+            preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
         }
     }
 
