@@ -141,6 +141,20 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
+     * Get all ids from index.
+     *
+     * @return List of ids
+     */
+    public List<Integer> findAllIDs() throws DataException {
+        List<Integer> allIds = new ArrayList<>();
+        for (Map<String, Object> document : findAllDocuments()) {
+            allIds.add(Integer.parseInt((String) document.get("id")));
+        }
+        return allIds;
+    }
+
+
+    /**
      * Method saves document to the index of Elastic Search.
      *
      * @param baseIndexedBean
@@ -858,12 +872,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Removes all objects from index, which are no longer in Database.
-     * @param baseIndexedBeans the list of beans to check for missing db eintries.
+     * @param baseIndexedBeansId the list of beans to check for missing db eintries.
      * 
      */
-    public void removeLooseIndexData(List<S> baseIndexedBeans) throws DataException, CustomResponseException {
-        for (S baseIndexedBean : baseIndexedBeans) {
-            Integer baseIndexedBeanId = baseIndexedBean.getId();
+    public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException, CustomResponseException {
+        for (Integer baseIndexedBeanId : baseIndexedBeansId) {
             try {
                 getById(baseIndexedBeanId);
             } catch (DAOException e) {
