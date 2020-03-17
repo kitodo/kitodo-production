@@ -168,7 +168,7 @@ public class ImportTab implements Serializable {
 
         // if fewer processes are imported than configured in the frontend, it can mean that
         // - the OPAC does not have as many processes in the hierarchy or
-        // - one process of the hierarchy was already in the DB
+        // - one process of the hierarchy was already in the DB and import ended at this point
         int numberOfProcesses = this.createProcessForm.getProcesses().size();
 
         if (numberOfProcesses < 1) {
@@ -176,30 +176,15 @@ public class ImportTab implements Serializable {
             return;
         }
 
-        if (numberOfProcesses < this.importDepth) {
-            // check, if parent of last process in list is in DB
-            TempProcess parentTempProcess = ServiceManager.getImportService().getParentTempProcess();
-            if (Objects.nonNull(parentTempProcess)) {
-                Process parentProcess = parentTempProcess.getProcess();
-                // case 1: only one process was imported => load parent into "TitleRecordLinkTab"
-                if (numberOfProcesses == 1) {
-                    this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
-                    ArrayList<SelectItem> parentCandidates = new ArrayList<>();
-                    parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
-                    this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
-                    this.createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
-                    this.createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
-                    Ajax.update(INSERTION_TREE);
-                }
-                // case 2: more than one process was imported => add parent to list
-                else {
-                    this.createProcessForm.getProcesses().add(parentTempProcess);
-                    this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
-                }
-            } else {
-                this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
-            }
+        TempProcess parentTempProcess = ServiceManager.getImportService().getParentTempProcess();
+        if (numberOfProcesses == 1 && Objects.nonNull(parentTempProcess)) {
+            // case 1: only one process was imported => load DB parent into "TitleRecordLinkTab"
+            setParentAsTitleRecord(parentTempProcess.getProcess());
         } else {
+            // case 2: multiple processes imported and one ancestor found in DB => add ancestor to list
+            if (Objects.nonNull(parentTempProcess)) {
+                this.createProcessForm.getProcesses().add(parentTempProcess);
+            }
             this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
         }
 
@@ -207,6 +192,16 @@ public class ImportTab implements Serializable {
         if (ServiceManager.getImportService().getExemplarRecords().size() > 0) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
         }
+    }
+
+    private void setParentAsTitleRecord(Process parentProcess) {
+        this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
+        ArrayList<SelectItem> parentCandidates = new ArrayList<>();
+        parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
+        this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
+        this.createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
+        this.createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
+        Ajax.update(INSERTION_TREE);
     }
 
     /**
