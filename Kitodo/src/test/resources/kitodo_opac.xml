@@ -105,9 +105,10 @@
         <metadataFormat>PICA</metadataFormat>
         <mappingFile>pica2kitodo.xsl</mappingFile>
         <config>
-            <param name="host" value="sru.k10plus.de" />
-            <param name="scheme" value="https" />
-            <param name="path" value="/gvk" />
+            <param name="host" value="localhost" />
+            <param name="scheme" value="http" />
+            <param name="path" value="/sru" />
+            <param name="port" value="8888" />
         </config>
         <identifierParameter value="pica.ppn" />
         <urlParameters>
