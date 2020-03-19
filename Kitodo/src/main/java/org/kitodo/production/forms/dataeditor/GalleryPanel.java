@@ -480,9 +480,11 @@ public class GalleryPanel {
     }
 
     GalleryMediaContent getGalleryMediaContent(View view) {
-        for (GalleryMediaContent galleryMediaContent : this.medias) {
-            if (galleryMediaContent.getView().getMediaUnit().equals(view.getMediaUnit())) {
-                return galleryMediaContent;
+        if (Objects.nonNull(view)) {
+            for (GalleryMediaContent galleryMediaContent : this.medias) {
+                if (galleryMediaContent.getView().getMediaUnit().equals(view.getMediaUnit())) {
+                    return galleryMediaContent;
+                }
             }
         }
         return null;

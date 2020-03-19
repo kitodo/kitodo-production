@@ -771,16 +771,12 @@ public class StructurePanel implements Serializable {
             if (Objects.nonNull(previouslySelectedPhysicalNode)) {
                 previouslySelectedPhysicalNode.setSelected(false);
             }
-            if (Objects.nonNull(selectedPhysicalNode)) {
+            if (Objects.nonNull(selectedPhysicalNode) && !selectedPhysicalNode.equals(treeNode)) {
                 selectedPhysicalNode.setSelected(false);
             }
-            if (Objects.nonNull(physicalTree)) {
-                if (Objects.nonNull(treeNode)) {
-                    setSelectedPhysicalNode(treeNode);
-                    this.dataEditor.getMetadataPanel().showPhysical(this.dataEditor.getSelectedMediaUnit());
-                } else {
-                    Helper.setErrorMessage("Unable to update Node selection in physical structure!");
-                }
+            if (Objects.nonNull(physicalTree) && Objects.nonNull(treeNode)) {
+                setSelectedPhysicalNode(treeNode);
+                this.dataEditor.getMetadataPanel().showPhysical(this.dataEditor.getSelectedMediaUnit());
             }
         }
     }
@@ -868,6 +864,9 @@ public class StructurePanel implements Serializable {
     }
 
     private TreeNode updatePhysicalNodeSelectionRecursive(GalleryMediaContent galleryMediaContent, TreeNode treeNode) {
+        if (Objects.isNull(galleryMediaContent)) {
+            return null;
+        }
         TreeNode matchingTreeNode = null;
         for (TreeNode currentTreeNode : treeNode.getChildren()) {
             if (currentTreeNode.getChildCount() < 1 && treeNodeMatchesGalleryMediaContent(galleryMediaContent, currentTreeNode)) {

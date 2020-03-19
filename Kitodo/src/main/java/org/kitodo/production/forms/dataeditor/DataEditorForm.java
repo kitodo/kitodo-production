@@ -632,13 +632,21 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 if (structureTreeNode.getDataObject() instanceof IncludedStructuralElement
                         && selectedStructure.isPresent()) {
                     // Logical structure element selected
-                    IncludedStructuralElement structuralElement = selectedStructure.get();
-                    getSelectedMedia().clear();
-                    if (!structuralElement.getViews().isEmpty()) {
-                        ArrayList<View> views = new ArrayList<>(structuralElement.getViews());
-                        if (Objects.nonNull(views.get(0))) {
-                            updatePhysicalStructureTree(views.get(0));
+                    if (structurePanel.isSeparateMedia()) {
+                        IncludedStructuralElement structuralElement = selectedStructure.get();
+                        if (!structuralElement.getViews().isEmpty()) {
+                            ArrayList<View> views = new ArrayList<>(structuralElement.getViews());
+                            if (Objects.nonNull(views.get(0))) {
+                                updatePhysicalStructureTree(views.get(0));
+                                if (updateGallery) {
+                                    updateGallery(views.get(0));
+                                }
+                            }
+                        } else {
+                            updatePhysicalStructureTree(null);
                         }
+                    } else {
+                        getSelectedMedia().clear();
                     }
                 } else if (structureTreeNode.getDataObject() instanceof View) {
                     // Page selected in logical tree
@@ -679,9 +687,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private void updatePhysicalStructureTree(View view) {
         GalleryMediaContent galleryMediaContent = this.galleryPanel.getGalleryMediaContent(view);
-        if (Objects.nonNull(galleryMediaContent)) {
-            structurePanel.updatePhysicalNodeSelection(galleryMediaContent);
-        }
+        structurePanel.updatePhysicalNodeSelection(galleryMediaContent);
     }
 
     private void updateGallery(View view) {
