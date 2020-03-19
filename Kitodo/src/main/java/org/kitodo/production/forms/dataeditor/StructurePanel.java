@@ -92,7 +92,7 @@ public class StructurePanel implements Serializable {
     /**
      * HashMap containing the current expansion states of all TreeNodes in the physical structure tree.
      */
-    private HashMap<IncludedStructuralElement, Boolean> previousExpansionStatesPhysicalTree;
+    private HashMap<MediaUnit, Boolean> previousExpansionStatesPhysicalTree;
 
     /**
      * List of all mediaUnits assigned to multiple IncludedStructuralElements.
@@ -397,15 +397,14 @@ public class StructurePanel implements Serializable {
      */
     public void show() {
         this.structure = dataEditor.getWorkpiece().getRootElement();
-        DefaultTreeNode result = buildStructureTree();
 
-        this.previousExpansionStatesLogicalTree = getTreeNodeExpansionStates(this.logicalTree);
-        this.logicalTree = result;
-        updateNodeExpansionStates(this.logicalTree, this.previousExpansionStatesLogicalTree);
+        this.previousExpansionStatesLogicalTree = getLogicalTreeNodeExpansionStates(this.logicalTree);
+        this.logicalTree = buildStructureTree();
+        updateLogicalNodeExpansionStates(this.logicalTree, this.previousExpansionStatesLogicalTree);
 
-        this.previousExpansionStatesPhysicalTree = getTreeNodeExpansionStates(this.getPhysicalTree());
+        this.previousExpansionStatesPhysicalTree = getPhysicalTreeNodeExpansionStates(this.physicalTree);
         this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit());
-        updateNodeExpansionStates(this.getPhysicalTree(), this.previousExpansionStatesPhysicalTree);
+        updatePhysicalNodeExpansionStates(this.physicalTree, this.previousExpansionStatesPhysicalTree);
 
         this.selectedLogicalNode = logicalTree.getChildren().get(logicalTree.getChildCount() - 1);
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
@@ -470,7 +469,7 @@ public class StructurePanel implements Serializable {
          * framework. So you do not have to add the result anywhere.
          */
         DefaultTreeNode parent = new DefaultTreeNode(node, result);
-        if (nodeStateUnknown(this.previousExpansionStatesLogicalTree, parent)) {
+        if (logicalNodeStateUnknown(this.previousExpansionStatesLogicalTree, parent)) {
             parent.setExpanded(true);
         }
 
@@ -584,9 +583,9 @@ public class StructurePanel implements Serializable {
             DefaultTreeNode parent) {
         DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(label, undefined, linked, dataObject),
                 parent);
-        if (dataObject instanceof MediaUnit && nodeStateUnknown(this.previousExpansionStatesPhysicalTree, node)
+        if (dataObject instanceof MediaUnit && physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, node)
                 || dataObject instanceof IncludedStructuralElement
-                && nodeStateUnknown(this.previousExpansionStatesLogicalTree, node)) {
+                && logicalNodeStateUnknown(this.previousExpansionStatesLogicalTree, node)) {
             node.setExpanded(true);
         }
         return node;
@@ -698,7 +697,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode buildMediaTree(MediaUnit mediaRoot) {
         DefaultTreeNode rootTreeNode = new DefaultTreeNode();
-        if (nodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
+        if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
             rootTreeNode.setExpanded(true);
         }
         buildMediaTreeRecursively(mediaRoot, rootTreeNode);
@@ -711,7 +710,7 @@ public class StructurePanel implements Serializable {
         DefaultTreeNode treeNode = addTreeNode("page".equals(mediaUnit.getType())
                         ? divisionView.getLabel().concat(" " + mediaUnit.getOrderlabel()) : divisionView.getLabel(),
                 false, false, mediaUnit, parentTreeNode);
-        if (nodeStateUnknown(this.previousExpansionStatesPhysicalTree, treeNode)) {
+        if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, treeNode)) {
             treeNode.setExpanded(true);
         }
         if (Objects.nonNull(mediaUnit.getChildren())) {
@@ -1365,32 +1364,57 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private HashMap<IncludedStructuralElement, Boolean> getTreeNodeExpansionStates(DefaultTreeNode tree) {
+    private HashMap<IncludedStructuralElement, Boolean> getLogicalTreeNodeExpansionStates(DefaultTreeNode tree) {
         if (Objects.nonNull(tree) && tree.getChildCount() == 1) {
             TreeNode treeRoot = tree.getChildren().get(0);
             IncludedStructuralElement structuralElement = getTreeNodeStructuralElement(treeRoot);
             if (Objects.nonNull(structuralElement)) {
-                return getTreeNodeExpansionStatesRecursively(treeRoot, new HashMap<>());
+                return getLogicalTreeNodeExpansionStatesRecursively(treeRoot, new HashMap<>());
             }
         }
         return new HashMap<>();
     }
 
-    private HashMap<IncludedStructuralElement, Boolean> getTreeNodeExpansionStatesRecursively(TreeNode treeNode,
+    private HashMap<IncludedStructuralElement, Boolean> getLogicalTreeNodeExpansionStatesRecursively(TreeNode treeNode,
             HashMap<IncludedStructuralElement, Boolean> expansionStates) {
         if (Objects.nonNull(treeNode)) {
             IncludedStructuralElement structureData = getTreeNodeStructuralElement(treeNode);
             if (Objects.nonNull(structureData)) {
                 expansionStates.put(structureData, treeNode.isExpanded());
                 for (TreeNode childNode : treeNode.getChildren()) {
-                    expansionStates.putAll(getTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+                    expansionStates.putAll(getLogicalTreeNodeExpansionStatesRecursively(childNode, expansionStates));
                 }
             }
         }
         return expansionStates;
     }
 
-    private void updateNodeExpansionStates(DefaultTreeNode tree, HashMap<IncludedStructuralElement, Boolean> expansionStates) {
+    private HashMap<MediaUnit, Boolean> getPhysicalTreeNodeExpansionStates(DefaultTreeNode tree) {
+        if (Objects.nonNull(tree) && tree.getChildCount() == 1) {
+            TreeNode treeRoot = tree.getChildren().get(0);
+            MediaUnit mediaUnit = getTreeNodeMediaUnit(treeRoot);
+            if (Objects.nonNull(mediaUnit)) {
+                return getPhysicalTreeNodeExpansionStatesRecursively(treeRoot, new HashMap<>());
+            }
+        }
+        return new HashMap<>();
+    }
+
+    private HashMap<MediaUnit, Boolean> getPhysicalTreeNodeExpansionStatesRecursively(TreeNode treeNode,
+            HashMap<MediaUnit, Boolean> expansionStates) {
+        if (Objects.nonNull(treeNode)) {
+            MediaUnit mediaUnit = getTreeNodeMediaUnit(treeNode);
+            if (Objects.nonNull(mediaUnit)) {
+                expansionStates.put(mediaUnit, treeNode.isExpanded());
+                for (TreeNode childNode : treeNode.getChildren()) {
+                    expansionStates.putAll(getPhysicalTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+                }
+            }
+        }
+        return expansionStates;
+    }
+
+    private void updateLogicalNodeExpansionStates(DefaultTreeNode tree, HashMap<IncludedStructuralElement, Boolean> expansionStates) {
         if (Objects.nonNull(tree) && Objects.nonNull(expansionStates) && !expansionStates.isEmpty()) {
             updateNodeExpansionStatesRecursively(tree, expansionStates);
         }
@@ -1406,9 +1430,30 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private boolean nodeStateUnknown(HashMap<IncludedStructuralElement, Boolean> expansionStates, TreeNode treeNode) {
+    private void updatePhysicalNodeExpansionStates(DefaultTreeNode tree, HashMap<MediaUnit, Boolean> expansionStates) {
+        if (Objects.nonNull(tree) && Objects.nonNull(expansionStates) && !expansionStates.isEmpty()) {
+            updatePhysicalNodeExpansionStatesRecursively(tree, expansionStates);
+        }
+    }
+
+    private void updatePhysicalNodeExpansionStatesRecursively(TreeNode treeNode, HashMap<MediaUnit, Boolean> expansionStates) {
+        MediaUnit mediaUnit = getTreeNodeMediaUnit(treeNode);
+        if (Objects.nonNull(mediaUnit) && expansionStates.containsKey(mediaUnit)) {
+            treeNode.setExpanded(expansionStates.get(mediaUnit));
+        }
+        for (TreeNode childNode : treeNode.getChildren()) {
+            updatePhysicalNodeExpansionStatesRecursively(childNode, expansionStates);
+        }
+    }
+
+    private boolean logicalNodeStateUnknown(HashMap<IncludedStructuralElement, Boolean> expansionStates, TreeNode treeNode) {
         IncludedStructuralElement element = getTreeNodeStructuralElement(treeNode);
         return !Objects.nonNull(expansionStates) || (Objects.nonNull(element) && !expansionStates.containsKey(element));
+    }
+
+    private boolean physicalNodeStateUnknown(HashMap<MediaUnit, Boolean> expanionStates, TreeNode treeNode) {
+        MediaUnit mediaUnit = getTreeNodeMediaUnit(treeNode);
+        return Objects.isNull(expanionStates) || (Objects.nonNull(mediaUnit) && !expanionStates.containsKey(mediaUnit));
     }
 
     private IncludedStructuralElement getTreeNodeStructuralElement(TreeNode treeNode) {
@@ -1416,6 +1461,16 @@ public class StructurePanel implements Serializable {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             if (structureTreeNode.getDataObject() instanceof IncludedStructuralElement) {
                 return (IncludedStructuralElement) structureTreeNode.getDataObject();
+            }
+        }
+        return null;
+    }
+
+    private MediaUnit getTreeNodeMediaUnit(TreeNode treeNode) {
+        if (treeNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+            if (structureTreeNode.getDataObject() instanceof MediaUnit) {
+                return (MediaUnit) structureTreeNode.getDataObject();
             }
         }
         return null;
