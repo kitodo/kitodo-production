@@ -12,31 +12,24 @@
 package org.kitodo.production.forms;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.InvalidMetadataValueException;
-import org.kitodo.exceptions.NoRecordFoundException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.exceptions.RulesetNotFoundException;
-import org.kitodo.exceptions.UnsupportedFormatException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.MassImportService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-import org.xml.sax.SAXException;
 
 @Named("MassImportForm")
 @SessionScoped
 public class MassImportForm extends BaseForm {
+
+    private static final Logger logger = LogManager.getLogger(MassImportForm.class);
 
     private int projectId;
     private int templateId;
@@ -60,11 +53,10 @@ public class MassImportForm extends BaseForm {
         UploadedFile file = event.getFile();
         try {
             massImportService.importFromCSV(selectedCatalog, file, projectId, templateId);
-        } catch (IOException | NoRecordFoundException | ParserConfigurationException | UnsupportedFormatException
-                | XPathExpressionException | URISyntaxException | SAXException | ProcessGenerationException
-                | RulesetNotFoundException | InvalidMetadataValueException | DataException
-                | NoSuchMetadataFieldException | DAOException e) {
+        } catch (IOException e) {
             Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
+        } catch (ImportException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -74,11 +66,8 @@ public class MassImportForm extends BaseForm {
     public void importFromText() {
         try {
             massImportService.importFromText(selectedCatalog, ppnString, projectId, templateId);
-        } catch (NoRecordFoundException | ParserConfigurationException | UnsupportedFormatException
-                | XPathExpressionException | URISyntaxException | SAXException | ProcessGenerationException
-                | IOException | RulesetNotFoundException | InvalidMetadataValueException | DataException
-                | NoSuchMetadataFieldException | DAOException e) {
-            Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
+        } catch (ImportException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 

@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.tools.picocli.CommandLine;
+import org.jboss.weld.environment.util.Collections;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -67,6 +70,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -1058,17 +1062,23 @@ public class ImportService {
      * @param selectedCatalog the selected catalog to import from
      * @return the importedProcess
      */
-    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws SAXException,
-            NoRecordFoundException, UnsupportedFormatException, IOException, XPathExpressionException,
-            URISyntaxException, ParserConfigurationException, ProcessGenerationException, DataException, DAOException,
-            RulesetNotFoundException, InvalidMetadataValueException, NoSuchMetadataFieldException {
+    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
-        Template template = ServiceManager.getTemplateService().getById(templateId);
-        String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
-        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-        importProcessAndReturnParentID(ppn,processList,selectedCatalog,projectId,templateId);
-        processTempProcess(processList.get(0), template, openRulesetFile(template.getRuleset().getFile()), "create", priorityList);
-        ServiceManager.getProcessService().save(processList.get(0).getProcess());
+        Template template = null;
+        try {
+            template = ServiceManager.getTemplateService().getById(templateId);
+            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+            List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+            importProcessAndReturnParentID(ppn,processList,selectedCatalog,projectId,templateId);
+            processTempProcess(processList.get(0), template, openRulesetFile(template.getRuleset().getFile()), "create", priorityList);
+            ServiceManager.getProcessService().save(processList.get(0).getProcess());
+        } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
+                | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
+                | URISyntaxException | SAXException | RulesetNotFoundException | InvalidMetadataValueException
+                | NoSuchMetadataFieldException | DataException e) {
+            throw new ImportException(
+                    Helper.getTranslation("errorImporting", Arrays.asList(Helper.getTranslation("process"), ppn)));
+        }
         return processList.get(0).getProcess();
     }
 }
