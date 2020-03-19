@@ -330,7 +330,7 @@ public class ImportService {
         }
     }
 
-    public TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
+    private TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
             throws ProcessGenerationException {
         String docType = getRecordDocType(document);
         NodeList metadataNodes = extractMetadataNodeList(document);
@@ -347,7 +347,7 @@ public class ImportService {
         return new TempProcess(process, metadataNodes, docType);
     }
 
-    public String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
+    private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
                                                  int projectID, int templateID)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
@@ -518,7 +518,7 @@ public class ImportService {
         }
     }
 
-    public Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
+    private Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
             UnsupportedFormatException, URISyntaxException, IOException, XPathExpressionException,
             ParserConfigurationException, SAXException {
         // ################ IMPORT #################
@@ -1027,7 +1027,7 @@ public class ImportService {
     }
 
     /**
-     * Opens the ruleset with the given fileName
+     * Opens the ruleset with the given fileName.
      * @param fileName the filname of the rulesetfile.
      * @return an open ruleset
      */
@@ -1058,7 +1058,10 @@ public class ImportService {
      * @param selectedCatalog the selected catalog to import from
      * @return the importedProcess
      */
-    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws SAXException, NoRecordFoundException, UnsupportedFormatException, IOException, XPathExpressionException, URISyntaxException, ParserConfigurationException, ProcessGenerationException, DataException, DAOException, RulesetNotFoundException, InvalidMetadataValueException, NoSuchMetadataFieldException {
+    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws SAXException,
+            NoRecordFoundException, UnsupportedFormatException, IOException, XPathExpressionException,
+            URISyntaxException, ParserConfigurationException, ProcessGenerationException, DataException, DAOException,
+            RulesetNotFoundException, InvalidMetadataValueException, NoSuchMetadataFieldException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         Template template = ServiceManager.getTemplateService().getById(templateId);
         String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();

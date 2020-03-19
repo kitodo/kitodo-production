@@ -13,22 +13,17 @@ package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
 
-import org.apache.commons.lang.SystemUtils;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
-
-import java.net.URI;
-import java.util.Objects;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ImportServiceIT {
 
