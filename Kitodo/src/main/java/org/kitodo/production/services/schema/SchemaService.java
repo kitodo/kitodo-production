@@ -229,8 +229,7 @@ public class SchemaService {
     /**
      * Replaces internal links in child structure elements with a publicly
      * resolvable link. Checks whether the linked process has not yet been
-     * exported, in which case false is returned to delete the link from the
-     * parental list.
+     * exported, in which case the link from the parental list will be deleted.
      *
      * @param workpiece
      *            current workpiece
@@ -238,7 +237,7 @@ public class SchemaService {
      *            current structure
      * @param prefs
      *            legacy ruleset wrapper
-     * @return whether the current structure shall not be deleted
+     * @return whether the current structure shall be deleted
      */
     private boolean convertChildrenLinksForExportRecursive(Workpiece workpiece, IncludedStructuralElement structure,
                                                LegacyPrefsHelper prefs) throws DAOException, IOException {
@@ -248,16 +247,16 @@ public class SchemaService {
             int linkedProcessId = ServiceManager.getProcessService().processIdFromUri(link.getUri());
             Process process = ServiceManager.getProcessService().getById(linkedProcessId);
             if (!process.isExported()) {
-                return false;
+                return true;
             }
             setLinkForExport(structure, process, prefs, workpiece);
         }
         for (Iterator<IncludedStructuralElement> iterator = structure.getChildren().iterator(); iterator.hasNext();) {
-            if (!convertChildrenLinksForExportRecursive(workpiece, iterator.next(), prefs)) {
+            if (convertChildrenLinksForExportRecursive(workpiece, iterator.next(), prefs)) {
                 iterator.remove();
             }
         }
-        return true;
+        return false;
     }
 
     private void addParentLinkForExport(LegacyPrefsHelper prefs, Workpiece workpiece, Process parent)
