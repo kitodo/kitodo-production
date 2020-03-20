@@ -11,7 +11,6 @@
 
 package org.kitodo.production.metadata.copier;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +45,8 @@ public abstract class DataCopyrule {
      * Factory method to create a class implementing the metadata copy rule
      * referenced by a given command string.
      *
-     * @param command
-     *            A space-separated string consisting of subject (aka. patiens),
+     * @param arguments
+     *            A list of strings consisting of subject (aka. patiens),
      *            operator (aka. agens) and (optional) objects (depending on
      *            what objects the operator requires).
      * @return a class implementing the metadata copy rule referenced
@@ -55,13 +54,13 @@ public abstract class DataCopyrule {
      *             if the operator cannot be resolved or the number of arguments
      *             doesn’t match
      */
-    public static DataCopyrule createFor(String command) throws ConfigurationException {
-        List<String> arguments = Arrays.asList(command.split("\\s+"));
+    public static DataCopyrule createFor(List<String> arguments) throws ConfigurationException {
         String operator;
         try {
             operator = arguments.get(1);
         } catch (IndexOutOfBoundsException e) {
-            throw new ConfigurationException("Missing operator (second argument) in line: " + command);
+            throw new ConfigurationException(
+                    "Missing operator (second argument) in line: " + String.join(" ", arguments));
         }
         Class<? extends DataCopyrule> ruleClass = AVAILABLE_RULES.get(operator);
         if (ruleClass == null) {
@@ -77,10 +76,10 @@ public abstract class DataCopyrule {
         if (ruleImplementation.getMaxObjects() > 0) {
             List<String> objects = arguments.subList(2, arguments.size());
             if (objects.size() < ruleImplementation.getMinObjects()) {
-                throw new ConfigurationException("Too few arguments in line: " + command);
+                throw new ConfigurationException("Too few arguments in line: " + String.join(" ", arguments));
             }
             if (objects.size() > ruleImplementation.getMaxObjects()) {
-                throw new ConfigurationException("Too many arguments in line: " + command);
+                throw new ConfigurationException("Too many arguments in line: " + String.join(" ", arguments));
             }
             ruleImplementation.setObjects(objects);
         }
