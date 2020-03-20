@@ -24,16 +24,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -42,6 +41,8 @@ import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.tasks.TaskManager;
+import org.kitodo.production.metadata.copier.CopierData;
+import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -74,7 +75,9 @@ public class KitodoScriptService {
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
             if (Objects.isNull(tok) || !tok.contains(":")) {
-                Helper.setErrorMessage("missing delimiter / unknown parameter: ", tok);
+                if (Objects.nonNull(parameters.get("action")) && !parameters.get("action").equals("copyData")) {
+                    Helper.setErrorMessage("missing delimiter / unknown parameter: ", tok);
+                }
             } else {
                 String key = tok.substring(0, tok.indexOf(':'));
                 String value = tok.substring(tok.indexOf(':') + 1);
@@ -91,12 +94,12 @@ public class KitodoScriptService {
             return;
         }
 
-        if (executeScript(processes)) {
+        if (executeScript(processes, script)) {
             Helper.setMessage("kitodoScript finished");
         }
     }
 
-    private boolean executeScript(List<Process> processes) throws DataException {
+    private boolean executeScript(List<Process> processes, String script) throws DataException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "importFromFileSystem":
@@ -151,6 +154,9 @@ public class KitodoScriptService {
                     contentOnly = false;
                 }
                 deleteProcess(processes, contentOnly);
+                break;
+            case "copyData":
+                copyData(processes, script);
                 break;
             case "generateImages":
                 String folders = parameters.get("folders");
@@ -225,6 +231,35 @@ public class KitodoScriptService {
                         new Object[] {Helper.getTranslation("process") + " " + title }, logger, e);
                 }
             }
+        }
+    }
+
+    private void copyData(List<Process> processes, String inScript) {
+        String currentProcessTitele = null;
+        try {
+            String rules = inScript.replaceFirst("\\s*action:copyData\\s+(.*?)[\r\n\\s]*", "$1");
+            DataCopier dataCopier = new DataCopier(rules);
+            for (Process process : processes) {
+                currentProcessTitele = process.getTitle();
+                LegacyMetsModsDigitalDocumentHelper gdzfile = ServiceManager.getProcessService()
+                        .readMetadataFile(process);
+                dataCopier.process(new CopierData(gdzfile, process));
+                ServiceManager.getMetsService().saveWorkpiece(gdzfile.getWorkpiece(),
+                    ServiceManager.getProcessService().getMetadataFileUri(process));
+                Helper.setMessage("copyDataOk", currentProcessTitele);
+            }
+        } catch (ConfigurationException | IOException | UnsupportedOperationException e) {
+            StringBuilder message = new StringBuilder(127);
+            if (currentProcessTitele != null) {
+                message.append(currentProcessTitele);
+                message.append(": ");
+            }
+            message.append(e.getClass().getSimpleName());
+            if (e.getMessage() != null) {
+                message.append(": ");
+                message.append(e.getMessage());
+            }
+            Helper.setErrorMessage("copyDataError", message.toString(), logger, e);
         }
     }
 

@@ -65,6 +65,9 @@
                                 <p:commandButton value="exportDms"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
                                                  onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:exportDms exportImages:false'"/>
+                                <p:commandButton value="copyData"
+                                                 update="executeScriptSelectedForm:selectionScriptFieldTextArea"
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:copyData &lt;rule(s)&gt;'"/>
                                 <p:commandButton value="generateImages"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
                                                  onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:generateImages folders:all|jpgs/max,jpgs/thumbs,... images:missingOrDamaged|missing|all'"/>
