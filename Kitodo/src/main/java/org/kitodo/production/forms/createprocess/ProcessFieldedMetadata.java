@@ -438,6 +438,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         assert division == null;
         MetadataGroup result = new MetadataGroup();
         result.setKey(metadataKey);
+        result.setDomain(DOMAIN_TO_MDSEC.get(metadataView.getDomain().orElse(Domain.DESCRIPTION)));
         try {
             this.preserve();
         } catch (NoSuchMetadataFieldException e) {
