@@ -165,14 +165,14 @@ public class TemplateForm extends TemplateBaseForm {
                     this.template.getClient().getId());
             int count = templates.size();
             if (count > 1) {
-                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
+                Helper.setErrorMessage(ERROR_OCCURRED, TITLE_USED);
                 return false;
             } else if (count == 1) {
                 Integer templateId = this.template.getId();
                 if (Objects.nonNull(templateId) && templates.get(0).getId().equals(templateId)) {
                     return true;
                 }
-                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
+                Helper.setErrorMessage(ERROR_OCCURRED, TITLE_USED);
                 return false;
             }
             return true;

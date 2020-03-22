@@ -257,14 +257,14 @@ public class ProjectForm extends BaseForm {
                     this.project.getClient().getId());
             int count = projects.size();
             if (count > 1) {
-                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
+                Helper.setErrorMessage(ERROR_OCCURRED, TITLE_USED);
                 return false;
             } else if (count == 1) {
                 Integer projectId = this.project.getId();
                 if (Objects.nonNull(projectId) && projects.get(0).getId().equals(projectId)) {
                     return true;
                 }
-                Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, TITLE_USED);
+                Helper.setErrorMessage(ERROR_OCCURRED, TITLE_USED);
                 return false;
             }
             return true;
@@ -656,7 +656,7 @@ public class ProjectForm extends BaseForm {
     /**
      * Getting the first template of the given project. This is just a hack
      * until the "choose-template" dialoge will be implemented.
-     * 
+     *
      * @param projectDTO
      *            the project to get the template from
      * @return the id of the first template
