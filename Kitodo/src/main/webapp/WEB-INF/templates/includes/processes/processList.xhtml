@@ -344,5 +344,15 @@
                         ajax="false"
                         icon="fa fa-file-pdf-o"/>
         </p:menu>
+        <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
+        <p:menu overlay="true" trigger="processesTabView:processesForm:statisticButton" my="left bottom" at="left top">
+            <p:menuitem id="stateOfVolume"
+                        value="#{msgs.stateOfVolume}"
+                        action="#{ProcessForm.showStateOfVolume}"
+                        update="processesTabView:processesForm"
+                        icon="fa fa-arrow-circle-o-up"/>
+        </p:menu>
+        <p:pieChart rendered="#{ProcessForm.showStatistic}" model="#{ProcessForm.pieModel}" style="width: 100%; height: 500px;"/>
+
     </h:form>
 </ui:composition>

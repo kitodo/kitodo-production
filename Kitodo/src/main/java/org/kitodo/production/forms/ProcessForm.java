@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +64,9 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.pie.PieChartDataSet;
+import org.primefaces.model.charts.pie.PieChartModel;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -87,6 +91,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Process> selectedProcesses = new ArrayList<>();
     final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
+    private PieChartModel pieModel;
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
@@ -97,6 +102,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     @Inject
     private CustomListColumnInitializer initializer;
+    private boolean showStatistic;
 
     /**
      * Constructor.
@@ -1345,5 +1351,56 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
             return 0;
         }
+    }
+
+    /**
+     * Shows the state of volumes from the selected processes.
+     */
+    public void showStateOfVolume() {
+        showStatistic = true;
+        Map<String, Integer> volumeStates = new HashMap<>();
+        for (Process selectedProcess : selectedProcesses) {
+            String currentTaskTitle = ServiceManager.getProcessService().getCurrentTask(selectedProcess).getTitle();
+            if (volumeStates.containsKey(currentTaskTitle)) {
+                volumeStates.put(currentTaskTitle, Math.addExact(volumeStates.get(currentTaskTitle), 1));
+            } else {
+                volumeStates.put(currentTaskTitle, 1);
+            }
+        }
+        createPieModel(volumeStates);
+    }
+
+    private void createPieModel(Map<String, Integer> processValues) {
+        pieModel = new PieChartModel();
+
+        PieChartDataSet dataSet = new PieChartDataSet();
+        List<Number> values = new ArrayList<>();
+        values.addAll(processValues.values());
+        dataSet.setData(values);
+
+        List<String> bgColors = Arrays.asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
+        dataSet.setBackgroundColor(bgColors);
+
+        ChartData data = new ChartData();
+        data.addChartDataSet(dataSet);
+        data.setLabels(new ArrayList<>(processValues.keySet()));
+
+        pieModel.setData(data);
+    }
+
+    public boolean isShowStatistic() {
+        return showStatistic;
+    }
+
+    public void setShowStatistic(boolean showStatistic) {
+        this.showStatistic = showStatistic;
+    }
+
+    public PieChartModel getPieModel() {
+        return pieModel;
+    }
+
+    public void setPieModel(PieChartModel pieModel) {
+        this.pieModel = pieModel;
     }
 }
