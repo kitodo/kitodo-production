@@ -46,6 +46,7 @@ public class BaseForm implements Serializable {
     private boolean saveDisabled = true;
 
     // error messages
+    protected static final String ERROR_OCCURRED = "errorOccurred";
     protected static final String ERROR_DATABASE_READING = "errorDatabaseReading";
     protected static final String ERROR_DUPLICATE = "errorDuplicate";
     protected static final String ERROR_EXPORTING = "errorExporting";
