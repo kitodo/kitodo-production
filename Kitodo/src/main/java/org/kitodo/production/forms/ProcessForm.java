@@ -99,6 +99,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<SelectItem> customColumns;
 
     private Map<Integer, Collection<String>> rulesetCache = new HashMap<>();
+    List<String> bgColors = Arrays.asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -1378,7 +1379,6 @@ public class ProcessForm extends TemplateBaseForm {
         values.addAll(processValues.values());
         dataSet.setData(values);
 
-        List<String> bgColors = Arrays.asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
         dataSet.setBackgroundColor(bgColors);
 
         ChartData data = new ChartData();
