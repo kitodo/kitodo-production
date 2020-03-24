@@ -275,8 +275,6 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         duplicatedProject.setFileFormatDmsExport(baseProject.getFileFormatDmsExport());
 
         duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
-        duplicatedProject.setUseDmsImport(baseProject.isUseDmsImport());
-        duplicatedProject.setDmsImportCreateProcessFolder(baseProject.isDmsImportCreateProcessFolder());
 
         duplicatedProject.setMetsRightsOwner(baseProject.getMetsRightsOwner());
         duplicatedProject.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());

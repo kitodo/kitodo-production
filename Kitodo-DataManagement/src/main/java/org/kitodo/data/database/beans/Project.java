@@ -66,14 +66,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @Column(name = "useDmsImport")
-    private boolean useDmsImport;
-
     @Column(name = "dmsImportRootPath")
     private String dmsImportRootPath;
-
-    @Column(name = "dmsImportCreateProcessFolder")
-    private Boolean dmsImportCreateProcessFolder;
 
     @Column(name = "fileFormatInternal")
     private String fileFormatInternal;
@@ -178,9 +172,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.processes = new ArrayList<>();
         this.users = new ArrayList<>();
         this.folders = new ArrayList<>();
-        this.useDmsImport = true;
         this.dmsImportRootPath = "";
-        this.dmsImportCreateProcessFolder = true;
         this.fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
         this.fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
     }
@@ -257,36 +249,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     public void setDmsImportRootPath(String dmsImportRootPath) {
         this.dmsImportRootPath = dmsImportRootPath;
-    }
-
-    public boolean isUseDmsImport() {
-        return this.useDmsImport;
-    }
-
-    public void setUseDmsImport(boolean useDmsImport) {
-        this.useDmsImport = useDmsImport;
-    }
-
-    /**
-     * Get DMS import create process folder.
-     *
-     * @return true or false
-     */
-    public boolean isDmsImportCreateProcessFolder() {
-        if (this.dmsImportCreateProcessFolder == null) {
-            this.dmsImportCreateProcessFolder = true;
-        }
-        return this.dmsImportCreateProcessFolder;
-    }
-
-    /**
-     * Set DMS import create process folder.
-     *
-     * @param dmsImportCreateProcessFolder
-     *            true or false
-     */
-    public void setDmsImportCreateProcessFolder(boolean dmsImportCreateProcessFolder) {
-        this.dmsImportCreateProcessFolder = dmsImportCreateProcessFolder;
     }
 
     /**

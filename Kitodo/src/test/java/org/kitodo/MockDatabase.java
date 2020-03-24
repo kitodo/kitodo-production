@@ -778,7 +778,6 @@ public class MockDatabase {
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
-        firstProject.setUseDmsImport(true);
         LocalDate localDate = new LocalDate(2016, 10, 20);
         firstProject.setStartDate(localDate.toDate());
         localDate = new LocalDate(2017, 10, 20);
@@ -796,7 +795,6 @@ public class MockDatabase {
 
         Project secondProject = new Project();
         secondProject.setTitle("Second project");
-        secondProject.setUseDmsImport(false);
         localDate = new LocalDate(2016, 11, 10);
         secondProject.setStartDate(localDate.toDate());
         localDate = new LocalDate(2017, 9, 15);
