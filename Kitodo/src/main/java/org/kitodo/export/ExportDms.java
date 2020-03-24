@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.rmi.server.ExportException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
@@ -63,22 +64,22 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * DMS-Export an eine gewünschte Stelle.
+     * Export to the DMS.
      *
      * @param process
-     *            object
-     * @param destination
-     *            String
+     *            process to export
+     * @param unused
+     *            user home directory
      */
     @Override
-    public boolean startExport(Process process, URI destination) {
+    public boolean startExport(Process process, URI unused) {
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
-            TaskManager.addTask(new ExportDmsTask(this, process, destination));
+            TaskManager.addTask(new ExportDmsTask(this, process));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
             return true;
         } else {
-            return startExport(process, destination, (ExportDmsTask) null);
+            return startExport(process, (ExportDmsTask) null);
         }
     }
 
@@ -90,16 +91,14 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            process to export
-     * @param destination
-     *            work directory of the user who triggered the export
      * @param exportDmsTask
      *            ExportDmsTask object to submit progress updates and errors
      * @return false if an error condition was caught, true otherwise
      */
-    public boolean startExport(Process process, URI destination, ExportDmsTask exportDmsTask) {
+    public boolean startExport(Process process, ExportDmsTask exportDmsTask) {
         this.exportDmsTask = exportDmsTask;
         try {
-            return startExport(process, destination,
+            return startExport(process,
                 ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
         } catch (IOException | DAOException e) {
             if (Objects.nonNull(exportDmsTask)) {
@@ -117,13 +116,11 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            object
-     * @param destination
-     *            String
      * @param newFile
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI destination, LegacyMetsModsDigitalDocumentHelper newFile)
+    private boolean startExport(Process process, LegacyMetsModsDigitalDocumentHelper newFile)
             throws IOException, DAOException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
@@ -150,33 +147,35 @@ public class ExportDms extends ExportMets {
             return false;
         }
 
-        return prepareAndDownloadSaveLocation(process, destination, gdzfile);
+        return prepareExportLocation(process, gdzfile);
     }
 
-    private boolean prepareAndDownloadSaveLocation(Process process, URI destinationDirectory,
+    private boolean prepareExportLocation(Process process,
             LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException, DAOException {
-        // TODO: why create again destinationDirectory if it is already given as
-        // an
-        // input??
-        URI destination;
-        URI userHome;
-        // TODO: I have got here value usr/local/kitodo/hotfolder
-        destination = new File(process.getProject().getDmsImportRootPath()).toURI();
-        userHome = destination;
 
-        // create process folder
-        URI userHomeProcess = fileService.createResource(userHome,
-            File.separator + Helper.getNormalizedTitle(process.getTitle()));
-        destination = userHomeProcess;
-        boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getTitle());
-        if (!createProcessFolderResult) {
+        URI hotfolder = new File(process.getProject().getDmsImportRootPath()).toURI();
+        String processTitle = Helper.getNormalizedTitle(process.getTitle());
+        URI exportFolder = new File(hotfolder.getPath(), processTitle).toURI();
+
+        // delete old export folder
+        if (!fileService.delete(exportFolder)) {
+            String message = Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle));
+            String description = Helper.getTranslation(EXPORT_DIR_DELETE,
+                Collections.singletonList(exportFolder.getPath()));
+            Helper.setErrorMessage(message, description);
+            if (Objects.nonNull(exportDmsTask)) {
+                exportDmsTask.setException(new ExportException(message + ": " + description));
+            }
             return false;
         }
+
+        fileService.createDirectory(hotfolder, processTitle);
+
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(1);
         }
 
-        return exportImagesAndMetsToDestinationUri(process, gdzfile, destination, userHome);
+        return exportImagesAndMetsToDestinationUri(process, gdzfile, exportFolder, hotfolder);
     }
 
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
@@ -225,22 +224,6 @@ public class ExportDms extends ExportMets {
                 return false;
             }
         }
-        return true;
-    }
-
-    private boolean createProcessFolder(URI userHomeProcess, URI userHome, String processTitle)
-            throws IOException {
-        // delete old import folder
-        if (!fileService.delete(userHomeProcess)) {
-            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
-                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
-            return false;
-        }
-
-        if (!fileService.fileExist(userHomeProcess)) {
-            fileService.createDirectory(userHome, Helper.getNormalizedTitle(processTitle));
-        }
-
         return true;
     }
 
