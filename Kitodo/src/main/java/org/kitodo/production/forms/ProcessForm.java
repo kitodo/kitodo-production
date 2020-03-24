@@ -50,6 +50,7 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ChartMode;
@@ -300,7 +301,7 @@ public class ProcessForm extends TemplateBaseForm {
             if (functionalDivisions.contains(docType)) {
                 return true;
             }
-        } catch (IOException | DAOException e) {
+        } catch (IOException | DAOException | RulesetNotFoundException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                 e);
         }

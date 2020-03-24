@@ -1031,30 +1031,6 @@ public class ImportService {
     }
 
     /**
-     * Opens the ruleset with the given fileName.
-     * @param fileName the filname of the rulesetfile.
-     * @return an open ruleset
-     */
-    public RulesetManagementInterface openRulesetFile(String fileName) throws IOException, RulesetNotFoundException {
-        final long begin = System.nanoTime();
-        String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
-        Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        try {
-            ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
-        } catch (FileNotFoundException e) {
-            List<String> param = new ArrayList<>();
-            param.add(fileName);
-            throw new RulesetNotFoundException(Helper.getTranslation("rulesetNotFound", param));
-        }
-
-        if (logger.isTraceEnabled()) {
-            logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
-        }
-        return ruleset;
-    }
-
-    /**
      * Imports a process and saves it to database.
      * @param ppn the ppn to import
      * @param projectId the projectId
@@ -1069,8 +1045,9 @@ public class ImportService {
             template = ServiceManager.getTemplateService().getById(templateId);
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-            importProcessAndReturnParentID(ppn,processList,selectedCatalog,projectId,templateId);
-            processTempProcess(processList.get(0), template, openRulesetFile(template.getRuleset().getFile()), "create", priorityList);
+            importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId);
+            processTempProcess(processList.get(0), template,
+                ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
             ServiceManager.getProcessService().save(processList.get(0).getProcess());
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException

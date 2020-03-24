@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -479,5 +480,14 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
         saveToDatabase(userWithNewPassword);
+    }
+
+    /**
+     * Gets the configured metadatalanguage from the User.
+     * @return a List of LanguageRange
+     */
+    public List<Locale.LanguageRange> getCurrentMetadataLanguage() {
+        String metadataLanguage = getCurrentUser().getMetadataLanguage();
+        return Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
     }
 }

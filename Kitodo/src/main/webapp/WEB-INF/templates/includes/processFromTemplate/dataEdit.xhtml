@@ -59,7 +59,7 @@
                                      required="true">
                         <f:selectItems value="#{ProcessForm.rulesets}"/>
                         <p:ajax event="change"
-                                listener="#{CreateProcessForm.updateRulesetAndDocType(CreateProcessForm.mainProcess.ruleset.file)}"
+                                listener="#{CreateProcessForm.updateRulesetAndDocType(CreateProcessForm.mainProcess.ruleset)}"
                                 update="editForm:processFromTemplateTabView:docType,editForm:processFromTemplateTabView:metadataTable"/>
                     </p:selectOneMenu>
                 </h:panelGroup>

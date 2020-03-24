@@ -43,6 +43,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.tasks.NewspaperMigrationTask;
@@ -270,7 +271,7 @@ public class NewspaperProcessesMigrator {
      *            the ID of the newspaper division in the ruleset
      */
     private void initializeMigrator(Process process, String newspaperIncludedStructalElementDivision)
-            throws IOException, ConfigurationException {
+            throws IOException, ConfigurationException, RulesetNotFoundException {
 
         title = process.getTitle().replaceFirst(INDIVIDUAL_PART, "");
         logger.trace("Newspaper is: {}", title);
@@ -304,7 +305,7 @@ public class NewspaperProcessesMigrator {
      *            index of process to convert in the processes transfer object
      *            list passed to the constructor—<b>not</b> the process ID
      */
-    public void convertProcess(int index) throws DAOException, IOException, ConfigurationException {
+    public void convertProcess(int index) throws DAOException, IOException, ConfigurationException, RulesetNotFoundException {
         final long begin = System.nanoTime();
         Integer processId = transferredProcess.get(index).getId();
         Process process = processService.getById(processId);
@@ -389,12 +390,10 @@ public class NewspaperProcessesMigrator {
      *            file
      * @throws IOException
      *             if an error occurs in the disk drive
-     * @throws ConfigurationException
-     *             if there is a ruleset configuration error
      */
     private String createLinkStructureAndCopyDates(Process process, URI yearMetadata,
             IncludedStructuralElement metaFileYearIncludedStructuralElement)
-            throws IOException, ConfigurationException {
+            throws IOException {
 
         IncludedStructuralElement yearFileYearIncludedStructuralElement = metsService.loadWorkpiece(yearMetadata)
                 .getRootElement().getChildren().get(0);

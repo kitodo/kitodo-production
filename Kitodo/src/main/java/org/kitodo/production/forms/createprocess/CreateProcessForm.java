@@ -42,6 +42,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
@@ -74,7 +75,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
     private RulesetManagementInterface rulesetManagementInterface;
-    private List<Locale.LanguageRange> priorityList;
+    private List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
     private String acquisitionStage = "create";
     private Project project;
     private Template template;
@@ -96,17 +97,17 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     /**
      * Update ruleset and docType.
-     * @param rulesetFileName as String
+     * @param ruleset as Ruleset
      * @throws RulesetNotFoundException thrown if ruleset could not be found
      */
-    public void updateRulesetAndDocType(String rulesetFileName) throws RulesetNotFoundException {
-        setRulesetManagementInterface(rulesetFileName);
+    public void updateRulesetAndDocType(Ruleset ruleset) throws RulesetNotFoundException {
+        setRulesetManagementInterface(ruleset);
         processDataTab.setAllDocTypes(getAllRulesetDivisions());
     }
 
-    private void setRulesetManagementInterface(String rulesetFileName) throws RulesetNotFoundException {
+    private void setRulesetManagementInterface(Ruleset ruleset) throws RulesetNotFoundException {
         try {
-            this.rulesetManagementInterface = ServiceManager.getImportService().openRulesetFile(rulesetFileName);
+            this.rulesetManagementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());
         }
@@ -345,7 +346,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                         processGenerator.getGeneratedProcess(), new Workpiece())));
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
-                updateRulesetAndDocType(getMainProcess().getRuleset().getFile());
+                updateRulesetAndDocType(getMainProcess().getRuleset());
                 processDataTab.prepare();
             }
         } catch (ProcessGenerationException | RulesetNotFoundException e) {
