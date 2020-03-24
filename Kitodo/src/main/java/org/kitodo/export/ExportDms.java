@@ -32,6 +32,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -54,13 +55,6 @@ public class ExportDms extends ExportMets {
     private final FileService fileService = ServiceManager.getFileService();
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
-
-    /**
-     * The field exportDmsTask holds an optional task instance. Its progress and
-     * its errors will be passed to the task manager screen (if available) for
-     * visualisation.
-     */
-    private EmptyTask exportDmsTask = null;
 
     public ExportDms() {
     }
@@ -152,6 +146,9 @@ public class ExportDms extends ExportMets {
         // validate metadata
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
                 && !ServiceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
+            if (Objects.nonNull(exportDmsTask)) {
+                exportDmsTask.setException(new MetadataException("metadata validation failed", null));
+            }
             return false;
         }
 
@@ -411,6 +408,9 @@ public class ExportDms extends ExportMets {
                     handleException(e, process.getTitle());
                     throw e;
                 } catch (RuntimeException e) {
+                    if (Objects.nonNull(exportDmsTask)) {
+                        exportDmsTask.setException(e);
+                    }
                     handleException(e, process.getTitle());
                 }
             }
