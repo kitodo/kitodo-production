@@ -87,8 +87,10 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
         convertChildrenLinksForExportRecursive(workpiece, workpiece.getRootElement(), prefs);
-        if (Objects.nonNull(process.getParent())) {
-            addParentLinkForExport(prefs, workpiece, process.getParent());
+        Process parentProcess = process.getParent();
+        while (Objects.nonNull(parentProcess)) {
+            addParentLinkForExport(prefs, workpiece, parentProcess);
+            parentProcess = parentProcess.getParent();
         }
 
         assignViewsFromChildrenRecursive(workpiece.getRootElement());
