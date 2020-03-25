@@ -29,9 +29,9 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ExportException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -64,23 +64,22 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * DMS-Export an eine gewünschte Stelle.
+     * Export to the DMS.
      *
      * @param process
-     *            object
-     * @param destination
-     *            String
+     *            process to export
+     * @param unused
+     *            user home directory
      */
     @Override
-    public boolean startExport(Process process, URI destination) {
-        if (process.getProject().isUseDmsImport()
-                && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
-            TaskManager.addTask(new ExportDmsTask(this, process, destination));
+    public boolean startExport(Process process, URI unused) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
+            TaskManager.addTask(new ExportDmsTask(this, process));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
             return true;
         } else {
-            return startExport(process, destination, (ExportDmsTask) null);
+            return startExport(process, (ExportDmsTask) null);
         }
     }
 
@@ -92,16 +91,14 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            process to export
-     * @param destination
-     *            work directory of the user who triggered the export
      * @param exportDmsTask
      *            ExportDmsTask object to submit progress updates and errors
      * @return false if an error condition was caught, true otherwise
      */
-    public boolean startExport(Process process, URI destination, ExportDmsTask exportDmsTask) {
+    public boolean startExport(Process process, ExportDmsTask exportDmsTask) {
         this.exportDmsTask = exportDmsTask;
         try {
-            return startExport(process, destination,
+            return startExport(process,
                 ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
         } catch (IOException | DAOException e) {
             if (Objects.nonNull(exportDmsTask)) {
@@ -119,13 +116,11 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            object
-     * @param destination
-     *            String
      * @param newFile
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI destination, LegacyMetsModsDigitalDocumentHelper newFile)
+    private boolean startExport(Process process, LegacyMetsModsDigitalDocumentHelper newFile)
             throws IOException, DAOException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
@@ -152,48 +147,35 @@ public class ExportDms extends ExportMets {
             return false;
         }
 
-        return prepareAndDownloadSaveLocation(process, destination, gdzfile);
+        return prepareExportLocation(process, gdzfile);
     }
 
-    private boolean prepareAndDownloadSaveLocation(Process process, URI destinationDirectory,
+    private boolean prepareExportLocation(Process process,
             LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException, DAOException {
-        // TODO: why create again destinationDirectory if it is already given as
-        // an
-        // input??
-        URI destination;
-        URI userHome;
-        if (process.getProject().isUseDmsImport()) {
-            // TODO: I have got here value usr/local/kitodo/hotfolder
-            destination = new File(process.getProject().getDmsImportRootPath()).toURI();
-            userHome = destination;
 
-            // if necessary, create process folder
-            if (process.getProject().isDmsImportCreateProcessFolder()) {
-                URI userHomeProcess = fileService.createResource(userHome,
-                    File.separator + Helper.getNormalizedTitle(process.getTitle()));
-                destination = userHomeProcess;
-                boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getTitle());
-                if (!createProcessFolderResult) {
-                    return false;
-                }
+        URI hotfolder = new File(process.getProject().getDmsImportRootPath()).toURI();
+        String processTitle = Helper.getNormalizedTitle(process.getTitle());
+        URI exportFolder = new File(hotfolder.getPath(), processTitle).toURI();
+
+        // delete old export folder
+        if (!fileService.delete(exportFolder)) {
+            String message = Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle));
+            String description = Helper.getTranslation(EXPORT_DIR_DELETE,
+                Collections.singletonList(exportFolder.getPath()));
+            Helper.setErrorMessage(message, description);
+            if (Objects.nonNull(exportDmsTask)) {
+                exportDmsTask.setException(new ExportException(message + ": " + description));
             }
-        } else {
-            destination = URI.create(destinationDirectory + atsPpnBand + "/");
-            // if the home exists, first delete and then create again
-            userHome = destination;
-            if (!fileService.delete(userHome)) {
-                Helper.setErrorMessage(
-                    Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
-                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Home")));
-                return false;
-            }
-            prepareUserDirectory(destination);
+            return false;
         }
+
+        fileService.createDirectory(hotfolder, processTitle);
+
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(1);
         }
 
-        return exportImagesAndMetsToDestinationUri(process, gdzfile, destination, userHome);
+        return exportImagesAndMetsToDestinationUri(process, gdzfile, exportFolder, hotfolder);
     }
 
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
@@ -212,15 +194,8 @@ public class ExportDms extends ExportMets {
             }
         }
 
-        /*
-         * export the file to the desired location, either directly into the import
-         * folder or into the user's home, then start the import thread
-         */
-        if (process.getProject().isUseDmsImport()) {
-            asyncExportWithImport(process, gdzfile, destination);
-        } else {
-            exportWithoutImport(process, gdzfile, destination);
-        }
+        // export the file to the import folder
+        asyncExportWithImport(process, gdzfile, destination);
         return true;
     }
 
@@ -249,22 +224,6 @@ public class ExportDms extends ExportMets {
                 return false;
             }
         }
-        return true;
-    }
-
-    private boolean createProcessFolder(URI userHomeProcess, URI userHome, String processTitle)
-            throws IOException {
-        // delete old import folder
-        if (!fileService.delete(userHomeProcess)) {
-            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
-                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
-            return false;
-        }
-
-        if (!fileService.fileExist(userHomeProcess)) {
-            fileService.createDirectory(userHome, Helper.getNormalizedTitle(processTitle));
-        }
-
         return true;
     }
 
@@ -319,18 +278,6 @@ public class ExportDms extends ExportMets {
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(100);
         }
-    }
-
-    private void exportWithoutImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI destinationDirectory)
-            throws IOException, DAOException {
-        if (MetadataFormat
-                .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
-            writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile);
-        } else {
-            gdzfile.write(destinationDirectory + atsPpnBand + ".xml");
-        }
-
-        Helper.setMessage(process.getTitle() + ": ", "exportFinished");
     }
 
     /**
@@ -393,40 +340,14 @@ public class ExportDms extends ExportMets {
         if (fileService.fileExist(tifOrdner) && !fileService.getSubUris(tifOrdner).isEmpty()) {
             URI zielTif = userHome.resolve(atsPpnBand + ordnerEndung + "/");
 
-            /* bei Agora-Import einfach den Ordner anlegen */
-            if (process.getProject().isUseDmsImport()) {
-                if (!fileService.fileExist(zielTif)) {
-                    fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
-                }
-            } else {
-                // if no async import, then create the folder with user
-                // authorization again
-                User user = ServiceManager.getUserService().getAuthenticatedUser();
-                try {
-                    fileService.createDirectoryForUser(zielTif, user.getLogin());
-                } catch (IOException e) {
-                    handleException(e, process.getTitle());
-                    throw e;
-                } catch (RuntimeException e) {
-                    if (Objects.nonNull(exportDmsTask)) {
-                        exportDmsTask.setException(e);
-                    }
-                    handleException(e, process.getTitle());
-                }
+            // with Agora import simply create the folder
+            if (!fileService.fileExist(zielTif)) {
+                fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
             }
 
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setWorkDetail(null);
             }
-        }
-    }
-
-    private void handleException(Exception e, String processTitle) {
-        if (Objects.nonNull(exportDmsTask)) {
-            exportDmsTask.setException(e);
-            logger.error("Could not create destination directory", e);
-        } else {
-            Helper.setErrorMessage(ERROR_EXPORT, new Object[] {processTitle }, logger, e);
         }
     }
 

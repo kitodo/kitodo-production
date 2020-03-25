@@ -100,7 +100,6 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.IndexAction;
-import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProcessDAO;
@@ -1935,18 +1934,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             URI destination = userHome.resolve(File.separator + atsPpnBand + directorySuffix);
 
             // with Agora import simply create the folder
-            if (project.isUseDmsImport()) {
-                if (!fileService.fileExist(destination)) {
-                    fileService.createDirectory(userHome, atsPpnBand + directorySuffix);
-                }
-            } else {
-                // if no Agora import, then create again the folder with user authorization
-                User user = ServiceManager.getUserService().getAuthenticatedUser();
-                try {
-                    fileService.createDirectoryForUser(destination, user.getLogin());
-                } catch (RuntimeException e) {
-                    Helper.setErrorMessage(ERROR_EXPORT, "could not create destination directory", logger, e);
-                }
+            if (!fileService.fileExist(destination)) {
+                fileService.createDirectory(userHome, atsPpnBand + directorySuffix);
             }
             copyProcessFiles(tifDirectory, destination, ImageHelper.dataFilter);
         }

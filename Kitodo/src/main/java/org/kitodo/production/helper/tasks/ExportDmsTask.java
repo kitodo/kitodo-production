@@ -11,8 +11,6 @@
 
 package org.kitodo.production.helper.tasks;
 
-import java.net.URI;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.export.ExportDms;
 
@@ -26,7 +24,6 @@ public class ExportDmsTask extends EmptyTask {
 
     private final ExportDms exportDms;
     private final Process process;
-    private final URI userHome;
 
     /**
      * ExportDmsTask constructor. Creates a ExportDmsTask.
@@ -35,14 +32,11 @@ public class ExportDmsTask extends EmptyTask {
      *            exportDMS configuration
      * @param process
      *            the process to export
-     * @param userHome
-     *            home directory of the user who started the export
      */
-    public ExportDmsTask(ExportDms exportDms, Process process, URI userHome) {
+    public ExportDmsTask(ExportDms exportDms, Process process) {
         super(process.getTitle());
         this.exportDms = exportDms;
         this.process = process;
-        this.userHome = userHome;
     }
 
     /**
@@ -56,7 +50,6 @@ public class ExportDmsTask extends EmptyTask {
         super(source);
         this.exportDms = source.exportDms;
         this.process = source.process;
-        this.userHome = source.userHome;
     }
 
     /**
@@ -69,7 +62,7 @@ public class ExportDmsTask extends EmptyTask {
     @Override
     public void run() {
         try {
-            exportDms.startExport(process, userHome, this);
+            exportDms.startExport(process, this);
         } catch (RuntimeException e) {
             setException(e);
         }
