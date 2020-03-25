@@ -297,52 +297,63 @@
             </p:rowExpansion>
 
         </p:dataTable>
+        <div id="dropDownMenus">
+            <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
+            <p:menu overlay="true" trigger="processesTabView:processesForm:actionsButton" my="left bottom" at="left top">
+                    <p:menuitem id="processingStatusUpSelection"
+                                value="#{msgs.processingStatusUp}"
+                                action="#{ProcessForm.setTaskStatusUpForSelection}"
+                                update="processesTabView:processesForm:processesTable"
+                                icon="fa fa-arrow-circle-o-up"/>
+                    <p:menuitem id="processingStatusDownSelection"
+                                value="#{msgs.processingStatusDown}"
+                                action="#{ProcessForm.setTaskStatusDownForSelection}"
+                                update="processesTabView:processesForm:processesTable"
+                                icon="fa fa-arrow-circle-o-down"/>
+                    <p:menuitem id="executeScriptSelection"
+                                value="#{msgs.executeKitodoScript}"
+                                onclick="PF('executeScriptSelectedDialog').show();"
+                                icon="fa fa-cogs"/>
+                    <p:menuitem id="downloadSelection"
+                                value="#{msgs.linkHomeDirectory}"
+                                action="#{ProcessForm.downloadToHomeForSelection}"
+                                update="processesTabView:processesForm:processesTable"
+                                icon="fa fa-download"/>
+                    <p:menuitem id="uploadAll"
+                                value="#{msgs.deleteLinkHomeDirectory}"
+                                action="#{ProcessForm.uploadFromHomeForAll}"
+                                update="processesTabView:processesForm:processesTable"
+                                icon="fa fa-upload">
+                        <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                        <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
+                                   icon="ui-icon-alert"/>
+                    </p:menuitem>
+                    <p:menuitem id="exportDmsSelection"
+                                value="#{msgs.exportDMS}"
+                                action="#{ProcessForm.exportDMSForSelection}"
+                                update="processesTabView:processesForm:processesTable"
+                                icon="fa fa-file-archive-o"/>
+                    <p:menuitem id="createExcel"
+                                value="#{msgs.createExcel}"
+                                action="#{ProcessForm.generateResult}"
+                                ajax="false"
+                                icon="fa fa-file-excel-o"/>
+                    <p:menuitem id="createPdf"
+                                value="#{msgs.createPdf}"
+                                action="#{ProcessForm.generateResultAsPdf}"
+                                ajax="false"
+                                icon="fa fa-file-pdf-o"/>
+                </p:menu>
+            <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
+            <p:menu overlay="true" trigger="processesTabView:processesForm:statisticButton" my="left bottom" at="left top">
+                <p:menuitem id="stateOfVolume"
+                            value="#{msgs.stateOfVolume}"
+                            action="#{ProcessForm.showStateOfVolume}"
+                            update="processesTabView:processesForm"
+                            icon="fa fa-arrow-circle-o-up"/>
+            </p:menu>
+        </div>
+        <p:pieChart rendered="#{ProcessForm.showStatistic}" model="#{ProcessForm.pieModel}" style="width: 100%; height: 500px;"/>
 
-        <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
-        <p:menu overlay="true" trigger="processesTabView:processesForm:actionsButton" my="left bottom" at="left top">
-            <p:menuitem id="processingStatusUpSelection"
-                        value="#{msgs.processingStatusUp}"
-                        action="#{ProcessForm.setTaskStatusUpForSelection}"
-                        update="processesTabView:processesForm:processesTable"
-                        icon="fa fa-arrow-circle-o-up"/>
-            <p:menuitem id="processingStatusDownSelection"
-                        value="#{msgs.processingStatusDown}"
-                        action="#{ProcessForm.setTaskStatusDownForSelection}"
-                        update="processesTabView:processesForm:processesTable"
-                        icon="fa fa-arrow-circle-o-down"/>
-            <p:menuitem id="executeScriptSelection"
-                        value="#{msgs.executeKitodoScript}"
-                        onclick="PF('executeScriptSelectedDialog').show();"
-                        icon="fa fa-cogs"/>
-            <p:menuitem id="downloadSelection"
-                        value="#{msgs.linkHomeDirectory}"
-                        action="#{ProcessForm.downloadToHomeForSelection}"
-                        update="processesTabView:processesForm:processesTable"
-                        icon="fa fa-download"/>
-            <p:menuitem id="uploadAll"
-                        value="#{msgs.deleteLinkHomeDirectory}"
-                        action="#{ProcessForm.uploadFromHomeForAll}"
-                        update="processesTabView:processesForm:processesTable"
-                        icon="fa fa-upload">
-                <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
-                           icon="ui-icon-alert"/>
-            </p:menuitem>
-            <p:menuitem id="exportDmsSelection"
-                        value="#{msgs.exportDMS}"
-                        action="#{ProcessForm.exportDMSForSelection}"
-                        update="processesTabView:processesForm:processesTable"
-                        icon="fa fa-file-archive-o"/>
-            <p:menuitem id="createExcel"
-                        value="#{msgs.createExcel}"
-                        action="#{ProcessForm.generateResult}"
-                        ajax="false"
-                        icon="fa fa-file-excel-o"/>
-            <p:menuitem id="createPdf"
-                        value="#{msgs.createPdf}"
-                        action="#{ProcessForm.generateResultAsPdf}"
-                        ajax="false"
-                        icon="fa fa-file-pdf-o"/>
-        </p:menu>
     </h:form>
 </ui:composition>
