@@ -19,9 +19,9 @@ public class ExportException extends RuntimeException {
     /**
      * Constructs an {@code ExportException} with the specified detail message.
      *
-     * @param s the detail message
+     * @param exceptionMessage the detail message
      */
-    public ExportException(String s) {
-        super(s);
+    public ExportException(String exceptionMessage) {
+        super(exceptionMessage);
     }
 }
