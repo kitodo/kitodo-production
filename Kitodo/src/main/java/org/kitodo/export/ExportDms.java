@@ -448,8 +448,12 @@ public class ExportDms extends ExportMets {
                 .collect(Collectors.toList());
         VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
 
+        String uriToDestination = destination.toString();
+        if (!uriToDestination.endsWith("/")) {
+            uriToDestination = uriToDestination.concat("/");
+        }
         for (Subfolder processDir : processDirs) {
-            URI dstDir = new URI(destination.toString() + File.separator
+            URI dstDir = new URI(uriToDestination
                     + variableReplacer.replace(processDir.getFolder().getRelativePath()));
             fileService.createDirectories(dstDir);
 
