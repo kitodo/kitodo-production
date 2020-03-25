@@ -1066,10 +1066,14 @@ h3#headerText {
     white-space: nowrap;
 }
 
-#processesTabView\:processesForm\:dropDownMenues {
+#dropDownMenus {
     float: left;
     margin-top: calc((var(--input-height) + var(--input-padding)) * -1);
     margin-left: var(--default-full-size);
+}
+
+#dropDownMenus button {
+    margin-right: var(--default-half-size);
 }
 
 .ui-datatable.default-layout > div.ui-datatable-tablewrapper > table  > tbody > tr > td.hierarchy-info {
