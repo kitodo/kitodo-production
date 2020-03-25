@@ -37,6 +37,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -45,6 +46,13 @@ public class ExportMets {
     protected LegacyPrefsHelper myPrefs;
 
     private static final Logger logger = LogManager.getLogger(ExportMets.class);
+
+    /**
+     * The field exportDmsTask holds an optional task instance. Its progress and
+     * its errors will be passed to the task manager screen (if available) for
+     * visualization.
+     */
+    protected EmptyTask exportDmsTask = null;
 
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
@@ -103,6 +111,9 @@ public class ExportMets {
         try {
             fileService.createDirectoryForUser(targetFolder, user.getLogin());
         } catch (IOException | RuntimeException e) {
+            if (Objects.nonNull(exportDmsTask)) {
+                exportDmsTask.setException(e);
+            }
             Helper.setErrorMessage("Export canceled, could not create destination directory: " + targetFolder, logger,
                 e);
         }
@@ -126,6 +137,9 @@ public class ExportMets {
         try {
             ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);
         } catch (URISyntaxException e) {
+            if (Objects.nonNull(exportDmsTask)) {
+                exportDmsTask.setException(e);
+            }
             Helper.setErrorMessage("Writing Mets file failed!", e.getLocalizedMessage(), logger, e);
             return false;
         }
@@ -145,6 +159,9 @@ public class ExportMets {
                     }
                     bufferedOutputStream.write(XsltHelper.transformXmlByXslt(source, xslFile).toByteArray());
                 } catch (FileNotFoundException | TransformerException e) {
+                    if (Objects.nonNull(exportDmsTask)) {
+                        exportDmsTask.setException(e);
+                    }
                     Helper.setErrorMessage("Writing Mets file failed!", e.getLocalizedMessage(), logger, e);
                     return false;
                 }
