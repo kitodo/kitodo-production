@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,6 +34,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.print.DocFlavor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,6 +52,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.helper.CustomListColumnInitializer;
@@ -65,6 +68,16 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.hbar.HorizontalBarChartDataSet;
+import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
+import org.primefaces.model.charts.optionconfig.title.Title;
+import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 
@@ -92,6 +105,7 @@ public class ProcessForm extends TemplateBaseForm {
     final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private PieChartModel pieModel;
+    private HorizontalBarChartModel stackedBarModel;
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
@@ -103,7 +117,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     @Inject
     private CustomListColumnInitializer initializer;
-    private boolean showStatistic;
+    private ChartMode chartMode;
 
     /**
      * Constructor.
@@ -1358,8 +1372,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Shows the state of volumes from the selected processes.
      */
     public void showStateOfVolume() {
-        showStatistic = true;
-        Map<String, Integer> volumeStates = new HashMap<>();
+        chartMode = ChartMode.BAR;
+        Map<String, Integer> volumeStates = new LinkedHashMap<>();
         for (Process selectedProcess : selectedProcesses) {
             String currentTaskTitle = ServiceManager.getProcessService().getCurrentTask(selectedProcess).getTitle();
             if (volumeStates.containsKey(currentTaskTitle)) {
@@ -1369,6 +1383,23 @@ public class ProcessForm extends TemplateBaseForm {
             }
         }
         createPieModel(volumeStates);
+    }
+
+    /**
+     * Shows the state of volumes from the selected processes.
+     */
+    public void showDurationOfTasks() {
+        chartMode = ChartMode.PIE;
+        LinkedHashMap<String, LinkedHashMap<String,Integer>> durationOfTasks = new LinkedHashMap<>();
+        for (Process selectedProcess : selectedProcesses) {
+            LinkedHashMap<String,Integer> taskValues = new LinkedHashMap<>();
+            for (Task task  : selectedProcess.getTasks()) {
+                long durationInDays = ServiceManager.getTaskService().getDurationInDays(task);
+                taskValues.put(task.getTitle(), Math.toIntExact(durationInDays));
+            }
+            durationOfTasks.put(selectedProcess.getTitle(), taskValues);
+        }
+        createBarModel(durationOfTasks);
     }
 
     private void createPieModel(Map<String, Integer> processValues) {
@@ -1388,12 +1419,62 @@ public class ProcessForm extends TemplateBaseForm {
         pieModel.setData(data);
     }
 
-    public boolean isShowStatistic() {
-        return showStatistic;
+    private void createBarModel(LinkedHashMap<String, LinkedHashMap<String,Integer>> taskValues){
+        stackedBarModel = new HorizontalBarChartModel();
+        ChartData data = new ChartData();
+        List<String> labels = new ArrayList<>();
+        boolean isTask = true;
+        int i = 0;
+        while (isTask) {
+            isTask = false;
+            HorizontalBarChartDataSet barDataSet = new HorizontalBarChartDataSet();
+            List<Number> taskDurations = new ArrayList<>();
+            for (String processTitle : taskValues.keySet()) {
+                LinkedHashMap<String, Integer> tasksForProcess = taskValues.get(processTitle);
+                ArrayList<Integer> durations = new ArrayList<>(tasksForProcess.values());
+                Integer taskDuration = 0;
+                if(durations.size()>i){
+                    barDataSet.setLabel(new ArrayList<>(tasksForProcess.keySet()).get(i));
+                    taskDuration = durations.get(i);
+                    isTask = true;
+                }
+                taskDurations.add(taskDuration);
+            }
+            barDataSet.setStack("Stack 0");
+            barDataSet.setBackgroundColor(bgColors.get(i));
+            barDataSet.setData(taskDurations);
+            data.addChartDataSet(barDataSet);
+            i++;
+        }
+        labels.addAll(taskValues.keySet());
+        data.setLabels(labels);
+        stackedBarModel.setData(data);
+
+        //Options
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        linearAxes.setStacked(true);
+        CartesianLinearTicks ticks = new CartesianLinearTicks();
+        ticks.setBeginAtZero(true);
+        linearAxes.setTicks(ticks);
+        cScales.addXAxesData(linearAxes);
+        options.setScales(cScales);
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setMode("index");
+        tooltip.setIntersect(false);
+        options.setTooltip(tooltip);
+
+        stackedBarModel.setOptions(options);
     }
 
-    public void setShowStatistic(boolean showStatistic) {
-        this.showStatistic = showStatistic;
+    public boolean isPieModel() {
+        return ChartMode.PIE.equals(chartMode);
+    }
+
+    public boolean isBarModel() {
+        return ChartMode.BAR.equals(chartMode);
     }
 
     public PieChartModel getPieModel() {
@@ -1402,5 +1483,13 @@ public class ProcessForm extends TemplateBaseForm {
 
     public void setPieModel(PieChartModel pieModel) {
         this.pieModel = pieModel;
+    }
+
+    public HorizontalBarChartModel getStackedBarModel() {
+        return stackedBarModel;
+    }
+
+    public void setStackedBarModel(HorizontalBarChartModel stackedBarModel) {
+        this.stackedBarModel = stackedBarModel;
     }
 }
