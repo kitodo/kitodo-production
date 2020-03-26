@@ -101,7 +101,7 @@ INSERT INTO `projectfilegroups` (`ProjectFileGroupID`, `name`, `path`, `mimetype
 (1, 'MAX', 'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/', 'image/jpeg', 'jpg', 1, '', 0),
 (2, 'DEFAULT', 'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/', 'image/jpeg', 'jpg', 1, '', 0),
 (3, 'THUMBS', 'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/', 'image/jpeg', 'jpg', 1, '', 0),
-(4, 'FULLTEXT', 'http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/', 'text/xml', 'xml', 1, '', 0),
+(4, 'FULLTEXT', 'http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/', 'application/alto+xml', 'xml', 1, '', 0),
 (5, 'DOWNLOAD', 'http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/', 'application/pdf', 'pdf', 1, '', 0);
 /*!40000 ALTER TABLE `projectfilegroups` ENABLE KEYS */;
 
