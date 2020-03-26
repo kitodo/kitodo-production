@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -204,7 +205,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             selectedMedia = new LinkedList<>();
             init();
             openProcesses.put(process.getId(), user);
-        } catch (IOException | DAOException | InvalidImagesException e) {
+        } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
         }
