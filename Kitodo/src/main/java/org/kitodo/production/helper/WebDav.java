@@ -140,9 +140,9 @@ public class WebDav implements Serializable {
                     logger.error("Can not create project directory {}", Paths.get(destinationPath).toUri());
                     return;
                 }
-                destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
-                fileService.deleteSymLink(destination);
             }
+            destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
+            fileService.deleteSymLink(destination);
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home" }, logger, e);
         }
