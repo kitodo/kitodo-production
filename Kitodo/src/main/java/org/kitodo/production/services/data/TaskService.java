@@ -811,20 +811,25 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                 || folder.getImageScale().isPresent() || folder.getImageSize().isPresent());
     }
 
+    /**
+     * Get the duration of a task in days.
+     * @param task the task to get the duration for
+     * @return the duration in days
+     */
     public long getDurationInDays(Task task) {
 
         Date end = task.getProcessingEnd();
-        if(Objects.isNull(end)){
+        if (Objects.isNull(end)) {
             end = new Date();
         }
         Date begin = task.getProcessingBegin();
-        if(Objects.isNull(begin)){
+        if (Objects.isNull(begin)) {
             begin = task.getProcessingTime();
-            if(Objects.isNull(begin)) {
+            if (Objects.isNull(begin)) {
                 begin = new Date();
             }
         }
         long differenceTime = end.getTime() - begin.getTime();
-        return differenceTime  / (1000 * 60 * 60 * 24);
+        return differenceTime / (1000 * 60 * 60 * 24);
     }
 }

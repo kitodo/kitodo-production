@@ -359,8 +359,8 @@
             </p:menu>
         </div>
 
-        <p:pieChart rendered="#{ProcessForm.isPieModel}" model="#{ProcessForm.pieModel}" style="width: 100%"/>
-        <p:barChart rendered="#{ProcessForm.isBarModel}" model="#{ProcessForm.stackedBarModel}" style="width: 100%"/>
+        <p:pieChart rendered="#{ProcessForm.showPieModel()}" model="#{ProcessForm.pieModel}" style="width: 100%"/>
+        <p:barChart rendered="#{ProcessForm.showBarModel()}" model="#{ProcessForm.stackedBarModel}" style="width: 100%"/>
 
     </h:form>
 </ui:composition>

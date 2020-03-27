@@ -1375,11 +1375,14 @@ public class ProcessForm extends TemplateBaseForm {
         chartMode = ChartMode.BAR;
         Map<String, Integer> volumeStates = new LinkedHashMap<>();
         for (Process selectedProcess : selectedProcesses) {
-            String currentTaskTitle = ServiceManager.getProcessService().getCurrentTask(selectedProcess).getTitle();
-            if (volumeStates.containsKey(currentTaskTitle)) {
-                volumeStates.put(currentTaskTitle, Math.addExact(volumeStates.get(currentTaskTitle), 1));
-            } else {
-                volumeStates.put(currentTaskTitle, 1);
+            Task currentTask = ServiceManager.getProcessService().getCurrentTask(selectedProcess);
+            if (Objects.nonNull(currentTask)) {
+                String currentTaskTitle = currentTask.getTitle();
+                if (volumeStates.containsKey(currentTaskTitle)) {
+                    volumeStates.put(currentTaskTitle, Math.addExact(volumeStates.get(currentTaskTitle), 1));
+                } else {
+                    volumeStates.put(currentTaskTitle, 1);
+                }
             }
         }
         createPieModel(volumeStates);
@@ -1419,8 +1422,7 @@ public class ProcessForm extends TemplateBaseForm {
         pieModel.setData(data);
     }
 
-    private void createBarModel(LinkedHashMap<String, LinkedHashMap<String,Integer>> taskValues){
-        stackedBarModel = new HorizontalBarChartModel();
+    private void createBarModel(LinkedHashMap<String, LinkedHashMap<String, Integer>> taskValues) {
         ChartData data = new ChartData();
         List<String> labels = new ArrayList<>();
         boolean isTask = true;
@@ -1433,7 +1435,7 @@ public class ProcessForm extends TemplateBaseForm {
                 LinkedHashMap<String, Integer> tasksForProcess = taskValues.get(processTitle);
                 ArrayList<Integer> durations = new ArrayList<>(tasksForProcess.values());
                 Integer taskDuration = 0;
-                if(durations.size()>i){
+                if (durations.size() > i) {
                     barDataSet.setLabel(new ArrayList<>(tasksForProcess.keySet()).get(i));
                     taskDuration = durations.get(i);
                     isTask = true;
@@ -1448,17 +1450,21 @@ public class ProcessForm extends TemplateBaseForm {
         }
         labels.addAll(taskValues.keySet());
         data.setLabels(labels);
+
+        stackedBarModel = new HorizontalBarChartModel();
         stackedBarModel.setData(data);
 
-        //Options
-        BarChartOptions options = new BarChartOptions();
-        CartesianScales cScales = new CartesianScales();
+        // Options
         CartesianLinearAxes linearAxes = new CartesianLinearAxes();
         linearAxes.setStacked(true);
         CartesianLinearTicks ticks = new CartesianLinearTicks();
         ticks.setBeginAtZero(true);
         linearAxes.setTicks(ticks);
+
+        CartesianScales cScales = new CartesianScales();
         cScales.addXAxesData(linearAxes);
+
+        BarChartOptions options = new BarChartOptions();
         options.setScales(cScales);
 
         Tooltip tooltip = new Tooltip();
@@ -1469,11 +1475,11 @@ public class ProcessForm extends TemplateBaseForm {
         stackedBarModel.setOptions(options);
     }
 
-    public boolean isPieModel() {
+    public boolean showPieModel() {
         return ChartMode.PIE.equals(chartMode);
     }
 
-    public boolean isBarModel() {
+    public boolean showBarModel() {
         return ChartMode.BAR.equals(chartMode);
     }
 
