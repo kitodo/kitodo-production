@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.sruimport;
+package org.kitodo.queryurlimport;
 
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.contentType;
@@ -43,7 +43,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class SRUImportTest {
+public class QueryURLImportTest {
 
     private static StubServer server;
     private static final String TEST_FILE_PATH = "src/test/resources/sruTestRecord.xml";
@@ -63,8 +63,8 @@ public class SRUImportTest {
     @Test
     public void shouldGetFullRecordById() throws IOException, SAXException, ParserConfigurationException,
             NoRecordFoundException {
-        SRUImport sruImport = new SRUImport();
-        DataRecord importRecord = sruImport.getFullRecordById(OPAC_NAME, RECORD_ID);
+        QueryURLImport queryURLImport = new QueryURLImport();
+        DataRecord importRecord = queryURLImport.getFullRecordById(OPAC_NAME, RECORD_ID);
         Assert.assertNotNull(importRecord);
         Assert.assertThat("Original data of data record has wrong class!",
                 importRecord.getOriginalData(), instanceOf(String.class));

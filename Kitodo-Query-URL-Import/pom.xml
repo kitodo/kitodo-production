@@ -19,8 +19,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <name>Kitodo - SRU Import</name>
-    <artifactId>kitodo-sru-import</artifactId>
+    <name>Kitodo - Query URL Import</name>
+    <artifactId>kitodo-query-url-import</artifactId>
 
     <dependencies>
         <dependency>
