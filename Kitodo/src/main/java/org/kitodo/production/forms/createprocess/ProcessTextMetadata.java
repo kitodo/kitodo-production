@@ -39,9 +39,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
 
     ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry value) {
         super(container, settings, Objects.isNull(settings) ? value.getKey() : settings.getLabel());
-        if (Objects.nonNull(value)) {
-            this.value = value.getValue();
-        }
+        this.value = Objects.isNull(value) ? "" : value.getValue();
     }
 
     private ProcessTextMetadata(ProcessTextMetadata template) {
@@ -79,6 +77,10 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
 
     @Override
     public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+        value = value.trim();
+        if (value.isEmpty()) {
+            return Collections.emptyList();
+        }
         /* if (!settings.isValid(value)) {
             throw new InvalidMetadataValueException(label, value);
         }*/
