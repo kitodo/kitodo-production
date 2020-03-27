@@ -1372,7 +1372,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Shows the state of volumes from the selected processes.
      */
     public void showStateOfVolume() {
-        chartMode = ChartMode.BAR;
+        chartMode = ChartMode.PIE;
         Map<String, Integer> volumeStates = new LinkedHashMap<>();
         for (Process selectedProcess : selectedProcesses) {
             Task currentTask = ServiceManager.getProcessService().getCurrentTask(selectedProcess);
@@ -1392,7 +1392,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Shows the state of volumes from the selected processes.
      */
     public void showDurationOfTasks() {
-        chartMode = ChartMode.PIE;
+        chartMode = ChartMode.BAR;
         LinkedHashMap<String, LinkedHashMap<String,Integer>> durationOfTasks = new LinkedHashMap<>();
         for (Process selectedProcess : selectedProcesses) {
             LinkedHashMap<String,Integer> taskValues = new LinkedHashMap<>();
@@ -1424,10 +1424,9 @@ public class ProcessForm extends TemplateBaseForm {
 
     private void createBarModel(LinkedHashMap<String, LinkedHashMap<String, Integer>> taskValues) {
         ChartData data = new ChartData();
-        List<String> labels = new ArrayList<>();
-        boolean isTask = true;
+        boolean isTask;
         int i = 0;
-        while (isTask) {
+        while (true) {
             isTask = false;
             HorizontalBarChartDataSet barDataSet = new HorizontalBarChartDataSet();
             List<Number> taskDurations = new ArrayList<>();
@@ -1442,13 +1441,17 @@ public class ProcessForm extends TemplateBaseForm {
                 }
                 taskDurations.add(taskDuration);
             }
-            barDataSet.setStack("Stack 0");
-            barDataSet.setBackgroundColor(bgColors.get(i));
-            barDataSet.setData(taskDurations);
-            data.addChartDataSet(barDataSet);
-            i++;
+            if (isTask) {
+                barDataSet.setStack("Stack 0");
+                barDataSet.setBackgroundColor(bgColors.get(i));
+                barDataSet.setData(taskDurations);
+                data.addChartDataSet(barDataSet);
+                i++;
+            } else {
+                break;
+            }
         }
-        labels.addAll(taskValues.keySet());
+        List<String> labels = new ArrayList<>(taskValues.keySet());
         data.setLabels(labels);
 
         stackedBarModel = new HorizontalBarChartModel();
@@ -1457,15 +1460,7 @@ public class ProcessForm extends TemplateBaseForm {
         // Options
         CartesianLinearAxes linearAxes = new CartesianLinearAxes();
         linearAxes.setStacked(true);
-        CartesianLinearTicks ticks = new CartesianLinearTicks();
-        ticks.setBeginAtZero(true);
-        linearAxes.setTicks(ticks);
-
-        CartesianScales cScales = new CartesianScales();
-        cScales.addXAxesData(linearAxes);
-
         BarChartOptions options = new BarChartOptions();
-        options.setScales(cScales);
 
         Tooltip tooltip = new Tooltip();
         tooltip.setMode("index");
