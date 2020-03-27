@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.PersistenceException;
+
 import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -115,7 +116,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                     session.flush();
                     transaction.commit();
                 }
-            } catch (HibernateException e) {
+            } catch (PersistenceException e) {
                 throw new DAOException(e);
             }
         }
@@ -215,7 +216,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             Query q = session.createQuery(query);
             addParameters(q, parameters);
             return (Long) q.uniqueResult();
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
@@ -230,7 +231,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     public Long count(String query) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
             return (Long) session.createQuery(query).uniqueResult();
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
@@ -256,7 +257,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 session.flush();
                 transaction.commit();
             }
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
@@ -290,7 +291,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     T retrieveObject(Class cls, Integer id) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
             return (T) session.get(cls, id);
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
@@ -313,7 +314,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             sessionQuery.setFirstResult(first);
             sessionQuery.setMaxResults(max);
             return sessionQuery.list();
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
@@ -330,7 +331,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             Query query = session.createQuery("FROM " + cls.getSimpleName() + " ORDER BY id ASC");
             return query.list();
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
@@ -351,7 +352,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
             session.flush();
             transaction.commit();
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
