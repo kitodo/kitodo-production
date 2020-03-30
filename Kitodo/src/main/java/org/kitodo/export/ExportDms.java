@@ -195,7 +195,7 @@ public class ExportDms extends ExportMets {
         }
 
         // export the file to the import folder
-        asyncExportWithImport(process, gdzfile, destination);
+        asyncExportWithImport(process, gdzfile, userHome);
         return true;
     }
 
