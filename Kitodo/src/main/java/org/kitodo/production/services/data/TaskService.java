@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -808,5 +809,27 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     private static Stream<Folder> removeFoldersThatCannotBeGenerated(Stream<Folder> folders) {
         return folders.filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
                 || folder.getImageScale().isPresent() || folder.getImageSize().isPresent());
+    }
+
+    /**
+     * Get the duration of a task in days.
+     * @param task the task to get the duration for
+     * @return the duration in days
+     */
+    public long getDurationInDays(Task task) {
+
+        Date end = task.getProcessingEnd();
+        if (Objects.isNull(end)) {
+            end = new Date();
+        }
+        Date begin = task.getProcessingBegin();
+        if (Objects.isNull(begin)) {
+            begin = task.getProcessingTime();
+            if (Objects.isNull(begin)) {
+                begin = new Date();
+            }
+        }
+        long differenceTime = end.getTime() - begin.getTime();
+        return differenceTime / (1000 * 60 * 60 * 24);
     }
 }
