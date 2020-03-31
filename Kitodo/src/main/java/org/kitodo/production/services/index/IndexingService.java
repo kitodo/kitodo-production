@@ -252,9 +252,19 @@ public class IndexingService {
      * @param type
      *            type objects that get indexed
      */
-    public void startIndexing(ObjectType type, PushContext pushContext) {
+    public void startIndexing(ObjectType type, PushContext pushContext) throws DataException, CustomResponseException {
+        SearchService searchService = searchServices.get(type);
+        int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         if (countDatabaseObjects.get(type) > 0) {
             List<IndexWorker> indexWorkerList = indexWorkers.get(type);
+            Long amountInIndex = searchService.count();
+            long indexBatches = 0L;
+
+            while (indexBatches < amountInIndex) {
+                searchService.removeLooseIndexData(searchService.findAllIDs(indexBatches, indexLimit));
+                indexBatches += indexLimit;
+            }
+
             for (IndexWorker worker : indexWorkerList) {
                 currentIndexWorker = worker;
                 runIndexing(currentIndexWorker, type, pushContext);

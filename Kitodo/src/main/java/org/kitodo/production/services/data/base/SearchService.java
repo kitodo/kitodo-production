@@ -153,6 +153,19 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return allIds;
     }
 
+    /**
+     * Get all ids from index in a given range.
+     *
+     * @return List of ids in given range
+     */
+    public List<Integer> findAllIDs(Long startIndex, int limit) throws DataException {
+        List<Integer> allIds = new ArrayList<>();
+        for (Map<String, Object> document : findAllDocuments(Math.toIntExact(startIndex), limit)) {
+            allIds.add(Integer.parseInt((String) document.get("id")));
+        }
+        return allIds;
+    }
+
 
     /**
      * Method saves document to the index of Elastic Search.
@@ -373,6 +386,20 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         QueryBuilder queryBuilder = matchAllQuery();
         try {
             return searcher.findDocuments(queryBuilder, null, null, Math.toIntExact(count()));
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
+    }
+    
+    /**
+     * Display all documents for exact type in a given range.
+     *
+     * @return list of all documents from that range
+     */
+    public List<Map<String, Object>> findAllDocuments(Integer offset, Integer size) throws DataException {
+        QueryBuilder queryBuilder = matchAllQuery();
+        try {
+            return searcher.findDocuments(queryBuilder, null, offset, size);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }

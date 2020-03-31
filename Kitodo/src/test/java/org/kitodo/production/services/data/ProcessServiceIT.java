@@ -564,6 +564,16 @@ public class ProcessServiceIT {
         List<Integer> allIDs = ServiceManager.getProcessService().findAllIDs();
         Assert.assertEquals("Wrong amount of id's in index", 7, allIDs.size());
         Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 2, 6, 4, 1, 7, 3)));
+
+        allIDs = ServiceManager.getProcessService().findAllIDs(0L, 5);
+        Assert.assertEquals("Wrong amount of id's in index", 5, allIDs.size());
+        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 2, 4, 1, 6)));
+
+
+        allIDs = ServiceManager.getProcessService().findAllIDs(5L, 10);
+        Assert.assertEquals("Wrong amount of id's in index", 2, allIDs.size());
+        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(7, 3)));
+
     }
 
 }
