@@ -1443,7 +1443,7 @@ public class ProcessForm extends TemplateBaseForm {
             }
             if (isTask) {
                 barDataSet.setStack("Stack 0");
-                barDataSet.setBackgroundColor(bgColors.get(i%bgColors.size()));
+                barDataSet.setBackgroundColor(bgColors.get(i % bgColors.size()));
                 barDataSet.setData(taskDurations);
                 data.addChartDataSet(barDataSet);
                 i++;
