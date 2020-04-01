@@ -1440,7 +1440,7 @@ Popup dialogs
     background: var(--green);
     text-shadow: 0 0 0 transparent;
     border-radius: var(--default-border-radius);
-    padding: 16px;
+    padding: 32px 16px 16px 16px;
 }
 
 .ui-growl-item p {
@@ -1455,8 +1455,15 @@ Popup dialogs
     box-shadow: var(--second-level-shadow);
 }
 
-.ui-growl-item .ui-growl-icon-close[style] {
-    display: none !important;
+.ui-growl-item .ui-growl-icon-close {
+    margin-right: 8px;
+    text-align: right;
+}
+
+.ui-growl-item .ui-growl-icon-close::after {
+    color: var(--pure-white);
+    content: "\f00d";
+    font-family: FontAwesome;
 }
 
 .ui-growl-item .ui-growl-image {
