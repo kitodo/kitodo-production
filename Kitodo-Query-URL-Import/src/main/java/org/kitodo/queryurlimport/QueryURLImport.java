@@ -147,7 +147,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
                         queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + rows + "&";
                     }
                     if (Objects.nonNull(interfaceType.getQueryString())) {
-                        queryString = queryString + equalsOperand;
+                        queryString = queryString + interfaceType.getQueryString() + equalsOperand;
                     }
                 }
                 queryString = queryString + createSearchFieldString(searchFieldMap);
