@@ -13,7 +13,7 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +26,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 @Named("MassImportForm")
-@SessionScoped
+@ViewScoped
 public class MassImportForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
