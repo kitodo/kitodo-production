@@ -135,7 +135,7 @@ public class UserForm extends BaseForm {
      */
     public String save() {
         Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
-        if(passwordViolations.isEmpty()) {
+        if (!passwordViolations.isEmpty()) {
             for (ConstraintViolation<KitodoPassword> passwordViolation : passwordViolations) {
                 Helper.setErrorMessage(passwordViolation.getMessage());
             }
