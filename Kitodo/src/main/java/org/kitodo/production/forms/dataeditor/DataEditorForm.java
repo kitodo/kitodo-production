@@ -55,6 +55,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
@@ -205,7 +206,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             selectedMedia = new LinkedList<>();
             init();
             openProcesses.put(process.getId(), user);
-        } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
+        } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException | RulesetNotFoundException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
         }
@@ -228,7 +229,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
-    private RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
+    private RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException, RulesetNotFoundException {
         final long begin = System.nanoTime();
         String metadataLanguage = user.getMetadataLanguage();
         priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);

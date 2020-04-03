@@ -52,6 +52,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
@@ -264,8 +265,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if there is a "CurrentNo" item in the projects configuration,
      *             but its value cannot be evaluated to an integer
      */
-    public void nextStep()
-            throws ConfigurationException, DAOException, DataException, IOException, ProcessGenerationException, DoctypeMissingException {
+    public void nextStep() throws ConfigurationException, DAOException, DataException, IOException,
+            ProcessGenerationException, DoctypeMissingException, RulesetNotFoundException {
 
         if (currentStep == 0) {
             initialize();
@@ -286,7 +287,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      */
-    private void initialize() throws ConfigurationException, IOException, DoctypeMissingException {
+    private void initialize() throws ConfigurationException, IOException, DoctypeMissingException, RulesetNotFoundException {
         final long begin = System.nanoTime();
 
         overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
@@ -321,7 +322,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      */
-    private void initializeRulesetFields(String newspaperType) throws ConfigurationException, IOException {
+    private void initializeRulesetFields(String newspaperType) throws ConfigurationException, IOException, RulesetNotFoundException {
         RulesetManagementInterface ruleset = rulesetService.openRuleset(overallProcess.getRuleset());
         StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, "", ENGLISH);
         StructuralElementViewInterface yearDivisionView = nextSubView(ruleset, newspaperView);
@@ -610,7 +611,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private boolean openExistingYearProcess(String yearMark)
-            throws DAOException, DataException, ProcessGenerationException, IOException {
+            throws DAOException, IOException {
         final long begin = System.nanoTime();
 
         boolean couldOpenExistingProcess = false;

@@ -23,15 +23,15 @@
         <p:outputLabel for="catalogueSelect"
                        value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
         <p:selectOneMenu id="catalogueSelect"
-                         immediate="true"
                          value="#{MassImportForm.selectedCatalog}">
             <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
-            <f:selectItems value="#{CreateProcessForm.importTab.catalogs}" var="step" itemLabel="#{step}"
-                           itemValue="#{step}"/>
+            <f:selectItems value="#{CreateProcessForm.importTab.catalogs}" var="catalog" itemLabel="#{catalog}"
+                           itemValue="#{catalog}"/>
+            <p:ajax update="fileMassImportForm"/>
         </p:selectOneMenu>
     </div>
         <div>
-            <p:fileUpload value="#{MassImportForm.file}" fileUploadListener="#{MassImportForm.handleFileUpload}" allowTypes="/(\.|\/)(csv)$/" skinSimple="true"/>
+            <p:fileUpload value="#{MassImportForm.file}" rendered="#{MassImportForm.selectedCatalog ne null}" fileUploadListener="#{MassImportForm.handleFileUpload}" allowTypes="/(\.|\/)(csv)$/" skinSimple="true"/>
         </div>
     </p:row>
     </p:panelGrid>

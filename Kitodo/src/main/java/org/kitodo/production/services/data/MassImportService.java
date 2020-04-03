@@ -20,12 +20,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.UploadedFile;
 
 public class MassImportService {
 
-    private static volatile MassImportService instance = null;
+    private static MassImportService instance = null;
 
     /**
      * Return singleton variable of type MassImportService.
@@ -54,7 +55,8 @@ public class MassImportService {
      * @param projectId the project id.
      * @param templateId the template id.
      */
-    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId) throws IOException {
+    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId)
+            throws IOException, ImportException {
         CSVReader reader = null;
         List<String> ppns = new ArrayList<>();
         reader = new CSVReader(new InputStreamReader(file.getInputstream()));
@@ -73,17 +75,17 @@ public class MassImportService {
      * @param projectId the project id.
      * @param templateId the template id.
      */
-    public void importFromText(String selectedCatalog, String ppnString, int projectId, int templateId) {
+    public void importFromText(String selectedCatalog, String ppnString, int projectId, int templateId)
+            throws ImportException {
         List<String> ppns = Arrays.asList(ppnString.split(","));
         importPPNs(selectedCatalog, ppns, projectId, templateId);
-
     }
 
-    private void importPPNs(String selectedCatalog, List<String> ppns, int projectId, int templateId) {
+    private void importPPNs(String selectedCatalog, List<String> ppns, int projectId, int templateId)
+            throws ImportException {
         ImportService importService = ServiceManager.getImportService();
         for (String ppn : ppns) {
-            // import
+            importService.importProcess(ppn, projectId, templateId, selectedCatalog);
         }
     }
-
 }

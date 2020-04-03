@@ -13,9 +13,13 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.MassImportService;
@@ -23,8 +27,10 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 @Named("MassImportForm")
-@SessionScoped
+@ViewScoped
 public class MassImportForm extends BaseForm {
+
+    private static final Logger logger = LogManager.getLogger(MassImportForm.class);
 
     private int projectId;
     private int templateId;
@@ -50,6 +56,8 @@ public class MassImportForm extends BaseForm {
             massImportService.importFromCSV(selectedCatalog, file, projectId, templateId);
         } catch (IOException e) {
             Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
+        } catch (ImportException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -57,7 +65,11 @@ public class MassImportForm extends BaseForm {
      * Import processes from textField.
      */
     public void importFromText() {
-        massImportService.importFromText(selectedCatalog, ppnString, projectId, templateId);
+        try {
+            massImportService.importFromText(selectedCatalog, ppnString, projectId, templateId);
+        } catch (ImportException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -104,7 +116,7 @@ public class MassImportForm extends BaseForm {
      * @return value of selectedCatalog
      */
     public String getSelectedCatalog() {
-        return selectedCatalog;
+        return StringUtils.isBlank(selectedCatalog) ? null : selectedCatalog;
     }
 
     /**
@@ -142,7 +154,7 @@ public class MassImportForm extends BaseForm {
      * @return value of ppnString
      */
     public String getPpnString() {
-        return ppnString;
+        return StringUtils.isBlank(ppnString) ? null : ppnString;
     }
 
     /**

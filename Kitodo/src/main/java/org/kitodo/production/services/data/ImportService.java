@@ -12,11 +12,13 @@
 package org.kitodo.production.services.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +40,8 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.tools.picocli.CommandLine;
+import org.jboss.weld.environment.util.Collections;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -65,11 +70,13 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
@@ -345,7 +352,7 @@ public class ImportService {
     }
 
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
-                                                  int projectID, int templateID)
+                                                 int projectID, int templateID)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
 
@@ -1021,5 +1028,34 @@ public class ImportService {
         Process process = tempProcess.getProcess();
         addProperties(tempProcess.getProcess(), template, processDetails, docType, tempProcess.getProcess().getTitle());
         updateTasks(process);
+    }
+
+    /**
+     * Imports a process and saves it to database.
+     * @param ppn the ppn to import
+     * @param projectId the projectId
+     * @param templateId the templateId
+     * @param selectedCatalog the selected catalog to import from
+     * @return the importedProcess
+     */
+    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws ImportException {
+        LinkedList<TempProcess> processList = new LinkedList<>();
+        Template template = null;
+        try {
+            template = ServiceManager.getTemplateService().getById(templateId);
+            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+            List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+            importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId);
+            processTempProcess(processList.get(0), template,
+                ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
+            ServiceManager.getProcessService().save(processList.get(0).getProcess());
+        } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
+                | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
+                | URISyntaxException | SAXException | RulesetNotFoundException | InvalidMetadataValueException
+                | NoSuchMetadataFieldException | DataException e) {
+            throw new ImportException(
+                    Helper.getTranslation("errorImporting", Arrays.asList(Helper.getTranslation("process"), ppn)));
+        }
+        return processList.get(0).getProcess();
     }
 }

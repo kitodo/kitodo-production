@@ -99,4 +99,32 @@
             <searchField label="Keyword" value="ead.keyword" />
         </searchFields>
     </catalogue>
+    <catalogue title="K10Plus" description="K10Plus OPAC">
+        <interfaceType>sru</interfaceType>
+        <returnFormat>xml</returnFormat>
+        <metadataFormat>PICA</metadataFormat>
+        <mappingFile>pica2kitodo.xsl</mappingFile>
+        <config>
+            <param name="host" value="localhost" />
+            <param name="scheme" value="http" />
+            <param name="path" value="/sru" />
+            <param name="port" value="8888" />
+        </config>
+        <identifierParameter value="pica.ppn" />
+        <urlParameters>
+            <param name="version" value="1.1" />
+            <param name="operation" value="searchRetrieve" />
+            <param name="recordSchema" value="picaxml" />
+        </urlParameters>
+        <searchFields>
+            <searchField label="Titel" value="pica.tit"/>
+            <searchField label="PPN" value="pica.ppn"/>
+            <searchField label="Author" value="pica.per"/>
+            <searchField label="ISSN" value="pica.iss"/>
+            <searchField label="ISBN" value="pica.isb"/>
+            <searchField label="Erscheinungsort" value="pica.plc"/>
+            <searchField label="Erscheinungsjahr" value="pica.jah"/>
+            <searchField label="Volltext" value="pica.txt"/>
+        </searchFields>
+    </catalogue>
 </opacCatalogues>

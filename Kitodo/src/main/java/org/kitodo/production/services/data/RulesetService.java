@@ -12,12 +12,16 @@
 package org.kitodo.production.services.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,8 +40,10 @@ import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.RulesetDTO;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
@@ -223,11 +229,24 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
      *            database object that references the ruleset
      * @return a Ruleset Management in which the ruleset has been loaded
      */
-    public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
-        String rulesetPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), ruleset.getFile())
-                .toString();
-        RulesetManagementInterface openRuleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        openRuleset.load(new File(rulesetPath));
-        return openRuleset;
+    public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException, RulesetNotFoundException {
+        return openRulesetFile(ruleset.getFile());
+    }
+
+    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException, RulesetNotFoundException {
+        final long begin = System.nanoTime();
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        try {
+            ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+        } catch (FileNotFoundException e) {
+            List<String> param = new ArrayList<>();
+            param.add(fileName);
+            throw new RulesetNotFoundException(Helper.getTranslation("rulesetNotFound", param));
+        }
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+        return ruleset;
     }
 }

@@ -22,17 +22,19 @@
                 <div>
                     <p:outputLabel for="catalogueSelect"
                                    value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
-                    <p:selectOneMenu id="catalogueSelect"
-                                     immediate="true"
+                    <p:selectOneMenu id="catalogueSelect" required="true"
                                      value="#{MassImportForm.selectedCatalog}">
                         <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
                         <f:selectItems value="#{CreateProcessForm.importTab.catalogs}" var="step" itemLabel="#{step}"
                                        itemValue="#{step}"/>
+                        <p:ajax update="textMassImportForm"/>
                     </p:selectOneMenu>
                 </div>
                 <div>
-                    <p:inputTextarea id="ppnMassImport" value="#{MassImportForm.ppnString}" />
-                    <p:commandButton id="importFromText"
+                    <p:inputTextarea id="ppnMassImport" value="#{MassImportForm.ppnString}" >
+                        <p:ajax event="keyup" update="textMassImportForm:importFromText" />
+                    </p:inputTextarea>
+                    <p:commandButton id="importFromText" disabled="#{MassImportForm.ppnString eq null}"
                                      value="#{msgs.massImport}"
                                      icon="fa fa-align-center"
                                      iconPos="right"
