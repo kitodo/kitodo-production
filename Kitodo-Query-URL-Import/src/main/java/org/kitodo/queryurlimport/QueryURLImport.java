@@ -45,6 +45,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -389,7 +390,13 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static LinkedHashMap<String, String> getSearchFieldMap(Map<String, String> searchFields) {
         LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : searchFields.entrySet()) {
-            searchFieldMap.put(searchFieldMapping.get(entry.getKey()), entry.getValue());
+            String searchField = searchFieldMapping.get(entry.getKey());
+            if (StringUtils.isNotBlank(idPrefix) && StringUtils.isNotBlank(idParameter)
+                    && idParameter.equals(searchField) && !entry.getValue().startsWith(idPrefix)) {
+                searchFieldMap.put(searchField, idPrefix + entry.getValue());
+            } else {
+                searchFieldMap.put(searchField, entry.getValue());
+            }
         }
         return searchFieldMap;
     }
