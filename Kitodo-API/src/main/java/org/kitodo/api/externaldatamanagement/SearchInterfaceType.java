@@ -13,9 +13,10 @@ package org.kitodo.api.externaldatamanagement;
 
 public enum SearchInterfaceType {
     SRU("sru", "http://www.loc.gov/zing/srw/", "record", "startRecord",
-            "maximumRecords", "query", "numberOfRecords"),
+            "maximumRecords", "query", "numberOfRecords",
+            ".//*[local-name()='diagnostic']/*[local-name()='message']/text()"),
     OAI("oai", "http://www.openarchives.org/OAI/2.0/", "record", null,
-            null, null, null);
+            null, null, null, ".//*[local-name()='error']/text()");
 
     private String typeString;
     private String namespace;
@@ -24,9 +25,10 @@ public enum SearchInterfaceType {
     private String maxRecordsString;
     private String queryString;
     private String numberOfRecordsString;
+    private String errorMessageXpath;
 
     SearchInterfaceType(String type, String namespace, String record, String startRecord, String maxRecords,
-                        String query, String numberOfRecords) {
+                        String query, String numberOfRecords, String errorMessageXpath) {
         this.typeString = type;
         this.namespace = namespace;
         this.recordString = record;
@@ -34,6 +36,7 @@ public enum SearchInterfaceType {
         this.maxRecordsString = maxRecords;
         this.queryString = query;
         this.numberOfRecordsString = numberOfRecords;
+        this.errorMessageXpath = errorMessageXpath;
     }
 
     public String getTypeString() {
@@ -62,5 +65,9 @@ public enum SearchInterfaceType {
 
     public String getNumberOfRecordsString() {
         return this.numberOfRecordsString;
+    }
+
+    public String getErrorMessageXpath() {
+        return this.errorMessageXpath;
     }
 }

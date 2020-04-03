@@ -24,6 +24,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.jdom2.output.Format;
@@ -31,6 +32,7 @@ import org.jdom2.output.XMLOutputter;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,6 +70,14 @@ abstract class XmlResponseHandler {
                 searchResult.setNumberOfHits(extractNumberOfRecords(resultDocument, interfaceType));
             } else {
                 searchResult.setNumberOfHits(searchResult.getHits().size());
+            }
+            if (searchResult.getNumberOfHits() < 1 && Objects.nonNull(interfaceType.getErrorMessageXpath())) {
+                String errorMessage = getTextContent(resultDocument.getDocumentElement(),
+                        interfaceType.getErrorMessageXpath());
+                if (StringUtils.isNotBlank(errorMessage)) {
+                    errorMessage = interfaceType.getTypeString().toUpperCase() + " error: '" + errorMessage + "'";
+                    throw new CatalogException(errorMessage);
+                }
             }
         }
         return searchResult;
