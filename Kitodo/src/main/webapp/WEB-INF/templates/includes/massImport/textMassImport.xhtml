@@ -31,8 +31,10 @@
                     </p:selectOneMenu>
                 </div>
                 <div>
-                    <p:inputTextarea id="ppnMassImport" value="#{MassImportForm.ppnString}" />
-                    <p:commandButton id="importFromText"
+                    <p:inputTextarea id="ppnMassImport" value="#{MassImportForm.ppnString}" >
+                        <p:ajax event="keyup" update="textMassImportForm:importFromText" />
+                    </p:inputTextarea>
+                    <p:commandButton id="importFromText" disabled="#{MassImportForm.ppnString eq null}"
                                      value="#{msgs.massImport}"
                                      icon="fa fa-align-center"
                                      iconPos="right"

@@ -154,7 +154,7 @@ public class MassImportForm extends BaseForm {
      * @return value of ppnString
      */
     public String getPpnString() {
-        return ppnString;
+        return StringUtils.isBlank(ppnString)? null : ppnString;
     }
 
     /**
