@@ -31,7 +31,7 @@
         </p:selectOneMenu>
     </div>
         <div>
-            <p:fileUpload value="#{MassImportForm.file}" fileUploadListener="#{MassImportForm.handleFileUpload}" allowTypes="/(\.|\/)(csv)$/" skinSimple="true"/>
+            <p:fileUpload value="#{MassImportForm.file}" rendered="#{MassImportForm.selectedCatalog ne null}" fileUploadListener="#{MassImportForm.handleFileUpload}" allowTypes="/(\.|\/)(csv)$/" skinSimple="true"/>
         </div>
     </p:row>
     </p:panelGrid>
