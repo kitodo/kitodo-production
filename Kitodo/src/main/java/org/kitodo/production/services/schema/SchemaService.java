@@ -161,7 +161,9 @@ public class SchemaService {
     private void removeFLocatsForUnwantedUses(Process process, List<Folder> folders,
             MediaUnit mediaUnit,
             String canonical) {
-        for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
+        for (Iterator<Entry<MediaVariant, URI>> mediaFilesForMediaVariants = mediaUnit.getMediaFiles().entrySet()
+                .iterator(); mediaFilesForMediaVariants.hasNext();) {
+            Entry<MediaVariant, URI> mediaFileForMediaVariant = mediaFilesForMediaVariants.next();
             String use = mediaFileForMediaVariant.getKey().getUse();
             Optional<Folder> optionalFolderForUse = folders.parallelStream()
                     .filter(folder -> use.equals(folder.getFileGroup())).findAny();
@@ -170,7 +172,7 @@ public class SchemaService {
                     || (optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.EXISTING)
                             && new Subfolder(process, optionalFolderForUse.get()).getURIIfExists(canonical)
                                     .isPresent())) {
-                mediaUnit.getMediaFiles().remove(mediaFileForMediaVariant.getKey());
+                mediaFilesForMediaVariants.remove();
             }
         }
     }
