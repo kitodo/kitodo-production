@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -27,6 +28,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,8 +49,8 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.SecuritySession;
+import org.kitodo.production.security.password.KitodoPassword;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
-import org.kitodo.production.security.password.ValidPassword;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
 
@@ -58,7 +63,6 @@ public class UserForm extends BaseForm {
     private transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient UserService userService = ServiceManager.getUserService();
 
-    @ValidPassword
     private String passwordToEncrypt;
 
     private String oldPassword;
@@ -130,8 +134,15 @@ public class UserForm extends BaseForm {
      * @return page or empty String
      */
     public String save() {
-        String login = this.userObject.getLogin();
+        Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
+        if (!passwordViolations.isEmpty()) {
+            for (ConstraintViolation<KitodoPassword> passwordViolation : passwordViolations) {
+                Helper.setErrorMessage(passwordViolation.getMessage());
+            }
+            return this.stayOnCurrentPage;
+        }
 
+        String login = this.userObject.getLogin();
         if (!isUserExistingOrLoginValid(login)) {
             Helper.setErrorMessage("loginNotValid", new Object[] {login });
             return this.stayOnCurrentPage;
@@ -166,6 +177,13 @@ public class UserForm extends BaseForm {
 
     private boolean isUserExistingOrLoginValid(String login) {
         return Objects.nonNull(userObject.getId()) || userService.isLoginValid(login);
+    }
+
+    private Set<ConstraintViolation<KitodoPassword>> getPasswordViolations() {
+        KitodoPassword validPassword = new KitodoPassword(passwordToEncrypt);
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        return validator.validate(validPassword);
     }
 
     private boolean isMissingClient() {
