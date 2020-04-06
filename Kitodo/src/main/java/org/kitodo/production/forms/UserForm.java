@@ -134,12 +134,14 @@ public class UserForm extends BaseForm {
      * @return page or empty String
      */
     public String save() {
-        Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
-        if (!passwordViolations.isEmpty()) {
-            for (ConstraintViolation<KitodoPassword> passwordViolation : passwordViolations) {
-                Helper.setErrorMessage(passwordViolation.getMessage());
+        if (Objects.isNull(userObject.getId())) {
+            Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
+            if (!passwordViolations.isEmpty()) {
+                for (ConstraintViolation<KitodoPassword> passwordViolation : passwordViolations) {
+                    Helper.setErrorMessage(passwordViolation.getMessage());
+                }
+                return this.stayOnCurrentPage;
             }
-            return this.stayOnCurrentPage;
         }
 
         String login = this.userObject.getLogin();
