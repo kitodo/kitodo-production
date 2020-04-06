@@ -101,6 +101,14 @@
             <div>
                 <p:outputLabel for="password" value="#{msgs.password}" rendered="#{isCreateMode}"/>
                 <p:password id="password" class="input" rendered="#{isCreateMode}"
+                            match="passwordValidation" validatorMessage="#{msgs.passwordsDontMatch}"
+                            placeholder="#{msgs.password}" value="#{UserForm.passwordToEncrypt}"
+                            onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
+                            redisplay="true"/>
+            </div>
+            <div>
+                <p:outputLabel for="passwordValidation" value="#{msgs.confirmNewPassword}" rendered="#{isCreateMode}"/>
+                <p:password id="passwordValidation" class="input" rendered="#{isCreateMode}"
                             placeholder="#{msgs.password}" value="#{UserForm.passwordToEncrypt}"
                             onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
                             redisplay="true"/>
