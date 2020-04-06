@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.sruimport;
+package org.kitodo.queryurlimport;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,12 +24,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,10 +41,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 abstract class XmlResponseHandler {
-
-    private static final String SRW_NAMESPACE = "http://www.loc.gov/zing/srw/";
-    private static final String SRW_RECORD_TAG = "record";
-    private static final String SRW_NUMBER_OF_RECORDS_TAG = "numberOfRecords";
 
     private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private static XMLOutputter xmlOutputter = new XMLOutputter();
@@ -62,12 +61,24 @@ abstract class XmlResponseHandler {
      * @param response HttpResponse for which a SearchResult is created
      * @return SearchResult created from given HttpResponse
      */
-    SearchResult getSearchResult(HttpResponse response) {
+    SearchResult getSearchResult(HttpResponse response, SearchInterfaceType interfaceType) {
         SearchResult searchResult = new SearchResult();
         Document resultDocument = transformResponseToDocument(response);
         if (Objects.nonNull(resultDocument)) {
-            searchResult.setHits(extractHits(resultDocument));
-            searchResult.setNumberOfHits(extractNumberOfRecords(resultDocument));
+            searchResult.setHits(extractHits(resultDocument, interfaceType));
+            if (Objects.nonNull(interfaceType.getNumberOfRecordsString())) {
+                searchResult.setNumberOfHits(extractNumberOfRecords(resultDocument, interfaceType));
+            } else {
+                searchResult.setNumberOfHits(searchResult.getHits().size());
+            }
+            if (searchResult.getNumberOfHits() < 1 && Objects.nonNull(interfaceType.getErrorMessageXpath())) {
+                String errorMessage = getTextContent(resultDocument.getDocumentElement(),
+                        interfaceType.getErrorMessageXpath());
+                if (StringUtils.isNotBlank(errorMessage)) {
+                    errorMessage = interfaceType.getTypeString().toUpperCase() + " error: '" + errorMessage + "'";
+                    throw new CatalogException(errorMessage);
+                }
+            }
         }
         return searchResult;
     }
@@ -86,7 +97,7 @@ abstract class XmlResponseHandler {
                 throw new ConfigException(e.getMessage());
             }
         }
-        throw new ConfigException("SRU response is null");
+        throw new ConfigException("Query response is null");
     }
 
     private static Document parseXML(InputStream xmlSteam) {
@@ -98,9 +109,9 @@ abstract class XmlResponseHandler {
         }
     }
 
-    private LinkedList<SingleHit> extractHits(Document document) {
+    private LinkedList<SingleHit> extractHits(Document document, SearchInterfaceType type) {
         LinkedList<SingleHit> hits = new LinkedList<>();
-        NodeList records = document.getElementsByTagNameNS(SRW_NAMESPACE, SRW_RECORD_TAG);
+        NodeList records = document.getElementsByTagNameNS(type.getNamespace(), type.getRecordString());
         for (int i = 0; i < records.getLength(); i++) {
             Element recordElement = (Element) records.item(i);
             hits.add(new SingleHit(getRecordTitle(recordElement), getRecordID(recordElement)));
@@ -108,8 +119,8 @@ abstract class XmlResponseHandler {
         return hits;
     }
 
-    private static int extractNumberOfRecords(Document document) {
-        NodeList numberOfRecordNodes = document.getElementsByTagNameNS(SRW_NAMESPACE, SRW_NUMBER_OF_RECORDS_TAG);
+    private static int extractNumberOfRecords(Document document, SearchInterfaceType type) {
+        NodeList numberOfRecordNodes = document.getElementsByTagNameNS(type.getNamespace(), type.getNumberOfRecordsString());
         assert numberOfRecordNodes.getLength() == 1;
         Element numberOfRecordsElement = (Element) numberOfRecordNodes.item(0);
         if (Objects.nonNull(numberOfRecordsElement)) {

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.sruimport;
+package org.kitodo.queryurlimport;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

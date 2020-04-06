@@ -23,6 +23,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ParameterNotFoundException;
@@ -57,6 +58,21 @@ public class OPACConfig {
             }
             return parameterValue;
         }
+    }
+
+    /**
+     * Retrieve the "interfaceType" of the catalog identified by it title.
+     * @param catalogName String String identifying the catalog by its title
+     * @return String name of interfaceType
+     */
+    public static SearchInterfaceType getInterfaceType(String catalogName) {
+        String interfaceType = getCatalog(catalogName).getString("interfaceType");
+        for (SearchInterfaceType type : SearchInterfaceType.values()) {
+            if (type.getTypeString().equals(interfaceType)) {
+                return type;
+            }
+        }
+        return null;
     }
 
     /**
@@ -130,6 +146,16 @@ public class OPACConfig {
      */
     public static String getIdentifierParameter(String catalogName) {
         return getCatalog(catalogName).getString("identifierParameter[@value]");
+    }
+
+    /**
+     * Load the identifier prefix that needs to be prepended to IDs in order retrieving
+     * individual records by ID from the specified catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return String containing identifier prefix
+     */
+    public static String getIdentifierPrefix(String catalogName) {
+        return getCatalog(catalogName).getString("identifierParameter[@prefix]");
     }
 
     /**

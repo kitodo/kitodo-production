@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.sruimport;
+package org.kitodo.queryurlimport;
 
 import static org.apache.http.HttpStatus.SC_OK;
 
@@ -45,6 +45,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -56,6 +57,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
+import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.DataRecord;
@@ -73,9 +75,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class SRUImport implements ExternalDataImportInterface {
+public class QueryURLImport implements ExternalDataImportInterface {
 
-    private static final Logger logger = LogManager.getLogger(SRUImport.class);
+    private static final Logger logger = LogManager.getLogger(QueryURLImport.class);
     private static final String NAME_ATTRIBUTE = "[@name]";
     private static final String VALUE_ATTRIBUTE = "[@value]";
     private static final String LABEL_ATTRIBUTE = "[@label]";
@@ -89,17 +91,19 @@ public class SRUImport implements ExternalDataImportInterface {
     private static final String METADATA_FORMAT_TAG = "metadataFormat";
     private static final String MODS_RECORD_TAG = "mods";
 
+    private static SearchInterfaceType interfaceType;
     private static String protocol;
     private static String host;
     private static String path;
     private static int port = -1;
     private static String idParameter;
+    private static String idPrefix;
     private static String fileFormat;
     private static String metadataFormat;
     private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private static HashMap<String, String> searchFieldMapping = new HashMap<>();
     private static String equalsOperand = "=";
-    private static HttpClient sruClient = HttpClientBuilder.create().build();
+    private static HttpClient httpClient = HttpClientBuilder.create().build();
 
     private static HashMap<String, XmlResponseHandler> formatHandlers;
 
@@ -130,17 +134,24 @@ public class SRUImport implements ExternalDataImportInterface {
         if (searchFieldMapping.keySet().containsAll(searchFields.keySet())) {
             // Query parameters for HTTP request
             LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
-
             // Search fields and terms of query
-            LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
-            for (Map.Entry<String, String> entry : searchFields.entrySet()) {
-                searchFieldMap.put(searchFieldMapping.get(entry.getKey()), entry.getValue());
-            }
+            LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchFields);
+
             try {
                 URI queryURL = createQueryURI(queryParameters);
-                String queryString = queryURL.toString();
-                queryString = queryString + "&startRecord=0&maximumRecords=" + rows + "&query="
-                        + createSearchFieldString(searchFieldMap);
+                String queryString = queryURL.toString() + "&";
+                if (Objects.nonNull(interfaceType)) {
+                    if (Objects.nonNull(interfaceType.getStartRecordString())) {
+                        queryString = queryString + interfaceType.getStartRecordString() + equalsOperand + "0&";
+                    }
+                    if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
+                        queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + rows + "&";
+                    }
+                    if (Objects.nonNull(interfaceType.getQueryString())) {
+                        queryString = queryString + interfaceType.getQueryString() + equalsOperand;
+                    }
+                }
+                queryString = queryString + createSearchFieldString(searchFieldMap);
                 return performQueryToMultipleRecords(queryString);
             } catch (URISyntaxException | IOException | ParserConfigurationException | SAXException
                     | TransformerException e) {
@@ -169,25 +180,26 @@ public class SRUImport implements ExternalDataImportInterface {
     private SearchResult search(String catalogId, Map<String, String> searchParameters, int start, int numberOfRecords) {
         loadOPACConfiguration(catalogId);
         if (searchFieldMapping.keySet().containsAll(searchParameters.keySet())) {
-
             // Query parameters for HTTP request
             LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
-
             // Search fields and terms of query
-            LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
-            for (Map.Entry<String, String> entry : searchParameters.entrySet()) {
-                searchFieldMap.put(searchFieldMapping.get(entry.getKey()), entry.getValue());
-            }
+            LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchParameters);
 
             try {
                 URI queryURL = createQueryURI(queryParameters);
-                String queryString = queryURL.toString();
-                if (start > 0 ) {
-                    queryString += "&startRecord=" + start;
+                String queryString = queryURL.toString() + "&";
+                if (Objects.nonNull(interfaceType)) {
+                    if (start > 0 && Objects.nonNull(interfaceType.getStartRecordString())) {
+                        queryString += interfaceType.getStartRecordString() + equalsOperand + start + "&";
+                    }
+                    if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
+                        queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + numberOfRecords + "&";
+                    }
+                    if (Objects.nonNull(interfaceType.getQueryString())) {
+                        queryString = queryString + interfaceType.getQueryString() + equalsOperand;
+                    }
                 }
-                return performQuery(queryString
-                                + "&maximumRecords=" + numberOfRecords
-                                + "&query=" + createSearchFieldString(searchFieldMap));
+                return performQuery(queryString + createSearchFieldString(searchFieldMap));
             } catch (URISyntaxException | UnsupportedEncodingException | ResponseHandlerNotFoundException e) {
                 logger.error(e.getLocalizedMessage());
             }
@@ -202,11 +214,11 @@ public class SRUImport implements ExternalDataImportInterface {
 
     private SearchResult performQuery(String queryURL) throws ResponseHandlerNotFoundException {
         try {
-            HttpResponse response = sruClient.execute(new HttpGet(queryURL));
+            HttpResponse response = httpClient.execute(new HttpGet(queryURL));
             int responseStatusCode = response.getStatusLine().getStatusCode();
             if (Objects.equals(responseStatusCode, SC_OK)) {
                 if (formatHandlers.containsKey(metadataFormat)) {
-                    return formatHandlers.get(metadataFormat).getSearchResult(response);
+                    return formatHandlers.get(metadataFormat).getSearchResult(response, interfaceType);
                 } else {
                     throw new ResponseHandlerNotFoundException("No ResponseHandler found for metadata format "
                             + metadataFormat);
@@ -224,9 +236,22 @@ public class SRUImport implements ExternalDataImportInterface {
     }
 
     private DataRecord performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
-        String fullUrl = queryURL + "&maximumRecords=1&query=" + idParameter + equalsOperand + identifier;
+        String fullUrl = queryURL + "&";
+        if (Objects.nonNull(interfaceType)) {
+            if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
+                fullUrl = fullUrl + interfaceType.getMaxRecordsString() + equalsOperand + "1&";
+            }
+            if (Objects.nonNull(interfaceType.getQueryString())) {
+                fullUrl = fullUrl + interfaceType.getQueryString() + equalsOperand;
+            }
+        }
+        if (Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix)) {
+            fullUrl = fullUrl + idParameter + equalsOperand + idPrefix + identifier;
+        } else {
+            fullUrl = fullUrl + idParameter + equalsOperand + identifier;
+        }
         try {
-            HttpResponse response = sruClient.execute(new HttpGet(fullUrl));
+            HttpResponse response = httpClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
                 if (Objects.isNull(response.getEntity())) {
                     throw new NoRecordFoundException("No record with ID '" + identifier + "' found!");
@@ -234,7 +259,7 @@ public class SRUImport implements ExternalDataImportInterface {
                 return createRecordFromXMLElement(IOUtils.toString(response.getEntity().getContent(),
                         Charset.defaultCharset()));
             }
-            throw new ConfigException("SRU Request Failed");
+            throw new ConfigException("Search Query Request Failed");
         } catch (IOException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
@@ -249,7 +274,7 @@ public class SRUImport implements ExternalDataImportInterface {
         requestConfigBuilder.setConnectTimeout(3000);
         request.setConfig(requestConfigBuilder.build());
         try {
-            HttpResponse response = sruClient.execute(request);
+            HttpResponse response = httpClient.execute(request);
             int responseStatusCode = response.getStatusLine().getStatusCode();
             if (Objects.equals(responseStatusCode, SC_OK)) {
                 String xmlContent = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
@@ -292,7 +317,12 @@ public class SRUImport implements ExternalDataImportInterface {
         List<String> searchOperands = searchFields.entrySet().stream()
                 .map(entry -> entry.getKey() + equalsOperand + entry.getValue())
                 .collect(Collectors.toList());
-        return URLEncoder.encode(String.join(" AND ", searchOperands), StandardCharsets.UTF_8.displayName());
+        String searchString = String.join(" AND ", searchOperands);
+        if (Objects.nonNull(interfaceType) && SearchInterfaceType.SRU.equals(interfaceType)) {
+            return URLEncoder.encode(searchString, StandardCharsets.UTF_8.displayName());
+        } else {
+            return searchString;
+        }
     }
 
     private static void loadOPACConfiguration(String opacName) {
@@ -319,7 +349,9 @@ public class SRUImport implements ExternalDataImportInterface {
                 }
             }
 
+            interfaceType = OPACConfig.getInterfaceType(opacName);
             idParameter = OPACConfig.getIdentifierParameter(opacName);
+            idPrefix = OPACConfig.getIdentifierPrefix(opacName);
             fileFormat = OPACConfig.getConfigValue(opacName, RETURN_FORMAT_TAG);
             metadataFormat = OPACConfig.getConfigValue(opacName, METADATA_FORMAT_TAG);
 
@@ -331,6 +363,7 @@ public class SRUImport implements ExternalDataImportInterface {
 
             HierarchicalConfiguration urlParameters = OPACConfig.getUrlParameters(opacName);
 
+            parameters = new LinkedHashMap<>();
             for (HierarchicalConfiguration queryParam : urlParameters.configurationsAt(PARAM_TAG)) {
                 parameters.put(queryParam.getString(NAME_ATTRIBUTE), queryParam.getString(VALUE_ATTRIBUTE));
             }
@@ -352,5 +385,19 @@ public class SRUImport implements ExternalDataImportInterface {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.transform(new DOMSource(node), new StreamResult(writer));
         return writer.toString();
+    }
+
+    private static LinkedHashMap<String, String> getSearchFieldMap(Map<String, String> searchFields) {
+        LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : searchFields.entrySet()) {
+            String searchField = searchFieldMapping.get(entry.getKey());
+            if (StringUtils.isNotBlank(idPrefix) && StringUtils.isNotBlank(idParameter)
+                    && idParameter.equals(searchField) && !entry.getValue().startsWith(idPrefix)) {
+                searchFieldMap.put(searchField, idPrefix + entry.getValue());
+            } else {
+                searchFieldMap.put(searchField, entry.getValue());
+            }
+        }
+        return searchFieldMap;
     }
 }
