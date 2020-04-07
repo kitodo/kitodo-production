@@ -59,8 +59,8 @@ public class ImportTab implements Serializable {
     private LazyHitModel hitModel = new LazyHitModel();
 
     private CreateProcessForm createProcessForm;
-    private static final int ADDITIONAL_FIELDS_TAB_INDEX = 2;
-    private static final int TITLE_RECORD_LINK_TAB_INDEX = 4;
+    private static final int ADDITIONAL_FIELDS_TAB_INDEX = 1;
+    private static final int TITLE_RECORD_LINK_TAB_INDEX = 3;
     private static final String ID_PARAMETER_NAME = "ID";
     private static final String FORM_CLIENTID = "editForm";
     private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";

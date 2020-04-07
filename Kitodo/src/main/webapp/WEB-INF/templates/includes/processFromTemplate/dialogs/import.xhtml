@@ -1,0 +1,122 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog widgetVar="catalogSearchDialog"
+              id="catalogSearch"
+              width="800"
+              modal="true"
+              appendTo="@(body)"
+              resizable="false">
+        <h:form id="catalogSearchForm">
+            <p:panelGrid layout="grid" columns="2" cellpadding="10">
+                <p:row>
+                    <div>
+                        <p:outputLabel for="catalogueSelectMenu"
+                                       value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+                        <p:selectOneMenu id="catalogueSelectMenu"
+                                         required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
+                                         immediate="true"
+                                         value="#{CreateProcessForm.importTab.hitModel.selectedCatalog}">
+                            <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
+                            <f:selectItems value="#{CreateProcessForm.importTab.catalogs}" var="step" itemLabel="#{step}"
+                                           itemValue="#{step}"/>
+                            <p:ajax update="catalogSearchForm:fieldSelectMenu,
+                                            catalogSearchForm:searchTerm,
+                                            catalogSearchForm:importDepth,
+                                            catalogSearchForm:importChildren,
+                                            catalogSearchForm:catalogSearchButton"/>
+                        </p:selectOneMenu>
+                    </div>
+                </p:row>
+            </p:panelGrid>
+
+            <p:panelGrid layout="grid" columns="2" cellpadding="10">
+                <p:row>
+                    <div>
+                        <p:outputLabel for="fieldSelectMenu"
+                                       value="#{msgs.field}"/>
+                        <p:selectOneMenu id="fieldSelectMenu"
+                                         disabled="#{empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
+                                         required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
+                                         value="#{CreateProcessForm.importTab.hitModel.selectedField}">
+                            <f:selectItem itemValue="#{null}"
+                                          itemLabel="-- #{msgs.selectSearchField} --"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{CreateProcessForm.importTab.searchFields}" var="field"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div>
+                        <p:outputLabel for="importDepth"
+                                       value="#{msgs.importDepth}"/>
+                        <p:spinner id="importDepth"
+                                   class="input"
+                                   disabled="#{empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
+                                   value="#{CreateProcessForm.importTab.importDepth}"
+                                   min="1"
+                                   max="5"/>
+                    </div>
+                </p:row>
+                <p:row>
+                    <div>
+                        <p:outputLabel for="searchTerm"
+                                       value="#{msgs.value}"/>
+                        <p:inputText id="searchTerm"
+                                     onkeypress="if (event.keyCode === 13) { document.getElementById('catalogSearchForm:performCatalogSearch').click(); return false; }"
+                                     disabled="#{empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
+                                     value="#{CreateProcessForm.importTab.hitModel.searchTerm}"
+                                     class="input"
+                                     placeholder="#{msgs['newProcess.catalogueSearch.searchTerm']}"
+                                     required="#{not empty param['catalogSearchForm:performCatalogSearch']}"/>
+                    </div>
+                    <div>
+                        <p:outputLabel id="importChildrenLabel"
+                                       for="importChildren"
+                                       value="#{msgs.importChildren}"/>
+                        <p:selectBooleanCheckbox id="importChildren"
+                                                 class="input"
+                                                 title="#{CreateProcessForm.importTab.parentElementConfigured ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
+                                                 disabled="#{empty CreateProcessForm.importTab.hitModel.selectedCatalog or not CreateProcessForm.importTab.isParentElementConfigured()}"
+                                                 value="#{CreateProcessForm.importTab.importChildren}"/>
+                    </div>
+                </p:row>
+                <h:panelGroup layout="block"
+                              id="catalogSearchButton">
+                    <p:commandButton id="cancel"
+                                     value="#{msgs.cancel}"
+                                     styleClass="secondary"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('catalogSearchDialog').hide();"/>
+                    <p:commandButton id="performCatalogSearch"
+                                     disabled="#{empty CreateProcessForm.importTab.hitModel.selectedCatalog}"
+                                     action="#{CreateProcessForm.importTab.search}"
+                                     value="#{msgs.searchOPAC}"
+                                     title="#{msgs.searchOPAC}"
+                                     process="@this importChildren searchTerm importDepth fieldSelectMenu catalogueSelectMenu"
+                                     onstart="$('#loadingScreen').show()"
+                                     oncomplete="$('#loadingScreen').hide();PF('catalogSearchDialog').hide();"
+                                     icon="fa fa-search" iconPos="right"
+                                     styleClass="primary"
+                                     update="editForm hitlist"/>
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>
