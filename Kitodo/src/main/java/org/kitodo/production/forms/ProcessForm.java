@@ -34,7 +34,6 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.print.DocFlavor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,15 +68,10 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
-import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
-import org.primefaces.model.charts.bar.BarChartDataSet;
-import org.primefaces.model.charts.bar.BarChartModel;
 import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.hbar.HorizontalBarChartDataSet;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
-import org.primefaces.model.charts.optionconfig.title.Title;
 import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
@@ -107,6 +101,7 @@ public class ProcessForm extends TemplateBaseForm {
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private PieChartModel pieModel;
     private HorizontalBarChartModel stackedBarModel;
+    private Map<String,Integer> statisticResult;
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
@@ -1418,8 +1413,13 @@ public class ProcessForm extends TemplateBaseForm {
 
         ChartData data = new ChartData();
         data.addChartDataSet(dataSet);
-        data.setLabels(new ArrayList<>(processValues.keySet()));
+        ArrayList<String> labels = new ArrayList<>();
+        for (Map.Entry<String, Integer> processValueEntry : processValues.entrySet()) {
+            labels.add(processValueEntry.getKey().concat(" ").concat(processValueEntry.getValue().toString()));
+        }
+        data.setLabels(labels);
 
+        statisticResult = processValues;
         pieModel.setData(data);
     }
 
@@ -1493,5 +1493,9 @@ public class ProcessForm extends TemplateBaseForm {
 
     public void setStackedBarModel(HorizontalBarChartModel stackedBarModel) {
         this.stackedBarModel = stackedBarModel;
+    }
+
+    public Map<String, Integer> getStatisticResult() {
+        return statisticResult;
     }
 }
