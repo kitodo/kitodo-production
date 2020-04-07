@@ -2590,6 +2590,10 @@ footer {
     width: calc(100% - 64px);
 }
 
+#tasksTabView\:actionForm {
+    padding: 0 var(--default-full-size);
+}
+
 #tasksTabView\:actionForm\:metadataBlocked {
     color: var(--orange);
     display: block;
