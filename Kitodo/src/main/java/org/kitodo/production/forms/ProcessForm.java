@@ -205,7 +205,7 @@ public class ProcessForm extends TemplateBaseForm {
             }
 
             try {
-                ServiceManager.getProcessService().save(this.process);
+                workflowControllerService.updateProcessSortHelperStatus(this.process);
                 return processListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
@@ -268,7 +268,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * If processes are generated with calendar.
-     * 
+     *
      * @param processDTO
      *            the process dto to check.
      * @return true if processes are created with calendar, false otherwise
@@ -709,6 +709,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 workflowControllerService.setTasksStatusUp(processForStatus);
                 ServiceManager.getProcessService().save(processForStatus);
+                workflowControllerService.updateProcessSortHelperStatus(processForStatus);
             } catch (DataException | IOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
@@ -735,6 +736,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 workflowControllerService.setTasksStatusDown(processForStatus);
                 ServiceManager.getProcessService().save(processForStatus);
+                workflowControllerService.updateProcessSortHelperStatus(processForStatus);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
@@ -747,16 +749,14 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setTaskStatusUp() throws DataException, IOException {
         workflowControllerService.setTaskStatusUp(this.task);
-        save();
         ProcessService.deleteSymlinksFromUserHomes(this.task);
     }
 
     /**
      * Task status down.
      */
-    public void setTaskStatusDown() {
+    public void setTaskStatusDown() throws DataException {
         workflowControllerService.setTaskStatusDown(this.task);
-        save();
         ProcessService.deleteSymlinksFromUserHomes(this.task);
     }
 

@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -81,7 +81,7 @@ public class WorkflowControllerService {
      *            to change status up
      */
     public void setTaskStatusUp(Task task) throws DataException, IOException {
-        setTaskStatusUp(Arrays.asList(task));
+        setTaskStatusUp(Collections.singletonList(task));
     }
 
     /**
@@ -111,8 +111,8 @@ public class WorkflowControllerService {
      * @param task
      *            to change status down
      */
-    public void setTaskStatusDown(Task task) {
-        setTaskStatusDown(Arrays.asList(task));
+    public void setTaskStatusDown(Task task) throws DataException {
+        setTaskStatusDown(Collections.singletonList(task));
     }
 
     /**
@@ -672,7 +672,7 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    private void updateProcessSortHelperStatus(Process process) throws DataException {
+    public void updateProcessSortHelperStatus(Process process) throws DataException {
         try {
             process = ServiceManager.getProcessService().getById(process.getId());
         } catch (DAOException e) {
