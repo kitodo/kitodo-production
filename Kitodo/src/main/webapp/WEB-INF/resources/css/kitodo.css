@@ -1150,6 +1150,28 @@ Import form
     margin-bottom: var(--default-double-size);
 }
 
+#fileMassImportForm .ui-panelgrid-cell,
+#textMassImportForm .ui-panelgrid-cell {
+    padding-left: var(--default-full-size);
+}
+
+#fileMassImportForm .ui-fileupload-buttonbar {
+    padding: 0;
+}
+
+#fileMassImportForm .ui-fileupload-buttonbar .ui-button {
+    margin-right: var(--default-full-size);
+}
+
+#fileMassImportForm .ui-fileupload-choose .ui-button-text {
+    padding-top: 10px;
+}
+
+#textMassImportForm\:importFromText {
+    margin-left: var(--default-full-size);
+    vertical-align: top;
+}
+
 /*----------------------------------------------------------------------
 Calendar
 ----------------------------------------------------------------------*/
