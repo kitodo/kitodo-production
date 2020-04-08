@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog id="dialogEditDocStrucTypeDialog"
+              resizable="false"
+              widgetVar="dialogEditDocStrucType"
+              width="400px"
+              modal="true"
+              showHeader="false"
+              dynamic="true"
+              appendTo="@(body)">
+
+        <h3>#{msgs.changeDocstructType}</h3>
+        <h:form id="dialogEditDocStrucTypeForm">
+
+            <!-- Select the new type -->
+            <p:selectOneMenu id="docStructEditTypeSelection"
+                             class="input"
+                             value="#{DataEditorForm.changeDocStrucTypeDialog.docStructEditTypeSelectionSelectedItem}"
+                             required="true"
+                             immediate="true"
+                             style="width: 180px; margin-left: 33px;">
+                <f:selectItems value="#{DataEditorForm.changeDocStrucTypeDialog.docStructEditTypeSelectionItems}"/>
+            </p:selectOneMenu>
+
+            <!-- Press OK when finish -->
+            <p:commandButton id="addDocStruc"
+                             value="#{msgs.apply}"
+                             action="#{DataEditorForm.changeDocStrucTypeDialog.editDocStruc}"
+                             styleClass="primary right"
+                             icon="fa fa-check fa-lg"
+                             iconPos="right"
+                             style="margin-right: 33px; margin-top: 29px;"
+                             update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
+                             oncomplete="updateMetadataEditorView(false);"/>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

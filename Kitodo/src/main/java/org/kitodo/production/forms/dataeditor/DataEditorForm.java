@@ -87,6 +87,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private final AddMediaUnitDialog addMediaUnitDialog;
 
     /**
+     * Backing bean for the change doc struc type dialog.
+     */
+    private final ChangeDocStrucTypeDialog changeDocStrucTypeDialog;
+
+    /**
      * Backing bean for the edit pages dialog.
      */
     private final EditPagesDialog editPagesDialog;
@@ -177,6 +182,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.paginationPanel = new PaginationPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.addMediaUnitDialog = new AddMediaUnitDialog(this);
+        this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
         acquisitionStage = "edit";
     }
@@ -414,6 +420,17 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public AddMediaUnitDialog getAddMediaUnitDialog() {
         return addMediaUnitDialog;
+    }
+
+    /**
+     * Returns the backing bean for the change doc struc type dialog. This
+     * function is used by PrimeFaces to access the elements of the change doc
+     * struc type dialog.
+     *
+     * @return the backing bean for the change doc struc type dialog
+     */
+    public ChangeDocStrucTypeDialog getChangeDocStrucTypeDialog() {
+        return changeDocStrucTypeDialog;
     }
 
     /**

@@ -75,6 +75,13 @@
                         actionListener="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
                         oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeDialog"/>
+            <p:menuitem value="#{msgs.changeDocstructType}"
+                        icon="fa fa-pencil fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        actionListener="#{DataEditorForm.changeDocStrucTypeDialog.prepare}"
+                        oncomplete="PF('dialogEditDocStrucType').show()"
+                        update="dialogEditDocStrucTypeDialog"/>
             <p:menuitem value="#{msgs.removeElement}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"

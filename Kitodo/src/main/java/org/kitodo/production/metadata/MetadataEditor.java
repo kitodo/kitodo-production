@@ -24,6 +24,9 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -44,6 +47,8 @@ import org.kitodo.production.services.ServiceManager;
  * This class contains some methods to handle metadata (semi) automatically.
  */
 public class MetadataEditor {
+    private static final Logger logger = LogManager.getLogger(MetadataEditor.class);
+
     /**
      * Separator for specifying an insertion position.
      */
@@ -348,6 +353,44 @@ public class MetadataEditor {
         View unrestrictedView = new View();
         unrestrictedView.setMediaUnit(mediaUnit);
         return unrestrictedView;
+    }
+
+    /**
+     * Recursively determines the path to the included structural element of the
+     * child. For each level of the root element, the recursion is run through
+     * once, that is for a newspaper year process tree times (year, month, day).
+     *
+     * @param includedStructuralElement
+     *            included structural element of the level stage of recursion
+     *            (starting from the top)
+     * @param number
+     *            number of the record of the process of the child
+     *
+     */
+    public static List<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
+            IncludedStructuralElement includedStructuralElement, int number) {
+
+        if (Objects.nonNull(includedStructuralElement.getLink())) {
+            try {
+                if (ServiceManager.getProcessService()
+                        .processIdFromUri(includedStructuralElement.getLink().getUri()) == number) {
+                    LinkedList<IncludedStructuralElement> linkedIncludedStructuralElements = new LinkedList<>();
+                    linkedIncludedStructuralElements.add(includedStructuralElement);
+                    return linkedIncludedStructuralElements;
+                }
+            } catch (IllegalArgumentException | ClassCastException | SecurityException e) {
+                logger.catching(Level.TRACE, e);
+            }
+        }
+        for (IncludedStructuralElement includedStructuralElementChild : includedStructuralElement.getChildren()) {
+            List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
+                includedStructuralElementChild, number);
+            if (!includedStructuralElementList.isEmpty()) {
+                includedStructuralElementList.add(0, includedStructuralElement);
+                return includedStructuralElementList;
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
