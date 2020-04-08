@@ -140,7 +140,11 @@ public class IndexingForm {
     public void callIndexing(ObjectType type) {
         indexingStartedTime = LocalDateTime.now();
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        ServiceManager.getIndexingService().startIndexing(type, pollingChannel);
+        try {
+            ServiceManager.getIndexingService().startIndexing(type, pollingChannel);
+        } catch (DataException | CustomResponseException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**

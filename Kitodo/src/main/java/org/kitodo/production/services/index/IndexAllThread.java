@@ -13,6 +13,8 @@ package org.kitodo.production.services.index;
 
 import javax.faces.push.PushContext;
 
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 
@@ -31,9 +33,13 @@ public class IndexAllThread extends Thread {
         indexingService.setIndexingAll(true);
 
         for (ObjectType objectType : ObjectType.getIndexableObjectTypes()) {
-            indexingService.startIndexing(objectType, context);
+            try {
+                indexingService.startIndexing(objectType, context);
+            } catch (DataException | CustomResponseException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), IndexingService.getLogger(), e);
+                Thread.currentThread().interrupt();
+            }
         }
-
         try {
             sleep(IndexingService.PAUSE);
         } catch (InterruptedException e) {
