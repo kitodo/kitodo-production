@@ -33,10 +33,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -51,8 +54,11 @@ import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Cell;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
+import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
+import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.calendar.CalendarService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -99,6 +105,9 @@ public class CalendarForm implements Serializable {
     private int numberOfPagesPerIssue = 0;
     protected int yearShowing = 1979;
     private UploadedFile uploadedFile;
+    private LocalDate selectedDate;
+    private Block selectedBlock = null;
+    private List<SelectItem> metadataTypes = null;
 
     /**
      * The field course holds the course of appearance currently under edit by
@@ -578,6 +587,18 @@ public class CalendarForm implements Serializable {
     }
 
     /**
+     * Add issue to given block.
+     *
+     * @param block block to add a new issue to
+     */
+    public void addIssue(Block block) {
+        if (Objects.nonNull(block)) {
+            Issue issue = block.addIssue();
+            issue.setHeading(Helper.getTranslation("calendar.issue") + " " + (block.getIssues().indexOf(issue) + 1));
+        }
+    }
+
+    /**
      * Get the color from the list of defined colors for the given index.
      * These colors are used to highlight and distinguish the different issues in the calendar.
      *
@@ -701,5 +722,172 @@ public class CalendarForm implements Serializable {
      */
     public LocalDate getToday() {
         return today;
+    }
+
+    /**
+     * Add new metadata for the selected Block and with the selected date and Issue.
+     */
+    public void addMetadata(Issue issue) {
+        IndividualIssue selectedIssue = null;
+        for (IndividualIssue individualIssue : getIndividualIssues(selectedBlock)) {
+            if (Objects.nonNull(issue)
+                    && Objects.equals(individualIssue.getIssue(), issue)
+                    && Objects.equals(selectedDate, individualIssue.getDate())) {
+                selectedIssue = individualIssue;
+                break;
+            }
+        }
+        if (!selectedBlock.getIssues().isEmpty() && Objects.nonNull(selectedIssue)) {
+            CountableMetadata metadata = new CountableMetadata(selectedBlock, Pair.of(selectedIssue.getDate(), selectedIssue.getIssue()));
+            if (!getAllMetadataTypes().isEmpty()) {
+                metadata.setMetadataType((String) getAllMetadataTypes().get(0).getValue());
+            }
+            selectedBlock.addMetadata(metadata);
+        } else {
+            Helper.setErrorMessage("Selected issue or list of issues must not be empty for selectedBlock: " + selectedBlock.toString());
+        }
+    }
+
+    /**
+     * Get selectedDate.
+     *
+     * @return value of selectedDate
+     */
+    public LocalDate getSelectedDate() {
+        return selectedDate;
+    }
+
+    /**
+     * Set selectedDate.
+     *
+     * @param selectedDate as java.time.LocalDate
+     */
+    public void setSelectedDate(LocalDate selectedDate) {
+        this.selectedDate = selectedDate;
+    }
+
+    /**
+     * Get selectedBlock.
+     *
+     * @return value of selectedBlock
+     */
+    public Block getSelectedBlock() {
+        return selectedBlock;
+    }
+
+    /**
+     * Set the selected block based on the selected date.
+     */
+    public void setSelectedBlock() {
+        if (Objects.nonNull(selectedDate)) {
+            for (Block block : course) {
+                if ((block.getFirstAppearance().isBefore(selectedDate) || block.getFirstAppearance().isEqual(selectedDate))
+                        && (block.getLastAppearance().isAfter(selectedDate) || block.getLastAppearance().isEqual(selectedDate))) {
+                    selectedBlock = block;
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Set selectedBlock.
+     *
+     * @param selectedBlock as org.kitodo.production.model.bibliography.course.Block
+     */
+    public void setSelectedBlock(Block selectedBlock) {
+        this.selectedBlock = selectedBlock;
+    }
+
+    /**
+     * Return a list of all individual issues for this block.
+     *
+     * @return the list of issues
+     */
+    public List<IndividualIssue> getIndividualIssues(Block block) {
+        return CalendarService.getIndividualIssues(block);
+    }
+
+    /**
+     * Returns the list of selectable metadata types.
+     *
+     * @return the map of metadata types
+     */
+    public List<SelectItem> getAllMetadataTypes() {
+        if (Objects.isNull(metadataTypes)) {
+            try {
+                Process process = ServiceManager.getProcessService().getById(parentId);
+                metadataTypes = CalendarService.getAddableMetadata(process);
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
+            }
+        }
+        return metadataTypes;
+    }
+
+    /**
+     * Get list of metadata for given block on a specific date and issue.
+     *
+     * @param block the block to get the metadata from
+     * @param date the date to get the metadata for
+     * @param issue the issue to get the metadata for
+     * @return list of matching metadata
+     */
+    public List<CountableMetadata> getMetadata(Block block, LocalDate date, Issue issue) {
+        return CalendarService.getMetadata(block, date, issue);
+    }
+
+    /**
+     * Set the issue and date where the given metadata occurred last.
+     *
+     * @param metadata the metadata to set the end date and issue for
+     * @param date date where the metadata occurred last
+     * @param issue issue where the metadata occurred last
+     */
+    public void setLastIssue(CountableMetadata metadata, LocalDate date, Issue issue) {
+        if (Objects.nonNull(metadata)) {
+            metadata.setDelete(new ImmutablePair<>(date, issue));
+        }
+    }
+
+    /**
+     * Get value of countable metadata for the given date and issue.
+     *
+     * @param metadata the metadata to calculate the the value for
+     * @param date the date to calculate the value for
+     * @param issue the issue to calculate the metadata for
+     * @return the metadata value as java.lang.String
+     */
+    public String getMetadataValue(CountableMetadata metadata, LocalDate date, Issue issue) {
+        if (Objects.nonNull(metadata)) {
+            return metadata.getValue(new ImmutablePair<>(date, issue), course.getYearStart());
+        }
+        return "";
+    }
+
+    /**
+     * Get all metadata of the given block as summary.
+     * Each type of metadata is only listed once with its earliest occurrence.
+     *
+     * @param block the block to get the metadata for
+     * @return list of pairs containing the metadata type and the date of its earliest occurrence
+     */
+    public List<Pair<String, LocalDate>> getMetadataSummary(Block block) {
+        return CalendarService.getMetadataSummary(block);
+    }
+
+    /**
+     * Translates the given metadata key to the users locale.
+     *
+     * @param key the metadata type to be translated
+     * @return the translated metadata type as java.lang.String
+     */
+    public String getMetadataTranslation(String key) {
+        try {
+            return CalendarService.getMetadataTranslation(getAllMetadataTypes(), key);
+        } catch (IllegalArgumentException e) {
+            Helper.setErrorMessage(e);
+            return key;
+        }
     }
 }

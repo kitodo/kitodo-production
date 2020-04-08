@@ -55,16 +55,20 @@
                            styleClass="#{calendar.get(index).styleClass}">
                     <h:outputText value="#{calendar.get(index).day}"
                                   styleClass="calendar-date"/>
+                    <p:commandButton action="#{CalendarForm.setSelectedBlock()}"
+                                     actionListener="#{CalendarForm.setSelectedDate(calendar.get(index).date)}"
+                                     styleClass="date"
+                                     oncomplete="PF('calendarDayDialog').show()"
+                                     disabled="#{not calendar.get(index).onBlock}"
+                                     update="calendarDayForm"/>
                     <p:repeat value="#{calendar.get(index).issues}"
                               var="issue"
                               varStatus="iteration">
-                        <p:commandButton action="#{CalendarForm.changeMatch(issue, calendar.get(index).date)}"
-                                         title="#{issue.isMatch(calendar.get(index).date) ? msgs['calendar.issue.delete'] : msgs['calendar.issue.add']}"
-                                         value=""
-                                         styleClass="#{issue.isMatch(calendar.get(index).date) ? 'issue match' : 'issue'}"
-                                         style="background-color: #{issue.isMatch(calendar.get(index).date) ? CalendarForm.getIssueColor(iteration.index) : 'white'};
-                                                border-color: #{CalendarForm.getIssueColor(iteration.index)}"
-                                         update="editForm:calendarTabView:calendarDetailsLayout"/>
+                        <h:outputText title="#{msgs['calendar.sheet.issue.selected']}"
+                                      rendered="#{issue.isMatch(calendar.get(index).date)}"
+                                      styleClass="issue match"
+                                      style="background-color: #{CalendarForm.getIssueColor(iteration.index)};
+                                             border-color: #{CalendarForm.getIssueColor(iteration.index)}"/>
                     </p:repeat>
                 </p:columns>
             </p:dataTable>

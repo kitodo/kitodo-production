@@ -22,6 +22,7 @@ import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
+import org.kitodo.production.services.calendar.CalendarService;
 
 /**
  * Generic metadata that is created using a counter.
@@ -102,6 +103,36 @@ public class CountableMetadata {
         } else {
             return MetadataEditMode.HIDDEN;
         }
+    }
+
+    /**
+     * Get create.
+     *
+     * @return value of create as Pair of LocalDate and Issue
+     */
+    public Pair<LocalDate, Issue> getCreate() {
+        return create;
+    }
+
+    /**
+     * Get create.
+     *
+     * @return value of create as java.lang.String
+     */
+    public String getCreateAsString() {
+        return CalendarService.dateIssueToString(create);
+    }
+
+    /**
+     * Get delete.
+     *
+     * @return value of delete as java.lang.String
+     */
+    public String getDelete() {
+        if (Objects.isNull(delete)) {
+            return DateTimeFormatter.ISO_DATE.format(block.getLastAppearance());
+        }
+        return CalendarService.dateIssueToString(delete);
     }
 
     /**

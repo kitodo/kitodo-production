@@ -61,6 +61,6 @@ public class IssueComparator implements Comparator<Pair<LocalDate, Issue>> {
         if (comparee.getRight().equals(compared.getRight())) {
             return 0;
         }
-        return block.getIssueIndex(compared.getRight()) - block.getIssueIndex(comparee.getRight());
+        return block.getIssueIndex(comparee.getRight()) - block.getIssueIndex(compared.getRight());
     }
 }
