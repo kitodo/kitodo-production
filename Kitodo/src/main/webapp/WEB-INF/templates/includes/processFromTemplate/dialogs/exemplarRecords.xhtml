@@ -25,7 +25,7 @@
         <h3>#{msgs.multipleCopiesFound}<br/>#{msgs.multipleCopiesFoundSelectCopy}</h3>
         <h:form id="exemplarRecordsDialogForm">
             <p:dataTable id="exemplarRecordsDialogTable"
-                         value="#{CreateProcessForm.importTab.exemplarRecords}"
+                         value="#{CreateProcessForm.importDialog.exemplarRecords}"
                          var="exemplar"
                          paginatorPosition="bottom"
                          paginator="true"
@@ -37,7 +37,7 @@
                                    value="#{exemplar.owner}: #{exemplar.signature}"
                                    title="#{exemplar.owner}: #{exemplar.signature}"
                                    onclick="PF('exemplarRecordsDialog').hide()"
-                                   action="#{CreateProcessForm.importTab.setSelectedExemplarRecord(exemplar)}"
+                                   action="#{CreateProcessForm.importDialog.setSelectedExemplarRecord(exemplar)}"
                                    immediate="true"/>
                 </p:column>
             </p:dataTable>

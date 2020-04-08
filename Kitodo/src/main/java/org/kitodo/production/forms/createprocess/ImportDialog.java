@@ -54,8 +54,8 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
-public class ImportTab implements Serializable {
-    private static final Logger logger = LogManager.getLogger(ImportTab.class);
+public class ImportDialog implements Serializable {
+    private static final Logger logger = LogManager.getLogger(ImportDialog.class);
     private LazyHitModel hitModel = new LazyHitModel();
 
     private CreateProcessForm createProcessForm;
@@ -80,7 +80,7 @@ public class ImportTab implements Serializable {
      *
      * @param createProcessForm CreateProcessForm instance to which this ImportTab is assigned.
      */
-    ImportTab(CreateProcessForm createProcessForm) {
+    ImportDialog(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 
