@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -43,6 +44,7 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -56,6 +58,7 @@ import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 
 /**
@@ -576,4 +579,12 @@ public class ProcessServiceIT {
 
     }
 
+    @Test
+    public void testCountMetadata() throws DAOException, IOException {
+        Process process = ServiceManager.getProcessService().getById(2);
+        URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+        long logicalMetadata = MetsService.countLogicalMetadata(workpiece);
+        Assert.assertEquals("Wrong amount of metadata found!", 3, logicalMetadata);
+    }
 }
