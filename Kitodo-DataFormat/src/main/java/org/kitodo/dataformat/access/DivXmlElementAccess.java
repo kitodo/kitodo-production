@@ -199,17 +199,19 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      */
     static final Collection<Metadata> readMetadata(MdSecType mdSecType, MdSec mdSec) {
         Collection<Metadata> metadata = new HashSet<>();
-        for (Object object : mdSecType.getMdWrap().getXmlData().getAny()) {
-            if (object instanceof JAXBElement) {
-                JAXBElement<?> jaxbElement = (JAXBElement<?>) object;
-                Object value = jaxbElement.getValue();
-                if (value instanceof KitodoType) {
-                    KitodoType kitodoType = (KitodoType) value;
-                    for (MetadataType metadataEntry : kitodoType.getMetadata()) {
-                        metadata.add(new MetadataXmlElementAccess(mdSec, metadataEntry).getMetadataEntry());
-                    }
-                    for (MetadataGroupType metadataGroup : kitodoType.getMetadataGroup()) {
-                        metadata.add(new MetadataGroupXmlElementAccess(mdSec, metadataGroup).getMetadataGroup());
+        if (Objects.nonNull(mdSecType) && Objects.nonNull(mdSecType.getMdWrap())) {
+            for (Object object : mdSecType.getMdWrap().getXmlData().getAny()) {
+                if (object instanceof JAXBElement) {
+                    JAXBElement<?> jaxbElement = (JAXBElement<?>) object;
+                    Object value = jaxbElement.getValue();
+                    if (value instanceof KitodoType) {
+                        KitodoType kitodoType = (KitodoType) value;
+                        for (MetadataType metadataEntry : kitodoType.getMetadata()) {
+                            metadata.add(new MetadataXmlElementAccess(mdSec, metadataEntry).getMetadataEntry());
+                        }
+                        for (MetadataGroupType metadataGroup : kitodoType.getMetadataGroup()) {
+                            metadata.add(new MetadataGroupXmlElementAccess(mdSec, metadataGroup).getMetadataGroup());
+                        }
                     }
                 }
             }
