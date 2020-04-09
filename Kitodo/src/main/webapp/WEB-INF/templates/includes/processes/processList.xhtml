@@ -359,7 +359,24 @@
             </p:menu>
         </div>
 
-        <p:pieChart rendered="#{ProcessForm.showPieModel()}" model="#{ProcessForm.pieModel}" style="width: 100%"/>
+        <p:pieChart rendered="#{ProcessForm.showPieModel()}" model="#{ProcessForm.pieModel}"/>
+        <p:dataTable  id="statisticResult"
+                      style="width: 50%"
+                      rendered="#{ProcessForm.showPieModel()}"
+                      value="#{ProcessForm.statisticResult}"
+                      var="result">
+            <p:column headerText="#{msgs.task}"
+                      width="50">
+                <h:outputText title="#{result.key}"
+                              value="#{result.key}"/>
+            </p:column>
+            <p:column headerText="#{msgs.amount}"
+                      width="50">
+                <h:outputText title="#{result.value}"
+                              value="#{result.value}"/>
+            </p:column>
+        </p:dataTable>
+
         <p:barChart rendered="#{ProcessForm.showBarModel()}" model="#{ProcessForm.stackedBarModel}" style="width: 100%"/>
 
     </h:form>
