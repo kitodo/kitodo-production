@@ -199,39 +199,68 @@
         </p:dataTable>
     </h:form>
 
-    <h:panelGrid columns="1">
-        <h:panelGroup>
-            <h3>
-                <h:outputText value="#{msgs.filterAdjust}"/>
-            </h3>
-
-            <h:form id="filterForm">
-                <h:panelGrid columns="2" style="margin-left:20px;">
-                    <h:outputText value="#{msgs.showAutomaticTasks}:"/>
-                    <h:selectBooleanCheckbox id="showAutomaticTasks" value="#{CurrentTaskForm.showAutomaticTasks}"
-                                             style="margin-right:20px;"/>
-
-                    <h:outputText value="#{msgs.hideCorrectionTasks}:"/>
-                    <h:selectBooleanCheckbox id="hideCorrectionTasks" value="#{CurrentTaskForm.hideCorrectionTasks}"
-                                             style="margin-right:20px;"/>
-
-
-                    <h:outputText value="#{msgs.showOnlyOwnTasks}:"/>
-                    <h:selectBooleanCheckbox id="onlyOwnTasks" value="#{CurrentTaskForm.onlyOwnTasks}"
-                                             style="margin-right:20px;"/>
-
-                    <h:outputText value="#{msgs.showOnlyOpenTasks}:"/>
-                    <h:selectBooleanCheckbox id="onlyOpenTasks" value="#{CurrentTaskForm.onlyOpenTasks}"
-                                             style="margin-right:20px;"/>
-                </h:panelGrid>
-
-                <h:commandLink id="applyFilter"
-                               update="tasksTabView:taskTable"
-                               style="margin-left:24px;"
-                               title="#{msgs.apply}">
-                    <h:outputText value="#{msgs.apply}"/>
-                </h:commandLink>
-            </h:form>
-        </h:panelGroup>
-    </h:panelGrid>
+    <div id="dropDownMenus">
+        <h:form id="filterForm">
+            <p:commandButton id="actionsButton"
+                             value="#{msgs.filterAdjust}"
+                             process="@this"
+                             styleClass="secondary"
+                             icon="fa fa-sort"
+                             iconPos="right"/>
+            <p:menu id="filterMenu"
+                    overlay="true"
+                    trigger="tasksTabView:filterForm:actionsButton"
+                    my="left bottom"
+                    at="left top">
+                <p:menuitem id="showAutomaticTasks"
+                            value="#{msgs.showAutomaticTasks}"
+                            rendered="#{CurrentTaskForm.showAutomaticTasks eq false}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.showAutomaticTasks}" value="#{true}"/>
+                </p:menuitem>
+                <p:menuitem id="hideAutomaticTasks"
+                            value="#{msgs.hideAutomaticTasks}"
+                            rendered="#{CurrentTaskForm.showAutomaticTasks eq true}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.showAutomaticTasks}" value="#{false}"/>
+                </p:menuitem>
+                <p:menuitem id="showCorrectionTasks"
+                            value="#{msgs.showCorrectionTasks}"
+                            rendered="#{CurrentTaskForm.hideCorrectionTasks eq true}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.hideCorrectionTasks}" value="#{false}"/>
+                </p:menuitem>
+                <p:menuitem id="hideCorrectionTasks"
+                            value="#{msgs.hideCorrectionTasks}"
+                            rendered="#{CurrentTaskForm.hideCorrectionTasks eq false}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.hideCorrectionTasks}" value="#{true}"/>
+                </p:menuitem>
+                <p:menuitem id="retrictToOwnTasks"
+                            value="#{msgs.showOnlyOwnTasks}"
+                            rendered="#{CurrentTaskForm.onlyOwnTasks eq false}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOwnTasks}" value="#{true}"/>
+                </p:menuitem>
+                <p:menuitem id="removeRestrictionToOwnTasks"
+                            value="#{msgs.removeRestrictionToOwnTasks}"
+                            rendered="#{CurrentTaskForm.onlyOwnTasks eq true}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOwnTasks}" value="#{false}"/>
+                </p:menuitem>
+                <p:menuitem id="restrictToOpenTasks"
+                            value="#{msgs.showOnlyOpenTasks}"
+                            rendered="#{CurrentTaskForm.onlyOpenTasks eq false}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOpenTasks}" value="#{true}"/>
+                </p:menuitem>
+                <p:menuitem id="removeRestrictionToOpenTasks"
+                            value="#{msgs.removeRestrictionToOpenTasks}"
+                            rendered="#{CurrentTaskForm.onlyOpenTasks eq true}"
+                            update="tasksTabView:tasksForm:taskTable filterMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOpenTasks}" value="#{false}"/>
+                </p:menuitem>
+            </p:menu>
+        </h:form>
+    </div>
 </ui:composition>
