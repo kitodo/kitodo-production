@@ -344,7 +344,8 @@
                                 ajax="false"
                                 icon="fa fa-file-pdf-o"/>
                 </p:menu>
-            <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
+            <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary"
+                             icon="fa fa-sort" iconPos="right" process="@this"/>
             <p:menu overlay="true" trigger="processesTabView:processesForm:statisticButton" my="left bottom" at="left top">
                 <p:menuitem id="stateOfVolume"
                             value="#{msgs.stateOfVolume}"
