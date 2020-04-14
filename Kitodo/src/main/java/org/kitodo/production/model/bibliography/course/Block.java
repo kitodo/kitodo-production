@@ -123,8 +123,10 @@ public class Block {
     /**
      * Add a new issue to this block.
      */
-    public void addIssue() {
-        addIssue(new Issue(course));
+    public Issue addIssue() {
+        Issue issue = new Issue(course);
+        addIssue(issue);
+        return issue;
     }
 
     /**

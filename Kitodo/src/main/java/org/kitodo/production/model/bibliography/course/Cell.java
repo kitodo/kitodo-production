@@ -134,4 +134,13 @@ public class Cell {
     public void setOnBlock(boolean onBlock) {
         this.onBlock = onBlock;
     }
+
+    /**
+     * Get onBlock.
+     *
+     * @return value of onBlock
+     */
+    public boolean isOnBlock() {
+        return onBlock;
+    }
 }

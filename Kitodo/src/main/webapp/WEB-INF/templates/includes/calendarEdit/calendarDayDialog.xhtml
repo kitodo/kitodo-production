@@ -1,0 +1,157 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+    <p:dialog id="calendarDayDialog"
+              widgetVar="calendarDayDialog"
+              resizable="false"
+              width="800"
+              height="900"
+              showHeader="false"
+              dynamic="true"
+              modal="true">
+        <h:form id="calendarDayForm">
+            <ui:param name="date" value="#{CalendarForm.selectedDate}"/>
+            <p:panelGrid columns="1" layout="grid">
+                <h3>
+                    #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
+                    #{date.toString()}
+                    (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
+                </h3>
+                <h:panelGroup layout="block"
+                              styleClass="dialogFieldWrapper">
+
+                    <p:repeat value="#{CalendarForm.calendarSheet.get(date.dayOfMonth - 1).get(date.monthValue - 1).issues}"
+                              var="issue">
+                        <h:panelGroup layout="block"
+                                      styleClass="issue-wrapper">
+                            <div class="appearance-wrapper">
+                                <h:outputText value="#{issue.heading} #{msgs['calendar.sheet.issue.'.concat(issue.isMatch(date) ? 'selected' : 'notSelected')]}"/>
+                                <p:commandButton action="#{CalendarForm.changeMatch(issue, date)}"
+                                                 title="#{issue.isMatch(date) ? msgs['calendar.issue.delete'] : msgs['calendar.issue.add']}"
+                                                 icon="#{issue.isMatch(date) ? 'fa fa-trash' : 'fa fa-plus'}"
+                                                 styleClass="secondary"
+                                                 update="editForm:calendarTabView:calendarDetailsLayout
+                                                         calendarDayForm"/>
+                            </div>
+                            <!-- Metadata -->
+                            <p:fragment rendered="#{issue.isMatch(date)}">
+                                <p:dataView styleClass="metadata-list"
+                                            value="#{CalendarForm.getMetadata(CalendarForm.selectedBlock, date, issue)}"
+                                            var="metadata">
+                                    <p:dataViewListItem>
+                                        <h:outputText styleClass="metadata-first-appearance"
+                                                      value="#{msgs['calendar.block.firstAppearance']} #{metadata.getCreateAsString()}"/>
+                                        <h:outputText styleClass="metadata-last-appearance"
+                                                      value="#{msgs['calendar.block.lastAppearance']} #{metadata.getDelete()}"/>
+                                        <!-- metadata type -->
+                                        <p:outputLabel value="#{msgs.type}"
+                                                       for="metadataType"
+                                                       styleClass="input"/>
+                                        <p:selectOneMenu id="metadataType"
+                                                         value="#{metadata.metadataType}"
+                                                         title="#{msgs.type}">
+                                            <f:selectItems value="#{CalendarForm.allMetadataTypes}"/>
+                                            <p:ajax event="change"
+                                                    update="editForm:calendarTabView:calendarDetailsLayout
+                                                            calendarDayForm"/>
+                                        </p:selectOneMenu>
+                                        <!-- start value -->
+                                        <p:outputLabel value="#{msgs['calendar.metadata.startValue']}"
+                                                       for="metadataStartValue"
+                                                       styleClass="input"/>
+                                        <p:inputText id="metadataStartValue"
+                                                     value="#{metadata.startValue}"
+                                                     title="#{msgs['calendar.metadata.startValue']}">
+                                            <p:ajax event="change"
+                                                    update="editForm:calendarTabView:calendarDetailsLayout
+                                                            calendarDayForm"/>
+                                        </p:inputText>
+                                        <!-- current value -->
+                                        <p:outputLabel value="#{msgs['calendar.metadata.currentValue']}:"
+                                                       for="metadataValue"
+                                                       styleClass="metadata-value-label"/>
+                                        <h:outputText id="metadataValue"
+                                                      styleClass="metadata-value"
+                                                      value="#{CalendarForm.getMetadataValue(metadata, date, issue)}"/>
+                                        <!-- step size -->
+                                        <p:outputLabel value="#{msgs['calendar.metadata.stepSize']}"
+                                                       for="metadataStepSize"
+                                                       styleClass="input"/>
+                                        <p:selectOneMenu id="metadataStepSize"
+                                                         value="#{metadata.stepSize}"
+                                                         title="#{msgs['calendar.metadata.stepSize']}">
+                                            <f:selectItem itemValue="#{null}"
+                                                          itemLabel="#{msgs['calendar.metadata.stepSize.static']}"/>
+                                            <f:selectItems value="#{CalendarForm.granularities}"
+                                                           var="item"
+                                                           itemLabel="#{msgs['calendar.metadata.stepSize.'.concat(item.toString().toLowerCase())]}"/>
+                                            <p:ajax event="change"
+                                                    update="editForm:calendarTabView:calendarDetailsLayout
+                                                            calendarDayForm"/>
+                                        </p:selectOneMenu>
+                                        <!-- last issue -->
+                                        <p:commandButton id="metadataLastIssue"
+                                                         action="#{CalendarForm.setLastIssue(metadata, date, issue)}"
+                                                         value="#{msgs['calendar.metadata.setLastIssue']}"
+                                                         title="#{msgs['calendar.metadata.setLastIssue']}"
+                                                         icon="fa fa-step-forward"
+                                                         iconPos="right"
+                                                         styleClass="secondary"
+                                                         update="editForm:calendarTabView:calendarDetailsLayout
+                                                                 calendarDayForm"/>
+                                        <!-- delete metadata -->
+                                        <p:commandButton id="removeMetadata"
+                                                         action="#{CalendarForm.selectedBlock.deleteMetadata(metadata)}"
+                                                         value="#{msgs.delete}"
+                                                         title="#{msgs.delete}"
+                                                         icon="fa fa-trash-o"
+                                                         iconPos="right"
+                                                         styleClass="secondary"
+                                                         update="editForm:calendarTabView:calendarDetailsLayout
+                                                                 calendarDayForm"/>
+
+                                    </p:dataViewListItem>
+                                </p:dataView>
+                                <!-- Add metadata-->
+                                <p:commandButton id="addMetadata"
+                                                 action="#{CalendarForm.addMetadata(issue)}"
+                                                 value="#{msgs['calendar.metadata.add']}"
+                                                 title="#{msgs['calendar.metadata.add']}"
+                                                 icon="fa fa-plus"
+                                                 iconPos="right"
+                                                 styleClass="secondary"
+                                                 update="editForm:calendarTabView:calendarDetailsLayout
+                                                         calendarDayForm"/>
+                            </p:fragment>
+
+
+                        </h:panelGroup>
+                    </p:repeat>
+                </h:panelGroup>
+                <h:panelGroup layout="block"
+                              styleClass="dialogButtonWrapper">
+                    <p:commandButton id="close"
+                                     onclick="PF('calendarDayDialog').hide()"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times"
+                                     iconPos="right"
+                                     styleClass="primary right"/>
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>
