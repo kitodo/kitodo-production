@@ -106,18 +106,19 @@
                                        oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
                                        rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
                             <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
-                            <h:outputText><i class="fa fa-list-alt"/></h:outputText>
+                            <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                         </p:commandLink>
                         <!-- else, open metadata editor directly -->
-                        <h:link id="readXML"
-                                outcome="/pages/metadataEditor?faces-redirect=true"
-                                styleClass="action"
-                                title="#{msgs.metadataEdit}"
-                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
-                            <f:param name="taskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}"/>
-                            <f:param name="referrer" value="#{'searchResult'}"/>
-                            <h:outputText><i class="fa fa-list-alt"/></h:outputText>
-                        </h:link>
+                        <!--@elvariable id="currentTaskId" type="int"-->
+                        <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}" />
+                        <h:commandLink id="readXML"
+                                       action="#{DataEditorForm.open(currentTaskId, 'searchResult')}"
+                                       styleClass="action"
+                                       title="#{msgs.metadataEdit}"
+                                       rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
+                            <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
+                            <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
+                        </h:commandLink>
 
                         <p:commandLink id="download"
                                        action="#{SearchResultForm.downloadToHome(process.id)}"
