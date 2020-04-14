@@ -40,6 +40,8 @@ public class SelectTemplateDialogView implements Serializable {
     private ProjectDTO project;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String MASSIMPORT_PATH = "/pages/massImport.jsf?faces-redirect=true";
+    private String redirectPath;
 
     /**
      * Get project.
@@ -94,19 +96,35 @@ public class SelectTemplateDialogView implements Serializable {
     }
 
     /**
-     * Navigate to 'createProcess' page if 'selectedTemplateId' is > 0.
+     * check for templates with create process path.
+     */
+    public void createProcessForProject() {
+        redirectPath = CREATE_PROCESS_PATH;
+        checkForTemplates();
+    }
+
+    /**
+     * check for templates with massimport path.
+     */
+    public void openMassImportForProject() {
+        redirectPath = MASSIMPORT_PATH;
+        checkForTemplates();
+    }
+
+    /**
+     * Navigate to redirectPath page if 'selectedTemplateId' is > 0.
      * Show template selection dialog if 'selectedTemplateId' is 0 and more than one template is configured for
      * current project.
      * Display error message if no template is configured for current project.
      */
-    public void createProcessForProject() {
+    public void checkForTemplates() {
         if (this.project.getTemplates().size() == 1) {
             this.selectedTemplateId = project.getTemplates().get(0).getId();
         }
         if (this.selectedTemplateId > 0) {
             try {
                 FacesContext context = FacesContext.getCurrentInstance();
-                String path = context.getExternalContext().getRequestContextPath() + CREATE_PROCESS_PATH
+                String path = context.getExternalContext().getRequestContextPath() + redirectPath
                         + "&templateId=" + this.selectedTemplateId + "&projectId=" + this.project.getId()
                         + "&referrer=" + context.getViewRoot().getViewId();
                 context.getExternalContext().redirect(path);
