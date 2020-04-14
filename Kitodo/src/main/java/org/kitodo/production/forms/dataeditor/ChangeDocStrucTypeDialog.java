@@ -40,8 +40,8 @@ public class ChangeDocStrucTypeDialog {
     private static final Logger logger = LogManager.getLogger(ChangeDocStrucTypeDialog.class);
 
     private final DataEditorForm dataEditor;
-    private final List<SelectItem> docStructEditTypeSelectionItems = new ArrayList<>();
-    private String docStructEditTypeSelectionSelectedItem;
+    private final List<SelectItem> docStructTypes = new ArrayList<>();
+    private String docStructType;
 
     /**
      * Backing bean for the add doc struc type dialog of the metadata editor.
@@ -56,8 +56,8 @@ public class ChangeDocStrucTypeDialog {
      * Edit the doc struc.
      */
     public void editDocStruc() {
-        IncludedStructuralElement selectedStructure = getTheCurrentlySelectedIncludedStructuralElement();
-        selectedStructure.setType(docStructEditTypeSelectionSelectedItem);
+        IncludedStructuralElement selectedStructure = getSelectedIncludedStructuralElement();
+        selectedStructure.setType(docStructType);
         dataEditor.refreshStructurePanel();
     }
 
@@ -67,8 +67,8 @@ public class ChangeDocStrucTypeDialog {
      *
      * @return the selected item of the docStructEditTypeSelection
      */
-    public List<SelectItem> getDocStructEditTypeSelectionItems() {
-        return docStructEditTypeSelectionItems;
+    public List<SelectItem> getDocStructTypes() {
+        return docStructTypes;
     }
 
     /**
@@ -76,8 +76,8 @@ public class ChangeDocStrucTypeDialog {
      *
      * @return selected doc struct type
      */
-    public String getDocStructEditTypeSelectionSelectedItem() {
-        return docStructEditTypeSelectionSelectedItem;
+    public String getDocStructType() {
+        return docStructType;
     }
 
     /**
@@ -86,8 +86,8 @@ public class ChangeDocStrucTypeDialog {
      * @param docStructEditTypeSelectionSelectedItem
      *            selected item to set
      */
-    public void setDocStructEditTypeSelectionSelectedItem(String docStructEditTypeSelectionSelectedItem) {
-        this.docStructEditTypeSelectionSelectedItem = docStructEditTypeSelectionSelectedItem;
+    public void setDocStructType(String docStructEditTypeSelectionSelectedItem) {
+        this.docStructType = docStructEditTypeSelectionSelectedItem;
     }
 
     /**
@@ -96,19 +96,19 @@ public class ChangeDocStrucTypeDialog {
      */
     public void prepare() {
         try {
-            IncludedStructuralElement selectedStructure = getTheCurrentlySelectedIncludedStructuralElement();
-            Map<String, String> possibleTypes = findAllTypesThisIncludedStructuralElementCanHave(selectedStructure);
-            docStructEditTypeSelectionItems.clear();
+            IncludedStructuralElement selectedStructure = getSelectedIncludedStructuralElement();
+            Map<String, String> possibleTypes = findAllPossibleTypes(selectedStructure);
+            docStructTypes.clear();
             for (Entry<String, String> typeOption : possibleTypes.entrySet()) {
-                docStructEditTypeSelectionItems.add(new SelectItem(typeOption.getKey(), typeOption.getValue()));
+                docStructTypes.add(new SelectItem(typeOption.getKey(), typeOption.getValue()));
             }
-            docStructEditTypeSelectionSelectedItem = selectedStructure.getType();
+            docStructType = selectedStructure.getType();
         } catch (IllegalStateException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
-    private IncludedStructuralElement getTheCurrentlySelectedIncludedStructuralElement() {
+    private IncludedStructuralElement getSelectedIncludedStructuralElement() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             return dataEditor.getSelectedStructure().get();
         } else {
@@ -116,12 +116,12 @@ public class ChangeDocStrucTypeDialog {
         }
     }
 
-    private Map<String, String> findAllTypesThisIncludedStructuralElementCanHave(
+    private Map<String, String> findAllPossibleTypes(
             IncludedStructuralElement includedStructuralElement) throws IOException {
 
         Map<String, String> possibleTypes = getAllowedChildTypesFromIncludedStructuralParentElement(
             includedStructuralElement);
-        onlyAllowTypesThatSupportAllGivenIncludedStructuralChildElements(includedStructuralElement, possibleTypes);
+        restrictTypesToChildElements(includedStructuralElement, possibleTypes);
         return possibleTypes;
     }
 
@@ -164,7 +164,7 @@ public class ChangeDocStrucTypeDialog {
         return parentView.getAllowedSubstructuralElements();
     }
 
-    private void onlyAllowTypesThatSupportAllGivenIncludedStructuralChildElements(
+    private void restrictTypesToChildElements(
             IncludedStructuralElement includedStructuralElement, Map<String, String> possibleTypes) {
         if (includedStructuralElement.getChildren().isEmpty()) {
             return;

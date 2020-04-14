@@ -33,11 +33,11 @@
             <!-- Select the new type -->
             <p:selectOneMenu id="docStructEditTypeSelection"
                              class="input"
-                             value="#{DataEditorForm.changeDocStrucTypeDialog.docStructEditTypeSelectionSelectedItem}"
+                             value="#{DataEditorForm.changeDocStrucTypeDialog.docStructType}"
                              required="true"
                              immediate="true"
                              style="width: 180px; margin-left: 33px;">
-                <f:selectItems value="#{DataEditorForm.changeDocStrucTypeDialog.docStructEditTypeSelectionItems}"/>
+                <f:selectItems value="#{DataEditorForm.changeDocStrucTypeDialog.docStructTypes}"/>
             </p:selectOneMenu>
 
             <!-- Press OK when finish -->
