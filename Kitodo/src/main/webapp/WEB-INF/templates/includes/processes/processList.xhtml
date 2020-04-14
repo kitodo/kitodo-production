@@ -399,7 +399,7 @@
                 <h:outputText title="#{processStatistic.numberOfImages}"
                               value="#{processStatistic.numberOfImages}"/>
             </p:column>
-            <p:column headerText="#{msgs.relativAmount}"
+            <p:column headerText="#{msgs.relativeAmount}"
                       width="10">
                 <p:progressBar value="#{ProcessForm.getRelativeImageAmount(processStatistic.numberOfImages)}" displayOnly="true"/>
             </p:column>
@@ -408,7 +408,7 @@
                 <h:outputText title="#{processStatistic.numberOfStructuralElements}"
                               value="#{processStatistic.numberOfStructuralElements}"/>
             </p:column>
-            <p:column headerText="#{msgs.relativAmount}"
+            <p:column headerText="#{msgs.relativeAmount}"
                       width="10">
                 <p:progressBar value="#{ProcessForm.getRelativeStructuralElementAmount(processStatistic.numberOfStructuralElements)}" displayOnly="true"/>
             </p:column>
@@ -417,7 +417,7 @@
                 <h:outputText title="#{processStatistic.numberOfMetadata}"
                               value="#{processStatistic.numberOfMetadata}"/>
             </p:column>
-            <p:column headerText="#{msgs.relativAmount}"
+            <p:column headerText="#{msgs.relativeAmount}"
                       width="10">
                 <p:progressBar value="#{ProcessForm.getRelativeMetadataAmount(processStatistic.numberOfMetadata)}" displayOnly="true"/>
             </p:column>
