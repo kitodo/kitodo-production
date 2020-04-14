@@ -8,6 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+/* globals PF */
 // jshint unused:false
 
 var SEPARATOR_WIDTH = 3;
@@ -403,6 +404,7 @@ function expandThirdColumn() {
 
 function updateMetadataEditorView(showMetadataColumn) {
     PF('dialogAddDocStrucType').hide();
+    PF('dialogEditDocStrucType').hide();
     expandFirstColumn();
     if (showMetadataColumn) {
         expandSecondColumn();

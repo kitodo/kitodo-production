@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -616,7 +615,7 @@ public class StructurePanel implements Serializable {
         try {
             IncludedStructuralElement rootElement = ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement();
             List<IncludedStructuralElement> includedStructuralElementList
-                    = determineIncludedStructuralElementPathToChildRecursive(rootElement, child.getId());
+                    = MetadataEditor.determineIncludedStructuralElementPathToChild(rootElement, child.getId());
             DefaultTreeNode parentNode = tree;
             if (includedStructuralElementList.isEmpty()) {
                 /*
@@ -648,44 +647,6 @@ public class StructurePanel implements Serializable {
             Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
             addTreeNode(parent.getTitle(), true, true, parent, tree);
         }
-    }
-
-    /**
-     * Recursively determines the path to the included structural element of the
-     * child. For each level of the root element, the recursion is run through
-     * once, that is for a newspaper year process tree times (year, month, day).
-     *
-     * @param includedStructuralElement
-     *            included structural element of the level stage of recursion
-     *            (starting from the top)
-     * @param number
-     *            number of the record of the process of the child
-     *
-     */
-    private static List<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
-            IncludedStructuralElement includedStructuralElement, int number) {
-
-        if (Objects.nonNull(includedStructuralElement.getLink())) {
-            try {
-                if (ServiceManager.getProcessService()
-                        .processIdFromUri(includedStructuralElement.getLink().getUri()) == number) {
-                    LinkedList<IncludedStructuralElement> linkedIncludedStructuralElements = new LinkedList<>();
-                    linkedIncludedStructuralElements.add(includedStructuralElement);
-                    return linkedIncludedStructuralElements;
-                }
-            } catch (IllegalArgumentException | ClassCastException | SecurityException e) {
-                logger.catching(Level.TRACE, e);
-            }
-        }
-        for (IncludedStructuralElement includedStructuralElementChild : includedStructuralElement.getChildren()) {
-            List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
-                includedStructuralElementChild, number);
-            if (!includedStructuralElementList.isEmpty()) {
-                includedStructuralElementList.add(0, includedStructuralElement);
-                return includedStructuralElementList;
-            }
-        }
-        return Collections.emptyList();
     }
 
     /**
