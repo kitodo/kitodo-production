@@ -298,7 +298,8 @@
 
         </p:dataTable>
         <div id="dropDownMenus">
-            <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
+            <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary"
+                             icon="fa fa-sort" iconPos="right" process="@this"/>
             <p:menu overlay="true" trigger="processesTabView:processesForm:actionsButton" my="left bottom" at="left top">
                     <p:menuitem id="processingStatusUpSelection"
                                 value="#{msgs.processingStatusUp}"
