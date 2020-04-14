@@ -54,13 +54,13 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
-public class ImportTab implements Serializable {
-    private static final Logger logger = LogManager.getLogger(ImportTab.class);
+public class ImportDialog implements Serializable {
+    private static final Logger logger = LogManager.getLogger(ImportDialog.class);
     private LazyHitModel hitModel = new LazyHitModel();
 
     private CreateProcessForm createProcessForm;
-    private static final int ADDITIONAL_FIELDS_TAB_INDEX = 2;
-    private static final int TITLE_RECORD_LINK_TAB_INDEX = 4;
+    private static final int ADDITIONAL_FIELDS_TAB_INDEX = 1;
+    private static final int TITLE_RECORD_LINK_TAB_INDEX = 3;
     private static final String ID_PARAMETER_NAME = "ID";
     private static final String FORM_CLIENTID = "editForm";
     private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
@@ -80,7 +80,7 @@ public class ImportTab implements Serializable {
      *
      * @param createProcessForm CreateProcessForm instance to which this ImportTab is assigned.
      */
-    ImportTab(CreateProcessForm createProcessForm) {
+    ImportDialog(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 

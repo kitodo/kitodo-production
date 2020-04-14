@@ -1062,7 +1062,7 @@ h3#headerText {
     display: inline-block;
     overflow-x: hidden;
     text-overflow: ellipsis;
-    width: calc(100% - 500px);
+    width: calc(100% - 680px);
     white-space: nowrap;
 }
 
@@ -1170,6 +1170,10 @@ Import form
 #textMassImportForm\:importFromText {
     margin-left: var(--default-full-size);
     vertical-align: top;
+}
+
+#catalogSearchForm {
+    padding: 0 var(--default-double-size);
 }
 
 /*----------------------------------------------------------------------

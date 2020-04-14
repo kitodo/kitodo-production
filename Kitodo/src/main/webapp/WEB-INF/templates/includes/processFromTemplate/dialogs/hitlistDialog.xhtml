@@ -26,7 +26,7 @@
         <h3>#{msgs.hitlist}</h3>
         <h:form id="hitlistDialogForm">
             <p:dataTable id="hitlistDialogTable"
-                         value="#{CreateProcessForm.importTab.hitModel}"
+                         value="#{CreateProcessForm.importDialog.hitModel}"
                          var="hit"
                          rows="10"
                          paginatorPosition="bottom"
@@ -34,7 +34,7 @@
                          lazy="true"
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                          currentPageReportTemplate="#{msgs.currentPageReportTemplate}">
-                <p:column headerText="#{CreateProcessForm.importTab.hitModel.rowCount} #{msgs.hits}">
+                <p:column headerText="#{CreateProcessForm.importDialog.hitModel.rowCount} #{msgs.hits}">
                     <p:commandLink id="selectRecord"
                                    value="#{not empty hit.title ? hit.title : msgs.hitWithoutTitle}"
                                    title="#{hit.title}"
@@ -42,7 +42,7 @@
                                    update="editForm"
                                    immediate="true"
                                    actionListener="#{CreateProcessForm.initializeProcesses()}"
-                                   action="#{CreateProcessForm.importTab.getSelectedRecord()}">
+                                   action="#{CreateProcessForm.importDialog.getSelectedRecord()}">
                         <f:param name="ID" value="#{hit.identifier}"/>
                     </p:commandLink>
                 </p:column>

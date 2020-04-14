@@ -13,20 +13,15 @@ package org.kitodo.production.forms.createprocess;
 
 import com.sun.jersey.api.NotFoundException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
@@ -38,8 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
@@ -68,7 +61,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private static final Logger logger = LogManager.getLogger(CreateProcessForm.class);
 
-    private final ImportTab importTab = new ImportTab(this);
+    private final ImportDialog importDialog = new ImportDialog(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
     private final ProcessMetadataTab processMetadataTab = new ProcessMetadataTab(this);
     private final SearchTab searchTab = new SearchTab(this);
@@ -149,10 +142,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     /**
      * Get importTab.
      *
-     * @return value of importTab
+     * @return value of importDialog
      */
-    public ImportTab getImportTab() {
-        return importTab;
+    public ImportDialog getImportDialog() {
+        return importDialog;
     }
 
     /**
@@ -373,7 +366,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             throw new IOException("Unable to create directories for process hierarchy!");
         }
 
-        if (this.importTab.isImportChildren() && !createProcessesLocation(this.childProcesses)) {
+        if (this.importDialog.isImportChildren() && !createProcessesLocation(this.childProcesses)) {
             throw new IOException("Unable to create directories for child processes!");
         }
 
@@ -397,7 +390,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
                 Collections.singletonList(titleRecordLinkTab.getTitleRecordProcess().getTitle()));
-            importTab.showGrowlMessage(summary, detail);
+            importDialog.showGrowlMessage(summary, detail);
         } else {
             // add links between consecutive processes in list
             for (int i = 0; i < this.processes.size() - 1; i++) {
