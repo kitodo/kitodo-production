@@ -149,7 +149,7 @@ public class ChangeDocStrucTypeDialog {
         IncludedStructuralElement parentRootElement = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri)
                 .getRootElement();
         List<IncludedStructuralElement> parentHierarchyPath = MetadataEditor
-                .determineIncludedStructuralElementPathToChildRecursive(parentRootElement,
+                .determineIncludedStructuralElementPathToChild(parentRootElement,
                     dataEditor.getProcess().getId());
         if (parentHierarchyPath.isEmpty()) {
             throw new IllegalStateException("proces is not linked in parent process");

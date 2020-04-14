@@ -356,9 +356,9 @@ public class MetadataEditor {
     }
 
     /**
-     * Recursively determines the path to the included structural element of the
-     * child. For each level of the root element, the recursion is run through
-     * once, that is for a newspaper year process tree times (year, month, day).
+     * Determines the path to the included structural element of the child. For
+     * each level of the root element, the recursion is run through once, that
+     * is for a newspaper year process tree times (year, month, day).
      *
      * @param includedStructuralElement
      *            included structural element of the level stage of recursion
@@ -367,7 +367,7 @@ public class MetadataEditor {
      *            number of the record of the process of the child
      *
      */
-    public static List<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
+    public static List<IncludedStructuralElement> determineIncludedStructuralElementPathToChild(
             IncludedStructuralElement includedStructuralElement, int number) {
 
         if (Objects.nonNull(includedStructuralElement.getLink())) {
@@ -383,7 +383,7 @@ public class MetadataEditor {
             }
         }
         for (IncludedStructuralElement includedStructuralElementChild : includedStructuralElement.getChildren()) {
-            List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
+            List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChild(
                 includedStructuralElementChild, number);
             if (!includedStructuralElementList.isEmpty()) {
                 includedStructuralElementList.add(0, includedStructuralElement);

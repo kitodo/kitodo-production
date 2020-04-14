@@ -615,7 +615,7 @@ public class StructurePanel implements Serializable {
         try {
             IncludedStructuralElement rootElement = ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement();
             List<IncludedStructuralElement> includedStructuralElementList
-                    = MetadataEditor.determineIncludedStructuralElementPathToChildRecursive(rootElement, child.getId());
+                    = MetadataEditor.determineIncludedStructuralElementPathToChild(rootElement, child.getId());
             DefaultTreeNode parentNode = tree;
             if (includedStructuralElementList.isEmpty()) {
                 /*
