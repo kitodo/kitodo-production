@@ -197,7 +197,7 @@
                                    action="#{ProcessForm.exportPdf}"
                                    styleClass="action"
                                    title="#{msgs.exportPdf}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
+                                   rendered="false">
                         <h:outputText><i class="fa fa-file-pdf-o fa-lg"/></h:outputText>
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     </h:commandLink>
