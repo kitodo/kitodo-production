@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Objects;
-
+import java.util.function.Function;
+import java.util.stream.Stream;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -28,7 +30,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.Parent;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.production.services.ServiceManager;
@@ -142,5 +146,24 @@ public class MetsService {
 
     public void save(Workpiece workpiece, OutputStream outputStream) throws IOException {
         metsXmlElementAccess.save(workpiece, outputStream);
+    }
+
+    /**
+     * Counts the logical metadata tags in the workpiece.
+     * @param workpiece the workpiece to count tags.
+     * @return the number of tags
+     */
+    public static long countLogicalMetadata(Workpiece workpiece) {
+        return treeStream(workpiece.getRootElement(), Parent::getChildren)
+                .flatMap(includedStructuralElement -> includedStructuralElement.getMetadata().parallelStream())
+                .filter(metadata -> !(metadata instanceof MetadataEntry)
+                        || Objects.nonNull(((MetadataEntry) metadata).getValue())
+                                && !((MetadataEntry) metadata).getValue().isEmpty())
+                .mapToInt(metadata -> 1).count();
+    }
+
+    private static <T> Stream<T> treeStream(T tree, Function<T, Collection<T>> childAccessor) {
+        return Stream.concat(Stream.of(tree),
+            childAccessor.apply(tree).stream().flatMap(child -> treeStream(child, childAccessor)));
     }
 }

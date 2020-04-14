@@ -38,6 +38,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -60,6 +61,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
@@ -94,6 +96,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> workpieces;
     private Property property;
     private transient FileService fileService = ServiceManager.getFileService();
+    private transient ProcessService processService = ServiceManager.getProcessService();
     private transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private String doneDirectoryName;
     private List<Process> selectedProcesses = new ArrayList<>();
@@ -102,6 +105,10 @@ public class ProcessForm extends TemplateBaseForm {
     private PieChartModel pieModel;
     private HorizontalBarChartModel stackedBarModel;
     private Map<String,Integer> statisticResult;
+    private List<ProcessMetadataStatistic> processMetadataStatistics = new ArrayList<>();
+    private int numberOfGlobalImages;
+    private int numberOfGlobalStructuralElements;
+    private int numberOfGlobalMetadata;
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
@@ -1401,6 +1408,41 @@ public class ProcessForm extends TemplateBaseForm {
         createBarModel(durationOfTasks);
     }
 
+    /**
+     * Shows the number of images, metadata and structuralElements.
+     */
+    public void showProcessMetadataStatistic() {
+        chartMode = ChartMode.METADATA_STATISTIC;
+        resetGlobalStatisticValues();
+        Workpiece workpiece;
+        for (Process selectedProcess : selectedProcesses) {
+            try {
+                URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(selectedProcess);
+                workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+            } catch (IOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE,
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), selectedProcess.getId() }, logger, e);
+                return;
+            }
+            int numberOfProcessImages = workpiece.getAllMediaUnitsSorted().size();
+            this.numberOfGlobalImages += numberOfProcessImages;
+            int numberOfProcessStructuralElements = workpiece.getAllIncludedStructuralElements().size();
+            this.numberOfGlobalStructuralElements += numberOfProcessStructuralElements;
+            int numberOfProcessMetadata = Math
+                    .toIntExact(ServiceManager.getMetsService().countLogicalMetadata(workpiece));
+            this.numberOfGlobalMetadata += numberOfProcessMetadata;
+
+            processMetadataStatistics.add(new ProcessMetadataStatistic(selectedProcess.getTitle(),
+                    numberOfProcessImages, numberOfProcessStructuralElements, numberOfProcessMetadata));
+        }
+    }
+
+    private void resetGlobalStatisticValues() {
+        this.numberOfGlobalStructuralElements = 0;
+        this.numberOfGlobalImages = 0;
+        this.numberOfGlobalMetadata = 0;
+    }
+
     private void createPieModel(Map<String, Integer> processValues) {
         pieModel = new PieChartModel();
 
@@ -1479,6 +1521,23 @@ public class ProcessForm extends TemplateBaseForm {
         return ChartMode.BAR.equals(chartMode);
     }
 
+    public boolean showProcessMetadataStatisticTable() {
+        return ChartMode.METADATA_STATISTIC.equals(chartMode);
+    }
+
+    public int getRelativeImageAmount(int numberOfImages) {
+        return numberOfImages == 0 ? 0 : numberOfImages * 100 / this.numberOfGlobalImages;
+    }
+
+    public int getRelativeStructuralElementAmount(int numberOfStructuralElements) {
+        return numberOfStructuralElements == 0 ? 0
+                : numberOfStructuralElements * 100 / this.numberOfGlobalStructuralElements;
+    }
+
+    public int getRelativeMetadataAmount(int numberOfMetadata) {
+        return numberOfMetadata == 0 ? 0 : numberOfMetadata * 100 / this.numberOfGlobalMetadata;
+    }
+
     public PieChartModel getPieModel() {
         return pieModel;
     }
@@ -1497,5 +1556,9 @@ public class ProcessForm extends TemplateBaseForm {
 
     public Map<String, Integer> getStatisticResult() {
         return statisticResult;
+    }
+
+    public List<ProcessMetadataStatistic> getProcessMetadataStatistics() {
+        return processMetadataStatistics;
     }
 }

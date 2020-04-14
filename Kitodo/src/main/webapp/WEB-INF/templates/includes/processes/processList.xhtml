@@ -356,6 +356,11 @@
                             action="#{ProcessForm.showDurationOfTasks}"
                             update="processesTabView:processesForm"
                             icon="fa fa-arrow-circle-o-up"/>
+                <p:menuitem id="processMetadataStatistic"
+                            value="#{msgs.numberOfMetadata}"
+                            action="#{ProcessForm.showProcessMetadataStatistic()}"
+                            update="processesTabView:processesForm"
+                            icon="fa fa-arrow-circle-o-up"/>
             </p:menu>
         </div>
 
@@ -378,6 +383,45 @@
         </p:dataTable>
 
         <p:barChart rendered="#{ProcessForm.showBarModel()}" model="#{ProcessForm.stackedBarModel}" style="width: 100%"/>
+
+        <p:dataTable id="processMetadataTable"
+                     style="width: 50%"
+                     rendered="#{ProcessForm.showProcessMetadataStatisticTable()}"
+                     value="#{ProcessForm.processMetadataStatistics}"
+                     var = "processStatistic">
+            <p:column headerText="#{msgs.title}"
+                      width="25">
+                <h:outputText title="#{processStatistic.processTitle}"
+                              value="#{processStatistic.processTitle}"/>
+            </p:column>
+            <p:column headerText="#{msgs.images}"
+                      width="10">
+                <h:outputText title="#{processStatistic.numberOfImages}"
+                              value="#{processStatistic.numberOfImages}"/>
+            </p:column>
+            <p:column headerText="#{msgs.relativeAmount}"
+                      width="10">
+                <p:progressBar value="#{ProcessForm.getRelativeImageAmount(processStatistic.numberOfImages)}" displayOnly="true"/>
+            </p:column>
+            <p:column headerText="#{msgs.structuralElement}"
+                      width="10">
+                <h:outputText title="#{processStatistic.numberOfStructuralElements}"
+                              value="#{processStatistic.numberOfStructuralElements}"/>
+            </p:column>
+            <p:column headerText="#{msgs.relativeAmount}"
+                      width="10">
+                <p:progressBar value="#{ProcessForm.getRelativeStructuralElementAmount(processStatistic.numberOfStructuralElements)}" displayOnly="true"/>
+            </p:column>
+            <p:column headerText="#{msgs.metadata}"
+                      width="10">
+                <h:outputText title="#{processStatistic.numberOfMetadata}"
+                              value="#{processStatistic.numberOfMetadata}"/>
+            </p:column>
+            <p:column headerText="#{msgs.relativeAmount}"
+                      width="10">
+                <p:progressBar value="#{ProcessForm.getRelativeMetadataAmount(processStatistic.numberOfMetadata)}" displayOnly="true"/>
+            </p:column>
+        </p:dataTable>
 
     </h:form>
 </ui:composition>
