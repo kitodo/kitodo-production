@@ -154,7 +154,9 @@ public class MetadataEditor {
                 linkElement = structuralElement;
                 break;
             } else {
-                return removeLinkRecursive(structuralElement, childId);
+                if (removeLinkRecursive(structuralElement, childId)) {
+                    return true;
+                }
             }
         }
         // no need to check if 'linkElement' is Null since it is set in the same place as 'parentElement'!
