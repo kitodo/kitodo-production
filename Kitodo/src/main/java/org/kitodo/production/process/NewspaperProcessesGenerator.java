@@ -50,6 +50,7 @@ import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RulesetNotFoundException;
@@ -266,7 +267,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             but its value cannot be evaluated to an integer
      */
     public void nextStep() throws ConfigurationException, DAOException, DataException, IOException,
-            ProcessGenerationException, DoctypeMissingException, RulesetNotFoundException {
+            ProcessGenerationException, DoctypeMissingException, RulesetNotFoundException, CommandException {
 
         if (currentStep == 0) {
             initialize();
@@ -462,7 +463,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return metadataEntries;
     }
 
-    private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException {
+    private void createProcess(int index)
+            throws DAOException, DataException, IOException, ProcessGenerationException, CommandException {
         final long begin = System.nanoTime();
 
         List<IndividualIssue> individualIssuesForProcess = processesToCreate.get(index);
@@ -505,7 +507,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return title;
     }
 
-    private void createMetadataFileForProcess(List<IndividualIssue> individualIssues) throws IOException {
+    private void createMetadataFileForProcess(List<IndividualIssue> individualIssues)
+            throws IOException, CommandException {
 
         IncludedStructuralElement rootElement = new IncludedStructuralElement();
         MetadataEntry dateMetadataEntry = new MetadataEntry();
@@ -580,7 +583,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void prepareTheAppropriateYearProcess(String yearMark, Map<String, String> genericFields)
-            throws DAOException, DataException, ProcessGenerationException, IOException {
+            throws DAOException, DataException, ProcessGenerationException, IOException, CommandException {
 
         if (yearMark.equals(currentYear)) {
             return;
@@ -651,7 +654,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void createNewYearProcess(String yearMark, Map<String, String> genericFields)
-            throws ProcessGenerationException, DataException, IOException {
+            throws ProcessGenerationException, DataException, IOException, CommandException {
         final long begin = System.nanoTime();
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());

@@ -38,6 +38,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -503,7 +504,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             try {
                 URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
                 tempProcess.getProcess().setProcessBaseUri(processBaseUri);
-            } catch (IOException e) {
+            } catch (IOException | CommandException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 try {
                     ServiceManager.getProcessService().remove(tempProcess.getProcess());

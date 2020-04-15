@@ -51,6 +51,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.Helper;
@@ -104,7 +105,7 @@ public class FileService {
      * @throws IOException
      *             an IOException
      */
-    URI createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
+    URI createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException, CommandException {
         URI directoryUri = asDirectory(parentFolderUri).resolve(URIUtil.encodePath(directoryName));
         if (fileExist(directoryUri)) {
             logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
@@ -115,13 +116,16 @@ public class FileService {
                     .normalize().toAbsolutePath().toString();
             List<String> commandParameter = Collections.singletonList(path);
             File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+            if (!script.exists()) {
+                throw new CommandException(Helper.getTranslation("fileNotFound", Arrays.asList(script.getName())));
+            }
             CommandResult commandResult = commandService.runCommand(script, commandParameter);
             if (!commandResult.isSuccessful()) {
                 String message = MessageFormat.format(
                     "Could not create directory {0} in {1}! No new directory was created", directoryName,
                     parentFolderUri.getPath());
                 logger.warn(message);
-                throw new IOException(message);
+                throw new CommandException(message);
             }
         }
         return directoryUri;
@@ -205,7 +209,7 @@ public class FileService {
      *            the process
      * @return the URI to the process location
      */
-    public URI createProcessLocation(Process process) throws IOException {
+    public URI createProcessLocation(Process process) throws IOException, CommandException {
         URI processLocationUri = fileManagementModule.createProcessLocation(process.getId().toString());
         createProcessFolders(process, processLocationUri);
         return processLocationUri;
@@ -217,11 +221,11 @@ public class FileService {
      * @param process
      *            the process
      */
-    public void createProcessFolders(Process process) throws IOException {
+    public void createProcessFolders(Process process) throws IOException, CommandException {
         createProcessFolders(process, fileManagementModule.createUriForExistingProcess(process.getId().toString()));
     }
 
-    private void createProcessFolders(Process process, URI processLocationUri) throws IOException {
+    private void createProcessFolders(Process process, URI processLocationUri) throws IOException, CommandException {
         for (Folder folder : process.getProject().getFolders()) {
             if (folder.isCreateFolder()) {
                 URI parentFolderUri = processLocationUri;
