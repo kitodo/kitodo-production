@@ -109,13 +109,17 @@
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:commandLink>
 
-                <h:link id="massImport"
-                        outcome="/pages/massImport?faces-redirect=true"
-                        styleClass="action">
-                    <f:param name="templateId" value="#{ProjectForm.getFirstTemplate(item)}"/>
-                    <f:param name="projectId" value="#{item.id}"/>
-                    <h:outputText><i class="fa fa-align-center"/></h:outputText>
-                </h:link>
+                <h:panelGroup styleClass="action"
+                              title="#{item.templates.size() gt 0 ? msgs['massImport'] : msgs['noTemplatesConfigured']}">
+                    <p:commandLink id="massImport"
+                                   action="#{SelectTemplateDialogView.openMassImportForProject()}"
+                                   disabled="#{item.templates.size() lt 1}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                        <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
+                        <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{item}"/>
+                        <h:outputText><i class="fa fa-align-center"/></h:outputText>
+                    </p:commandLink>
+                </h:panelGroup>
 
                 <h:link styleClass="action"
                         rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
