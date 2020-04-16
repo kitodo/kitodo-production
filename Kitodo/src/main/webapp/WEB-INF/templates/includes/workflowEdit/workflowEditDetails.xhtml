@@ -31,7 +31,7 @@
                          value="#{WorkflowForm.workflow.title}" required="true" disabled="#{isViewMode}"/>
             <div class="workflow-editor-hidden">
                 <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
-
+                <h:inputHidden value="#{WorkflowForm.language}" id="editor_language"/>
                 <p:selectOneMenu id="roleId" value="#{WorkflowForm.roleId}">
                     <f:selectItems value="#{WorkflowForm.roles}"/>
                 </p:selectOneMenu>
