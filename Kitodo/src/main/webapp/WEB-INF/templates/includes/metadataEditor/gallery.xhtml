@@ -120,7 +120,7 @@
                                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                             rendered="#{media.showingInPreview}">
-                                                <f:param name="id"
+                                                <f:param name="mediaId"
                                                          value="#{media.id}" />
                                                 <f:param name="process"
                                                          value="#{DataEditorForm.process.id}"/>
@@ -205,7 +205,7 @@
                                                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                                                     <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                                     rendered="#{media.showingInPreview}">
-                                                        <f:param name="id"
+                                                        <f:param name="mediaId"
                                                                  value="#{media.id}"/>
                                                         <f:param name="process"
                                                                  value="#{DataEditorForm.process.id}"/>
@@ -314,7 +314,7 @@
                                                            a:data-order="#{media.order}">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                                               rendered="#{media.showingInPreview}">
-                                                    <f:param name="id"
+                                                    <f:param name="mediaId"
                                                              value="#{media.id}" />
                                                     <f:param name="process"
                                                              value="#{DataEditorForm.process.id}"/>

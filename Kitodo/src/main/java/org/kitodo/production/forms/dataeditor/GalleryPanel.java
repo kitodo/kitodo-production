@@ -159,13 +159,13 @@ public class GalleryPanel {
     public StreamedContent getPreviewData() {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getCurrentPhaseId() != PhaseId.RENDER_RESPONSE) {
-            String id = context.getExternalContext().getRequestParameterMap().get("id");
+            String id = context.getExternalContext().getRequestParameterMap().get("mediaId");
             GalleryMediaContent mediaContent = previewImageResolver.get(id);
             if (Objects.nonNull(mediaContent)) {
                 logger.trace("Serving image request {}", id);
                 return mediaContent.getPreviewData();
             }
-            logger.debug("Cannot serve image request, id = {}", id);
+            logger.debug("Cannot serve image request, mediaId = {}", id);
         }
         return new DefaultStreamedContent();
     }
