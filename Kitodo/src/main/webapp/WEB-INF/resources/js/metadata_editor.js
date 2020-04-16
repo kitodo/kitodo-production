@@ -219,6 +219,7 @@ metadataEditor.shortcuts = {
         switch (this.getGalleryViewMode()) {
             case "LIST":
                 destruct();
+                scrollToSelectedThumbnail();
                 break;
             case "PREVIEW":
                 initialize();
