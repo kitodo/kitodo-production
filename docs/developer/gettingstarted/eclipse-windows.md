@@ -28,7 +28,7 @@ Create the data-file structure required by Kitodo.Production (outside the Eclips
 
     mkdir config debug logs messages metadata modules plugins plugins\command plugins\import plugins\opac plugins\step plugins\validation rulesets scripts temp users xslt
 	
-Copy `modules.xml` and all `kitodo_*.xml` from `Kitodo\src\main\resources\` into the `config` directory.
+Copy all `kitodo_*.xml` from `Kitodo\src\main\resources\` into the `config` directory.
 
 Copy the contents of `Kitodo\rulesets\` to the `rulesets` directory.
 
