@@ -118,7 +118,8 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
         FileSec fileSec = mets.getFileSec();
         Map<String, MediaVariant> useXmlAttributeAccess = fileSec != null
-                ? fileSec.getFileGrp().parallelStream().map(UseXmlAttributeAccess::new)
+                ? fileSec.getFileGrp().parallelStream().filter(fileGrp -> !fileGrp.getFile().isEmpty())
+                        .map(UseXmlAttributeAccess::new)
                         .collect(Collectors.toMap(
                             newUseXmlAttributeAccess -> newUseXmlAttributeAccess.getMediaVariant().getUse(),
                             UseXmlAttributeAccess::getMediaVariant))
