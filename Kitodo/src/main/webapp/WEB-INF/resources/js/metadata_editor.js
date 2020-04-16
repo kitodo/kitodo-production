@@ -14,6 +14,7 @@
 var metadataEditor = {
     dragging: false,
     handleMouseDown(event) {
+        $(document.activeElement).blur();
         let target = $(event.target);
         if (target.closest(".stripe").length === 1) {
             this.stripes.handleMouseDown(event);
