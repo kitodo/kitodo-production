@@ -40,7 +40,7 @@ public class MassImportForm extends BaseForm {
     private String ppnString;
     private MassImportService massImportService = ServiceManager.getMassImportService();
 
-    private final String processListPath = "/pages/processes.jsf?faces-redirect=true";
+    private static final String PROCESS_LIST_PATH = "/pages/processes.jsf?faces-redirect=true";
 
     public void prepareMassImport(int templateId, int projectId) {
         this.projectId = projectId;
@@ -58,7 +58,7 @@ public class MassImportForm extends BaseForm {
         try {
             massImportService.importFromCSV(selectedCatalog, file, projectId, templateId);
             FacesContext context = FacesContext.getCurrentInstance();
-            String path = context.getExternalContext().getRequestContextPath() + processListPath;
+            String path = context.getExternalContext().getRequestContextPath() + PROCESS_LIST_PATH;
             context.getExternalContext().redirect(path);
         } catch (IOException e) {
             Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
@@ -73,7 +73,7 @@ public class MassImportForm extends BaseForm {
     public String importFromText() {
         try {
             massImportService.importFromText(selectedCatalog, ppnString, projectId, templateId);
-            return processListPath;
+            return PROCESS_LIST_PATH;
         } catch (ImportException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
