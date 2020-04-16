@@ -339,7 +339,11 @@ public class User extends BaseBean {
     }
 
     public String getMetadataLanguage() {
-        return this.metadataLanguage;
+        if (Objects.isNull(this.metadataLanguage)) {
+            return "";
+        } else {
+            return this.metadataLanguage;
+        }
     }
 
     public void setMetadataLanguage(String metadataLanguage) {
