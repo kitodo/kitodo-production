@@ -67,7 +67,6 @@ mysqldump -u kitodo --password=kitodo kitodo > kitodo-3.sql
 ```
 mkdir zip zip/config zip/debug zip/import zip/logs zip/messages zip/metadata zip/plugins zip/plugins/command zip/plugins/import zip/plugins/opac zip/plugins/step zip/plugins/validation zip/rulesets zip/scripts zip/swap zip/temp zip/users zip/xslt zip/diagrams
 install -m 444 kitodo-production-master/Kitodo/src/main/resources/kitodo_*.xml zip/config/
-install -m 444 kitodo-production-master/Kitodo/src/main/resources/modules.xml zip/config/
 install -m 444 kitodo-production-master/Kitodo/src/main/resources/docket*.xsl zip/xslt/
 install -m 444 kitodo-production-master/Kitodo/rulesets/*.xml zip/rulesets/
 install -m 444 kitodo-production-master/Kitodo/diagrams/*.xml zip/diagrams/
