@@ -292,7 +292,23 @@ public class Subfolder {
      * @return map of canonical file name parts to URIs
      */
     public Map<String, URI> listContents() {
-        return listDirectory(determineDirectoryAndFileNamePattern());
+        return listContents(true);
+    }
+
+    /**
+     * Returns a map of canonical file name parts to URIs with all files
+     * actually contained in this folder. The canonical part is the part that is
+     * different from one file to another in the folder, but equal between two
+     * files representing the same content in two different folders. A typical
+     * canonical part could be “00000001”.
+     *
+     * @param absolute
+     *            whether to return absolute URIs, else URIs relative to the
+     *            process base directory
+     * @return map of canonical file name parts to URIs
+     */
+    public Map<String, URI> listContents(boolean absolute) {
+        return listDirectory(determineDirectoryAndFileNamePattern(), absolute);
     }
 
     /**
@@ -301,16 +317,21 @@ public class Subfolder {
      * @param query
      *            search request consisting of an indication of the folder to be
      *            searched and a pattern to which the file names must correspond
+     * @param absolute
+     *            whether to return absolute URIs, else URIs relative to the
+     *            process base directory
      * @return a map from the canonical file name part to the URI
      */
-    private Map<String, URI> listDirectory(Pair<URI, Pattern> query) {
+    private Map<String, URI> listDirectory(Pair<URI, Pattern> query, boolean absolute) {
         FilenameFilter filter = (dir, name) -> query.getRight().matcher(name).matches();
-        Stream<URI> relativeURIs = fileService.getSubUris(filter, query.getLeft()).parallelStream();
-        Stream<URI> absoluteURIs = relativeURIs
-                .map(uri -> new File(FilenameUtils.concat(ConfigCore.getKitodoDataDirectory(), uri.getPath())).toURI());
-        Function<URI, String> keyMapper = createKeyMapperForPattern(query.getRight());
-        return absoluteURIs.collect(Collectors.toMap(keyMapper, Function.identity(), (previous, latest) -> latest,
-            () -> new TreeMap<>(new MetadataImageComparator())));
+        try (Stream<URI> relativeURIs = fileService.getSubUris(filter, query.getLeft()).parallelStream()) {
+            Stream<URI> resultURIs = absolute ? relativeURIs.map(
+                uri -> new File(FilenameUtils.concat(ConfigCore.getKitodoDataDirectory(), uri.getPath())).toURI())
+                    : relativeURIs;
+            Function<URI, String> keyMapper = createKeyMapperForPattern(query.getRight());
+            return resultURIs.collect(Collectors.toMap(keyMapper, Function.identity(), (previous, latest) -> latest,
+                () -> new TreeMap<>(new MetadataImageComparator())));
+        }
     }
 
     /**
