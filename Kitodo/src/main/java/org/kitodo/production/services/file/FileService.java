@@ -997,7 +997,7 @@ public class FileService {
         }
         Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(new MetadataImageComparator());
         for (Subfolder subfolder : subfolders.values()) {
-            for (Entry<String, URI> element : subfolder.listContents().entrySet()) {
+            for (Entry<String, URI> element : subfolder.listContents(false).entrySet()) {
                 mediaToAdd.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
                 mediaToAdd.get(element.getKey()).put(subfolder, element.getValue());
             }
