@@ -107,4 +107,12 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
     public void setInChoiceListShown(Boolean inChoiceListShown) {
         this.inChoiceListShown = inChoiceListShown;
     }
+
+    /**
+     * Returns a string that textually represents this object.
+     */
+    @Override
+    public String toString() {
+        return title + " [" + id + ']';
+    }
 }

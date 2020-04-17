@@ -52,7 +52,7 @@ import org.kitodo.production.services.file.FileService;
  * representation. The computer files, which are located in different use
  * folders and which are conceptually the same file, share a part of their
  * filename. This is referred to here as the canonical part of the file name.
- * 
+ *
  * <p>
  * For historical reasons, in some institutions using this software, there is a
  * situation where the different variants of a file are in the same folder and
@@ -81,7 +81,7 @@ public class Subfolder {
 
     /**
      * Creates a new subfolder.
-     * 
+     *
      * @param process
      *            the process this subfolder belongs to
      * @param folder
@@ -117,7 +117,7 @@ public class Subfolder {
     /**
      * Computes the search patterns in the complicated case that the path
      * contains a search pattern.
-     * 
+     *
      * @param lastSeparator
      *            position of the last File.separatorChar in the path
      * @param lastSegment
@@ -149,7 +149,7 @@ public class Subfolder {
     /**
      * Calculates the search pattern in the ordinary case that the path is
      * simply a path.
-     * 
+     *
      * @return search request consisting of an indication of the folder to be
      *         searched and a pattern to which the file names must correspond
      */
@@ -181,7 +181,7 @@ public class Subfolder {
 
     /**
      * Returns the canonical part of the file name for a given URI.
-     * 
+     *
      * @param uri
      *            URI for which the canonical part of the file name should be
      *            returned
@@ -193,7 +193,7 @@ public class Subfolder {
 
     /**
      * Returns a file format by its MIME type, if any.
-     * 
+     *
      * @return the file format, if any
      */
     public FileFormat getFileFormat() {
@@ -213,7 +213,7 @@ public class Subfolder {
     /**
      * Returns the folder database bean. The folder bean contains the settings
      * for the subfolder.
-     * 
+     *
      * @return the folder
      */
     public Folder getFolder() {
@@ -222,7 +222,7 @@ public class Subfolder {
 
     /**
      * Returns the relative path to the directory storing the files.
-     * 
+     *
      * @return relative path to the directory
      */
     public String getRelativeDirectoryPath() {
@@ -339,6 +339,6 @@ public class Subfolder {
      */
     @Override
     public String toString() {
-        return "UseFolder [process=" + process + ", folder=" + folder + "]";
+        return Objects.toString(process) + '/' + folder;
     }
 }

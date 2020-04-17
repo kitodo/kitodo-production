@@ -33,7 +33,7 @@ public abstract class BaseBean implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    protected Integer id;
 
     public Integer getId() {
         return id;
