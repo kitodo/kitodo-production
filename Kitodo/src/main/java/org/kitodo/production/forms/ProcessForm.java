@@ -213,6 +213,7 @@ public class ProcessForm extends TemplateBaseForm {
 
             try {
                 workflowControllerService.updateProcessSortHelperStatus(this.process);
+                ServiceManager.getProcessService().save(this.process);
                 return processListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
