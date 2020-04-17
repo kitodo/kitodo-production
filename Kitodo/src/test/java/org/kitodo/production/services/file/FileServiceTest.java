@@ -33,6 +33,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.exceptions.CommandException;
 
 public class FileServiceTest {
 
@@ -53,7 +54,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testCreateMetaDirectory() throws IOException {
+    public void testCreateMetaDirectory() throws IOException, CommandException {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));

@@ -18,6 +18,7 @@ import javax.naming.ConfigurationException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RulesetNotFoundException;
@@ -84,7 +85,7 @@ public class GeneratesNewspaperProcessesThread extends EmptyTask {
             }
             super.setProgress(100);
         } catch (ConfigurationException | DAOException | DataException | DoctypeMissingException | IOException
-                | ProcessGenerationException | RulesetNotFoundException e) {
+                | ProcessGenerationException | RulesetNotFoundException | CommandException e) {
             setException(e);
         }
     }

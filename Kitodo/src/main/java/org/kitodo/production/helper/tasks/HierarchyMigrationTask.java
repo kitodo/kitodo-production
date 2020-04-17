@@ -33,6 +33,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -154,7 +155,7 @@ public class HierarchyMigrationTask extends EmptyTask {
                     return;
                 }
             }
-        } catch (IOException | DAOException | ProcessGenerationException | DataException e) {
+        } catch (IOException | DAOException | ProcessGenerationException | DataException | CommandException e) {
             setException(e);
         }
     }
@@ -165,7 +166,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param process
      *            process to migrate
      */
-    private void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException {
+    private void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
         logger.info("Starting to convert process {} (ID {})...", process.getTitle(), process.getId());
         long begin = System.nanoTime();
         migrateMetadataFiles(process);
@@ -227,7 +228,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      *         current number of the child process
      */
     private List<Integer> createParentProcess(Process childProcess)
-            throws ProcessGenerationException, IOException, DataException {
+            throws ProcessGenerationException, IOException, DataException, CommandException {
 
         processGenerator.generateProcess(childProcess.getTemplate().getId(), childProcess.getProject().getId());
         Process parentProcess = processGenerator.getGeneratedProcess();

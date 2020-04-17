@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
@@ -198,7 +199,7 @@ public class KitodoScriptService {
         for (Process process : processes) {
             try {
                 fileService.createProcessFolders(process);
-            } catch (IOException e) {
+            } catch (IOException | CommandException e) {
                 Helper.setErrorMessage("Error while creating folders", logger, e);
             }
         }

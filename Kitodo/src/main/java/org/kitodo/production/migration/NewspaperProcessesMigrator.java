@@ -42,6 +42,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.BatchDTO;
@@ -540,7 +541,7 @@ public class NewspaperProcessesMigrator {
      * @throws IOException
      *             An error has occurred in the disk drive.
      */
-    public void createOverallProcess() throws ProcessGenerationException, IOException, DataException, DAOException {
+    public void createOverallProcess() throws ProcessGenerationException, IOException, DataException, DAOException, CommandException {
         final long begin = System.nanoTime();
         logger.info("Creating overall process {}...", title);
 
@@ -573,7 +574,7 @@ public class NewspaperProcessesMigrator {
      * @throws DAOException
      *             if a process cannot be load from the database
      */
-    public void createNextYearProcess() throws ProcessGenerationException, IOException, DataException, DAOException {
+    public void createNextYearProcess() throws ProcessGenerationException, IOException, DataException, DAOException, CommandException {
         final long begin = System.nanoTime();
         Entry<String, IncludedStructuralElement> yearToCreate = yearsIterator.next();
         String yearTitle = getYearTitle(yearToCreate.getKey());

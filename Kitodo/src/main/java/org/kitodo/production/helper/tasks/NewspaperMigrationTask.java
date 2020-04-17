@@ -17,6 +17,7 @@ import javax.naming.ConfigurationException;
 
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.BatchDTO;
@@ -123,7 +124,7 @@ public class NewspaperMigrationTask extends EmptyTask {
      *             ruleset
      */
     private void next() throws DAOException, IOException, ProcessGenerationException, DataException,
-            ConfigurationException, RulesetNotFoundException {
+            ConfigurationException, RulesetNotFoundException, CommandException {
         switch (part) {
             case CONVERT_PROCESSES: {
                 super.setWorkDetail(migrator.getProcessTitle(step));
@@ -164,7 +165,7 @@ public class NewspaperMigrationTask extends EmptyTask {
             }
             setProgress(100);
         } catch (ConfigurationException | DAOException | IOException | ProcessGenerationException | DataException
-                | RulesetNotFoundException e) {
+                | RulesetNotFoundException | CommandException e) {
             setException(e);
         }
     }
