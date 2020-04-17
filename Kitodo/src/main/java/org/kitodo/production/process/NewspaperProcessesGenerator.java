@@ -40,6 +40,7 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -96,6 +97,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private static final String PATTERN_DOUBLE_YEAR = "yyyy/yyyy";
 
     /**
+     * Acquisition stage of newspaper generator.
+     */
+    private final String acquisitionStage = "";
+
+    /**
      * This class requires service for files.
      */
     private final FileService fileService = ServiceManager.getFileService();
@@ -147,9 +153,9 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private String dayType;
 
     /**
-     * Which included structural element type are the issues.
+     * Information from the rule set about the issue.
      */
-    private String issueType;
+    StructuralElementViewInterface issueDivisionView;
 
     /**
      * An interface view for simple metadata that maps the date of the month.
@@ -183,7 +189,6 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * title generator.
      */
     private Optional<String> yearTitleDefinition;
-    private Optional<String> issueTitleDefinition;
 
     /**
      * The title generator is used to create the process titles.
@@ -299,7 +304,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         ConfigProject configProject = new ConfigProject(overallProcess.getProject().getTitle());
 
         Collection<MetadataViewInterface> addableDivisions = rulesetService.openRuleset(overallProcess.getRuleset())
-                .getStructuralElementView(overallWorkpiece.getRootElement().getType(), "", ENGLISH)
+                .getStructuralElementView(overallWorkpiece.getRootElement().getType(), acquisitionStage, ENGLISH)
                 .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
 
         titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece , addableDivisions);
@@ -325,20 +330,18 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      */
     private void initializeRulesetFields(String newspaperType) throws ConfigurationException, IOException, RulesetNotFoundException {
         RulesetManagementInterface ruleset = rulesetService.openRuleset(overallProcess.getRuleset());
-        StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, "", ENGLISH);
-        StructuralElementViewInterface yearDivisionView = nextSubView(ruleset, newspaperView);
+        StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, acquisitionStage, ENGLISH);
+        StructuralElementViewInterface yearDivisionView = nextSubView(ruleset, newspaperView, acquisitionStage);
         yearSimpleMetadataView = yearDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         yearTitleDefinition = yearDivisionView.getProcessTitle();
         yearType = yearDivisionView.getId();
-        StructuralElementViewInterface monthDivisionView = nextSubView(ruleset, yearDivisionView);
+        StructuralElementViewInterface monthDivisionView = nextSubView(ruleset, yearDivisionView, acquisitionStage);
         monthSimpleMetadataView = monthDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         monthType = monthDivisionView.getId();
-        StructuralElementViewInterface dayDivisionView = nextSubView(ruleset, monthDivisionView);
+        StructuralElementViewInterface dayDivisionView = nextSubView(ruleset, monthDivisionView, acquisitionStage);
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         dayType = dayDivisionView.getId();
-        StructuralElementViewInterface issueDivisionView = nextSubView(ruleset, dayDivisionView);
-        issueTitleDefinition = issueDivisionView.getProcessTitle();
-        issueType = issueDivisionView.getId();
+        issueDivisionView = nextSubView(ruleset, dayDivisionView, acquisitionStage);
     }
 
     /**
@@ -351,11 +354,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * @return the sub-view
      */
     public static StructuralElementViewInterface nextSubView(RulesetManagementInterface ruleset,
-            StructuralElementViewInterface superiorView) {
+            StructuralElementViewInterface superiorView, String acquisitionStage) {
 
         Map<String, String> allowedSubstructuralElements = superiorView.getAllowedSubstructuralElements();
         String subType = allowedSubstructuralElements.entrySet().iterator().next().getKey();
-        return ruleset.getStructuralElementView(subType, "", ENGLISH);
+        return ruleset.getStructuralElementView(subType, acquisitionStage, ENGLISH);
     }
 
     /**
@@ -479,7 +482,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
 
-        String title = makeTitle(issueTitleDefinition.orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"), genericFields);
+        String title = makeTitle(issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"), genericFields);
         getGeneratedProcess().setTitle(title);
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
@@ -528,15 +531,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                 daySimpleMetadataView, dayMark);
 
             IncludedStructuralElement processIssue = new IncludedStructuralElement();
-            processIssue.setType(issueType);
-            for (Pair<String, String> metadata : individualIssue.getMetadata(
-                yearSimpleMetadataView.getYearBegin().getMonthValue(),
-                yearSimpleMetadataView.getYearBegin().getDayOfMonth())) {
-                MetadataEntry metadataEntry = new MetadataEntry();
-                metadataEntry.setKey(metadata.getKey());
-                metadataEntry.setValue(metadata.getValue());
-                processIssue.getMetadata().add(metadataEntry);
-            }
+            processIssue.setType(issueDivisionView.getId());
+            addCustomMetadata(individualIssue, processIssue);
             processDay.getChildren().add(processIssue);
 
             IncludedStructuralElement yearIssue = new IncludedStructuralElement();
@@ -552,6 +548,35 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         fileService.createProcessLocation(getGeneratedProcess());
         final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
         metsService.saveWorkpiece(workpiece, metadataFileUri);
+    }
+
+    private void addCustomMetadata(IndividualIssue definition, IncludedStructuralElement issue) {
+        Map<Pair<String, String>, String> entered = new HashMap<>();
+        MonthDay yearBegin = yearSimpleMetadataView.getYearBegin();
+        for (Pair<String, String> metadata : definition.getMetadata(yearBegin.getMonthValue(),
+            yearBegin.getDayOfMonth())) {
+            entered.put(metadata, metadata.getKey());
+        }
+        List<MetadataViewWithValuesInterface<Pair<String, String>>> viewsWithValues = issueDivisionView
+                .getSortedVisibleMetadata(entered, Collections.emptyList());
+        for (MetadataViewWithValuesInterface<Pair<String, String>> viewWithValues : viewsWithValues) {
+            for (Pair<String, String> metadata : viewWithValues.getValues()) {
+                if (viewWithValues.getMetadata().isPresent()) {
+                    MetadataViewInterface view = viewWithValues.getMetadata().get();
+                    if (view instanceof SimpleMetadataViewInterface) {
+                        MetadataEditor.writeMetadataEntry(issue, (SimpleMetadataViewInterface) view,
+                            metadata.getValue());
+                    } else {
+                        logger.warn("Cannot add metadata value \"{}\" of type {} to {}: {} is a metadata group",
+                            metadata.getValue(), metadata.getKey(), issue.getType(), view.getId());
+                    }
+                } else {
+                    logger.warn(
+                        "Cannot add metadata value \"{}\" of type {} to NewspaperIssue: type is hidden in acquisition stage \"{}\".",
+                        metadata.getValue(), metadata.getKey(), issue.getType(), acquisitionStage);
+                }
+            }
+        }
     }
 
     /**

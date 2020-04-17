@@ -90,6 +90,11 @@ public class NewspaperProcessesMigrator {
     private static final String YEAR_OR_DOUBLE_YEAR = "\\d{4}(?:/\\d{4})?";
 
     /**
+     * Acquisition stage of newspaper processes migrator.
+     */
+    private final String acquisitionStage = "";
+
+    /**
      * The database index number of the newspaper batch.
      */
     private Integer batchNumber;
@@ -286,15 +291,15 @@ public class NewspaperProcessesMigrator {
         StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
             newspaperIncludedStructalElementDivision, "", NewspaperProcessesGenerator.ENGLISH);
         StructuralElementViewInterface yearDivisionView = NewspaperProcessesGenerator.nextSubView(rulesetManagement,
-            newspaperView);
+            newspaperView, acquisitionStage);
         yearSimpleMetadataView = yearDivisionView.getDatesSimpleMetadata().orElseThrow(
             () -> new ConfigurationException(yearDivisionView.getId() + " has no dates metadata configuration!"));
         StructuralElementViewInterface monthDivisionView = NewspaperProcessesGenerator.nextSubView(rulesetManagement,
-            yearDivisionView);
+            yearDivisionView, acquisitionStage);
         monthSimpleMetadataView = monthDivisionView.getDatesSimpleMetadata().orElseThrow(
             () -> new ConfigurationException(monthDivisionView.getId() + " has no dates metadata configuration!"));
         StructuralElementViewInterface dayDivisionView = NewspaperProcessesGenerator.nextSubView(rulesetManagement,
-            monthDivisionView);
+            monthDivisionView, acquisitionStage);
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(
             () -> new ConfigurationException(dayDivisionView.getId() + " has no dates metadata configuration!"));
     }
