@@ -535,4 +535,13 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     public int getProgress() {
         return this.progress;
     }
+
+    /**
+     * Return referring view.
+     *
+     * @return referring view
+     */
+    public String getReferringView() {
+        return this.referringView;
+    }
 }

@@ -61,7 +61,7 @@
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="#{not empty param['referrer'] ? param['referrer'] : 'desktop'}"
+                  outcome="#{not empty param['referrer'] ? param['referrer'] : not empty CreateProcessForm.referringView ? CreateProcessForm.referringView : 'desktop'}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
