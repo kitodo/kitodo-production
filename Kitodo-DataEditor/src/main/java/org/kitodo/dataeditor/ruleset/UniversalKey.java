@@ -54,6 +54,21 @@ class UniversalKey extends Labeled {
     }
 
     /**
+     * This constructor produces a universal key for a known key.
+     *
+     * @param ruleset
+     *            the ruleset
+     * @param key
+     *            the key
+     * @param undefined
+     *            whether he is undefined or not
+     */
+    UniversalKey(Ruleset ruleset, Key key, boolean undefined) {
+        super(ruleset, key.getId(), key.getLabels(), undefined);
+        optionalKey = Optional.of(key);
+    }
+
+    /**
      * This constructor produces a universal key for an unknown key. A key is
      * unknown if it is not in the ruleset (but it is in the data!) This, one
      * must be able to handle and not the application crashes. Here we want to

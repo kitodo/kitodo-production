@@ -444,10 +444,17 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
                 sortedAuxiliaryTable.get(keyId).add(entry.getKey());
             } else {
                 auxiliaryTableToBeSorted.computeIfAbsent(keyId,
-                    missing -> new AuxiliaryTableRow<>(new UniversalKey(ruleset, keyId), settings));
+                    missing -> retrieveOrCompute(keyId));
                 auxiliaryTableToBeSorted.get(keyId).add(entry.getKey());
             }
         }
+    }
+
+    private <V> AuxiliaryTableRow<V> retrieveOrCompute(String keyId) {
+        Optional<Key> possibleKey = ruleset.getKey(keyId);
+        UniversalKey universalKey = possibleKey.isPresent() ? new UniversalKey(ruleset, possibleKey.get(), true)
+                : new UniversalKey(ruleset, keyId);
+        return new AuxiliaryTableRow<>(universalKey, settings);
     }
 
     @Override
