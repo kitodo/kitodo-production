@@ -1005,9 +1005,7 @@ public class FileService {
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
         addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getAllMediaUnitsSorted(), canonicals);
-        for (String canonical : canonicals) {
-            mediaToAdd.remove(canonical);
-        }
+        mediaToAdd.keySet().removeAll(canonicals);
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
         renumberMediaUnits(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
