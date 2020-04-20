@@ -500,4 +500,16 @@ public class WorkflowForm extends BaseForm {
     public String getLanguage() {
         return ServiceManager.getUserService().getCurrentUser().getLanguage();
     }
+
+    /**
+     * Set language.
+     *
+     * @param language as String
+     */
+    public void setLanguage(String language) {
+        // We don't need to do anything. The language value is written into a hidden input field for the localization
+        // of the editor. On saving the workflow form it gets submitted again. Therfore, a setter is expected and we
+        // only need it for completeness sake. If we find a better way to get the language value into the editor's JS
+        // we should do so. :)
+    }
 }
