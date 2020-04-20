@@ -93,6 +93,7 @@
             <p:selectOneMenu id="selectOneMenu"
                              value="#{item.selectedItem}"
                              readonly="#{not item.editable}"
+                             autoWidth="false"
                              rendered="#{item.input eq 'oneMenu'}">
                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                 <f:selectItems value="#{item.items}"/>
