@@ -106,11 +106,15 @@
     <!-- Error pages -->
     <error-page>
         <error-code>500</error-code>
-        <location>/pages/error.xhtml</location>
+        <location>/pages/error.jsf</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/pages/desktop.jsf</location>
     </error-page>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/pages/error.xhtml</location>
+        <location>/pages/error.jsf</location>
     </error-page>
 
     <servlet>
