@@ -125,6 +125,9 @@ public class Process extends BaseTemplateBean {
     @Transient
     private List<Map<String, Object>> metadata;
 
+    @Transient
+    private String baseType;
+
     /**
      * Constructor.
      */
@@ -522,6 +525,24 @@ public class Process extends BaseTemplateBean {
      */
     public void setBlockedUser(User blockedUser) {
         this.blockedUser = blockedUser;
+    }
+
+    /**
+     * Get baseType.
+     *
+     * @return value of baseType
+     */
+    public String getBaseType() {
+        return baseType;
+    }
+
+    /**
+     * Set baseType.
+     *
+     * @param baseType as java.lang.String
+     */
+    public void setBaseType(String baseType) {
+        this.baseType = baseType;
     }
 
     /**

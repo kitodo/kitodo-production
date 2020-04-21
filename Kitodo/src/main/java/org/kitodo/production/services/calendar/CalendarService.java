@@ -38,6 +38,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
@@ -74,7 +75,7 @@ public class CalendarService {
      * @return list of allowed metadata as SelectItem objects
      * @throws IOException when ruleset file could not be read
      */
-    public static List<SelectItem> getAddableMetadata(Process completeEdition) throws IOException {
+    public static List<SelectItem> getAddableMetadata(Process completeEdition) throws IOException, DataException {
         final String acquisitionStage = "create";
 
         // get an instance of the ruleset module
@@ -90,7 +91,7 @@ public class CalendarService {
         List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(authenticatedUser.getMetadataLanguage());
 
         // get the basic rule set type of the newspaper
-        String newspaperType = ServiceManager.getProcessService().getBaseType(completeEdition);
+        String newspaperType = ServiceManager.getProcessService().getBaseType(completeEdition.getId());
 
         // descend to the issue
         StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, acquisitionStage, priorityList);

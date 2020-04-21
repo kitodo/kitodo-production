@@ -350,6 +350,15 @@
                 "hasChildren": {
                     "type": "boolean"
                 },
+                "baseType": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type":"keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
                 "comments": {
                     "properties": {
                         "id": {
