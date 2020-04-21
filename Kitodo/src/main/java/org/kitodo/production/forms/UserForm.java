@@ -43,6 +43,7 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -72,6 +73,7 @@ public class UserForm extends BaseForm {
 
     private final String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
+    private final String defaultPath = MessageFormat.format(REDIRECT_PATH, DEFAULT_LINK);
 
     /**
      * Default constructor with inject login form that also sets the LazyDTOModel
@@ -166,7 +168,11 @@ public class UserForm extends BaseForm {
                     loginForm.setLoggedUser(this.userObject);
                 }
 
-                return userListPath;
+                SecurityAccessController securityAccessController = new SecurityAccessController();
+                if (securityAccessController.hasAuthorityToViewUserList()) {
+                    return userListPath;
+                }
+                return defaultPath;
             } else {
                 Helper.setErrorMessage("loginInUse");
                 return this.stayOnCurrentPage;
