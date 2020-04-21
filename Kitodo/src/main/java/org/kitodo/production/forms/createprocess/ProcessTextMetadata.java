@@ -39,7 +39,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
 
     ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry value) {
         super(container, settings, Objects.isNull(settings) ? value.getKey() : settings.getLabel());
-        this.value = Objects.isNull(value) ? "" : value.getValue();
+        this.value = Objects.isNull(value) ? settings.getDefaultValue() : value.getValue();
     }
 
     private ProcessTextMetadata(ProcessTextMetadata template) {
