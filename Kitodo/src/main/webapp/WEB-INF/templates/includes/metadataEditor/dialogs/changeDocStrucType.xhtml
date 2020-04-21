@@ -15,7 +15,6 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
         xmlns:p="http://primefaces.org/ui">
 
     <p:dialog id="dialogEditDocStrucTypeDialog"
@@ -28,28 +27,38 @@
               appendTo="@(body)">
 
         <h3>#{msgs.changeDocstructType}</h3>
-        <h:form id="dialogEditDocStrucTypeForm">
+        <h:form id="dialogEditDocStrucTypeForm"
+                style="margin-top: -32px;">
 
-            <!-- Select the new type -->
-            <p:selectOneMenu id="docStructEditTypeSelection"
-                             class="input"
-                             value="#{DataEditorForm.changeDocStrucTypeDialog.docStructType}"
-                             required="true"
-                             immediate="true"
-                             style="width: 180px; margin-left: 33px;">
-                <f:selectItems value="#{DataEditorForm.changeDocStrucTypeDialog.docStructTypes}"/>
-            </p:selectOneMenu>
+            <h:panelGroup layout="block"
+                          styleClass="select-selector">
 
-            <!-- Press OK when finish -->
-            <p:commandButton id="addDocStruc"
-                             value="#{msgs.apply}"
-                             action="#{DataEditorForm.changeDocStrucTypeDialog.editDocStruc}"
-                             styleClass="primary right"
-                             icon="fa fa-check fa-lg"
-                             iconPos="right"
-                             style="margin-right: 33px; margin-top: 29px;"
-                             update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
-                             oncomplete="updateMetadataEditorView(false);"/>
+                <!-- Select the new type -->
+                <p:selectOneMenu id="docStructEditTypeSelection"
+                                 class="input"
+                                 value="#{DataEditorForm.changeDocStrucTypeDialog.docStructType}"
+                                 required="true"
+                                 immediate="true">
+                    <f:selectItems value="#{DataEditorForm.changeDocStrucTypeDialog.docStructTypes}"/>
+                </p:selectOneMenu>
+
+                <!-- Press OK when finish -->
+                <h:panelGroup layout="block">
+                    <p:commandButton id="changeDocStruc"
+                                     value="#{msgs.apply}"
+                                     action="#{DataEditorForm.changeDocStrucTypeDialog.editDocStruc}"
+                                     styleClass="primary right"
+                                     icon="fa fa-check fa-lg"
+                                     iconPos="right"
+                                     update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
+                                     oncomplete="updateMetadataEditorView(false);"/>
+                    <p:commandButton value="#{msgs.cancel}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="secondary"
+                                     styleClass="secondary right"
+                                     onclick="PF('dialogEditDocStrucType').hide();"/>
+                </h:panelGroup>
+            </h:panelGroup>
         </h:form>
     </p:dialog>
 
