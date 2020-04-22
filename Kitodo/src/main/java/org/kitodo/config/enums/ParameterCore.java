@@ -573,7 +573,17 @@ public enum ParameterCore implements ParameterInterface {
 
     /*
      * FUNCTIONAL EXTENSIONS
+     */
+
+    /**
+     * Which help to use.
      *
+     * <p>
+     * Example: helpLocation=help.html
+     */
+    HELP_LOCATION(new Parameter<>("helpLocation", "help.html")),
+
+    /*
      * OCR service access
      */
 

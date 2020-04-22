@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.json.JsonException;
@@ -23,6 +25,8 @@ import javax.json.JsonException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -41,6 +45,12 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
+
+    /**
+     * Used to determine if a string is a URL.
+     */
+    private static final Pattern SCHEME_TEST = Pattern.compile("[A-Za-z][+\\-\\.0-9A-Za-z]*:[^ ]+");
+
     private static final String SORT_TITLE = "title";
     private static final String SORT_ID = "properties.id";
     private List<TaskDTO> taskList = new ArrayList<>();
@@ -52,6 +62,25 @@ public class DesktopForm extends BaseForm {
      */
     public DesktopForm() {
         super();
+    }
+
+    /**
+     * Returns the link location of the help file. If the link is local
+     * absolute, i.e. begins with a slash, or is a URL, i.e. begins with a
+     * scheme (e.g. "http"), it is returned as-is. Otherwise, a link relative to
+     * the context path of the web application is returned.
+     *
+     * @return link location of the help
+     */
+    public String getHelpLocation() {
+        String helpLocation = ConfigCore.getParameter(ParameterCore.HELP_LOCATION,
+            (String) ParameterCore.HELP_LOCATION.getParameter().getDefaultValue());
+        if (helpLocation.startsWith("/") || SCHEME_TEST.matcher(helpLocation).matches()) {
+            return helpLocation;
+        } else {
+            String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+            return contextPath + '/' + helpLocation;
+        }
     }
 
     /**
