@@ -499,6 +499,23 @@ public class MetadataEditor {
     }
 
     /**
+     * Get the first view the given MediaUnit is assigned to.
+     * @param mediaUnit MediaUnit to get the view for
+     * @return View or null if no View was found
+     */
+    public static View getFirstViewForMediaUnit(MediaUnit mediaUnit) {
+        List<IncludedStructuralElement> includedStructuralElements = mediaUnit.getIncludedStructuralElements();
+        if (!includedStructuralElements.isEmpty() && Objects.nonNull(includedStructuralElements.get(0))) {
+            for (View view : includedStructuralElements.get(0).getViews()) {
+                if (Objects.nonNull(view) && Objects.equals(view.getMediaUnit(), mediaUnit)) {
+                    return view;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Reads the simple metadata from an included structural element defined by
      * the simple metadata view interface, including {@code mets:div} metadata.
      *
