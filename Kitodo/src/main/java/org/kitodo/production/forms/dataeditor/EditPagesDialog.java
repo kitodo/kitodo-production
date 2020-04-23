@@ -205,8 +205,10 @@ public class EditPagesDialog {
     }
 
     private List<View> getViewsToAdd(List<Integer> pages) {
-        return pages.parallelStream().map(dataEditor.getWorkpiece().getAllMediaUnitsSorted()::get)
-                .map(MetadataEditor::createUnrestrictedViewOn).collect(Collectors.toList());
+        return pages.parallelStream()
+                .map(dataEditor.getWorkpiece().getAllMediaUnitsSorted()::get)
+                .map(MetadataEditor::getFirstViewForMediaUnit)
+                .collect(Collectors.toList());
     }
 
     /**
