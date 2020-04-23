@@ -120,6 +120,7 @@ public class AddDocStrucTypeDialog {
      * Add structure element.
      */
     public void addDocStruc(boolean preview) {
+        dataEditor.getMetadataPanel().preserve();
         if (this.elementsToAddSpinnerValue > 1) {
             this.addMultiDocStruc();
         } else {
