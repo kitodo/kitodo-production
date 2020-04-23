@@ -82,17 +82,6 @@
                         actionListener="#{DataEditorForm.changeDocStrucTypeDialog.prepare}"
                         oncomplete="PF('dialogEditDocStrucType').show()"
                         update="dialogEditDocStrucTypeDialog"/>
-            <p:menuitem value="#{msgs.removeElement}"
-                        icon="fa fa-trash fa-sm"
-                        styleClass="plain"
-                        disabled="#{readOnly}"
-                        onclick="$('#loadingScreen').show()"
-                        oncomplete="$('#loadingScreen').hide()"
-                        action="#{DataEditorForm.deleteStructure()}"
-                        update="structureTreeForm:logicalTree
-                                paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
-                                galleryWrapperPanel"/>
             <p:menuitem value="#{msgs.assignToNextElement}"
                         icon="fa fa-link fa-sm"
                         styleClass="plain"
@@ -115,6 +104,18 @@
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 @(.structureElementDataList)"/>
+            <p:menuitem value="#{msgs.removeElement}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+                        icon="fa fa-trash fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        onclick="$('#loadingScreen').show()"
+                        oncomplete="$('#loadingScreen').hide()"
+                        action="#{DataEditorForm.deleteStructure()}"
+                        update="structureTreeForm:logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
         </p:contextMenu>
 
         <!-- Physical Tree -->
