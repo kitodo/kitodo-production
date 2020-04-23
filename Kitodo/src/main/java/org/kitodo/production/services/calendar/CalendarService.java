@@ -25,12 +25,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.config.ConfigCore;
@@ -106,8 +108,16 @@ public class CalendarService {
         StructuralElementViewInterface issueView = ruleset.getStructuralElementView(issueType, acquisitionStage, priorityList);
 
         // From view to output, get all addable metadata
+        List<MetadataViewWithValuesInterface<Object>> alreadyShowing = issueView
+                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
         Collection<MetadataViewInterface> addable = issueView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
-        return addable.stream()
+        return Stream
+                .concat(
+                    alreadyShowing.stream()
+                            .filter(metadataViewWithValues -> metadataViewWithValues.getMetadata().isPresent())
+                            .map(metadataViewWithValues -> metadataViewWithValues.getMetadata().get()),
+                    addable.stream())
+                .filter(new UniqueMetadataView())
                 .map(metadataView -> new SelectItem(metadataView.getId(), metadataView.getLabel()))
                 .collect(Collectors.toList());
     }
