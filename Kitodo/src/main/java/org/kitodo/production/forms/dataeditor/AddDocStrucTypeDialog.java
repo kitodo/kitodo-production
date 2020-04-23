@@ -216,7 +216,7 @@ public class AddDocStrucTypeDialog {
      * @return selected doc struct type
      */
     public String getDocStructAddTypeSelectionSelectedItem() {
-        return docStructAddTypeSelectionSelectedItem;
+        return StringUtils.isBlank(docStructAddTypeSelectionSelectedItem) ? null : docStructAddTypeSelectionSelectedItem;
     }
 
     /**
