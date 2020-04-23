@@ -22,9 +22,10 @@
     <div>
         <p:outputLabel for="catalogueSelect"
                        value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
-        <p:selectOneMenu id="catalogueSelect"
+        <p:selectOneMenu id="catalogueSelect" required="true"
                          value="#{MassImportForm.selectedCatalog}">
-            <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
+            <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"
+                          itemDisabled="true"/>
             <f:selectItems value="#{CreateProcessForm.importDialog.catalogs}" var="catalog" itemLabel="#{catalog}"
                            itemValue="#{catalog}"/>
             <p:ajax update="fileMassImportForm"/>
