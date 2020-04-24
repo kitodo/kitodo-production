@@ -303,19 +303,25 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece,
                 ruleset);
             State state = validationResult.getState();
-            if (State.ERROR.equals(state)) {
-                Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
-                for (String message : validationResult.getResultMessages()) {
-                    Helper.setErrorMessage(message);
-                }
-                return false;
-            } else {
-                Helper.setMessage(Helper.getTranslation("dataEditor.validation.state.".concat(state.toString()
-                        .toLowerCase())));
-                for (String message : validationResult.getResultMessages()) {
-                    Helper.setMessage(message);
-                }
-                return true;
+            switch (state) {
+                case ERROR:
+                    Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
+                    for (String message : validationResult.getResultMessages()) {
+                        Helper.setErrorMessage(message);
+                    }
+                    return false;
+                case WARNING:
+                    Helper.setWarnMessage(Helper.getTranslation("dataEditor.validation.state.warning"));
+                    for (String message : validationResult.getResultMessages()) {
+                        Helper.setWarnMessage(message);
+                    }
+                    return true;
+                default:
+                    Helper.setMessage(Helper.getTranslation("dataEditor.validation.state.success"));
+                    for (String message : validationResult.getResultMessages()) {
+                        Helper.setMessage(message);
+                    }
+                    return true;
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

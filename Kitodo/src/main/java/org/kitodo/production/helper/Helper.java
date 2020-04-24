@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
+import org.kitodo.production.enums.MessageLevel;
 import org.kitodo.production.enums.ReportLevel;
 import org.kitodo.production.helper.messages.Error;
 import org.kitodo.production.helper.messages.Message;
@@ -73,7 +74,7 @@ public class Helper implements Observer, Serializable {
      *            for user
      */
     public static void setErrorMessage(String message) {
-        setMessage(null, message, "", false);
+        setMessage(null, message, "", MessageLevel.ERROR);
     }
 
     /**
@@ -85,7 +86,7 @@ public class Helper implements Observer, Serializable {
      *            additional information to message
      */
     public static void setErrorMessage(String message, String description) {
-        setMessage(null, message, description, false);
+        setMessage(null, message, description, MessageLevel.ERROR);
     }
 
     /**
@@ -99,7 +100,7 @@ public class Helper implements Observer, Serializable {
      *            additional information to message
      */
     public static void setErrorMessage(String control, String message, String description) {
-        setMessage(control, message, description, false);
+        setMessage(control, message, description, MessageLevel.ERROR);
     }
 
     /**
@@ -221,13 +222,23 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
+     * Set a message with warning level.
+     *
+     * @param message
+     *            Message displayed to the user
+     */
+    public static void setWarnMessage(String message) {
+        setMessage(null, message, "", MessageLevel.WARN);
+    }
+
+    /**
      * Set message for user.
      *
      * @param message
      *            for user
      */
     public static void setMessage(String message) {
-        setMessage(null, message, "", true);
+        setMessage(null, message, "", MessageLevel.INFO);
     }
 
     /**
@@ -239,7 +250,7 @@ public class Helper implements Observer, Serializable {
      *            additional information to message
      */
     public static void setMessage(String message, String description) {
-        setMessage(null, message, description, true);
+        setMessage(null, message, description, MessageLevel.INFO);
     }
 
     /**
@@ -253,14 +264,14 @@ public class Helper implements Observer, Serializable {
      *            additional information to message
      */
     public static void setMessage(String control, String message, String description) {
-        setMessage(control, message, description, true);
+        setMessage(control, message, description, MessageLevel.INFO);
     }
 
     /**
      * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control
      * übergeben.
      */
-    private static void setMessage(String control, String message, String description, boolean onlyInfo) {
+    private static void setMessage(String control, String message, String description, MessageLevel level) {
         // Never forget: Strings are immutable
         message = Objects.toString(message).replaceAll("<", "&lt;");
         message = message.replaceAll(">", "&gt;");
@@ -273,16 +284,19 @@ public class Helper implements Observer, Serializable {
         String compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + descript;
         if (Objects.nonNull(activeMQReporting)) {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
-                    onlyInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
+                    MessageLevel.ERROR.equals(level) ? ReportLevel.ERROR :
+                            MessageLevel.WARN.equals(level) ? ReportLevel.WARN : ReportLevel.INFO, compoundMessage).send();
         }
 
         FacesContext context = FacesContext.getCurrentInstance();
         if (Objects.nonNull(context)) {
             context.addMessage(control,
-                new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));
+                new FacesMessage(MessageLevel.ERROR.equals(level) ? FacesMessage.SEVERITY_ERROR : MessageLevel.WARN.equals(level)
+                        ? FacesMessage.SEVERITY_WARN : FacesMessage.SEVERITY_INFO, msg, descript));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
-            logger.log(onlyInfo ? Level.INFO : Level.ERROR, compoundMessage);
+            logger.log(MessageLevel.ERROR.equals(level) ? Level.ERROR : MessageLevel.WARN.equals(level) ? Level.WARN : Level.INFO,
+                    compoundMessage);
         }
     }
 
