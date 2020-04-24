@@ -32,7 +32,6 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.export.ExportMets;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyInnerPhysicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -52,14 +51,12 @@ public class SchemaService {
      *
      * @param workpiece
      *            class inside method is used
-     * @param exportMets
-     *            MetsModsImportExport object
      * @param prefs
      *            preferences - Prefs object
      * @param process
      *            object
      */
-    public <T extends ExportMets> void tempConvert(Workpiece workpiece, T exportMets, LegacyPrefsHelper prefs,
+    public void tempConvert(Workpiece workpiece, LegacyPrefsHelper prefs,
             Process process) throws IOException, DAOException, URISyntaxException {
         /*
          * wenn Filegroups definiert wurden, werden diese jetzt in die
