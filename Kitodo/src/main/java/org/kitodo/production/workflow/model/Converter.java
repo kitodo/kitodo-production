@@ -35,7 +35,7 @@ import org.kitodo.production.workflow.model.beans.TaskInfo;
 
 public class Converter {
 
-    private Reader reader;
+    private final Reader reader;
 
     /**
      * Constructor with diagram name as parameter. It sets up reader for xml file
@@ -90,18 +90,14 @@ public class Converter {
 
         List<org.kitodo.data.database.beans.Task> taskBeans = new ArrayList<>();
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
-            try {
-                taskBeans.add(getTask(entry.getKey(), entry.getValue()));
-            } catch (DAOException e) {
-                throw new WorkflowException(Helper.getTranslation("workflowExceptionNotFoundRole"));
-            }
+            taskBeans.add(getTask(entry.getKey(), entry.getValue()));
         }
 
         return taskBeans;
     }
 
     private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo)
-            throws DAOException, WorkflowException {
+            throws WorkflowException {
         org.kitodo.data.database.beans.Task task = new org.kitodo.data.database.beans.Task();
         KitodoTask kitodoTask = new KitodoTask(workflowTask);
         task.setWorkflowId(kitodoTask.getWorkflowId());
@@ -132,10 +128,15 @@ public class Converter {
             String[] userRoleIds = kitodoTask.getUserRoles().split(",");
             for (String userRoleString : userRoleIds) {
                 int userRoleId = Integer.parseInt(userRoleString.trim());
-                task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
+                try {
+                    task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
+                } catch (DAOException e) {
+                    throw new WorkflowException(Helper.getTranslation("workflowExceptionRoleNotFound",
+                            Collections.singletonList(task.getTitle())));
+                }
             }
         } catch (NullPointerException e) {
-            throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRole",
+            throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
                     Collections.singletonList(task.getTitle())));
         }
 
