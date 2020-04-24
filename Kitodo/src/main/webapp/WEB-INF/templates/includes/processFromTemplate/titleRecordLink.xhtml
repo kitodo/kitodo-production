@@ -85,9 +85,14 @@
                                        rendered="#{node.possibleInsertionPosition}"/>
                         <h:outputText value="#{node.label}" id="treeNodeText"
                                        rendered="#{not node.possibleInsertionPosition}"/>
-                        <p:tooltip id="treeNodeTooltip" for="treeNodeText" value="#{node.tooltip}"
+                        <p:tooltip id="treeNodeTooltip" for="treeNodeText"
                                        position="right" showEffect="clip" hideEffect="explode"
-                                       rendered="#{not node.possibleInsertionPosition and not empty node.tooltip}"/>
+                                       rendered="#{not node.possibleInsertionPosition and not empty node.tooltip}"
+                        >
+                            <p:repeat var="line" value="#{node.tooltip}">
+                                <div><h:outputText value="#{line}"/></div>
+                            </p:repeat>
+                        </p:tooltip>
                     </p:treeNode>
                 </p:tree>
             </h:panelGroup>

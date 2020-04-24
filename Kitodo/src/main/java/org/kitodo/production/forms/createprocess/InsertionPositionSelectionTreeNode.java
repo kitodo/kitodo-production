@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.util.List;
+
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -22,7 +24,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
     private int itemIndex;
     private String label;
     private boolean possibleInsertionPosition;
-    private String tooltip;
+    private List<String> tooltip;
 
     /**
      * Creates a new node for a radio button.
@@ -47,7 +49,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
      * @param label
      *            label for the included structural element
      */
-    InsertionPositionSelectionTreeNode(TreeNode parent, String label, String tooltip) {
+    InsertionPositionSelectionTreeNode(TreeNode parent, String label, List<String> tooltip) {
         super(null, parent);
         this.label = label;
         this.possibleInsertionPosition = false;
@@ -79,7 +81,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
      *
      * @return the tooltip
      */
-    public String getTooltip() {
+    public List<String> getTooltip() {
         return tooltip;
     }
 
