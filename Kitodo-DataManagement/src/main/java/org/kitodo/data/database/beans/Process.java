@@ -231,7 +231,7 @@ public class Process extends BaseTemplateBean {
      * Gets the process base URI.
      */
     public URI getProcessBaseUri() {
-        return URI.create(processBaseUri);
+        return Objects.isNull(processBaseUri) ? null : URI.create(processBaseUri);
     }
 
     /**
