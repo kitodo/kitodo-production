@@ -60,7 +60,7 @@ public class Process extends BaseTemplateBean {
     private String wikiField = "";
 
     @Column(name = "processBaseUri")
-    private URI processBaseUri;
+    private String processBaseUri;
 
     @Column(name = "ordering")
     private Integer ordering;
@@ -231,7 +231,7 @@ public class Process extends BaseTemplateBean {
      * Gets the process base URI.
      */
     public URI getProcessBaseUri() {
-        return processBaseUri;
+        return URI.create(processBaseUri);
     }
 
     /**
@@ -241,7 +241,7 @@ public class Process extends BaseTemplateBean {
      *            the given process base URI
      */
     public void setProcessBaseUri(URI processBaseUri) {
-        this.processBaseUri = processBaseUri;
+        this.processBaseUri = Objects.isNull(processBaseUri) ? null : processBaseUri.toString();
     }
 
     /**
