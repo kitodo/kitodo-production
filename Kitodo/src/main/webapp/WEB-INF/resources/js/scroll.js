@@ -167,7 +167,7 @@ function scrollToPreviewThumbnail(thumbnail, scrollable) {
 function scrollToSelectedPreviewThumbnail() {
     let scrollableContent = $("#thumbnailStripeScrollableContent");
     if (scrollableContent.length) {
-        let selectedThumbnail = scrollableContent.find(".active.last-selection + .thumbnail-container");
+        let selectedThumbnail = scrollableContent.find(".selected.last-selection + .thumbnail-container");
         if (selectedThumbnail.length) {
             scrollToPreviewThumbnail(selectedThumbnail.first(), scrollableContent);
         }
@@ -190,7 +190,7 @@ function scrollToSelectedStripe(selectedStripe, scrollable) {
 function scrollToSelectedStructureThumbnail() {
     let scrollableContent = $("#imagePreviewForm\\:structuredPagesField");
     if (scrollableContent.length) {
-        let selectedThumbnail = scrollableContent.find(".active.last-selection");
+        let selectedThumbnail = scrollableContent.find(".selected.last-selection");
         let selectedStripe = scrollableContent.find(".selected.stripe");
         if (selectedThumbnail.length) {
             scrollToStructureThumbnail(selectedThumbnail.first(), scrollableContent);
