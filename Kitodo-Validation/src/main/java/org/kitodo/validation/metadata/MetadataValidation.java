@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentHashMap.KeySetView;
@@ -171,7 +172,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         Collection<String> messages = new HashSet<>();
 
         Collection<String> structuresWithoutMedia = treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
-                .filter(structure -> structure.getViews().isEmpty() && structure.getChildren().isEmpty())
+                .filter(struc -> Objects.nonNull(struc.getType()) && struc.getViews().isEmpty() && struc.getChildren().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
         if (!structuresWithoutMedia.isEmpty()) {
