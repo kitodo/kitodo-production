@@ -64,6 +64,23 @@ public class ExportDms extends ExportMets {
     }
 
     /**
+     * Export to DMS.
+     *
+     * @param process
+     *            Process object
+     */
+    @Override
+    public void startExport(Process process) throws IOException, DAOException {
+        boolean exportSucessfull = startExport(process, (URI) null);
+        if (exportSucessfull) {
+            process.setExported(true);
+        }
+        if (Objects.nonNull(process.getParent())) {
+            startExport(process.getParent());
+        }
+    }
+
+    /**
      * Export to the DMS.
      *
      * @param process
