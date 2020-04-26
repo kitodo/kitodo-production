@@ -126,7 +126,7 @@ public class ReaderIT {
 
         exception.expect(WorkflowException.class);
         exception.expectMessage(
-            "Task in parallel branch cannot have second task. Please remove task after task with name 'Task9'.");
+            "Task in parallel branch cannot have second task. Please remove task after task 'Task9'.");
         reader.readWorkflowTasks();
     }
 
@@ -185,7 +185,7 @@ public class ReaderIT {
 
         exception.expect(WorkflowException.class);
         exception.expectMessage(
-                "Task with name 'Task1' has more than one incoming elements - probably workflow contains not allowed loop.");
+                "Task 'Task1' has more than one incoming elements - probably workflow contains not allowed loop.");
         reader.readWorkflowTasks();
     }
 
