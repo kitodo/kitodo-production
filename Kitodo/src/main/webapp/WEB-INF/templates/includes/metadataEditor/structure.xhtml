@@ -76,6 +76,7 @@
                         oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeDialog"/>
             <p:menuitem value="#{msgs.changeDocstructType}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
                         icon="fa fa-pencil fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -170,6 +171,7 @@
                             oncomplete="PF('dialogAddMediaUnit').show()"
                             update="dialogAddMediaUnitForm"/>
                 <p:menuitem value="#{msgs.removeElement}"
+                            rendered="#{DataEditorForm.structurePanel.selectedPhysicalNode.data.dataObject.type ne 'page'}"
                             icon="fa fa-trash fa-sm"
                             styleClass="plain"
                             disabled="#{readOnly}"
