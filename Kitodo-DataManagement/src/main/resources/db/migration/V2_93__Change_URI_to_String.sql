@@ -9,4 +9,4 @@
 -- GPL3-License.txt file that was distributed with this source code.
 
 UPDATE process SET processBaseUri = NULL WHERE id > 0;
-ALTER TABLE process MODIFY processBaseUri varchar(255);
+ALTER TABLE process MODIFY COLUMN processBaseUri varchar(255);
