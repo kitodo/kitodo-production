@@ -23,13 +23,6 @@
         <p:remoteCommand name="showStructure"
                          update="structureTreeForm:structureWrapperPanel, metadataAccordion"
                          action="#{DataEditorForm.structurePanel.show()}"/>
-        <p:commandButton id="linkButton"
-                         title="#{msgs.link}"
-                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                         disabled="#{readOnly}"
-                         icon="fa fa-link fa-sm"
-                         onclick="PF('dialogEditPages').show();"
-                         iconPos="right"/>
         <p:commandButton id="pagingButton"
                          value="#{msgs.pagination}"
                          title="#{msgs.pagination}"

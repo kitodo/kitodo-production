@@ -19,23 +19,6 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.extendedSearch}</h3>
-        <p:menuButton id="submitSearch"
-                      value="#{msgs.search}"
-                      icon="fa fa-search"
-                      iconPos="right"
-                      styleClass="right"
-                      rendered="#{SecurityAccessController.hasAuthorityToViewProcessList() and SecurityAccessController.hasAuthorityToViewTaskList()}">
-            <p:menuitem id="submitSearchProcess"
-                        value="#{msgs.searchForVolume}"
-                        action="#{SearchForm.filterProcesses}"
-                        onclick="setConfirmUnload(false)"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}"/>
-            <p:menuitem id="submitSearchTask"
-                        value="#{msgs.searchForTask}"
-                        action="#{SearchForm.filterTasks}"
-                        onclick="setConfirmUnload(false)"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewTaskList()}"/>
-        </p:menuButton>
         <p:commandButton id="submitProcessSearch"
                          value="#{msgs.searchForVolume}"
                          action="#{SearchForm.filterProcesses}"
@@ -43,7 +26,7 @@
                          icon="fa fa-search"
                          iconPos="right"
                          styleClass="right"
-                         rendered="#{SecurityAccessController.hasAuthorityToViewProcessList() and not SecurityAccessController.hasAuthorityToViewTaskList()}"/>
+                         rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}"/>
         <p:commandButton id="submitTaskSearch"
                          value="#{msgs.searchForTask}"
                          action="#{SearchForm.filterTasks}"
@@ -51,7 +34,7 @@
                          icon="fa fa-search"
                          iconPos="right"
                          styleClass="right"
-                         rendered="#{SecurityAccessController.hasAuthorityToViewTaskList() and not SecurityAccessController.hasAuthorityToViewProcessList()}"/>
+                         rendered="#{SecurityAccessController.hasAuthorityToViewTaskList()}"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -216,15 +199,6 @@
                         </p:column>
                     </p:row>
                 </p:panelGrid>
-                <p:panel styleClass="content-header">
-                    <p:commandButton value="#{msgs.clearData}"
-                                     action="extendedSearch"
-                                     icon="fa fa-trash-o fa-lg"
-                                     iconPos="right"
-                                     update="editForm"
-                                     immediate="true"
-                                     onclick="return confirm('#{msgs.shouldContentBeRemoved}')"/>
-                </p:panel>
             </p:tab>
         </p:tabView>
     </ui:define>
