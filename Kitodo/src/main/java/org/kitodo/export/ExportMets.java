@@ -135,7 +135,7 @@ public class ExportMets {
 
         Workpiece workpiece = gdzfile.getWorkpiece();
         try {
-            ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);
+            ServiceManager.getSchemaService().tempConvert(workpiece, myPrefs, process);
         } catch (URISyntaxException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
