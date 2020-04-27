@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +18,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.helper.Helper;
 
 public class ConverterIT {
 
@@ -95,8 +97,8 @@ public class ConverterIT {
 
         Template template = new Template();
         exception.expect(WorkflowException.class);
-        exception.expectMessage(
-            "Task in parallel branch cannot have second task. Please remove task after task with name 'Task9'.");
+        exception.expectMessage(Helper.getTranslation("workflowExceptionParallelBranch",
+                Collections.singletonList("Task9")));
         converter.convertWorkflowToTemplate(template);
     }
 
@@ -106,7 +108,8 @@ public class ConverterIT {
 
         Template template = new Template();
         exception.expect(WorkflowException.class);
-        exception.expectMessage("No roles assigned to the workflow task with name 'Task1'.");
+        exception.expectMessage(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
+                Collections.singletonList("Task1")));
         converter.convertWorkflowToTemplate(template);
     }
 
