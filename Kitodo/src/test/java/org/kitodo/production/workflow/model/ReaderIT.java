@@ -16,6 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -29,6 +30,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.workflow.model.beans.TaskInfo;
 
 public class ReaderIT {
@@ -125,8 +127,8 @@ public class ReaderIT {
         Reader reader = new Reader("gateway-test2");
 
         exception.expect(WorkflowException.class);
-        exception.expectMessage(
-            "Task in parallel branch cannot have second task. Please remove task after task 'Task9'.");
+        exception.expectMessage(Helper.getTranslation("workflowExceptionParallelBranch",
+                Collections.singletonList("Task9")));
         reader.readWorkflowTasks();
     }
 
@@ -184,8 +186,7 @@ public class ReaderIT {
         Reader reader = new Reader("gateway-test6");
 
         exception.expect(WorkflowException.class);
-        exception.expectMessage(
-                "Task 'Task1' has more than one incoming elements - probably workflow contains not allowed loop.");
+        exception.expectMessage(Helper.getTranslation("workflowExceptionLoop", Collections.singletonList("Task1")));
         reader.readWorkflowTasks();
     }
 
