@@ -85,7 +85,7 @@ public class LegacyPrefsHelper {
                     User user = ServiceManager.getUserService().getAuthenticatedUser();
                     String metadataLanguage = user != null ? user.getMetadataLanguage()
                             : Helper.getRequestParameter("Accept-Language");
-                    priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
+                    priorityList = LanguageRange.parse(! metadataLanguage.isEmpty() ? metadataLanguage : "en");
                 } catch (NullPointerException e) {
                     /*
                      * new Metadaten() throws a NullPointerException in
