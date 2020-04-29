@@ -29,7 +29,7 @@
             <h:outputText value="#{msgs.correction}" rendered="#{item.correction}"/>
         </p:column>
         <p:column headerText="#{msgs.status}">
-            <h:outputText value="#{item.processingStatus.title}"/>
+            <h:outputText value="#{msgs[item.processingStatus.title]}"/>
         </p:column>
         <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
             <p:column headerText="#{msgs.processingBegin}:"/>
