@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -510,8 +511,8 @@ public class FileManagement implements FileManagementInterface {
         String command = KitodoConfig.getParameter("script_deleteSymLink");
         CommandService commandService = new CommandService();
         List<String> parameters = new ArrayList<>();
-        parameters.add(homeFile.getAbsolutePath());
         try {
+            parameters.add(URLDecoder.decode(homeFile.getAbsolutePath(), StandardCharsets.UTF_8.name()));
             return commandService.runCommand(new File(command), parameters).isSuccessful();
         } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException in deleteSymLink", e);
