@@ -85,7 +85,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
             User user = ServiceManager.getUserService().getAuthenticatedUser();
             String metadataLanguage = user != null ? user.getMetadataLanguage()
                     : Helper.getRequestParameter("Accept-Language");
-            this.priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
+            this.priorityList = LanguageRange.parse(! metadataLanguage.isEmpty() ? metadataLanguage : "en");
         } catch (NullPointerException e) {
             /*
              * new Metadaten() throws a NullPointerException in asynchronous
