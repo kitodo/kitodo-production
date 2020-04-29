@@ -24,9 +24,11 @@
                         <h3>Kitodo.Production</h3>
                     </ui:insert>
                 </p:panel>
-                <p:messages id="error-messages" showIcon="false" showDetail="true" closable="true">
-                    <p:autoUpdate/>
-                </p:messages>
+                <ui:insert name="messages">
+                    <p:messages id="error-messages" showIcon="false" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
+                </ui:insert>
 
                 <ui:insert name="pageTabView">
                     <p:tabView/>

@@ -37,6 +37,11 @@
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewWorkflow()}"/>
 
+    <ui:define name="messages">
+        <p:messages id="error-messages" showIcon="false" showDetail="false" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+    </ui:define>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body"/>
