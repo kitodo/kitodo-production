@@ -126,16 +126,12 @@ public class TemplateForm extends TemplateBaseForm {
         if (isTitleValid()) {
             try {
                 prepareTasks();
-            } catch (DAOException | DataException e) {
-                Helper.setErrorMessage("errorDiagramConvert", new Object[] {this.template.getWorkflow().getTitle() },
-                    logger, e);
-                return this.stayOnCurrentPage;
-            } catch (IOException e) {
-                Helper.setErrorMessage("errorDiagramFile", new Object[] {this.template.getWorkflow().getTitle() },
+            } catch (DAOException | DataException | IOException e) {
+                Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getTitle() },
                     logger, e);
                 return this.stayOnCurrentPage;
             } catch (WorkflowException e) {
-                Helper.setErrorMessage("errorDiagramTask",
+                Helper.setErrorMessage("errorDiagram",
                     new Object[] {this.template.getWorkflow().getTitle(), e.getMessage() }, logger, e);
                 return this.stayOnCurrentPage;
             }
