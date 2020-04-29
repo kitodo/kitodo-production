@@ -1520,6 +1520,7 @@ Popup dialogs
 
 /* Messages */
 .ui-messages-error.ui-corner-all,
+.ui-messages-warn.ui-corner-all,
 .ui-messages-info.ui-corner-all {
     border: 0;
     border-radius: 0;
@@ -1527,11 +1528,13 @@ Popup dialogs
 }
 
 .ui-messages-error.ui-corner-all span.ui-icon-close,
+.ui-messages-warn.ui-corner-all span.ui-icon-close,
 .ui-messages-info.ui-corner-all span.ui-icon-close {
     background: none;
 }
 
 .ui-messages-error.ui-corner-all span.ui-icon-close:before,
+.ui-messages-warn.ui-corner-all span.ui-icon-close:before,
 .ui-messages-info.ui-corner-all span.ui-icon-close:before {
     color: var(--pure-white);
     content: "\f00d";
@@ -1543,6 +1546,11 @@ Popup dialogs
 /* Info messages */
 .ui-messages-info {
     background-color: var(--green);
+}
+
+/* Warning messages */
+.ui-messages-warn {
+    background-color: var(--light-orange);
 }
 
 /* Error messages */
