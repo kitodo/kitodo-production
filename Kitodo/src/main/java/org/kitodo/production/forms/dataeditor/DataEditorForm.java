@@ -726,6 +726,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     public int getFallbackTaskID(int processID) {
         try {
             Process process = ServiceManager.getProcessService().getById(processID);
+            Task currentProcessTask = ServiceManager.getProcessService().getCurrentTask(process);
+            if (Objects.nonNull(currentProcessTask)) {
+                return currentProcessTask.getId();
+            }
             if (!process.getTasks().isEmpty()) {
                 return process.getTasks().get(0).getId();
             }
