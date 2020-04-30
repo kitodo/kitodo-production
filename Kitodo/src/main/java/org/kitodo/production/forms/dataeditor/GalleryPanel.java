@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -92,6 +93,8 @@ public class GalleryPanel {
     private List<GalleryStripe> stripes;
 
     private Subfolder previewFolder;
+
+    private String cachingUUID = "";
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -391,6 +394,7 @@ public class GalleryPanel {
         medias = new ArrayList<>(mediaUnits.size());
         stripes = new ArrayList<>();
         previewImageResolver = new HashMap<>();
+        cachingUUID = UUID.randomUUID().toString();
 
         previewFolder = new Subfolder(process, project.getPreview());
         for (MediaUnit mediaUnit : mediaUnits) {
@@ -834,5 +838,14 @@ public class GalleryPanel {
             return dataEditor.getStructurePanel().getSeveralAssignments().indexOf(galleryMediaContent.getView().getMediaUnit());
         }
         return -1;
+    }
+
+    /**
+     * Get cachingUUID.
+     *
+     * @return value of cachingUUID
+     */
+    public String getCachingUUID() {
+        return cachingUUID;
     }
 }
