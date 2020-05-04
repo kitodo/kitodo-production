@@ -158,6 +158,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
+    private static final String METADATA_GROUP_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadataGroup.metadata";
     private static final String METADATA_FILE_NAME = "meta.xml";
     private static final String NEW_LINE_ENTITY = "\n";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
@@ -555,6 +556,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public List<ProcessDTO> findByAnything(String searchQuery) throws DataException {
         NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY,
             matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
+        NestedQueryBuilder nestedQueryForMetadataGroupContent = nestedQuery(METADATA_GROUP_SEARCH_KEY,
+            matchQuery(METADATA_GROUP_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
         MultiMatchQueryBuilder multiMatchQueryForProcessFields = multiMatchQuery(searchQuery,
                 ProcessTypeField.TITLE.getKey(),
                 ProcessTypeField.PROJECT_TITLE.getKey(),
@@ -564,6 +567,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery.should(nestedQueryForMetadataContent);
+        boolQuery.should(nestedQueryForMetadataGroupContent);
         boolQuery.should(multiMatchQueryForProcessFields);
 
         if (!searchQuery.contains(" ")) {

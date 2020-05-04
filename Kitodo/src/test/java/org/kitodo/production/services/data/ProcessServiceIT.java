@@ -226,6 +226,12 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindByMetadataGroupContent() throws DataException {
+        processService.findByTitle("Second Process");
+        assertEquals(processNotFound, 1, processService.findByAnything("August").size());
+    }
+
+    @Test
     public void shouldFindLinkableParentProcesses() throws DataException {
         assertEquals("Processes were not found in index!", 1,
             processService.findLinkableParentProcesses("HierarchyParent", 1, 1).size());

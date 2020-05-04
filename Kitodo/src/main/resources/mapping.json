@@ -421,6 +421,33 @@
                                                             }
                                                         }
                                                     }
+                                                },
+                                                "metadataGroup": {
+                                                    "properties": {
+                                                        "metadata": {
+                                                            "type": "nested",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "text",
+                                                                    "fields": {
+                                                                        "keyword": {
+                                                                            "type": "keyword",
+                                                                            "ignore_above": 256
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "content": {
+                                                                    "type": "text",
+                                                                    "fields": {
+                                                                        "keyword": {
+                                                                            "type": "keyword",
+                                                                            "ignore_above": 256
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
