@@ -1287,9 +1287,14 @@ Popup dialogs
     display: none;
 }
 
-.ui-dialog.legal-dialog div.dialogFieldWrapper {
-    overflow-y: scroll;
+#paginationForm {
+    position: relative;
+    height: 95%;
+}
+
+.ui-dialog div.dialogFieldWrapper {
     max-height: calc(100% - 100px);
+    overflow-y: scroll;
 }
 
 .ui-dialog.legal-dialog button.secondary.right {
