@@ -1285,7 +1285,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            list of TaskDTO objects
      * @return progress for closed steps
      */
-    int getProgressClosed(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+    double getProgressClosed(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
         return calculateProgressClosed(tasks);
@@ -1300,7 +1300,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            list of TaskDTO objects
      * @return progress for processed tasks
      */
-    int getProgressInProcessing(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+    double getProgressInProcessing(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
         return calculateProgressInProcessing(tasks);
@@ -1315,7 +1315,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            list of TaskDTO objects
      * @return return progress for open tasks
      */
-    int getProgressOpen(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+    double getProgressOpen(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
         return calculateProgressOpen(tasks);
     }
@@ -1329,29 +1329,29 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            list of TaskDTO objects
      * @return return progress for open tasks
      */
-    int getProgressLocked(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+    double getProgressLocked(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
         return calculateProgressLocked(tasks);
     }
 
-    private int calculateProgressClosed(Map<String, Integer> tasks) {
-        return tasks.get(CLOSED) * 100
-                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+    private double calculateProgressClosed(Map<String, Integer> tasks) {
+        return Double.valueOf(tasks.get(CLOSED) * 100)
+                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
-    private int calculateProgressInProcessing(Map<String, Integer> tasks) {
-        return tasks.get(IN_PROCESSING) * 100
-                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+    private double calculateProgressInProcessing(Map<String, Integer> tasks) {
+        return Double.valueOf(tasks.get(IN_PROCESSING) * 100)
+                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
-    private int calculateProgressOpen(Map<String, Integer> tasks) {
-        return tasks.get(OPEN) * 100
-                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+    private double calculateProgressOpen(Map<String, Integer> tasks) {
+        return Double.valueOf(tasks.get(OPEN) * 100)
+                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
-    private int calculateProgressLocked(Map<String, Integer> tasks) {
-        return tasks.get(LOCKED) * 100
-                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+    private double calculateProgressLocked(Map<String, Integer> tasks) {
+        return Double.valueOf(tasks.get(LOCKED) * 100)
+                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private Map<String, Integer> getCalculationForProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {

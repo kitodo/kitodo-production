@@ -25,10 +25,10 @@ public class ProcessDTO extends BaseTemplateDTO {
     private List<PropertyDTO> properties = new ArrayList<>();
     private List<PropertyDTO> sortedCorrectionSolutionMessages = new ArrayList<>();
     private UserDTO blockedUser;
-    private Integer progressClosed;
-    private Integer progressInProcessing;
-    private Integer progressOpen;
-    private Integer progressLocked;
+    private Double progressClosed;
+    private Double progressInProcessing;
+    private Double progressOpen;
+    private Double progressLocked;
     private String wikiField;
     private String processBaseUri;
     private String batchID;
@@ -140,9 +140,9 @@ public class ProcessDTO extends BaseTemplateDTO {
     /**
      * Get progress of closed tasks.
      *
-     * @return progress of closed tasks as Integer
+     * @return progress of closed tasks as Double
      */
-    public Integer getProgressClosed() {
+    public Double getProgressClosed() {
         return progressClosed;
     }
 
@@ -150,18 +150,18 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set progress of closed tasks.
      *
      * @param progressClosed
-     *            as Integer
+     *            as Double
      */
-    public void setProgressClosed(Integer progressClosed) {
+    public void setProgressClosed(Double progressClosed) {
         this.progressClosed = progressClosed;
     }
 
     /**
      * Get progress of processed tasks.
      *
-     * @return progress of processed tasks as Integer
+     * @return progress of processed tasks as Double
      */
-    public Integer getProgressInProcessing() {
+    public Double getProgressInProcessing() {
         return progressInProcessing;
     }
 
@@ -169,18 +169,18 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set progress of processed tasks.
      *
      * @param progressInProcessing
-     *            as Integer
+     *            as Double
      */
-    public void setProgressInProcessing(Integer progressInProcessing) {
+    public void setProgressInProcessing(Double progressInProcessing) {
         this.progressInProcessing = progressInProcessing;
     }
 
     /**
      * Get progress of locked tasks.
      *
-     * @return progress of locked tasks as Integer
+     * @return progress of locked tasks as Double
      */
-    public Integer getProgressLocked() {
+    public Double getProgressLocked() {
         return progressLocked;
     }
 
@@ -188,9 +188,9 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set progress of locked tasks.
      *
      * @param progressLocked
-     *            as Integer
+     *            as Double
      */
-    public void setProgressLocked(Integer progressLocked) {
+    public void setProgressLocked(Double progressLocked) {
         this.progressLocked = progressLocked;
     }
 
@@ -218,7 +218,7 @@ public class ProcessDTO extends BaseTemplateDTO {
      *
      * @return progress of open tasks as Integer
      */
-    public Integer getProgressOpen() {
+    public Double getProgressOpen() {
         return progressOpen;
     }
 
@@ -226,9 +226,9 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set progress of open tasks.
      *
      * @param progressOpen
-     *            as Integer
+     *            as Double
      */
-    public void setProgressOpen(Integer progressOpen) {
+    public void setProgressOpen(Double progressOpen) {
         this.progressOpen = progressOpen;
     }
 
