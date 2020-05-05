@@ -570,9 +570,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Using this helper variable, JSF can check if there is content to generate in
-     * the current task. In this case, corresponding action links are rendered,
-     * otherwise not.
+     * Checks if the task type is "generateImages" and thus the generate images links are shown.
      *
      * @return whether action links should be displayed
      */
@@ -580,6 +578,10 @@ public class CurrentTaskForm extends BaseForm {
         return currentTask.isTypeGenerateImages();
     }
 
+    /**
+     * Checks if folders for generation are configured in the project.
+     * @return whether the folders are configured.
+     */
     public boolean isImageGenerationPossible() {
         return TaskService.generatableFoldersFromProjects(Stream.of(currentTask.getProcess().getProject()))
                 .findAny().isPresent();
