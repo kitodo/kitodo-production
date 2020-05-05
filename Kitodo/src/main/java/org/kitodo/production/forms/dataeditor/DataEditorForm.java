@@ -503,7 +503,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return value of process title
      */
     public String getProcessTitle() {
-        return process.getTitle();
+        return Objects.nonNull(process) ? process.getTitle() : "";
     }
 
     /**
