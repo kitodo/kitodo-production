@@ -338,6 +338,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             structurePanel.preserve();
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
+                ServiceManager.getProcessService().saveToIndex(process,false);
                 PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                         + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
             } catch (IOException e) {
@@ -361,6 +362,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             structurePanel.preserve();
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
+                ServiceManager.getProcessService().saveToIndex(process,false);
                 return close();
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
