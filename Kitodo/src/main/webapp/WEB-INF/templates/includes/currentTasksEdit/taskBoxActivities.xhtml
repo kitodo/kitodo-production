@@ -96,21 +96,24 @@
                     <h:commandLink id="generateAllImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateAllImages}"
-                                   title="#{msgs.regenerateAllImages}">
+                                   disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
+                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.regenerateAllImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateAllImages}</h:outputText>
                     </h:commandLink>
                     <!-- Generate missing and re-generate damaged images action link -->
                     <h:commandLink id="regenerateMissingAndDamagedImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateMissingAndDamagedImages}"
-                                   title="#{msgs.regenerateMissingAndDamagedImages}">
+                                   disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
+                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.regenerateMissingAndDamagedImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateMissingAndDamagedImages}</h:outputText>
                     </h:commandLink>
                     <!-- Generate missing images action link -->
                     <h:commandLink id="generateMissingImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateMissingImages}"
-                                   title="#{msgs.generateMissingImages}">
+                                   disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
+                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.generateMissingImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.generateMissingImages}</h:outputText>
                     </h:commandLink>
 

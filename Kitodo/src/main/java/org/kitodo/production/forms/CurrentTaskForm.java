@@ -577,6 +577,10 @@ public class CurrentTaskForm extends BaseForm {
      * @return whether action links should be displayed
      */
     public boolean isShowingGenerationActions() {
+        return currentTask.isTypeGenerateImages();
+    }
+
+    public boolean isImageGenerationPossible() {
         return TaskService.generatableFoldersFromProjects(Stream.of(currentTask.getProcess().getProject()))
                 .findAny().isPresent();
     }
