@@ -386,32 +386,32 @@ public class ProcessServiceIT {
     public void shouldGetProgressClosed() throws Exception {
         Process process = processService.getById(1);
 
-        int condition = processService.getProgressClosed(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 40, condition);
+        double condition = processService.getProgressClosed(process.getTasks(), null);
+        assertEquals("Progress doesn't match given plain text!", 40, condition, 0);
     }
 
     @Test
     public void shouldGetProgressInProcessing() throws Exception {
         Process process = processService.getById(1);
 
-        int condition = processService.getProgressInProcessing(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 20, condition);
+        double condition = processService.getProgressInProcessing(process.getTasks(), null);
+        assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
     @Test
     public void shouldGetProgressOpen() throws Exception {
         Process process = processService.getById(1);
 
-        int condition = processService.getProgressOpen(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 20, condition);
+        double condition = processService.getProgressOpen(process.getTasks(), null);
+        assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
     @Test
     public void shouldGetProgressLocked() throws Exception {
         Process process = processService.getById(1);
 
-        int condition = processService.getProgressLocked(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 20, condition);
+        double condition = processService.getProgressLocked(process.getTasks(), null);
+        assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
     @Test
