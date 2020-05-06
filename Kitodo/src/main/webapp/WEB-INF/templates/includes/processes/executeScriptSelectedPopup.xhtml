@@ -34,7 +34,7 @@
                             <div>
                                 <p:commandButton value="addRole"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
-                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:addRole &quot;steptitle:TITLE_STEP&quot; group:GROUP_NAME'"/>
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:addRole &quot;tasktitle:TASK_TITLE&quot; role:ROLE_NAME'"/>
                                 <p:commandButton value="createFolders"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
                                                  onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:createFolders'"/>
@@ -49,13 +49,13 @@
                                                  onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:setRuleset &quot;ruleset:TITLE_RULESET&quot;'"/>
                                 <p:commandButton value="setStepStatus"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
-                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:setStepStatus &quot;steptitle:TITLE_STEP&quot; status:NUMBER_0_TO_3'"/>
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:setStepStatus &quot;tasktitle:TASK_TITLE&quot; status:NUMBER_0_TO_3'"/>
                                 <p:commandButton value="addShellScriptToStep"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
-                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:addShellScriptToStep &quot;steptitle:TITLE_STEP&quot; &quot;label:LABEL_FOR_SCRIPT&quot; &quot;script:PATH_TO_SCRIPT&quot;'"/>
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:addShellScriptToStep &quot;tasktitle:TASK_TITLE&quot; &quot;label:LABEL_FOR_SCRIPT&quot; &quot;script:PATH_TO_SCRIPT&quot;'"/>
                                 <p:commandButton value="setTaskProperty"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
-                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:setTaskProperty &quot;steptitle:TITLE_STEP&quot; property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:setTaskProperty &quot;tasktitle:TASK_TITLE&quot; property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
                                 <p:commandButton value="tiffWriter"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
                                                  onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:tiffWriter'"/>

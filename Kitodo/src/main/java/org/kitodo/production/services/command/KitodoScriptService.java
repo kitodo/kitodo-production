@@ -58,7 +58,7 @@ public class KitodoScriptService {
     private static final String SCRIPT = "script";
     private static final String SOURCE_FOLDER = "sourcefolder";
     private static final String STATUS = "status";
-    private static final String TASK_TITLE = "steptitle";
+    private static final String TASK_TITLE = "tasktitle";
     private static final String ROLE = "role";
 
     /**
