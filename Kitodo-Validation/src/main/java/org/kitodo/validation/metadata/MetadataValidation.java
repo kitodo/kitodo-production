@@ -126,16 +126,44 @@ public class MetadataValidation implements MetadataValidationInterface {
             IncludedStructuralElement::getChildren)
                 .collect(Collectors.toList())) {
             results.addAll(checkMetadataRules(includedStructuralElement.toString(), includedStructuralElement.getType(),
-                    includedStructuralElement.getMetadata(), ruleset, metadataLanguage, translations));
+                getMetadata(includedStructuralElement), ruleset, metadataLanguage, translations));
         }
 
         for (MediaUnit mediaUnit : treeStream(workpiece.getMediaUnit(), MediaUnit::getChildren)
                 .collect(Collectors.toList())) {
-            results.addAll(checkMetadataRules(mediaUnit.toString(), mediaUnit.getType(), mediaUnit.getMetadata(),
+            results.addAll(checkMetadataRules(mediaUnit.toString(), mediaUnit.getType(), getMetadata(mediaUnit),
                     ruleset, metadataLanguage, translations));
         }
 
         return merge(results);
+    }
+
+    private static Collection<Metadata> getMetadata(IncludedStructuralElement includedStructuralElement) {
+        Collection<Metadata> metadata = new ArrayList<>(includedStructuralElement.getMetadata());
+        if (Objects.nonNull(includedStructuralElement.getLabel())) {
+            MetadataEntry labelEntry = new MetadataEntry();
+            labelEntry.setKey("LABEL");
+            labelEntry.setValue(includedStructuralElement.getLabel());
+            metadata.add(labelEntry);
+        }
+        if (Objects.nonNull(includedStructuralElement.getOrderlabel())) {
+            MetadataEntry orderlabelEntry = new MetadataEntry();
+            orderlabelEntry.setKey("ORDERLABEL");
+            orderlabelEntry.setValue(includedStructuralElement.getOrderlabel());
+            metadata.add(orderlabelEntry);
+        }
+        return metadata;
+    }
+
+    private static Collection<Metadata> getMetadata(MediaUnit mediaUnit) {
+        Collection<Metadata> metadata = new ArrayList<>(mediaUnit.getMetadata());
+        if (Objects.nonNull(mediaUnit.getOrderlabel())) {
+            MetadataEntry orderlabelEntry = new MetadataEntry();
+            orderlabelEntry.setKey("ORDERLABEL");
+            orderlabelEntry.setValue(mediaUnit.getOrderlabel());
+            metadata.add(orderlabelEntry);
+        }
+        return metadata;
     }
 
     private Collection<ValidationResult> checkMetadataRules(String elementString,
