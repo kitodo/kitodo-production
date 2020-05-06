@@ -260,8 +260,8 @@ public class TitleRecordLinkTab {
                 String value = MetadataEditor.getMetadataValue(rootElement, key);
 
                 if (Objects.nonNull(value)) {
-                    Optional<String> label = ruleset.getTranslationForKey(rootElement.getType(), priorityList);
-                    toolTip.add(label.orElse(rootElement.getType()) + ": " + value);
+                    Optional<String> label = ruleset.getTranslationForKey(key, priorityList);
+                    toolTip.add(label.orElse(key) + ": " + value);
                 }
             }
         }
