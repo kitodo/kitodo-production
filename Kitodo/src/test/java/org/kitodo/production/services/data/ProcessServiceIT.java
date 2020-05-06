@@ -57,6 +57,7 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
@@ -255,11 +256,11 @@ public class ProcessServiceIT {
         UserService userService = ServiceManager.getUserService();
 
         Process process = processService.getById(1);
-        boolean condition = processService.getBlockedUser(process) == null;
+        boolean condition = MetadataLock.getLockUser(process.getId()) == null;
         assertTrue("Process has blocked user but it shouldn't!", condition);
 
         process = processService.getById(2);
-        condition = processService.getBlockedUser(process) == userService.getById(3);
+        condition = MetadataLock.getLockUser(process.getId()) == userService.getById(3);
         assertTrue("Blocked user doesn't match to given user!", condition);
     }
 

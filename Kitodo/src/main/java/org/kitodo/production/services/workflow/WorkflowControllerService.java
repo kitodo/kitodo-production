@@ -65,7 +65,6 @@ import org.xml.sax.SAXException;
 
 public class WorkflowControllerService {
 
-    private final MetadataLock metadataLock = new MetadataLock();
     private List<Task> automaticTasks = new ArrayList<>();
     private List<Task> tasksToFinish;
     private boolean flagWait = false;
@@ -224,7 +223,7 @@ public class WorkflowControllerService {
         }
 
         // unlock the process
-        metadataLock.setFree(task.getProcess().getId());
+        MetadataLock.setFree(task.getProcess().getId());
 
         // if the result of the verification is ok, then continue, otherwise it
         // is not reached
@@ -323,7 +322,7 @@ public class WorkflowControllerService {
         taskService.save(task);
 
         // unlock the process
-        metadataLock.setFree(task.getProcess().getId());
+        MetadataLock.setFree(task.getProcess().getId());
 
         updateProcessSortHelperStatus(task.getProcess());
     }

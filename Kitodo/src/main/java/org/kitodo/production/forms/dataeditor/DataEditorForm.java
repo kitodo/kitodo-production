@@ -16,12 +16,10 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,6 +58,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
+import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
@@ -115,11 +114,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * Backing bean for the metadata panel.
      */
     private final MetadataPanel metadataPanel;
-
-    /**
-     * Currently open processes of all users.
-     */
-    private static Map<Integer, User> openProcesses = new HashMap<>();
 
     /**
      * Backing bean for the pagination panel.
@@ -203,6 +197,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
 
+            User blockedUser = MetadataLock.getLockUser(process.getId());
+            if (Objects.nonNull(blockedUser) && !blockedUser.equals(this.user)) {
+                Helper.setErrorMessage("blocked", blockedUser.getFullName());
+                return referringView;
+            }
+
             ruleset = openRuleset(process.getRuleset());
             openMetsFile();
             if (!workpiece.getId().equals(process.getId().toString())) {
@@ -211,7 +211,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             }
             selectedMedia = new LinkedList<>();
             init();
-            openProcesses.put(process.getId(), user);
+            MetadataLock.setLocked(process.getId(), user);
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException | RulesetNotFoundException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
@@ -282,7 +282,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         ruleset = null;
         currentChildren.clear();
         selectedMedia.clear();
-        openProcesses.remove(process.getId());
+        MetadataLock.setFree(process.getId());
         process = null;
         user = null;
         this.setCurrentTask(null);
@@ -544,10 +544,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public void setCurrentTask(Task task) {
         this.currentTask = task;
-    }
-
-    public static User getUserOpened(Integer identificationNumber) {
-        return openProcesses.get(identificationNumber);
     }
 
     @Override

@@ -291,12 +291,6 @@ public enum ParameterCore implements ParameterInterface {
      */
 
     /**
-     * Long, value in milliseconds. Defaults to 180000 (30 minutes).
-     */
-    METS_EDITOR_LOCKING_TIME(
-            new Parameter<>("metsEditor.lockingTime", TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES))),
-
-    /**
      * Use special image folder for METS editor if exists (define suffix here).
      */
     METS_EDITOR_DEFAULT_SUFFIX(new Parameter<UndefinedParameter>("metsEditor.defaultSuffix")),

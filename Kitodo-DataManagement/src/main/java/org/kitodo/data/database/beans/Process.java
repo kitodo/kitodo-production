@@ -120,15 +120,6 @@ public class Process extends BaseTemplateBean {
     private boolean exported;
 
     @Transient
-    private User blockedUser;
-
-    @Transient
-    private long blockedMinutes;
-
-    @Transient
-    private long blockedSeconds;
-
-    @Transient
     private List<Map<String, Object>> metadata;
 
     /**
@@ -491,63 +482,6 @@ public class Process extends BaseTemplateBean {
      */
     public void setExported(boolean exported) {
         this.exported = exported;
-    }
-
-    /**
-     * Get blocked user.
-     *
-     * @return User object if this user is blocked
-     */
-    public User getBlockedUser() {
-        return blockedUser;
-    }
-
-    /**
-     * Set blocked user.
-     *
-     * @param blockedUser
-     *            User object
-     */
-    public void setBlockedUser(User blockedUser) {
-        this.blockedUser = blockedUser;
-    }
-
-    /**
-     * Get blocked minutes.
-     *
-     * @return blocked minutes as long
-     */
-    public long getBlockedMinutes() {
-        return blockedMinutes;
-    }
-
-    /**
-     * Set blocked minutes.
-     *
-     * @param blockedMinutes
-     *            as long
-     */
-    public void setBlockedMinutes(long blockedMinutes) {
-        this.blockedMinutes = blockedMinutes;
-    }
-
-    /**
-     * Get blocked seconds.
-     *
-     * @return blocked seconds as long
-     */
-    public long getBlockedSeconds() {
-        return blockedSeconds;
-    }
-
-    /**
-     * Set blocked seconds.
-     *
-     * @param blockedSeconds
-     *            as long
-     */
-    public void setBlockedSeconds(long blockedSeconds) {
-        this.blockedSeconds = blockedSeconds;
     }
 
     /**

@@ -11,10 +11,10 @@
 
 package org.kitodo.config.enums;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 
 public class ParameterCoreTest {
 
@@ -22,12 +22,6 @@ public class ParameterCoreTest {
     public void shouldGetParameterWithoutDefaultValueTest() {
         assertNull("Default value for param exists!",
             ParameterCore.DIR_USERS.getParameter().getDefaultValue());
-    }
-
-    @Test
-    public void shouldGetParameterWithDefaultValueTest() {
-        assertEquals("Default value for param doesn't exist!", 1800000L,
-            ParameterCore.METS_EDITOR_LOCKING_TIME.getParameter().getDefaultValue());
     }
 
     @Test
