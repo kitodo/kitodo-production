@@ -91,7 +91,7 @@ public class KitodoScriptServiceIT {
         Task task = ServiceManager.getTaskService().getById(8);
         int amountOfRoles = task.getRoles().size();
 
-        String script = "action:addRole \"steptitle:Progress\" role:General";
+        String script = "action:addRole \"tasktitle:Progress\" role:General";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
         kitodoScript.execute(processes, script);
@@ -107,7 +107,7 @@ public class KitodoScriptServiceIT {
 
         KitodoScriptService kitodoScript = new KitodoScriptService();
 
-        String script = "action:setStepStatus \"steptitle:Progress\" status:3";
+        String script = "action:setStepStatus \"tasktitle:Progress\" status:3";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
         kitodoScript.execute(processes, script);
@@ -120,7 +120,7 @@ public class KitodoScriptServiceIT {
     public void shouldExecuteAddShellScriptToTaskScript() throws Exception {
         KitodoScriptService kitodoScript = new KitodoScriptService();
 
-        String script = "action:addShellScriptToStep \"steptitle:Progress\" \"label:script\" \"script:/some/new/path\"";
+        String script = "action:addShellScriptToStep \"tasktitle:Progress\" \"label:script\" \"script:/some/new/path\"";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
         kitodoScript.execute(processes, script);
@@ -134,7 +134,7 @@ public class KitodoScriptServiceIT {
     public void shouldExecuteSetPropertyTaskScript() throws Exception {
         KitodoScriptService kitodoScript = new KitodoScriptService();
 
-        String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:true";
+        String script = "action:setTaskProperty \"tasktitle:Closed\" property:validate value:true";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
         kitodoScript.execute(processes, script);
@@ -147,7 +147,7 @@ public class KitodoScriptServiceIT {
     public void shouldNotExecuteSetPropertyTaskScript() throws Exception {
         KitodoScriptService kitodoScript = new KitodoScriptService();
 
-        String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:invalid";
+        String script = "action:setTaskProperty \"tasktitle:Closed\" property:validate value:invalid";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
         kitodoScript.execute(processes, script);
