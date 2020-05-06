@@ -29,14 +29,16 @@
                 <ui:param name="readOnly" value="#{readOnly}" />
             </ui:include>
 
-            <p:panelGrid style="margin-top:10px;" styleClass="ui-noborder full-width">
+            <p:panelGrid style="margin-top:10px;"
+                         styleClass="ui-noborder full-width"
+                         rendered="#{not readOnly}">
                 <p:row>
                     <h:panelGroup id="addMetadataButtonWrapper"
                                   title="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems ? msgs['dataEditor.addMetadata.noMetadataAddable'] : msgs['dataEditor.addMetadata.newMetadata']}">
                         <p:commandButton id="addMetadataButton"
                                          icon="fa fa-plus"
-                                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                         disabled="#{readOnly or empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"
+                                         styleClass="secondary"
+                                         disabled="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"
                                          update="addMetadataForm"
                                          oncomplete="PF('addMetadataDialog').show();"/>
                     </h:panelGroup>

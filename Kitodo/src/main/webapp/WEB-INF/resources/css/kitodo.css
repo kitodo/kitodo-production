@@ -2006,13 +2006,53 @@ Column content
 #metadataAccordion\:metadata\:metadataTable_data .ui-spinner,
 #metadataAccordion\:physicalMetadata\:metadataTable_data .ui-spinner,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectonemenu,
-#metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectonemenu {
+#metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectonemenu,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio,
+#metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectoneradio {
     background: inherit;
     box-sizing: border-box;
     margin-right: var(--default-half-size);
     max-width: calc(100% - 93px);
+    overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-calendar .ui-inputfield,
+#metadataAccordion\:physicalMetadata\:metadataTable_data .ui-calendar .ui-inputfield {
+    max-width: calc(100% - 139px);
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-calendar .ui-datepicker-trigger {
+    background: var(--pure-white);
+    border: solid var(--default-border-width) var(--light-blue);
+    margin: 0 3px 0 0;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-calendar .ui-datepicker-trigger::before {
+    color: var(--light-blue);
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-calendar.read-only .ui-datepicker-trigger {
+    display: none;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .read-only,
+#metadataAccordion\:metadata\:metadataTable_data .ui-calendar.read-only .ui-inputfield {
+    max-width: 100%;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-inputfield.ui-selectmanymenu.read-only,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio.read-only {
+    max-width: unset;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
+    display: inline-table;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio td {
+    padding: var(--input-padding-none) var(--input-padding);
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-spinner-input,
