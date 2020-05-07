@@ -277,10 +277,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return stay on the current page
      */
     public String releaseLock() {
-        MetadataLock.unlockProcess(this.currentTask.getProcess().getId());
-        this.currentTask.getProcess().setBlockedUser(null);
-        this.currentTask.getProcess().setBlockedMinutes(0);
-        this.currentTask.getProcess().setBlockedSeconds(0);
+        MetadataLock.setFree(this.currentTask.getProcess().getId());
         return this.stayOnCurrentPage;
     }
 
@@ -461,7 +458,6 @@ public class CurrentTaskForm extends BaseForm {
         this.currentTask.setLocalizedTitle(ServiceManager.getTaskService().getLocalizedTitle(task.getTitle()));
         this.myProcess = this.currentTask.getProcess();
         loadProcessProperties();
-        setAttributesForProcess();
     }
 
     /**
@@ -472,13 +468,6 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setTaskById(int id) {
         loadTaskById(id);
-    }
-
-    private void setAttributesForProcess() {
-        Process process = this.currentTask.getProcess();
-        process.setBlockedUser(ServiceManager.getProcessService().getBlockedUser(process));
-        process.setBlockedMinutes(ServiceManager.getProcessService().getBlockedMinutes(process));
-        process.setBlockedSeconds(ServiceManager.getProcessService().getBlockedSeconds(process));
     }
 
     /**

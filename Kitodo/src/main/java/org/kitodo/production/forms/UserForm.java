@@ -500,7 +500,7 @@ public class UserForm extends BaseForm {
      *            UserDTO to check
      * @return whether given UserDTO is checked in
      */
-    public boolean checkUserLoggedIn(User user) {
+    public static boolean checkUserLoggedIn(User user) {
         for (SecuritySession securitySession : ServiceManager.getSessionService().getActiveSessions()) {
             if (securitySession.getUserName().equals(user.getLogin())) {
                 return true;

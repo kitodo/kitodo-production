@@ -130,7 +130,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataEditor;
-import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.process.TiffHeaderGenerator;
@@ -141,7 +140,6 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
-    private final MetadataLock msp = new MetadataLock();
     private final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
@@ -916,32 +914,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     boolean isProcessAssignedToOnlyOneBatch(List<BatchDTO> batchDTOList) {
         return batchDTOList.size() == 1;
-    }
-
-    /**
-     * Get blocked user for Process.
-     *
-     * @return blocked metadata (user)
-     */
-    public User getBlockedUser(Process process) {
-        User user = null;
-        if (MetadataLock.isLocked(process.getId())) {
-            String userID = this.msp.getLockUser(process.getId());
-            try {
-                user = ServiceManager.getUserService().getById(Integer.valueOf(userID));
-            } catch (DAOException | RuntimeException e) {
-                Helper.setErrorMessage("userNotFound", logger, e);
-            }
-        }
-        return user;
-    }
-
-    public long getBlockedMinutes(Process process) {
-        return this.msp.getLockSeconds(process.getId()) / 60;
-    }
-
-    public long getBlockedSeconds(Process process) {
-        return this.msp.getLockSeconds(process.getId()) % 60;
     }
 
     /**

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.joda.time.LocalDateTime;
+import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.security.SecurityConfig;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.security.SecurityUserDetails;
@@ -43,6 +44,7 @@ public class SessionService {
      *            The UserDetails Object.
      */
     public void expireSessionsOfUser(UserDetails user) {
+        MetadataLock.setAllUserLocksFree(user.getUsername());
         List<SessionInformation> activeUserSessions = sessionRegistry.getAllSessions(user, false);
         for (SessionInformation sessionInformation : activeUserSessions) {
             sessionInformation.expireNow();

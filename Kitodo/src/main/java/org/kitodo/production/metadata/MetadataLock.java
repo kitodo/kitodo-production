@@ -12,68 +12,57 @@
 package org.kitodo.production.metadata;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.production.forms.UserForm;
 
 /**
  * Bean for locking the metadata.
  */
 public class MetadataLock implements Serializable {
-    private static HashMap<Integer, HashMap<String, String>> locks = new HashMap<>();
-    private static final String USER = "Benutzer";
-    private static final String LIFE_SIGN = "Lebenszeichen";
-    /*
-     * Time within which the user must act to keep his lock (30 min)
-     */
-    private static final long LOCKING_TIME = ConfigCore.getLongParameterOrDefaultValue(ParameterCore.METS_EDITOR_LOCKING_TIME);
+    private static ConcurrentHashMap<Integer, User> locks = new ConcurrentHashMap<>();
 
     /**
      * Unlock metadata of a particular process again.
      */
-    public void setFree(int prozessID) {
+    public static void setFree(int prozessID) {
         locks.remove(prozessID);
     }
 
     /**
      * Lock metadata of a specific process for a user.
      */
-    public void setLocked(int prozessID, String benutzerID) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(USER, benutzerID);
-        map.put(LIFE_SIGN, String.valueOf(System.currentTimeMillis()));
-        locks.put(prozessID, map);
+    public static void setLocked(int prozessID, User user) {
+        locks.put(prozessID, user);
     }
 
     /**
      * Check if certain metadata is still locked by other users.
      */
     public static boolean isLocked(int processID) {
-        HashMap<String, String> temp = locks.get(processID);
+        User user = locks.get(processID);
         /* if the process is not in the hash map, it is not locked */
-        if (temp == null) {
+        if (user == null) {
             return false;
         } else {
-            /* if it is in the hash map, the time must be checked */
-            long lifeSign = Long.parseLong(temp.get(LIFE_SIGN));
-            return lifeSign >= System.currentTimeMillis() - LOCKING_TIME;
+            /* if it is in the hash map, the user must be checked */
+            return UserForm.checkUserLoggedIn(user);
         }
     }
 
     /**
      * Java doc.
      *
-     * @param inBenutzerID
-     *            Integer
+     * @param inUsername
+     *            String
      */
-    public void alleBenutzerSperrungenAufheben(Integer inBenutzerID) {
-        String inBenutzerString = String.valueOf(inBenutzerID.intValue());
-        HashMap<Integer, HashMap<String, String>> temp = new HashMap<>(locks);
-        for (Integer key : temp.keySet()) {
-            HashMap<String, String> intern = locks.get(key);
-            if (intern.get(USER).equals(inBenutzerString)) {
-                locks.remove(key);
+    public static void setAllUserLocksFree(String inUsername) {
+        for (Iterator<Entry<Integer, User>> intern = locks.entrySet().iterator(); intern.hasNext();) {
+            if (intern.next().getValue().getLogin().equals(inUsername)) {
+                intern.remove();
             }
         }
     }
@@ -81,42 +70,7 @@ public class MetadataLock implements Serializable {
     /**
      * Return a user who has locked metadata.
      */
-    public String getLockUser(int processID) {
-        String lockUser = "-1";
-        HashMap<String, String> temp = locks.get(processID);
-        /*
-         * if the process is not in the hash map, there is no user
-         */
-        if (temp != null) {
-            lockUser = temp.get(USER);
-        }
-        return lockUser;
-    }
-
-    /**
-     * Remove lock for process.
-     *
-     * @param processID
-     *            Id of process to unlock
-     */
-    public static void unlockProcess(int processID) {
-        HashMap<String, String> temp = locks.get(processID);
-        /* if the process is in the hash map, take it out there */
-        if (temp != null) {
-            locks.remove(processID);
-        }
-    }
-
-    /**
-     * Return seconds since the metadata was last edited.
-     */
-    public long getLockSeconds(int processID) {
-        HashMap<String, String> temp = locks.get(processID);
-        /* if the process is not in the hash map, there is no time */
-        if (temp == null) {
-            return 0;
-        } else {
-            return (System.currentTimeMillis() - Long.parseLong(temp.get(LIFE_SIGN))) / 1000;
-        }
+    public static User getLockUser(int processID) {
+        return locks.get(processID);
     }
 }
