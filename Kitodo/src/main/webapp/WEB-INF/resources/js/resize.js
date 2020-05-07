@@ -188,8 +188,7 @@ function setSectionHeight() {
         firstSectionHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2);
         secondSection.height(secondSection.height() + firstSectionHeight);
     } else if (secondSection.hasClass('collapsed')) {
-        secondSectionHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT;
-        firstSection.height(firstSection.height() + secondSectionHeight);
+        firstSection.height(wrapper.height() - 2 * HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top'))) - SEPARATOR_HEIGHT);
     } else {
         firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
         secondSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT);
