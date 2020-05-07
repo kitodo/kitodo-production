@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
@@ -172,6 +173,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     private List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia;
 
+    private static final String DESKTOP_LINK = "/pages/desktop.jsf";
+
     /**
      * Public constructor.
      */
@@ -185,6 +188,23 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
         acquisitionStage = "edit";
+    }
+
+    /**
+     * Checks if the process is correctly set. Otherwise redirect to desktop,
+     * because metadataeditor doesn't work withut a process.
+     */
+    public void initMetadataEditor() {
+        if(Objects.isNull(process)) {
+            try {
+                Helper.setErrorMessage("noProcessSelected");
+                FacesContext context = FacesContext.getCurrentInstance();
+                String path = context.getExternalContext().getRequestContextPath() + DESKTOP_LINK;
+                context.getExternalContext().redirect(path);
+            } catch (IOException e) {
+                Helper.setErrorMessage("noProcessSelected");
+            }
+        }
     }
 
     /**
@@ -503,7 +523,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return value of process title
      */
     public String getProcessTitle() {
-        return Objects.nonNull(process) ? process.getTitle() : "";
+        return process.getTitle();
     }
 
     /**
