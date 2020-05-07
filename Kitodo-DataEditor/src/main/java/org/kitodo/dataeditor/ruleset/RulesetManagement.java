@@ -149,6 +149,28 @@ public class RulesetManagement implements RulesetManagementInterface {
     }
 
     /**
+     * Returns the most appropriate label for a key, if there is one.
+     *
+     * @param key
+     *            key whose label should be returned
+     * @param priorityList
+     *            weighted list of user-preferred display languages. Return
+     *            value of the function {@link LanguageRange#parse(String)}.
+     * @return the best-matching label, if any
+     */
+    @Override
+    public Optional<String> getTranslationForKey(String key, List<LanguageRange> priorityList) {
+        Optional<Key> optionalKey = ruleset.getKey(key);
+        if (optionalKey.isPresent()) {
+            UniversalKey universalKey = new UniversalKey(ruleset, optionalKey.get());
+            String label = universalKey.getLabel(priorityList);
+            return Optional.of(label);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Loads a ruleset from a file.
      *
      * @param rulesetFile

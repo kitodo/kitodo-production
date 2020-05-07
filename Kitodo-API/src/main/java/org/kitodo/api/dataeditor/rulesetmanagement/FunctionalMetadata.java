@@ -36,6 +36,12 @@ public enum FunctionalMetadata {
     DATA_SOURCE("dataSource"),
 
     /**
+     * Display metadata as summary on Title Record Link tab when creating a new
+     * process.
+     */
+    DISPLAY_SUMMARY("displaySummary"),
+
+    /**
      * The key of a higher-level data record in a hierarchical data structure of
      * 1:n relationships, which are stored from bottom to top.
      */

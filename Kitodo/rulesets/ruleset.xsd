@@ -49,6 +49,7 @@
         <xs:attribute type="xs:string" name="processTitle"/>
         <xs:attribute type="xs:NMTOKEN" name="dates"/>
         <xs:attribute type="xs:string" name="scheme"/>
+        <xs:attribute type="ruleset:DivisionUseAttribute" name="use"/>
     </xs:complexType>
 
     <xs:simpleType name="DomainAttribute">
@@ -80,6 +81,7 @@
         </xs:sequence>
         <xs:attribute use="required" type="xs:NMTOKEN" name="id"/>
         <xs:attribute type="ruleset:DomainAttribute" name="domain" default="description"/>
+        <xs:attribute type="ruleset:KeyUseAttribute" name="use"/>
     </xs:complexType>
 
     <xs:complexType name="Label">
@@ -176,4 +178,39 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="KeyUseAttribute">
+        <xs:restriction>
+            <xs:simpleType>
+                <xs:list>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                            <xs:enumeration value="authorLastName"/>
+                            <xs:enumeration value="dataSource"/>
+                            <xs:enumeration value="displaySummary"/>
+                            <xs:enumeration value="higherlevelIdentifier"/>
+                            <xs:enumeration value="recordIdentifier"/>
+                            <xs:enumeration value="title"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:list>
+            </xs:simpleType>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DivisionUseAttribute">
+        <xs:restriction>
+            <xs:simpleType>
+                <xs:list>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                            <xs:enumeration value="createChildrenFromParent"/>
+                            <xs:enumeration value="createChildrenWithCalendar"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:list>
+            </xs:simpleType>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

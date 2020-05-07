@@ -14,18 +14,21 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
@@ -39,6 +42,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.dataformat.MetsService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -47,6 +51,10 @@ import org.primefaces.model.TreeNode;
  */
 public class TitleRecordLinkTab {
     private static final Logger logger = LogManager.getLogger(TitleRecordLinkTab.class);
+
+    private static final String ACQUISITION_STAGE = "create";
+    private static final MetsService metsService = ServiceManager.getMetsService();
+    private static final ProcessService processService = ServiceManager.getProcessService();
 
     /**
      * Maximum number of search hits to show.
@@ -139,7 +147,7 @@ public class TitleRecordLinkTab {
             return;
         }
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(titleRecordProcess);
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
+        Workpiece workpiece = metsService.loadWorkpiece(uri);
 
         RulesetManagementInterface ruleset = ServiceManager.getRulesetService()
                 .openRuleset(titleRecordProcess.getRuleset());
@@ -184,7 +192,7 @@ public class TitleRecordLinkTab {
             RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException {
 
         String type;
-        String tooltip = "";
+        List<String> tooltip = Collections.emptyList();
         if (Objects.isNull(currentIncludedStructuralElement.getLink())) {
             type = currentIncludedStructuralElement.getType();
         } else {
@@ -192,7 +200,7 @@ public class TitleRecordLinkTab {
             int linkedProcessUri = processService.processIdFromUri(currentIncludedStructuralElement.getLink().getUri());
             Process linkedProcess = processService.getById(linkedProcessUri);
             type = processService.getBaseType(linkedProcess);
-            tooltip = Helper.getTranslation("tooltip", Arrays.asList(Integer.toString(linkedProcessUri)));
+            tooltip = getToolTip(ruleset, linkedProcess);
         }
 
         StructuralElementViewInterface currentIncludedStructuralElementView = ruleset.getStructuralElementView(type,
@@ -224,6 +232,47 @@ public class TitleRecordLinkTab {
             }
         }
     }
+
+    /**
+     * Determines the overlay text for a node of the tree.
+     *
+     * @param ruleset
+     *            Ruleset of the process
+     * @param linkedProcess
+     *            Linked child process
+     * @return text to be displayed
+     * @throws IOException
+     *             if the METS file cannot be read
+     */
+    private List<String> getToolTip(RulesetManagementInterface ruleset, Process linkedProcess) throws IOException {
+
+        Collection<String> summaryKeys = ruleset.getFunctionalKeys(FunctionalMetadata.DISPLAY_SUMMARY);
+        List<String> toolTip = new ArrayList<>();
+        if (!summaryKeys.isEmpty()) {
+
+            Workpiece workpiece = metsService.loadWorkpiece(processService.getMetadataFileUri(linkedProcess));
+            IncludedStructuralElement rootElement = workpiece.getRootElement();
+
+            final String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+            List<LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage);
+
+            for (String key : summaryKeys) {
+                String value = MetadataEditor.getMetadataValue(rootElement, key);
+
+                if (Objects.nonNull(value)) {
+                    Optional<String> label = ruleset.getTranslationForKey(key, priorityList);
+                    toolTip.add(label.orElse(key) + ": " + value);
+                }
+            }
+        }
+
+        if (toolTip.isEmpty()) {
+            toolTip.add(linkedProcess.toString());
+        }
+
+        return toolTip;
+    }
+
 
     /**
      * Returns the HTML identifier of the selected parent process.

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Interface for a service that provides access to the ruleset.
@@ -87,6 +88,18 @@ public interface RulesetManagementInterface {
      */
     StructuralElementViewInterface getStructuralElementView(String structuralElement, String acquisitionStage,
             List<LanguageRange> priorityList);
+
+    /**
+     * Returns the most appropriate label for a key, if there is one.
+     *
+     * @param key
+     *            key whose label should be returned
+     * @param priorityList
+     *            weighted list of user-preferred display languages. Return
+     *            value of the function {@link LanguageRange#parse(String)}.
+     * @return the best-matching label, if any
+     */
+    Optional<String> getTranslationForKey(String key, List<LanguageRange> priorityList);
 
     /**
      * Loads a ruleset into this management.

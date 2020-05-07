@@ -17,10 +17,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Optional;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 
 public class DummyRulesetManagement implements RulesetManagementInterface {
@@ -49,6 +50,11 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     public StructuralElementViewInterface getStructuralElementView(String division, String acquisitionStage,
             List<LanguageRange> priorityList) {
         return new DummyStructuralElementView(division);
+    }
+
+    @Override
+    public Optional<String> getTranslationForKey(String key, List<LanguageRange> priorityList) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
