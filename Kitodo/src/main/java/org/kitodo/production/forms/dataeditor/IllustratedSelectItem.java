@@ -23,6 +23,12 @@ public class IllustratedSelectItem {
     private String image;
 
     /**
+     * Constructor required by some JSF-internal processing.
+     */
+    public IllustratedSelectItem() {
+    }
+
+    /**
      * Creates a new illustrated select item.
      *
      * @param value
