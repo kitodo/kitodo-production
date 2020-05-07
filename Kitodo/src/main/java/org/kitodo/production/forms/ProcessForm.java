@@ -1322,6 +1322,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private String filterList() {
+        this.selectedProcesses.clear();
         return processListPath;
     }
 
