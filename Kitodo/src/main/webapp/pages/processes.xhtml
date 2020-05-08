@@ -47,10 +47,13 @@
                         </li>
                         <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
                             <li>
-                                <p:commandLink value="#{filter}" action="#{ProcessForm.changeFilter(filter)}"/>
+                                <p:commandLink value="#{filter}"
+                                               action="#{ProcessForm.changeFilter(filter)}"
+                                               title="#{filter}"/>
                                 <p:commandLink title="#{msgs.removeFilter}"
                                                action="#{ProcessForm.removeFilterFromUser(filter)}"
-                                               styleClass="filter-delete plain" update="@form">
+                                               styleClass="filter-delete plain"
+                                               update="@form">
                                     <i class="fa fa-trash-o fa-lg"/>
                                 </p:commandLink>
                             </li>
