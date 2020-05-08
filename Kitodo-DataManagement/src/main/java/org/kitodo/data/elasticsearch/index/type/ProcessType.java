@@ -67,7 +67,9 @@ public class ProcessType extends BaseType<Process> {
         String commentsMessages = "";
         List<Comment> processComments = process.getComments();
         for (Comment comment : processComments) {
-            commentsMessages = commentsMessages.concat(comment.getMessage());
+            if (Objects.nonNull(comment) && Objects.nonNull(comment.getMessage())) {
+                commentsMessages = commentsMessages.concat(comment.getMessage());
+            }
         }
         return commentsMessages;
     }
