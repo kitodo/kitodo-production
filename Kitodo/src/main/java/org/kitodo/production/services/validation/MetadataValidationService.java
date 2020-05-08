@@ -228,7 +228,7 @@ public class MetadataValidationService {
         String metadataLanguage = user != null ? user.getMetadataLanguage()
                 : Helper.getRequestParameter("Accept-Language");
         return LanguageRange
-                .parse(Objects.nonNull(metadataLanguage) && !metadataLanguage.isEmpty() ? metadataLanguage : "en");
+                .parse(StringUtils.isBlank(metadataLanguage) ? metadataLanguage : "en");
     }
 
     private Map<String, String> getTranslations() {
