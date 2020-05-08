@@ -160,16 +160,6 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldDuplicateProject() throws DAOException {
-        Project initialProject = projectService.getById(1);
-        Project duplicatedProject = projectService.duplicateProject(initialProject);
-
-        assertEquals(
-            "DMS export file format of duplicated project does not match DMS export file format of original project!",
-            duplicatedProject.getFileFormatDmsExport(), initialProject.getFileFormatDmsExport());
-    }
-
-    @Test
     public void shouldGetClientOfProject() throws Exception {
         Project project = projectService.getById(1);
         assertEquals("Client names doesnt match", "First client", project.getClient().getName());

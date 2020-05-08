@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -68,12 +67,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     @Column(name = "dmsImportRootPath")
     private String dmsImportRootPath;
-
-    @Column(name = "fileFormatInternal")
-    private String fileFormatInternal;
-
-    @Column(name = "fileFormatDmsExport")
-    private String fileFormatDmsExport;
 
     @Column(name = "metsRightsOwner")
     private String metsRightsOwner = "";
@@ -173,8 +166,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.users = new ArrayList<>();
         this.folders = new ArrayList<>();
         this.dmsImportRootPath = "";
-        this.fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
-        this.fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
     }
 
     @XmlAttribute(name = "key")
@@ -344,22 +335,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     public String getMetsContentIDs() {
         return this.metsContentIDs;
-    }
-
-    public String getFileFormatInternal() {
-        return this.fileFormatInternal;
-    }
-
-    public void setFileFormatInternal(String fileFormatInternal) {
-        this.fileFormatInternal = fileFormatInternal;
-    }
-
-    public String getFileFormatDmsExport() {
-        return this.fileFormatDmsExport;
-    }
-
-    public void setFileFormatDmsExport(String fileFormatDmsExport) {
-        this.fileFormatDmsExport = fileFormatDmsExport;
     }
 
     /**

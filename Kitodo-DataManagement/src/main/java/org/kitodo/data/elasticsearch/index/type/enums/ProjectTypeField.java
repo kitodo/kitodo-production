@@ -19,8 +19,6 @@ public enum ProjectTypeField implements TypeInterface {
     END_DATE("endDate"),
     NUMBER_OF_PAGES("numberOfPages"),
     NUMBER_OF_VOLUMES("numberOfVolumes"),
-    FILE_FORMAT_DMS_EXPORT("fileFormatDmsExport"),
-    FILE_FORMAT_INTERNAL("fileFormatInternal"),
     METS_RIGTS_OWNER("metsRightsOwner"),
     ACTIVE("active"),
     PROCESSES("processes"),

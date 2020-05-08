@@ -12,15 +12,12 @@
 package org.kitodo.production.forms;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.version.KitodoVersion;
 
@@ -38,36 +35,6 @@ public class HelperForm implements Serializable {
 
     public boolean getAnonymized() {
         return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ANONYMIZE);
-    }
-
-    /**
-     * Get file formats.
-     *
-     * @return list of file formats as Strings
-     */
-    public List<String> getFileFormats() {
-        ArrayList<String> ffs = new ArrayList<>();
-        for (MetadataFormat ffh : MetadataFormat.values()) {
-            if (!ffh.equals(MetadataFormat.RDF)) {
-                ffs.add(ffh.getName());
-            }
-        }
-        return ffs;
-    }
-
-    /**
-     * Get only internal file formats.
-     *
-     * @return list of internal file formats as Strings
-     */
-    public List<String> getFileFormatsInternalOnly() {
-        ArrayList<String> ffs = new ArrayList<>();
-        for (MetadataFormat ffh : MetadataFormat.values()) {
-            if (ffh.isUsableForInternal() && !ffh.equals(MetadataFormat.RDF)) {
-                ffs.add(ffh.getName());
-            }
-        }
-        return ffs;
     }
 
     /**

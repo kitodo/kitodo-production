@@ -29,7 +29,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ExportException;
 import org.kitodo.exceptions.MetadataException;
@@ -245,15 +244,7 @@ public class ExportDms extends ExportMets {
     private LegacyMetsModsDigitalDocumentHelper readDocument(Process process, LegacyMetsModsDigitalDocumentHelper newFile) {
         LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
-            switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
-                case METS:
-                    gdzfile = new LegacyMetsModsDigitalDocumentHelper(this.myPrefs.getRuleset());
-                    break;
-                case METS_AND_RDF:
-                default:
-                    throw new UnsupportedOperationException("Dead code pending removal");
-            }
-
+            gdzfile = new LegacyMetsModsDigitalDocumentHelper(this.myPrefs.getRuleset());
             gdzfile.setDigitalDocument(newFile);
             return gdzfile;
         } catch (RuntimeException e) {
@@ -269,27 +260,12 @@ public class ExportDms extends ExportMets {
 
     private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
             throws IOException, DAOException {
-        String fileFormat = process.getProject().getFileFormatDmsExport();
 
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
-        if (MetadataFormat.findFileFormatsHelperByName(fileFormat) == MetadataFormat.METS) {
-            // if METS, then write by writeMetsFile...
-            writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile);
-        } else {
-            // ...if not, just write a fileformat
-            gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
-        }
-
-        // if necessary, METS and RDF should be written in the export
-        if (MetadataFormat.findFileFormatsHelperByName(fileFormat) == MetadataFormat.METS_AND_RDF) {
-            writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".mets.xml"),
-                gdzfile);
-        }
-
-        Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
+        writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile);
 
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(100);
