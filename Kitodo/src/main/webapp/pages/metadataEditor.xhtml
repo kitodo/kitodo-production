@@ -14,10 +14,14 @@
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:p="http://primefaces.org/ui">
 
+    <f:metadata>
+        <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
+    </f:metadata>
     <ui:define name="content">
 
         <!--@elvariable id="viewStructure" type="boolean"-->
