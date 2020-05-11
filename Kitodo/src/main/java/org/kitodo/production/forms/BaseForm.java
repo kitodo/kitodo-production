@@ -145,11 +145,11 @@ public class BaseForm implements Serializable {
     /**
      * Remove filter from user.
      */
-    public void removeFilterFromUser() {
-        if (Objects.isNull(this.filter) || this.filter.isEmpty()) {
+    public void removeFilterFromUser(String filter) {
+        if (Objects.isNull(filter) || filter.isEmpty()) {
             return;
         }
-        ServiceManager.getUserService().removeFilter(getUser(), this.filter);
+        ServiceManager.getUserService().removeFilter(getUser(), filter);
     }
 
     /**

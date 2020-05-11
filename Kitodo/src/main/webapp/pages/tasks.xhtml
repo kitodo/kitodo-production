@@ -43,7 +43,9 @@
                         <ui:repeat value="#{CurrentTaskForm.userFilters}" var="filter">
                             <li>
                                 <p:commandLink value="#{filter}" action="#{CurrentTaskForm.changeFilter(filter)}"/>
-                                <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete plain">
+                                <p:commandLink title="#{msgs.removeFilter}"
+                                               action="#{ProcessForm.removeFilterFromUser(filter)}"
+                                               styleClass="filter-delete plain" update="@form">
                                     <i class="fa fa-trash-o fa-lg"/>
                                 </p:commandLink>
                             </li>

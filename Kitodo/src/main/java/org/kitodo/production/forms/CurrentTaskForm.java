@@ -783,6 +783,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     private String filterList() {
+        this.selectedTasks.clear();
         return taskListPath;
     }
 
