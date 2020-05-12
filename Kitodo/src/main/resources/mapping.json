@@ -302,6 +302,9 @@
         "process": {
             "dynamic": "strict",
             "properties": {
+                "id": {
+                    "type": "text"
+                },
                 "batches": {
                     "properties": {
                         "id": {

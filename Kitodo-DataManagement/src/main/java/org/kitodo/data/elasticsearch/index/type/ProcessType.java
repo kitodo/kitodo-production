@@ -33,6 +33,7 @@ public class ProcessType extends BaseType<Process> {
         int processParentId = Objects.nonNull(process.getParent()) ? process.getParent().getId() : 0;
 
         Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(ProcessTypeField.ID.getKey(), preventNull(process.getId()));
         jsonObject.put(ProcessTypeField.TITLE.getKey(), preventNull(process.getTitle()));
         jsonObject.put(ProcessTypeField.CREATION_DATE.getKey(), getFormattedDate(process.getCreationDate()));
         jsonObject.put(ProcessTypeField.WIKI_FIELD.getKey(), preventNull(process.getWikiField()));
