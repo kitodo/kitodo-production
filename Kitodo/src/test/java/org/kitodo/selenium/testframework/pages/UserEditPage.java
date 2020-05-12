@@ -54,6 +54,10 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private WebElement passwordInput;
 
     @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":passwordValidation")
+    private WebElement confirmPasswordInput;
+
+    @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":location")
     private WebElement locationInput;
 
@@ -124,6 +128,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
 
     public UserEditPage insertUserData(User user) {
         passwordInput.sendKeys(user.getPassword());
+        confirmPasswordInput.sendKeys(user.getPassword());
         firstNameInput.sendKeys(user.getName());
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
