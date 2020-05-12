@@ -9,6 +9,8 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+/* global PrimeFaces */
+
 let currentEvent;
 
 $(document).ready(function() {
@@ -39,8 +41,8 @@ $(document).ready(function() {
         }
 
         this.jq.css({
-            'left': left,
-            'top': top,
+            left,
+            top,
             'z-index': ++PrimeFaces.zindex
         }).show();
 
