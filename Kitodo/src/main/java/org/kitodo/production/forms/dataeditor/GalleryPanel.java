@@ -43,6 +43,8 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.primefaces.PrimeFaces;
@@ -708,6 +710,17 @@ public class GalleryPanel {
                 selectedMediaUnit = mediaUnit;
                 break;
             }
+        }
+
+        try {
+            this.dataEditor.getMetadataPanel().preserveLogical();
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        if (Objects.nonNull(selectedMediaUnit)) {
+            this.dataEditor.getMetadataPanel().showPageInLogical(selectedMediaUnit);
+        } else {
+            Helper.setErrorMessage("Selected MediaUnit is null!");
         }
 
         GalleryStripe parentStripe;
