@@ -105,11 +105,11 @@ public class ExportMetsIT {
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
                 + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_mets.xml"));
         Assert.assertTrue("Export of metadata 'singleDigCollection' was wrong",
-            strings.toString().contains("<ns3:metadata name=\"singleDigCollection\">test collection</ns3:metadata>"));
+            strings.toString().contains("<kitodo:metadata name=\"singleDigCollection\">test collection</kitodo:metadata>"));
         Assert.assertTrue("Export of metadata 'TitleDocMain' was wrong",
-            strings.toString().contains("<ns3:metadata name=\"TitleDocMain\">test title</ns3:metadata>"));
+            strings.toString().contains("<kitodo:metadata name=\"TitleDocMain\">test title</kitodo:metadata>"));
         Assert.assertTrue("Export of metadata 'PublisherName' was wrong",
-            strings.toString().contains("<ns3:metadata name=\"PublisherName\">Publisher test name</ns3:metadata>"));
+            strings.toString().contains("<kitodo:metadata name=\"PublisherName\">Publisher test name</kitodo:metadata>"));
         Assert.assertTrue("exportedFlag of process should be true", process.isExported());
 
     }

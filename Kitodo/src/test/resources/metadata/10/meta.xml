@@ -11,15 +11,15 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<mets xmlns="http://www.loc.gov/METS/" xmlns:ns2="http://www.w3.org/1999/xlink" xmlns:ns3="http://meta.kitodo.org/v1/">
+<mets xmlns="http://www.loc.gov/METS/" xmlns:kitodo="http://meta.kitodo.org/v1/">
     <metsHdr CREATEDATE="2019-09-02T11:03:56.453+02:00"/>
     <amdSec>
         <sourceMD ID="ba64d0f9-d1d5-3ced-a88c-aa780ad9e69c">
             <mdWrap>
                 <xmlData>
-                    <ns3:kitodo>
-                        <ns3:metadata name="ShelfMark">I-5300 II,III,IV</ns3:metadata>
-                    </ns3:kitodo>
+                    <kitodo:kitodo>
+                        <kitodo:metadata name="ShelfMark">I-5300 II,III,IV</kitodo:metadata>
+                    </kitodo:kitodo>
                 </xmlData>
             </mdWrap>
         </sourceMD>
