@@ -50,7 +50,6 @@ import org.kitodo.production.services.file.FileService;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
-    private String atsPpnBand;
     private boolean exportWithImages = true;
     private final FileService fileService = ServiceManager.getFileService();
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
@@ -141,7 +140,6 @@ public class ExportDms extends ExportMets {
             throws IOException, DAOException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        this.atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
 
         LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(process, newFile);
         if (Objects.isNull(gdzfile)) {
@@ -273,6 +271,7 @@ public class ExportDms extends ExportMets {
             throws IOException, DAOException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
+        String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
