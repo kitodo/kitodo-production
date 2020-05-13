@@ -45,6 +45,7 @@
                             metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
+                    onstart="$('#structureTreeForm\\:contextMenuLogicalTree .ui-menuitem').addClass('ui-state-disabled')"
                     oncomplete="scrollToSelectedThumbnail();changeToMapView();PF('contextMenuLogicalTree').show(currentEvent)"
                     update="@(.stripe)
                             @(.thumbnail)
