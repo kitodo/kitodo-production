@@ -99,6 +99,9 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     @FindBy(id = TAB_VIEW + ":generateTitleButton")
     private WebElement generateTitleButton;
 
+    @FindBy(id = "catalogSearchForm:cancel")
+    private WebElement cancelCatalogSearchButton;
+
     public ProcessFromTemplatePage() {
         super("pages/processFromTemplate.jsf");
     }
@@ -109,19 +112,22 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     public String createProcess() throws Exception {
-        switchToTabByIndex(1);
+        clickElement(cancelCatalogSearchButton);
+        await("Wait for OPAC search dialog to disappear").pollDelay(150, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_1")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
-        switchToTabByIndex(2);
+        switchToTabByIndex(1);
         titleInput.sendKeys("TestProcess");
         titleSortInput.sendKeys("TestProcess");
         ppnAnalogInput.sendKeys("12345");
         ppnDigitalInput.sendKeys("12345");
 
-        switchToTabByIndex(1);
+        switchToTabByIndex(0);
         guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
@@ -139,25 +145,28 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
      * @return generated title
      */
     public String createProcessAsChild(String parentProcessTitle) throws Exception {
-        switchToTabByIndex(1);
+        clickElement(cancelCatalogSearchButton);
+        await("Wait for OPAC search dialog to disappear").pollDelay(150, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_1")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
-        switchToTabByIndex(2);
+        switchToTabByIndex(1);
         titleInput.sendKeys("TestProcessChild");
         titleSortInput.sendKeys("TestProcessChild");
         ppnAnalogInput.sendKeys("123456");
         ppnDigitalInput.sendKeys("123456");
 
-        switchToTabByIndex(1);
+        switchToTabByIndex(0);
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
         final String generatedTitle = processTitleInput.getAttribute("value");
 
-        switchToTabByIndex(4);
+        switchToTabByIndex(3);
         searchForParentInput.sendKeys(parentProcessTitle);
         searchParentButton.click();
         await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
@@ -176,24 +185,27 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
      * @return whether an error message is showing
      */
     public boolean createProcessAsChildNotPossible() throws Exception {
-        switchToTabByIndex(1);
+        clickElement(cancelCatalogSearchButton);
+        await("Wait for OPAC search dialog to disappear").pollDelay(150, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_0")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
-        switchToTabByIndex(2);
+        switchToTabByIndex(1);
         titleInput.sendKeys("TestProcessChildNotPossible");
         titleSortInput.sendKeys("TestProcessChildNotPossible");
         ppnAnalogInput.sendKeys("1234567");
         ppnDigitalInput.sendKeys("1234567");
 
-        switchToTabByIndex(1);
+        switchToTabByIndex(0);
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
 
-        switchToTabByIndex(4);
+        switchToTabByIndex(3);
         searchForParentInput.sendKeys("Second");
         searchParentButton.click();
         await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
@@ -243,8 +255,8 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         switchToTabByIndex(index, processFromTemplateTabView);
     }
 
-    public ProcessesPage cancel() throws IllegalAccessException, InstantiationException {
+    public void cancel() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(cancelButton, Pages.getProjectsPage().getUrl());
-        return Pages.getProcessesPage();
+        Pages.getProcessesPage();
     }
 }

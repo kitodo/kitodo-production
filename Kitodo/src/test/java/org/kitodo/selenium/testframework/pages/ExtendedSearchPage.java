@@ -11,26 +11,16 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import static org.awaitility.Awaitility.await;
-
-import java.util.concurrent.TimeUnit;
-
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-
-
 
 public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
 
     private static final String EDIT_FORM = "editForm";
 
     @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":submitSearch")
-    private WebElement submitMenuButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":submitSearchProcess")
+    @FindBy(id = EDIT_FORM + ":submitProcessSearch")
     private WebElement submitButton;
 
     @SuppressWarnings("unused")
@@ -68,11 +58,16 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
         return Pages.getExtendedSearchPage();
     }
 
-    public ProcessesPage searchById(String processId) throws IllegalAccessException, InstantiationException {
+    /**
+     * Search process by ID.
+     * @param processId process ID
+     * @throws IllegalAccessException if process page cannot be instantiated
+     * @throws InstantiationException if process page cannot be instantiated
+     */
+    public void searchById(String processId) throws IllegalAccessException, InstantiationException {
         processIdInput.clear();
         processIdInput.sendKeys(processId);
-        return triggerSearch();
-
+        triggerSearch();
     }
 
     public ProcessesPage seachByTaskStatus() throws InstantiationException, IllegalAccessException {
@@ -85,11 +80,6 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     }
 
     private ProcessesPage triggerSearch() throws IllegalAccessException, InstantiationException {
-        submitMenuButton.click();
-        await("Wait for search menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
-                .atMost(30, TimeUnit.SECONDS)
-                .ignoreExceptions()
-                .until(() -> submitButton.isDisplayed());
         clickButtonAndWaitForRedirect(submitButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }
