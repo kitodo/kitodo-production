@@ -12,6 +12,7 @@
 <jxb:bindings xmlns="http://java.sun.com/xml/ns/jaxb"
               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
               xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              xmlns:namespace="http://jaxb2-commons.dev.java.net/namespace-prefix"
               version="2.1">
     <bindings schemaLocation="../../../../target/downloaded-sources/xsd/mets.xsd">
         <schemaBindings>
@@ -21,6 +22,9 @@
             <bindings node="//xsd:attribute[@ref='xlink:label']">
                 <property name="xlinkLabel"/>
             </bindings>
+        </bindings>
+        <bindings>
+            <namespace:prefix name="mets"/>
         </bindings>
     </bindings>
 </jxb:bindings>
