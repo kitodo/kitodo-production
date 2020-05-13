@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<mets xmlns="http://www.loc.gov/METS/" xmlns:ns2="http://www.w3.org/1999/xlink" xmlns:ns3="http://meta.kitodo.org/v1/">
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/">
     <metsHdr CREATEDATE="2018-02-14T10:01:44">
         <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
             <name>Kitodo - kitodo-ugh-2.1.0-kitodo-ugh-2.1.0 - 22−May−2017</name>
@@ -10,60 +10,60 @@
     <dmdSec ID="DMDLOG_0000">
         <mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <xmlData>
-                <ns3:kitodo version="1.0">
-                    <ns3:metadata name="TitleDocMain">Test Title</ns3:metadata>
-                    <ns3:metadata name="PublisherName">Test Publisher</ns3:metadata>
-                    <ns3:metadataGroup name="Contributor">
-                        <ns3:metadata name="ctrFirstName">FirstTestName</ns3:metadata>
-                        <ns3:metadata name="ctrLastName">LastTestName</ns3:metadata>
-                    </ns3:metadataGroup>
-                    <ns3:metadataGroup name="person">
-                        <ns3:metadata name="role">FormerOwner</ns3:metadata>
-                        <ns3:metadata name="firstName">oldFirstName</ns3:metadata>
-                        <ns3:metadata name="lastName">oldLastName</ns3:metadata>
-                        <ns3:metadata name="authorityID">gnd</ns3:metadata>
-                        <ns3:metadata name="authorityURI">http://d-nb.info/gnd/</ns3:metadata>
-                        <ns3:metadata name="authorityValue">http://d-nb.info/gnd/102740518</ns3:metadata>
-                        <ns3:metadata name="displayName">DisplayName</ns3:metadata>
-                    </ns3:metadataGroup>
-                </ns3:kitodo>
+                <kitodo:kitodo version="1.0">
+                    <kitodo:metadata name="TitleDocMain">Test Title</kitodo:metadata>
+                    <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
+                    <kitodo:metadataGroup name="Contributor">
+                        <kitodo:metadata name="ctrFirstName">FirstTestName</kitodo:metadata>
+                        <kitodo:metadata name="ctrLastName">LastTestName</kitodo:metadata>
+                    </kitodo:metadataGroup>
+                    <kitodo:metadataGroup name="person">
+                        <kitodo:metadata name="role">FormerOwner</kitodo:metadata>
+                        <kitodo:metadata name="firstName">oldFirstName</kitodo:metadata>
+                        <kitodo:metadata name="lastName">oldLastName</kitodo:metadata>
+                        <kitodo:metadata name="authorityID">gnd</kitodo:metadata>
+                        <kitodo:metadata name="authorityURI">http://d-nb.info/gnd/</kitodo:metadata>
+                        <kitodo:metadata name="authorityValue">http://d-nb.info/gnd/102740518</kitodo:metadata>
+                        <kitodo:metadata name="displayName">DisplayName</kitodo:metadata>
+                    </kitodo:metadataGroup>
+                </kitodo:kitodo>
             </xmlData>
         </mdWrap>
     </dmdSec>
     <dmdSec ID="DMDLOG_0001">
         <mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <xmlData>
-                <ns3:kitodo version="1.0">
-                    <ns3:metadata name="TitleDocMain">[Seite 134r-156v]</ns3:metadata>
-                </ns3:kitodo>
+                <kitodo:kitodo version="1.0">
+                    <kitodo:metadata name="TitleDocMain">[Seite 134r-156v]</kitodo:metadata>
+                </kitodo:kitodo>
             </xmlData>
         </mdWrap>
     </dmdSec>
     <dmdSec ID="DMDLOG_0002">
         <mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <xmlData>
-                <ns3:kitodo version="1.0">
-                    <ns3:metadata name="TitleDocMain">[Seite 157r-181v]</ns3:metadata>
-                </ns3:kitodo>
+                <kitodo:kitodo version="1.0">
+                    <kitodo:metadata name="TitleDocMain">[Seite 157r-181v]</kitodo:metadata>
+                </kitodo:kitodo>
             </xmlData>
         </mdWrap>
     </dmdSec>
     <dmdSec ID="DMDPHYS_0000">
         <mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <xmlData>
-                <ns3:kitodo version="1.0">
-                    <ns3:metadata name="pathimagefiles">file:///home/goobi/work/daten/44394/images/neunja_358576229_0001_tif</ns3:metadata>
-                </ns3:kitodo>
+                <kitodo:kitodo version="1.0">
+                    <kitodo:metadata name="pathimagefiles">file:///home/goobi/work/daten/44394/images/neunja_358576229_0001_tif</kitodo:metadata>
+                </kitodo:kitodo>
             </xmlData>
         </mdWrap>
     </dmdSec>
     <fileSec>
         <fileGrp USE="LOCAL">
             <file ID="FILE_0001" MIMETYPE="image/tiff">
-                <FLocat LOCTYPE="URL" ns2:href="file:/opt/goobi/production/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000001.tif"/>
+                <FLocat LOCTYPE="URL" xlink:href="file:/opt/goobi/production/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000001.tif"/>
             </file>
             <file ID="FILE_0002" MIMETYPE="image/tiff">
-                <FLocat LOCTYPE="URL" ns2:href="file:/opt/goobi/production/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000002.tif"/>
+                <FLocat LOCTYPE="URL" xlink:href="file:/opt/goobi/production/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000002.tif"/>
             </file>
         </fileGrp>
     </fileSec>
@@ -85,8 +85,8 @@
         </div>
     </structMap>
     <structLink>
-        <smLink ns2:to="PHYS_0001" ns2:from="LOG_0000"/>
-        <smLink ns2:to="PHYS_0001" ns2:from="LOG_0001"/>
-        <smLink ns2:to="PHYS_0002" ns2:from="LOG_0002"/>
+        <smLink xlink:to="PHYS_0001" xlink:from="LOG_0000"/>
+        <smLink xlink:to="PHYS_0001" xlink:from="LOG_0001"/>
+        <smLink xlink:to="PHYS_0002" xlink:from="LOG_0002"/>
     </structLink>
 </mets>
