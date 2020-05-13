@@ -120,6 +120,9 @@ public class Process extends BaseTemplateBean {
     private boolean exported;
 
     @Transient
+    private User blockedUser;
+
+    @Transient
     private List<Map<String, Object>> metadata;
 
     /**
@@ -500,6 +503,25 @@ public class Process extends BaseTemplateBean {
      */
     public void setMetadata(List<Map<String, Object>> metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+     * Get blocked user.
+     *
+     * @return User object if this user is blocked
+     */
+    public User getBlockedUser() {
+        return blockedUser;
+    }
+
+    /**
+     * Set blocked user.
+     *
+     * @param blockedUser
+     *            User object
+     */
+    public void setBlockedUser(User blockedUser) {
+        this.blockedUser = blockedUser;
     }
 
     /**
