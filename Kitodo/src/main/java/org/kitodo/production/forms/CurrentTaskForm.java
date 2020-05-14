@@ -793,17 +793,17 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Check and return whether the given task has any correction comments or not.
+     * Check and return whether the process of the given task has any correction comments or not.
      *
      * @param task
      *          TaskDTO to check
-     * @return 0, if task has no correction comment
-     *         1, if task has correction comments that are all corrected
-     *         2, if task has at least one open correction comment
+     * @return 0, if process of given task has no correction comment
+     *         1, if process of given task has correction comments that are all corrected
+     *         2, if process of given task has at least one open correction comment
      */
     public int hasCorrectionComment(TaskDTO task) {
         try {
-            return ProcessService.hasCorrectionComment(task);
+            return ProcessService.hasCorrectionComment(task.getProcess().getId());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
                     task.getProcess().getId() }, logger, e);
@@ -812,15 +812,15 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve correction comments of given task and return them as a tooltip String.
+     * Retrieve correction comments of process of given task and return them as a tooltip String.
      *
      * @param taskDTO
      *          task for which comment tooltip is created and returned
-     * @return String containing correction comment messages for given task
+     * @return String containing correction comment messages for process of given task
      */
     public String getCorrectionMessages(TaskDTO taskDTO) {
         try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(taskDTO);
+            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(taskDTO.getProcess());
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
             return "";
