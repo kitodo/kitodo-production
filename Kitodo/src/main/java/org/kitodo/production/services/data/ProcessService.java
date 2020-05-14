@@ -758,9 +758,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
             throws DataException {
 
-        BoolQueryBuilder query = new BoolQueryBuilder()
-                .must(new BoolQueryBuilder().should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput))
-                        .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput)))
+        BoolQueryBuilder processQuery = new BoolQueryBuilder()
+                .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput));
+        if (searchInput.matches("\\d*")) {
+            processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput));
+        }
+        BoolQueryBuilder query = new BoolQueryBuilder().must(processQuery)
                 .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
         return findByQuery(query, false);

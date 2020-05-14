@@ -303,7 +303,7 @@
             "dynamic": "strict",
             "properties": {
                 "id": {
-                    "type": "text"
+                    "type": "long"
                 },
                 "batches": {
                     "properties": {
