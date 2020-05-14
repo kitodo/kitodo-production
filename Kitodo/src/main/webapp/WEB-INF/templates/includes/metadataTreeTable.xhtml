@@ -130,7 +130,7 @@
 
             <!-- toggleSwitch -->
             <h:panelGroup rendered="#{item.input eq 'toggleSwitch'}"
-                          title="#{item.active}">
+                          title="#{item.active.toString()}">
                 <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                          value="#{item.active}">
                     <p:ajax event="blur"/>
