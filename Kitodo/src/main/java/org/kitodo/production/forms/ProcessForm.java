@@ -1575,7 +1575,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public int hasCorrectionTask(int processId) {
         try {
-            return ProcessService.hasCorrectionComment(processId);
+            return ProcessService.hasCorrectionComment(processId).getValue();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
                 processId}, logger, e);

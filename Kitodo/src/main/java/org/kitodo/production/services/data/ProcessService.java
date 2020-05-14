@@ -14,6 +14,9 @@ package org.kitodo.production.services.data;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
+import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
+import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -101,6 +104,7 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -2459,20 +2463,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param processID
      *          ID of process to check
-     * @return 0, if process has no correction comment
-     *         1, if process has correction comments that are all corrected
-     *         2, if process has at least one open correction comment
+     * @return CorrectionComment status of process
      */
-    public static int hasCorrectionComment(int processID) throws DAOException {
+    public static CorrectionComments hasCorrectionComment(int processID) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processID);
         List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
                 .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
         if (correctionComments.size() < 1) {
-            return 0;
+            return NO_CORRECTION_COMMENTS;
         } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
-            return 2;
+            return OPEN_CORRECTION_COMMENTS;
         } else {
-            return 1;
+            return NO_OPEN_CORRECTION_COMMENTS;
         }
     }
 

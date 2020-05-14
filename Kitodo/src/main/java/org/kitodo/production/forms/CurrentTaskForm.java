@@ -803,7 +803,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public int hasCorrectionComment(TaskDTO task) {
         try {
-            return ProcessService.hasCorrectionComment(task.getProcess().getId());
+            return ProcessService.hasCorrectionComment(task.getProcess().getId()).getValue();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
                     task.getProcess().getId() }, logger, e);
