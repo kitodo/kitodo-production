@@ -28,7 +28,7 @@
                      paginator="true"
                      resizableColumns="true"
                      liveResize="true"
-                     sortBy="#{process.properties.id}"
+                     sortBy="#{process.id}"
                      sortOrder="descending"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
@@ -49,8 +49,8 @@
                       styleClass="numeric"
                       resizable="false"
                       headerText="#{msgs.id}"
-                      sortBy="#{process.properties.id}"
-                      filterBy="#{process.properties.id}">
+                      sortBy="#{process.id}"
+                      filterBy="#{process.id}">
                 <h:outputText value="#{process.id}"
                               title="#{process.id}"/>
             </p:column>
