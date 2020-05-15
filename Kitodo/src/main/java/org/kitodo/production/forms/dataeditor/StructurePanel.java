@@ -245,6 +245,8 @@ public class StructurePanel implements Serializable {
         if (Objects.nonNull(matchingTreeNode)) {
             updatePhysicalNodeSelection(matchingTreeNode);
             matchingTreeNode.setSelected(true);
+            previouslySelectedPhysicalNode.setSelected(false);
+            show(true);
         }
     }
 
