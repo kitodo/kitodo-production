@@ -1818,8 +1818,8 @@ form#metadata div label,
 Column content
  */
 
-#structureTreeForm\:structurePanel > .ui-panel-content,
-#structureTreeForm\:paginationPanel > .ui-panel-content,
+#structurePanel > .ui-panel-content,
+#paginationPanel > .ui-panel-content,
 #metaDataPanel > .ui-panel-content,
 #commentPanel > .ui-panel-content {
     padding: 0;
@@ -1835,7 +1835,7 @@ Column content
     height: 100%;
 }
 
-#structureTreeForm\:structurePanel {
+#structurePanel {
     overflow-y: scroll;
     height: calc(100% - 100px);
     box-sizing: border-box;
@@ -1896,7 +1896,7 @@ Column content
     margin-right: 3px;
 }
 
-#structureTreeForm\:paginationPanel {
+#paginationPanel {
     margin-top: 5px;
     height: calc(50% - 45px);
     box-sizing: border-box;

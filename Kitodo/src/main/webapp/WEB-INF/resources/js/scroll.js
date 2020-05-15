@@ -128,7 +128,7 @@ function initializeStructureTreeScrolling() {
     $(document).on("mouseenter.scrollUpArea", "#scrollUpArea", function (e) {
         if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
             structureInterval = window.setInterval(function() {
-                scrollUp("#structureTreeForm\\:structurePanel", false);
+                scrollUp("#structurePanel", false);
             }, 100);
             $(this).css("opacity", ".2");
         }
@@ -137,7 +137,7 @@ function initializeStructureTreeScrolling() {
     $(document).on("mouseenter.scrollDownArea", "#scrollDownArea", function (e) {
         if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
             structureInterval = window.setInterval(function() {
-                scrollDown("#structureTreeForm\\:structurePanel", false);
+                scrollDown("#structurePanel", false);
             }, 100);
             $(this).css("opacity", ".2");
         }
@@ -207,7 +207,7 @@ function scrollToSelectedThumbnail() {
 
 function scrollToSelectedTreeNode() {
     let selectedTreeNode = $(".ui-treenode-selected");
-    let structureTree = $("#structureTreeForm\\:structurePanel");
+    let structureTree = $("#structurePanel");
     if (selectedTreeNode.length === 1 && structureTree.length) {
         structureTree.animate({
             scrollTop: selectedTreeNode.position().top - structureTree.height()/2
@@ -219,7 +219,7 @@ $(document).ready(function () {
     if ($("#thumbnailStripeScrollableContent")[0] != null) {
         initialize();
     }
-    if ($("#structureTreeForm\\:structurePanel").length) {
+    if ($("#structurePanel").length) {
         initializeStructureTreeScrolling();
     }
 });
