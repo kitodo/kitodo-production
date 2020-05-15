@@ -85,9 +85,14 @@
                 />
             </p:column>
 
-            <p:column headerText="#{msgs.correction}"
-                      rendered="#{CurrentTaskForm.showColumn('task.correction')}">
-                <h:outputText value="#{item.correction}"/>
+            <p:column styleClass="correction-column"
+                      width="85"
+                      rendered="#{CurrentTaskForm.showColumn('task.correctionMessage')}"
+                      headerText="#{msgs.correction}">
+                <h:outputText value="#{msgs.correctionK}"
+                              title="#{CurrentTaskForm.getCorrectionMessages(item)}"
+                              styleClass="correction-marker #{CurrentTaskForm.hasCorrectionComment(item) eq 1 ? 'corrected' : ''}"
+                              rendered="#{CurrentTaskForm.hasCorrectionComment(item) gt 0}"/>
             </p:column>
 
             <p:column headerText="#{msgs.duration} (#{msgs.process})"

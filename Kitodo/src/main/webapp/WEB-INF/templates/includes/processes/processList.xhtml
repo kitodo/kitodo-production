@@ -68,6 +68,15 @@
                       rendered="#{ProcessForm.showColumn('process.state')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
+            <p:column styleClass="correction-column"
+                      width="85"
+                      rendered="#{ProcessForm.showColumn('process.correctionMessage')}"
+                      headerText="#{msgs.correction}">
+                <h:outputText value="#{msgs.correctionK}"
+                              title="#{ProcessForm.getCorrectionMessages(process)}"
+                              styleClass="correction-marker #{ProcessForm.hasCorrectionTask(process.id) eq 1 ? 'corrected' : ''}"
+                              rendered="#{ProcessForm.hasCorrectionTask(process.id) gt 0}"/>
+            </p:column>
             <p:column headerText="#{msgs.project}"
                       rendered="#{ProcessForm.showColumn('process.project')}">
                 <h:outputText value="#{process.project.title}"

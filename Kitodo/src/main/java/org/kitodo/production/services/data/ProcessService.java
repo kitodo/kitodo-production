@@ -14,6 +14,9 @@ package org.kitodo.production.services.data;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
+import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
+import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -93,12 +96,15 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilt
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -2450,5 +2456,49 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         } else {
             webDav.downloadToHome(process, false);
         }
+    }
+
+    /**
+     * Check and return whether the process with the ID 'processId' has any correction comments or not.
+     *
+     * @param processID
+     *          ID of process to check
+     * @return CorrectionComment status of process
+     */
+    public static CorrectionComments hasCorrectionComment(int processID) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(processID);
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        if (correctionComments.size() < 1) {
+            return NO_CORRECTION_COMMENTS;
+        } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
+            return OPEN_CORRECTION_COMMENTS;
+        } else {
+            return NO_OPEN_CORRECTION_COMMENTS;
+        }
+    }
+
+    /**
+     * Create and return String used as tooltip for a given process. Tooltip contains authors, timestamps and messages
+     * of correction comments associated with tasks of the given process.
+     *
+     * @param processDTO
+     *          process for which the tooltip is created
+     * @return tooltip containing correction messages
+     *
+     * @throws DAOException thrown when process cannot be loaded from database
+     */
+    public String createCorrectionMessagesTooltip(ProcessDTO processDTO) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        return createCommentTooltip(correctionComments);
+    }
+
+    private String createCommentTooltip(List<Comment> comments) {
+        return comments.stream()
+                .map(c -> " - [" + c.getCreationDate() + "] " + c.getAuthor().getFullName() + ": " + c.getMessage()
+                        + " (" + Helper.getTranslation("fixed") + ": " + c.isCorrected() + ")")
+                .collect(Collectors.joining(NEW_LINE_ENTITY));
     }
 }
