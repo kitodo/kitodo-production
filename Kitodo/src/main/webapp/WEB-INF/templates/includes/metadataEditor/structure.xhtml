@@ -17,15 +17,24 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <div id="scrollUpArea"></div>
-    <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
+    <p:accordionPanel id="structureWrapperPanel"
+                      styleClass="wrapperPanel"
+                      multiple="true"
+                      activeIndex="0#{DataEditorForm.structurePanel.separateMedia ? ',1' : ''}"
+                      prependId="false">
         <!--@elvariable id="readOnly" type="boolean"-->
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
         <!-- Logical Tree -->
-        <ui:include src="/WEB-INF/templates/includes/metadataEditor/logicalStructure.xhtml"/>
+        <p:tab title="#{msgs.logical} #{msgs.structure}">
+            <ui:include src="/WEB-INF/templates/includes/metadataEditor/logicalStructure.xhtml"/>
+        </p:tab>
 
         <!-- Physical Tree -->
-        <ui:include src="/WEB-INF/templates/includes/metadataEditor/physicalStructure.xhtml"/>
-    </p:panel>
+        <p:tab title="#{msgs.physical} #{msgs.structure}"
+               rendered="#{DataEditorForm.structurePanel.separateMedia}">
+            <ui:include src="/WEB-INF/templates/includes/metadataEditor/physicalStructure.xhtml"/>
+        </p:tab>
+    </p:accordionPanel>
     <div id="scrollDownArea"></div>
 </ui:composition>

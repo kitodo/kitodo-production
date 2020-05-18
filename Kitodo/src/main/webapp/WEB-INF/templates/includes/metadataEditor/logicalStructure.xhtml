@@ -17,9 +17,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
-    <h:panelGroup layout="block"
-                  style="background-color: var(--cloudy-gray); display: #{DataEditorForm.structurePanel.separateMedia ? 'block' : 'none'}"
-                  styleClass="ui-widget-content columnHeadingWrapper">#{msgs.logical} #{msgs.structure}</h:panelGroup>
     <p:tree id="logicalTree"
             value="#{DataEditorForm.structurePanel.logicalTree}"
             var="logicalNode"

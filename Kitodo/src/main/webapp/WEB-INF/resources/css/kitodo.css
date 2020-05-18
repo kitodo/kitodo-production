@@ -1836,10 +1836,32 @@ Column content
 }
 
 #structurePanel {
-    overflow-y: scroll;
     height: calc(100% - 100px);
     box-sizing: border-box;
     padding: 0;
+}
+
+#structurePanel > div,
+#structureWrapperPanel {
+    height: 100%;
+}
+
+#structureWrapperPanel {
+    display: flex;
+    flex-direction: column;
+}
+
+#structureWrapperPanel .ui-accordion-header {
+    flex: 0 0 var(--input-height);
+    box-sizing: border-box;
+}
+
+#structureWrapperPanel .ui-accordion-content {
+    flex: 1 0;
+}
+
+#structureWrapperPanel .ui-tree-container {
+    overflow: initial;
 }
 
 #scrollUpArea,
