@@ -406,6 +406,8 @@ public class UserForm extends BaseForm {
         try {
             if (!Objects.equals(id, 0)) {
                 setUserObject(userService.getById(id));
+            } else {
+                this.passwordToEncrypt = "";
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
