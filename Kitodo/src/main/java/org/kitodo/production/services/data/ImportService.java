@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,8 +38,6 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
-import org.jboss.weld.environment.util.Collections;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -881,7 +877,7 @@ public class ImportService {
      * @return whether a title was changed or not
      * @throws IOException if the meta.xml file of a process could not be loaded
      */
-    public static boolean ensureNonEmptyTitles(LinkedList<TempProcess> tempProcesses) throws IOException {
+    public static boolean ensureNonEmptyTitles(List<TempProcess> tempProcesses) throws IOException {
         boolean changedTitle = false;
         for (TempProcess tempProcess : tempProcesses) {
             Process process = tempProcess.getProcess();

@@ -73,7 +73,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private String acquisitionStage = "create";
     private Project project;
     private Template template;
-    private LinkedList<TempProcess> processes = new LinkedList<>();
+    private List<TempProcess> processes = new LinkedList<>();
     private LinkedList<TempProcess> childProcesses = new LinkedList<>();
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String referringView = "";
@@ -199,7 +199,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      *
      * @param processes as java.util.List of Process
      */
-    public void setProcesses(LinkedList<TempProcess> processes) {
+    public void setProcesses(List<TempProcess> processes) {
         this.processes = processes;
     }
 
@@ -228,7 +228,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public Process getMainProcess() {
         if (processes.isEmpty()) {
-            throw new NotFoundException("Process list is empty!");
+            NotFoundException notFoundException = new NotFoundException("Process list is empty!");
+            logger.warn("getMainProcess() may be called as a getter, but throws an Exception:",
+                notFoundException);
+            throw notFoundException;
         }
         return processes.get(0).getProcess();
     }

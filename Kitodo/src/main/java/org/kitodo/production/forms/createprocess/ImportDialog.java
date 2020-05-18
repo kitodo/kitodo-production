@@ -130,7 +130,7 @@ public class ImportDialog implements Serializable {
             return;
         }
         if (hits.size() == 1) {
-            getRecordById(((SingleHit) hits.get(0)).getIdentifier());
+            getRecordById(((SingleHit) hits.get(0)).getIdentifier(), null);
         } else {
             try {
                 ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
@@ -159,8 +159,9 @@ public class ImportDialog implements Serializable {
      */
     public void getSelectedRecord() {
         this.createProcessForm.setChildProcesses(new LinkedList<>());
+        List<TempProcess> processesBeforePossibleError = createProcessForm.getProcesses();
         this.createProcessForm.setProcesses(new LinkedList<>());
-        getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
+        getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME), processesBeforePossibleError);
     }
 
     private void showRecord() {
@@ -208,7 +209,7 @@ public class ImportDialog implements Serializable {
      * Retrieve complete record hierarchy of record from currently selected catalog, including
      * potential child records and ancestor records.
      */
-    public void getRecordHierarchy() {
+    public void getRecordHierarchy(List<TempProcess> processesBeforePossibleError) {
         if (StringUtils.isBlank(this.currentRecordId)) {
             Helper.setErrorMessage("No record selected!");
         } else {
@@ -254,12 +255,15 @@ public class ImportDialog implements Serializable {
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException
                     | DAOException | ConfigException e) {
-                Helper.setErrorMessage(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                if (Objects.nonNull(processesBeforePossibleError) && createProcessForm.getProcesses().isEmpty()) {
+                    createProcessForm.setProcesses(processesBeforePossibleError);
+                }
             }
         }
     }
 
-    private void getRecordById(String recordId) {
+    private void getRecordById(String recordId, List<TempProcess> processesBeforePossibleError) {
         this.currentRecordId = recordId;
         try {
             if (this.importChildren) {
@@ -270,10 +274,13 @@ public class ImportDialog implements Serializable {
                 Ajax.update("manyChildrenWarningDialog");
                 PrimeFaces.current().executeScript("PF('manyChildrenWarningDialog').show();");
             } else {
-                getRecordHierarchy();
+                getRecordHierarchy(processesBeforePossibleError);
             }
         } catch (ConfigException e) {
-            Helper.setErrorMessage(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            if (Objects.nonNull(processesBeforePossibleError) && createProcessForm.getProcesses().isEmpty()) {
+                createProcessForm.setProcesses(processesBeforePossibleError);
+            }
         }
     }
 
