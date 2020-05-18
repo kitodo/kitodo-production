@@ -629,6 +629,7 @@ td.actionsColumn {
     width: calc(100% - 32px);
 }
 
+#errorContainer,
 #listWrapper,
 section#content-section {
     margin: auto 16px;
@@ -2520,6 +2521,26 @@ System page
 
 #systemTabView\:migrationForm\:aggregatedTasksTable > .ui-datatable-tablewrapper > table {
     table-layout: auto;
+}
+
+/*----------------------------------------------------------------------
+Error page
+----------------------------------------------------------------------*/
+
+#errorContainer {
+    background: white;
+    border: 3px solid red;
+    height: 100%;
+    padding: var(--default-full-size);
+    overflow: scroll;
+}
+
+#errorContainer .content-header {
+    padding: 0;
+}
+
+#errorDetails {
+    margin-left: var(--default-full-size);
 }
 
 /*----------------------------------------------------------------------
