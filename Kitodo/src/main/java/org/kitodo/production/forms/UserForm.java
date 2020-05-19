@@ -119,12 +119,13 @@ public class UserForm extends BaseForm {
         this.userObject = new User();
         List<Client> clients = new ArrayList<>();
         clients.add(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.passwordToEncrypt = "";
         this.userObject.setClients(clients);
         this.userObject.setName("");
         this.userObject.setSurname("");
         this.userObject.setLogin("");
         this.userObject.setLdapLogin("");
-        this.userObject.setPassword("");
+        this.userObject.setPassword(passwordToEncrypt);
         return userEditPath;
     }
 
@@ -165,7 +166,6 @@ public class UserForm extends BaseForm {
                 if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                     loginForm.setLoggedUser(this.userObject);
                 }
-
                 return userListPath;
             } else {
                 Helper.setErrorMessage("loginInUse");
@@ -406,6 +406,8 @@ public class UserForm extends BaseForm {
         try {
             if (!Objects.equals(id, 0)) {
                 setUserObject(userService.getById(id));
+            } else {
+                this.passwordToEncrypt = "";
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
