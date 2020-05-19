@@ -208,11 +208,18 @@ function scrollToSelectedThumbnail() {
 }
 
 function scrollToSelectedTreeNode() {
-    let selectedTreeNode = $(".ui-treenode-selected");
-    let structureTree = $("#structurePanel");
-    if (selectedTreeNode.length === 1 && structureTree.length) {
-        structureTree.animate({
-            scrollTop: selectedTreeNode.position().top - structureTree.height()/2
+    let logicalStructure = $("#logicalStructure .scroll-wrapper");
+    let physicalStructure = $("#physicalStructure .scroll-wrapper");
+    let selectedLogicalNode = logicalStructure.find(".ui-treenode-selected");
+    let selectedPhysicalNode = physicalStructure.find(".ui-treenode-selected");
+    if (selectedLogicalNode.length === 1 && logicalStructure.length) {
+        logicalStructure.animate({
+            scrollTop: selectedLogicalNode.position().top - logicalStructure.height()/2
+        }, 180, null, null);
+    }
+    if (selectedPhysicalNode.length === 1 && physicalStructure.length) {
+        physicalStructure.animate({
+            scrollTop: selectedPhysicalNode.position().top - physicalStructure.height()/2
         }, 180, null, null);
     }
 }
