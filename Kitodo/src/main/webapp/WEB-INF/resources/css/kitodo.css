@@ -788,6 +788,8 @@ section#content-section {
 }
 
 #filterMenu .ui-overlaypanel li > a:first-child {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
     width: 75%;
 }
 
