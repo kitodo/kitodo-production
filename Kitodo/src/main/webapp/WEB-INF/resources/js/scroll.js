@@ -111,16 +111,6 @@ function initialize() {
     });
 }
 
-function initializeStructureTreeScrolling() {
-    $(document).on("mouseup", function() {
-        $(".scroll-up-area").css("display", "none");
-        $(".scroll-down-area").css("display", "none");
-    });
-
-    initializeStructureSpecificScrolling("#logicalStructure");
-    initializeStructureSpecificScrolling("#physicalStructure");
-}
-
 function initializeStructureSpecificScrolling(structureIdentifier) {
     $(document).on("dragstart.structureTree", structureIdentifier, function(e) {
         $(structureIdentifier + " .scroll-up-area").css("display", "block");
@@ -154,6 +144,16 @@ function initializeStructureSpecificScrolling(structureIdentifier) {
         window.clearInterval(structureInterval);
         $(this).css("opacity", "0");
     });
+}
+
+function initializeStructureTreeScrolling() {
+    $(document).on("mouseup", function() {
+        $(".scroll-up-area").css("display", "none");
+        $(".scroll-down-area").css("display", "none");
+    });
+
+    initializeStructureSpecificScrolling("#logicalStructure");
+    initializeStructureSpecificScrolling("#physicalStructure");
 }
 
 function scrollToPreviewThumbnail(thumbnail, scrollable) {
