@@ -1858,14 +1858,24 @@ Column content
 
 #structureWrapperPanel .ui-accordion-content {
     flex: 1 0;
+    overflow: hidden;
+    padding: 0;
 }
 
 #structureWrapperPanel .ui-tree-container {
     overflow: initial;
 }
 
-#scrollUpArea,
-#scrollDownArea {
+#structureWrapperPanel .scroll-wrapper {
+    box-sizing: border-box;
+    height: 100%;
+    overflow: auto;
+    padding: var(--default-full-size) var(--default-double-size);
+    width: 100%;
+}
+
+.scroll-up-area,
+.scroll-down-area {
     content: "";
     z-index: 1;
     height: 50px;
@@ -1876,8 +1886,8 @@ Column content
     display: none;
 }
 
-#scrollDownArea {
-    bottom: 64px;
+.scroll-down-area {
+    bottom: 0;
 }
 
 .ui-tree .ui-treenode.linked .ui-treenode-label::after {

@@ -112,43 +112,45 @@ function initialize() {
 }
 
 function initializeStructureTreeScrolling() {
-
-    $(document).on("mousemove.structureTreeForm", "#structureTreeForm", function(e) {
-        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
-            $("#scrollUpArea").css("display", "block");
-            $("#scrollDownArea").css("display", "block");
-        }
-    });
-
     $(document).on("mouseup", function() {
-        $("#scrollUpArea").css("display", "none");
-        $("#scrollDownArea").css("display", "none");
+        $(".scroll-up-area").css("display", "none");
+        $(".scroll-down-area").css("display", "none");
     });
 
-    $(document).on("mouseenter.scrollUpArea", "#scrollUpArea", function (e) {
+    initializeStructureSpecificScrolling("#logicalStructure");
+    initializeStructureSpecificScrolling("#physicalStructure");
+}
+
+function initializeStructureSpecificScrolling(structureIdentifier) {
+    $(document).on("dragstart.structureTree", structureIdentifier, function(e) {
+        $(structureIdentifier + " .scroll-up-area").css("display", "block");
+        $(structureIdentifier + " .scroll-down-area").css("display", "block");
+    });
+
+    $(document).on("mouseenter.scrollUpArea", structureIdentifier + " .scroll-up-area", function (e) {
         if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
             structureInterval = window.setInterval(function() {
-                scrollUp("#structurePanel", false);
+                scrollUp(structureIdentifier + " .scroll-wrapper", false);
             }, 100);
             $(this).css("opacity", ".2");
         }
     });
 
-    $(document).on("mouseenter.scrollDownArea", "#scrollDownArea", function (e) {
+    $(document).on("mouseenter.scrollDownArea", structureIdentifier + " .scroll-down-area", function (e) {
         if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
             structureInterval = window.setInterval(function() {
-                scrollDown("#structurePanel", false);
+                scrollDown(structureIdentifier + " .scroll-wrapper", false);
             }, 100);
             $(this).css("opacity", ".2");
         }
     });
 
-    $(document).on("mouseleave.scrollUpArea", "#scrollUpArea", function () {
+    $(document).on("mouseleave.scrollUpArea", ".scroll-up-area", function () {
         window.clearInterval(structureInterval);
         $(this).css("opacity", "0");
     });
 
-    $(document).on("mouseleave.scrollDownArea", "#scrollDownArea", function () {
+    $(document).on("mouseleave.scrollDownArea", ".scroll-down-area", function () {
         window.clearInterval(structureInterval);
         $(this).css("opacity", "0");
     });
