@@ -1299,6 +1299,10 @@ Popup dialogs
     overflow-y: scroll;
 }
 
+#dialogAddDocStrucTypeForm\:dialogAddDocStrucTypeFormContent {
+    overflow-y: hidden;
+}
+
 .ui-dialog.legal-dialog button.secondary.right {
     position: absolute;
     bottom: var(--default-double-size);

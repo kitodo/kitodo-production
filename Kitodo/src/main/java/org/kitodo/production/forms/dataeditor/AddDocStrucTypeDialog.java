@@ -517,8 +517,7 @@ public class AddDocStrucTypeDialog {
                                         : "dataTable"));
             }
             if (!dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
-                Collections.sort(selectAddableMetadataTypesItems,
-                    (one, another) -> one.getLabel().compareTo(another.getLabel()));
+                selectAddableMetadataTypesItems.sort(Comparator.comparing(SelectItem::getLabel));
             }
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e);
