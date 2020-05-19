@@ -15,117 +15,37 @@
         template="/WEB-INF/templates/base.xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions">
 
     <ui:define name="content">
-        <h:body>
-            <table cellspacing="5" cellpadding="0" class="layoutTable" align="center">
 
-                <tr>
-                    <td valign="top" class="layoutInhalt">
+        <h:panelGroup id="errorContainer"
+                      layout="block">
 
-                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+            <p:panel styleClass="content-header">
+                <ui:insert name="contentHeader">
+                    <h3>#{err.errorOccurred}</h3>
+                </ui:insert>
+            </p:panel>
 
-                        <!-- Breadcrumb -->
-                        <h:panelGrid id="id2" columns="1" styleClass="layoutInhaltKopf">
-                            <h:panelGroup id="id3">
-                                <h:outputText id="id4" value="#{err.error}"/>
-                            </h:panelGroup>
-                        </h:panelGrid>
-                        <!-- // Breadcrumb -->
-                        <div  id="mydiv">
-                            <h:form id="myform" style="margin:3px">
-                                <!-- Überschrift -->
-                                <h3>
-                                    <h:outputText id="id5" value="#{err.errorOccurred}"/>
-                                </h3>
-
-                                <!-- TODO: refactor template to replace JAVA scriptlet -->
-                                <!--<%-->
-                                <!--if (exception != null) {-->
-                                <!--List exceptions = ExceptionUtils-->
-                                <!--.getExceptions(exception);-->
-                                <!--Throwable throwable = (Throwable) exceptions-->
-                                <!--.get(exceptions.size() - 1);-->
-                                <!--String customaryMessage = exception-->
-                                <!--.getMessage();-->
-                                <!--if (customaryMessage == null) {-->
-                                <!--customaryMessage = "";-->
-                                <!--} else {-->
-                                <!--customaryMessage = customaryMessage-->
-                                <!--+ "<hr/>";-->
-                                <!--}-->
-                                <!--String exceptionMessage = ExceptionUtils-->
-                                <!--.getExceptionMessage(exceptions);-->
-                                <!--%>-->
-
-                                <!--<p style="color:red;font-weight:bold;">-->
-                                    <!--&lt;!&ndash;<%=customaryMessage&ndash;&gt;-->
-                                    <!--&lt;!&ndash;+ exceptionMessage%>&ndash;&gt;-->
-                                <!--</p>-->
-
-                                <!--<a href="#"-->
-                                   <!--onclick="toggle('trace1');toggle('trace2'); return false;">-->
-                                    <!--<span style="display: inline;" id="buttonOff"> + </span> <span-->
-                                        <!--id="buttonOn" style="display: none;"> - </span> Stack Trace</a>-->
-                                <!--<%-->
-                                <!--PrintWriter pw = new PrintWriter(out);-->
-                                <!--%>-->
-                                <!--<t:div id="trace1" forceId="true"-->
-                                       <!--style="border: grey 1px solid; background-color:#EFEFEF;margin:20px;display: none">-->
-                                        <!--<pre>-->
-                                    <!--<%-->
-                                        <!--throwable.printStackTrace(pw);-->
-                                    <!--%>-->
-                                    <!--</pre>-->
-                                <!--</t:div>-->
-                                <!--<%-->
-                                <!--throwable = (Throwable) exceptions-->
-                                <!--.get(0);-->
-                                <!--%>-->
-                                <!--<t:div id="trace2" forceId="true"-->
-                                       <!--style="border: grey 1px solid; background-color:#EFEFEF;margin:20px;display: none">-->
-                                        <!--<pre>-->
-                                    <!--<%-->
-                                        <!--throwable.printStackTrace(pw);-->
-                                    <!--%>-->
-                                    <!--</pre>-->
-                                <!--</t:div>-->
-
-                                <!--<%-->
-                                <!--} else {-->
-                                <!--%>-->
-                                <!--<h:outputText id="id6" value="#{err.error}"/>-->
-                                <!--<%-->
-                                <!--}-->
-                                <!--%>-->
-
-                            </h:form>
-                        </div>
-                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
-
-                    </td>
-                </tr>
-            </table>
-
-            <script language="javascript" type="text/javascript">
-                //<![CDATA[
-                    function toggle(id) {
-                        var style = document.getElementById(id).style;
-                        if ("block" == style.display) {
-                            style.display = "none";
-                            document.getElementById("buttonOff").style.display = "inline";
-                            document.getElementById("buttonOn").style.display = "none";
-                        } else {
-                            style.display = "block";
-                            document.getElementById("buttonOff").style.display = "none";
-                            document.getElementById("buttonOn").style.display = "inline";
-                        }
-                    }
-                //]]>
-            </script>
-
-        </h:body>
+            <h:panelGroup layout="block">
+                <ul id="errorDetails">
+                    <li>Date/time: #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
+                    <li>User agent: #{header['user-agent']}</li>
+                    <li>User IP: #{request.remoteAddr}</li>
+                    <li>Request URI: #{requestScope['javax.servlet.error.request_uri']}</li>
+                    <li>Ajax request: #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
+                    <li>Status code: #{requestScope['javax.servlet.error.status_code']}</li>
+                    <li>Exception type: #{requestScope['javax.servlet.error.exception_type']}</li>
+                    <li>Exception message: #{requestScope['javax.servlet.error.message']}</li>
+                    <li>Exception UUID: #{requestScope['org.omnifaces.exception_uuid']}</li>
+                    <li>Stack trace:
+                        <pre>#{of:printStackTrace(requestScope['javax.servlet.error.exception'])}</pre>
+                    </li>
+                </ul>
+            </h:panelGroup>
+        </h:panelGroup>
 
     </ui:define>
 </ui:composition>
