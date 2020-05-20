@@ -57,6 +57,8 @@
                          disabled="#{UserForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
         <p:commandButton id="saveButtonToggler"
+                         process="@this"
+                         immediate="#{true}"
                          actionListener="#{UserForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
