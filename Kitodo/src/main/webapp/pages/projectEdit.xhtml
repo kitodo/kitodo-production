@@ -54,7 +54,7 @@
                          style="display:none;"/>
         <p:button value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="#{ProjectForm.projectEditReferer}"
+                  outcome="#{not empty param['referer'] ? param['referer'] : ProjectForm.projectEditReferer}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
