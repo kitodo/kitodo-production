@@ -70,7 +70,7 @@ public class CommentForm extends BaseForm {
             this.process = ServiceManager.getProcessService().getById(processId);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                    processId}, logger, e);
+                processId}, logger, e);
         }
     }
 
