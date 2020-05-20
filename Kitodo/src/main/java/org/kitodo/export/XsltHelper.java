@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -44,9 +45,14 @@ public class XsltHelper {
      */
     static ByteArrayOutputStream transformXmlByXslt(StreamSource source, URI xslFile)
             throws TransformerException, IOException {
-        StreamSource xsltSource = new StreamSource(xslFile.getPath());
+
+        String xsltPath = xslFile.getPath();
+        StreamSource xsltSource = new StreamSource(xsltPath);
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(xsltSource);
+        if (Objects.isNull(transformer)) {
+            throw new IllegalArgumentException("Could not create XSLT transformer. Check " + xsltPath + " for errors.");
+        }
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             StreamResult streamResult = new StreamResult(outputStream);
             transformer.transform(source, streamResult);
