@@ -83,10 +83,10 @@
 
                     <!-- Metadaten-button -->
                     <h:commandLink id="readXML"
-                                   action="#{DataEditorForm.open(task.id, 'currentTasksEdit.jsf?id='.concat(task.id))}"
+                                   action="#{DataEditorForm.open(task.process.id, 'currentTasksEdit.jsf?id='.concat(task.id))}"
                                    rendered="#{task.typeMetadata and process.blockedUser == null}"
                                    title="#{msgs.metadataEdit}">
-                        <f:actionListener binding="#{CommentForm.setCurrentTaskById(task.id)}"/>
+                        <f:actionListener binding="#{CommentForm.setProcessById(task.process.id)}"/>
                         <h:outputText><i class="fa fa-list-alt"/> #{msgs.metadataEdit}</h:outputText>
                     </h:commandLink>
 

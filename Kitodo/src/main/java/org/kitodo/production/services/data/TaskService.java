@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -831,5 +832,38 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         }
         long differenceTime = end.getTime() - begin.getTime();
         return differenceTime / (1000 * 60 * 60 * 24);
+    }
+
+    /**
+     * Compute and return list of tasks that are in work concurrently in the given Process 'process' and are not the
+     * given Task 'task', if 'task' is not null.
+     */
+    public static List<Task> getListOfConcurrentTasksInWork(Process process, Task task) {
+        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        List<Task> currentTasksInWork = process.getTasks().stream()
+                .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())
+                        && authenticatedUserId != t.getProcessingUser().getId())
+                .collect(Collectors.toList());
+        if (Objects.nonNull(task) && task.isConcurrent()) {
+            return currentTasksInWork.stream()
+                    .filter(t -> !t.getId().equals(task.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            return currentTasksInWork;
+        }
+    }
+
+    /**
+     * Compute and return list of tasks that are eligible as 'currentTask' for a new correction comment.
+     *
+     * @return list of current task options for new correction comment
+     */
+    public static List<Task> getCurrentTaskOptions(Process process) {
+        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        return process.getTasks().stream()
+                .filter(t -> (TaskStatus.INWORK.equals(t.getProcessingStatus())
+                        && authenticatedUserId == t.getProcessingUser().getId())
+                        || TaskStatus.OPEN.equals(t.getProcessingStatus()))
+                .collect(Collectors.toList());
     }
 }

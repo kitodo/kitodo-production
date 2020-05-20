@@ -41,7 +41,6 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
-import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
@@ -1294,27 +1293,14 @@ public class StructurePanel implements Serializable {
     /**
      * Check and return whether the metadata of a process should be displayed in separate logical and physical
      * structure trees or in one unified structure tree.
-     * Returns true if the current task in the metadata editor is
-     * - non null
-     * - assigned to the current user
-     * - type metadata
-     * - separate structure flag = true
      *
      * @return
      *          whether metadata structure should be displayed in separate structure trees or not
      */
     public boolean isSeparateMedia() {
-        if (Objects.nonNull(this.dataEditor.getCurrentTask())
-                && this.dataEditor.getCurrentTask().isTypeMetadata()
-                && this.dataEditor.getCurrentTask().isSeparateStructure()) {
-            SecurityUserDetails authenticatedUser = ServiceManager.getUserService().getAuthenticatedUser();
-            if (Objects.nonNull(authenticatedUser)) {
-                int userID = authenticatedUser.getId();
-                return Objects.nonNull(this.dataEditor.getCurrentTask().getProcessingUser())
-                        && Objects.equals(this.dataEditor.getCurrentTask().getProcessingUser().getId(), userID);
-            } else {
-                return true;
-            }
+        if (!this.dataEditor.getProcess().getTasks().isEmpty()) {
+            // TODO: once the "separateMedia" flag has been moved from tasks to workflows this needs to be adapted accordingly!
+            return this.dataEditor.getProcess().getTasks().get(0).isSeparateStructure();
         } else {
             return false;
         }

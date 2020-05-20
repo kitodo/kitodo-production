@@ -37,6 +37,19 @@
                 <ui:fragment rendered="#{CommentForm.correctionComment}">
                     <p:panelGrid columns="1">
                         <p:column>
+                            <p:outputLabel value="#{msgs.currentTask}"/>
+                            <p:selectOneMenu id="currentTaskSelection"
+                                             required="#{empty param['newCommentForm:save']}"
+                                             converter="#{taskConverter}"
+                                             value="#{CommentForm.currentTask}">
+                                <f:selectItems value="#{CommentForm.currentTaskOptions}"
+                                               var="task"
+                                               itemLabel="#{task.title}"
+                                               itemValue="#{task}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+
+                        <p:column>
                             <p:outputLabel value="#{msgs.backToTask}" for="stepSelection"/>
                             <p:selectOneMenu id="stepSelection"
                                              value="#{CommentForm.correctionTaskId}">

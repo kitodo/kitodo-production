@@ -47,15 +47,12 @@ import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.RulesetNotFoundException;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
@@ -74,7 +71,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * A filter on the rule set depending on the workflow step. So far this is
      * not configurable anywhere and is therefore on “edit”.
      */
-    private String acquisitionStage;
+    private final String acquisitionStage;
 
     /**
      * Backing bean for the add doc struc type dialog.
@@ -104,7 +101,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     /**
      * The current process children.
      */
-    private Set<Process> currentChildren = new HashSet<>();
+    private final Set<Process> currentChildren = new HashSet<>();
 
     /**
      * The path to the main file, to save it later.
@@ -157,11 +154,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private Workpiece workpiece;
 
     /**
-     * The task the user is currently working on when opening the Metadata Editor.
-     */
-    private Task currentTask;
-
-    /**
      * This List of Pairs stores all selected physical elements and the logical elements in which the physical element was selected.
      * It is necessary to store the logical elements as well, because a physical element can be assigned to multiple logical elements.
      */
@@ -186,7 +178,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     /**
      * Checks if the process is correctly set. Otherwise redirect to desktop,
-     * because metadataeditor doesn't work withut a process.
+     * because metadataeditor doesn't work without a process.
      */
     public void initMetadataEditor() {
         if(Objects.isNull(process)) {
@@ -202,18 +194,17 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Open the metadata file of the process of which the task with the given ID in the metadata editor.
+     * Open the metadata file of the process with the given ID in the metadata editor.
      *
-     * @param taskID
-     *            ID of the task whose process is opened
+     * @param processID
+     *            ID of the process that is opened
      * @param referringView
      *            JSF page the user came from
      */
-    public String open(String taskID, String referringView) {
+    public String open(String processID, String referringView) {
         try {
-            this.currentTask = ServiceManager.getTaskService().getById(Integer.parseInt(taskID));
             this.referringView = referringView;
-            this.process = this.currentTask.getProcess();
+            this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
 
@@ -305,7 +296,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         MetadataLock.setFree(process.getId());
         process = null;
         user = null;
-        this.setCurrentTask(null);
         if (referringView.contains("?")) {
             return referringView + "&faces-redirect=true";
         } else {
@@ -528,46 +518,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return process.getTitle();
     }
 
-    /**
-     * Get the current task.
-     *
-     * @return the current task
-     */
-    public Task getCurrentTask() {
-        return this.currentTask;
-    }
-
-    /**
-     * Return a list of tasks that are "INWORK", assigned to the current user and have type "metadata".
-     *
-     * @param processID
-     *          ID of the process for which the current task options will be determined
-     *
-     * @return list of tasks with type metadata that are "INWORK" assigned to the current user
-     */
-    public List<Task> getCurrentTaskOptions(int processID) {
-        try {
-            Process process = ServiceManager.getProcessService().getById(processID);
-            return process.getTasks().stream().filter(t -> t.isTypeMetadata()
-                    && Objects.nonNull(t.getProcessingUser())
-                    && ServiceManager.getUserService().getAuthenticatedUser().getId().equals(t.getProcessingUser().getId())
-                    && TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne",
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processID} , logger, e);
-            return new LinkedList<>();
-        }
-    }
-
-    /**
-     * Set the current task.
-     *
-     * @param task the new value for the current task
-     */
-    public void setCurrentTask(Task task) {
-        this.currentTask = task;
-    }
-
     @Override
     public RulesetManagementInterface getRuleset() {
         return ruleset;
@@ -588,11 +538,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public boolean isStripeSelected(IncludedStructuralElement structure) {
         Optional<IncludedStructuralElement> selectedStructure = structurePanel.getSelectedStructure();
-        if (selectedStructure.isPresent()) {
-            return Objects.equals(structure, selectedStructure.get());
-        } else {
-            return false;
-        }
+        return selectedStructure.filter(includedStructuralElement -> Objects.equals(structure, includedStructuralElement)).isPresent();
     }
 
     /**
@@ -615,20 +561,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     void setProcess(Process process) {
         this.process = process;
-    }
-
-    /**
-     * Set the current process of the DataEditorForm by ID.
-     *
-     * @param processID
-     *          ID of the process to set
-     */
-    public void setProcessByID(int processID) {
-        try {
-            setProcess(ServiceManager.getProcessService().getById(processID));
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
-        }
     }
 
     /**
@@ -737,27 +669,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         MediaUnit mediaUnit = view.getMediaUnit();
         if (Objects.nonNull(mediaUnit)) {
             galleryPanel.updateSelection(mediaUnit, structurePanel.getPageStructure(view, workpiece.getRootElement()));
-        }
-    }
-
-    /**
-     * Determine fallback task of process with given ID 'processID' and return the tasks ID.
-     *
-     * @param processID
-     *          ID of process for which the fallback task is determined
-     * @return ID of the fallback task for process with given ID 'processID'
-     */
-    public int getFallbackTaskID(int processID) {
-        try {
-            Process process = ServiceManager.getProcessService().getById(processID);
-            if (!process.getTasks().isEmpty()) {
-                return process.getTasks().get(0).getId();
-            }
-            return -1;
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                processID}, logger, e);
-            return -1;
         }
     }
 
