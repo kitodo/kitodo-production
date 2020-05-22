@@ -238,7 +238,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         User currentProcessingUser = task.getProcessingUser();
 
         if (Objects.isNull(user) && Objects.isNull(currentProcessingUser)) {
-            logger.info("do nothing - there is not new nor old user");
+            logger.info("do nothing - there is neither a new nor an old user");
         } else if (Objects.isNull(user)) {
             currentProcessingUser.getProcessingTasks().remove(task);
             task.setProcessingUser(null);
