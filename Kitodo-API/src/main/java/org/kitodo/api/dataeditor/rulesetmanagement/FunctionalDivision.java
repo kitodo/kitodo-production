@@ -75,11 +75,11 @@ public enum FunctionalDivision {
      */
     public static Set<FunctionalDivision> valuesOf(String marks) {
         Set<FunctionalDivision> values = new HashSet<>();
-        for (String mark : marks.split("\\s+", 0)) {
+        OUTER: for (String mark : marks.split("\\s+", 0)) {
             for (FunctionalDivision candidate : FunctionalDivision.values()) {
                 if (mark.equals(candidate.mark)) {
                     values.add(candidate);
-                    break;
+                    continue OUTER;
                 }
             }
             logger.warn("Ruleset declares undefined field use '{}', must be one of: {}", mark,
