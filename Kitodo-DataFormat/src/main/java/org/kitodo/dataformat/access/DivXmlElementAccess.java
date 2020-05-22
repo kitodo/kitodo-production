@@ -276,6 +276,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      */
     static Optional<MdSecType> createMdSec(Iterable<Metadata> metadata, MdSec domain) {
         KitodoType kitodoType = new KitodoType();
+        boolean empty = true;
         for (Metadata entry : metadata) {
             if (domain.equals(entry.getDomain())) {
                 if (entry instanceof MetadataEntry) {
@@ -284,9 +285,10 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
                     kitodoType.getMetadataGroup()
                             .add(new MetadataGroupXmlElementAccess((MetadataGroup) entry).toXMLMetadataGroup());
                 }
+                empty = false;
             }
         }
-        if (kitodoType.getMetadata().isEmpty() && kitodoType.getMetadataGroup().isEmpty()) {
+        if (empty) {
             return Optional.empty();
         } else {
             XmlData xmlData = new XmlData();
