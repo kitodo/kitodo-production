@@ -64,7 +64,7 @@ public class TaskScriptThread extends EmptyTask {
                 logger.error("Data Error occurred", e);
             }
         }
-        if (!task.getContentFolders().isEmpty()) {
+        if (task.isTypeGenerateImages() && !task.getContentFolders().isEmpty()) {
             try {
                 taskService.generateImages(this, task, automatic);
             } catch (DataException e) {
