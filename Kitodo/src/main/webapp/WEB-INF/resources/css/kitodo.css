@@ -1847,31 +1847,31 @@ Column content
 }
 
 #structurePanel > div,
-#structureWrapperPanel {
+#structureAccordion {
     height: 100%;
 }
 
-#structureWrapperPanel {
+#structureAccordion {
     display: flex;
     flex-direction: column;
 }
 
-#structureWrapperPanel .ui-accordion-header {
+#structureAccordion .ui-accordion-header {
     flex: 0 0 var(--input-height);
     box-sizing: border-box;
 }
 
-#structureWrapperPanel .ui-accordion-content {
+#structureAccordion .ui-accordion-content {
     flex: 1 0;
     overflow: hidden;
     padding: 0;
 }
 
-#structureWrapperPanel .ui-tree-container {
+#structureAccordion .ui-tree-container {
     overflow: initial;
 }
 
-#structureWrapperPanel .scroll-wrapper {
+#structureAccordion .scroll-wrapper {
     box-sizing: border-box;
     height: 100%;
     overflow: auto;
@@ -1974,6 +1974,7 @@ Column content
     height: 100%;
 }
 
+#structureAccordion .ui-accordion-header,
 #metadataAccordion .ui-accordion-header {
     display: none;
 }
@@ -1982,6 +1983,7 @@ Column content
     overflow-y: hidden;
 }
 
+#structureAccordion.separateStructure .ui-accordion-header,
 #metadataAccordion.separateStructure .ui-accordion-header {
     display: block;
 }
@@ -2357,10 +2359,11 @@ Column content
 
 .thumbnail.selected + .thumbnail-container img {
     border-color: var(--green);
+    border-style: dashed;
 }
 
 .thumbnail.selected.last-selection + .thumbnail-container img {
-    border-style: dashed;
+    border-style: solid;
 }
 
 .thumbnail-container {

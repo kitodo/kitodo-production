@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 /* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF, scrollToStructureThumbnail,
-    scrollToPreviewThumbnail */
+    scrollToPreviewThumbnail, expandMetadata */
 
 var metadataEditor = {
     dragging: false,
@@ -230,6 +230,10 @@ metadataEditor.shortcuts = {
         }
     }
 };
+
+function expandMetadata(panelClass) {
+    $("." + panelClass + "[aria-expanded='false']").click()
+}
 
 $(document).ready(function () {
     metadataEditor.shortcuts.listen();

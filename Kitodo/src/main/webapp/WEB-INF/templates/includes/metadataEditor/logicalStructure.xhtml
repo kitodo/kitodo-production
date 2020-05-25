@@ -15,7 +15,6 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
     <div class="scroll-up-area"></div>
     <div class="scroll-wrapper">
@@ -29,7 +28,7 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
-                    oncomplete="scrollToSelectedThumbnail();changeToMapView()"
+                    oncomplete="scrollToSelectedThumbnail();changeToMapView();expandMetadata('logical-metadata-tab');"
                     update="@(.stripe)
                             @(.thumbnail)
                             galleryHeadingWrapper
