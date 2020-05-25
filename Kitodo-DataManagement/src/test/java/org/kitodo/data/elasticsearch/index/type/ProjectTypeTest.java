@@ -452,7 +452,7 @@ public class ProjectTypeTest {
         Project project = prepareData().get(0);
         Map<String, Object> actual = processType.createDocument(project);
 
-        assertEquals("Amount of keys is incorrect!", 15, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 13, actual.keySet().size());
 
         List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         Map<String, Object> process = processes.get(0);
