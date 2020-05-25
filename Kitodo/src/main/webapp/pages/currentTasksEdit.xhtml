@@ -14,6 +14,7 @@
 <ui:composition
         template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
@@ -28,13 +29,23 @@
         <h3>#{msgs.detailsDesArbeitsschritts}</h3>
     </ui:define>
 
+    <!--@elvariable id="commentsNumber" type="Integer"-->
+    <ui:param name="commentsNumber" value="#{CommentForm.getAllComments().size()}"/>
+
     <ui:define name="pageTabView">
         <p:tabView id="tasksTabView">
             <p:tab title="#{msgs.taskDetails}">
                 <ui:include src="/WEB-INF/templates/includes/currentTasksEdit/taskBoxDetails.xhtml"/>
                 <ui:include src="/WEB-INF/templates/includes/currentTasksEdit/taskBoxActivities.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.comments}">
+            <p:tab>
+                <f:facet name="title">
+                    <h:outputText styleClass="tab-title"
+                                  value="#{msgs.comments}"/>
+                    <h:outputText styleClass="counter-badge #{CommentForm.hasCorrectionComment(CurrentTaskForm.currentTask.process.id) eq 2 ? 'new' : ''}"
+                                  value="#{commentsNumber}"
+                                  rendered="#{commentsNumber gt 0}"/>
+                </f:facet>
                 <ui:include src="/WEB-INF/templates/includes/comments/comments.xhtml"/>
             </p:tab>
         </p:tabView>
