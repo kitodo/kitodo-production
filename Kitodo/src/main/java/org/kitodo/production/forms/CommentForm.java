@@ -213,7 +213,6 @@ public class CommentForm extends BaseForm {
         refreshProcess(this.process);
         List<Task> currentTaskOptions = getCurrentTaskOptions();
         if (currentTaskOptions.isEmpty()) {
-            Helper.setErrorMessage("Invalid process state: no 'inwork' or 'open' task found!");
             return Collections.emptyList();
         } else {
             return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
@@ -319,22 +318,17 @@ public class CommentForm extends BaseForm {
      * @return whether there are concurrent tasks in work or not
      */
     public boolean isConcurrentTaskInWork() {
-        return !TaskService.getListOfConcurrentTasksInWork(this.process, this.currentTask).isEmpty();
+        return !TaskService.getTasksInWorkByOtherUsers(
+                TaskService.getConcurrentTasksOpenOrInWork(this.process, this.currentTask)).isEmpty();
     }
 
     /**
-     * Create a tooltip explaining that there are concurrent tasks to the current task.
+     * Create and return a tooltip for the correction message switch.
      *
-     * @return concurrent task in work tooltip
+     * @return tooltip for correction message switch
      */
-    public String getConcurrentTaskInWorkTooltip() {
-        List<Task> concurrentTasks = TaskService.getListOfConcurrentTasksInWork(this.process, this.currentTask);
-        if (concurrentTasks.isEmpty()) {
-            return "";
-        } else {
-            return MessageFormat.format(Helper.getTranslation("dataEditor.comment.parallelTaskInWorkText"),
-                    concurrentTasks.get(0).getTitle(), concurrentTasks.get(0).getProcessingUser().getFullName());
-        }
+    public String getCorrectionMessageSwitchTooltip() {
+        return TaskService.getCorrectionMessageSwitchTooltip(this.process, this.currentTask);
     }
 
     /**
