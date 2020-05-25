@@ -1114,6 +1114,11 @@ h3#headerText {
     margin: 0 0 5px 5px;
 }
 
+#resetPasswordForm .dialogFieldWrapper {
+    max-height: unset;
+    overflow: hidden;
+}
+
 /*----------------------------------------------------------------------
 Import form
 ----------------------------------------------------------------------*/
