@@ -81,7 +81,7 @@
                     <p:commandButton id="save"
                                      value="#{msgs.save}"
                                      action="#{CommentForm.addComment()}"
-                                     update="#{request.requestURI.contains('metadataEditor') ? 'commentsBox:commentsGrid' : 'tasksTabView:commentsBox:commentsGrid'}"
+                                     update="#{request.requestURI.contains('metadataEditor') ? 'commentsBox:commentsGrid commentsNumberWrapper' : 'tasksTabView:commentsBox:commentsGrid tasksTabView:commentsNumberWrapper'}"
                                      oncomplete="PF('newCommentDialog').hide()"
                                      styleClass="primary dialog"
                                      icon="fa fa-check fa-lg"
