@@ -83,7 +83,7 @@ public enum FunctionalDivision {
                 }
             }
             logger.warn("Ruleset declares undefined field use '{}', must be one of: {}", mark,
-                    Arrays.stream(values()).map(FunctionalDivision::toString).collect(Collectors.joining(", ")));
+                    Arrays.stream(values()).map(FunctionalDivision::getMark).collect(Collectors.joining(", ")));
         }
         return values;
     }
