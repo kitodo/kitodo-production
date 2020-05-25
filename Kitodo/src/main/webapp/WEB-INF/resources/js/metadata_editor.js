@@ -232,7 +232,7 @@ metadataEditor.shortcuts = {
 };
 
 function expandMetadata(panelClass) {
-    $("." + panelClass + "[aria-expanded='false']").click()
+    $("." + panelClass + "[aria-expanded='false']").click();
 }
 
 $(document).ready(function () {
