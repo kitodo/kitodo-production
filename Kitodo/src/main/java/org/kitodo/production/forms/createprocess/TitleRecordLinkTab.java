@@ -126,7 +126,7 @@ public class TitleRecordLinkTab {
             try {
                 titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
                 createInsertionPositionSelectionTree();
-            } catch (DAOException | IOException | RulesetNotFoundException e) {
+            } catch (DAOException | DataException | IOException | RulesetNotFoundException e) {
                 Helper.setErrorMessage("errorLoadingOne",
                         new Object[] {possibleParentProcesses.parallelStream()
                                 .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
@@ -142,7 +142,7 @@ public class TitleRecordLinkTab {
      * @throws IOException
      *             if the METS file cannot be read
      */
-    public void createInsertionPositionSelectionTree() throws DAOException, IOException, RulesetNotFoundException {
+    public void createInsertionPositionSelectionTree() throws DAOException, DataException, IOException, RulesetNotFoundException {
         if (Objects.isNull(titleRecordProcess)) {
             return;
         }
@@ -189,7 +189,7 @@ public class TitleRecordLinkTab {
      */
     private void createInsertionPositionSelectionTreeRecursive(String positionPrefix,
             IncludedStructuralElement currentIncludedStructuralElement, TreeNode parentNode,
-            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException {
+            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException, DataException {
 
         String type;
         List<String> tooltip = Collections.emptyList();
@@ -199,7 +199,7 @@ public class TitleRecordLinkTab {
             ProcessService processService = ServiceManager.getProcessService();
             int linkedProcessUri = processService.processIdFromUri(currentIncludedStructuralElement.getLink().getUri());
             Process linkedProcess = processService.getById(linkedProcessUri);
-            type = processService.getBaseType(linkedProcess);
+            type = processService.getBaseType(linkedProcessUri);
             tooltip = getToolTip(ruleset, linkedProcess);
         }
 

@@ -46,6 +46,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
@@ -818,7 +819,7 @@ public class CalendarForm implements Serializable {
             try {
                 Process process = ServiceManager.getProcessService().getById(parentId);
                 metadataTypes = CalendarService.getAddableMetadata(process);
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
             }
         }

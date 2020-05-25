@@ -37,6 +37,7 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
@@ -451,14 +452,14 @@ public class StructurePanel implements Serializable {
             node = new StructureTreeNode(structure.getLink().getUri().toString(), true, true, structure);
             for (Process child : dataEditor.getCurrentChildren()) {
                 try {
-                    String type = ServiceManager.getProcessService().getBaseType(child);
+                    String type = ServiceManager.getProcessService().getBaseType(child.getId());
                     if (child.getId() == ServiceManager.getProcessService()
                             .processIdFromUri(structure.getLink().getUri())) {
                         StructuralElementViewInterface view = dataEditor.getRuleset().getStructuralElementView(
                             type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                         node = new StructureTreeNode(view.getLabel(), view.isUndefined(), true, structure);
                     }
-                } catch (IOException e) {
+                } catch (DataException e) {
                     Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
                     node = new StructureTreeNode(child.getTitle(), true, true, child);
                 }

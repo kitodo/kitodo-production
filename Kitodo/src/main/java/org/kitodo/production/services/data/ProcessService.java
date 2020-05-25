@@ -235,6 +235,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public void saveToIndex(Process process, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
         process.setMetadata(getMetadataForIndex(process));
+        process.setBaseType(getBaseType(process));
         super.saveToIndex(process, forceRefresh);
     }
 
@@ -242,6 +243,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException {
         for (Process process : processes) {
             process.setMetadata(getMetadataForIndex(process, true));
+            process.setBaseType(getBaseType(process));
         }
         super.addAllObjectsToIndex(processes);
     }
@@ -874,6 +876,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
             processDTO.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
             processDTO.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
+            processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
 
             if (!related) {
                 convertRelatedJSONObjects(jsonObject, processDTO);
@@ -1686,20 +1689,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Returns the type of the top element of the root element, and thus the
      * type of the workpiece of the process.
      *
-     * @param processId
-     *            process whose root type is to be determined
-     * @return the type of root element of the root element of the workpiece
-     * @throws RuntimeException
-     *             because it is used in a parallel stream
-     */
-    private String getBaseType(Integer processId) throws DAOException, IOException {
-        return getBaseType(getById(processId));
-    }
-
-    /**
-     * Returns the type of the top element of the root element, and thus the
-     * type of the workpiece of the process.
-     *
      * @param process
      *            process whose root type is to be determined
      * @return the type of root element of the root element of the workpiece
@@ -1707,9 +1696,33 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *             if the file cannot be read (for example, because the file was
      *             not found)
      */
-    public String getBaseType(Process process) throws IOException {
-        URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
-        return ServiceManager.getMetsService().getBaseType(metadataFilePath);
+    public String getBaseType(Process process) {
+        try {
+            URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+            return ServiceManager.getMetsService().getBaseType(metadataFilePath);
+        } catch (IOException e) {
+            logger.error("Could not determine base type for process: " + e.getMessage());
+            return "";
+        }
+    }
+
+    /**
+     * Returns the type of the top element of the root element, and thus the
+     * type of the workpiece of the process.
+     *
+     * @param processId
+     *          id of the process whose root type is to be determined
+     * @return the type of root element of the root element of the workpiece
+     * @throws DataException
+     *          if the type cannot be found in the index (e.g. because the process
+     *          cannot be found in the index)
+     */
+    public String getBaseType(int processId) throws DataException {
+        ProcessDTO processDTO = findById(processId);
+        if (Objects.nonNull(processDTO)) {
+            return processDTO.getBaseType();
+        }
+        return "";
     }
 
     /**

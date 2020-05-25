@@ -38,6 +38,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
     private Integer sortHelperMetadata;
+    private String baseType;
 
     /**
      * Get project.
@@ -380,5 +381,23 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
+    }
+
+    /**
+     * Get baseType.
+     *
+     * @return value of baseType
+     */
+    public String getBaseType() {
+        return baseType;
+    }
+
+    /**
+     * Set baseType.
+     *
+     * @param baseType as java.lang.String
+     */
+    public void setBaseType(String baseType) {
+        this.baseType = baseType;
     }
 }

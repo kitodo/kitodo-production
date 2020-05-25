@@ -40,7 +40,8 @@ public enum ProcessTypeField implements TypeInterface {
     PROPERTIES("properties"),
     TEMPLATES("templates"),
     WORKPIECES("workpieces"),
-    METADATA("meta");
+    METADATA("meta"),
+    BASE_TYPE("baseType");
 
     private String name;
 
