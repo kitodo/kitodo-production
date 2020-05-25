@@ -744,6 +744,7 @@ public class GalleryPanel {
         IncludedStructuralElement includedStructuralElement = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
         dataEditor.getSelectedMedia().clear();
         dataEditor.getStructurePanel().updateLogicalNodeSelection(includedStructuralElement);
+        PrimeFaces.current().executeScript("scrollToSelectedTreeNode()");
     }
 
     /**

@@ -33,8 +33,8 @@
                                      @(.thumbnail)
                                      galleryHeadingWrapper
                                      imagePreviewForm:mediaViewData
-                                     structureTreeForm:logicalTree
-                                     structureTreeForm:physicalTree
+                                     logicalTree
+                                     physicalTree
                                      metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
@@ -147,7 +147,7 @@
                                                  activeStyleClass="media-stripe-index-active">
                                         <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                 update="@(.pageList)
-                                                        structureTreeForm:logicalTree"/>
+                                                        logicalTree"/>
                                     </p:droppable>
                                 </ui:fragment>
                                 <!-- add one last drop area after the last page in a stripe -->
@@ -159,7 +159,7 @@
                                                  activeStyleClass="media-stripe-index-active">
                                         <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                 update="@(.pageList)
-                                                        structureTreeForm:logicalTree"/>
+                                                        logicalTree"/>
                                     </p:droppable>
                                 </ui:fragment>
                             </p:dataList>
@@ -170,7 +170,7 @@
                                              activeStyleClass="media-stripe-active">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                             update="@(.pageList)
-                                                    structureTreeForm:logicalTree"/>
+                                                    logicalTree"/>
                                 </p:droppable>
                             </ui:fragment>
                         </p:outputPanel>
@@ -231,7 +231,7 @@
                                                      activeStyleClass="media-stripe-index-active">
                                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                     update="@(.pageList)
-                                                            structureTreeForm:logicalTree"/>
+                                                            logicalTree"/>
                                         </p:droppable>
                                     </ui:fragment>
                                     <!-- add one last drop area after the last page in a stripe -->
@@ -243,7 +243,7 @@
                                                      activeStyleClass="media-stripe-index-active">
                                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                     update="@(.pageList)
-                                                            structureTreeForm:logicalTree"/>
+                                                            logicalTree"/>
                                         </p:droppable>
                                     </ui:fragment>
                                 </p:dataList>
@@ -254,7 +254,7 @@
                                                  activeStyleClass="media-stripe-active">
                                         <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                 update="@(.pageList)
-                                                        structureTreeForm:logicalTree"/>
+                                                        logicalTree"/>
                                     </p:droppable>
                                 </ui:fragment>
                             </p:outputPanel>
@@ -379,7 +379,7 @@
                             action="#{DataEditorForm.deleteStructure()}"
                             onclick="$('#loadingScreen').show()"
                             oncomplete="$('#loadingScreen').hide()"
-                            update="structureTreeForm:logicalTree
+                            update="logicalTree
                                     paginationForm:paginationWrapperPanel
                                     metadataAccordion:logicalMetadataWrapperPanel
                                     galleryWrapperPanel"/>

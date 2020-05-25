@@ -1818,8 +1818,8 @@ form#metadata div label,
 Column content
  */
 
-#structureTreeForm\:structurePanel > .ui-panel-content,
-#structureTreeForm\:paginationPanel > .ui-panel-content,
+#structurePanel > .ui-panel-content,
+#paginationPanel > .ui-panel-content,
 #metaDataPanel > .ui-panel-content,
 #commentPanel > .ui-panel-content {
     padding: 0;
@@ -1835,15 +1835,47 @@ Column content
     height: 100%;
 }
 
-#structureTreeForm\:structurePanel {
-    overflow-y: scroll;
+#structurePanel {
     height: calc(100% - 100px);
     box-sizing: border-box;
     padding: 0;
 }
 
-#scrollUpArea,
-#scrollDownArea {
+#structurePanel > div,
+#structureWrapperPanel {
+    height: 100%;
+}
+
+#structureWrapperPanel {
+    display: flex;
+    flex-direction: column;
+}
+
+#structureWrapperPanel .ui-accordion-header {
+    flex: 0 0 var(--input-height);
+    box-sizing: border-box;
+}
+
+#structureWrapperPanel .ui-accordion-content {
+    flex: 1 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+#structureWrapperPanel .ui-tree-container {
+    overflow: initial;
+}
+
+#structureWrapperPanel .scroll-wrapper {
+    box-sizing: border-box;
+    height: 100%;
+    overflow: auto;
+    padding: var(--default-full-size) var(--default-double-size);
+    width: 100%;
+}
+
+.scroll-up-area,
+.scroll-down-area {
     content: "";
     z-index: 1;
     height: 50px;
@@ -1854,8 +1886,8 @@ Column content
     display: none;
 }
 
-#scrollDownArea {
-    bottom: 64px;
+.scroll-down-area {
+    bottom: 0;
 }
 
 .ui-tree .ui-treenode.linked .ui-treenode-label::after {
@@ -1896,7 +1928,7 @@ Column content
     margin-right: 3px;
 }
 
-#structureTreeForm\:paginationPanel {
+#paginationPanel {
     margin-top: 5px;
     height: calc(50% - 45px);
     box-sizing: border-box;

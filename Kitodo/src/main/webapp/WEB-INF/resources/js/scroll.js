@@ -111,47 +111,49 @@ function initialize() {
     });
 }
 
+function initializeStructureSpecificScrolling(structureIdentifier) {
+    $(document).on("dragstart.structureTree", structureIdentifier, function(e) {
+        $(structureIdentifier + " .scroll-up-area").css("display", "block");
+        $(structureIdentifier + " .scroll-down-area").css("display", "block");
+    });
+
+    $(document).on("mouseenter.scrollUpArea", structureIdentifier + " .scroll-up-area", function (e) {
+        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
+            structureInterval = window.setInterval(function() {
+                scrollUp(structureIdentifier + " .scroll-wrapper", false);
+            }, 100);
+            $(this).css("opacity", ".2");
+        }
+    });
+
+    $(document).on("mouseenter.scrollDownArea", structureIdentifier + " .scroll-down-area", function (e) {
+        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
+            structureInterval = window.setInterval(function() {
+                scrollDown(structureIdentifier + " .scroll-wrapper", false);
+            }, 100);
+            $(this).css("opacity", ".2");
+        }
+    });
+
+    $(document).on("mouseleave.scrollUpArea", ".scroll-up-area", function () {
+        window.clearInterval(structureInterval);
+        $(this).css("opacity", "0");
+    });
+
+    $(document).on("mouseleave.scrollDownArea", ".scroll-down-area", function () {
+        window.clearInterval(structureInterval);
+        $(this).css("opacity", "0");
+    });
+}
+
 function initializeStructureTreeScrolling() {
-
-    $(document).on("mousemove.structureTreeForm", "#structureTreeForm", function(e) {
-        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
-            $("#scrollUpArea").css("display", "block");
-            $("#scrollDownArea").css("display", "block");
-        }
-    });
-
     $(document).on("mouseup", function() {
-        $("#scrollUpArea").css("display", "none");
-        $("#scrollDownArea").css("display", "none");
+        $(".scroll-up-area").css("display", "none");
+        $(".scroll-down-area").css("display", "none");
     });
 
-    $(document).on("mouseenter.scrollUpArea", "#scrollUpArea", function (e) {
-        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
-            structureInterval = window.setInterval(function() {
-                scrollUp("#structureTreeForm\\:structurePanel", false);
-            }, 100);
-            $(this).css("opacity", ".2");
-        }
-    });
-
-    $(document).on("mouseenter.scrollDownArea", "#scrollDownArea", function (e) {
-        if (e.originalEvent.buttons === 1 && $(".ui-tree-draghelper.ui-draggable-dragging").length) {
-            structureInterval = window.setInterval(function() {
-                scrollDown("#structureTreeForm\\:structurePanel", false);
-            }, 100);
-            $(this).css("opacity", ".2");
-        }
-    });
-
-    $(document).on("mouseleave.scrollUpArea", "#scrollUpArea", function () {
-        window.clearInterval(structureInterval);
-        $(this).css("opacity", "0");
-    });
-
-    $(document).on("mouseleave.scrollDownArea", "#scrollDownArea", function () {
-        window.clearInterval(structureInterval);
-        $(this).css("opacity", "0");
-    });
+    initializeStructureSpecificScrolling("#logicalStructure");
+    initializeStructureSpecificScrolling("#physicalStructure");
 }
 
 function scrollToPreviewThumbnail(thumbnail, scrollable) {
@@ -206,11 +208,18 @@ function scrollToSelectedThumbnail() {
 }
 
 function scrollToSelectedTreeNode() {
-    let selectedTreeNode = $(".ui-treenode-selected");
-    let structureTree = $("#structureTreeForm\\:structurePanel");
-    if (selectedTreeNode.length === 1 && structureTree.length) {
-        structureTree.animate({
-            scrollTop: selectedTreeNode.position().top - structureTree.height()/2
+    let logicalStructure = $("#logicalStructure .scroll-wrapper");
+    let physicalStructure = $("#physicalStructure .scroll-wrapper");
+    let selectedLogicalNode = logicalStructure.find(".ui-treenode-selected");
+    let selectedPhysicalNode = physicalStructure.find(".ui-treenode-selected");
+    if (selectedLogicalNode.length === 1 && logicalStructure.length) {
+        logicalStructure.animate({
+            scrollTop: selectedLogicalNode.position().top - logicalStructure.height()/2
+        }, 180, null, null);
+    }
+    if (selectedPhysicalNode.length === 1 && physicalStructure.length) {
+        physicalStructure.animate({
+            scrollTop: selectedPhysicalNode.position().top - physicalStructure.height()/2
         }, 180, null, null);
     }
 }
@@ -219,7 +228,7 @@ $(document).ready(function () {
     if ($("#thumbnailStripeScrollableContent")[0] != null) {
         initialize();
     }
-    if ($("#structureTreeForm\\:structurePanel").length) {
+    if ($("#structurePanel").length) {
         initializeStructureTreeScrolling();
     }
 });
