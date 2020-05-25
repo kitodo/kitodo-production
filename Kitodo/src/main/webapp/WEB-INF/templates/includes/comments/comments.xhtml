@@ -13,6 +13,7 @@
 
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:panel id="commentWrapperPanel" styleClass="wrapperPanel">
@@ -20,13 +21,19 @@
             <!-- Existing comments -->
             <p:dataTable id="commentsGrid" value="#{CommentForm.getAllComments()}" var="item">
                 <p:column style="width: 100%;">
-                    <p:outputLabel value="#{msgs.correctionK}"
+                    <p:outputLabel value="#{msgs.correctionK} "
                                    styleClass="#{(item.corrected) ? 'correction solved' : 'correction'}"
                                    rendered="#{item.type eq 'ERROR'}"/>
 
-                    <h:outputText value="#{item.author ne null ? item.author.fullName : 'System'}: #{item.messageFormatted}"
+                    <h:outputText value="#{item.author ne null ? item.author.fullName : 'System'}"
+                                  styleClass="comment-author"/>
+                    <h:outputText value="#{item.creationDate}"
+                                  styleClass="comment-date">
+                        <f:convertDateTime pattern="yyyy-MM-dd hh:mm:ss"/>
+                    </h:outputText>
+                    <h:outputText value="#{item.messageFormatted}"
                                   escape="false"
-                                  styleClass="full-width"/>
+                                  styleClass="comment-message"/>
                     <p:commandButton
                             rendered="#{(item.type eq 'ERROR') and (!item.corrected)}"
                             icon="fa fa-check"

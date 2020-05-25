@@ -1597,6 +1597,24 @@ form#metadata div label,
     display: none;
 }
 
+.comment-author {
+    font-weight: bold;
+    margin-right: .2em;
+}
+
+.comment-date::before {
+    content: '(';
+}
+
+.comment-date::after {
+    content: ')';
+}
+
+.comment-message {
+    display: block;
+    width: 100%;
+}
+
 #newCommentDialog .ui-dialog-content {
     padding: var(--default-double-size);
 }
