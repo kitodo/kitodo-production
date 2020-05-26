@@ -105,10 +105,12 @@
                             <div id="metadataPanel" data-min-height="100" class="#{viewMetadata ? '' : 'collapsed'}">
                                 <p:accordionPanel id="metadataAccordion"
                                                   styleClass="#{DataEditorForm.structurePanel.separateMedia ? 'separateStructure' : ''}">
-                                    <p:tab title="#{msgs.logical} #{msgs.metadata}">
+                                    <p:tab title="#{msgs.logical} #{msgs.metadata}"
+                                           titleStyleClass="logical-metadata-tab">
                                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/logicalMetadata.xhtml" />
                                     </p:tab>
                                     <p:tab title="#{msgs.physical} #{msgs.metadata}"
+                                           titleStyleClass="physical-metadata-tab"
                                            rendered="#{DataEditorForm.structurePanel.separateMedia}">
                                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/physicalMetadata.xhtml" />
                                     </p:tab>
