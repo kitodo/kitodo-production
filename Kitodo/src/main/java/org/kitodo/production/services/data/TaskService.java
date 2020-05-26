@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -831,5 +833,86 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         }
         long differenceTime = end.getTime() - begin.getTime();
         return differenceTime / (1000 * 60 * 60 * 24);
+    }
+
+    /**
+     * Compute and return list of tasks that are open or in work in the given Process 'process' and are concurrent but
+     * not equal not the to given Task 'task', if 'task' is not null.
+     * @param process Process whose tasks are returned
+     * @param task task to filter from returned list, if not null
+     * @return List of concurrent open or inwork tasks
+     */
+    public static List<Task> getConcurrentTasksOpenOrInWork(Process process, Task task) {
+        List<Task> tasks = process.getTasks().stream()
+                .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())
+                        || TaskStatus.OPEN.equals(t.getProcessingStatus()))
+                .collect(Collectors.toList());
+        if (Objects.nonNull(task) && task.isConcurrent()) {
+            return tasks.stream()
+                    .filter(t -> !t.getId().equals(task.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            return tasks;
+        }
+    }
+
+    /**
+     * Filter and return current list of tasks for those in work by other users.
+     * @param tasks list of tasks
+     * @return list of tasks in work by other users
+     */
+    public static List<Task> getTasksInWorkByOtherUsers(List<Task> tasks) {
+        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        return tasks.stream()
+                .filter(t -> Objects.nonNull(t.getProcessingUser())
+                        && authenticatedUserId != t.getProcessingUser().getId())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Compute and return list of tasks that are eligible as 'currentTask' for a new correction comment.
+     *
+     * @return list of current task options for new correction comment
+     */
+    public static List<Task> getCurrentTaskOptions(Process process) {
+        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        // NOTE: checking for 'INWORK' tasks that do not have a 'processingUser' shouldn't be necessary, but the current
+        // version of Kitodo.Production allows setting tasks to 'INWORK' without explicitly assigning a user to it via a
+        // process' task list (e.g. administrative action)
+        return process.getTasks().stream()
+                .filter(t -> (TaskStatus.INWORK.equals(t.getProcessingStatus())
+                        && ((Objects.nonNull(t.getProcessingUser()) && authenticatedUserId == t.getProcessingUser().getId())
+                        || Objects.isNull(t.getProcessingUser())))
+                        || TaskStatus.OPEN.equals(t.getProcessingStatus()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Create and return a tooltip for the correction message switch using the give Process and Task.
+     * @param process Process for which tooltip is created
+     * @param task Task for which tooltip is created
+     * @return tooltip for correction message switch
+     */
+    public static String getCorrectionMessageSwitchTooltip(Process process, Task task) {
+        if (Objects.nonNull(task) && task.getOrdering() == 1) {
+            return Helper.getTranslation("dataEditor.comment.firstTaskInWorkflow");
+        } else {
+            List<Task> concurrentTasks = TaskService.getConcurrentTasksOpenOrInWork(process, task);
+            if (concurrentTasks.isEmpty()) {
+                Helper.setErrorMessage("Invalid process state: no 'inwork' or 'open' task found!");
+                return "";
+            } else if (concurrentTasks.get(0).getOrdering() == 1) {
+                return Helper.getTranslation("dataEditor.comment.firstTaskInWorkflow");
+            } else {
+                List<Task> tasksInWorkByOtherUsers = TaskService.getTasksInWorkByOtherUsers(concurrentTasks);
+                if (tasksInWorkByOtherUsers.isEmpty()) {
+                    return "";
+                } else {
+                    return MessageFormat.format(Helper.getTranslation("dataEditor.comment.parallelTaskInWorkText"),
+                            tasksInWorkByOtherUsers.get(0).getTitle(),
+                            tasksInWorkByOtherUsers.get(0).getProcessingUser().getFullName());
+                }
+            }
+        }
     }
 }

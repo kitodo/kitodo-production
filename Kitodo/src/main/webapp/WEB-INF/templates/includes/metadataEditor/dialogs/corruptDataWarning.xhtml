@@ -38,12 +38,14 @@
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="reload"
-                                         action="#{DataEditorForm.open(DataEditorForm.currentTask.id, DataEditorForm.referringView)}"
+                                         action="#{DataEditorForm.open(DataEditorForm.process.id, DataEditorForm.referringView)}"
                                          oncomplete="PF('addMetadataDialog').hide();"
                                          value="#{msgs.ok}"
                                          icon="fa fa-check"
                                          iconPos="right"
-                                         styleClass="primary right"/>
+                                         styleClass="primary right">
+                            <f:actionListener binding="#{CommentForm.setProcessById(DataEditorForm.process.id)}"/>
+                        </p:commandButton>
                     </h:panelGroup>
                 </p:row>
             </p:panelGrid>

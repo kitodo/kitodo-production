@@ -13,13 +13,10 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -32,15 +29,14 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
-import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 @Named("CommentForm")
@@ -51,8 +47,32 @@ public class CommentForm extends BaseForm {
     private String commentMessage;
     private String correctionTaskId;
     private Task currentTask;
+    private Process process;
     private BatchTaskHelper batchHelper;
-    private WorkflowControllerService workflowControllerService = new WorkflowControllerService();
+    private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
+
+    /**
+     * Get process.
+     *
+     * @return value of process
+     */
+    public Process getProcess() {
+        return process;
+    }
+
+    /**
+     * Set process by ID.
+     *
+     * @param processId process ID
+     */
+    public void setProcessById(int processId) {
+        try {
+            this.process = ServiceManager.getProcessService().getById(processId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {ObjectType.PROCESS.getTranslationSingular(),
+                processId}, logger, e);
+        }
+    }
 
     /**
      * Get all process Comments.
@@ -60,12 +80,7 @@ public class CommentForm extends BaseForm {
      * @return List of Comments.
      */
     public List<Comment> getAllComments() {
-        try {
-            this.currentTask.setProcess(WikiFieldHelper.transformWikiFieldToComment(this.currentTask.getProcess()));
-        } catch (DAOException | DataException | ParseException e) {
-            Helper.setErrorMessage("Error in conversion of Wiki field to comments: ", logger, e);
-        }
-        return ServiceManager.getCommentService().getAllCommentsByProcess(this.currentTask.getProcess());
+        return ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
     }
 
     /**
@@ -195,14 +210,14 @@ public class CommentForm extends BaseForm {
      * Correction message to previous Tasks.
      */
     public List<Task> getPreviousStepsForProblemReporting() {
-        refreshProcess(this.currentTask.getProcess());
-        if (Objects.isNull(currentTask)) {
-            Helper.setErrorMessage("Invalid process state: no 'active' or 'open' task found!");
+        refreshProcess(this.process);
+        List<Task> currentTaskOptions = getCurrentTaskOptions();
+        if (currentTaskOptions.isEmpty()) {
             return Collections.emptyList();
         } else {
             return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-                    this.currentTask.getOrdering(),
-                    this.currentTask.getProcess().getId());
+                    currentTaskOptions.get(0).getOrdering(),
+                    this.process.getId());
         }
     }
 
@@ -247,7 +262,9 @@ public class CommentForm extends BaseForm {
         try {
             if (!Objects.equals(process.getId(), 0)) {
                 ServiceManager.getProcessService().refresh(process);
-                this.currentTask.setProcess(ServiceManager.getProcessService().getById(process.getId()));
+                if (Objects.nonNull(this.currentTask)) {
+                    this.currentTask.setProcess(ServiceManager.getProcessService().getById(process.getId()));
+                }
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
@@ -265,6 +282,7 @@ public class CommentForm extends BaseForm {
     public void setCurrentTaskById(int taskId) {
         try {
             this.currentTask = ServiceManager.getTaskService().getById(taskId);
+            this.setProcessById(this.currentTask.getProcess().getId());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.TASK.getTranslationSingular(), taskId}, logger, e);
@@ -300,33 +318,44 @@ public class CommentForm extends BaseForm {
      * @return whether there are concurrent tasks in work or not
      */
     public boolean isConcurrentTaskInWork() {
-        return !getConcurrentTasksInWork().isEmpty();
+        return !TaskService.getTasksInWorkByOtherUsers(
+                TaskService.getConcurrentTasksOpenOrInWork(this.process, this.currentTask)).isEmpty();
     }
 
     /**
-     * Create a tooltip explaining that there are concurrent tasks to the current task.
+     * Create and return a tooltip for the correction message switch.
      *
-     * @return concurrent task in work tooltip
+     * @return tooltip for correction message switch
      */
-    public String getConcurrentTaskInWorkTooltip() {
-        List<Task> concurrentTasks = getConcurrentTasksInWork();
-        if (concurrentTasks.isEmpty()) {
-            return "";
-        } else {
-            return MessageFormat.format(Helper.getTranslation("dataEditor.comment.parallelTaskInWorkText"),
-                    concurrentTasks.get(0).getTitle(), concurrentTasks.get(0).getProcessingUser().getFullName());
-        }
+    public String getCorrectionMessageSwitchTooltip() {
+        return TaskService.getCorrectionMessageSwitchTooltip(this.process, this.currentTask);
     }
 
-    private List<Task> getConcurrentTasksInWork() {
-        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
-        if (currentTask.isConcurrent()) {
-            return currentTask.getProcess().getTasks().stream()
-                    .filter(t -> !t.getId().equals(this.currentTask.getId())
-                            && TaskStatus.INWORK.equals(t.getProcessingStatus())
-                            && authenticatedUserId != t.getProcessingUser().getId())
-                    .collect(Collectors.toList());
-        }
-        return new LinkedList<>();
+    /**
+     * Compute and return list of tasks that are eligible as 'currentTask' for a new correction comment.
+     *
+     * @return list of current task options for new correction comment
+     */
+    public List<Task> getCurrentTaskOptions() {
+        return TaskService.getCurrentTaskOptions(this.process);
     }
+
+    /**
+     * Get currentTask.
+     *
+     * @return value of currentTask
+     */
+    public Task getCurrentTask() {
+        return currentTask;
+    }
+
+    /**
+     * Set currentTask.
+     *
+     * @param currentTask as org.kitodo.data.database.beans.Task
+     */
+    public void setCurrentTask(Task currentTask) {
+        this.currentTask = currentTask;
+    }
+
 }

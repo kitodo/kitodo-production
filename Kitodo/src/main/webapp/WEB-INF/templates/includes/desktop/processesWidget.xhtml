@@ -50,26 +50,13 @@
                     <f:param name="referer" value="desktop"/>
                 </h:link>
 
-                <!--@elvariable id="taskOptions" type="java.util.List"-->
-                <ui:param name="taskOptions" value="#{DataEditorForm.getCurrentTaskOptions(process.id)}"/>
-                <!-- if the user has more than one metadata editor task "INWORK", display "select current task" dialog -->
-                <p:commandLink id="openTaskSelectionDialogLink"
-                               styleClass="action"
-                               title="#{msgs['dataEditor.selectMetadataTask']} (#{process.title})"
-                               oncomplete="$('#loadingScreen').hide(); PF('selectCurrentTaskDialog').show();"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() gt 1}">
-                    <f:actionListener binding="#{DataEditorForm.setProcessByID(process.id)}"/>
-                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
-                </p:commandLink>
-                <!-- else, open metadata editor directly -->
-                <!--@elvariable id="currentTaskId" type="int"-->
-                <ui:param name="currentTaskId" value="#{taskOptions.size() eq 1 ? taskOptions.get(0).getId() : DataEditorForm.getFallbackTaskID(process.id)}" />
+                <!-- open metadata editor -->
                 <h:commandLink id="readXML"
-                               action="#{DataEditorForm.open(currentTaskId, 'desktop')}"
+                               action="#{DataEditorForm.open(process.id, 'desktop')}"
                                styleClass="action"
                                title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() and taskOptions.size() le 1}">
-                    <f:actionListener binding="#{CommentForm.setCurrentTaskById(currentTaskId)}"/>
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                    <f:actionListener binding="#{CommentForm.setProcessById(process.id)}"/>
                     <h:outputText><i class="fa fa-list-alt"/></h:outputText>
                 </h:commandLink>
 
