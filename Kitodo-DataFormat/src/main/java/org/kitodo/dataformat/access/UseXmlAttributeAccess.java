@@ -11,10 +11,12 @@
 
 package org.kitodo.dataformat.access;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
@@ -55,6 +57,11 @@ public class UseXmlAttributeAccess {
         mediaVariant.setUse(fileGrp.getUSE());
         Set<String> mimeTypes = fileGrp.getFile().parallelStream().map(fileType -> fileType.getMIMETYPE())
                 .filter(Objects::nonNull).collect(Collectors.toSet());
+        for (Iterator<String> mimeType = mimeTypes.iterator(); mimeTypes.size() > 1 && mimeType.hasNext();) {
+            if (StringUtils.isEmpty(mimeType.next())) {
+                mimeType.remove();
+            }
+        }
         switch (mimeTypes.size()) {
             case 0:
                 throw new IllegalArgumentException("Corrupt file: <mets:fileGrp USE=\"" + mediaVariant.getUse()
