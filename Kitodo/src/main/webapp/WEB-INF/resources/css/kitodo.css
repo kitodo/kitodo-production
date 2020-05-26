@@ -1194,6 +1194,11 @@ Import form
     font-weight: bold;
 }
 
+.correction {
+    color: var(--focused-orange);
+    font-weight: bold;
+}
+
 .corrected {
     color: var(--medium-gray);
 }
@@ -2149,15 +2154,6 @@ Column content
 #metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectoneradio label {
     display: inline-block;
     overflow: hidden;
-}
-
-.correction {
-    color: var(--focused-orange);
-    font-weight: bold;
-}
-
-.solved {
-    color: var(--orange);
 }
 
 #imagePreviewForm {
