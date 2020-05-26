@@ -1700,7 +1700,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         try {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
             return ServiceManager.getMetsService().getBaseType(metadataFilePath);
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             logger.error("Could not determine base type for process: " + e.getMessage());
             return "";
         }
