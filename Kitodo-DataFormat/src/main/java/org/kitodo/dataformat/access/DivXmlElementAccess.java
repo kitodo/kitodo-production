@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -275,8 +276,12 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      * @return a metadata section, if there is data for it
      */
     static Optional<MdSecType> createMdSec(Iterable<Metadata> metadata, MdSec domain) {
+        if (StreamSupport.stream(metadata.spliterator(), false)
+                .noneMatch(piece -> Objects.equals(piece.getDomain(), domain))) {
+            return Optional.empty();
+        }
+
         KitodoType kitodoType = new KitodoType();
-        boolean empty = true;
         for (Metadata entry : metadata) {
             if (domain.equals(entry.getDomain())) {
                 if (entry instanceof MetadataEntry) {
@@ -285,20 +290,15 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
                     kitodoType.getMetadataGroup()
                             .add(new MetadataGroupXmlElementAccess((MetadataGroup) entry).toXMLMetadataGroup());
                 }
-                empty = false;
             }
         }
-        if (empty) {
-            return Optional.empty();
-        } else {
-            XmlData xmlData = new XmlData();
-            xmlData.getAny().add(new JAXBElement<>(KITODO_QNAME, KitodoType.class, kitodoType));
-            MdWrap mdWrap = new MdWrap();
-            mdWrap.setXmlData(xmlData);
-            MdSecType dmdSec = new MdSecType();
-            dmdSec.setMdWrap(mdWrap);
-            return Optional.of(dmdSec);
-        }
+        XmlData xmlData = new XmlData();
+        xmlData.getAny().add(new JAXBElement<>(KITODO_QNAME, KitodoType.class, kitodoType));
+        MdWrap mdWrap = new MdWrap();
+        mdWrap.setXmlData(xmlData);
+        MdSecType dmdSec = new MdSecType();
+        dmdSec.setMdWrap(mdWrap);
+        return Optional.of(dmdSec);
     }
 
     /**
