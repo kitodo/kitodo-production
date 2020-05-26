@@ -55,6 +55,27 @@ public enum FunctionalDivision {
     }
 
     /**
+     * Iterates over the {@code enum} constants, and if the candidate value has
+     * the searched mark, it is added to the list.
+     *
+     * @param mark
+     *            a character string defining how the special field is to be
+     *            marked in the ruleset
+     * @param to
+     *            object to add value, return value of {@link #valuesOf(String)}
+     * @return whether the loop has to continue
+     */
+    private static boolean addEnumByMark(String mark, Set<FunctionalDivision> to) {
+        for (FunctionalDivision candidate : FunctionalDivision.values()) {
+            if (mark.equals(candidate.mark)) {
+                to.add(candidate);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns a string which defines how the special field is to be marked in
      * the ruleset.
      *
@@ -75,12 +96,9 @@ public enum FunctionalDivision {
      */
     public static Set<FunctionalDivision> valuesOf(String marks) {
         Set<FunctionalDivision> values = new HashSet<>();
-        OUTER: for (String mark : marks.split("\\s+", 0)) {
-            for (FunctionalDivision candidate : FunctionalDivision.values()) {
-                if (mark.equals(candidate.mark)) {
-                    values.add(candidate);
-                    continue OUTER;
-                }
+        for (String mark : marks.split("\\s+", 0)) {
+            if (addEnumByMark(mark, values)) {
+                continue;
             }
             logger.warn("Ruleset declares undefined field use '{}', must be one of: {}", mark,
                     Arrays.stream(values()).map(FunctionalDivision::toString).collect(Collectors.joining(", ")));
