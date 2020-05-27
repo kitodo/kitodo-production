@@ -1194,6 +1194,11 @@ Import form
     font-weight: bold;
 }
 
+.correction {
+    color: var(--focused-orange);
+    font-weight: bold;
+}
+
 .corrected {
     color: var(--medium-gray);
 }
@@ -1595,6 +1600,24 @@ form#metadata div label,
 
 #commentsBox\:commentsGrid_head {
     display: none;
+}
+
+.comment-author {
+    font-weight: bold;
+    margin-right: .2em;
+}
+
+.comment-date::before {
+    content: '(';
+}
+
+.comment-date::after {
+    content: ')';
+}
+
+.comment-message {
+    display: block;
+    width: 100%;
 }
 
 #newCommentDialog .ui-dialog-content {
@@ -2133,15 +2156,6 @@ Column content
 #metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectoneradio label {
     display: inline-block;
     overflow: hidden;
-}
-
-.correction {
-    color: var(--focused-orange);
-    font-weight: bold;
-}
-
-.solved {
-    color: var(--orange);
 }
 
 #imagePreviewForm {

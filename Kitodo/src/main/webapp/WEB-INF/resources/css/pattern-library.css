@@ -1505,6 +1505,30 @@ Popup dialogs
     display: none !important;
 }
 
+.counter-badge {
+    background: var(--medium-gray);
+    border-radius: 1em;
+    color: var(--cloudy-gray);
+    display: inline-block;
+    font-size: .7em;
+    line-height: 1;
+    margin-left: var(--default-half-size);
+    min-width: .9em;
+    padding: 3px 7px;
+    text-align: center;
+    vertical-align: text-top;
+}
+
+.ui-tabs-selected .counter-badge {
+    background: var(--blue);
+    color: var(--pure-white);
+}
+
+.counter-badge.new {
+    background: var(--orange);
+    color: var(--pure-white);
+}
+
 /* Helper classes for margin */
 .m-1em {
     margin: 1em;
