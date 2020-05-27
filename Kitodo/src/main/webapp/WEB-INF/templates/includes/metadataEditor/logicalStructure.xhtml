@@ -77,6 +77,7 @@
                         disabled="#{readOnly}"
                         action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
                         actionListener="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
+                        process="@this"
                         oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeDialog"/>
             <p:menuitem value="#{msgs.changeDocstructType}"
@@ -85,6 +86,7 @@
                         styleClass="plain"
                         disabled="#{readOnly}"
                         actionListener="#{DataEditorForm.changeDocStrucTypeDialog.prepare}"
+                        process="@this"
                         oncomplete="PF('dialogEditDocStrucType').show()"
                         update="dialogEditDocStrucTypeDialog"/>
             <p:menuitem value="#{msgs.assignToNextElement}"
@@ -93,6 +95,7 @@
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not DataEditorForm.structurePanel.assignedSeveralTimes}"
                         action="#{DataEditorForm.structurePanel.assign}"
+                        process="@this"
                         oncomplete="$('#loadingScreen').hide()"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
@@ -104,6 +107,7 @@
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes}"
                         action="#{DataEditorForm.structurePanel.unassign}"
+                        process="@this"
                         oncomplete="$('#loadingScreen').hide()"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
@@ -117,6 +121,7 @@
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
                         action="#{DataEditorForm.deleteStructure()}"
+                        process="@this"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel

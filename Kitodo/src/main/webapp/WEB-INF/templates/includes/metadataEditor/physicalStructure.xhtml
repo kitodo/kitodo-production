@@ -69,6 +69,7 @@
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
+                        process="@this"
                         actionListener="#{DataEditorForm.addMediaUnitDialog.prepare}"
                         oncomplete="PF('dialogAddMediaUnit').show()"
                         update="dialogAddMediaUnitForm"/>
@@ -77,6 +78,7 @@
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
+                        process="@this"
                         action="#{DataEditorForm.deleteMediaUnit()}"
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
