@@ -50,6 +50,12 @@ public class Division {
     private String use;
 
     /**
+     * If the division should not use a workflow.
+     */
+    @XmlAttribute
+    private boolean noWorkflow;
+
+    /**
      * The schema in which the part of the date relevant to this division is
      * stored. Apart from the dates built into Java and interpreted by the
      * runtime, there is still the special string “{@code yyyy/yyyy}”, which
@@ -154,5 +160,14 @@ public class Division {
      */
     public String getUse() {
         return use;
+    }
+
+    /**
+     * Returns if no workflow is used.
+     *
+     * @return if no workflow is used.
+     */
+    public boolean isNoWorkflow() {
+        return noWorkflow;
     }
 }

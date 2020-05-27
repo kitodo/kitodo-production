@@ -79,6 +79,21 @@ public class RulesetManagement implements RulesetManagementInterface {
         return getIdsOfDivisionsForSpecialField(ruleset.getDivisions(), functionalDivision);
     }
 
+    @Override
+    public Collection<String> getDivisionsWithNoWorkflow() {
+        return getDivionsWithNoWorkflow(ruleset.getDivisions());
+    }
+
+    private Collection<String> getDivionsWithNoWorkflow(List<Division> divisions) {
+        ArrayList<String> divionsWithNoWorkflow = new ArrayList<>();
+        for (Division division : divisions) {
+            if(division.isNoWorkflow()) {
+                divionsWithNoWorkflow.add(division.getId());
+            }
+        }
+        return divionsWithNoWorkflow;
+    }
+
     private List<String> getIdsOfDivisionsForSpecialField(List<Division> divisions,
             FunctionalDivision functionalDivision) {
         ArrayList<String> idsOfDivisionsForSpecialField = new ArrayList<>();

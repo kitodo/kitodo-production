@@ -11,12 +11,11 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import com.sun.jersey.api.NotFoundException;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +54,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.primefaces.PrimeFaces;
+
+import com.sun.jersey.api.NotFoundException;
 
 @Named("CreateProcessForm")
 @ViewScoped
@@ -289,6 +290,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                     logger, e);
         } catch (IOException | ProcessGenerationException e) {
             logger.error(e.getLocalizedMessage());
+        } catch (RulesetNotFoundException e) {
+            Helper.setErrorMessage("rulesetNotFound", new Object[] {this.getMainProcess().getRuleset().getFile()},
+                    logger, e);
         }
         return this.stayOnCurrentPage;
     }
@@ -351,13 +355,19 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     /**
      * Create process hierarchy.
      */
-    private void createProcessHierarchy() throws DataException, ProcessGenerationException, IOException {
-        // discard all processes in hierarchy except the first if parent process in title record link tab is selected!
-        if (this.processes.size() > 1
-                && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
+    private void createProcessHierarchy()
+            throws DataException, ProcessGenerationException, IOException, RulesetNotFoundException {
+        // discard all processes in hierarchy except the first if parent process in
+        // title record link tab is selected!
+        if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
                 && Objects.nonNull(this.titleRecordLinkTab.getSelectedInsertionPosition())
                 && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
             this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
+        }
+        // remove tasks from process, if doctype is configured not to use a workflow
+        Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService().openRuleset(getMainProcess().getRuleset()).getDivisionsWithNoWorkflow();
+        if (divisionsWithNoWorkflow.contains(processDataTab.getDocType())) {
+            this.getMainProcess().getTasks().clear();
         }
         processAncestors();
         processChildren();

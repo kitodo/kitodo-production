@@ -99,4 +99,28 @@ public class CreateProcessFormIT {
         processService.remove(processId);
         fileService.delete(URI.create(processId.toString()));
     }
+    @Test
+    public void shouldCreateProcessWithoutTasks() throws Exception {
+        CreateProcessForm underTest = new CreateProcessForm();
+        underTest.getProcessDataTab().setDocType("MultiVolumeWork");
+        Process newProcess = new Process();
+        Workpiece newWorkPiece = new Workpiece();
+        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
+        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
+        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
+        underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
+        underTest.getMainProcess().setTitle("title");
+
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        ExecutionPermission.setExecutePermission(script);
+        underTest.createNewProcess();
+        ExecutionPermission.setNoExecutePermission(script);
+
+        assertEquals("There are tasks assigned to a process with doctype 'noWorkflow'", 0, newProcess.getTasks().size());
+
+        // clean up database, index and file system
+        Integer processId = newProcess.getId();
+        processService.remove(processId);
+        fileService.delete(URI.create(processId.toString()));
+    }
 }

@@ -24,6 +24,9 @@
         <division id="ContainedWork" processTitle="TSL_ATS+'_'+CatalogIDDigital">
             <label>Beigefügtes Werk</label>
         </division>
+        <division id="MultiVolumeWork" noWorkflow="true" processTitle="TSL_ATS+'_'+CatalogIDDigital">
+            <label>Mehrbändiges Werk</label>
+        </division>
         <key id="TitleDocMain" domain="source">
             <label>HauptTitel</label>
         </key>
