@@ -30,6 +30,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.helper.Helper;
@@ -68,9 +69,10 @@ public class ExportDms extends ExportMets {
      *            Process object
      */
     @Override
-    public void startExport(Process process) throws IOException, DAOException {
+    public void startExport(Process process) throws DAOException, DataException, IOException {
         boolean exported = process.isExported();
         process.setExported(true);
+        ServiceManager.getProcessService().save(process);
         boolean exportSucessfull = startExport(process, (URI) null);
         if (exportSucessfull) {
             if (Objects.nonNull(process.getParent())) {
@@ -79,6 +81,7 @@ public class ExportDms extends ExportMets {
         } else {
             process.setExported(exported);
         }
+        ServiceManager.getProcessService().save(process);
     }
 
     /**
