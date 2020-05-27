@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -95,7 +96,11 @@ public class KitodoServiceLoader<T> {
      */
     public T loadModule() {
         ServiceLoader<T> loader = getClassLoader();
-        return loader.iterator().next();
+        Iterator<T> loaderIterator = loader.iterator();
+        if (!loaderIterator.hasNext()) {
+            logger.error("Couldn't find a module for {}!", clazz);
+        }
+        return loaderIterator.next();
     }
 
     /**
