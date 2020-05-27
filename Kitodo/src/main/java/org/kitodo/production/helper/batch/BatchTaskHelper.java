@@ -143,7 +143,7 @@ public class BatchTaskHelper extends BatchHelper {
             ExportDms export = new ExportDms();
             try {
                 export.startExport(step.getProcess());
-            } catch (IOException | DAOException e) {
+            } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("task"), step.getId() }, logger, e);
             }

@@ -2428,11 +2428,16 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Export Mets.
      *
-     * @param processId Id of which process should be exported
-     * @throws IOException Thrown on IO error
-     * @throws DAOException Thrown on database like error
+     * @param processId
+     *            Id of which process should be exported
+     * @throws DAOException
+     *             Thrown on database error
+     * @throws DataException
+     *             Thrown on index error
+     * @throws IOException
+     *             Thrown on I/O error
      */
-    public static void exportMets(int processId) throws IOException, DAOException {
+    public static void exportMets(int processId) throws DAOException, DataException, IOException {
         Process process = ServiceManager.getProcessService().getById(processId);
         ExportMets export = new ExportMets();
         export.startExport(process);

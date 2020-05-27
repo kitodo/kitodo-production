@@ -614,7 +614,7 @@ public class KitodoScriptService {
             try {
                 ExportDms dms = new ExportDms(!withoutImages);
                 dms.startExport(process);
-            } catch (IOException | DAOException e) {
+            } catch (DAOException | DataException | IOException e) {
                 logger.error(e.getMessage(), e);
             }
         }

@@ -456,7 +456,7 @@ public class BatchForm extends BaseForm {
                             ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
                     dms.startExport(process);
                 }
-            } catch (IOException | DAOException e) {
+            } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
                 return this.stayOnCurrentPage;
