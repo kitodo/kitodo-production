@@ -1691,17 +1691,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param process
      *            process whose root type is to be determined
-     * @return the type of root element of the root element of the workpiece
-     * @throws IOException
-     *             if the file cannot be read (for example, because the file was
-     *             not found)
+     * @return the type of the root element of the workpiece, "" if unreadable
      */
     public String getBaseType(Process process) {
         try {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
             return ServiceManager.getMetsService().getBaseType(metadataFilePath);
-        } catch (IOException e) {
-            logger.error("Could not determine base type for process: " + e.getMessage());
+        } catch (IOException | IllegalArgumentException e) {
+            logger.info("Could not determine base type for process {}: {}", process, e.getMessage());
             return "";
         }
     }
