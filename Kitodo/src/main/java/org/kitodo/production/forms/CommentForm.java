@@ -76,12 +76,14 @@ public class CommentForm extends BaseForm {
     }
 
     /**
-     * Get all process Comments.
+     * Get all process Comments in descending order.
      *
      * @return List of Comments.
      */
     public List<Comment> getAllComments() {
-        return ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
+        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
+        Collections.reverse(comments);
+        return comments;
     }
 
     /**
