@@ -169,6 +169,6 @@ public class Division {
      * @return if a workflow is used.
      */
     public boolean isWithWorkflow() {
-     return Objects.isNull(withWorkflow) ? true : withWorkflow;
+        return Objects.isNull(withWorkflow) ? true : withWorkflow;
     }
 }
