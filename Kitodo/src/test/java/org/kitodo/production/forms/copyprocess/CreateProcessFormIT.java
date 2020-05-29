@@ -78,10 +78,8 @@ public class CreateProcessFormIT {
     public void shouldCreateNewProcess() throws Exception {
         CreateProcessForm underTest = new CreateProcessForm();
         underTest.getProcessDataTab().setDocType("Monograph");
-        Process newProcess = new Process();
-        Workpiece newWorkPiece = new Workpiece();
-        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
-        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
+        underTest.prepareProcess(1,1,null);
+        underTest.initializeProcesses();
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");
@@ -93,33 +91,32 @@ public class CreateProcessFormIT {
         ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
         assertEquals("No process was created!", before + 1, after);
+        assertEquals("no Tasks were created", 5, underTest.getMainProcess().getTasks().size());
 
         // clean up database, index and file system
-        Integer processId = newProcess.getId();
+        Integer processId = underTest.getMainProcess().getId();
         processService.remove(processId);
         fileService.delete(URI.create(processId.toString()));
     }
     @Test
     public void shouldCreateProcessWithoutTasks() throws Exception {
         CreateProcessForm underTest = new CreateProcessForm();
+        underTest.prepareProcess(1,1,null);
+        underTest.initializeProcesses();
         underTest.getProcessDataTab().setDocType("MultiVolumeWork");
-        Process newProcess = new Process();
-        Workpiece newWorkPiece = new Workpiece();
-        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
-        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
+        underTest.getMainProcess().setTemplate(ServiceManager.getTemplateService().getById(1));
         underTest.getMainProcess().setTitle("title");
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         ExecutionPermission.setExecutePermission(script);
         underTest.createNewProcess();
         ExecutionPermission.setNoExecutePermission(script);
-
-        assertEquals("There are tasks assigned to a process with doctype 'noWorkflow'", 0, newProcess.getTasks().size());
+        assertEquals("There are tasks assigned to a process with doctype 'noWorkflow'", 0, underTest.getMainProcess().getTasks().size());
 
         // clean up database, index and file system
-        Integer processId = newProcess.getId();
+        Integer processId = underTest.getMainProcess().getId();
         processService.remove(processId);
         fileService.delete(URI.create(processId.toString()));
     }
