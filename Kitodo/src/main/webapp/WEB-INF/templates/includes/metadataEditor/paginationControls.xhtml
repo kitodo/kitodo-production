@@ -28,6 +28,7 @@
                          title="#{msgs.pagination}"
                          actionListener="#{DataEditorForm.paginationPanel.show()}"
                          oncomplete="PF('paginationDialog').show();"
+                         process="@this"
                          update="paginationForm"
                          styleClass="secondary #{readOnly ? 'disabled' : ''}"
                          disabled="#{readOnly}"
