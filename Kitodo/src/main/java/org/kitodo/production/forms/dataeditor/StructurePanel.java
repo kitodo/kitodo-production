@@ -104,6 +104,11 @@ public class StructurePanel implements Serializable {
     private int order = 1;
 
     /**
+     * Active tabs in StructurePanel's accordion.
+     */
+    private String activeTabs;
+
+    /**
      * Creates a new structure panel.
      *
      * @param dataEditor
@@ -1435,6 +1440,23 @@ public class StructurePanel implements Serializable {
         return severalAssignments;
     }
 
+    /**
+     * Get activeTabs.
+     *
+     * @return value of activeTabs
+     */
+    public String getActiveTabs() {
+        return activeTabs;
+    }
+
+    /**
+     * Set activeTabs.
+     *
+     * @param activeTabs as java.lang.String
+     */
+    public void setActiveTabs(String activeTabs) {
+        this.activeTabs = activeTabs;
+    }
 
     /**
      * Get the index of this StructureTreeNode's MediaUnit out of all MediaUnits

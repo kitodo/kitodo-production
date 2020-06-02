@@ -21,7 +21,7 @@
     <p:accordionPanel id="structureAccordion"
                       styleClass="wrapperPanel #{separateStructure ? 'separateStructure' : ''}"
                       multiple="true"
-                      activeIndex="0#{separateStructure ? ',1' : ''}"
+                      activeIndex="#{DataEditorForm.structurePanel.activeTabs}"
                       prependId="false">
         <!--@elvariable id="readOnly" type="boolean"-->
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
