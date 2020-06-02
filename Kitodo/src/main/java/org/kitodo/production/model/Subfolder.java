@@ -327,7 +327,7 @@ public class Subfolder {
         try (Stream<URI> relativeURIs = fileService.getSubUris(filter, query.getLeft()).parallelStream()) {
             Stream<URI> resultURIs = absolute ? relativeURIs.map(
                 uri -> new File(FilenameUtils.concat(ConfigCore.getKitodoDataDirectory(), uri.getPath())).toURI())
-                    : relativeURIs;
+                    : relativeURIs.map(uri -> URI.create(uri.toString().replaceFirst("^[^/]+/", "")));
             Function<URI, String> keyMapper = createKeyMapperForPattern(query.getRight());
             return resultURIs.collect(Collectors.toMap(keyMapper, Function.identity(), (previous, latest) -> latest,
                 () -> new TreeMap<>(new MetadataImageComparator())));
