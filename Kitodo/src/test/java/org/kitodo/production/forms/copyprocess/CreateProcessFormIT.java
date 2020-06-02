@@ -31,6 +31,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
@@ -76,6 +77,7 @@ public class CreateProcessFormIT {
 
     @Test
     public void shouldCreateNewProcess() throws Exception {
+        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().createNewFile();
         CreateProcessForm underTest = new CreateProcessForm();
         underTest.getProcessDataTab().setDocType("Monograph");
         underTest.prepareProcess(1,1,null);
@@ -97,9 +99,12 @@ public class CreateProcessFormIT {
         Integer processId = underTest.getMainProcess().getId();
         processService.remove(processId);
         fileService.delete(URI.create(processId.toString()));
+        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
     }
+    
     @Test
     public void shouldCreateProcessWithoutTasks() throws Exception {
+        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().createNewFile();
         CreateProcessForm underTest = new CreateProcessForm();
         underTest.prepareProcess(1,1,null);
         underTest.initializeProcesses();
@@ -119,5 +124,6 @@ public class CreateProcessFormIT {
         Integer processId = underTest.getMainProcess().getId();
         processService.remove(processId);
         fileService.delete(URI.create(processId.toString()));
+        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
     }
 }

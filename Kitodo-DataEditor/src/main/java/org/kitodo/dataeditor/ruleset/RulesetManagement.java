@@ -87,7 +87,7 @@ public class RulesetManagement implements RulesetManagementInterface {
     private Collection<String> getDivionsWithNoWorkflow(List<Division> divisions) {
         ArrayList<String> divionsWithNoWorkflow = new ArrayList<>();
         for (Division division : divisions) {
-            if(!division.isWithWorkflow()) {
+            if (!division.isWithWorkflow()) {
                 divionsWithNoWorkflow.add(division.getId());
             }
         }

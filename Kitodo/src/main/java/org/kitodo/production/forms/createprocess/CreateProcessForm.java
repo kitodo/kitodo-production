@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import com.sun.jersey.api.NotFoundException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -54,8 +56,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.primefaces.PrimeFaces;
-
-import com.sun.jersey.api.NotFoundException;
 
 @Named("CreateProcessForm")
 @ViewScoped
@@ -364,11 +364,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
             this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
         }
-        // remove tasks from process, if doctype is configured not to use a workflow
-        Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService().openRuleset(getMainProcess().getRuleset()).getDivisionsWithNoWorkflow();
-        if (divisionsWithNoWorkflow.contains(processDataTab.getDocType())) {
-            this.getMainProcess().getTasks().clear();
-        }
+        checkTasks();
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved so they have IDs before creating their process directories
@@ -380,9 +376,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         if (this.importDialog.isImportChildren() && !createProcessesLocation(this.childProcesses)) {
             throw new IOException("Unable to create directories for child processes!");
         }
-
         saveProcessHierarchyMetadata();
-
         // TODO: do the same 'ensureNonEmptyTitles' for child processes?
         if (ImportService.ensureNonEmptyTitles(this.processes)) {
             // saving the main process automatically saves it's parent and ancestor processes as well!
@@ -410,6 +404,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             }
         }
         ServiceManager.getProcessService().save(getMainProcess());
+    }
+
+    private void checkTasks() throws IOException, RulesetNotFoundException {
+        // remove tasks from process, if doctype is configured not to use a workflow
+        Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService()
+                .openRuleset(getMainProcess().getRuleset()).getDivisionsWithNoWorkflow();
+        if (divisionsWithNoWorkflow.contains(processDataTab.getDocType())) {
+            this.getMainProcess().getTasks().clear();
+        }
     }
 
     /**
