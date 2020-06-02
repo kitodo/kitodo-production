@@ -55,8 +55,8 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     /**
      * Returns the canonical part of the file name for a given media unit.
      *
-     * @param project
-     *            project to which the process belongs
+     * @param process
+     *            the process
      * @param mediaUnit
      *            Media unit for which the canonical part of the file name
      *            should be returned
