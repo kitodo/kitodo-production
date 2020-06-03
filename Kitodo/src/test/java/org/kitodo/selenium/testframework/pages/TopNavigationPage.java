@@ -158,6 +158,9 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
      void gotoTasks() {
          RemoteWebDriver driver = Browser.getDriver();
+         await("wait for taskpagelink to be clickable").pollDelay(700, TimeUnit.MILLISECONDS)
+                 .atMost(3, TimeUnit.SECONDS)
+                 .until(() -> driver.findElement(By.id("linkTasks")).isDisplayed());
          ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkTasks")));
     }
 
