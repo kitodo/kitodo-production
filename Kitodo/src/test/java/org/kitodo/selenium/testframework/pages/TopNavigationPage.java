@@ -156,12 +156,10 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     /**
      * Hovers dashboard menu and clicks on link to tasks page.
      */
-     void gotoTasks() {
-         RemoteWebDriver driver = Browser.getDriver();
-         await("wait for taskpagelink to be clickable").pollDelay(700, TimeUnit.MILLISECONDS)
-                 .atMost(3, TimeUnit.SECONDS)
-                 .until(() -> driver.findElement(By.id("linkTasks")).isDisplayed());
-         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkTasks")));
+    void gotoTasks() throws InterruptedException {
+        RemoteWebDriver driver = Browser.getDriver();
+        Thread.sleep(Browser.getDelayAfterDelete());
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkTasks")));
     }
 
     /**
