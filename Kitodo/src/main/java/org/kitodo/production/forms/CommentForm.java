@@ -112,7 +112,7 @@ public class CommentForm extends BaseForm {
         comment.setMessage(getCommentMessage());
         comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
         comment.setCreationDate(new Date());
-        comment.setProcess(this.currentTask.getProcess());
+        comment.setProcess(this.process);
         if (isCorrectionComment()) {
             try {
                 comment.setCorrectionTask(ServiceManager.getTaskService().getById(Integer.parseInt(getCorrectionTaskId())));
@@ -129,7 +129,7 @@ public class CommentForm extends BaseForm {
         }
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
-            ServiceManager.getProcessService().saveToIndex(this.currentTask.getProcess(), true);
+            ServiceManager.getProcessService().saveToIndex(this.process, true);
         } catch (DAOException | CustomResponseException | DataException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
