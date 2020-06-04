@@ -47,6 +47,14 @@
                               value="#{item.title}"/>
             </p:column>
 
+            <p:column id="processIdColumn"
+                      rendered="#{CurrentTaskForm.showColumn('task.processId')}"
+                      headerText="#{msgs.processId}">
+                <h:outputText title="#{item.process.id}"
+                              value="#{item.process.id}"/>
+            </p:column>
+
+
             <!-- columns for tasks that have been configured in kitodo config file! -->
             <p:columns value="#{CurrentTaskForm.getTaskCustomColumnNames()}"
                        var="taskColumn"
