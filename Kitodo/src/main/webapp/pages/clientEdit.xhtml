@@ -100,10 +100,12 @@
                             <p:selectOneMenu id="clientToCopyRoles" converter="#{clientConverter}" value="#{ClientForm.clientToCopyRoles}"  >
                                 <f:selectItem value="#{null}" itemLabel="#{msgs.clientSelect}"/>
                                 <f:selectItems value="#{ClientForm.possibleClientsForCopying}" var="client" itemValue="#{client}" itemLabel="#{client.name}"/>
+                                <p:ajax update="copyRolesToClient"/>
                             </p:selectOneMenu>
                             <p:commandButton id="copyRolesToClient"
                                              update="editForm:clientsTabView:clientRoleDatatable"
                                              oncomplete="toggleSave()"
+                                             disabled="#{ClientForm.clientToCopyRoles eq null}"
                                              action="#{ClientForm.copyRolesToClient()}"
                                              value="#{msgs.copyRolesToClient}"/>
                         </div>
