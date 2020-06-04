@@ -33,6 +33,23 @@
                 </division>
             </subdivisionByDate>
         </division>
+        <division id="Season">
+            <label>season</label>
+            <subdivisionByDate yearBegin="--07-01">
+                <division dates="ORDERLABEL" id="SeasonYear"
+                    scheme="yyyy/yyyy">
+                    <label>Year’s issues ‹season›</label>
+                </division>
+                <division dates="ORDERLABEL" id="SeasonMonth"
+                    scheme="yyyy-MM">
+                    <label>Month’s issues ‹season›</label>
+                </division>
+                <division dates="ORDERLABEL" id="SeasonDay"
+                    scheme="yyyy-MM-dd">
+                    <label>Day’s issues ‹season›</label>
+                </division>
+            </subdivisionByDate>
+        </division>
         <division id="NewspaperIssue">
             <label>Issue ‹newspaper›</label>
             <label lang="de">Ausgabe ‹Zeitung›</label>
