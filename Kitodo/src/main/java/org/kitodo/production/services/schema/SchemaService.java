@@ -33,7 +33,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.VariableReplacer;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyInnerPhysicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -68,7 +67,7 @@ public class SchemaService {
                 new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset(), workpiece), prefs,
                 process, null);
 
-        addVirtualFileGroupsToMetsMods(workpiece, process);
+        addVirtualFileGroupsToMetsMods(workpiece.getMediaUnit(), process);
         replaceFLocatForExport(workpiece, process);
 
         // Replace rights and digiprov entries.
@@ -119,16 +118,14 @@ public class SchemaService {
         workpiece.getRootElement().getMetadata().add(entry);
     }
 
-    private void addVirtualFileGroupsToMetsMods(Workpiece workpiece, Process process) {
-        List<Folder> folders = process.getProject().getFolders();
-        Subfolder useLocalSubfolder = getUseLocalSubfolder(process);
-        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
-            String canonical = useLocalSubfolder
-                    .getCanonical(mediaUnit.getMediaFiles().get(LegacyInnerPhysicalDocStructHelper.LOCAL));
-            if (Objects.nonNull(canonical)) {
-                removeFLocatsForUnwantedUses(process, folders, mediaUnit, canonical);
-                addMissingUses(process, folders, mediaUnit, canonical);
-            }
+    private void addVirtualFileGroupsToMetsMods(MediaUnit mediaUnit, Process process) {
+        String canonical = ServiceManager.getFolderService().getCanonical(process, mediaUnit);
+        if (Objects.nonNull(canonical)) {
+            removeFLocatsForUnwantedUses(process, mediaUnit, canonical);
+            addMissingUses(process, mediaUnit, canonical);
+        }
+        for (MediaUnit child : mediaUnit.getChildren()) {
+            addVirtualFileGroupsToMetsMods(child, process);
         }
     }
 
@@ -155,14 +152,14 @@ public class SchemaService {
      * mode NO or has linking mode EXISTING but the file does not exist, remove
      * it.
      */
-    private void removeFLocatsForUnwantedUses(Process process, List<Folder> folders,
+    private void removeFLocatsForUnwantedUses(Process process,
             MediaUnit mediaUnit,
             String canonical) {
         for (Iterator<Entry<MediaVariant, URI>> mediaFilesForMediaVariants = mediaUnit.getMediaFiles().entrySet()
                 .iterator(); mediaFilesForMediaVariants.hasNext();) {
             Entry<MediaVariant, URI> mediaFileForMediaVariant = mediaFilesForMediaVariants.next();
             String use = mediaFileForMediaVariant.getKey().getUse();
-            Optional<Folder> optionalFolderForUse = folders.parallelStream()
+            Optional<Folder> optionalFolderForUse = process.getProject().getFolders().parallelStream()
                     .filter(folder -> use.equals(folder.getFileGroup())).findAny();
             if (!optionalFolderForUse.isPresent()
                     || optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.NO)
@@ -178,9 +175,9 @@ public class SchemaService {
      * If the media unit is missing a variant that has linking mode ALL or has
      * linking mode EXISTING and the file does exist, add it.
      */
-    private void addMissingUses(Process process, List<Folder> folders, MediaUnit mediaUnit,
+    private void addMissingUses(Process process, MediaUnit mediaUnit,
             String canonical) {
-        for (Folder folder : folders) {
+        for (Folder folder : process.getProject().getFolders()) {
             Subfolder useFolder = new Subfolder(process, folder);
             if (mediaUnit.getMediaFiles().entrySet().parallelStream().map(Entry::getKey).map(MediaVariant::getUse)
                     .noneMatch(use -> use.equals(folder.getFileGroup())) && (folder.getLinkingMode().equals(LinkingMode.ALL)
@@ -188,25 +185,6 @@ public class SchemaService {
                 addUse(useFolder, canonical, mediaUnit);
             }
         }
-    }
-
-    /**
-     * Returns the USE="LOCAL" subfolder.
-     *
-     * @param process
-     *            process whose USE="LOCAL" subfolder shall be returned
-     * @return the subfolder with USE="LOCAL"
-     */
-    private Subfolder getUseLocalSubfolder(Process process) {
-        Folder useLocalFolder = process.getProject().getGeneratorSource();
-        if (Objects.isNull(useLocalFolder)) {
-            Optional<Folder> optionalUseLocalFolderByName = process.getProject().getFolders().parallelStream()
-                    .filter(folder -> folder.getFileGroup().equals("LOCAL")).findAny();
-            if (optionalUseLocalFolderByName.isPresent()) {
-                useLocalFolder = optionalUseLocalFolderByName.get();
-            }
-        }
-        return new Subfolder(process, useLocalFolder);
     }
 
     /**
