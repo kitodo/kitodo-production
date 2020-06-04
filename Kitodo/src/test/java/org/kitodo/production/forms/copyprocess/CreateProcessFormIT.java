@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,10 +29,12 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
+import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -44,8 +48,6 @@ public class CreateProcessFormIT {
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     private static final String firstProcess = "First process";
-
-    private static final String KITODO_PROJECTS_TEST_XML = "kitodo_projects_test.xml";
 
     /**
      * Is running before the class runs.
@@ -74,11 +76,12 @@ public class CreateProcessFormIT {
 
     @Test
     public void shouldCreateNewProcess() throws Exception {
-        new File(KITODO_PROJECTS_TEST_XML).renameTo(KitodoConfigFile.PROJECT_CONFIGURATION.getFile());
         CreateProcessForm underTest = new CreateProcessForm();
         underTest.getProcessDataTab().setDocType("Monograph");
-        underTest.prepareProcess(1,1,null);
-        underTest.initializeProcesses();
+        Process newProcess = new Process();
+        Workpiece newWorkPiece = new Workpiece();
+        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
+        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");
@@ -90,37 +93,10 @@ public class CreateProcessFormIT {
         ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
         assertEquals("No process was created!", before + 1, after);
-        assertEquals("no Tasks were created", 5, underTest.getMainProcess().getTasks().size());
 
         // clean up database, index and file system
-        Integer processId = underTest.getMainProcess().getId();
+        Integer processId = newProcess.getId();
         processService.remove(processId);
         fileService.delete(URI.create(processId.toString()));
-        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().renameTo(new File(KITODO_PROJECTS_TEST_XML));
-    }
-    
-    @Test
-    public void shouldCreateProcessWithoutTasks() throws Exception {
-        new File(KITODO_PROJECTS_TEST_XML).renameTo(KitodoConfigFile.PROJECT_CONFIGURATION.getFile());
-        CreateProcessForm underTest = new CreateProcessForm();
-        underTest.prepareProcess(1,1,null);
-        underTest.initializeProcesses();
-        underTest.getProcessDataTab().setDocType("MultiVolumeWork");
-        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
-        underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
-        underTest.getMainProcess().setTemplate(ServiceManager.getTemplateService().getById(1));
-        underTest.getMainProcess().setTitle("title");
-
-        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        //ExecutionPermission.setExecutePermission(script);
-        underTest.createNewProcess();
-        //ExecutionPermission.setNoExecutePermission(script);
-        assertEquals("There are tasks assigned to a process with doctype 'noWorkflow'", 0, underTest.getMainProcess().getTasks().size());
-
-        // clean up database, index and file system
-        Integer processId = underTest.getMainProcess().getId();
-        processService.remove(processId);
-        fileService.delete(URI.create(processId.toString()));
-        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().renameTo(new File(KITODO_PROJECTS_TEST_XML));
     }
 }
