@@ -565,6 +565,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         NestedQueryBuilder nestedQueryForMetadataGroupContent = nestedQuery(METADATA_GROUP_SEARCH_KEY,
             matchQuery(METADATA_GROUP_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
         MultiMatchQueryBuilder multiMatchQueryForProcessFields = multiMatchQuery(searchQuery,
+                ProcessTypeField.ID.getKey(),
                 ProcessTypeField.TITLE.getKey(),
                 ProcessTypeField.PROJECT_TITLE.getKey(),
                 ProcessTypeField.COMMENTS.getKey(),
