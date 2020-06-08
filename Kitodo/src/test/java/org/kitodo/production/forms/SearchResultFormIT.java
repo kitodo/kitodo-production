@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.services.ServiceManager;
 
@@ -85,6 +87,12 @@ public class SearchResultFormIT {
         Assert.assertEquals(2, resultList.size());
 
         searchResultForm.setSearchQuery("problem");
+        searchResultForm.searchForProcessesBySearchQuery();
+        resultList = searchResultForm.getFilteredList();
+
+        Assert.assertEquals(1, resultList.size());
+
+        searchResultForm.setSearchQuery("2");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 

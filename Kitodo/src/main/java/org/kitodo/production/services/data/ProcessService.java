@@ -571,6 +571,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 ProcessTypeField.WIKI_FIELD.getKey(),
                 ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
 
+        if (searchQuery.matches("^\\d*$")) {
+            multiMatchQueryForProcessFields.fields().put(ProcessTypeField.ID.getKey(), 1.0f);
+        }
+
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery.should(nestedQueryForMetadataContent);
         boolQuery.should(nestedQueryForMetadataGroupContent);
