@@ -40,6 +40,7 @@ import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ImageGeneratorStep;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
@@ -346,7 +347,15 @@ public class ImageGenerator implements Runnable {
     public void run() {
         do {
             state.accept(this);
-            setPosition(getPosition() + 1);
+            if (state.equals(ImageGeneratorStep.DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) && position == -1
+                    && sources.isEmpty()) {
+                if (Objects.nonNull(supervisor)) {
+                    supervisor.setProgress(100);
+                    supervisor.setWorkDetail(Helper.getTranslation("noImagesToGenerate"));
+                }
+                return;
+            }
+            position++;
             setProgress();
             if (Objects.nonNull(supervisor) && supervisor.isInterrupted()) {
                 return;
