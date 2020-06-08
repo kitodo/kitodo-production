@@ -69,20 +69,20 @@ public class ExportDms extends ExportMets {
      *            Process object
      */
     @Override
-    public void startExport(Process process) throws DAOException, DataException, IOException {
-        boolean wasPreviouslyExported = process.isExported();
-        process.setExported(true);
-        ServiceManager.getProcessService().save(process);
+    public void startExport(Process process) throws DataException {
+        boolean wasNotAlreadyExported = !process.isExported();
+        if (wasNotAlreadyExported) {
+            process.setExported(true);
+            ServiceManager.getProcessService().save(process);
+        }
         boolean exportSucessfull = startExport(process, (URI) null);
         if (exportSucessfull) {
-            if (!wasPreviouslyExported) {
-                ServiceManager.getProcessService().save(process);
-            }
             if (Objects.nonNull(process.getParent())) {
                 startExport(process.getParent());
             }
-        } else {
-            process.setExported(wasPreviouslyExported);
+        } else if (wasNotAlreadyExported) {
+            process.setExported(false);
+            ServiceManager.getProcessService().save(process);
         }
     }
 
