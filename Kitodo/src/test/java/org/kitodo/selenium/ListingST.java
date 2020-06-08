@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.DesktopPage;
@@ -28,7 +29,6 @@ import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
-import org.kitodo.production.services.ServiceManager;
 
 public class ListingST extends BaseTestSelenium {
 
@@ -172,10 +172,8 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
 
         List<String> detailsProject = projectsPage.getProjectDetails();
-        assertEquals("Displayed wrong number of project's details", 3, detailsProject.size());
-        assertEquals("Displayed wrong project's save format", "Mets", detailsProject.get(0));
-        assertEquals("Displayed wrong project's DMS export format", "Mets", detailsProject.get(1));
-        assertEquals("Displayed wrong project's METS owner", "Test Owner", detailsProject.get(2));
+        assertEquals("Displayed wrong number of project's details", 1, detailsProject.size());
+        assertEquals("Displayed wrong project's METS owner", "Test Owner", detailsProject.get(0));
 
         List<String> templatesProject = projectsPage.getProjectTemplates();
         assertEquals("Displayed wrong number of project's templates", 2, templatesProject.size());
