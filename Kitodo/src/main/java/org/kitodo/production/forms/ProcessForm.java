@@ -608,7 +608,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (DAOException | DataException | IOException e) {
+        } catch (DataException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                 new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
         }
@@ -634,7 +634,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 export.startExport(processToExport);
                 Helper.setMessage(EXPORT_FINISHED);
-            } catch (DAOException | DataException | IOException e) {
+            } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             }

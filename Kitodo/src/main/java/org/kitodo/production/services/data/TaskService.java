@@ -549,13 +549,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        ExportDms export = new ExportDms();
-        try {
-            export.startExport(task.getProcess());
-        } catch (IOException | DAOException e) {
-            Helper.setErrorMessage("errorExport", new Object[] {task.getProcess().getTitle() }, logger, e);
-            abortTask(task);
-        }
+        new ExportDms().startExport(task.getProcess());
     }
 
     /**

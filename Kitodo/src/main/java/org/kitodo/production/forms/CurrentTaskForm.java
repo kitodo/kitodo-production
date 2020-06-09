@@ -504,7 +504,7 @@ public class CurrentTaskForm extends BaseForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.currentTask.getProcess());
-        } catch (DAOException | DataException | IOException e) {
+        } catch (DataException e) {
             Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle() }, logger, e);
         }
     }

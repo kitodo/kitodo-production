@@ -34,7 +34,6 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.export.ExportDms;
@@ -614,7 +613,7 @@ public class KitodoScriptService {
             try {
                 ExportDms dms = new ExportDms(!withoutImages);
                 dms.startExport(process);
-            } catch (DAOException | DataException | IOException e) {
+            } catch (DataException e) {
                 logger.error(e.getMessage(), e);
             }
         }
