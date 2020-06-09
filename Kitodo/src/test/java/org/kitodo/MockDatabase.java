@@ -784,8 +784,6 @@ public class MockDatabase {
         firstProject.setEndDate(localDate.toDate());
         firstProject.setNumberOfPages(30);
         firstProject.setNumberOfVolumes(2);
-        firstProject.setFileFormatInternal("Mets");
-        firstProject.setFileFormatDmsExport("Mets");
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);

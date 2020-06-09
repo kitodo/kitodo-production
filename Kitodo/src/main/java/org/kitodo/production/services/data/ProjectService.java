@@ -200,8 +200,6 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         projectDTO.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
         projectDTO.setStartDate(ProjectTypeField.START_DATE.getStringValue(jsonObject));
         projectDTO.setEndDate(ProjectTypeField.END_DATE.getStringValue(jsonObject));
-        projectDTO.setFileFormatDmsExport(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getStringValue(jsonObject));
-        projectDTO.setFileFormatInternal(ProjectTypeField.FILE_FORMAT_INTERNAL.getStringValue(jsonObject));
         projectDTO.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
         projectDTO.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
         projectDTO.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
@@ -252,7 +250,6 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         boolean digitalCollectionsXmlExists = KitodoConfigFile.DIGITAL_COLLECTIONS.exists();
 
         return Objects.nonNull(project.getTitle()) && Objects.nonNull(project.template)
-                && project.getFileFormatDmsExport() != null && Objects.nonNull(project.getFileFormatInternal())
                 && digitalCollectionsXmlExists && projectsXmlExists;
     }
 
@@ -270,9 +267,6 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         duplicatedProject.setEndDate(baseProject.getEndDate());
         duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());
         duplicatedProject.setNumberOfVolumes(baseProject.getNumberOfVolumes());
-
-        duplicatedProject.setFileFormatInternal(baseProject.getFileFormatInternal());
-        duplicatedProject.setFileFormatDmsExport(baseProject.getFileFormatDmsExport());
 
         duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
 

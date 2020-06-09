@@ -44,8 +44,6 @@ public class ProjectType extends BaseType<Project> {
         jsonObject.put(ProjectTypeField.END_DATE.getKey(), getFormattedDate(project.getEndDate()));
         jsonObject.put(ProjectTypeField.NUMBER_OF_PAGES.getKey(), preventNull(project.getNumberOfPages()));
         jsonObject.put(ProjectTypeField.NUMBER_OF_VOLUMES.getKey(), preventNull(project.getNumberOfVolumes()));
-        jsonObject.put(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getKey(), project.getFileFormatDmsExport());
-        jsonObject.put(ProjectTypeField.FILE_FORMAT_INTERNAL.getKey(), project.getFileFormatInternal());
         jsonObject.put(ProjectTypeField.METS_RIGTS_OWNER.getKey(), project.getMetsRightsOwner());
         jsonObject.put(ProjectTypeField.ACTIVE.getKey(), project.isActive());
         jsonObject.put(ProjectTypeField.PROCESSES.getKey(), addObjectRelation(project.getProcesses(), true));

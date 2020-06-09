@@ -52,11 +52,6 @@ public class ProjectServiceTest {
         project.setTitle("testProject");
         Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
 
-        // Add dms and internal format, still not complete
-        project.setFileFormatDmsExport("METS");
-        project.setFileFormatInternal("METS");
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
-
         // Add templates, still not complete
         Template template = new Template();
         project.template = new ArrayList<>(Collections.singleton(template));

@@ -191,10 +191,6 @@ public class ProjectTypeTest {
             ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual));
         assertEquals("Key numberOfPages doesn't match to given value!", 100,
             ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual));
-        assertEquals("Key fileFormatInternal doesn't match to given value!", "Mets",
-            ProjectTypeField.FILE_FORMAT_INTERNAL.getStringValue(actual));
-        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "Mets",
-            ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getStringValue(actual));
 
         assertEquals("Key client.id doesn't match to given value!", 1, ProjectTypeField.CLIENT_ID.getIntValue(actual));
         assertEquals("Key client.clientName doesn't match to given value!", "TestClient",
@@ -314,10 +310,6 @@ public class ProjectTypeTest {
             ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual));
         assertEquals("Key numberOfPages doesn't match to given value!", 2000,
             ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual));
-        assertEquals("Key fileFormatInternal doesn't match to given value!", "Mets",
-            ProjectTypeField.FILE_FORMAT_INTERNAL.getStringValue(actual));
-        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "Mets",
-            ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getStringValue(actual));
 
         assertEquals("Key client.id doesn't match to given value!", 0, ProjectTypeField.CLIENT_ID.getIntValue(actual));
         assertEquals("Key client.clientName doesn't match to given value!", "",
@@ -438,10 +430,6 @@ public class ProjectTypeTest {
             ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual));
         assertEquals("Key numberOfPages doesn't match to given value!", 0,
             ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual));
-        assertEquals("Key fileFormatInternal doesn't match to given value!", "Mets",
-            ProjectTypeField.FILE_FORMAT_INTERNAL.getStringValue(actual));
-        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "Mets",
-            ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getStringValue(actual));
 
         assertEquals("Key client.id doesn't match to given value!", 0, ProjectTypeField.CLIENT_ID.getIntValue(actual));
         assertEquals("Key client.clientName doesn't match to given value!", "",
@@ -464,7 +452,7 @@ public class ProjectTypeTest {
         Project project = prepareData().get(0);
         Map<String, Object> actual = processType.createDocument(project);
 
-        assertEquals("Amount of keys is incorrect!", 15, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 13, actual.keySet().size());
 
         List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         Map<String, Object> process = processes.get(0);

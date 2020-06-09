@@ -49,7 +49,6 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -631,13 +630,8 @@ public class FileService {
         LegacyMetsModsDigitalDocumentHelper ff;
 
         Ruleset ruleset = process.getRuleset();
-        switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
-            case METS:
-                ff = new LegacyMetsModsDigitalDocumentHelper(rulesetService.getPreferences(ruleset).getRuleset());
-                break;
-            default:
-                throw new UnsupportedOperationException("Dead code pending removal");
-        }
+        ff = new LegacyMetsModsDigitalDocumentHelper(rulesetService.getPreferences(ruleset).getRuleset());
+
         // createBackupFile();
         URI metadataFileUri = getMetadataFilePath(process, false, false);
         String temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileUri);
