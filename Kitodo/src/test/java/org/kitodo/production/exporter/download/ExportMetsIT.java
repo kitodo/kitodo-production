@@ -100,7 +100,6 @@ public class ExportMetsIT {
             fileService.createDirectory(ConfigCore.getUriParameter(ParameterCore.DIR_USERS), userDirectory);
         }
 
-        Assert.assertFalse("exportedFlag of process should be false", process.isExported());
         exportMets.startExport(process);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
                 + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_mets.xml"));
@@ -110,7 +109,5 @@ public class ExportMetsIT {
             strings.toString().contains("<kitodo:metadata name=\"TitleDocMain\">test title</kitodo:metadata>"));
         Assert.assertTrue("Export of metadata 'PublisherName' was wrong",
             strings.toString().contains("<kitodo:metadata name=\"PublisherName\">Publisher test name</kitodo:metadata>"));
-        Assert.assertTrue("exportedFlag of process should be true", process.isExported());
-
     }
 }
