@@ -131,7 +131,7 @@
 
     <p:panelGrid columns="1">
         <p:row>
-            <o:graphicImage rendered="#{ProcessForm.process.template.workflow ne null}" value="#{ProcessForm.tasksDiagram}" dataURI="true" />
+            <o:graphicImage rendered="#{ProcessForm.process.template.workflow ne null and not empty ProcessForm.process.tasks}" value="#{ProcessForm.tasksDiagram}" dataURI="true" />
         </p:row>
     </p:panelGrid>
 </ui:composition>
