@@ -811,6 +811,21 @@ public class FileService {
     }
 
     /**
+     * Returns the URI of the resource in the file management module for a URI
+     * relative to the process directory.
+     *
+     * @param process
+     *            Process in whose possession the URI should be resolved
+     * @param processRelativeUri
+     *            URI relative to the specified process
+     * @return URI of the resource
+     */
+    public URI getResourceUriForProcessRelativeUri(Process process, URI processRelativeUri) {
+        URI processBaseUri = getProcessBaseUriForExistingProcess(process);
+        return asDirectory(processBaseUri).resolve(processRelativeUri);
+    }
+
+    /**
      * This method is needed for migration purposes. It maps existing filePaths
      * to the correct URI. File.separator doesn't work because on Windows it
      * appends backslash to URI.
