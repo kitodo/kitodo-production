@@ -42,6 +42,11 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     }
 
     @Override
+    public Collection<String> getDivisionsWithNoWorkflow() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Map<String, String> getStructuralElements(List<LanguageRange> priorityList) {
         throw new UnsupportedOperationException();
     }

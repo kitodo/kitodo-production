@@ -117,7 +117,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_1")));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_2")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
@@ -150,7 +150,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_1")));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_2")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 

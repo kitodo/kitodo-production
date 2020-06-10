@@ -14,6 +14,7 @@ package org.kitodo.dataeditor.ruleset.xml;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,6 +49,12 @@ public class Division {
      */
     @XmlAttribute
     private String use;
+
+    /**
+     * If the division should use a workflow.
+     */
+    @XmlAttribute
+    private Boolean withWorkflow;
 
     /**
      * The schema in which the part of the date relevant to this division is
@@ -154,5 +161,14 @@ public class Division {
      */
     public String getUse() {
         return use;
+    }
+
+    /**
+     * Returns if a workflow is used.
+     *
+     * @return if a workflow is used.
+     */
+    public boolean isWithWorkflow() {
+        return Objects.isNull(withWorkflow) ? true : withWorkflow;
     }
 }

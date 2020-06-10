@@ -59,6 +59,13 @@ public interface RulesetManagementInterface {
     Collection<String> getFunctionalDivisions(FunctionalDivision functionalDivision);
 
     /**
+     * Returns all metadata divisions that are configured without workflow.
+     *
+     * @return all divisions which are configured without workflow.
+     */
+    Collection<String> getDivisionsWithNoWorkflow();
+
+    /**
      * Returns all outline elements. The result is a map whose keys are the ID
      * strings of the outline elements. The mapped values are the labels in the
      * language best suited to the given language priority list. This function
