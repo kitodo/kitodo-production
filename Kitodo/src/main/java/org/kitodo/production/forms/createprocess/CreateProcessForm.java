@@ -364,7 +364,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
             this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
         }
-        checkTasks();
+        ImportService.checkTasks(this.getMainProcess(), processDataTab.getDocType());
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved so they have IDs before creating their process directories
@@ -406,15 +406,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         ServiceManager.getProcessService().save(getMainProcess());
     }
 
-    private void checkTasks() throws IOException, RulesetNotFoundException {
-        // remove tasks from process, if doctype is configured not to use a workflow
-        Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService()
-                .openRuleset(getMainProcess().getRuleset()).getDivisionsWithNoWorkflow();
-        if (divisionsWithNoWorkflow.contains(processDataTab.getDocType())) {
-            this.getMainProcess().getTasks().clear();
-        }
-    }
-
     /**
      * Save links between child processes and main process.
      *
@@ -448,7 +439,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             ImportService.processProcessChildren(getMainProcess(), this.childProcesses, template,
                     rulesetManagementInterface, acquisitionStage, priorityList);
         } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
-                | ProcessGenerationException e) {
+                | ProcessGenerationException | IOException | RulesetNotFoundException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
         }
     }
@@ -479,6 +470,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                             acquisitionStage, priorityList);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
+                } catch (IOException e) {
+                    throw new ProcessGenerationException("Error reading Ruleset: " + tempProcess.getProcess().getRuleset().getTitle());
+                } catch (RulesetNotFoundException e) {
+                    throw new ProcessGenerationException("Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
                 }
             }
         }
