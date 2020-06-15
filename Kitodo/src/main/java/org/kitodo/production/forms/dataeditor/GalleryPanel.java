@@ -47,6 +47,8 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -57,6 +59,8 @@ import org.primefaces.model.StreamedContent;
  */
 public class GalleryPanel {
     private static final Logger logger = LogManager.getLogger(GalleryPanel.class);
+
+    private static final FileService fileService = ServiceManager.getFileService();
 
     // Structured media
     private static final Pattern DRAG_STRIPE_IMAGE = Pattern
@@ -460,9 +464,13 @@ public class GalleryPanel {
     private GalleryMediaContent createGalleryMediaContent(View view) {
         MediaUnit mediaUnit = view.getMediaUnit();
         URI previewUri = mediaUnit.getMediaFiles().get(previewVariant);
+        URI resourcePreviewUri = previewUri.isAbsolute() ? previewUri
+                : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
         URI mediaViewUri = mediaUnit.getMediaFiles().get(mediaViewVariant);
-        String canonical = Objects.nonNull(previewUri) ? previewFolder.getCanonical(previewUri) : null;
-        return new GalleryMediaContent(this, view, canonical, previewUri, mediaViewUri);
+        URI resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
+                : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
+        String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
+        return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri);
     }
 
     /**
