@@ -216,6 +216,23 @@ public class MediaUnit implements Parent<MediaUnit> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MediaUnit)) {
+            return false;
+        }
+        MediaUnit mediaUnit = (MediaUnit) o;
+        return order == mediaUnit.order
+                && Objects.equals(children, mediaUnit.children)
+                && Objects.equals(mediaFiles, mediaUnit.mediaFiles)
+                && Objects.equals(metadata, mediaUnit.metadata)
+                && Objects.equals(orderlabel, mediaUnit.orderlabel)
+                && Objects.equals(type, mediaUnit.type);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int hashCode = 1;
@@ -226,36 +243,4 @@ public class MediaUnit implements Parent<MediaUnit> {
         return hashCode;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof MediaUnit)) {
-            return false;
-        }
-        MediaUnit other = (MediaUnit) obj;
-        if (mediaFiles == null) {
-            if (other.mediaFiles != null) {
-                return false;
-            }
-        } else if (!mediaFiles.equals(other.mediaFiles)) {
-            return false;
-        }
-        if (order != other.order) {
-            return false;
-        }
-        if (orderlabel == null) {
-            if (other.orderlabel != null) {
-                return false;
-            }
-        } else if (!orderlabel.equals(other.orderlabel)) {
-            return false;
-        }
-        if (Objects.isNull(type)) {
-            return !Objects.nonNull(other.type);
-        } else {
-            return type.equals(other.type);
-        }
-    }
 }

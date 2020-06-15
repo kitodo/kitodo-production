@@ -11,6 +11,8 @@
 
 package org.kitodo.api.dataformat;
 
+import java.util.Objects;
+
 /**
  * A view on a media unit. The individual levels of the
  * {@link IncludedStructuralElement} refer to {@code View}s on
@@ -40,6 +42,18 @@ public class View {
      */
     public void setMediaUnit(MediaUnit mediaUnit) {
         this.mediaUnit = mediaUnit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        View view = (View) o;
+        return Objects.equals(mediaUnit, view.mediaUnit);
     }
 
     @Override

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 /* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF, scrollToStructureThumbnail,
-    scrollToPreviewThumbnail, expandMetadata */
+    scrollToPreviewThumbnail, expandMetadata, preserveMetadata, setConfirmUnload */
 
 var metadataEditor = {
     dragging: false,
@@ -238,4 +238,11 @@ function expandMetadata(panelClass) {
 $(document).ready(function () {
     metadataEditor.shortcuts.listen();
     metadataEditor.contextMenu.listen();
+    $("#metadataAccordion input").blur("input", function () {
+        preserveMetadata();
+    });
 });
+
+function setConfirmUnload(on) {
+    window.onbeforeunload = (on) ? function() { return true; } : void 0;
+}

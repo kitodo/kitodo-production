@@ -25,6 +25,9 @@
     </f:metadata>
     <ui:define name="content">
 
+        <p:remoteCommand name="preserveMetadata"
+                         actionListener="#{DataEditorForm.metadataPanel.preserve}"/>
+
         <!--@elvariable id="viewStructure" type="boolean"-->
         <ui:param name="viewStructure" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData()}"/>
         <!--@elvariable id="viewMetadata" type="boolean"-->

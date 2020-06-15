@@ -35,7 +35,7 @@
                          styleClass="#{mayWrite ? '' : 'disabled'}"
                          disabled="#{not mayWrite}"
                          style="margin-left: 16px;"
-                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -46,7 +46,8 @@
                          styleClass="#{mayWrite ? '' : 'disabled'} secondary"
                          disabled="#{not mayWrite}"
                          style="margin-left: 16px;"
-                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
+                         onclick="setConfirmUnload(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
+                         oncomplete="$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();"
                          update="notifications"/>
         <p:commandButton value="#{msgs.validate}"
                          actionListener="#{DataEditorForm.validate}"
@@ -57,6 +58,7 @@
                          style="margin-left: 16px;"
                          styleClass="secondary"/>
         <p:commandButton value="#{msgs.exit}"
+                         onclick="setConfirmUnload(false);"
                          action="#{DataEditorForm.close}"
                          icon="fa fa-times fa-lg"
                          iconPos="right"

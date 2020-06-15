@@ -139,7 +139,10 @@ public class MetadataPanel implements Serializable {
 
     }
 
-    void preserve() {
+    /**
+     * Preserve metadata.
+     */
+    public void preserve() {
         try {
             this.preserveLogical();
             this.preservePhysical();
@@ -150,9 +153,11 @@ public class MetadataPanel implements Serializable {
 
     void preserveLogical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         logicalMetadataTable.preserve();
+        this.dataEditorForm.checkForChanges();
     }
 
     void preservePhysical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         physicalMetadataTable.preserve();
+        this.dataEditorForm.checkForChanges();
     }
 }

@@ -164,21 +164,19 @@ public class Workpiece {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-
-        if (obj instanceof Workpiece) {
-            Workpiece other = (Workpiece) obj;
-
-            if (Objects.isNull(id)) {
-                return Objects.isNull(other.id);
-            } else {
-                return id.equals(other.id);
-            }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        return false;
+        Workpiece workpiece = (Workpiece) o;
+        return Objects.equals(creationDate, workpiece.creationDate)
+                && Objects.equals(editHistory, workpiece.editHistory)
+                && Objects.equals(id, workpiece.id)
+                && Objects.equals(mediaUnit, workpiece.mediaUnit)
+                && Objects.equals(rootElement, workpiece.rootElement);
     }
 
     /**

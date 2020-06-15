@@ -53,7 +53,7 @@ import org.primefaces.model.TreeNode;
 public class StructurePanel implements Serializable {
     private static final Logger logger = LogManager.getLogger(StructurePanel.class);
 
-    private DataEditorForm dataEditor;
+    private final DataEditorForm dataEditor;
 
     /**
      * If changing the tree node fails, we need this value to undo the user’s
@@ -313,6 +313,7 @@ public class StructurePanel implements Serializable {
     private void preserveLogical() {
         if (!this.logicalTree.getChildren().isEmpty()) {
             preserveLogicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
+            this.dataEditor.checkForChanges();
         }
     }
 
@@ -343,6 +344,7 @@ public class StructurePanel implements Serializable {
     private void preservePhysical() {
         if (!physicalTree.getChildren().isEmpty()) {
             preservePhysicalRecursive(physicalTree.getChildren().get(0));
+            this.dataEditor.checkForChanges();
         }
     }
 
@@ -416,6 +418,7 @@ public class StructurePanel implements Serializable {
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
         this.previouslySelectedPhysicalNode = selectedPhysicalNode;
+        this.dataEditor.checkForChanges();
     }
 
     private void restoreSelection(String rowKey, TreeNode parentNode) {
