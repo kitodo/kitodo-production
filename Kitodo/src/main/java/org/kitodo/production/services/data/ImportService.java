@@ -1032,6 +1032,12 @@ public class ImportService {
         updateTasks(process);
     }
 
+    /**
+     * Checks if an imported Process should be created with Tasks and removes them if not,
+     * depending on the configuration of the doctype.
+     * @param process the process to check.
+     * @param docType the doctype to check in the ruleset.
+     */
     public static void checkTasks(Process process, String docType) throws IOException, RulesetNotFoundException {
         // remove tasks from process, if doctype is configured not to use a workflow
         Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService()
