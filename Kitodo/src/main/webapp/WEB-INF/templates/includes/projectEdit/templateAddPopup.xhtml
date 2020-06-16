@@ -38,8 +38,10 @@
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                              currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                              paginatorPosition="bottom">
-                    <p:column headerText="#{msgs.template}">
-                        <h:outputText value="#{item.title}"/>
+                    <p:column headerText="#{msgs.template}"
+                              width="300">
+                        <h:outputText value="#{item.title}"
+                                      title="#{item.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
                         <p:commandLink id="addTemplate"
