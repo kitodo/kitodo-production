@@ -12,47 +12,54 @@
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
-        <!-- edit dialog -->
+        xmlns:p="http://primefaces.org/ui">
         <p:dialog id="confirmWorkflowPopup"
                   widgetVar="confirmWorkflowPopup"
-                  header="#{msgs.workflowExisting}"
-                  width="400px"
                   modal="true"
+                  resizable="false"
                   dynamic="true">
             <h:form id="confirmWorkflowForm">
                 <p:panelGrid columns="1" layout="grid">
                     <p:row>
+                        <h3>#{msgs.selectWorkflow}</h3>
+                        <h:panelGroup layout="block"
+                                      style="overflow-y: hidden;"
+                                      styleClass="dialogFieldWrapper">
+                            <div>
+                                <p:selectOneMenu id="allWorkflows"
+                                                 rendered="#{not empty MigrationForm.allWorkflows}"
+                                                 value="#{MigrationForm.workflowToUse}"
+                                                 converter="#{workflowConverter}">
+                                    <f:selectItems value="#{MigrationForm.allWorkflows}" var="workflow" itemLabel="#{workflow.title}" itemValue="#{workflow}"/>
+                                </p:selectOneMenu>
 
-                        <div>
-                            <p:panel rendered="#{not empty MigrationForm.allWorkflows}">
-                            <p:selectOneMenu id="allWorkflows" value="#{MigrationForm.workflowToUse}"
-                                             converter="#{workflowConverter}">
-                                <f:selectItems value="#{MigrationForm.allWorkflows}" var="workflow" itemLabel="#{workflow.title}" itemValue="#{workflow}"/>
-                            </p:selectOneMenu>
+                                <h:outputText rendered="#{empty MigrationForm.allWorkflows}" value="#{msgs.noExistingWorkflow}"/>
+                            </div>
+
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block"
+                                      style="padding-left: var(--default-double-size);"
+                                      styleClass="dialogButtonWrapper">
                             <p:commandButton id="useExistingWorkflow"
+                                             rendered="#{not empty MigrationForm.allWorkflows}"
                                              value="#{msgs.useExistingWorkflow}"
                                              action="#{MigrationForm.useExistingWorkflow()}"
                                              icon="fa fa-floppy-o fa-lg"
                                              iconPos="right"
-                                             styleClass="button-filled-blue"
+                                             styleClass="primary right"
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
-                            </p:panel>
-                            <h:outputText rendered="#{empty MigrationForm.allWorkflows}" value="#{msgs.noExistingWorkflow}"/>
-                        </div>
-                        <div>
                             <p:commandButton id="createNewWorkflow"
                                              value="#{msgs.createNewWorkflow}"
                                              action="#{MigrationForm.createNewWorkflow()}"
                                              icon="fa fa-floppy-o fa-lg"
                                              iconPos="right"
-                                             styleClass="button-filled-blue"
+                                             styleClass="#{empty MigrationForm.allWorkflows ? 'primary' : 'secondary'} right"
                                              oncomplete="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
-                        </div>
-                        <div>
                             <p:commandButton value="#{msgs.cancel}"
                                              immediate="true"
                                              icon="fa fa-times fa-lg"
@@ -60,7 +67,7 @@
                                              styleClass="secondary right"
                                              onclick="PF('confirmWorkflowPopup').hide();">
                             </p:commandButton>
-                        </div>
+                        </h:panelGroup>
                     </p:row>
                 </p:panelGrid>
             </h:form>
