@@ -11,8 +11,11 @@
 
 package org.kitodo.production.services.security;
 
+import java.util.List;
 import java.util.Objects;
 
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.security.SecurityAccess;
@@ -313,6 +316,16 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to edit the task.
+     *
+     * @param taskId the specific taskId
+     * @return true if the current user has the authority to edit the task
+     */
+    public boolean hasAuthorityToEditTask(int taskId) throws DataException {
+        return hasAuthorityForClient("editTask") && hasAuthorityForTask(taskId);
+    }
+
+    /**
      * Check if the current user has the authority to edit the batch.
      *
      * @return true if the current user has the authority to edit the batch
@@ -331,12 +344,35 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to edit the process.
+     *
+     * @param processId
+     *            the specific processId
+     * @return true if the current user has the authority to edit the process
+     */
+    public boolean hasAuthorityToEditProcess(int processId) throws DataException {
+        return hasAuthorityForClient("editProcess") && hasAuthorityForProcess(processId);
+    }
+
+    /**
      * Check if the current user has the authority to edit the project.
      *
      * @return true if the current user has the authority to edit the project
      */
     public boolean hasAuthorityToEditProject() {
         return hasAuthorityForClient("editProject");
+    }
+
+
+    /**
+     * Check if the current user has the authority to edit the project.
+     *
+     * @param projectId
+     *            the specific processId
+     * @return true if the current user has the authority to edit the project
+     */
+    public boolean hasAuthorityToEditProject(int projectId) {
+        return hasAuthorityForClient("editProject") && hasAuthorityForProject(projectId);
     }
 
     /**
@@ -440,6 +476,18 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view the process. Add and edit
+     * authorities include also view.
+     *
+     * @param processId
+     *            the specific processId
+     * @return true if the current user has the authority to view the process
+     */
+    public boolean hasAuthorityToViewProcess(int processId) throws DataException {
+        return hasAnyAuthorityForClient("viewProcess, addProcess, editProcess") && hasAuthorityForProcess(processId);
+    }
+
+    /**
      * Check if the current user has the authority to view the project. Add and edit
      * authorities include also view.
      *
@@ -447,6 +495,18 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToViewProject() {
         return hasAnyAuthorityForClient("viewProject, addProject, editProject");
+    }
+
+    /**
+     * Check if the current user has the authority to view the project. Add and edit
+     * authorities include also view.
+     *
+     * @param projectId
+     *            the specific processId
+     * @return true if the current user has the authority to view the project
+     */
+    public boolean hasAuthorityToViewProject(int projectId) {
+        return hasAnyAuthorityForClient("viewProject, addProject, editProject") && hasAuthorityForProject(projectId);
     }
 
     /**
@@ -809,4 +869,20 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToViewSystemPage() {
         return hasAnyAuthorityGlobal("viewIndex, viewIndex");
     }
+
+    private boolean hasAuthorityForTask(int taskId) throws DataException {
+        Integer processId = ServiceManager.getTaskService().findById(taskId).getProcess().getId();
+        return hasAuthorityForProcess(processId);
+    }
+
+    private boolean hasAuthorityForProcess(int processId) throws DataException {
+        Integer projectId = ServiceManager.getProcessService().findById(processId).getProject().getId();
+        return hasAuthorityForProject(projectId);
+    }
+
+    private boolean hasAuthorityForProject(Integer projectId) {
+        List<Project> projects = ServiceManager.getUserService().getCurrentUser().getProjects();
+        return projects.stream().anyMatch(project -> project.getId().equals(projectId)) || projectId == 0;
+    }
+
 }

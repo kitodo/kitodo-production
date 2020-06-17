@@ -63,7 +63,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="processTabView" cache="false">
+        <p:tabView id="processTabView" cache="false" rendered="#{SecurityAccessController.hasAuthorityToEditProcess(id)}">
             <p:tab title="#{msgs.processDetails}" id="details">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml">
                     <ui:param name="isEditMode" value="#{isEditMode}" />
