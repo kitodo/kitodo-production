@@ -61,6 +61,7 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -466,8 +467,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return metadataEntries;
     }
 
-    private void createProcess(int index)
-            throws DAOException, DataException, IOException, ProcessGenerationException, CommandException {
+    private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException,
+            CommandException, RulesetNotFoundException {
         final long begin = System.nanoTime();
 
         List<IndividualIssue> individualIssuesForProcess = processesToCreate.get(index);
@@ -608,7 +609,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void prepareTheAppropriateYearProcess(String yearMark, Map<String, String> genericFields)
-            throws DAOException, DataException, ProcessGenerationException, IOException, CommandException {
+            throws DAOException, DataException, ProcessGenerationException, IOException, CommandException,
+            RulesetNotFoundException {
 
         if (yearMark.equals(currentYear)) {
             return;
@@ -620,10 +622,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    private void saveAndCloseCurrentYearProcess() throws DataException, IOException {
+    private void saveAndCloseCurrentYearProcess() throws DataException, IOException, RulesetNotFoundException {
         final long begin = System.nanoTime();
 
         metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
+        ImportService.checkTasks(yearProcess, yearWorkpiece.getRootElement().getType());
         processService.save(yearProcess);
 
         this.yearProcess = null;
@@ -737,11 +740,12 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return createdChild;
     }
 
-    private void finish() throws DataException, IOException {
+    private void finish() throws DataException, IOException, RulesetNotFoundException {
         final long begin = System.nanoTime();
 
         saveAndCloseCurrentYearProcess();
         metsService.saveWorkpiece(overallWorkpiece, overallMetadataFileUri);
+        ImportService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
         processService.save(overallProcess);
 
         if (logger.isTraceEnabled()) {

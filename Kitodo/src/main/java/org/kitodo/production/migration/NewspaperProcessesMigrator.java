@@ -54,6 +54,7 @@ import org.kitodo.production.process.NewspaperProcessesGenerator;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BatchService;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -546,7 +547,8 @@ public class NewspaperProcessesMigrator {
      * @throws IOException
      *             An error has occurred in the disk drive.
      */
-    public void createOverallProcess() throws ProcessGenerationException, IOException, DataException, DAOException, CommandException {
+    public void createOverallProcess() throws ProcessGenerationException, IOException, DataException, DAOException,
+            CommandException, RulesetNotFoundException {
         final long begin = System.nanoTime();
         logger.info("Creating overall process {}...", title);
 
@@ -554,6 +556,7 @@ public class NewspaperProcessesMigrator {
         processGenerator.generateProcess(templateId, projectId);
         overallProcess = processGenerator.getGeneratedProcess();
         overallProcess.setTitle(getTitle());
+        ImportService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
         processService.save(overallProcess);
         ServiceManager.getFileService().createProcessLocation(overallProcess);
         overallWorkpiece.setId(overallProcess.getId().toString());
@@ -579,7 +582,8 @@ public class NewspaperProcessesMigrator {
      * @throws DAOException
      *             if a process cannot be load from the database
      */
-    public void createNextYearProcess() throws ProcessGenerationException, IOException, DataException, DAOException, CommandException {
+    public void createNextYearProcess() throws ProcessGenerationException, IOException, DataException, DAOException,
+            CommandException, RulesetNotFoundException {
         final long begin = System.nanoTime();
         Entry<String, IncludedStructuralElement> yearToCreate = yearsIterator.next();
         String yearTitle = getYearTitle(yearToCreate.getKey());
@@ -588,6 +592,7 @@ public class NewspaperProcessesMigrator {
         processGenerator.generateProcess(templateId, projectId);
         Process yearProcess = processGenerator.getGeneratedProcess();
         yearProcess.setTitle(yearTitle);
+        ImportService.checkTasks(yearProcess, yearToCreate.getValue().getType());
         processService.save(yearProcess);
 
         MetadataEditor.addLink(overallWorkpiece.getRootElement(), yearProcess.getId());

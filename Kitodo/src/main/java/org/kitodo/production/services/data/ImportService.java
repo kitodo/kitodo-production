@@ -919,7 +919,7 @@ public class ImportService {
                                               Template template, RulesetManagementInterface managementInterface,
                                               String acquisitionStage, List<Locale.LanguageRange> priorityList)
             throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
-            ProcessGenerationException {
+            ProcessGenerationException, IOException, RulesetNotFoundException {
         for (TempProcess tempProcess : childProcesses) {
             if (Objects.isNull(tempProcess) || Objects.isNull(tempProcess.getProcess())) {
                 logger.error("Child process " + (childProcesses.indexOf(tempProcess) + 1) + " is null => Skip!");
@@ -1020,14 +1020,31 @@ public class ImportService {
     public static void processTempProcess(TempProcess tempProcess, Template template,
                                           RulesetManagementInterface managementInterface, String acquisitionStage,
                                           List<Locale.LanguageRange> priorityList)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException {
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException, IOException,
+            RulesetNotFoundException {
         List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
                 acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getRootElement().getType();
         createProcessTitle(tempProcess, managementInterface, acquisitionStage, priorityList, processDetails);
         Process process = tempProcess.getProcess();
         addProperties(tempProcess.getProcess(), template, processDetails, docType, tempProcess.getProcess().getTitle());
+        checkTasks(process, docType);
         updateTasks(process);
+    }
+
+    /**
+     * Checks if an imported Process should be created with Tasks and removes them if not,
+     * depending on the configuration of the doctype.
+     * @param process the process to check.
+     * @param docType the doctype to check in the ruleset.
+     */
+    public static void checkTasks(Process process, String docType) throws IOException, RulesetNotFoundException {
+        // remove tasks from process, if doctype is configured not to use a workflow
+        Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService()
+                .openRuleset(process.getRuleset()).getDivisionsWithNoWorkflow();
+        if (divisionsWithNoWorkflow.contains(docType)) {
+            process.getTasks().clear();
+        }
     }
 
     /**
