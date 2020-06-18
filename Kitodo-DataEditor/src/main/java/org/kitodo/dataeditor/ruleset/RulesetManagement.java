@@ -164,6 +164,25 @@ public class RulesetManagement implements RulesetManagementInterface {
     }
 
     /**
+     * Opens a views on a metadata of the ruleset.
+     *
+     * @param keyId
+     *          the id of the metadata
+     * @param acquisitionStage
+     *          the current acquisition level
+     * @param priorityList
+     *          the list of display languages preferred by the user
+     * @return a view on a metadata
+     */
+    @Override
+    public NestedKeyView<UniversalKey> getMetadataView(String keyId, String acquisitionStage, List<LanguageRange> priorityList) {
+        Optional<Key> key = ruleset.getKey(keyId);
+        UniversalKey universalKey = key.isPresent() ? new UniversalKey(ruleset, key.get()) : new UniversalKey(ruleset, keyId);
+        UniversalRule universalRule = ruleset.getUniversalRestrictionRuleForKey(keyId);
+        return new NestedKeyView<>(ruleset, universalKey, universalRule, ruleset.getSettings(acquisitionStage), priorityList);
+    }
+
+    /**
      * Returns the most appropriate label for a key, if there is one.
      *
      * @param key

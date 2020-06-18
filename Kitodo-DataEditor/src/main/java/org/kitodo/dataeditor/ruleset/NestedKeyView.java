@@ -145,7 +145,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * @param priorityList
      *            the user’s wish list for the best possible translation
      */
-    private NestedKeyView(Ruleset ruleset, U universalKey, UniversalRule universalRule,
+    public NestedKeyView(Ruleset ruleset, U universalKey, UniversalRule universalRule,
             Settings settings, List<LanguageRange> priorityList) {
 
         super(universalKey, universalRule, priorityList);

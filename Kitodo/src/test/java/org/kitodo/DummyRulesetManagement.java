@@ -19,6 +19,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Optional;
 
+import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -55,6 +56,11 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     public StructuralElementViewInterface getStructuralElementView(String division, String acquisitionStage,
             List<LanguageRange> priorityList) {
         return new DummyStructuralElementView(division);
+    }
+
+    @Override
+    public ComplexMetadataViewInterface getMetadataView(String metadata, String acquisitionStage, List<LanguageRange> priorityList) {
+        return new DummyMetadataView();
     }
 
     @Override
