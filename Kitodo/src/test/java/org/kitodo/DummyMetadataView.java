@@ -11,15 +11,15 @@
 
 package org.kitodo;
 
-import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 
 public class DummyMetadataView implements ComplexMetadataViewInterface {
 
@@ -32,7 +32,8 @@ public class DummyMetadataView implements ComplexMetadataViewInterface {
     }
 
     @Override
-    public <T> List<MetadataViewWithValuesInterface<T>> getSortedVisibleMetadata(Map<T, String> entered, Collection<String> additionallySelected) {
+    public <T> List<MetadataViewWithValuesInterface<T>> getSortedVisibleMetadata(Map<T, String> entered,
+                                                                                 Collection<String> additionallySelected) {
         throw new UnsupportedOperationException();
     }
 
