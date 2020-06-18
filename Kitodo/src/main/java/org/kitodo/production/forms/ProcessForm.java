@@ -30,6 +30,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
@@ -52,6 +54,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
@@ -1213,6 +1216,16 @@ public class ProcessForm extends TemplateBaseForm {
      *            ID of the process to load
      */
     public void load(int id) {
+        SecurityAccessController securityAccessController = new SecurityAccessController();
+        try {
+            if (!securityAccessController.hasAuthorityToEditProcess(id)) {
+                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                context.redirect(DESKTOP_LINK);
+            }
+        } catch (IOException | DataException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
+                logger, e);
+        }
         try {
             if (id != 0) {
                 setProcess(ServiceManager.getProcessService().getById(id));
@@ -1228,6 +1241,16 @@ public class ProcessForm extends TemplateBaseForm {
      * Method being used as viewAction for task form.
      */
     public void loadTask(int id) {
+        SecurityAccessController securityAccessController = new SecurityAccessController();
+        try {
+            if (!securityAccessController.hasAuthorityToEditTask(id)) {
+                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                context.redirect(DESKTOP_LINK);
+            }
+        } catch (IOException | DataException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
+                    logger, e);
+        }
         try {
             if (id != 0) {
                 setTask(ServiceManager.getTaskService().getById(id));
