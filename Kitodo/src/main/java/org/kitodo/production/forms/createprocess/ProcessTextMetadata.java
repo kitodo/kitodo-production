@@ -105,6 +105,9 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
 
     @Override
     public boolean isValid() {
+        if (Objects.isNull(settings)) {
+            return false;
+        }
         if (Objects.isNull(value) || value.isEmpty()) {
             return false;
         }
