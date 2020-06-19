@@ -145,7 +145,7 @@
                                  rendered="#{item.input eq 'dataTable'}"
                                  icon="fa fa-plus"
                                  styleClass="secondary"
-                                 update="addMetadataForm"
+                                 update="#{request.requestURI.contains('metadataEditor') ? 'addMetadataForm' : ''}"
                                  oncomplete="PF('addMetadataDialog').show()">
                     <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{node}"/>
                 </p:commandButton>
