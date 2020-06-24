@@ -80,6 +80,8 @@ public class CalendarForm implements Serializable {
     private static final String BLOCK_NEGATIVE = BLOCK + "negative";
     private static final String UPLOAD_ERROR = "calendar.upload.error";
     private static final String DEFAULT_REFERER = "processes";
+    private static final String TASK_MANAGER_REFERER = "system";
+    private static final String REDIRECT_PARAMETER = "?faces-redirect=true";
     private static final Integer[] MONTHS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
     /**
@@ -661,7 +663,10 @@ public class CalendarForm implements Serializable {
     public String createProcesses() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(parentId);
         TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
-        return DEFAULT_REFERER;
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewSystemPage()) {
+            return TASK_MANAGER_REFERER + REDIRECT_PARAMETER;
+        }
+        return DEFAULT_REFERER + REDIRECT_PARAMETER;
     }
 
     public String formatString(String messageKey, String... replacements) {

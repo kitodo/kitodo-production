@@ -577,7 +577,7 @@ public class SecurityAccessController {
      * @return true if user has authority 'viewIndex' or 'viewIndex' globally
      */
     public boolean hasAuthorityToViewSystemPage() {
-        return securityAccessService.hasAnyAuthorityGlobal("viewIndex, viewIndex");
+        return securityAccessService.hasAuthorityToViewSystemPage();
     }
 
     /**

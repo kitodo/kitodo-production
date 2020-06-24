@@ -800,4 +800,13 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToViewDatabaseStatistic() {
         return hasAuthorityGlobal("viewDatabaseStatistic");
     }
+
+    /**
+     * Check if the current user has the authority to view the system page.
+     *
+     * @return true if the current user has the authority to view the system page
+     */
+    public boolean hasAuthorityToViewSystemPage() {
+        return hasAnyAuthorityGlobal("viewIndex, viewIndex");
+    }
 }
