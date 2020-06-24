@@ -238,7 +238,7 @@ function expandMetadata(panelClass) {
 $(document).ready(function () {
     metadataEditor.shortcuts.listen();
     metadataEditor.contextMenu.listen();
-    $("#metadataAccordion input").blur("input", function () {
+    $("#metadataAccordion input").blur(function () {
         preserveMetadata();
     });
 });
