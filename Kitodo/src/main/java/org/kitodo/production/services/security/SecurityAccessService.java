@@ -368,7 +368,7 @@ public class SecurityAccessService extends SecurityAccess {
      * Check if the current user has the authority to edit the project.
      *
      * @param projectId
-     *            the specific processId
+     *            the specific projectId
      * @return true if the current user has the authority to edit the project
      */
     public boolean hasAuthorityToEditProject(int projectId) {
@@ -502,7 +502,7 @@ public class SecurityAccessService extends SecurityAccess {
      * authorities include also view.
      *
      * @param projectId
-     *            the specific processId
+     *            the specific projectId
      * @return true if the current user has the authority to view the project
      */
     public boolean hasAuthorityToViewProject(int projectId) {
