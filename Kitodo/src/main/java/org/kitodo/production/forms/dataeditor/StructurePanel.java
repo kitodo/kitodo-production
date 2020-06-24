@@ -855,6 +855,7 @@ public class StructurePanel implements Serializable {
         TreeNode matchingTreeNode = null;
         for (TreeNode currentTreeNode : treeNode.getChildren()) {
             if (treeNode.getData() instanceof StructureTreeNode
+                    && Objects.nonNull(((StructureTreeNode) treeNode.getData()).getDataObject())
                     && ((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
                     && currentTreeNode.getData() instanceof StructureTreeNode
                     && ((StructureTreeNode) currentTreeNode.getData()).getDataObject() instanceof View
