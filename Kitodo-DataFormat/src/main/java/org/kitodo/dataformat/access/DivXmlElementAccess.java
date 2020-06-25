@@ -208,7 +208,9 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
                     if (value instanceof KitodoType) {
                         KitodoType kitodoType = (KitodoType) value;
                         for (MetadataType metadataEntry : kitodoType.getMetadata()) {
-                            metadata.add(new MetadataXmlElementAccess(mdSec, metadataEntry).getMetadataEntry());
+                            if (!metadataEntry.getValue().isEmpty()) {
+                                metadata.add(new MetadataXmlElementAccess(mdSec, metadataEntry).getMetadataEntry());
+                            }
                         }
                         for (MetadataGroupType metadataGroup : kitodoType.getMetadataGroup()) {
                             metadata.add(new MetadataGroupXmlElementAccess(mdSec, metadataGroup).getMetadataGroup());

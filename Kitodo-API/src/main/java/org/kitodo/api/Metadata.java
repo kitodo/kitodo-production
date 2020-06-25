@@ -11,6 +11,8 @@
 
 package org.kitodo.api;
 
+import java.util.Objects;
+
 public class Metadata {
     /**
      * In which conceptual area in the METS file this metadata entry is stored.
@@ -58,5 +60,18 @@ public class Metadata {
      */
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Metadata metadata = (Metadata) o;
+        return domain == metadata.domain
+                && Objects.equals(key, metadata.key);
     }
 }

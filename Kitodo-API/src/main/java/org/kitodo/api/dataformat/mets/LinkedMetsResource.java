@@ -12,6 +12,7 @@
 package org.kitodo.api.dataformat.mets;
 
 import java.net.URI;
+import java.util.Objects;
 
 /**
  * Data about a linked METS resource.
@@ -63,5 +64,18 @@ public class LinkedMetsResource {
      */
     public void setUri(URI uri) {
         this.uri = uri;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LinkedMetsResource that = (LinkedMetsResource) o;
+        return Objects.equals(loctype, that.loctype)
+                && Objects.equals(uri, that.uri);
     }
 }

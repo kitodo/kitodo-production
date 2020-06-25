@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -233,5 +234,24 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
     @Override
     public String toString() {
         return type + " \"" + label + "\"";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        IncludedStructuralElement that = (IncludedStructuralElement) o;
+        return order == that.order
+                && Objects.equals(label, that.label)
+                && Objects.equals(link, that.link)
+                && Objects.equals(metadata, that.metadata)
+                && Objects.equals(orderlabel, that.orderlabel)
+                && Objects.equals(subincludedStructuralElements, that.subincludedStructuralElements)
+                && Objects.equals(type, that.type)
+                && Objects.equals(views, that.views);
     }
 }

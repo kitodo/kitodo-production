@@ -36,7 +36,7 @@ import org.kitodo.production.services.ServiceManager;
  */
 public class PaginationPanel {
 
-    private DataEditorForm dataEditor;
+    private final DataEditorForm dataEditor;
     private boolean fictitiousCheckboxChecked = false;
     private int newPagesCountValue = 0;
     private List<SelectItem> paginationSelectionItems;
