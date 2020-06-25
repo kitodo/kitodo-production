@@ -605,10 +605,10 @@ public class ProjectForm extends BaseForm {
         try {
             if (!securityAccessController.hasAuthorityToEditProject(id)) {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-                context.redirect(DESKTOP_LINK);
+                context.redirect(DEFAULT_LINK);
             }
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
                     logger, e);
         }
         try {

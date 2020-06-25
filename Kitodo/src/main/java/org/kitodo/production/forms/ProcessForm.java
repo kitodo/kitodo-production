@@ -1220,7 +1220,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             if (!securityAccessController.hasAuthorityToEditProcess(id)) {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-                context.redirect(DESKTOP_LINK);
+                context.redirect(DEFAULT_LINK);
             }
         } catch (IOException | DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
@@ -1245,10 +1245,10 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             if (!securityAccessController.hasAuthorityToEditTask(id)) {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-                context.redirect(DESKTOP_LINK);
+                context.redirect(DEFAULT_LINK);
             }
         } catch (IOException | DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                     logger, e);
         }
         try {
