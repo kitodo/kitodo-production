@@ -46,8 +46,8 @@
                          styleClass="#{mayWrite ? '' : 'disabled'} secondary"
                          disabled="#{not mayWrite}"
                          style="margin-left: 16px;"
-                         onclick="setConfirmUnload(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
-                         oncomplete="$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();"
+                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
+                         oncomplete="$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();setConfirmUnload(false);"
                          update="notifications"/>
         <p:commandButton value="#{msgs.validate}"
                          actionListener="#{DataEditorForm.validate}"
