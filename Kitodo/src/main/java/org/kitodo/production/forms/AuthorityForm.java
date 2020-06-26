@@ -33,7 +33,6 @@ public class AuthorityForm extends BaseForm {
     private Authority authority = new Authority();
     private String title;
     private String type;
-    private final String authorityListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String authorityEditPath = MessageFormat.format(REDIRECT_PATH, "authorityEdit");
 
     /**
@@ -101,7 +100,7 @@ public class AuthorityForm extends BaseForm {
         try {
             this.authority.setTitle(this.title + "_" + this.type);
             ServiceManager.getAuthorityService().saveToDatabase(this.authority);
-            return authorityListPath;
+            return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.AUTHORITY.getTranslationSingular() }, logger,
                 e);

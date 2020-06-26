@@ -21,6 +21,7 @@
         <p:dataTable id="taskTable"
                      var="item"
                      value="#{CurrentTaskForm.lazyDTOModel}"
+                     first="#{CurrentTaskForm.firstRow}"
                      styleClass="default-layout"
                      lazy="true"
                      paginator="true"
@@ -31,7 +32,10 @@
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                      paginatorPosition="bottom">
 
-            <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();"/>
+            <p:ajax event="page"
+                    listener="#{CurrentTaskForm.onPageChange}"/>
+            <p:ajax event="rowToggle"
+                    oncomplete="registerRowToggleEvents();"/>
 
             <p:column style="width: 20px;"
                       resizable="false">

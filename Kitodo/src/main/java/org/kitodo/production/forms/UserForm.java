@@ -70,7 +70,6 @@ public class UserForm extends BaseForm {
     @Named("LoginForm")
     private LoginForm loginForm;
 
-    private final String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
     /**
@@ -166,7 +165,7 @@ public class UserForm extends BaseForm {
                 if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                     loginForm.setLoggedUser(this.userObject);
                 }
-                return userListPath;
+                return usersPage;
             } else {
                 Helper.setErrorMessage("loginInUse");
                 return this.stayOnCurrentPage;

@@ -21,6 +21,7 @@
                  styleClass="default-layout"
                  var="item"
                  value="#{TemplateForm.lazyDTOModel}"
+                 first="#{TemplateForm.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -30,7 +31,10 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+        <p:ajax event="page"
+                listener="#{TemplateForm.onPageChange}"/>
+        <p:ajax event="rowToggle"
+                oncomplete="registerRowToggleEvents();" />
 
         <p:column style="width: 20px;"
                   resizable="false"

@@ -20,6 +20,7 @@
                  id="ldapGroupsTable"
                  styleClass="default-layout"
                  value="#{LdapGroupForm.ldapGroups}"
+                 first="#{LdapGroupForm.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -28,6 +29,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
+        <p:ajax event="page"
+                listener="#{LdapGroupForm.onPageChange}"/>
         <p:column headerText="#{msgs.ldapGroup}"
                   sortBy="#{item.title}"
                   rendered="#{UserForm.showColumn('ldapgroup.ldapgroup')}">

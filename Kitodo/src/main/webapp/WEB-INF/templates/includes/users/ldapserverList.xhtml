@@ -18,6 +18,7 @@
                  id="ldapServersTable"
                  styleClass="default-layout"
                  value="#{LdapServerForm.ldapServers}"
+                 first="#{LdapServerForm.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -26,6 +27,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
+        <p:ajax event="page"
+                listener="#{LdapServerForm.onPageChange}"/>
         <p:column headerText="#{msgs.ldapServer}"
                   sortBy="#{item.title}">
             <h:outputText value="#{item.title}"

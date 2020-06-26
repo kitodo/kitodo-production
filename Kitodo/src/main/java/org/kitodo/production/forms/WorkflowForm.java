@@ -63,7 +63,7 @@ public class WorkflowForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
-    private transient FileService fileService = ServiceManager.getFileService();
+    private final transient FileService fileService = ServiceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
     private WorkflowStatus workflowStatus;
@@ -71,7 +71,6 @@ public class WorkflowForm extends BaseForm {
     private static final String SVG_EXTENSION = ".svg";
     private static final String SVG_DIAGRAM_URI = "svgDiagramURI";
     private static final String XML_DIAGRAM_URI = "xmlDiagramURI";
-    private final String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private final String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
     private Integer roleId;
     private boolean migration;
@@ -153,7 +152,7 @@ public class WorkflowForm extends BaseForm {
                 if (migration) {
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
                 }
-                return workflowListPath;
+                return projectsPage;
             } else {
                 return this.stayOnCurrentPage;
             }

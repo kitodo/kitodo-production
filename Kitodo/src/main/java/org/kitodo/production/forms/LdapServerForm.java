@@ -33,7 +33,6 @@ public class LdapServerForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(LdapServerForm.class);
     private static final String LDAP_SERVER = Helper.getTranslation("ldapServer");
-    private final String ldapServerListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String ldapServerEditPath = MessageFormat.format(REDIRECT_PATH, "ldapserverEdit");
 
     private LdapServer ldapServer;
@@ -71,7 +70,7 @@ public class LdapServerForm extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLdapServerService().saveToDatabase(this.ldapServer);
-            return ldapServerListPath;
+            return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
             return this.stayOnCurrentPage;

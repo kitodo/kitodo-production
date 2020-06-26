@@ -40,7 +40,6 @@ public class RoleForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(RoleForm.class);
     private Role role = new Role();
 
-    private final String roleListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String roleEditPath = MessageFormat.format(REDIRECT_PATH, "roleEdit");
 
     /**
@@ -77,7 +76,7 @@ public class RoleForm extends BaseForm {
     public String save() {
         try {
             ServiceManager.getRoleService().saveToDatabase(this.role);
-            return roleListPath;
+            return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;

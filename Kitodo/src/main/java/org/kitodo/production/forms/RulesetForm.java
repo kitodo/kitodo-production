@@ -45,11 +45,10 @@ public class RulesetForm extends BaseForm {
     private Ruleset ruleset;
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
 
-    private final String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private final String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
     @Named("ProjectForm")
-    private ProjectForm projectForm;
+    private final ProjectForm projectForm;
 
     /**
      * Default constructor with inject project form that also sets the LazyDTOModel
@@ -89,7 +88,7 @@ public class RulesetForm extends BaseForm {
                     return this.stayOnCurrentPage;
                 }
                 ServiceManager.getRulesetService().save(this.ruleset);
-                return rulesetListPath;
+                return projectsPage;
             } else {
                 Helper.setErrorMessage("rulesetNotFound", this.ruleset.getFile());
                 return this.stayOnCurrentPage;

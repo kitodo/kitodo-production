@@ -100,7 +100,6 @@ public class ProcessForm extends TemplateBaseForm {
     private transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private String doneDirectoryName;
     private List<Process> selectedProcesses = new ArrayList<>();
-    final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private PieChartModel pieModel;
     private HorizontalBarChartModel stackedBarModel;
@@ -214,7 +213,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 workflowControllerService.updateProcessSortHelperStatus(this.process);
                 ServiceManager.getProcessService().save(this.process);
-                return processListPath;
+                return processesPage;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
@@ -1293,7 +1292,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setProcessEditReferer(String referer) {
         if (!referer.isEmpty()) {
             if ("processes".equals(referer)) {
-                this.processEditReferer = referer;
+                this.processEditReferer = referer + "?keepPagination=true";
             } else if (!referer.contains("taskEdit") || this.processEditReferer.isEmpty()) {
                 this.processEditReferer = DEFAULT_LINK;
             }
@@ -1323,7 +1322,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     private String filterList() {
         this.selectedProcesses.clear();
-        return processListPath;
+        return processesPage;
     }
 
     @Override
@@ -1597,5 +1596,13 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(e);
             return "";
         }
+    }
+
+    /**
+     * Return path to processes page.
+     * @return path to processes page
+     */
+    public String getProcessesPage() {
+        return this.processesPage;
     }
 }

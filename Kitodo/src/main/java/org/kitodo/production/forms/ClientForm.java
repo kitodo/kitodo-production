@@ -35,7 +35,6 @@ public class ClientForm extends BaseForm {
     private Client client;
     private static final Logger logger = LogManager.getLogger(ClientForm.class);
 
-    private final String clientListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String clientEditPath = MessageFormat.format(REDIRECT_PATH, "clientEdit");
     private Client clientToCopyRoles;
     private List<Role> rolesForClient;
@@ -61,7 +60,7 @@ public class ClientForm extends BaseForm {
                 ServiceManager.getRoleService().saveToDatabase(role);
             }
             rolesForClient = null;
-            return clientListPath;
+            return usersPage;
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
@@ -144,7 +143,7 @@ public class ClientForm extends BaseForm {
 
     /**
      * Gets all roles for a Client.
-     * 
+     *
      * @return a list of roles
      */
     public List<Role> getRolesForClient() {
@@ -193,7 +192,7 @@ public class ClientForm extends BaseForm {
 
     /**
      * Removes a givon role from a client.
-     * 
+     *
      * @param roleToRemove
      *            role to remove.
      */

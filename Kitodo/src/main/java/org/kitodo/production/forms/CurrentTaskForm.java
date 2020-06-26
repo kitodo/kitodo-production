@@ -78,7 +78,6 @@ public class CurrentTaskForm extends BaseForm {
     private WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private List<Property> properties;
     private Property property;
-    private final String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
@@ -253,7 +252,7 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
-        return taskListPath;
+        return tasksPage;
     }
 
     /**
@@ -268,7 +267,7 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
-        return taskListPath;
+        return tasksPage;
     }
 
     /**
@@ -294,7 +293,7 @@ public class CurrentTaskForm extends BaseForm {
         // go through the uploaded process IDs and set to complete
         if (!readyList.isEmpty() && this.onlyOpenTasks) {
             this.onlyOpenTasks = false;
-            return taskListPath;
+            return tasksPage;
         }
         for (URI element : readyList) {
             String id = element.toString()
@@ -734,7 +733,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return value of taskListPath
      */
     public String getTaskListPath() {
-        return taskListPath;
+        return tasksPage;
     }
 
     private int getTaskIdForPath() {
@@ -784,7 +783,7 @@ public class CurrentTaskForm extends BaseForm {
 
     private String filterList() {
         this.selectedTasks.clear();
-        return taskListPath;
+        return tasksPage;
     }
 
     @Override

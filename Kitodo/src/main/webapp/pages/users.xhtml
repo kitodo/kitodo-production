@@ -20,6 +20,14 @@
     <f:metadata>
         <f:viewParam name="tabIndex"/>
         <f:viewAction action="#{UserForm.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
+        <f:viewParam name="keepPagination"/>
+        <f:viewAction action="#{UserForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{RoleForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{ClientForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{AuthorityForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{LdapGroupForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{LdapServerForm.resetPaginator(keepPagination)}" />
     </f:metadata>
 
     <ui:define name="contentHeader">

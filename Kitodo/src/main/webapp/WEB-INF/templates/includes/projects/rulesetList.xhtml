@@ -20,6 +20,7 @@
                  styleClass="default-layout"
                  var="item"
                  value="#{RulesetForm.lazyDTOModel}"
+                 first="#{RulesetForm.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -28,6 +29,9 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
+
+        <p:ajax event="page"
+                listener="#{RulesetForm.onPageChange}"/>
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"

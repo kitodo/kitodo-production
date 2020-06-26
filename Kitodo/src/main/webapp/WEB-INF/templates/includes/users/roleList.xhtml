@@ -20,6 +20,7 @@
                  id="rolesTable"
                  styleClass="default-layout"
                  value="#{RoleForm.lazyDTOModel}"
+                 first="#{RoleForm.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -28,6 +29,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
+        <p:ajax event="page"
+                listener="#{RoleForm.onPageChange}"/>
         <p:column headerText="#{msgs.role}"
                   sortBy="#{item.title}"
                   rendered="#{UserForm.showColumn('role.role')}">

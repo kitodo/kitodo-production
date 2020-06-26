@@ -45,11 +45,10 @@ public class DocketForm extends BaseForm {
     private Docket docket = new Docket();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
-    private final String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private final String docketEditPath = MessageFormat.format(REDIRECT_PATH, "docketEdit");
 
     @Named("ProjectForm")
-    private ProjectForm projectForm;
+    private final ProjectForm projectForm;
 
     /**
      * Default constructor with inject project form that also sets the LazyDTOModel
@@ -89,7 +88,7 @@ public class DocketForm extends BaseForm {
                     return this.stayOnCurrentPage;
                 }
                 ServiceManager.getDocketService().save(docket);
-                return docketListPath;
+                return projectsPage;
             } else {
                 Helper.setErrorMessage("docketNotFound");
                 return this.stayOnCurrentPage;

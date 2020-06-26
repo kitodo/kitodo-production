@@ -20,6 +20,7 @@
                  styleClass="default-layout"
                  var="item"
                  value="#{DocketForm.lazyDTOModel}"
+                 first="#{DocketForm.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -28,6 +29,9 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
+
+        <p:ajax event="page"
+                listener="#{DocketForm.onPageChange}"/>
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"
