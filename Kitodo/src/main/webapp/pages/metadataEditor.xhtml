@@ -211,6 +211,15 @@
         <h:outputScript name="js/scroll.js" target="body"/>
         <h:outputScript name="js/metadata_editor.js" target="body"/>
         <h:outputScript name="js/pf_contextMenu_custom.js" target="body"/>
+        <h:outputScript>
+            $(document).ready(function () {
+                metadataEditor.shortcuts.listen(#{DataEditorForm.shortcuts});
+                metadataEditor.contextMenu.listen();
+                $("#metadataAccordion input").blur(function () {
+                    preserveMetadata();
+                });
+            });
+        </h:outputScript>
     </ui:define>
 
 </ui:composition>

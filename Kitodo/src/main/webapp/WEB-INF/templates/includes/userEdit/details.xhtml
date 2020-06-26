@@ -152,6 +152,16 @@
                 <p:selectBooleanCheckbox id="show-process-data" styleClass="switch input" onchange="toggleSave()"
                                          disabled="#{isViewMode}" value="#{UserForm.userObject.configProductionDateShow}"/>
             </div>
+            <div>
+                <p:commandButton onclick="PF('changeShortcutsDialog').show()"
+                                 id="showShortcutsDialogButton"
+                                 value="#{msgs['shortcuts.change']}"
+                                 icon="fa fa-pencil fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary"
+                                 rendered="#{isEditMode}">
+                </p:commandButton>
+            </div>
         </p:row>
     </p:panelGrid>
 </ui:composition>

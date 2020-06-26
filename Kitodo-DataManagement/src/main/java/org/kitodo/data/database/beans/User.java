@@ -71,6 +71,9 @@ public class User extends BaseBean {
     @Column(name = "withMassDownload")
     private boolean withMassDownload = false;
 
+    @Column(name = "shortcuts", columnDefinition = "longtext")
+    private String shortcuts;
+
     @ManyToOne
     @JoinColumn(name = "ldapGroup_id", foreignKey = @ForeignKey(name = "FK_user_ldapGroup_id"))
     private LdapGroup ldapGroup;
@@ -131,6 +134,7 @@ public class User extends BaseBean {
         this.processingTasks = user.processingTasks;
         this.surname = user.surname;
         this.withMassDownload = user.withMassDownload;
+        this.shortcuts = user.shortcuts;
 
         if (user.roles != null) {
             this.roles = user.roles;
@@ -240,6 +244,14 @@ public class User extends BaseBean {
 
     public void setWithMassDownload(boolean withMassDownload) {
         this.withMassDownload = withMassDownload;
+    }
+
+    public String getShortcuts() {
+        return shortcuts;
+    }
+
+    public void setShortcuts(String shortcuts) {
+        this.shortcuts = shortcuts;
     }
 
     public LdapGroup getLdapGroup() {

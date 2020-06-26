@@ -758,4 +758,18 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             PrimeFaces.current().executeScript("setConfirmUnload(" + unsavedChanges + ");");
         }
     }
+
+    /**
+     * Get the shortcuts for the current user.
+     *
+     * @return shortcuts as java.lang.String
+     */
+    public String getShortcuts() {
+        try {
+            return ServiceManager.getUserService().getShortcuts(user.getId());
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return "{}";
+        }
+    }
 }
