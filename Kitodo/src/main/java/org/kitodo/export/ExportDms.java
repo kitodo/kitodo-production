@@ -197,11 +197,11 @@ public class ExportDms extends ExportMets {
             exportDmsTask.setProgress(1);
         }
 
-        return exportImagesAndMetsToDestinationUri(process, gdzfile, exportFolder, hotfolder);
+        return exportImagesAndMetsToDestinationUri(process, gdzfile, exportFolder);
     }
 
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
-            URI destination, URI userHome) throws IOException, DAOException {
+            URI destination) throws IOException, DAOException {
 
         if (exportWithImages) {
             try {
@@ -217,7 +217,7 @@ public class ExportDms extends ExportMets {
         }
 
         // export the file to the import folder
-        asyncExportWithImport(process, gdzfile, userHome);
+        asyncExportWithImport(process, gdzfile, destination);
         return true;
     }
 
