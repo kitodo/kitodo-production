@@ -8,4 +8,4 @@
 -- For the full copyright and license information, please read the
 -- GPL3-License.txt file that was distributed with this source code.
 
-ALTER TABLE user ADD COLUMN shortcuts JSON DEFAULT NULL;
+ALTER TABLE user ADD COLUMN shortcuts LONGTEXT DEFAULT NULL;

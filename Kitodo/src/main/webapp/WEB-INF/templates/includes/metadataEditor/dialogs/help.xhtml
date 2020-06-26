@@ -13,11 +13,9 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui"
-        xmlns:c="http://java.sun.com/jsp/jstl/core">
+        xmlns:p="http://primefaces.org/ui">
     <h:body>
         <!-- edit dialog -->
         <p:dialog widgetVar="helpDialog"
@@ -30,12 +28,12 @@
             <h:form id="helpForm">
                 <h3>#{msgs.shortcuts}</h3>
                 <ul id="keyboardShortcuts">
-                    <c:forEach items="#{UserForm.shortcuts}" var="item">
+                    <ui:repeat value="#{UserForm.shortcuts}" var="item">
                         <li>
                             <h:outputLabel value="#{msgs['shortcuts.dataEditor.'.concat(item.key)]}"/>
                             <h:outputLabel><kbd>#{UserForm.shortcuts[item.key]}</kbd></h:outputLabel>
                         </li>
-                    </c:forEach>
+                    </ui:repeat>
                 </ul>
 
                 <h:panelGroup layout="block"

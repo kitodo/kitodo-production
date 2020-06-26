@@ -13,15 +13,11 @@ let shortcuts = {
     listen() {
         $(document).on("keydown.shortcuts", ".shortcut-input", function (event) {
             let keyCombination = "";
-            let modifierKeys = [];
-            if (event.originalEvent.ctrlKey) modifierKeys.push("Control");
-            if (event.originalEvent.altKey) modifierKeys.push("Alt");
-            if (event.originalEvent.metaKey) modifierKeys.push("Meta");
-            if (event.originalEvent.shiftKey) modifierKeys.push("Shift");
-            if (event.originalEvent.altGraphKey) modifierKeys.push("AltGraph");
-            modifierKeys.forEach(function (item, index) {
-                keyCombination += item + " ";
-            });
+            keyCombination += event.originalEvent.ctrlKey ? "Control " : "";
+            keyCombination += event.originalEvent.altKey ? "Alt " : "";
+            keyCombination += event.originalEvent.metaKey ? "Meta " : "";
+            keyCombination += event.originalEvent.shiftKey ? "Shift " : "";
+            keyCombination += event.originalEvent.altGraphKey ? "AltGraph " : "";
             keyCombination += event.originalEvent.code;
             event.originalEvent.target.value = keyCombination;
             event.preventDefault();
