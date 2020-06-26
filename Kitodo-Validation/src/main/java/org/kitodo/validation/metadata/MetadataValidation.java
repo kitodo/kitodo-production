@@ -18,7 +18,6 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -276,15 +275,15 @@ public class MetadataValidation implements MetadataValidationInterface {
 
             if (count == 0 && (min == 1 && max == 1)) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_MISSING),
-                        Collections.singletonList(location + metadataView.getLabel())));
+                    location.concat(metadataView.getLabel())));
                 error = true;
             } else if (count < min) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_TOO_RARE),
-                    Arrays.asList(location + metadataView.getLabel(), Integer.toString(count), Integer.toString(min))));
+                    location.concat(metadataView.getLabel()), Integer.toString(count), Integer.toString(min)));
                 error = true;
             } else if (count > max) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_TOO_OFTEN),
-                    Arrays.asList(location + metadataView.getLabel(), Integer.toString(count), Integer.toString(min))));
+                    location.concat(metadataView.getLabel()), Integer.toString(count), Integer.toString(min)));
                 error = true;
             }
 
@@ -342,8 +341,8 @@ public class MetadataValidation implements MetadataValidationInterface {
                         && metadataView instanceof SimpleMetadataViewInterface) {
                     String value = ((MetadataEntry) metadata).getValue();
                     if (!((SimpleMetadataViewInterface) metadataView).isValid(value)) {
-                        messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_INVALID),
-                            Arrays.asList(value, location + metadataView.getLabel())));
+                        messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_INVALID), value,
+                            location.concat(metadataView.getLabel())));
                         error = true;
                     }
                 } else if (metadata instanceof MetadataGroup
