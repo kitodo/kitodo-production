@@ -132,9 +132,6 @@ public class IndexingService {
                 case PROJECT:
                     searchServices.put(objectType, ServiceManager.getProjectService());
                     break;
-                case PROPERTY:
-                    searchServices.put(objectType, ServiceManager.getPropertyService());
-                    break;
                 case RULESET:
                     searchServices.put(objectType, ServiceManager.getRulesetService());
                     break;

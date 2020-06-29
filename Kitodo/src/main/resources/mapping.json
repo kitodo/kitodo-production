@@ -504,9 +504,6 @@
                 },
                 "properties": {
                     "properties": {
-                        "id": {
-                            "type": "long"
-                        },
                         "title": {
                             "type": "text",
                             "fields": {
@@ -524,8 +521,7 @@
                                     "ignore_above": 256
                                 }
                             }
-                        }
-                    }
+                        }}
                 },
                 "ruleset": {
                     "type": "long"

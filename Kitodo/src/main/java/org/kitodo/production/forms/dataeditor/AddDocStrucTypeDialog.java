@@ -685,7 +685,7 @@ public class AddDocStrucTypeDialog {
             for (int processId : ids) {
                 processes.add(ServiceManager.getProcessService().getById(processId));
             }
-        } catch (DataException | IOException | DAOException e) {
+        } catch (DataException | DAOException e) {
             logger.catching(e);
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.error", e.getMessage()));
         }

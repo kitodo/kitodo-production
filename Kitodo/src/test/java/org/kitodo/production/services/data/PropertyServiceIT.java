@@ -55,14 +55,7 @@ public class PropertyServiceIT {
     @Test
     public void shouldCountAllProperties() {
         await().untilAsserted(
-            () -> assertEquals("Properties were not counted correctly!", Long.valueOf(8), propertyService.count()));
-    }
-
-    @Test
-    public void shouldCountAllPropertiesAccordingToQuery() {
-        QueryBuilder query = matchQuery("type", "process").operator(Operator.AND);
-        await().untilAsserted(() -> assertEquals("Properties were not counted correctly!", Long.valueOf(4),
-            propertyService.count(query)));
+            () -> assertEquals("Properties were not counted correctly!", Long.valueOf(8), propertyService.countDatabaseRows()));
     }
 
     @Test
@@ -137,21 +130,21 @@ public class PropertyServiceIT {
     public void shouldRemoveProperty() throws Exception {
         Property property = new Property();
         property.setTitle("To Remove");
-        propertyService.save(property);
+        propertyService.saveToDatabase(property);
         Property foundProperty = propertyService.getById(9);
         assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
 
-        propertyService.remove(foundProperty);
+        propertyService.saveToDatabase(foundProperty);
         exception.expect(DAOException.class);
         propertyService.getById(9);
 
         property = new Property();
         property.setTitle("To remove");
-        propertyService.save(property);
+        propertyService.saveToDatabase(property);
         foundProperty = propertyService.getById(10);
         assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
 
-        propertyService.remove(10);
+        propertyService.removeFromDatabase(10);
         exception.expect(DAOException.class);
         propertyService.getById(10);
     }
@@ -160,7 +153,7 @@ public class PropertyServiceIT {
     public void shouldFindById() {
         Integer expected = 1;
         await().untilAsserted(
-            () -> assertEquals("Property was not found in index!", expected, propertyService.findById(1).getId()));
+            () -> assertEquals("Property was not found in index!", expected, propertyService.getById(1).getId()));
     }
 
     @Test

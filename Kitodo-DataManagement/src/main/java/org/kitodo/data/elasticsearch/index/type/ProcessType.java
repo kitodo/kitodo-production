@@ -11,6 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Objects;
 
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 
 /**
@@ -57,12 +59,33 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.HAS_CHILDREN.getKey(), process.getChildren().size() > 0);
         jsonObject.put(ProcessTypeField.PARENT_ID.getKey(), processParentId);
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
-        jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), addObjectRelation(process.getProperties(), true));
-        jsonObject.put(ProcessTypeField.TEMPLATES.getKey(), addObjectRelation(process.getTemplates()));
-        jsonObject.put(ProcessTypeField.WORKPIECES.getKey(), addObjectRelation(process.getWorkpieces()));
         jsonObject.put(ProcessTypeField.METADATA.getKey(), process.getMetadata());
+        jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), getProperties(process));
         jsonObject.put(ProcessTypeField.BASE_TYPE.getKey(), process.getBaseType());
         return jsonObject;
+    }
+
+    private List<Map<String, String>> getProperties(Process process) {
+        List<Property> properties = process.getProperties();
+        List<Map<String, String>> propertiesForIndex = new ArrayList<>();
+        for (Property property : properties) {
+            HashMap<String, String> propertyMap = new HashMap<>();
+            propertyMap.put(property.getTitle(), property.getValue());
+            propertiesForIndex.add(propertyMap);
+        }
+        properties = process.getTemplates();
+        for (Property property : properties) {
+            HashMap<String, String> propertyMap = new HashMap<>();
+            propertyMap.put(property.getTitle(), property.getValue());
+            propertiesForIndex.add(propertyMap);
+        }
+        properties = process.getWorkpieces();
+        for (Property property : properties) {
+            HashMap<String, String> propertyMap = new HashMap<>();
+            propertyMap.put(property.getTitle(), property.getValue());
+            propertiesForIndex.add(propertyMap);
+        }
+        return propertiesForIndex;
     }
 
     private String getProcessComments(Process process) {

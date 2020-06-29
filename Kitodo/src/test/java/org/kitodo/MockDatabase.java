@@ -662,7 +662,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().save(firstProcessProperty);
+        ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
         secondProcessProperty.setTitle("Korrektur notwendig");
@@ -673,7 +673,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
         secondProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().save(secondProcessProperty);
+        ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
 
         Property thirdProcessProperty = new Property();
         thirdProcessProperty.setTitle("Korrektur notwendig");
@@ -684,7 +684,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
         thirdProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().save(thirdProcessProperty);
+        ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
 
         Process secondProcess = ServiceManager.getProcessService().getById(2);
         Property fourthProcessProperty = new Property();
@@ -696,7 +696,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 7, 15);
         fourthProcessProperty.setCreationDate(localDate.toDate());
         fourthProcessProperty.getProcesses().add(secondProcess);
-        ServiceManager.getPropertyService().save(fourthProcessProperty);
+        ServiceManager.getPropertyService().saveToDatabase(fourthProcessProperty);
 
         firstProcess.getProperties().add(firstProcessProperty);
         firstProcess.getProperties().add(secondProcessProperty);
@@ -720,7 +720,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().save(firstProcessProperty);
+        ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
         secondProcessProperty.setTitle("Korrektur notwendig");
@@ -731,7 +731,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
         secondProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().save(secondProcessProperty);
+        ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
 
         Property thirdProcessProperty = new Property();
         thirdProcessProperty.setTitle("Korrektur notwendig");
@@ -742,7 +742,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
         thirdProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().save(thirdProcessProperty);
+        ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
 
         firstProcess.getProperties().add(firstProcessProperty);
         firstProcess.getProperties().add(secondProcessProperty);
@@ -1086,7 +1086,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
         firstTemplateProperty.getTemplates().add(template);
-        ServiceManager.getPropertyService().save(firstTemplateProperty);
+        ServiceManager.getPropertyService().saveToDatabase(firstTemplateProperty);
 
         Property secondTemplateProperty = new Property();
         secondTemplateProperty.setTitle("template");
@@ -1097,7 +1097,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 15);
         secondTemplateProperty.setCreationDate(localDate.toDate());
         secondTemplateProperty.getTemplates().add(template);
-        ServiceManager.getPropertyService().save(secondTemplateProperty);
+        ServiceManager.getPropertyService().saveToDatabase(secondTemplateProperty);
 
         template.getTemplates().add(firstTemplateProperty);
         template.getTemplates().add(secondTemplateProperty);
@@ -1313,7 +1313,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
         firstWorkpieceProperty.getWorkpieces().add(workpiece);
-        ServiceManager.getPropertyService().save(firstWorkpieceProperty);
+        ServiceManager.getPropertyService().saveToDatabase(firstWorkpieceProperty);
 
         Property secondWorkpieceProperty = new Property();
         secondWorkpieceProperty.setTitle("workpiece");
@@ -1324,7 +1324,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(localDate.toDate());
         secondWorkpieceProperty.getWorkpieces().add(workpiece);
-        ServiceManager.getPropertyService().save(secondWorkpieceProperty);
+        ServiceManager.getPropertyService().saveToDatabase(secondWorkpieceProperty);
 
         workpiece.getWorkpieces().add(firstWorkpieceProperty);
         workpiece.getWorkpieces().add(secondWorkpieceProperty);

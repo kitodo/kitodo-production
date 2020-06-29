@@ -34,7 +34,6 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.PropertyTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 
 /**
@@ -239,13 +238,6 @@ public class ProcessTypeTest {
         List<Map<String, Object>> properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
         assertEquals("Size properties doesn't match to given value!", 2, properties.size());
 
-        Map<String, Object> property = properties.get(0);
-        assertEquals("Key properties.id doesn't match to given value!", 1,
-            PropertyTypeField.ID.getIntValue(property));
-
-        property = properties.get(1);
-        assertEquals("Key properties.id doesn't match to given value!", 2,
-            PropertyTypeField.ID.getIntValue(property));
     }
 
     @Test

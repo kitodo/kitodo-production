@@ -105,13 +105,7 @@ public class SearchForm {
      * Initialise drop down list of master piece property titles.
      */
     private void initMasterpiecePropertyTitles() {
-        List<String> workpiecePropertiesTitlesDistinct = new ArrayList<>();
-        try {
-            workpiecePropertiesTitlesDistinct = ServiceManager.getPropertyService()
-                    .findWorkpiecePropertiesTitlesDistinct();
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        List<String> workpiecePropertiesTitlesDistinct = ServiceManager.getPropertyService().findWorkpiecePropertiesTitlesDistinct();
         this.masterpiecePropertyTitles = workpiecePropertiesTitlesDistinct;
     }
 
@@ -135,12 +129,7 @@ public class SearchForm {
      * Initialise drop down list of process property titles.
      */
     private void initProcessPropertyTitles() {
-        List<String> processPropertiesTitlesDistinct = new ArrayList<>();
-        try {
-            processPropertiesTitlesDistinct = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        List<String> processPropertiesTitlesDistinct = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
         this.processPropertyTitles = processPropertiesTitlesDistinct;
     }
 
@@ -168,13 +157,8 @@ public class SearchForm {
      * Initialise drop down list of template property titles.
      */
     private void initTemplatePropertyTitles() {
-        List<String> templatePropertiesTitlesDistinct = new ArrayList<>();
-        try {
-            templatePropertiesTitlesDistinct = ServiceManager.getPropertyService()
+        List<String> templatePropertiesTitlesDistinct = ServiceManager.getPropertyService()
                     .findTemplatePropertiesTitlesDistinct();
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
         this.templatePropertyTitles = templatePropertiesTitlesDistinct;
     }
 

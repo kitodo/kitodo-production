@@ -26,7 +26,7 @@ public enum ObjectType {
     LDAP_SERVER("ldapServer", "ldapServers", false),
     PROCESS("process", "processes", true),
     PROJECT("project", "projects", true),
-    PROPERTY("property", "properties", true),
+    PROPERTY("property", "properties", false),
     RULESET("ruleset", "rulesets", true),
     TASK("task", "tasks", true),
     TEMPLATE("template", "template", true),

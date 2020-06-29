@@ -25,8 +25,8 @@ public class LoginST extends BaseTestSelenium {
 
     @BeforeClass
     public static void manipulateIndex() throws DataException, CustomResponseException {
-        // remove one property from index but not from DB to provoke index warning
-        ServiceManager.getPropertyService().removeFromIndex(1, true);
+        // remove one process from index but not from DB to provoke index warning
+        ServiceManager.getProcessService().removeFromIndex(1, true);
     }
 
     @Test
