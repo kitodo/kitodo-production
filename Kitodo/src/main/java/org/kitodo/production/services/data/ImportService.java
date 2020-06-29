@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,8 +38,6 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
-import org.jboss.weld.environment.util.Collections;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -437,16 +433,16 @@ public class ImportService {
         }
         // always try to find a parent for last imported process (e.g. level == importDepth) in the database!
         if (Objects.nonNull(parentID) && level == importDepth) {
-            this.parentTempProcess = checkForParent(parentID, templateId, projectId);
+            this.parentTempProcess = checkForParent(parentID, template.getRuleset().getId(), projectId);
         }
         return processes;
     }
 
-    private TempProcess checkForParent(String parentID, int templateID, int projectID) throws DAOException, IOException,
+    private TempProcess checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
             ProcessGenerationException {
         HashMap<String, String> parentIDMetadata = new HashMap<>();
         parentIDMetadata.put(identifierMetadata, parentID);
-        Process parentProcess = loadParentProcess(parentIDMetadata, templateID, projectID);
+        Process parentProcess = loadParentProcess(parentIDMetadata, rulesetID, projectID);
         if (Objects.nonNull(parentProcess)) {
             logger.info("Linking last imported process to parent process with ID " + parentID + " in database!");
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
@@ -1057,7 +1053,7 @@ public class ImportService {
      */
     public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
-        Template template = null;
+        Template template;
         try {
             template = ServiceManager.getTemplateService().getById(templateId);
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
