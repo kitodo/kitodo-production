@@ -23,6 +23,7 @@
                      styleClass="default-layout"
                      var="process"
                      value="#{ProcessForm.lazyDTOModel}"
+                     first="#{ProcessForm.firstRow}"
                      selection="#{ProcessForm.selectedProcesses}"
                      lazy="true"
                      paginator="true"
@@ -35,7 +36,10 @@
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                      paginatorPosition="bottom">
 
-            <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+            <p:ajax event="page"
+                    listener="#{ProcessForm.onPageChange}"/>
+            <p:ajax event="rowToggle"
+                    oncomplete="registerRowToggleEvents();" />
 
             <p:column styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
             <p:column styleClass="hierarchy-info">
@@ -135,7 +139,7 @@
 
                     <!-- Open metadata editor -->
                     <h:commandLink id="readXML"
-                                   action="#{DataEditorForm.open(process.id, 'processes')}"
+                                   action="#{DataEditorForm.open(process.id, 'processes?keepPagination=true')}"
                                    styleClass="action"
                                    title="#{msgs.metadataEdit}"
                                    rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
@@ -259,7 +263,7 @@
                                         <f:param name="referer" value="processes"/>
                                         <f:param name="id" value="#{parent.id}"/>
                                     </h:link>
-                                    <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes')}"
+                                    <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes?keepPagination=true')}"
                                                    styleClass="action"
                                                    title="#{msgs.metadataEdit}"
                                                    rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">

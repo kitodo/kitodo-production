@@ -365,7 +365,7 @@ public class SearchForm {
      */
     public String filterProcesses() {
         processForm.changeFilter(createFilter());
-        return processForm.processListPath;
+        return processForm.getProcessesPage();
     }
 
     /**

@@ -17,6 +17,12 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
+        <f:viewParam name="keepPagination"/>
+        <f:viewAction action="#{CurrentTaskForm.resetPaginator(keepPagination)}"/>
+    </f:metadata>
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/filter.js" target="body" />
         <h3>#{msgs.tasks}</h3>

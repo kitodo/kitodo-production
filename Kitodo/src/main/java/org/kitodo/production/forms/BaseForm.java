@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,9 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
 import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.RoleService;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.event.data.PageEvent;
 
 public class BaseForm implements Serializable {
 
@@ -62,9 +65,40 @@ public class BaseForm implements Serializable {
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
     protected static final String DEFAULT_LINK = "desktop";
+    private static final String LIST_PAGE = TEMPLATE_ROOT + "{0}?keepPagination=true&" + REDIRECT_PARAMETER;
+    protected final String usersPage = MessageFormat.format(LIST_PAGE, "users");
+    protected final String processesPage = MessageFormat.format(LIST_PAGE, "processes");
+    protected final String projectsPage = MessageFormat.format(LIST_PAGE, "projects");
+    protected final String tasksPage = MessageFormat.format(LIST_PAGE, "tasks");
 
     protected List<SelectItem> columns;
     protected List<ListColumn> selectedColumns;
+
+    protected int firstRow;
+
+    /**
+     * Get first row to show in datatable.
+     * @return first
+     */
+    public int getFirstRow() {
+        return this.firstRow;
+    }
+
+    /**
+     * Set first row to show in datatable.
+     * @param firstRow first row to show in datatable
+     */
+    public void setFirstRow(int firstRow) {
+        this.firstRow = firstRow;
+    }
+
+    /**
+     * Update first row to show in datatable on PageEvent.
+     * @param pageEvent PageEvent triggered by data tables paginator
+     */
+    public void onPageChange(PageEvent pageEvent) {
+        this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
+    }
 
     /**
      * Getter: return lazyDTOModel.
@@ -357,5 +391,16 @@ public class BaseForm implements Serializable {
      */
     public String getProjectTitles(List<Project> projects) {
         return ProjectService.getProjectTitles(projects);
+    }
+
+    /**
+     * Reset first row to 0 if given String 'keepPagination' is empty.
+     *
+     * @param keepPagination String parameter indicating if first row should be reset to 0
+     */
+    public void resetPaginator(String keepPagination) {
+        if (keepPagination.isEmpty()) {
+            this.setFirstRow(0);
+        }
     }
 }

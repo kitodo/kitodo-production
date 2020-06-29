@@ -20,6 +20,7 @@
                  id="authoritiesTable"
                  styleClass="default-layout"
                  value="#{AuthorityForm.lazyDTOModel}"
+                 first="#{AuthorityForm.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -28,6 +29,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
+        <p:ajax event="page"
+                listener="#{AuthorityForm.onPageChange}"/>
         <p:column headerText="#{msgs.authority}">
             <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"
                           title="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>

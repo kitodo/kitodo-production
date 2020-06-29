@@ -56,7 +56,7 @@
                          actionListener="#{ClientForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button value="#{msgs.cancel}" outcome="users" onclick="setConfirmUnload(false);"
+        <p:button value="#{msgs.cancel}" outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
 

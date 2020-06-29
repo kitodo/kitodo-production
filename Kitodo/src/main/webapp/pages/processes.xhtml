@@ -20,6 +20,9 @@
     <f:metadata>
         <f:viewParam name="tabIndex"/>
         <f:viewAction action="#{ProcessForm.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <!--@elvariable id="keepPagination" type="java.lang.String"-->
+        <f:viewParam name="keepPagination"/>
+        <f:viewAction action="#{ProcessForm.resetPaginator(keepPagination)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

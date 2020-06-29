@@ -21,6 +21,13 @@
         <!--@elvariable id="tabIndex" type="java.lang.String"-->
         <f:viewParam name="tabIndex"/>
         <f:viewAction action="#{ProjectForm.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
+        <f:viewParam name="keepPagination"/>
+        <f:viewAction action="#{ProjectForm.resetPaginator(keepPagination)}"/>
+        <f:viewAction action="#{TemplateForm.resetPaginator(keepPagination)}"/>
+        <f:viewAction action="#{WorkflowForm.resetPaginator(keepPagination)}"/>
+        <f:viewAction action="#{DocketForm.resetPaginator(keepPagination)}"/>
+        <f:viewAction action="#{RulesetForm.resetPaginator(keepPagination)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

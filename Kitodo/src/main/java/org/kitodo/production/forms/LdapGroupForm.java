@@ -32,7 +32,6 @@ public class LdapGroupForm extends BaseForm {
     private LdapGroup myLdapGruppe = new LdapGroup();
     private static final Logger logger = LogManager.getLogger(LdapGroupForm.class);
     private static final String LDAP_GROUP = "ldapGroup";
-    private final String ldapGroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String ldapGroupEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
 
     protected static final String ERROR_DELETING_LDAP_GROUPE = "ldapGroupInUse";
@@ -69,7 +68,7 @@ public class LdapGroupForm extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLdapGroupService().saveToDatabase(this.myLdapGruppe);
-            return ldapGroupListPath;
+            return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return this.stayOnCurrentPage;
@@ -112,7 +111,7 @@ public class LdapGroupForm extends BaseForm {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return this.stayOnCurrentPage;
         }
-        return ldapGroupListPath;
+        return usersPage;
     }
 
     /**
