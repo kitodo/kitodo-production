@@ -876,7 +876,7 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     private boolean hasAuthorityForProcess(int processId) throws DataException {
-        Integer projectId = ServiceManager.getProcessService().findById(processId).getProject().getId();
+        Integer projectId = processId == 0 ? 0 :ServiceManager.getProcessService().findById(processId).getProject().getId();
         return hasAuthorityForProject(projectId);
     }
 
