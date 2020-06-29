@@ -154,14 +154,8 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 1, ProcessTypeField.RULESET.getIntValue(actual));
 
-        List<Map<String, Object>> templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
-        assertEquals("Size templates doesn't match to given value!", 0, templates.size());
-
         List<Map<String, Object>> properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
         assertEquals("Size properties doesn't match to given value!", 0, properties.size());
-
-        List<Map<String, Object>> workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
-        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
         List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 1, batches.size());
@@ -223,14 +217,8 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 1, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, ProcessTypeField.RULESET.getIntValue(actual));
 
-        List<Map<String, Object>> templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
-        assertEquals("Size templates doesn't match to given value!", 0, templates.size());
-
         List<Map<String, Object>> tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
-
-        List<Map<String, Object>> workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
-        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
         List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, batches.size());
@@ -278,14 +266,8 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, ProcessTypeField.RULESET.getIntValue(actual));
 
-        List<Map<String, Object>> templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
-        assertEquals("Size templates doesn't match to given value!", 0, templates.size());
-
         List<Map<String, Object>> tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
-
-        List<Map<String, Object>> workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
-        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
         List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, batches.size());
@@ -301,7 +283,7 @@ public class ProcessTypeTest {
         Process process = prepareData().get(0);
         Map<String, Object> actual = processType.createDocument(process);
 
-        assertEquals("Amount of keys is incorrect!", 29, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 27, actual.keySet().size());
 
         List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         Map<String, Object> batch = batches.get(0);
