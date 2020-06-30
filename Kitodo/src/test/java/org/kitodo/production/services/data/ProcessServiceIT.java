@@ -511,27 +511,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetSortedCorrectionSolutionMessages() throws Exception {
-        ProcessDTO process = processService.findById(1);
-        List<PropertyDTO> properties = processService.getSortedCorrectionSolutionMessages(process);
-
-        int actual = properties.size();
-        assertEquals("Size of sorted correction messages is not equal to given size!", 2, actual);
-
-        actual = properties.get(0).getId();
-        assertEquals("Process property id is not equal to given process property id!", 2, actual);
-
-        actual = properties.get(1).getId();
-        assertEquals("Process property id is not equal to given process property id!", 3, actual);
-
-        process = processService.findById(3);
-        properties = processService.getSortedCorrectionSolutionMessages(process);
-
-        actual = properties.size();
-        assertEquals("Size of sorted correction messages is not equal to given size!", 0, actual);
-    }
-
-    @Test
     public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
         ProcessDTO processDTO = processService.findById(2);
         assertTrue(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));

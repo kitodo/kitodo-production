@@ -872,7 +872,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
             processDTO.setProperties(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.PROPERTIES.getKey(),
                 ServiceManager.getPropertyService()));
-            processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
             processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
             processDTO.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
             processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
@@ -1724,23 +1723,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             return processDTO.getBaseType();
         }
         return "";
-    }
-
-    /**
-     * Filter and sort after creation date list of process properties for
-     * correction and solution messages.
-     *
-     * @return list of ProcessProperty objects
-     */
-    public List<PropertyDTO> getSortedCorrectionSolutionMessages(ProcessDTO process) {
-        List<PropertyDTO> filteredList = filterForCorrectionSolutionMessages(process.getProperties());
-
-        if (filteredList.size() > 1) {
-            filteredList.sort(
-                Comparator.comparing(PropertyDTO::getCreationDate, Comparator.nullsFirst(Comparator.naturalOrder())));
-        }
-
-        return filteredList;
     }
 
     /**
