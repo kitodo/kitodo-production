@@ -503,6 +503,7 @@
                     }
                 },
                 "properties": {
+                    "dynamic": "false",
                     "properties": {
                         "title": {
                             "type": "text",
