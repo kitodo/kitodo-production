@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
@@ -42,6 +44,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
+import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.enums.ObjectType;
@@ -598,6 +601,16 @@ public class ProjectForm extends BaseForm {
      *            ID of the ruleset to load
      */
     public void loadProject(int id) {
+        SecurityAccessController securityAccessController = new SecurityAccessController();
+        try {
+            if (!securityAccessController.hasAuthorityToEditProject(id)) {
+                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                context.redirect(DEFAULT_LINK);
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
+                    logger, e);
+        }
         try {
             if (!Objects.equals(id, 0)) {
                 setProject(ServiceManager.getProjectService().getById(id));

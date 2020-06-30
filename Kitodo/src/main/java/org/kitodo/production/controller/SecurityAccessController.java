@@ -14,6 +14,7 @@ package org.kitodo.production.controller;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.security.SecurityAccessService;
 
@@ -320,6 +321,15 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to edit the task.
+     *
+     * @param taskId the specific taskId
+     * @return true if the current user has the authority to edit the task
+     */
+    public boolean hasAuthorityToEditTask(int taskId) throws DataException {
+        return securityAccessService.hasAuthorityToEditTask(taskId);
+    }
+    /**
      * Check if the current user has the authority to edit the batch.
      *
      * @return true if the current user has the authority to edit the batch
@@ -338,12 +348,32 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to edit the process.
+     *
+     * @param processId the specific processId
+     * @return true if the current user has the authority to edit the process
+     */
+    public boolean hasAuthorityToEditProcess(int processId) throws DataException {
+        return securityAccessService.hasAuthorityToEditProcess(processId);
+    }
+
+    /**
      * Check if the current user has the authority to edit the project.
      *
      * @return true if the current user has the authority to edit the project
      */
     public boolean hasAuthorityToEditProject() {
         return securityAccessService.hasAuthorityToEditProject();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the project.
+     *
+     * @param projectId the specific projectId
+     * @return true if the current user has the authority to edit the project
+     */
+    public boolean hasAuthorityToEditProject(int projectId) {
+        return securityAccessService.hasAuthorityToEditProject(projectId);
     }
 
     /**
@@ -446,12 +476,32 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to view the process.
+     *
+     * @param processId the specific processId
+     * @return true if the current user has the authority to view the process
+     */
+    public boolean hasAuthorityToViewProcess(int processId) throws DataException {
+        return securityAccessService.hasAuthorityToViewProcess(processId);
+    }
+
+    /**
      * Check if the current user has the authority to view the project.
      *
      * @return true if the current user has the authority to view the project
      */
     public boolean hasAuthorityToViewProject() {
         return securityAccessService.hasAuthorityToViewProject();
+    }
+
+    /**
+     * Check if the current user has the authority to view the project.
+     *
+     * @param projectId the specific projectId
+     * @return true if the current user has the authority to view the project
+     */
+    public boolean hasAuthorityToViewProject(int projectId) {
+        return securityAccessService.hasAuthorityToViewProject(projectId);
     }
 
     /**
