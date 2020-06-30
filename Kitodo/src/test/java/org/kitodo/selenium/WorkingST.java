@@ -65,6 +65,7 @@ public class WorkingST extends BaseTestSelenium {
         }
     }
 
+    @Ignore
     @Test
     public void takeOpenTaskAndGiveItBackTest() throws Exception {
         Task task = ServiceManager.getTaskService().getById(9);
