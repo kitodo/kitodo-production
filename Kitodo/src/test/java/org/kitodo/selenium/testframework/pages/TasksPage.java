@@ -28,7 +28,7 @@ public class TasksPage extends Page<TasksPage> {
 
     private static final String TASKS_TAB_VIEW = "tasksTabView";
     private static final String TASK_TABLE = TASKS_TAB_VIEW + ":tasksForm:taskTable";
-    private static final String FILTER_FORM = TASKS_TAB_VIEW + ":filterForm";
+    private static final String STATUS_FORM = TASKS_TAB_VIEW + ":statusForm";
     private static final String WAIT_FOR_FILTER_FORM_MENU = "Wait for filter form menu to open";
 
     @SuppressWarnings("unused")
@@ -39,11 +39,11 @@ public class TasksPage extends Page<TasksPage> {
 
     private WebElement takeTaskLink;
 
-    @FindBy(id = FILTER_FORM + ":actionsButton")
-    private WebElement actionsButton;
+    @FindBy(id = STATUS_FORM + ":statusButton")
+    private WebElement statusButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = FILTER_FORM + ":restrictToOpenTasks")
+    @FindBy(id = STATUS_FORM + ":restrictToOpenTasks")
     private WebElement restrictToOpenTasks;
 
     public TasksPage() {
@@ -76,7 +76,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     public void applyFilterShowOnlyOpenTasks() {
-        actionsButton.click();
+        statusButton.click();
         await(WAIT_FOR_FILTER_FORM_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS)
                 .until(() -> restrictToOpenTasks.isDisplayed());
@@ -84,7 +84,7 @@ public class TasksPage extends Page<TasksPage> {
 
         await("Wait for task list to be restricted to open tasks").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> actionsButton.isEnabled());
+                .until(() -> statusButton.isEnabled());
     }
 
     public int countListedTasks() throws Exception {

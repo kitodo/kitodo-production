@@ -70,12 +70,13 @@ public class CurrentTaskForm extends BaseForm {
     private final WebDav myDav = new WebDav();
     private boolean onlyOpenTasks = false;
     private boolean onlyOwnTasks = false;
+    private TaskStatus taskStatusRestriction = null;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
     private String scriptPath;
-    private String doneDirectoryName;
+    private final String doneDirectoryName;
     private transient BatchTaskHelper batchHelper;
-    private WorkflowControllerService workflowControllerService = new WorkflowControllerService();
+    private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private List<Property> properties;
     private Property property;
     private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
@@ -508,24 +509,13 @@ public class CurrentTaskForm extends BaseForm {
         }
     }
 
-    /**
-     * Check if it should show only open tasks.
-     *
-     * @return boolean
-     */
-    public boolean isOnlyOpenTasks() {
-        return this.onlyOpenTasks;
+    public void setTaskStatusRestriction(TaskStatus taskStatus) {
+        ServiceManager.getTaskService().setTaskStatusRestriction(taskStatus);
+        this.taskStatusRestriction = taskStatus;
     }
 
-    /**
-     * Set shown only open tasks.
-     *
-     * @param onlyOpenTasks
-     *            as boolean
-     */
-    public void setOnlyOpenTasks(boolean onlyOpenTasks) {
-        this.onlyOpenTasks = onlyOpenTasks;
-        ServiceManager.getTaskService().setOnlyOpenTasks(this.onlyOpenTasks);
+    public TaskStatus getTaskStatusRestriction() {
+        return this.taskStatusRestriction;
     }
 
     /**
