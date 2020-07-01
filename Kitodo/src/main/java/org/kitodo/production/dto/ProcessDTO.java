@@ -23,7 +23,6 @@ public class ProcessDTO extends BaseTemplateDTO {
     private ProjectDTO project;
     private List<BatchDTO> batches = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();
-    private List<PropertyDTO> sortedCorrectionSolutionMessages = new ArrayList<>();
     private UserDTO blockedUser;
     private Double progressClosed;
     private Double progressInProcessing;
@@ -117,25 +116,6 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setBlockedUser(UserDTO blockedUser) {
         this.blockedUser = blockedUser;
-    }
-
-    /**
-     * Get list of sorted correction and solution messages.
-     *
-     * @return list of sorted correction and solution messages as PropertyDTO
-     */
-    public List<PropertyDTO> getSortedCorrectionSolutionMessages() {
-        return sortedCorrectionSolutionMessages;
-    }
-
-    /**
-     * Set list of sorted correction and solution messages.
-     *
-     * @param sortedCorrectionSolutionMessages
-     *            as PropertyDTO
-     */
-    public void setSortedCorrectionSolutionMessages(List<PropertyDTO> sortedCorrectionSolutionMessages) {
-        this.sortedCorrectionSolutionMessages = sortedCorrectionSolutionMessages;
     }
 
     /**
