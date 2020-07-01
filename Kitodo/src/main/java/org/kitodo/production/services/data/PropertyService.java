@@ -96,7 +96,7 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
     }
 
     private List<String> findDistinctTitles(String type) {
-        List<Property> byQuery = getByQuery("SELECT DISTINCT title from property");
+        List<Property> byQuery = getByQuery("SELECT DISTINCT property.title from Property as property");
         List<String> titles = new ArrayList<>();
         for (Property property : byQuery) {
             titles.add(property.getTitle());
@@ -116,7 +116,7 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      * @return list of JSON objects with properties
      */
     public List<Property> findByTitle(String title, String type, boolean contains) {
-        return getByQuery("SELECT p from property where p.title=" + title);
+        return getByQuery("from Property as property where property.title='" + title + "'");
     }
 
     /**
@@ -131,7 +131,7 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      * @return list of JSON objects with properties
      */
     List<Property> findByValue(String value, String type, boolean contains) {
-        return getByQuery("SELECT p from property where p.value=" + value);
+        return getByQuery("from Property as property where property.value='" + value + "'");
     }
 
     /**
@@ -149,7 +149,7 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      * @return list of JSON objects with batches of exact type
      */
     List<Property> findByTitleAndValue(String title, String value, String type, boolean contains) {
-        return getByQuery("SELECT p from property where p.title=" + title + "and p.value=" + value);
+        return getByQuery("from Property as property where property.title='" + title + "' and property.value='" + value + "'");
     }
 
     /**
