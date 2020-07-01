@@ -17,6 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
+    <p:importEnum type="org.kitodo.data.database.enums.TaskStatus" allSuffix="ALL_ENUM_VALUES"/>
     <h:form id="tasksForm">
         <p:dataTable id="taskTable"
                      var="item"
@@ -217,7 +218,8 @@
     </h:form>
 
     <div id="dropDownMenus">
-        <h:form id="filterForm">
+        <h:form id="filterForm"
+                style="display: inline-block;">
             <p:commandButton id="actionsButton"
                              value="#{msgs.filterAdjust}"
                              process="@this"
@@ -265,17 +267,40 @@
                             update="tasksTabView:tasksForm:taskTable filterMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOwnTasks}" value="#{false}"/>
                 </p:menuitem>
+            </p:menu>
+        </h:form>
+        <h:form id="statusForm"
+                style="display: inline-block;">
+            <p:commandButton id="statusButton"
+                             value="#{msgs.processingStatus}"
+                             process="@this"
+                             styleClass="secondary"
+                             icon="fa fa-sort"
+                             iconPos="right"/>
+            <p:menu id="statusMenu"
+                    overlay="true"
+                    trigger="tasksTabView:statusForm:statusButton"
+                    my="left bottom"
+                    at="left top">
+                <!--@elvariable id="OPEN" type="org.kitodo.data.database.enums.TaskStatus"-->
                 <p:menuitem id="restrictToOpenTasks"
                             value="#{msgs.showOnlyOpenTasks}"
-                            rendered="#{CurrentTaskForm.onlyOpenTasks eq false}"
-                            update="tasksTabView:tasksForm:taskTable filterMenu">
-                    <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOpenTasks}" value="#{true}"/>
+                            disabled="#{CurrentTaskForm.taskStatusRestriction eq 'OPEN'}"
+                            update="tasksTabView:tasksForm:taskTable statusMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.taskStatusRestriction}" value="OPEN"/>
                 </p:menuitem>
-                <p:menuitem id="removeRestrictionToOpenTasks"
-                            value="#{msgs.removeRestrictionToOpenTasks}"
-                            rendered="#{CurrentTaskForm.onlyOpenTasks eq true}"
-                            update="tasksTabView:tasksForm:taskTable filterMenu">
-                    <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOpenTasks}" value="#{false}"/>
+                <!--@elvariable id="INWORK" type="org.kitodo.data.database.enums.TaskStatus"-->
+                <p:menuitem id="restrictToTasksInWork"
+                            value="#{msgs.showOnlyTasksInWork}"
+                            disabled="#{CurrentTaskForm.taskStatusRestriction eq 'INWORK'}"
+                            update="tasksTabView:tasksForm:taskTable statusMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.taskStatusRestriction}" value="INWORK"/>
+                </p:menuitem>
+                <p:menuitem id="removeRestriction"
+                            value="#{msgs.removeTaskStatusRestriction}"
+                            disabled="#{CurrentTaskForm.taskStatusRestriction eq null}"
+                            update="tasksTabView:tasksForm:taskTable statusMenu">
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.taskStatusRestriction}" value="#{null}"/>
                 </p:menuitem>
             </p:menu>
         </h:form>

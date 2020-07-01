@@ -77,8 +77,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private static volatile TaskService instance = null;
-    private boolean onlyOpenTasks = false;
     private boolean onlyOwnTasks = false;
+    private TaskStatus taskStatusRestriction = null;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
 
@@ -126,8 +126,10 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
         query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
 
-        if (onlyOpenTasks) {
+        if (TaskStatus.OPEN.equals(this.taskStatusRestriction)) {
             query.must(getQueryForProcessingStatus(TaskStatus.OPEN.getValue()));
+        } else if (TaskStatus.INWORK.equals(this.taskStatusRestriction)) {
+            query.must(getQueryForProcessingStatus(TaskStatus.INWORK.getValue()));
         } else {
             Set<Integer> processingStatuses = new HashSet<>();
             processingStatuses.add(TaskStatus.OPEN.getValue());
@@ -552,14 +554,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         new ExportDms().startExport(task.getProcess());
     }
 
-    /**
-     * Set shown only open tasks.
-     *
-     * @param onlyOpenTasks
-     *            as boolean
-     */
-    public void setOnlyOpenTasks(boolean onlyOpenTasks) {
-        this.onlyOpenTasks = onlyOpenTasks;
+    public void setTaskStatusRestriction(TaskStatus taskStatus) {
+        this.taskStatusRestriction = taskStatus;
     }
 
     /**
