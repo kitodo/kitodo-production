@@ -19,6 +19,8 @@
 --        hack: insert value and delete it, so LAST_INSERT_ID is up to date.
 --
 
+SET @rank=0;
+
 -- for workpieceproperty
 ALTER TABLE workpieceProperty
 CHANGE id id INT(11) NOT NULL;
@@ -26,14 +28,10 @@ ALTER TABLE workpieceProperty
 DROP PRIMARY KEY;
 
 UPDATE workpieceProperty
-JOIN (SELECT @rank := LAST_INSERT_ID()) r
 SET id=@rank:=@rank+1;
 ALTER TABLE workpieceProperty
 CHANGE id id INT(11) NOT NULL AUTO_INCREMENT,
 ADD PRIMARY KEY(id);
-INSERT INTO workpieceProperty (title)
-VALUES('dummyMigrationDeleteValue');
-DELETE FROM workpieceProperty WHERE title ='dummyMigrationDeleteValue';
 
 -- for userproperty
 ALTER TABLE userProperty
@@ -42,14 +40,10 @@ ALTER TABLE userProperty
 DROP PRIMARY KEY;
 
 UPDATE userProperty
-JOIN (SELECT @rank := LAST_INSERT_ID()) r
 SET id=@rank:=@rank+1;
 ALTER TABLE userProperty
 CHANGE id id INT(11) NOT NULL AUTO_INCREMENT,
 ADD PRIMARY KEY(id);
-INSERT INTO userProperty (title)
-VALUES('dummyMigrationDeleteValue');
-DELETE FROM userProperty WHERE title ='dummyMigrationDeleteValue';
 
 -- for templateproperty
 ALTER TABLE templateProperty
@@ -58,14 +52,10 @@ ALTER TABLE templateProperty
 DROP PRIMARY KEY;
 
 UPDATE templateProperty
-JOIN (SELECT @rank := LAST_INSERT_ID()) r
 SET id=@rank:=@rank+1;
 ALTER TABLE templateProperty
 CHANGE id id INT(11) NOT NULL AUTO_INCREMENT,
 ADD PRIMARY KEY(id);
-INSERT INTO templateProperty (title)
-VALUES('dummyMigrationDeleteValue');
-DELETE FROM templateProperty WHERE title ='dummyMigrationDeleteValue';
 
 -- for processproperty
 ALTER TABLE processProperty
@@ -74,14 +64,10 @@ ALTER TABLE processProperty
 DROP PRIMARY KEY;
 
 UPDATE processProperty
-JOIN (SELECT @rank := LAST_INSERT_ID()) r
 SET id=@rank:=@rank+1;
 ALTER TABLE processProperty
 CHANGE id id INT(11) NOT NULL AUTO_INCREMENT,
 ADD PRIMARY KEY(id);
-INSERT INTO processProperty (title)
-VALUES('dummyMigrationDeleteValue');
-DELETE FROM processProperty WHERE title ='dummyMigrationDeleteValue';
 
 -- 2. Create cross Tables, insert id and foreign keys from property tables
 
