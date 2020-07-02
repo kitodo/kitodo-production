@@ -106,7 +106,9 @@ public class SchemaService {
             for (IncludedStructuralElement child : children) {
                 assignViewsFromChildrenRecursive(child);
             }
-            MetadataEditor.assignViewsFromChildren(includedStructuralElement);
+            if (!Objects.nonNull(includedStructuralElement.getType())) {
+                MetadataEditor.assignViewsFromChildren(includedStructuralElement);
+            }
         }
     }
 
