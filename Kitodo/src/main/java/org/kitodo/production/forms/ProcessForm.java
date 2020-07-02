@@ -98,16 +98,15 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> templates;
     private List<Property> workpieces;
     private Property property;
-    private transient FileService fileService = ServiceManager.getFileService();
-    private transient ProcessService processService = ServiceManager.getProcessService();
-    private transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
-    private String doneDirectoryName;
+    private final transient FileService fileService = ServiceManager.getFileService();
+    private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
+    private final String doneDirectoryName;
     private List<Process> selectedProcesses = new ArrayList<>();
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private PieChartModel pieModel;
     private HorizontalBarChartModel stackedBarModel;
     private Map<String,Integer> statisticResult;
-    private List<ProcessMetadataStatistic> processMetadataStatistics = new ArrayList<>();
+    private final List<ProcessMetadataStatistic> processMetadataStatistics = new ArrayList<>();
     private int numberOfGlobalImages;
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
@@ -117,7 +116,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     private List<SelectItem> customColumns;
 
-    private Map<Integer, Collection<String>> rulesetCache = new HashMap<>();
+    private final Map<Integer, Collection<String>> rulesetCache = new HashMap<>();
     List<String> bgColors = Arrays.asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
 
     @Inject
@@ -1627,5 +1626,35 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String getProcessesPage() {
         return this.processesPage;
+    }
+
+    /**
+     * Retrieve and return UserName of last user processing a task of the current process.
+     *
+     * @param processDTO Process for which the UserName is returned
+     * @return username
+     */
+    public String getUserHandlingLastTask(ProcessDTO processDTO) {
+        return ServiceManager.getProcessService().getUserHandlingLastTask(processDTO);
+    }
+
+    /**
+     * Retrieve and return timestamp of last tasks processing begin.
+     *
+     * @param processDTO Process for which the timestamp is returned
+     * @return timestamp of last tasks processing begin
+     */
+    public String getProcessingBeginOfLastTask(ProcessDTO processDTO) {
+        return ServiceManager.getProcessService().getLastUserProcessingStart(processDTO);
+    }
+
+    /**
+     * Retrieve and return timestamp of last tasks processing end.
+     *
+     * @param processDTO Process for which the timestamp is returned
+     * @return timestamp of last tasks processing end
+     */
+    public String getProcessingEndOfLastTask(ProcessDTO processDTO) {
+        return ServiceManager.getProcessService().getLastUserProcessingEnd(processDTO);
     }
 }
