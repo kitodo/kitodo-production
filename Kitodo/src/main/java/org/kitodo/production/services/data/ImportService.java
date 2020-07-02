@@ -541,12 +541,12 @@ public class ImportService {
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
         String debugFolder = ConfigMain.getParameter("debugFolder", null);
         if (Objects.nonNull(debugFolder)) {
-            FileUtils.writeStringToFile(new File(debugFolder, "opacBeautifyBefore.xml"),
+            FileUtils.writeStringToFile(new File(debugFolder, "catalogRecord.xml"),
                 (String) dataRecord.getOriginalData(), Charset.forName("UTF-8"));
         }
         DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
         if (Objects.nonNull(debugFolder)) {
-            FileUtils.writeStringToFile(new File(debugFolder, "opacBeautifyAfter.xml"),
+            FileUtils.writeStringToFile(new File(debugFolder, "internalRecord.xml"),
                 (String) internalRecord.getOriginalData(), Charset.forName("UTF-8"));
         }
 
