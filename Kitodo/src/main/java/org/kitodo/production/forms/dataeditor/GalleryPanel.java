@@ -464,11 +464,17 @@ public class GalleryPanel {
     private GalleryMediaContent createGalleryMediaContent(View view) {
         MediaUnit mediaUnit = view.getMediaUnit();
         URI previewUri = mediaUnit.getMediaFiles().get(previewVariant);
-        URI resourcePreviewUri = previewUri.isAbsolute() ? previewUri
-                : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
+        URI resourcePreviewUri = null;
+        if (Objects.nonNull(previewUri)) {
+            resourcePreviewUri = previewUri.isAbsolute() ? previewUri
+                    : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
+        }
         URI mediaViewUri = mediaUnit.getMediaFiles().get(mediaViewVariant);
-        URI resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
-                : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
+        URI resourceMediaViewUri = null;
+        if (Objects.nonNull(mediaViewUri)) {
+            resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
+                    : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
+        }
         String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
         return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri);
     }
