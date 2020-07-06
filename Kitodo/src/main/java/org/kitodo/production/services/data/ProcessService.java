@@ -1198,7 +1198,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
-    private List<TaskDTO> getComnpletedTasks(ProcessDTO process) {
+    private List<TaskDTO> getCompletedTasks(ProcessDTO process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.DONE.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
@@ -2514,7 +2514,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private TaskDTO getLastProcessedTask(ProcessDTO processDTO) {
         List<TaskDTO> tasks = getTasksInWork(processDTO);
         if (tasks.isEmpty()) {
-            tasks = getComnpletedTasks(processDTO);
+            tasks = getCompletedTasks(processDTO);
         }
         tasks = tasks.stream().filter(t -> Objects.nonNull(t.getProcessingUser())).collect(Collectors.toList());
         if (tasks.isEmpty()) {
