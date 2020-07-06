@@ -18,14 +18,6 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -45,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -157,6 +148,14 @@ import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final FileService fileService = ServiceManager.getFileService();
@@ -606,52 +605,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), rulesetId, true);
         return findDocuments(query);
-    }
-
-    /**
-     * Find process by property.
-     *
-     * @param title
-     *            of property as String
-     * @param value
-     *            of property as String
-     * @param contains
-     *            true or false
-     * @return list of process JSONObjects
-     */
-    public List<Map<String, Object>> findByProcessProperty(String title, String value, boolean contains) {
-        return null;
-    }
-
-    /**
-     * Find process by template.
-     *
-     * @param title
-     *            of property as String
-     * @param value
-     *            of property as String
-     * @param contains
-     *            true or false
-     * @return list of process JSONObjects
-     */
-    public List<Map<String, Object>> findByTemplateProperty(String title, String value, boolean contains) {
-        return null;
-    }
-
-    /**
-     * Find process by workpiece.
-     *
-     * @param title
-     *            of property as String
-     * @param value
-     *            of property as String
-     * @param contains
-     *            true or false
-     * @return list of process JSONObjects
-     */
-    public List<Map<String, Object>> findByWorkpieceProperty(String title, String value, boolean contains)
-            throws DataException {
-        return null;
     }
 
     /**

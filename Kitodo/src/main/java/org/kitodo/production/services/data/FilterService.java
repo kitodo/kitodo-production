@@ -162,9 +162,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         }
 
         for (String tokenizedFilter : prepareFilters(filter)) {
-            if (evaluateFilterString(tokenizedFilter, FilterString.PROCESSPROPERTY, null)) {
-                query.must(filterProcessProperty(tokenizedFilter, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASK, null)) {
+            if (evaluateFilterString(tokenizedFilter, FilterString.TASK, null)) {
                 query.must(createHistoricFilter(tokenizedFilter));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, null)) {
                 query.must(
@@ -188,8 +186,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 query.must(filterAutomaticTasks(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PROJECT, null)) {
                 query.must(filterProject(tokenizedFilter, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TEMPLATE, null)) {
-                query.must(filterScanTemplate(tokenizedFilter, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.ID, null)) {
                 query.must(createProcessIdFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PARENTPROCESSID, null)) {
@@ -198,10 +194,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 query.must(createProcessTitleFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, null)) {
                 query.must(createBatchIdFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.WORKPIECE, null)) {
-                query.must(filterWorkpiece(tokenizedFilter, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROCESSPROPERTY, "-")) {
-                query.must(filterProcessProperty(tokenizedFilter, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, "-")) {
                 query.must(
                     createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, true, objectType));
@@ -219,10 +211,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PROJECT, "-")) {
                 query.must(filterProject(tokenizedFilter, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TEMPLATE, "-")) {
-                query.must(filterScanTemplate(tokenizedFilter, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.WORKPIECE, "-")) {
-                query.must(filterWorkpiece(tokenizedFilter, true, objectType));
             } else if (tokenizedFilter.startsWith("-")) {
                 query.must(createDefaultQuery(tokenizedFilter.substring(1), true, objectType));
             } else {
@@ -874,33 +862,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * Filter process properties.
-     *
-     * @param filter
-     *            as String
-     * @param negate
-     *            true or false
-     * @param objectType
-     *            as {@link ObjectType}
-     * @return query as {@link QueryBuilder}
-     */
-    private QueryBuilder filterProcessProperty(String filter, boolean negate, ObjectType objectType)
-            throws DataException {
-        /* Filtering by signature */
-        List<Map<String, Object>> processes;
-        List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
-        if (titleValue.size() > 1) {
-            processes = ServiceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
-                !negate);
-        } else {
-            processes = ServiceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
-        }
-
-        QueryBuilder projectQuery = createSetQuery("_id", processes, true);
-        return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
-    }
-
-    /**
      * Filter processes by project.
      *
      * @param filter
@@ -918,64 +879,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
     }
 
-    /**
-     * Filter processes by scan template.
-     *
-     * @param filter
-     *            part of filter string to use
-     * @param negate
-     *            true or false
-     * @param objectType
-     *            as {@link ObjectType}
-     * @return query as {@link QueryBuilder}
-     */
-    private QueryBuilder filterScanTemplate(String filter, boolean negate, ObjectType objectType) throws DataException {
-        // Filtering by signature
-        List<Map<String, Object>> templates;
-        List<String> templateProperty = getFilterValueFromFilterStringForProperty(filter, FilterString.TEMPLATE);
-        if (templateProperty.size() > 1) {
-            templates = ServiceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
-                templateProperty.get(1), !negate);
-        } else {
-            templates = ServiceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
-                !negate);
-        }
-
-        QueryBuilder templateQuery = createSetQuery("template", templates, true);
-        return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, templateQuery);
-    }
-
     private QueryBuilder createDefaultQuery(String filter, boolean negate, ObjectType objectType) throws DataException {
         QueryBuilder titleQuery = ServiceManager.getProcessService().getQueryTitle(filter, !negate);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
-    }
-
-    /**
-     * Filter processes by workpiece.
-     *
-     * @param filter
-     *            part of filter string to use
-     * @param negate
-     *            true or false
-     * @param objectType
-     *            as {@link ObjectType}
-     * @return query as {@link QueryBuilder}
-     */
-    private QueryBuilder filterWorkpiece(String filter, boolean negate, ObjectType objectType) throws DataException {
-        // filter according signature
-        List<Map<String, Object>> workpieces;
-        List<String> workpieceProperty = getFilterValueFromFilterStringForProperty(filter,
-            FilterString.PROCESSPROPERTY);
-        if (workpieceProperty.size() > 1) {
-            workpieces = ServiceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
-                workpieceProperty.get(1), !negate);
-        } else {
-            workpieces = ServiceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
-                !negate);
-        }
-
-        QueryBuilder workpieceQuery = createSetQuery("workpieces.id", workpieces, true);
-        return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, workpieceQuery);
     }
 
     private QueryBuilder getQueryAccordingToObjectTypeAndSearchInObject(ObjectType objectType,

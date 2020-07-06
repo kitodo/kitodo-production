@@ -73,68 +73,6 @@
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
-                    <!-- process property -->
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="processproperty" value="#{msgs.processProperties}"/>
-                        </p:column>
-                        <p:column>
-                            <p:selectOneMenu value="#{SearchForm.processPropertyOperand}">
-                                <f:selectItems value="#{SearchForm.operands}"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                        <p:column>
-                            <p:selectOneMenu value="#{SearchForm.processPropertyTitle}">
-                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                                <f:selectItems value="#{SearchForm.processPropertyTitles}"
-                                               var="proc" itemLabel="#{proc}"
-                                               itemValue="#{proc}"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                        <p:column>
-                            <p:inputText id="processproperty"
-                                         value="#{SearchForm.processPropertyValue}"
-                                         styleClass="extended-search-input-field"/>
-                        </p:column>
-                    </p:row>
-                    <!-- masterpiece property -->
-                    <p:row>
-                        <p:column> <p:outputLabel value="#{msgs.masterpieceProperties}"/> </p:column>
-                        <p:column>
-                            <p:selectOneMenu value="#{SearchForm.masterpiecePropertyOperand}">
-                                <f:selectItems value="#{SearchForm.operands}"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                        <p:column>
-                            <p:selectOneMenu value="#{SearchForm.masterpiecePropertyTitle}">
-                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                                <f:selectItems value="#{SearchForm.masterpiecePropertyTitles}" var="work" itemLabel="#{work}" itemValue="#{work}"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                        <p:column>
-                            <p:inputText value="#{SearchForm.masterpiecePropertyValue}"
-                                         styleClass="extended-search-input-field"/>
-                        </p:column>
-                    </p:row>
-                    <!-- template property -->
-                    <p:row>
-                        <p:column><p:outputLabel value="#{msgs.templateProperty}"/></p:column>
-                        <p:column>
-                            <p:selectOneMenu value="#{SearchForm.templatePropertyOperand}">
-                                <f:selectItems value="#{SearchForm.operands}"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                        <p:column>
-                            <p:selectOneMenu value="#{SearchForm.templatePropertyTitle}">
-                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                                <f:selectItems value="#{SearchForm.templatePropertyTitles}" var="temp" itemLabel="#{temp}" itemValue="#{temp}"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                        <p:column>
-                            <p:inputText value="#{SearchForm.templatePropertyValue}"
-                                         styleClass="extended-search-input-field"/>
-                        </p:column>
-                    </p:row>
                     <!--steps -->
                     <p:row>
                         <p:column><p:outputLabel value="#{msgs.task}"/></p:column>

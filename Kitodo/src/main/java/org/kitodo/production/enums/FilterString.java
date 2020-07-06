@@ -13,7 +13,6 @@ package org.kitodo.production.enums;
 
 public enum FilterString {
 
-    PROCESSPROPERTY("processproperty:", "prozesseigenschaft:"),
     TASK("step:", "schritt:"),
     TASKINWORK("stepinwork:", "schrittinarbeit:"),
     TASKLOCKED("steplocked:", "schrittgesperrt:"),

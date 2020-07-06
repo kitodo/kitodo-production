@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -116,7 +117,9 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      * @return list of JSON objects with properties
      */
     public List<Property> findByTitle(String title, String type, boolean contains) {
-        return getByQuery("from Property as property where property.title='" + title + "'");
+        HashMap parameters = new HashMap<String, String>();
+        parameters.put("title", title);
+        return getByQuery("from Property as property where property.title=:title", parameters);
     }
 
     /**
@@ -131,7 +134,9 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      * @return list of JSON objects with properties
      */
     List<Property> findByValue(String value, String type, boolean contains) {
-        return getByQuery("from Property as property where property.value='" + value + "'");
+        HashMap parameters = new HashMap<String, String>();
+        parameters.put("value", value);
+        return getByQuery("from Property as property where property.value=:value", parameters);
     }
 
     /**
@@ -149,7 +154,10 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      * @return list of JSON objects with batches of exact type
      */
     List<Property> findByTitleAndValue(String title, String value, String type, boolean contains) {
-        return getByQuery("from Property as property where property.title='" + title + "' and property.value='" + value + "'");
+        HashMap parameters = new HashMap<String, String>();
+        parameters.put("title", title);
+        parameters.put("value", value);
+        return getByQuery("from Property as property where property.title=:title and property.value=:value", parameters);
     }
 
     /**
