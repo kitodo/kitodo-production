@@ -238,27 +238,6 @@ public class ProcessServiceIT {
             processService.findLinkableParentProcesses("HierarchyParent", 1, 1).size());
     }
 
-    @Ignore
-    @Test
-    public void shouldFindManyByProperty() throws DataException {
-        assertEquals("Processes were not found in index!", 2,
-            processService.findByProcessProperty("Korrektur notwendig", null, true).size());
-    }
-
-    @Ignore
-    @Test
-    public void shouldFindOneByProperty() throws DataException {
-        assertEquals(processNotFound, 1,
-            processService.findByProcessProperty("Process Property", "first value", true).size());
-    }
-
-    @Ignore
-    @Test
-    public void shouldNotFindByProperty() throws DataException {
-        assertEquals(processNotFound, 0,
-            processService.findByProcessProperty("firstTemplate title", "first value", true).size());
-    }
-
     @Ignore("for second process is attached task which is processed by blocked user")
     @Test
     public void shouldGetBlockedUser() throws Exception {
