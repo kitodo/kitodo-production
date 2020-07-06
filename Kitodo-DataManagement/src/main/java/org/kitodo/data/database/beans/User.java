@@ -246,10 +246,20 @@ public class User extends BaseBean {
         this.withMassDownload = withMassDownload;
     }
 
+    /**
+     * Get shortcuts.
+     *
+     * @return value of shortcuts
+     */
     public String getShortcuts() {
         return shortcuts;
     }
 
+    /**
+     * Set shortcuts.
+     *
+     * @param shortcuts as java.lang.String
+     */
     public void setShortcuts(String shortcuts) {
         this.shortcuts = shortcuts;
     }

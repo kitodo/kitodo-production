@@ -251,15 +251,6 @@ public enum ParameterCore implements ParameterInterface {
 
     METADATA_LANGUAGE_LIST(new Parameter<>("metadataLanguage.list", "Deutsch-de")),
 
-    SHORTCUTS_DEFAULT(new Parameter<>("shortcuts.default", "{"
-            + "\"detailView\":\"Control Shift BracketRight\","
-            + "\"help\":\"Shift Minus\","
-            + "\"nextItem\":\"Control ArrowDown\","
-            + "\"nextItemMulti\":\"Control Shift ArrowDown\","
-            + "\"previousItem\":\"Control ArrowUp\","
-            + "\"previousItemMulti\":\"Control Shift ArrowUp\","
-            + "\"structuredView\":\"Control Shift Slash\"}")),
-
     /*
      * Data protection
      */

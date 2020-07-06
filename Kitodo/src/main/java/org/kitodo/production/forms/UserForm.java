@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -66,6 +68,14 @@ public class UserForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient UserService userService = ServiceManager.getUserService();
+    private static final List<String> AVAILABLE_SHORTCUTS = Arrays.asList(
+            "detailView",
+            "help",
+            "nextItem",
+            "nextItemMulti",
+            "previousItem",
+            "previousItemMulti",
+            "structuredView");
 
     private String passwordToEncrypt;
 
@@ -421,10 +431,11 @@ public class UserForm extends BaseForm {
             } else {
                 this.passwordToEncrypt = "";
             }
-            if (Objects.nonNull(userObject) && Objects.nonNull(userObject.getShortcuts())) {
-                shortcuts = new ObjectMapper().readValue(userObject.getShortcuts(), new TypeReference<TreeMap<String, String>>() {});
+            if (Objects.nonNull(userObject) && StringUtils.isNotBlank(userObject.getShortcuts())) {
+                shortcuts = mapShortcuts(new ObjectMapper().readValue(userObject.getShortcuts(),
+                        new TypeReference<TreeMap<String, String>>() {}));
             } else {
-                shortcuts = newDefaultShortcuts();
+                shortcuts = mapShortcuts(new TreeMap<String, String>());
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -585,14 +596,11 @@ public class UserForm extends BaseForm {
         return shortcuts;
     }
 
-    private SortedMap<String, String> newDefaultShortcuts() {
-        SortedMap<String, String> defaultShortcuts = new TreeMap<>();
-        String shortcutsString = ConfigCore.getParameterOrDefaultValue(ParameterCore.SHORTCUTS_DEFAULT);
-        try {
-            defaultShortcuts = new ObjectMapper().readValue(shortcutsString, new TypeReference<TreeMap<String, String>>() {});
-        } catch (IOException e) {
-            Helper.setErrorMessage("Could not parse default shortcuts from config file!", logger, e);
+    private SortedMap<String, String> mapShortcuts(Map<String, String> loadedShortcuts) {
+        SortedMap<String, String> shortcuts = new TreeMap<>();
+        for (String shortcut : AVAILABLE_SHORTCUTS) {
+            shortcuts.put(shortcut, loadedShortcuts.getOrDefault(shortcut, ""));
         }
-        return defaultShortcuts;
+        return shortcuts;
     }
 }
