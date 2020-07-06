@@ -22,13 +22,12 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProjectService;
 import org.primefaces.PrimeFaces;
 
 @ViewScoped
@@ -86,8 +85,7 @@ public class SelectTemplateDialogView implements Serializable {
      */
     public List<Template> getProjectTemplates() {
         try {
-            Project project = ServiceManager.getProjectService().getById(this.project.getId());
-            return project.getTemplates();
+            return ProjectService.getAvailableTemplates(this.project);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(),
                     this.project.getId()}, logger, e);
@@ -118,24 +116,30 @@ public class SelectTemplateDialogView implements Serializable {
      * Display error message if no template is configured for current project.
      */
     public void checkForTemplates() {
-        if (this.project.getTemplates().size() == 1) {
-            this.selectedTemplateId = project.getTemplates().get(0).getId();
-        }
-        if (this.selectedTemplateId > 0) {
-            try {
-                FacesContext context = FacesContext.getCurrentInstance();
-                String path = context.getExternalContext().getRequestContextPath() + redirectPath
-                        + "&templateId=" + this.selectedTemplateId + "&projectId=" + this.project.getId()
-                        + "&referrer=" + context.getViewRoot().getViewId();
-                context.getExternalContext().redirect(path);
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage());
+        try {
+            List<Template> availableTemplates = ProjectService.getAvailableTemplates(this.project);
+            if (availableTemplates.size() == 1) {
+                this.selectedTemplateId = availableTemplates.get(0).getId();
             }
-        } else if (project.getTemplates().size() > 1) {
-            PrimeFaces.current().ajax().update("selectTemplateDialog");
-            PrimeFaces.current().executeScript("PF('selectTemplateDialog').show();");
-        } else {
-            Helper.setErrorMessage("noTemplatesConfigured");
+            if (this.selectedTemplateId > 0) {
+                try {
+                    FacesContext context = FacesContext.getCurrentInstance();
+                    String path = context.getExternalContext().getRequestContextPath() + redirectPath
+                            + "&templateId=" + this.selectedTemplateId + "&projectId=" + this.project.getId()
+                            + "&referrer=" + context.getViewRoot().getViewId();
+                    context.getExternalContext().redirect(path);
+                } catch (IOException e) {
+                    Helper.setErrorMessage(e.getLocalizedMessage());
+                }
+            } else if (availableTemplates.size() > 1) {
+                PrimeFaces.current().ajax().update("selectTemplateDialog");
+                PrimeFaces.current().executeScript("PF('selectTemplateDialog').show();");
+            } else {
+                Helper.setErrorMessage("noTemplatesConfigured");
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(),
+                    this.project.getId()}, logger, e);
         }
     }
 }

@@ -25,6 +25,7 @@ import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -369,5 +370,18 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
             ServiceManager.getUserService().saveToDatabase(user);
         }
         ServiceManager.getProjectService().remove(project);
+    }
+
+    /**
+     * Load list of templates that are configured to be available for process generation in the given project.
+     * @param projectDTO Project for which the list of available templates is returned
+     * @return list of available templates
+     * @throws DAOException if project cannot be loaded from database
+     */
+    public static List<Template> getAvailableTemplates(ProjectDTO projectDTO) throws DAOException {
+        Project project = ServiceManager.getProjectService().getById(projectDTO.getId());
+        return project.getTemplates().stream()
+                .filter(BaseTemplateBean::getInChoiceListShown)
+                .collect(Collectors.toList());
     }
 }
