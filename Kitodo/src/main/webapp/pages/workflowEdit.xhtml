@@ -74,9 +74,8 @@
                          actionListener="#{WorkflowForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button value="#{isViewMode ? msgs.close : msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="projects?keepPagination=true"
+        <p:commandButton value="#{isViewMode ? msgs.close : msgs.cancel}"
+                  action="#{WorkflowForm.cancel()}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="#{isViewMode ? 'primary' : 'secondary'}"/>

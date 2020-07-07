@@ -166,6 +166,25 @@ public class WorkflowForm extends BaseForm {
         }
     }
 
+    /**
+     * Cancel Workflow creation.
+     * @return redirectPath
+     */
+    public String cancel() {
+        if(migration){
+            try {
+                ServiceManager.getWorkflowService().remove(workflow);
+            } catch (DataException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {this.workflow.getTitle(), e.getMessage() }, logger,
+                        e);
+                return this.stayOnCurrentPage;
+            }
+            return MIGRATION_FORM_PATH;
+        }
+
+        return "projects?keepPagination=true";
+    }
+
     private boolean hasMultipleSructureTreeConfiguration() throws WorkflowException, IOException {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();

@@ -14,6 +14,7 @@ package org.kitodo.production.migration;
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.TaskStatus;
 
 class XmlGenerator {
 
@@ -35,8 +36,8 @@ class XmlGenerator {
      *            for generating
      * @return generated task
      */
-    static String generateTask(Task task) {
-        return generateTask(task, "Task_" + (task.getOrdering() - 1), "Task_" + task.getOrdering());
+    static String generateTask(Task task, int order) {
+        return generateTask(task, "Task_" + (order - 1), "Task_" + order, order);
     }
 
     /**
@@ -50,13 +51,13 @@ class XmlGenerator {
      *            for sequence flow
      * @return generated task
      */
-    static String generateTask(Task task, String sourceReference, String targetReference) {
+    static String generateTask(Task task, String sourceReference, String targetReference, int ordering) {
         StringBuilder taskBuilder = new StringBuilder();
 
         openTask(taskBuilder, task);
 
         taskBuilder.append("id=\"Task_");
-        taskBuilder.append(task.getOrdering());
+        taskBuilder.append(ordering);
         taskBuilder.append(QUOTES);
 
         taskBuilder.append("name=\"");
@@ -64,7 +65,9 @@ class XmlGenerator {
         taskBuilder.append(QUOTES);
 
         generateTemplateTaskProperty(taskBuilder, "editType", task.getEditType().getValue());
-        generateTemplateTaskProperty(taskBuilder, "processingStatus", task.getProcessingStatus().getValue());
+        generateTemplateTaskProperty(taskBuilder, "processingStatus",
+            task.getProcessingStatus().equals(TaskStatus.DONE) ? TaskStatus.DONE.getValue()
+                    : TaskStatus.LOCKED.getValue());
         generateTemplateTaskProperty(taskBuilder, "concurrent", task.isConcurrent());
         generateTemplateTaskProperty(taskBuilder, "typeMetadata", task.isTypeMetadata());
         generateTemplateTaskProperty(taskBuilder, "separateStructure", task.isSeparateStructure());
@@ -94,9 +97,9 @@ class XmlGenerator {
 
         taskBuilder.append(">\n");
 
-        generateSequences(taskBuilder, task.getOrdering());
+        generateSequences(taskBuilder, ordering);
         closeTask(taskBuilder, task);
-        generateSequenceFlow(taskBuilder, task.getOrdering(), sourceReference, targetReference);
+        generateSequenceFlow(taskBuilder, ordering, sourceReference, targetReference);
 
         return taskBuilder.toString();
     }
