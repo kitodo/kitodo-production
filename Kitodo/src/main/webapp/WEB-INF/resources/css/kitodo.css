@@ -1638,6 +1638,20 @@ form#metadata div label,
     height: calc(var(--default-double-size) * 3);
 }
 
+#metadataAccordion\:metadata .ui-treetable-indent,
+#metadataAccordion\:metadata .ui-treetable-toggler {
+    float: left;
+}
+
+#metadataAccordion\:metadata .ui-treetable-indent {
+    width: var(--default-full-size);
+}
+
+#metadataAccordion\:metadata .input-wrapper {
+    display: block;
+    overflow: hidden;
+}
+
 #metadata\:personTable_data button.secondary,
 #metadata\:metadataTable_data button.secondary {
     float: right;

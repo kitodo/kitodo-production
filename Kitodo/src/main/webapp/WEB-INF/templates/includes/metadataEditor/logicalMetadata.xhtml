@@ -12,6 +12,7 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
@@ -40,7 +41,10 @@
                                          styleClass="secondary"
                                          disabled="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"
                                          update="addMetadataForm"
-                                         oncomplete="PF('addMetadataDialog').show();"/>
+                                         action="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true, DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
+                                         oncomplete="PF('addMetadataDialog').show();">
+                            <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{null}"/>
+                        </p:commandButton>
                     </h:panelGroup>
                 </p:row>
             </p:panelGrid>

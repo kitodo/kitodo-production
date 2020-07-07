@@ -28,144 +28,158 @@
     <!--@elvariable id="buttonUpdate" type="java.lang.String"-->
     <p:treeTable value="#{root}"
                  var="item"
+                 nodeVar="node"
                  styleClass="no-header"
                  id="metadataTable">
         <p:column>
-            <!-- field label -->
-            <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
-            <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
-                           title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}" />
+            <span class="input-wrapper">
+                <!-- field label -->
+                <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
+                <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
+                               title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}" />
 
-            <!-- inputText -->
-            <h:panelGroup rendered="#{item.input eq 'inputText'}"
-                          title="#{item.value}">
-                <p:inputText id="inputText"
-                             value="#{item.value}"
-                             disabled="#{not item.editable or readOnly}"
-                             required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
-                             styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                    <p:ajax event="blur"/>
-                </p:inputText>
-            </h:panelGroup>
-
-            <!-- inputTextarea -->
-            <h:panelGroup rendered="#{item.input eq 'inputTextarea'}"
-                          title="#{item.value}">
-                <p:inputTextarea id="inputTextarea"
+                <!-- inputText -->
+                <h:panelGroup rendered="#{item.input eq 'inputText'}"
+                              title="#{item.value}">
+                    <p:inputText id="inputText"
                                  value="#{item.value}"
-                                 rows="2"
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                    <p:ajax event="blur"/>
-                </p:inputTextarea>
-            </h:panelGroup>
+                        <p:ajax event="blur"/>
+                    </p:inputText>
+                </h:panelGroup>
 
-            <!-- spinner -->
-            <h:panelGroup rendered="#{item.input eq 'spinner'}"
-                          title="#{item.value}">
-                <p:spinner id="spinner"
-                           value="#{item.value}"
-                           disabled="#{not item.editable or readOnly}"
-                           required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
-                           styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                    <p:ajax event="blur"/>
-                </p:spinner>
-            </h:panelGroup>
+                <!-- inputTextarea -->
+                <h:panelGroup rendered="#{item.input eq 'inputTextarea'}"
+                              title="#{item.value}">
+                    <p:inputTextarea id="inputTextarea"
+                                     value="#{item.value}"
+                                     rows="2"
+                                     disabled="#{not item.editable or readOnly}"
+                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                     styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
+                        <p:ajax event="blur"/>
+                    </p:inputTextarea>
+                </h:panelGroup>
 
-            <!-- calendar -->
-            <h:panelGroup rendered="#{item.input eq 'calendar'}">
-                <p:calendar id="calendar"
-                            value="#{item.date}"
-                            pattern="yyyy-mm-dd"
-                            styleClass="input-with-button #{not item.editable or readOnly ? 'read-only disabled' : ''}"
-                            showOn="button"
-                            required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
-                            disabled="#{not item.editable or readOnly}">
-                    <p:ajax event="dateSelect"/>
-                </p:calendar>
-            </h:panelGroup>
+                <!-- spinner -->
+                <h:panelGroup rendered="#{item.input eq 'spinner'}"
+                              title="#{item.value}">
+                    <p:spinner id="spinner"
+                               value="#{item.value}"
+                               disabled="#{not item.editable or readOnly}"
+                               required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                               styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
+                        <p:ajax event="blur"/>
+                    </p:spinner>
+                </h:panelGroup>
 
-            <!-- manyMenu -->
-            <h:panelGroup rendered="#{item.input eq 'manyMenu'}">
-                <p:selectManyMenu id="selectManyMenu"
-                                  value="#{item.selectedItems}"
-                                  readonly="#{not item.editable}"
-                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
-                                  disabled="#{not item.editable or readOnly}"
-                                  showCheckbox="true">
-                    <f:selectItems value="#{item.items}"/>
-                    <p:ajax event="change"/>
-                </p:selectManyMenu>
-            </h:panelGroup>
+                <!-- calendar -->
+                <h:panelGroup rendered="#{item.input eq 'calendar'}">
+                    <p:calendar id="calendar"
+                                value="#{item.date}"
+                                pattern="yyyy-mm-dd"
+                                styleClass="input-with-button #{not item.editable or readOnly ? 'read-only disabled' : ''}"
+                                showOn="button"
+                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                disabled="#{not item.editable or readOnly}">
+                        <p:ajax event="dateSelect"/>
+                    </p:calendar>
+                </h:panelGroup>
 
-            <!-- oneMenu -->
-            <h:panelGroup rendered="#{item.input eq 'oneMenu'}"
-                          title="#{item.selectedItem}">
-                <p:selectOneMenu id="selectOneMenu"
-                                 value="#{item.selectedItem}"
-                                 readonly="#{not item.editable}"
-                                 autoWidth="false"
-                                 disabled="#{not item.editable or readOnly}"
-                                 styleClass="#{readOnly ? 'read-only' : ''}">
-                    <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                    <f:selectItems value="#{item.items}"/>
-                    <p:ajax event="change"/>
-                </p:selectOneMenu>
-            </h:panelGroup>
+                <!-- manyMenu -->
+                <h:panelGroup rendered="#{item.input eq 'manyMenu'}">
+                    <p:selectManyMenu id="selectManyMenu"
+                                      value="#{item.selectedItems}"
+                                      readonly="#{not item.editable}"
+                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
+                                      disabled="#{not item.editable or readOnly}"
+                                      showCheckbox="true">
+                        <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="change"/>
+                    </p:selectManyMenu>
+                </h:panelGroup>
 
-            <!-- oneRadio -->
-            <h:panelGroup rendered="#{item.input eq 'oneRadio'}">
-                <p:selectOneRadio id="selectOneRadio"
-                                  value="#{item.selectedItem}"
-                                  readonly="#{not item.editable}"
-                                  disabled="#{not item.editable or readOnly}"
-                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
-                                  layout="grid"
-                                  columns="1">
-                    <f:selectItems value="#{item.items}"/>
-                    <p:ajax event="blur"/>
-                </p:selectOneRadio>
-            </h:panelGroup>
+                <!-- oneMenu -->
+                <h:panelGroup rendered="#{item.input eq 'oneMenu'}"
+                              title="#{item.selectedItem}">
+                    <p:selectOneMenu id="selectOneMenu"
+                                     value="#{item.selectedItem}"
+                                     readonly="#{not item.editable}"
+                                     autoWidth="false"
+                                     disabled="#{not item.editable or readOnly}"
+                                     styleClass="#{readOnly ? 'read-only' : ''}">
+                        <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                        <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="change"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
 
-            <!-- toggleSwitch -->
-            <h:panelGroup rendered="#{item.input eq 'toggleSwitch'}"
-                          title="#{item.active.toString()}">
-                <p:selectBooleanCheckbox id="selectBooleanCheckbox"
-                                         value="#{item.active}">
-                    <p:ajax event="blur"/>
-                </p:selectBooleanCheckbox>
-            </h:panelGroup>
+                <!-- oneRadio -->
+                <h:panelGroup rendered="#{item.input eq 'oneRadio'}">
+                    <p:selectOneRadio id="selectOneRadio"
+                                      value="#{item.selectedItem}"
+                                      readonly="#{not item.editable}"
+                                      disabled="#{not item.editable or readOnly}"
+                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
+                                      layout="grid"
+                                      columns="1">
+                        <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="blur"/>
+                    </p:selectOneRadio>
+                </h:panelGroup>
 
-            <!-- button to delete -->
-            <p:commandButton id="deleteMetadata"
-                             update="#{buttonUpdate}"
-                             icon="fa fa-trash"
-                             immediate="true"
-                             tabindex="-1"
-                             title="#{msgs.metadataDelete}"
-                             styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                             onclick="$('#loadingScreen').show()"
-                             oncomplete="$('#loadingScreen').hide()"
-                             action="#{item.delete}"
-                             rendered="#{not empty buttonUpdate and not readOnly}"
-            />
+                <!-- toggleSwitch -->
+                <h:panelGroup rendered="#{item.input eq 'toggleSwitch'}"
+                              title="#{item.active.toString()}">
+                    <p:selectBooleanCheckbox id="selectBooleanCheckbox"
+                                             value="#{item.active}">
+                        <p:ajax event="blur"/>
+                    </p:selectBooleanCheckbox>
+                </h:panelGroup>
 
-            <!-- button to duplicate -->
-            <h:panelGroup title="#{DataEditorForm.canBeAdded(item) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
-                <p:commandButton id="duplicateMetadata"
+                <!-- button to add metadata to group -->
+                <p:commandButton id="addMetadataToGroup"
+                                 action="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true, node.getChildren())}"
+                                 rendered="#{item.input eq 'dataTable'}"
+                                 icon="fa fa-plus"
+                                 styleClass="secondary"
+                                 update="#{request.requestURI.contains('metadataEditor') ? 'addMetadataForm' : ''}"
+                                 oncomplete="PF('addMetadataDialog').show()">
+                    <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{node}"/>
+                </p:commandButton>
+
+                <!-- button to delete -->
+                <p:commandButton id="deleteMetadata"
                                  update="#{buttonUpdate}"
-                                 icon="fa fa-clone"
+                                 icon="fa fa-trash"
                                  immediate="true"
                                  tabindex="-1"
+                                 title="#{msgs.metadataDelete}"
                                  styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                 disabled="#{not DataEditorForm.canBeAdded(item)}"
                                  onclick="$('#loadingScreen').show()"
                                  oncomplete="$('#loadingScreen').hide()"
-                                 action="#{item.copy}"
+                                 action="#{item.delete}"
                                  rendered="#{not empty buttonUpdate and not readOnly}"
                 />
-            </h:panelGroup>
+
+                <!-- button to duplicate -->
+                <h:panelGroup title="#{DataEditorForm.canBeAdded(item) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
+                    <p:commandButton id="duplicateMetadata"
+                                     update="#{buttonUpdate}"
+                                     icon="fa fa-clone"
+                                     immediate="true"
+                                     tabindex="-1"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{not DataEditorForm.canBeAdded(item)}"
+                                     onclick="$('#loadingScreen').show()"
+                                     oncomplete="$('#loadingScreen').hide()"
+                                     action="#{item.copy}"
+                                     rendered="#{not empty buttonUpdate and not readOnly}"
+                    />
+                </h:panelGroup>
+            </span>
         </p:column>
     </p:treeTable>
 </ui:composition>

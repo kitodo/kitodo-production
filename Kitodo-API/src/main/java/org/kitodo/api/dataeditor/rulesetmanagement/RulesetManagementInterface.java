@@ -97,6 +97,22 @@ public interface RulesetManagementInterface {
             List<LanguageRange> priorityList);
 
     /**
+     * Returns a service that provides a view to the ruleset. In the view, the
+     * elements are selected for the adaptation, acquisition stage and metadata,
+     * and labeled best suited to the given language priority list.
+     *
+     * @param metadata
+     *          current metadata
+     * @param acquisitionStage
+     *          current acquisition level
+     * @param priorityList
+     *          weighted list of user-preferred display languages. Return
+     *          value of the function {@link LanguageRange#parse(String)}.
+     * @return a service that provides a view to the ruleset
+     */
+    ComplexMetadataViewInterface getMetadataView(String metadata, String acquisitionStage, List<LanguageRange> priorityList);
+
+    /**
      * Returns the most appropriate label for a key, if there is one.
      *
      * @param key

@@ -44,6 +44,7 @@ public class MetadataPanel implements Serializable {
 
     private ProcessFieldedMetadata logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
     private ProcessFieldedMetadata physicalMetadataTable = ProcessFieldedMetadata.EMPTY;
+    private TreeNode selectedMetadataTreeNode;
 
     MetadataPanel(DataEditorForm dataEditor) {
         this.dataEditorForm = dataEditor;
@@ -54,7 +55,11 @@ public class MetadataPanel implements Serializable {
      */
     public void addMetadataEntry() {
         try {
-            logicalMetadataTable.addAdditionallySelectedField(addMetadataKeySelectedItem);
+            if (Objects.nonNull(selectedMetadataTreeNode) && Objects.nonNull(selectedMetadataTreeNode.getData())) {
+                ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).addAdditionallySelectedField(addMetadataKeySelectedItem);
+            } else {
+                logicalMetadataTable.addAdditionallySelectedField(addMetadataKeySelectedItem);
+            }
         } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
@@ -99,6 +104,24 @@ public class MetadataPanel implements Serializable {
      */
     public TreeNode getPhysicalMetadataRows() {
         return physicalMetadataTable.getTreeNode();
+    }
+
+    /**
+     * Get selectedMetadataTreeNode.
+     *
+     * @return value of selectedMetadataTreeNode
+     */
+    public TreeNode getSelectedMetadataTreeNode() {
+        return selectedMetadataTreeNode;
+    }
+
+    /**
+     * Set selectedMetadataTreeNode.
+     *
+     * @param selectedMetadataTreeNode as org.primefaces.model.TreeNode
+     */
+    public void setSelectedMetadataTreeNode(TreeNode selectedMetadataTreeNode) {
+        this.selectedMetadataTreeNode = selectedMetadataTreeNode;
     }
 
     void showLogical(Optional<IncludedStructuralElement> optionalStructure) {

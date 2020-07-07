@@ -19,6 +19,7 @@ import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -40,6 +42,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -53,6 +56,7 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -499,17 +503,30 @@ public class AddDocStrucTypeDialog {
         setSelectAddableMetadataTypesSelectedItem("");
         Map<Metadata, String> existingMetadata = Collections.emptyMap();
         StructuralElementViewInterface structure;
+        Collection<MetadataViewInterface> addableMetadata;
+        TreeNode selectedMetadataTreeNode = dataEditor.getMetadataPanel().getSelectedMetadataTreeNode();
         try {
-            if (currentElement) {
+            if (Objects.nonNull(selectedMetadataTreeNode)
+                    && Objects.nonNull(selectedMetadataTreeNode.getData())) {
+                existingMetadata = ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadata().stream()
+                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+                ComplexMetadataViewInterface metadataView = dataEditor.getRuleset().getMetadataView(
+                        ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadataID(),
+                        dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+                addableMetadata = metadataView.getAddableMetadata(existingMetadata, Collections.emptyList());
+            } else if (currentElement) {
                 structure = getStructuralElementView();
                 existingMetadata = getExistingMetadataRows(metadataNodes);
+                addableMetadata = structure.getAddableMetadata(existingMetadata,
+                        Collections.emptyList());
             } else {
                 structure = dataEditor.getRuleset()
                         .getStructuralElementView(docStructAddTypeSelectionSelectedItem,
                                 dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+                addableMetadata = structure.getAddableMetadata(existingMetadata,
+                        Collections.emptyList());
             }
-            for (MetadataViewInterface keyView : structure.getAddableMetadata(existingMetadata,
-                    Collections.emptyList())) {
+            for (MetadataViewInterface keyView : addableMetadata) {
                 selectAddableMetadataTypesItems.add(
                         new SelectItem(keyView.getId(), keyView.getLabel(),
                                 keyView instanceof SimpleMetadataViewInterface
@@ -532,6 +549,7 @@ public class AddDocStrucTypeDialog {
      *                       (currentElement = false)
      */
     public void prepareSelectAddableMetadataTypesItems(boolean currentElement) {
+        dataEditor.getMetadataPanel().setSelectedMetadataTreeNode(null);
         prepareSelectAddableMetadataTypesItems(currentElement, Collections.emptyList());
     }
 
@@ -547,6 +565,9 @@ public class AddDocStrucTypeDialog {
                 } catch (NullPointerException e) {
                     logger.error(e);
                 }
+            }
+            if (metadataNode.getChildCount() > 0) {
+                existingMetadataRows.putAll(getExistingMetadataRows(metadataNode.getChildren()));
             }
         }
 
