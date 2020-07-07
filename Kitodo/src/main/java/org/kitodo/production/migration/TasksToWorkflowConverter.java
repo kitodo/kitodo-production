@@ -71,10 +71,11 @@ public class TasksToWorkflowConverter {
     }
 
     private void convertTasksToXmlWorkflow(StringBuilder diagram, List<Task> tasks) {
-        for (int i = 0; i<tasks.size(); i++) {
-            int diagramOrder = i+1;
-            if (i==0) {
-                diagram.append(XmlGenerator.generateTask(tasks.get(i), "StartEvent_1", "Task_" + diagramOrder, diagramOrder));
+        for (int i = 0; i < tasks.size(); i++) {
+            int diagramOrder = i + 1;
+            if (i == 0) {
+                diagram.append(
+                    XmlGenerator.generateTask(tasks.get(i), "StartEvent_1", "Task_" + diagramOrder, diagramOrder));
             } else {
                 diagram.append(XmlGenerator.generateTask(tasks.get(i), diagramOrder));
             }
@@ -84,7 +85,7 @@ public class TasksToWorkflowConverter {
     private void convertTasksToWorkflowCoordinates(StringBuilder diagram, List<Task> tasks) {
         int diagramStart = 498;
 
-        for (int i = 1; i<=tasks.size(); i++) {
+        for (int i = 1; i <= tasks.size(); i++) {
             diagram.append(XmlGenerator.generateTaskShape(i, diagramStart));
             diagramStart = diagramStart + BOX_DISTANCE;
         }

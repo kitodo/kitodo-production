@@ -303,7 +303,7 @@ public class MigrationForm extends BaseForm {
         TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
         List<Task> processTasks = blueprintProcess.getTasks();
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
-        String workflowTitle = "ChangeME_"+ Helper.generateRandomString(3);
+        String workflowTitle = "ChangeME_" + Helper.generateRandomString(3);
 
         try {
             templateConverter.convertTasksToWorkflowFile(workflowTitle, processTasks);

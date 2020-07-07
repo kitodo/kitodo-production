@@ -59,7 +59,6 @@ class XmlGenerator {
         taskBuilder.append("id=\"Task_");
         taskBuilder.append(ordering);
         taskBuilder.append(QUOTES);
-
         taskBuilder.append("name=\"");
         taskBuilder.append(task.getTitle());
         taskBuilder.append(QUOTES);
@@ -89,12 +88,10 @@ class XmlGenerator {
             taskBuilder.deleteCharAt(taskBuilder.length() - 1);
             taskBuilder.append(QUOTES);
         }
-
         if (StringUtils.isNotBlank(task.getScriptName()) || StringUtils.isNotBlank(task.getScriptPath())) {
             generateTemplateTaskProperty(taskBuilder, "scriptName", task.getScriptName());
             generateTemplateTaskProperty(taskBuilder, "scriptPath", task.getScriptPath());
         }
-
         taskBuilder.append(">\n");
 
         generateSequences(taskBuilder, ordering);

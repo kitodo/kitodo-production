@@ -171,12 +171,12 @@ public class WorkflowForm extends BaseForm {
      * @return redirectPath
      */
     public String cancel() {
-        if(migration){
+        if (migration) {
             try {
                 ServiceManager.getWorkflowService().remove(workflow);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {this.workflow.getTitle(), e.getMessage() }, logger,
-                        e);
+                    e);
                 return this.stayOnCurrentPage;
             }
             return MIGRATION_FORM_PATH;
