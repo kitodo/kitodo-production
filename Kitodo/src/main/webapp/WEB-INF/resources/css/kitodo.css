@@ -2004,10 +2004,6 @@ Column content
     filter: opacity(35%);
 }
 
-.structureElementDataList {
-    padding: 5px;
-}
-
 #metadataAccordion,
 #metadataAccordion > .ui-accordion-content,
 #metadataAccordion\:logicalMetadataWrapperPanel,

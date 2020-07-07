@@ -75,7 +75,11 @@ public class UserForm extends BaseForm {
             "nextItemMulti",
             "previousItem",
             "previousItemMulti",
-            "structuredView");
+            "structuredView",
+            "downItem",
+            "downItemMulti",
+            "upItem",
+            "upItemMulti");
 
     private String passwordToEncrypt;
 
