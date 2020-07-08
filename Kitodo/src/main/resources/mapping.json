@@ -682,6 +682,9 @@
                 "active": {
                     "type": "boolean"
                 },
+                "showInChoiceList": {
+                    "type": "boolean"
+                },
                 "sortHelperStatus": {
                     "type": "text",
                     "fields": {
