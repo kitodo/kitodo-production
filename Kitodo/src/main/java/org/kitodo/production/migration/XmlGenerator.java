@@ -37,7 +37,7 @@ class XmlGenerator {
      * @return generated task
      */
     static String generateTask(Task task, int order) {
-        return generateTask(task, "Task_" + (order - 1), "Task_" + order, order);
+        return generateTask(task, "Task_" + (order - 1), order);
     }
 
     /**
@@ -47,13 +47,10 @@ class XmlGenerator {
      *            for generating
      * @param sourceReference
      *            for sequence flow
-     * @param targetReference
-     *            for sequence flow
      * @return generated task
      */
-    static String generateTask(Task task, String sourceReference, String targetReference, int ordering) {
+    static String generateTask(Task task, String sourceReference, int ordering) {
         StringBuilder taskBuilder = new StringBuilder();
-
         openTask(taskBuilder, task);
 
         taskBuilder.append("id=\"Task_");
@@ -96,7 +93,7 @@ class XmlGenerator {
 
         generateSequences(taskBuilder, ordering);
         closeTask(taskBuilder, task);
-        generateSequenceFlow(taskBuilder, ordering, sourceReference, targetReference);
+        generateSequenceFlow(taskBuilder, ordering, sourceReference);
 
         return taskBuilder.toString();
     }
@@ -149,14 +146,13 @@ class XmlGenerator {
         taskBuilder.append("</bpmn2:outgoing>\n");
     }
 
-    private static void generateSequenceFlow(StringBuilder taskBuilder, Integer ordering, String sourceReference,
-            String targetReference) {
+    private static void generateSequenceFlow(StringBuilder taskBuilder, Integer ordering, String sourceReference) {
         taskBuilder.append("        <bpmn2:sequenceFlow id=\"SequenceFlow_");
         taskBuilder.append(ordering);
         taskBuilder.append("\" sourceRef=\"");
         taskBuilder.append(sourceReference);
         taskBuilder.append("\" targetRef=\"");
-        taskBuilder.append(targetReference);
+        taskBuilder.append("Task_");
         taskBuilder.append(SLASH_END_LINE);
     }
 

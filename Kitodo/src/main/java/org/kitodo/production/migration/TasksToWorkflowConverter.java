@@ -75,7 +75,7 @@ public class TasksToWorkflowConverter {
             int diagramOrder = i + 1;
             if (i == 0) {
                 diagram.append(
-                    XmlGenerator.generateTask(tasks.get(i), "StartEvent_1", "Task_" + diagramOrder, diagramOrder));
+                    XmlGenerator.generateTask(tasks.get(i), "StartEvent_1", diagramOrder));
             } else {
                 diagram.append(XmlGenerator.generateTask(tasks.get(i), diagramOrder));
             }

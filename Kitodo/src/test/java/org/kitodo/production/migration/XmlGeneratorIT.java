@@ -63,7 +63,7 @@ public class XmlGeneratorIT {
     public void shouldGenerateTaskWithSourceTarget() {
         Task task = template.getTasks().stream().filter(x -> x.getOrdering().equals(1)).findAny().orElse(null);
 
-        String taskString = XmlGenerator.generateTask(task, "StartEvent_1", "Task_1", task.getOrdering());
+        String taskString = XmlGenerator.generateTask(task, "StartEvent_1", task.getOrdering());
         String expected = "        <bpmn2:task id=\"Task_1\" name=\"Finished\" template:editType=\"3\" "
                 + "template:processingStatus=\"3\" template:concurrent=\"false\" template:typeMetadata=\"false\" "
                 + "template:separateStructure=\"false\" template:typeAutomatic=\"false\" template:typeExportDMS=\"false\" "
