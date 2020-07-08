@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,6 +56,7 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
@@ -536,7 +539,16 @@ public class ImportService {
         File mappingFile = getMappingFile(opac);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
+        String debugFolder = ConfigMain.getParameter("debugFolder", null);
+        if (Objects.nonNull(debugFolder)) {
+            FileUtils.writeStringToFile(new File(debugFolder, "catalogRecord.xml"),
+                (String) dataRecord.getOriginalData(), Charset.forName("UTF-8"));
+        }
         DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
+        if (Objects.nonNull(debugFolder)) {
+            FileUtils.writeStringToFile(new File(debugFolder, "internalRecord.xml"),
+                (String) internalRecord.getOriginalData(), Charset.forName("UTF-8"));
+        }
 
         if (!(internalRecord.getOriginalData() instanceof String)) {
             throw new UnsupportedFormatException("Original metadata of internal record has to be an XML String, '"
