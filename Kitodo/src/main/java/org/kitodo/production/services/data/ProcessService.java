@@ -2547,7 +2547,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param processDTO Process
      * @return processing begin of last processed task
      */
-    public String getLastUserProcessingStart(ProcessDTO processDTO) {
+    public String getLastProcessingStart(ProcessDTO processDTO) {
         TaskDTO lastTask = getLastProcessedTask(processDTO);
         if (Objects.isNull(lastTask)) {
             return "";
@@ -2562,7 +2562,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param processDTO Process
      * @return processing end of last processed task
      */
-    public String getLastUserProcessingEnd(ProcessDTO processDTO) {
+    public String getLastProcessingEnd(ProcessDTO processDTO) {
         TaskDTO lastTask = getLastProcessedTask(processDTO);
         if (Objects.isNull(lastTask) || TaskStatus.INWORK.equals(lastTask.getProcessingStatus())) {
             return "";

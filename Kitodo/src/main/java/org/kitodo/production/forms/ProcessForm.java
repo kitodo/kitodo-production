@@ -1645,7 +1645,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return timestamp of last tasks processing begin
      */
     public String getProcessingBeginOfLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getLastUserProcessingStart(processDTO);
+        return ServiceManager.getProcessService().getLastProcessingStart(processDTO);
     }
 
     /**
@@ -1655,6 +1655,6 @@ public class ProcessForm extends TemplateBaseForm {
      * @return timestamp of last tasks processing end
      */
     public String getProcessingEndOfLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getLastUserProcessingEnd(processDTO);
+        return ServiceManager.getProcessService().getLastProcessingEnd(processDTO);
     }
 }
