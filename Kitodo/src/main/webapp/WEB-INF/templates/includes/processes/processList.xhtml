@@ -136,6 +136,16 @@
                             <f:param name="id" value="#{process.id}"/>
                         </h:link>
                     </h:panelGroup>
+                    <h:panelGroup styleClass="action"
+                                  title="#{ProcessForm.createProcessAsChildPossible(process)? msgs.createProcessAsChild : msgs.createProcessAsChildNotConfigured}">
+                        <p:button id="createChildren"
+                                outcome="/pages/processFromTemplate.jsf?faces-redirect=true&amp;templateId= + #{process.template.id} + &amp;projectId= + #{process.project.id} + &amp;parentId= + #{process.id}"
+                                styleClass="#{ProcessForm.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
+                                disabled="#{not ProcessForm.createProcessAsChildPossible(process)}">
+                            <h:outputText><i class="fa fa-calendar fa-lg"/></h:outputText>
+                            <f:param name="id" value="#{process.id}"/>
+                        </p:button>
+                    </h:panelGroup>
 
                     <h:link id="viewProcess"
                             outcome="processEdit"

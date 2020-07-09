@@ -116,9 +116,11 @@ public class ProcessForm extends TemplateBaseForm {
 
     private List<SelectItem> customColumns;
 
-    private final Map<Integer, Collection<String>> rulesetCache = new HashMap<>();
+    private final Map<Integer, Collection<String>> rulesetCacheForCreateFromCalendar = new HashMap<>();
+    private final Map<Integer, Collection<String>> rulesetCacheForCreateChildFromParent = new HashMap<>();
     List<String> bgColors = Arrays.asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
 
+    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
     @Inject
     private CustomListColumnInitializer initializer;
     private ChartMode chartMode;
@@ -287,20 +289,14 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             Process process = ServiceManager.getProcessService().getById(processDTO.getId());
             Integer rulesetId = process.getRuleset().getId();
-            String docType = "";
-            for (Property workpieceProperty : process.getWorkpieces()) {
-                if ("DocType".equals(workpieceProperty.getTitle())) {
-                    docType = workpieceProperty.getValue();
-                    break;
-                }
-            }
-            if (rulesetCache.containsKey(rulesetId)) {
-                functionalDivisions = rulesetCache.get(rulesetId);
+            String docType = processDTO.getBaseType();
+            if (rulesetCacheForCreateFromCalendar.containsKey(rulesetId)) {
+                functionalDivisions = rulesetCacheForCreateFromCalendar.get(rulesetId);
             } else {
                 Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
                 functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
                         .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
-                rulesetCache.put(rulesetId, functionalDivisions);
+                rulesetCacheForCreateFromCalendar.put(rulesetId, functionalDivisions);
             }
             if (functionalDivisions.contains(docType)) {
                 return true;
@@ -310,6 +306,41 @@ public class ProcessForm extends TemplateBaseForm {
                 e);
         }
         return false;
+    }
+
+    /**
+     * If a process can be created as child.
+     *
+     * @param processDTO
+     *            the process dto to check.
+     * @return true if processes can be created as child, false otherwise
+     */
+    public boolean createProcessAsChildPossible(ProcessDTO processDTO) {
+        Collection<String> functionalDivisions;
+        try {
+            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+            Integer rulesetId = process.getRuleset().getId();
+            String docType = processDTO.getBaseType();
+            if (rulesetCacheForCreateChildFromParent.containsKey(rulesetId)) {
+                functionalDivisions = rulesetCacheForCreateChildFromParent.get(rulesetId);
+            } else {
+                Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+                functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                        .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
+                rulesetCacheForCreateChildFromParent.put(rulesetId, functionalDivisions);
+            }
+            if (functionalDivisions.contains(docType)) {
+                return true;
+            }
+        } catch (IOException | DAOException | RulesetNotFoundException e) {
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
+        return false;
+    }
+
+    public String createProcessAsChild(Process process) {
+        return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId=" + process.getProject().getId() + "&parentId=" + process.getId();
     }
 
     /**

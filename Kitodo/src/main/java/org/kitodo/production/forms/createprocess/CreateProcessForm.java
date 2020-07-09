@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -38,12 +39,14 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RulesetNotFoundException;
+import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
@@ -334,7 +337,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @param referringView
      *            view the user was coming from
      */
-    public void prepareProcess(int templateId, int projectId, String referringView) {
+    public void prepareProcess(int templateId, int projectId, String referringView, Integer parentId) {
         this.referringView = referringView;
         ProcessGenerator processGenerator = new ProcessGenerator();
         try {
@@ -346,8 +349,19 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
                 processDataTab.prepare();
+                if(Objects.nonNull(parentId)) {
+                    titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
+                    titleRecordLinkTab.chooseParentProcess();
+                    ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
+                    Map<String, String> allowedSubstructuralElements = ServiceManager.getRulesetService()
+                            .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()))
+                            .getStructuralElementView(parentProcess.getBaseType(), null, null)
+                            .getAllowedSubstructuralElements();
+                    processDataTab.setAllDocTypes(null);
+
+                }
             }
-        } catch (ProcessGenerationException | RulesetNotFoundException e) {
+        } catch (ProcessGenerationException | RulesetNotFoundException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
