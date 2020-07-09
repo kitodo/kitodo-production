@@ -153,6 +153,7 @@ class XmlGenerator {
         taskBuilder.append(sourceReference);
         taskBuilder.append("\" targetRef=\"");
         taskBuilder.append("Task_");
+        taskBuilder.append(ordering);
         taskBuilder.append(SLASH_END_LINE);
     }
 
