@@ -72,6 +72,26 @@
                       rendered="#{ProcessForm.showColumn('process.state')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
+
+            <p:column id="lastTaskHandledByColumn"
+                      headerText="#{msgs.lastEditingUser}"
+                      rendered="#{ProcessForm.showColumn('process.lastEditingUser')}">
+                <h:outputText value="#{ProcessForm.getUserHandlingLastTask(process)}"
+                              title="#{ProcessForm.getUserHandlingLastTask(process)}"/>
+            </p:column>
+            <p:column id="lastTaskProcessingBeginColumn"
+                      headerText="#{msgs.processingBeginLastTask}"
+                      rendered="#{ProcessForm.showColumn('process.processingBeginLastTask')}">
+                <h:outputText value="#{ProcessForm.getProcessingBeginOfLastTask(process)}"
+                              title="#{ProcessForm.getProcessingBeginOfLastTask(process)}"/>
+            </p:column>
+            <p:column id="lastTaskProcessingEndColumn"
+                      headerText="#{msgs.processingEndLastTask}"
+                      rendered="#{ProcessForm.showColumn('process.processingEndLastTask')}">
+                <h:outputText value="#{ProcessForm.getProcessingEndOfLastTask(process)}"
+                              title="#{ProcessForm.getProcessingEndOfLastTask(process)}"/>
+            </p:column>
+
             <p:column styleClass="correction-column"
                       width="85"
                       rendered="#{ProcessForm.showColumn('process.correctionMessage')}"

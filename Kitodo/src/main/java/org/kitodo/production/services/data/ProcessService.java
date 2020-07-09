@@ -1198,6 +1198,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
+    private List<TaskDTO> getCompletedTasks(ProcessDTO process) {
+        return process.getTasks().stream()
+                .filter(t -> TaskStatus.DONE.equals(t.getProcessingStatus())).collect(Collectors.toList());
+    }
+
     /**
      * Create and return String used as progress tooltip for a given process. Tooltip contains OPEN tasks and tasks
      * INWORK.
@@ -2504,5 +2509,65 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 .map(c -> " - [" + c.getCreationDate() + "] " + c.getAuthor().getFullName() + ": " + c.getMessage()
                         + " (" + Helper.getTranslation("fixed") + ": " + c.isCorrected() + ")")
                 .collect(Collectors.joining(NEW_LINE_ENTITY));
+    }
+
+    private TaskDTO getLastProcessedTask(ProcessDTO processDTO) {
+        List<TaskDTO> tasks = getTasksInWork(processDTO);
+        if (tasks.isEmpty()) {
+            tasks = getCompletedTasks(processDTO);
+        }
+        tasks = tasks.stream().filter(t -> Objects.nonNull(t.getProcessingUser())).collect(Collectors.toList());
+        if (tasks.isEmpty()) {
+            return null;
+        } else {
+            tasks.sort(Comparator.comparing(TaskDTO::getProcessingBegin));
+            return tasks.get(0);
+        }
+    }
+
+    /**
+     * Return UserName of user that handled the last task of the given process (either the newest task INWORK or the
+     * newest DONE task, if no task is INWORK). Return an empty String if no task is INWORK or DONE.
+     *
+     * @param processDTO Process
+     * @return name of processing user
+     */
+    public String getUserHandlingLastTask(ProcessDTO processDTO) {
+        TaskDTO lastTask = getLastProcessedTask(processDTO);
+        if (Objects.isNull(lastTask)) {
+            return "";
+        } else {
+            return lastTask.getProcessingUser().getFullName();
+        }
+    }
+
+    /**
+     * Return processing begin of last processed task of given process.
+     *
+     * @param processDTO Process
+     * @return processing begin of last processed task
+     */
+    public String getLastProcessingStart(ProcessDTO processDTO) {
+        TaskDTO lastTask = getLastProcessedTask(processDTO);
+        if (Objects.isNull(lastTask)) {
+            return "";
+        } else {
+            return lastTask.getProcessingBegin();
+        }
+    }
+
+    /**
+     * Return processing end of last processed task of given process.
+     *
+     * @param processDTO Process
+     * @return processing end of last processed task
+     */
+    public String getLastProcessingEnd(ProcessDTO processDTO) {
+        TaskDTO lastTask = getLastProcessedTask(processDTO);
+        if (Objects.isNull(lastTask) || TaskStatus.INWORK.equals(lastTask.getProcessingStatus())) {
+            return "";
+        } else {
+            return lastTask.getProcessingEnd();
+        }
     }
 }

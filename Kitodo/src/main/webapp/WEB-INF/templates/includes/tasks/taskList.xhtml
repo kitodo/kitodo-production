@@ -59,16 +59,6 @@
                               value="#{item.process.id}"/>
             </p:column>
 
-
-            <!-- columns for tasks that have been configured in kitodo config file! -->
-            <p:columns value="#{CurrentTaskForm.getTaskCustomColumnNames()}"
-                       var="taskColumn"
-                       headerText="#{fn:replace(taskColumn, 'task.', '')}"
-                       rendered="#{CurrentTaskForm.showColumn(taskColumn)}">
-                <h:outputText title="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"
-                              value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
-            </p:columns>
-
             <p:column headerText="#{msgs.process}"
                       rendered="#{CurrentTaskForm.showColumn('task.process')}">
                 <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.editProcess}"
@@ -78,12 +68,6 @@
                 </h:link>
                 <h:outputText title="#{item.process.title}"
                               value=" #{item.process.title}"/>
-            </p:column>
-
-            <p:column headerText="#{msgs.project}"
-                      rendered="#{CurrentTaskForm.showColumn('task.project')}">
-                <h:outputText title="#{item.process.project.title}"
-                              value="#{item.process.project.title}"/>
             </p:column>
 
             <p:column headerText="#{msgs.status}"
@@ -98,6 +82,25 @@
                 />
             </p:column>
 
+            <p:column id="processingUserColumn"
+                      headerText="#{msgs.lastEditingUser}"
+                      rendered="#{CurrentTaskForm.showColumn('task.lastProcessingUser')}">
+                <h:outputText value="#{item.processingUser ne null ? item.processingUser.fullName : ''}"
+                              title="#{item.processingUser ne null ? item.processingUser.fullName : ''}"/>
+            </p:column>
+            <p:column id="processingBeginColumn"
+                      headerText="#{msgs.processingBegin}"
+                      rendered="#{CurrentTaskForm.showColumn('task.processingBegin')}">
+                <h:outputText value="#{item.processingBegin}"
+                              title="#{item.processingBegin}"/>
+            </p:column>
+            <p:column id="processingEndColumn"
+                      headerText="#{msgs.processingEnd}"
+                      rendered="#{CurrentTaskForm.showColumn('task.processingEnd')}">
+                <h:outputText value="#{item.processingEnd}"
+                              title="#{item.processingEnd}"/>
+            </p:column>
+
             <p:column styleClass="correction-column"
                       width="85"
                       rendered="#{CurrentTaskForm.showColumn('task.correctionMessage')}"
@@ -106,6 +109,21 @@
                               title="#{CurrentTaskForm.getCorrectionMessages(item)}"
                               styleClass="correction-marker #{CurrentTaskForm.hasCorrectionComment(item) eq 1 ? 'corrected' : ''}"
                               rendered="#{CurrentTaskForm.hasCorrectionComment(item) gt 0}"/>
+            </p:column>
+
+            <!-- columns for tasks that have been configured in kitodo config file! -->
+            <p:columns value="#{CurrentTaskForm.getTaskCustomColumnNames()}"
+                       var="taskColumn"
+                       headerText="#{fn:replace(taskColumn, 'task.', '')}"
+                       rendered="#{CurrentTaskForm.showColumn(taskColumn)}">
+                <h:outputText title="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"
+                              value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
+            </p:columns>
+
+            <p:column headerText="#{msgs.project}"
+                      rendered="#{CurrentTaskForm.showColumn('task.project')}">
+                <h:outputText title="#{item.process.project.title}"
+                              value="#{item.process.project.title}"/>
             </p:column>
 
             <p:column headerText="#{msgs.duration} (#{msgs.process})"
