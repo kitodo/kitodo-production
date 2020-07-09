@@ -189,7 +189,10 @@ public class ImportDialog implements Serializable {
         }
 
         // if more than one exemplar record was found, display a selection dialog to the user
-        if (ServiceManager.getImportService().getExemplarRecords().size() > 0) {
+        LinkedList<ExemplarRecord> exemplarRecords = ServiceManager.getImportService().getExemplarRecords();
+        if (exemplarRecords.size() == 1) {
+            this.setSelectedExemplarRecord(exemplarRecords.get(0));
+        } else if (exemplarRecords.size() > 1) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
         }
     }
