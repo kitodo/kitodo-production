@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -355,9 +357,13 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
                     Map<String, String> allowedSubstructuralElements = ServiceManager.getRulesetService()
                             .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()))
-                            .getStructuralElementView(parentProcess.getBaseType(), null, null)
+                            .getStructuralElementView(parentProcess.getBaseType(), "", priorityList)
                             .getAllowedSubstructuralElements();
-                    processDataTab.setAllDocTypes(null);
+                    ArrayList<SelectItem> docTypes = new ArrayList<>();
+                    for (String value : allowedSubstructuralElements.values()) {
+                        docTypes.add(new SelectItem(value));
+                    }
+                    processDataTab.setAllDocTypes(docTypes);
 
                 }
             }

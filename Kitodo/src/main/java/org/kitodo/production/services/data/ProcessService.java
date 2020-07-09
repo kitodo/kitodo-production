@@ -899,6 +899,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (project > 0) {
             processDTO.setProject(ServiceManager.getProjectService().findById(project));
         }
+        int ruleset = ProcessTypeField.RULESET.getIntValue(jsonObject);
+        if (ruleset > 0) {
+            processDTO.setRuleset(ServiceManager.getRulesetService().findById(ruleset));
+        }
 
         processDTO.setBatchID(getBatchID(processDTO));
         processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
