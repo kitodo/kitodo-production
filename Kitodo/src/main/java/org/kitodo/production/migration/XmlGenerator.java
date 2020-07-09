@@ -14,6 +14,7 @@ package org.kitodo.production.migration;
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.TaskStatus;
 
 class XmlGenerator {
 
@@ -35,8 +36,8 @@ class XmlGenerator {
      *            for generating
      * @return generated task
      */
-    static String generateTask(Task task) {
-        return generateTask(task, "Task_" + (task.getOrdering() - 1), "Task_" + task.getOrdering());
+    static String generateTask(Task task, int order) {
+        return generateTask(task, "Task_" + (order - 1), order);
     }
 
     /**
@@ -46,25 +47,23 @@ class XmlGenerator {
      *            for generating
      * @param sourceReference
      *            for sequence flow
-     * @param targetReference
-     *            for sequence flow
      * @return generated task
      */
-    static String generateTask(Task task, String sourceReference, String targetReference) {
+    static String generateTask(Task task, String sourceReference, int ordering) {
         StringBuilder taskBuilder = new StringBuilder();
-
         openTask(taskBuilder, task);
 
         taskBuilder.append("id=\"Task_");
-        taskBuilder.append(task.getOrdering());
+        taskBuilder.append(ordering);
         taskBuilder.append(QUOTES);
-
         taskBuilder.append("name=\"");
         taskBuilder.append(task.getTitle());
         taskBuilder.append(QUOTES);
 
         generateTemplateTaskProperty(taskBuilder, "editType", task.getEditType().getValue());
-        generateTemplateTaskProperty(taskBuilder, "processingStatus", task.getProcessingStatus().getValue());
+        generateTemplateTaskProperty(taskBuilder, "processingStatus",
+            task.getProcessingStatus().equals(TaskStatus.DONE) ? TaskStatus.DONE.getValue()
+                    : TaskStatus.LOCKED.getValue());
         generateTemplateTaskProperty(taskBuilder, "concurrent", task.isConcurrent());
         generateTemplateTaskProperty(taskBuilder, "typeMetadata", task.isTypeMetadata());
         generateTemplateTaskProperty(taskBuilder, "separateStructure", task.isSeparateStructure());
@@ -86,17 +85,15 @@ class XmlGenerator {
             taskBuilder.deleteCharAt(taskBuilder.length() - 1);
             taskBuilder.append(QUOTES);
         }
-
         if (StringUtils.isNotBlank(task.getScriptName()) || StringUtils.isNotBlank(task.getScriptPath())) {
             generateTemplateTaskProperty(taskBuilder, "scriptName", task.getScriptName());
             generateTemplateTaskProperty(taskBuilder, "scriptPath", task.getScriptPath());
         }
-
         taskBuilder.append(">\n");
 
-        generateSequences(taskBuilder, task.getOrdering());
+        generateSequences(taskBuilder, ordering);
         closeTask(taskBuilder, task);
-        generateSequenceFlow(taskBuilder, task.getOrdering(), sourceReference, targetReference);
+        generateSequenceFlow(taskBuilder, ordering, sourceReference);
 
         return taskBuilder.toString();
     }
@@ -149,14 +146,13 @@ class XmlGenerator {
         taskBuilder.append("</bpmn2:outgoing>\n");
     }
 
-    private static void generateSequenceFlow(StringBuilder taskBuilder, Integer ordering, String sourceReference,
-            String targetReference) {
+    private static void generateSequenceFlow(StringBuilder taskBuilder, Integer ordering, String sourceReference) {
         taskBuilder.append("        <bpmn2:sequenceFlow id=\"SequenceFlow_");
         taskBuilder.append(ordering);
         taskBuilder.append("\" sourceRef=\"");
         taskBuilder.append(sourceReference);
         taskBuilder.append("\" targetRef=\"");
-        taskBuilder.append(targetReference);
+        taskBuilder.append("Task_");
         taskBuilder.append(SLASH_END_LINE);
     }
 

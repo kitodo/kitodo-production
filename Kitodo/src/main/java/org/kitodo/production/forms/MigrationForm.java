@@ -303,14 +303,15 @@ public class MigrationForm extends BaseForm {
         TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
         List<Task> processTasks = blueprintProcess.getTasks();
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
+        String workflowTitle = "ChangeME_" + Helper.generateRandomString(3);
 
         try {
-            templateConverter.convertTasksToWorkflowFile("ChangeME", processTasks);
+            templateConverter.convertTasksToWorkflowFile(workflowTitle, processTasks);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
-        workflowToUse = new Workflow("ChangeME");
+        workflowToUse = new Workflow(workflowTitle);
         workflowToUse.setClient(blueprintProcess.getProject().getClient());
         workflowToUse.setStatus(WorkflowStatus.DRAFT);
         workflowToUse.getTemplates().add(null);
@@ -337,6 +338,7 @@ public class MigrationForm extends BaseForm {
         if (Objects.nonNull(workflowId) && workflowId != 0) {
             // showPopup for Template
             try {
+                workflowToUse = ServiceManager.getWorkflowService().getById(workflowId);
                 createTemplates();
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },

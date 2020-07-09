@@ -14,6 +14,7 @@ package org.kitodo.selenium;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URI;
@@ -63,7 +64,7 @@ public class MigrationST extends BaseTestSelenium {
         assertEquals("Finished, Closed, Progress, Open, Locked", systemPage.getAggregatedTasks(2));
         WorkflowEditPage workflowEditPage = systemPage.createNewWorkflow();
         workflowEditPage.changeWorkflowStatusToActive();
-        assertEquals("ChangeME", workflowEditPage.getWorkflowTitle());
+        assertTrue(workflowEditPage.getWorkflowTitle().contains("ChangeME"));
         workflowEditPage.changeWorkflowTitle("migrationWorkflow");
         systemPage = workflowEditPage.saveForMigration();
         String newTemplateTitle = "newTemplate";
