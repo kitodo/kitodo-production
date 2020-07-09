@@ -13,6 +13,7 @@ package org.kitodo.production.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Project DTO object.
@@ -229,6 +230,15 @@ public class ProjectDTO extends BaseDTO {
      */
     public List<TemplateDTO> getTemplates() {
         return templates;
+    }
+
+    /**
+     * Get list of available templates.
+     *
+     * @return list of available templates as TemplateDTO
+     */
+    public List<TemplateDTO> getAvailableTemplates() {
+        return templates.stream().filter(TemplateDTO::isShowInChoiceList).collect(Collectors.toList());
     }
 
     /**

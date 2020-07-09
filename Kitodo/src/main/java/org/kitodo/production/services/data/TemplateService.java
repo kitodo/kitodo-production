@@ -184,6 +184,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
         templateDTO.setId(getIdFromJSONObject(jsonObject));
         templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
         templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
+        templateDTO.setShowInChoiceList(TemplateTypeField.SHOW_IN_CHOICE_LIST.getBooleanValue(jsonObject));
         templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
         templateDTO.setDocket(
             ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(jsonObject)));

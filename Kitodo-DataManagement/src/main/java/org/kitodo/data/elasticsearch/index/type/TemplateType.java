@@ -26,6 +26,7 @@ public class TemplateType extends BaseType<Template> {
         jsonObject.put(TemplateTypeField.TITLE.getKey(), template.getTitle());
         jsonObject.put(TemplateTypeField.CREATION_DATE.getKey(), getFormattedDate(template.getCreationDate()));
         jsonObject.put(TemplateTypeField.ACTIVE.getKey(), template.isActive());
+        jsonObject.put(TemplateTypeField.SHOW_IN_CHOICE_LIST.getKey(), template.getInChoiceListShown());
         jsonObject.put(TemplateTypeField.SORT_HELPER_STATUS.getKey(),
             preventNull(template.getSortHelperStatus()));
         jsonObject.put(TemplateTypeField.CLIENT_ID.getKey(), getId(template.getClient()));

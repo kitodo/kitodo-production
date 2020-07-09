@@ -13,29 +13,21 @@ package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
 @ViewScoped
 @Named("SelectTemplateDialogView")
 public class SelectTemplateDialogView implements Serializable {
 
-    private static final Logger logger = LogManager.getLogger(SelectTemplateDialogView.class);
     private int selectedTemplateId = 0;
     private ProjectDTO project;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
@@ -80,22 +72,6 @@ public class SelectTemplateDialogView implements Serializable {
     }
 
     /**
-     * Get templates.
-     *
-     * @return value of templates
-     */
-    public List<Template> getProjectTemplates() {
-        try {
-            Project project = ServiceManager.getProjectService().getById(this.project.getId());
-            return project.getTemplates();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(),
-                    this.project.getId()}, logger, e);
-        }
-        return Collections.emptyList();
-    }
-
-    /**
      * check for templates with create process path.
      */
     public void createProcessForProject() {
@@ -118,8 +94,9 @@ public class SelectTemplateDialogView implements Serializable {
      * Display error message if no template is configured for current project.
      */
     public void checkForTemplates() {
-        if (this.project.getTemplates().size() == 1) {
-            this.selectedTemplateId = project.getTemplates().get(0).getId();
+        List<TemplateDTO> availableTemplates = this.project.getAvailableTemplates();
+        if (availableTemplates.size() == 1) {
+            this.selectedTemplateId = availableTemplates.get(0).getId();
         }
         if (this.selectedTemplateId > 0) {
             try {
@@ -131,7 +108,7 @@ public class SelectTemplateDialogView implements Serializable {
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage());
             }
-        } else if (project.getTemplates().size() > 1) {
+        } else if (availableTemplates.size() > 1) {
             PrimeFaces.current().ajax().update("selectTemplateDialog");
             PrimeFaces.current().executeScript("PF('selectTemplateDialog').show();");
         } else {
