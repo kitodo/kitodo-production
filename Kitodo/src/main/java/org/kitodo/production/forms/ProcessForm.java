@@ -347,7 +347,7 @@ public class ProcessForm extends TemplateBaseForm {
     public String createProcessAsChild(ProcessDTO processDTO) {
         try {
             Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if(Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getRuleset())) {
+            if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getRuleset())) {
                 return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
                         + process.getProject().getId() + "&parentId=" + process.getId();
             }

@@ -351,7 +351,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
                 processDataTab.prepare();
-                if(Objects.nonNull(parentId)) {
+                if (Objects.nonNull(parentId)) {
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
