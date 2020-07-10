@@ -159,6 +159,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private Workpiece workpieceOriginalState;
 
     /**
+     * String indicating which UI area is currently focused receiving navigation shortcuts.
+     */
+    private String focusedArea = "";
+
+    /**
      * This List of Pairs stores all selected physical elements and the logical elements in which the physical element was selected.
      * It is necessary to store the logical elements as well, because a physical element can be assigned to multiple logical elements.
      */
@@ -755,6 +760,24 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             boolean unsavedChanges = !this.workpiece.equals(workpieceOriginalState);
             PrimeFaces.current().executeScript("setConfirmUnload(" + unsavedChanges + ");");
         }
+    }
+
+    /**
+     * Get focusedArea.
+     *
+     * @return value of focusedArea
+     */
+    public String getFocusedArea() {
+        return focusedArea;
+    }
+
+    /**
+     * Set focusedArea.
+     *
+     * @param focusedArea as java.lang.String
+     */
+    public void setFocusedArea(String focusedArea) {
+        this.focusedArea = focusedArea;
     }
 
     /**

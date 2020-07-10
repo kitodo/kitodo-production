@@ -212,6 +212,9 @@
         <h:outputScript name="js/metadata_editor.js" target="body"/>
         <h:outputScript name="js/pf_contextMenu_custom.js" target="body"/>
         <h:outputScript>
+            PrimeFaces.widget.VerticalTree.prototype.bindKeyEvents = function () {
+                // Prevent PrimeFaces' default keyboard event handling for VerticalTrees.
+            };
             $(document).ready(function () {
                 metadataEditor.shortcuts.listen(#{DataEditorForm.shortcuts});
                 metadataEditor.contextMenu.listen();

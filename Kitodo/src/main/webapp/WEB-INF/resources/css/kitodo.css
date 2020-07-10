@@ -1569,6 +1569,11 @@ Metadata Editor
     border-top: solid var(--contrast-border-width) var(--medium-gray);
 }
 
+.focusable.focused {
+    border: dashed var(--contrast-border-width) var(--blue);
+    box-sizing: border-box;
+}
+
 form#metadata,
 form#metadata textarea,
 form#metadata div label,
@@ -1918,6 +1923,7 @@ Column content
     overflow: initial;
 }
 
+#containerStructure.ui-accordion-content,
 #structureAccordion .scroll-wrapper {
     box-sizing: border-box;
     height: 100%;
