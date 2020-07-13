@@ -83,7 +83,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>http://www.loc.gov/standards/mets/version111/mets.xsd</url>
+                            <url>https://www.loc.gov/standards/mets/version111/mets.xsd</url>
                             <outputFileName>mets.xsd</outputFileName>
                             <outputDirectory>${project.build.directory}/downloaded-sources/xsd</outputDirectory>
                         </configuration>
@@ -128,6 +128,8 @@
                         </goals>
                         <configuration>
                             <extension>true</extension>
+                            <strict>false</strict>
+                            <catalog>src/main/resources/catalog.xml</catalog>
                             <schemaDirectory>target/downloaded-sources/xsd</schemaDirectory>
                             <schemaIncludes>
                                 <include>mets.xsd</include>
