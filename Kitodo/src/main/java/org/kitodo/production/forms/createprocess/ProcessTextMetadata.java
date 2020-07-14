@@ -138,7 +138,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     public Date getDate() {
         if (Objects.isNull(date) && Objects.nonNull(getValue())) {
             try {
-                date = new SimpleDateFormat("yyyy-mm-dd").parse(getValue());
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(getValue());
             } catch (ParseException e) {
                 logger.error(e.getLocalizedMessage(), e);
             }
@@ -154,7 +154,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     public void setDate(Date date) {
         this.date = date;
         if (Objects.nonNull(date)) {
-            this.value = new SimpleDateFormat("yyyy-mm-dd").format(date);
+            this.value = new SimpleDateFormat("yyyy-MM-dd").format(date);
         }
     }
 
