@@ -100,7 +100,6 @@ public class XmlSchemaConverterTest {
         Assert.assertEquals("PublicationYear after conversion is wrong!", "1999", year);
     }
 
-    @Ignore("Disabled due to problems with downloading marc xsl transformation file from loc.gov")
     @Test
     public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         DataRecord testRecord = new DataRecord();
