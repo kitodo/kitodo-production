@@ -66,7 +66,7 @@ public class CurrentTaskForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
-    private List<TaskDTO> selectedTasks;
+    private List<TaskDTO> selectedTasks = new ArrayList<>();
     private final WebDav myDav = new WebDav();
     private boolean onlyOpenTasks = false;
     private boolean onlyOwnTasks = false;
