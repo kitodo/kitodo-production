@@ -598,7 +598,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return false;
     }
 
-    void switchStructure(Object treeNodeData, boolean updateGallery) throws NoSuchMetadataFieldException {
+    void switchStructure(Object treeNodeData, boolean updateGalleryAndPhysicalTree) throws NoSuchMetadataFieldException {
         try {
             metadataPanel.preserveLogical();
         } catch (InvalidMetadataValueException e) {
@@ -618,11 +618,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                         IncludedStructuralElement structuralElement = selectedStructure.get();
                         if (!structuralElement.getViews().isEmpty()) {
                             ArrayList<View> views = new ArrayList<>(structuralElement.getViews());
-                            if (Objects.nonNull(views.get(0))) {
+                            if (Objects.nonNull(views.get(0)) && updateGalleryAndPhysicalTree) {
                                 updatePhysicalStructureTree(views.get(0));
-                                if (updateGallery) {
-                                    updateGallery(views.get(0));
-                                }
+                                updateGallery(views.get(0));
                             }
                         } else {
                             updatePhysicalStructureTree(null);
@@ -634,7 +632,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                     // Page selected in logical tree
                     View view = (View) structureTreeNode.getDataObject();
                     metadataPanel.showPageInLogical(view.getMediaUnit());
-                    if (updateGallery) {
+                    if (updateGalleryAndPhysicalTree) {
                         updateGallery(view);
                     }
                     // no need to update physical tree because pages can only be clicked in logical tree if physical tree is hidden!
