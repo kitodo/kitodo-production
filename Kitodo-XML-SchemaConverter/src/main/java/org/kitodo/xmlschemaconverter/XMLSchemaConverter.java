@@ -161,6 +161,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
         try {
             StringWriter stringWriter = new StringWriter();
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setURIResolver((href, base) -> new StreamSource(href.replace("http:", "https:")));
             System.setProperty("http.agent", "Chrome");
             Transformer xsltTransformer = transformerFactory.newTransformer(new StreamSource(stylesheetFile));
             TransformerHandler handler
