@@ -352,18 +352,17 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 updateRulesetAndDocType(getMainProcess().getRuleset());
                 processDataTab.prepare();
                 if (Objects.nonNull(parentId) && parentId != 0) {
-                    titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
-                    titleRecordLinkTab.chooseParentProcess();
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
                     Map<String, String> allowedSubstructuralElements = ServiceManager.getRulesetService()
                             .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()))
                             .getStructuralElementView(parentProcess.getBaseType(), "", priorityList)
                             .getAllowedSubstructuralElements();
-                    ArrayList<SelectItem> docTypes = new ArrayList<>();
-                    for (String value : allowedSubstructuralElements.values()) {
-                        docTypes.add(new SelectItem(value));
-                    }
+                    List<SelectItem> docTypes = allowedSubstructuralElements.entrySet()
+                            .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
+                            .collect(Collectors.toList());
                     processDataTab.setAllDocTypes(docTypes);
+                    titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
+                    titleRecordLinkTab.chooseParentProcess();
 
                 }
             }
