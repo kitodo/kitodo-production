@@ -711,6 +711,15 @@ section#content-section {
     min-width: 200px;
 }
 
+.shortcut-input {
+    border: solid var(--default-border-width) var(--blue);
+    border-radius: var(--default-border-radius);
+    display: block;
+    height: var(--input-height);
+    text-align: center;
+    width: 100%;
+}
+
 .input-with-button,
 .input-with-button > input {
     width: calc(100% - 44px);
@@ -1114,7 +1123,8 @@ h3#headerText {
     margin: 0 0 5px 5px;
 }
 
-#resetPasswordForm .dialogFieldWrapper {
+#resetPasswordForm .dialogFieldWrapper,
+#changeShortcutsForm .dialogFieldWrapper {
     max-height: unset;
     overflow: hidden;
 }

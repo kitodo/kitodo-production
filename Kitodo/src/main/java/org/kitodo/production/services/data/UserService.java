@@ -490,4 +490,15 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         String metadataLanguage = getCurrentUser().getMetadataLanguage();
         return Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
     }
+
+    /**
+     * Return the keyboard shortcuts for the specified user.
+     *
+     * @param userId specifying the user
+     * @return JSON object containing the user's shortcuts as java.lang.String
+     * @throws DAOException when user object could not be loaded from database
+     */
+    public String getShortcuts(int userId) throws DAOException {
+        return getById(userId).getShortcuts();
+    }
 }

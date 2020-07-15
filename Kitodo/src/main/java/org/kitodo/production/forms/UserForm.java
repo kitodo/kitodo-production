@@ -15,12 +15,15 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -33,8 +36,11 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
@@ -62,10 +68,19 @@ public class UserForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient UserService userService = ServiceManager.getUserService();
+    private static final List<String> AVAILABLE_SHORTCUTS = Arrays.asList(
+            "detailView",
+            "help",
+            "nextItem",
+            "nextItemMulti",
+            "previousItem",
+            "previousItemMulti",
+            "structuredView");
 
     private String passwordToEncrypt;
 
     private String oldPassword;
+    private SortedMap<String, String> shortcuts;
 
     @Named("LoginForm")
     private LoginForm loginForm;
@@ -152,6 +167,14 @@ public class UserForm extends BaseForm {
 
         if (isMissingClient()) {
             Helper.setErrorMessage("errorMissingClient");
+            return this.stayOnCurrentPage;
+        }
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            userObject.setShortcuts(mapper.writeValueAsString(shortcuts));
+        } catch (IOException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
         }
 
@@ -408,10 +431,17 @@ public class UserForm extends BaseForm {
             } else {
                 this.passwordToEncrypt = "";
             }
+            if (Objects.nonNull(userObject) && StringUtils.isNotBlank(userObject.getShortcuts())) {
+                shortcuts = mapShortcuts(new ObjectMapper().readValue(userObject.getShortcuts(),
+                        new TypeReference<TreeMap<String, String>>() {}));
+            } else {
+                shortcuts = mapShortcuts(new TreeMap<String, String>());
+            }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular(), id },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular(), id }, logger, e);
+        } catch (IOException e) {
+            Helper.setErrorMessage("Could not parse shortcuts loaded from user with id " + id + "!", logger, e);
         }
     }
 
@@ -555,5 +585,22 @@ public class UserForm extends BaseForm {
      */
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
+    }
+
+    /**
+     * Get shortcuts.
+     *
+     * @return value of shortcuts
+     */
+    public SortedMap<String, String> getShortcuts() {
+        return shortcuts;
+    }
+
+    private SortedMap<String, String> mapShortcuts(Map<String, String> loadedShortcuts) {
+        SortedMap<String, String> shortcuts = new TreeMap<>();
+        for (String shortcut : AVAILABLE_SHORTCUTS) {
+            shortcuts.put(shortcut, loadedShortcuts.getOrDefault(shortcut, ""));
+        }
+        return shortcuts;
     }
 }

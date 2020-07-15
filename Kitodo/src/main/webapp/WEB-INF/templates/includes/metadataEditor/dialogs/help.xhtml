@@ -13,7 +13,6 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
@@ -29,18 +28,12 @@
             <h:form id="helpForm">
                 <h3>#{msgs.shortcuts}</h3>
                 <ul id="keyboardShortcuts">
-                    <li>
-                        <h:outputLabel value="#{msgs['shortcuts.help']}"/>
-                        <h:outputLabel><kbd>#{msgs['shortcuts.help.keys']}</kbd></h:outputLabel>
-                    </li>
-                    <li>
-                        <h:outputLabel value="#{msgs['shortcuts.dataEditor.structuredView']}"/>
-                        <h:outputLabel><kbd>#{msgs['shortcuts.dataEditor.structuredView.keys']}</kbd></h:outputLabel>
-                    </li>
-                    <li>
-                        <h:outputLabel value="#{msgs['shortcuts.dataEditor.detailView']}"/>
-                        <h:outputLabel><kbd>#{msgs['shortcuts.dataEditor.detailView.keys']}</kbd></h:outputLabel>
-                    </li>
+                    <ui:repeat value="#{UserForm.shortcuts}" var="item">
+                        <li>
+                            <h:outputLabel value="#{msgs['shortcuts.dataEditor.'.concat(item.key)]}"/>
+                            <h:outputLabel><kbd>#{UserForm.shortcuts[item.key]}</kbd></h:outputLabel>
+                        </li>
+                    </ui:repeat>
                 </ul>
 
                 <h:panelGroup layout="block"

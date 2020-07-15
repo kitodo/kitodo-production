@@ -113,15 +113,6 @@ metadataEditor.dragdrop = {
 };
 
 metadataEditor.shortcuts = {
-    KEYS: {
-        HELP: ["Shift", "Minus"],
-        STRUCTURED_VIEW: ["Control", "Shift", "Slash"],
-        DETAIL_VIEW: ["Control", "Shift", "BracketRight"],
-        NEXT_IMAGE: ["Control", "ArrowDown"],
-        PREVIOUS_IMAGE: ["Control", "ArrowUp"],
-        NEXT_IMAGE_MULTI: ["Control", "Shift", "ArrowDown"],
-        PREVIOUS_IMAGE_MULTI: ["Control", "Shift", "ArrowUp"]
-    },
     getGalleryViewMode() {
         return $("#imagePreviewForm\\:galleryViewMode ").text().toUpperCase();
     },
@@ -167,27 +158,27 @@ metadataEditor.shortcuts = {
     },
     handleShortcut(shortcut) {
         switch (shortcut) {
-            case "HELP":
+            case "help":
                 if (!(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA")) {
                     PF("helpDialog").show();
                 }
                 break;
-            case "STRUCTURED_VIEW":
+            case "structuredView":
                 metadataEditor.shortcuts.changeView("LIST");
                 break;
-            case "DETAIL_VIEW":
+            case "detailView":
                 metadataEditor.shortcuts.changeView("PREVIEW");
                 break;
-            case "NEXT_IMAGE":
+            case "nextItem":
                 metadataEditor.shortcuts.jumpToSelectedImage(1);
                 break;
-            case "PREVIOUS_IMAGE":
+            case "previousItem":
                 metadataEditor.shortcuts.jumpToSelectedImage(-1);
                 break;
-            case "NEXT_IMAGE_MULTI":
+            case "nextItemMulti":
                 metadataEditor.shortcuts.jumpToSelectedImage(20);
                 break;
-            case "PREVIOUS_IMAGE_MULTI":
+            case "previousItemMulti":
                 metadataEditor.shortcuts.jumpToSelectedImage(-20);
                 break;
             default:
@@ -208,7 +199,8 @@ metadataEditor.shortcuts = {
             }
         });
     },
-    listen() {
+    listen(shortcuts) {
+        metadataEditor.shortcuts.KEYS = shortcuts;
         $(document).on("keydown.shortcuts", function (event) {
             metadataEditor.shortcuts.evaluateKeys(event.originalEvent);
         });
@@ -234,14 +226,6 @@ metadataEditor.shortcuts = {
 function expandMetadata(panelClass) {
     $("." + panelClass + "[aria-expanded='false']").click();
 }
-
-$(document).ready(function () {
-    metadataEditor.shortcuts.listen();
-    metadataEditor.contextMenu.listen();
-    $("#metadataAccordion input").blur(function () {
-        preserveMetadata();
-    });
-});
 
 function setConfirmUnload(on) {
     window.onbeforeunload = (on) ? function() { return true; } : void 0;
