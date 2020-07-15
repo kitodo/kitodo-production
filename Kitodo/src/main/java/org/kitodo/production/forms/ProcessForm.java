@@ -183,7 +183,6 @@ public class ProcessForm extends TemplateBaseForm {
             }
 
             try {
-                workflowControllerService.updateProcessSortHelperStatus(this.process);
                 ServiceManager.getProcessService().save(this.process);
                 return processesPage;
             } catch (DataException e) {
@@ -512,6 +511,18 @@ public class ProcessForm extends TemplateBaseForm {
         workflowControllerService.setTaskStatusUpForProcesses(getProcessesForActions());
     }
 
+    private void setTaskStatusUpForProcesses(List<Process> processes) {
+        for (Process processForStatus : processes) {
+            try {
+                workflowControllerService.setTasksStatusUp(processForStatus);
+                ServiceManager.getProcessService().save(processForStatus);
+            } catch (DataException | IOException e) {
+                Helper.setErrorMessage("errorChangeTaskStatus",
+                    new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
+            }
+        }
+    }
+
     /**
      * Set down processing status selection.
      */
@@ -524,6 +535,18 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setTaskStatusDownForAll() {
         workflowControllerService.setTaskStatusDownForProcesses(getProcessesForActions());
+    }
+
+    private void setTaskStatusDownForProcesses(List<Process> processes) {
+        for (Process processForStatus : processes) {
+            try {
+                workflowControllerService.setTasksStatusDown(processForStatus);
+                ServiceManager.getProcessService().save(processForStatus);
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorChangeTaskStatus",
+                    new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
+            }
+        }
     }
 
     /**
