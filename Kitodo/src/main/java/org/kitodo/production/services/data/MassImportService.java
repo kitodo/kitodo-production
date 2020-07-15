@@ -77,7 +77,7 @@ public class MassImportService {
      */
     public void importFromText(String selectedCatalog, String ppnString, int projectId, int templateId)
             throws ImportException {
-        List<String> ppns = Arrays.asList(ppnString.split(","));
+        List<String> ppns = Arrays.asList(ppnString.replaceAll("\\s","").split(","));
         importPPNs(selectedCatalog, ppns, projectId, templateId);
     }
 
