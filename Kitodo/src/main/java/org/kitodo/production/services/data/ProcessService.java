@@ -182,7 +182,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
     private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_FROM_CALENDAR = new HashMap<>();
     private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT = new HashMap<>();
-    private static final List<String> BG_COLORS = Arrays.asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
+    private static final List<String> BG_COLORS = Arrays
+            .asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -2657,8 +2658,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public PieChartModel getPieChardModel(Map<String, Integer> processValues) {
 
-        PieChartModel pieModel = new PieChartModel();
-
         PieChartDataSet dataSet = new PieChartDataSet();
         List<Number> values = new ArrayList<>(processValues.values());
         dataSet.setData(values);
@@ -2673,6 +2672,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         data.setLabels(labels);
 
+        PieChartModel pieModel = new PieChartModel();
         pieModel.setData(data);
         return pieModel;
     }

@@ -186,7 +186,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * because metadataeditor doesn't work without a process.
      */
     public void initMetadataEditor() {
-        if(Objects.isNull(process)) {
+        if (Objects.isNull(process)) {
             try {
                 Helper.setErrorMessage("noProcessSelected");
                 FacesContext context = FacesContext.getCurrentInstance();

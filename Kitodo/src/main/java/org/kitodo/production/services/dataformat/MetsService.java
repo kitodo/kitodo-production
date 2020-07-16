@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -43,7 +44,7 @@ public class MetsService {
     private static final Logger logger = LogManager.getLogger(MetsService.class);
 
     private static volatile MetsService instance = null;
-    private MetsXmlElementAccessInterface metsXmlElementAccess;
+    private final MetsXmlElementAccessInterface metsXmlElementAccess;
 
     /**
      * Return singleton variable of type MetsService.
