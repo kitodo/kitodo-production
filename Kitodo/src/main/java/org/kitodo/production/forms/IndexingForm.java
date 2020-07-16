@@ -41,7 +41,7 @@ import org.omnifaces.util.Ajax;
 @ApplicationScoped
 public class IndexingForm {
 
-    private static List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
+    private static final List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
     private static final Logger logger = LogManager.getLogger(IndexingForm.class);
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
     private String indexingStartedUser = "";

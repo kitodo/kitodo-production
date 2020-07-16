@@ -38,7 +38,7 @@ public class MassImportForm extends BaseForm {
     private String selectedCatalog;
     private UploadedFile file;
     private String ppnString;
-    private MassImportService massImportService = ServiceManager.getMassImportService();
+    private final MassImportService massImportService = ServiceManager.getMassImportService();
 
     private static final String PROCESS_LIST_PATH = "/pages/processes.jsf?faces-redirect=true";
 
@@ -49,7 +49,7 @@ public class MassImportForm extends BaseForm {
 
     /**
      * import from csv file.
-     * 
+     *
      * @param event
      *            the file upload event
      */

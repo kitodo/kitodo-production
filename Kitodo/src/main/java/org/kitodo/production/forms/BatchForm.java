@@ -122,7 +122,7 @@ public class BatchForm extends BaseForm {
             }
         }
 
-        Integer batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
+        int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
         try {
             if (batchMaxSize > 0) {
                 processDTOS = ServiceManager.getProcessService().findByQuery(query,
@@ -215,14 +215,6 @@ public class BatchForm extends BaseForm {
 
     public void setProcessfilter(String processfilter) {
         this.processfilter = processfilter;
-    }
-
-    public List<Batch> getCurrentBatches() {
-        return this.currentBatches;
-    }
-
-    public void setCurrentBatches(List<Batch> currentBatches) {
-        this.currentBatches = currentBatches;
     }
 
     public List<Process> getSelectedProcesses() {

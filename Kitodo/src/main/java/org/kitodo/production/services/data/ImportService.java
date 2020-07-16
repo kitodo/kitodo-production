@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -542,12 +542,12 @@ public class ImportService {
         String debugFolder = ConfigMain.getParameter("debugFolder", null);
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "catalogRecord.xml"),
-                (String) dataRecord.getOriginalData(), Charset.forName("UTF-8"));
+                (String) dataRecord.getOriginalData(), StandardCharsets.UTF_8);
         }
         DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "internalRecord.xml"),
-                (String) internalRecord.getOriginalData(), Charset.forName("UTF-8"));
+                (String) internalRecord.getOriginalData(), StandardCharsets.UTF_8);
         }
 
         if (!(internalRecord.getOriginalData() instanceof String)) {

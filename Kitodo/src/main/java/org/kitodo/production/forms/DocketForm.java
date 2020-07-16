@@ -193,7 +193,7 @@ public class DocketForm extends BaseForm {
      *
      * @return list of docket filenames
      */
-    public List getDocketFiles() {
+    public List<Path> getDocketFiles() {
         try (Stream<Path> docketPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)))) {
             return docketPaths.filter(s -> s.toString().endsWith(".xsl")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());

@@ -14,7 +14,6 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,12 +59,12 @@ public class MigrationForm extends BaseForm {
     private List<Project> selectedProjects = new ArrayList<>();
     private boolean projectListRendered;
     private boolean processListRendered;
-    private Map<String, List<Process>> aggregatedProcesses = new HashMap<>();
+    private final Map<String, List<Process>> aggregatedProcesses = new HashMap<>();
     private Workflow workflowToUse;
     private String currentTasks;
     private Map<Template, List<Process>> templatesToCreate = new HashMap<>();
     private Map<Template, Template> matchingTemplates = new HashMap<>();
-    private MigrationService migrationService = ServiceManager.getMigrationService();
+    private final MigrationService migrationService = ServiceManager.getMigrationService();
     private boolean metadataRendered;
     private boolean workflowRendered;
     private boolean newspaperMigrationRendered = false;
@@ -167,7 +166,7 @@ public class MigrationForm extends BaseForm {
             }
         }
         aggregatedProcesses.put(migrationService.createTaskString(processTasks),
-            new ArrayList<>(Arrays.asList(process)));
+            new ArrayList<>(Collections.singletonList(process)));
     }
 
     private boolean checkForTitle(String aggregatedTasks, List<Task> processTasks) {
@@ -248,7 +247,7 @@ public class MigrationForm extends BaseForm {
      */
     public List<String> getAggregatedTasks() {
         ArrayList<String> aggregatedTasks = new ArrayList<>(aggregatedProcesses.keySet());
-        Collections.sort(aggregatedTasks, (one, another) -> {
+        aggregatedTasks.sort((one, another) -> {
             int oneSize = aggregatedProcesses.get(one).size();
             int anotherSize = aggregatedProcesses.get(another).size();
             return oneSize == anotherSize ? one.compareTo(another) : anotherSize - oneSize;
