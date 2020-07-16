@@ -203,14 +203,14 @@ public class RulesetForm extends BaseForm {
      *
      * @return list of ruleset filenames
      */
-    public List getRulesetFilenames() {
+    public List<Path> getRulesetFilenames() {
         try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS)))) {
             return rulesetPaths.filter(f -> f.toString().endsWith(".xml")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.RULESET.getTranslationPlural() },
                 logger, e);
-            return new ArrayList();
+            return new ArrayList<>();
         }
     }
 }

@@ -79,8 +79,8 @@ public class SearchForm {
     private String templatePropertyOperand = "";
     private String stepOperand = "";
 
-    private ProcessForm processForm;
-    private CurrentTaskForm taskForm;
+    private final ProcessForm processForm;
+    private final CurrentTaskForm taskForm;
 
     /**
      * Constructor with inject process form.

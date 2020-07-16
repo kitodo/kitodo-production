@@ -61,6 +61,8 @@ public class ProjectForm extends BaseForm {
     private List<Template> deletedTemples = new ArrayList<>();
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
+    private static final String ID = "ID";
+    private static final String PARAMETER_MISSING = "parameterMissing";
 
     /**
      * Initialize the list of displayed list columns.
@@ -357,19 +359,23 @@ public class ProjectForm extends BaseForm {
      */
     public String addTemplate() {
         int templateId = 0;
-        try {
-            templateId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Template template = ServiceManager.getTemplateService().getById(templateId);
-
-            if (!this.project.getTemplates().contains(template)) {
-                this.project.getTemplates().add(template);
-                template.getProjects().add(this.project);
+        String templateIdString = Helper.getRequestParameter(ID);
+        if (Objects.nonNull(templateIdString)) {
+            try {
+                templateId = Integer.parseInt(templateIdString);
+                Template template = ServiceManager.getTemplateService().getById(templateId);
+                if (!this.project.getTemplates().contains(template)) {
+                    this.project.getTemplates().add(template);
+                    template.getProjects().add(this.project);
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_DATABASE_READING,
+                        new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), templateId }, logger, e);
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), templateId }, logger, e);
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(PARAMETER_MISSING, new Object[] {ID});
         }
         return this.stayOnCurrentPage;
     }
@@ -380,18 +386,23 @@ public class ProjectForm extends BaseForm {
      * @return stay on the same page
      */
     public String deleteTemplate() {
-        try {
-            int templateId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Template template : this.project.getTemplates()) {
-                if (template.getId().equals(templateId)) {
-                    this.project.getTemplates().remove(template);
-                    template.getProjects().remove(this.project);
-                    this.deletedTemples.add(template);
-                    break;
+        String templateIdString = Helper.getRequestParameter(ID);
+        if (Objects.nonNull(templateIdString)) {
+            try {
+                int templateId = Integer.parseInt(templateIdString);
+                for (Template template : this.project.getTemplates()) {
+                    if (template.getId().equals(templateId)) {
+                        this.project.getTemplates().remove(template);
+                        template.getProjects().remove(this.project);
+                        this.deletedTemples.add(template);
+                        break;
+                    }
                 }
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(PARAMETER_MISSING, new Object[] {ID});
         }
         return this.stayOnCurrentPage;
     }
@@ -431,22 +442,6 @@ public class ProjectForm extends BaseForm {
         // has to be called if a page back move was done
         cancel();
         this.project = project;
-    }
-
-    /**
-     * Set project by ID.
-     *
-     * @param projectID
-     *            ID of project to set.
-     */
-    public void setProjectById(int projectID) {
-        try {
-            setProject(ServiceManager.getProjectService().getById(projectID));
-            this.locked = true;
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
-        }
     }
 
     /**
@@ -665,26 +660,4 @@ public class ProjectForm extends BaseForm {
         return this.projectEditReferer;
     }
 
-    /**
-     * Getting the first template of the given project. This is just a hack
-     * until the "choose-template" dialoge will be implemented.
-     *
-     * @param projectDTO
-     *            the project to get the template from
-     * @return the id of the first template
-     */
-    public int getFirstTemplate(ProjectDTO projectDTO) {
-        Integer templateId = 0;
-        List<Template> templates = null;
-        try {
-            templates = ServiceManager.getProjectService().getById(projectDTO.getId()).getTemplates();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        if (Objects.nonNull(templates) && !templates.isEmpty()) {
-            templateId = templates.get(0).getId();
-
-        }
-        return templateId;
-    }
 }
