@@ -121,35 +121,53 @@ metadataEditor.shortcuts = {
             setGalleryViewMode([{name: "galleryViewMode", value: galleryViewMode}]);
         }
     },
-    jumpToGalleryImage(thumbnails, selectedThumbnail, delta) {
-        let currentIndex = thumbnails.index(selectedThumbnail);
+    jumpToGalleryImage(thumbnails, selectedThumbnail, delta, vertical) {
+        let currentIndex;
+        let selectableThumbnails;
+        if (vertical) {
+            let posX = selectedThumbnail.offset().left;
+            selectableThumbnails = $([]);
+            thumbnails.each(function () {
+                if (posX === $(this).offset().left) {
+                    selectableThumbnails = selectableThumbnails.add($(this));
+                }
+            });
+            currentIndex = selectableThumbnails.get().indexOf(selectedThumbnail[0]);
+        } else {
+            selectableThumbnails = thumbnails;
+            currentIndex = thumbnails.index(selectedThumbnail);
+        }
         let newIndex = currentIndex + delta;
-        if (currentIndex >= 0 && newIndex >= 0 && newIndex < thumbnails.length) {
-            metadataEditor.select(thumbnails[newIndex].dataset.order, thumbnails[newIndex].dataset.stripe, "default");
+        if (currentIndex >= 0 && newIndex >= 0 && newIndex < selectableThumbnails.length) {
+            metadataEditor.select(selectableThumbnails[newIndex].dataset.order, selectableThumbnails[newIndex].dataset.stripe, "default");
             let galleryViewMode = this.getGalleryViewMode();
             if (galleryViewMode === "LIST") {
-                scrollToStructureThumbnail(thumbnails.eq(newIndex), $("#imagePreviewForm\\:structuredPagesField"));
+                scrollToStructureThumbnail(selectableThumbnails.eq(newIndex), $("#imagePreviewForm\\:structuredPagesField"));
             } else if (galleryViewMode === "PREVIEW") {
-                scrollToPreviewThumbnail(thumbnails.eq(newIndex), $("#thumbnailStripeScrollableContent"));
+                scrollToPreviewThumbnail(selectableThumbnails.eq(newIndex), $("#thumbnailStripeScrollableContent"));
             }
             return true;
         }
         return false;
     },
-    jumpToSelectedImage(delta) {
+    jumpToSelectedImage(delta, vertical) {
         let gallery = $("#galleryWrapperPanel");
         let lastSelection = gallery.find(".thumbnail.last-selection + .thumbnail-container");
         if (lastSelection.length === 1) {
             let thumbnails = gallery.find(".thumbnail + .thumbnail-container");
             if (delta > 0) {
                 for (; delta > 0; delta--) {
-                    if (this.jumpToGalleryImage(thumbnails, lastSelection, delta)) {
+                    if (vertical && this.jumpToGalleryImage(thumbnails, lastSelection, delta, true)) {
+                        break;
+                    } else if (!vertical && this.jumpToGalleryImage(thumbnails, lastSelection, delta, false)) {
                         break;
                     }
                 }
             } else if (delta < 0) {
                 for (; delta < 0; delta++) {
-                    if (this.jumpToGalleryImage(thumbnails, lastSelection, delta)) {
+                    if (vertical && this.jumpToGalleryImage(thumbnails, lastSelection, delta, true)) {
+                        break;
+                    } else if (!vertical && this.jumpToGalleryImage(thumbnails, lastSelection, delta, false)) {
                         break;
                     }
                 }
@@ -170,16 +188,28 @@ metadataEditor.shortcuts = {
                 metadataEditor.shortcuts.changeView("PREVIEW");
                 break;
             case "nextItem":
-                metadataEditor.shortcuts.jumpToSelectedImage(1);
+                metadataEditor.shortcuts.jumpToSelectedImage(1, false);
                 break;
             case "previousItem":
-                metadataEditor.shortcuts.jumpToSelectedImage(-1);
+                metadataEditor.shortcuts.jumpToSelectedImage(-1, false);
                 break;
             case "nextItemMulti":
-                metadataEditor.shortcuts.jumpToSelectedImage(20);
+                metadataEditor.shortcuts.jumpToSelectedImage(20, false);
                 break;
             case "previousItemMulti":
-                metadataEditor.shortcuts.jumpToSelectedImage(-20);
+                metadataEditor.shortcuts.jumpToSelectedImage(-20, false);
+                break;
+            case "downItem":
+                metadataEditor.shortcuts.jumpToSelectedImage(1, true);
+                break;
+            case "upItem":
+                metadataEditor.shortcuts.jumpToSelectedImage(-1, true);
+                break;
+            case "downItemMulti":
+                metadataEditor.shortcuts.jumpToSelectedImage(10, true);
+                break;
+            case "upItemMulti":
+                metadataEditor.shortcuts.jumpToSelectedImage(-10, true);
                 break;
             default:
                 // This default case is only reached when shortcuts exist which are not implemented.
