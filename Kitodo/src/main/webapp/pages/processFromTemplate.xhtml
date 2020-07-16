@@ -24,10 +24,12 @@
         <f:viewParam name="templateId"/>
         <!--@elvariable id="projectId" type="java.lang.Integer"-->
         <f:viewParam name="projectId"/>
+        <!--@elvariable id="parentId" type="java.lang.Integer"-->
+        <f:viewParam name="parentId"/>
         <!--@elvariable id="referrer" type="java.lang.String"-->
         <f:viewParam name="referrer"/>
         <f:viewAction action="#{ProcessForm.load(id)}" />
-        <f:viewAction action="#{CreateProcessForm.prepareProcess(templateId, projectId, referrer)}"/>
+        <f:viewAction action="#{CreateProcessForm.prepareProcess(templateId, projectId, referrer, parentId)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

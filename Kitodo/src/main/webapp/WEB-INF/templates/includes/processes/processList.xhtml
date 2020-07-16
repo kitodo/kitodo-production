@@ -125,7 +125,16 @@
                       headerText="#{msgs.actions}">
                 <h:panelGroup layout="block"
                               styleClass="actionsBlock">
-
+                    <h:panelGroup styleClass="action"
+                                  title="#{ProcessForm.createProcessAsChildPossible(process)? msgs.createProcessAsChild : msgs.createProcessAsChildNotConfigured}">
+                        <h:link id="createChildren"
+                                outcome="#{ProcessForm.createProcessAsChild(process)}"
+                                styleClass="#{ProcessForm.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
+                                disabled="#{not ProcessForm.createProcessAsChildPossible(process)}">
+                            <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
+                            <f:param name="id" value="#{process.id}"/>
+                        </h:link>
+                    </h:panelGroup>
                     <h:panelGroup styleClass="action"
                                   title="#{ProcessForm.createProcessesWithCalendar(process)? msgs.createProcessesWithCalendar : msgs.calendarNotConfigured}">
                         <h:link id="calendarEdit"
