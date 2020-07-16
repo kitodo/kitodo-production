@@ -56,7 +56,7 @@ public class SearchResultForm extends ProcessListBaseView {
     /**
      * Set selectedProcesses.
      *
-     * @param selectedProcesses as java.util.List<org.kitodo.production.dto.ProcessDTO>
+     * @param selectedProcesses as java.util.List of {@link org.kitodo.production.dto.ProcessDTO}
      */
     public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
         try {

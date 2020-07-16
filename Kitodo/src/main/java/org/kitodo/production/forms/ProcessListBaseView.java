@@ -141,7 +141,7 @@ public class ProcessListBaseView extends BaseForm {
     }
 
     /**
-     * Return whether to display metadata statistics or not
+     * Return whether to display metadata statistics or not.
      *
      * @return whether to display metadata statistics or not
      */

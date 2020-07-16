@@ -124,7 +124,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Set selectedProcesses.
      *
-     * @param selectedProcesses as java.util.List<org.kitodo.data.database.beans.Process>
+     * @param selectedProcesses as java.util.List of {@link org.kitodo.data.database.beans.Process}
      */
     public void setSelectedProcesses(List<Process> selectedProcesses) {
         this.selectedProcesses = selectedProcesses;
