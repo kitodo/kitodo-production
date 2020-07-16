@@ -189,7 +189,7 @@ metadataEditor.shortcuts = {
     jumpToSelectedTreeNode(tree, delta, vertical) {
         let lastSelection = tree.find("li.ui-treenode[aria-selected='true']");
         if (!vertical && lastSelection.length === 1) {
-            lastSelection.children(".ui-treenode-children").is(":visible")
+            lastSelection.children(".ui-treenode-children").is(":visible");
             if (delta <= -1 && lastSelection.children(".ui-treenode-children").is(":visible")) {
                 lastSelection.children(".ui-treenode-content").children(".ui-tree-toggler").click();
             } else if (delta >= 1 && lastSelection.children(".ui-treenode-children").is(":hidden")) {
@@ -214,7 +214,7 @@ metadataEditor.shortcuts = {
     },
     navigateByShortcut(delta, vertical) {
         let focusedArea = $(".focused");
-        if (focusedArea.length !== 1 || focusedArea[0] == null) {
+        if (focusedArea.length !== 1 || focusedArea[0] === null) {
             return;
         }
         switch (focusedArea[0].id) {
@@ -282,7 +282,7 @@ metadataEditor.shortcuts = {
             }
         });
     },
-    listen: function (shortcuts) {
+    listen (shortcuts) {
         metadataEditor.shortcuts.KEYS = shortcuts;
         $(document).on("keydown.shortcuts", function (event) {
             metadataEditor.shortcuts.evaluateKeys(event.originalEvent);
