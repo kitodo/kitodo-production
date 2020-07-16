@@ -25,6 +25,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -33,23 +34,38 @@ import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.primefaces.PrimeFaces;
 
 @Named("SearchResultForm")
 @SessionScoped
-public class SearchResultForm extends BaseForm {
+public class SearchResultForm extends ProcessListBaseView {
     private static final Logger logger = LogManager.getLogger(SearchResultForm.class);
 
-    private String searchQuery;
     private List<ProcessDTO> filteredList = new ArrayList<>();
     private List<ProcessDTO> resultList;
+    private String searchQuery;
     private String currentTaskFilter;
     private Integer currentProjectFilter;
     private Integer currentTaskStatusFilter;
+    private final String searchResultListPath = MessageFormat.format(REDIRECT_PATH, "searchResult");
+    private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
 
-    private String searchResultListPath = MessageFormat.format(REDIRECT_PATH, "searchResult");
+    /**
+     * Set selectedProcesses.
+     *
+     * @param selectedProcesses as java.util.List<org.kitodo.production.dto.ProcessDTO>
+     */
+    public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
+        try {
+            this.selectedProcesses = ServiceManager.getProcessService().convertDtosToBeans(selectedProcesses);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
+                    logger, e);
+        }
+    }
 
     /**
      * Searches for processes with the entered searchQuery.
@@ -65,7 +81,7 @@ public class SearchResultForm extends BaseForm {
             for (ProcessDTO processDTO : results) {
                 resultHash.put(processDTO.getId(), processDTO);
             }
-            resultList = new ArrayList<>(resultHash.values());
+            this.resultList = new ArrayList<>(resultHash.values());
             refreshFilteredList();
         } catch (DataException e) {
             Helper.setErrorMessage("errorOnSearch", searchQuery);
@@ -82,11 +98,8 @@ public class SearchResultForm extends BaseForm {
      */
     void filterListByProject() {
         if (Objects.nonNull(currentProjectFilter)) {
-            for (ProcessDTO result : new ArrayList<>(filteredList)) {
-                if (!result.getProject().getId().equals(currentProjectFilter)) {
-                    filteredList.remove(result);
-                }
-            }
+            this.filteredList.removeIf(result -> !result.getProject().getId()
+                    .equals(currentProjectFilter));
         }
     }
 
@@ -95,7 +108,7 @@ public class SearchResultForm extends BaseForm {
      */
     void filterListByTaskAndStatus() {
         if (Objects.nonNull(currentTaskFilter) && Objects.nonNull(currentTaskStatusFilter)) {
-            for (ProcessDTO processDTO : new ArrayList<>(filteredList)) {
+            for (ProcessDTO processDTO : new ArrayList<>(this.filteredList)) {
                 boolean remove = true;
                 for (TaskDTO task : processDTO.getTasks()) {
                     if (task.getTitle().equalsIgnoreCase(currentTaskFilter)
@@ -105,7 +118,7 @@ public class SearchResultForm extends BaseForm {
                     }
                 }
                 if (remove) {
-                    filteredList.remove(processDTO);
+                    this.filteredList.remove(processDTO);
                 }
 
             }
@@ -129,7 +142,7 @@ public class SearchResultForm extends BaseForm {
      */
     public Collection<ProjectDTO> getProjectsForFiltering() {
         HashMap<Integer, ProjectDTO> projectsForFiltering = new HashMap<>();
-        for (ProcessDTO process : resultList) {
+        for (ProcessDTO process : this.resultList) {
             projectsForFiltering.put(process.getProject().getId(), process.getProject());
         }
         return projectsForFiltering.values();
@@ -142,7 +155,7 @@ public class SearchResultForm extends BaseForm {
      */
     public Collection<TaskDTO> getTasksForFiltering() {
         HashMap<String, TaskDTO> tasksForFiltering = new HashMap<>();
-        for (ProcessDTO processDTO : resultList) {
+        for (ProcessDTO processDTO : this.resultList) {
             for (TaskDTO currentTask : processDTO.getTasks()) {
                 tasksForFiltering.put(currentTask.getTitle(), currentTask);
             }
@@ -159,49 +172,62 @@ public class SearchResultForm extends BaseForm {
     }
 
     private void refreshFilteredList() {
-        filteredList.clear();
-        filteredList.addAll(resultList);
+        this.filteredList.clear();
+        this.filteredList.addAll(this.resultList);
     }
 
     /**
-     * Delete given Process 'process'.
+     * Delete Process.
      *
-     * @param processDTO Process to delete
+     * @param processDTO
+     *            process to delete.
      */
-    public void deleteProcess(ProcessDTO processDTO) {
+    @Override
+    public void delete(ProcessDTO processDTO) {
         try {
-            ProcessService.deleteProcess(processDTO.getId());
-            filteredList.remove(processDTO);
-        } catch (DataException | DAOException | IOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
-        }
-    }
-
-
-    /**
-     * Export METS.
-     */
-    public void exportMets(int processId) {
-        try {
-            ProcessService.exportMets(processId);
-            Helper.setMessage(EXPORT_FINISHED);
-        } catch (DAOException | DataException | IOException e) {
-            Helper.setErrorMessage("An error occurred while trying to export METS file for process "
-                    + processId, logger, e);
-        }
-    }
-
-    /**
-     * Download to home for single process. First check if this volume is currently
-     * being edited by another user and placed in his home directory, otherwise
-     * download.
-     */
-    public void downloadToHome(int processId) {
-        try {
-            ProcessService.downloadToHome(new WebDav(), processId);
+            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+            if (process.getChildren().isEmpty()) {
+                try {
+                    ProcessService.deleteProcess(process);
+                    this.filteredList.remove(processDTO);
+                } catch (DataException | IOException e) {
+                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                            logger, e);
+                }
+            } else {
+                this.deleteProcessDialog = new DeleteProcessDialog();
+                this.deleteProcessDialog.setProcess(process);
+                PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+            }
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
+    }
+
+    /**
+     * Set up processing status selection.
+     */
+    public void setTaskStatusUpForSelection() {
+        this.workflowControllerService.setTaskStatusUpForProcesses(this.getSelectedProcesses());
+    }
+
+    /**
+     * Set down processing status selection.
+     */
+    public void setTaskStatusDownForSelection() {
+        this.workflowControllerService.setTaskStatusDownForProcesses(this.getSelectedProcesses());
+    }
+
+    /**
+     * Download to home for selected processes.
+     */
+    public void downloadToHomeForSelection() {
+        try {
+            ProcessService.downloadToHome(this.getSelectedProcesses());
+            Helper.setMessage("createdInUserHomeAll");
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading processes to home directory!");
         }
     }
 
@@ -211,7 +237,7 @@ public class SearchResultForm extends BaseForm {
      * @return a list of ProcessDTO
      */
     public List<ProcessDTO> getFilteredList() {
-        return filteredList;
+        return this.filteredList;
     }
 
     /**
@@ -298,5 +324,4 @@ public class SearchResultForm extends BaseForm {
     public void setCurrentProjectFilter(Integer currentProjectFilter) {
         this.currentProjectFilter = currentProjectFilter;
     }
-
 }

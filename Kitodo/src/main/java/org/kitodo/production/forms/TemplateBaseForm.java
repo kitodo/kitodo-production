@@ -23,7 +23,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 
-class TemplateBaseForm extends BaseForm {
+class TemplateBaseForm extends ProcessListBaseView {
 
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
 

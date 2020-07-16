@@ -71,7 +71,7 @@ public class WorkflowControllerService {
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
-    private TaskService taskService = ServiceManager.getTaskService();
+    private final TaskService taskService = ServiceManager.getTaskService();
 
     /**
      * Set Task status up.
@@ -110,7 +110,7 @@ public class WorkflowControllerService {
      * @param task
      *            to change status down
      */
-    public void setTaskStatusDown(Task task) throws DataException {
+    public void setTaskStatusDown(Task task) {
         setTaskStatusDown(Collections.singletonList(task));
     }
 
@@ -671,7 +671,7 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void updateProcessSortHelperStatus(Process process) throws DataException {
+    public void updateProcessSortHelperStatus(Process process) {
         String value = ServiceManager.getProcessService().getProgress(process.getTasks(), null);
         process.setSortHelperStatus(value);
     }
@@ -692,5 +692,37 @@ public class WorkflowControllerService {
 
     private User getCurrentUser() {
         return ServiceManager.getUserService().getCurrentUser();
+    }
+
+    /**
+     * Set up processing status for given list of processes.
+     */
+    public void setTaskStatusUpForProcesses(List<Process> processes) {
+        for (Process processForStatus : processes) {
+            try {
+                setTasksStatusUp(processForStatus);
+                ServiceManager.getProcessService().save(processForStatus);
+                updateProcessSortHelperStatus(processForStatus);
+            } catch (DataException | IOException e) {
+                Helper.setErrorMessage("errorChangeTaskStatus",
+                        new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
+            }
+        }
+    }
+
+    /**
+     * Set down processing status for given list of processes.
+     */
+    public void setTaskStatusDownForProcesses(List<Process> processes) {
+        for (Process processForStatus : processes) {
+            try {
+                setTasksStatusDown(processForStatus);
+                ServiceManager.getProcessService().save(processForStatus);
+                updateProcessSortHelperStatus(processForStatus);
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorChangeTaskStatus",
+                        new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
+            }
+        }
     }
 }

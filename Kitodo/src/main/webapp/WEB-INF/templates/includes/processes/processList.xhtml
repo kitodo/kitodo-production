@@ -18,7 +18,7 @@
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
-        <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO-->
+        <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO"-->
         <p:dataTable id="processesTable"
                      styleClass="default-layout"
                      var="process"
@@ -119,145 +119,10 @@
                 <h:outputText value="#{ProcessForm.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"
                               title="#{ProcessForm.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"/>
             </p:columns>
-            <p:column styleClass="actionsColumn"
-                      resizable="false"
-                      width="310"
-                      headerText="#{msgs.actions}">
-                <h:panelGroup layout="block"
-                              styleClass="actionsBlock">
-                    <h:panelGroup styleClass="action"
-                                  title="#{ProcessForm.createProcessAsChildPossible(process)? msgs.createProcessAsChild : msgs.createProcessAsChildNotConfigured}">
-                        <h:link id="createChildren"
-                                outcome="#{ProcessForm.createProcessAsChild(process)}"
-                                styleClass="#{ProcessForm.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
-                                disabled="#{not ProcessForm.createProcessAsChildPossible(process)}">
-                            <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
-                            <f:param name="id" value="#{process.id}"/>
-                        </h:link>
-                    </h:panelGroup>
-                    <h:panelGroup styleClass="action"
-                                  title="#{ProcessForm.createProcessesWithCalendar(process)? msgs.createProcessesWithCalendar : msgs.calendarNotConfigured}">
-                        <h:link id="calendarEdit"
-                                outcome="calendarEdit"
-                                styleClass="#{ProcessForm.createProcessesWithCalendar(process) ? '' : 'ui-state-disabled'}"
-                                disabled="#{not ProcessForm.createProcessesWithCalendar(process)}">
-                            <h:outputText><i class="fa fa-calendar fa-lg"/></h:outputText>
-                            <f:param name="id" value="#{process.id}"/>
-                        </h:link>
-                    </h:panelGroup>
 
-                    <h:link id="viewProcess"
-                            outcome="processEdit"
-                            styleClass="action"
-                            title="#{msgs.view}"
-                            rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
-                        <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
-                        <f:param name="referer" value="processes"/>
-                        <f:param name="id" value="#{process.id}"/>
-                    </h:link>
-
-                    <h:link id="editProcess"
-                            outcome="processEdit"
-                            styleClass="action"
-                            title="#{msgs.edit}"
-                            rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
-                        <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
-                        <f:param name="referer" value="processes"/>
-                        <f:param name="id" value="#{process.id}"/>
-                    </h:link>
-
-                    <!-- Open metadata editor -->
-                    <h:commandLink id="readXML"
-                                   action="#{DataEditorForm.open(process.id, 'processes?keepPagination=true')}"
-                                   styleClass="action"
-                                   title="#{msgs.metadataEdit}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
-                        <f:actionListener binding="#{CommentForm.setProcessById(process.id)}"/>
-                        <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
-                    </h:commandLink>
-
-                    <p:commandLink id="download"
-                                   action="#{ProcessForm.downloadToHome(process.id)}"
-                                   styleClass="action"
-                                   title="#{msgs.linkHomeDirectory}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
-                        <h:outputText><i class="fa fa-download fa-lg"/></h:outputText>
-                        <!-- TODO: add separate message in case it already exists and alert -->
-                    </p:commandLink>
-
-                    <p:commandLink id="upload"
-                                   action="#{ProcessForm.uploadFromHome}"
-                                   styleClass="action"
-                                   title="#{msgs.deleteLinkHomeDirectory}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
-                        <h:outputText><i class="fa fa-upload fa-lg"/></h:outputText>
-                        <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                        <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
-                                   icon="ui-icon-alert"/>
-                    </p:commandLink>
-
-                    <!-- TODO: could be used for adding text: http://blog.fontawesome.io/2014/05/19/stacking-text-and-icons/ -->
-                    <p:commandLink id="exportLogXml"
-                                   action="#{ProcessForm.createXML}"
-                                   styleClass="action"
-                                   title="#{msgs.createXML}">
-                        <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
-                        <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                    </p:commandLink>
-
-                    <p:commandLink id="downloadDocket"
-                                   action="#{ProcessForm.downloadDocket}"
-                                   styleClass="action"
-                                   title="#{msgs.docketPrint}"
-                                   ajax="false" rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
-                        <h:outputText><i class="fa fa-print fa-lg"/></h:outputText>
-                        <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                    </p:commandLink>
-
-                    <h:commandLink id="exportMets"
-                                   action="#{ProcessForm.exportMets(process.id)}"
-                                   styleClass="action"
-                                   title="#{msgs.exportMets}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                        <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
-                    </h:commandLink>
-
-                    <h:commandLink id="exportPdf"
-                                   action="#{ProcessForm.exportPdf}"
-                                   styleClass="action"
-                                   title="#{msgs.exportPdf}"
-                                   rendered="false">
-                        <h:outputText><i class="fa fa-file-pdf-o fa-lg"/></h:outputText>
-                        <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                    </h:commandLink>
-
-                    <h:commandLink id="exportDms"
-                                   action="#{ProcessForm.exportDMS}"
-                                   styleClass="action"
-                                   title="#{msgs.exportDMS}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
-                        <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
-                        <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                    </h:commandLink>
-
-                    <h:panelGroup styleClass="action"
-                                  title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
-                        <p:commandLink id="deleteProcess"
-                                       process="@this"
-                                       action="#{ProcessForm.delete(process)}"
-                                       title="#{ process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}"
-                                       rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                                       disabled="#{process.hasChildren()}"
-                                       update="processesTabView:processesForm:processesTable">
-                                <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
-                                <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-                                <p:confirm header="#{msgs.confirmDelete}"
-                                           message="#{msgs.confirmDeleteProcess}"
-                                           icon="ui-icon-alert"/>
-                            </p:commandLink>
-                    </h:panelGroup>
-                </h:panelGroup>
-            </p:column>
+            <ui:include src="/WEB-INF/templates/includes/processes/processActionsColumn.xhtml">
+                <ui:param name="ProcessListView" value="#{ProcessForm}"/>
+            </ui:include>
 
             <p:rowExpansion styleClass="expansion-class">
                 <div class="row-expansion-wrapper">
@@ -389,79 +254,24 @@
                 <p:menuitem id="stateOfVolume"
                             value="#{msgs.stateOfVolume}"
                             action="#{ProcessForm.showStateOfVolume}"
-                            update="processesTabView:processesForm"
+                            update="processesTabView:processesForm:statisticPanel"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="durationOfTasks"
                             value="#{msgs.durationOfTasks}"
                             action="#{ProcessForm.showDurationOfTasks}"
-                            update="processesTabView:processesForm"
+                            update="processesTabView:processesForm:statisticPanel"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="processMetadataStatistic"
                             value="#{msgs.numberOfMetadata}"
-                            action="#{ProcessForm.showProcessMetadataStatistic()}"
-                            update="processesTabView:processesForm"
+                            action="#{ProcessForm.showProcessMetadataStatistic}"
+                            update="processesTabView:processesForm:statisticPanel"
                             icon="fa fa-arrow-circle-o-up"/>
             </p:menu>
         </div>
 
-        <p:pieChart rendered="#{ProcessForm.showPieModel()}" model="#{ProcessForm.pieModel}"/>
-        <p:dataTable  id="statisticResult"
-                      style="width: 50%"
-                      rendered="#{ProcessForm.showPieModel()}"
-                      value="#{ProcessForm.statisticResult}"
-                      var="result">
-            <p:column headerText="#{msgs.task}"
-                      width="50">
-                <h:outputText title="#{result.key}"
-                              value="#{result.key}"/>
-            </p:column>
-            <p:column headerText="#{msgs.amount}"
-                      width="50">
-                <h:outputText title="#{result.value}"
-                              value="#{result.value}"/>
-            </p:column>
-        </p:dataTable>
-
-        <p:barChart rendered="#{ProcessForm.showBarModel()}" model="#{ProcessForm.stackedBarModel}" style="width: 100%"/>
-
-        <p:dataTable id="processMetadataTable"
-                     style="width: 50%"
-                     rendered="#{ProcessForm.showProcessMetadataStatisticTable()}"
-                     value="#{ProcessForm.processMetadataStatistics}"
-                     var = "processStatistic">
-            <p:column headerText="#{msgs.title}"
-                      width="25">
-                <h:outputText title="#{processStatistic.processTitle}"
-                              value="#{processStatistic.processTitle}"/>
-            </p:column>
-            <p:column headerText="#{msgs.images}"
-                      width="10">
-                <h:outputText title="#{processStatistic.numberOfImages}"
-                              value="#{processStatistic.numberOfImages}"/>
-            </p:column>
-            <p:column headerText="#{msgs.relativeAmount}"
-                      width="10">
-                <p:progressBar value="#{ProcessForm.getRelativeImageAmount(processStatistic.numberOfImages)}" displayOnly="true"/>
-            </p:column>
-            <p:column headerText="#{msgs.structuralElement}"
-                      width="10">
-                <h:outputText title="#{processStatistic.numberOfStructuralElements}"
-                              value="#{processStatistic.numberOfStructuralElements}"/>
-            </p:column>
-            <p:column headerText="#{msgs.relativeAmount}"
-                      width="10">
-                <p:progressBar value="#{ProcessForm.getRelativeStructuralElementAmount(processStatistic.numberOfStructuralElements)}" displayOnly="true"/>
-            </p:column>
-            <p:column headerText="#{msgs.metadata}"
-                      width="10">
-                <h:outputText title="#{processStatistic.numberOfMetadata}"
-                              value="#{processStatistic.numberOfMetadata}"/>
-            </p:column>
-            <p:column headerText="#{msgs.relativeAmount}"
-                      width="10">
-                <p:progressBar value="#{ProcessForm.getRelativeMetadataAmount(processStatistic.numberOfMetadata)}" displayOnly="true"/>
-            </p:column>
-        </p:dataTable>
+        <ui:include src="/WEB-INF/templates/includes/processes/statistics.xhtml">
+            <ui:param name="StatisticView" value="#{ProcessForm}"/>
+        </ui:include>
 
     </h:form>
 </ui:composition>

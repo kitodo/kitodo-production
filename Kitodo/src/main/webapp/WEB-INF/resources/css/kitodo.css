@@ -1070,6 +1070,16 @@ main i.fa {
     margin-left: var(--default-double-size);
 }
 
+#searchResultTabView\:configureFilters {
+    margin: 0 0 0 16px;
+}
+
+.filter-span {
+    display: inline-block;
+    margin-right: var(--default-double-size);
+    width: 220px;
+}
+
 h3#headerText {
     display: inline-block;
     overflow-x: hidden;

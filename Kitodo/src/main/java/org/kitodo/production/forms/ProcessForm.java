@@ -11,22 +11,14 @@
 
 package org.kitodo.production.forms;
 
-import com.itextpdf.text.DocumentException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -39,47 +31,29 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.RulesetNotFoundException;
-import org.kitodo.export.ExportDms;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
-import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.model.LazyDTOModel;
-import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
-import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
-import org.primefaces.model.charts.bar.BarChartOptions;
-import org.primefaces.model.charts.hbar.HorizontalBarChartDataSet;
-import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
-import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
-import org.primefaces.model.charts.pie.PieChartDataSet;
-import org.primefaces.model.charts.pie.PieChartModel;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -92,7 +66,6 @@ public class ProcessForm extends TemplateBaseForm {
     private String kitodoScriptSelection;
     private String kitodoScriptAll;
     private String newProcessTitle;
-    private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private List<Property> properties;
     private List<Property> templates;
@@ -100,30 +73,17 @@ public class ProcessForm extends TemplateBaseForm {
     private Property property;
     private final transient FileService fileService = ServiceManager.getFileService();
     private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
-    private final String doneDirectoryName;
-    private List<Process> selectedProcesses = new ArrayList<>();
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
-    private PieChartModel pieModel;
-    private HorizontalBarChartModel stackedBarModel;
-    private Map<String,Integer> statisticResult;
-    private final List<ProcessMetadataStatistic> processMetadataStatistics = new ArrayList<>();
-    private int numberOfGlobalImages;
-    private int numberOfGlobalStructuralElements;
-    private int numberOfGlobalMetadata;
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
 
     private List<SelectItem> customColumns;
 
-    private final Map<Integer, Collection<String>> rulesetCacheForCreateFromCalendar = new HashMap<>();
-    private final Map<Integer, Collection<String>> rulesetCacheForCreateChildFromParent = new HashMap<>();
-    List<String> bgColors = Arrays.asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
-
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+
     @Inject
     private CustomListColumnInitializer initializer;
-    private ChartMode chartMode;
 
     /**
      * Constructor.
@@ -131,7 +91,6 @@ public class ProcessForm extends TemplateBaseForm {
     public ProcessForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProcessService()));
-        doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -160,6 +119,15 @@ public class ProcessForm extends TemplateBaseForm {
 
         selectedColumns =
                 ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
+    }
+
+    /**
+     * Set selectedProcesses.
+     *
+     * @param selectedProcesses as java.util.List<org.kitodo.data.database.beans.Process>
+     */
+    public void setSelectedProcesses(List<Process> selectedProcesses) {
+        this.selectedProcesses = selectedProcesses;
     }
 
     /**
@@ -230,116 +198,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Delete Process.
-     *
-     * @param processDTO
-     *            process to delete.
-     */
-    public void delete(ProcessDTO processDTO) {
-        try {
-            this.process = ServiceManager.getProcessService().getById(processDTO.getId());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
-        }
-        delete();
-    }
-
-    /**
-     * Delete process.
-     */
-    public void delete() {
-        if (this.process.getChildren().isEmpty()) {
-            try {
-                ProcessService.deleteProcess(this.process);
-            } catch (DataException | IOException e) {
-                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                        logger, e);
-            }
-        } else {
-            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
-        }
-    }
-
-    /**
-     * Delete with children processes.
-     */
-    public void deleteWithChildren() {
-        List<Process> children = new CopyOnWriteArrayList<>(this.process.getChildren());
-        try {
-            for (Process child : children) {
-                ProcessService.deleteProcess(child);
-            }
-            ProcessService.deleteProcess(this.process);
-        } catch (DataException | IOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
-        }
-    }
-
-    /**
-     * If processes are generated with calendar.
-     *
-     * @param processDTO
-     *            the process dto to check.
-     * @return true if processes are created with calendar, false otherwise
-     */
-    public boolean createProcessesWithCalendar(ProcessDTO processDTO) {
-        Collection<String> functionalDivisions;
-        try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            Integer rulesetId = process.getRuleset().getId();
-            String docType = processDTO.getBaseType();
-            if (rulesetCacheForCreateFromCalendar.containsKey(rulesetId)) {
-                functionalDivisions = rulesetCacheForCreateFromCalendar.get(rulesetId);
-            } else {
-                Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
-                functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
-                        .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
-                rulesetCacheForCreateFromCalendar.put(rulesetId, functionalDivisions);
-            }
-            if (functionalDivisions.contains(docType)) {
-                return true;
-            }
-        } catch (IOException | DAOException | RulesetNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
-        }
-        return false;
-    }
-
-    /**
-     * If a process can be created as child.
-     *
-     * @param processDTO
-     *            the process dto to check.
-     * @return true if processes can be created as child, false otherwise
-     */
-    public boolean createProcessAsChildPossible(ProcessDTO processDTO) {
-        Collection<String> functionalDivisions;
-        try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            Integer rulesetId = process.getRuleset().getId();
-            String docType = processDTO.getBaseType();
-            if (rulesetCacheForCreateChildFromParent.containsKey(rulesetId)) {
-                functionalDivisions = rulesetCacheForCreateChildFromParent.get(rulesetId);
-            } else {
-                Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
-                functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
-                        .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
-                rulesetCacheForCreateChildFromParent.put(rulesetId, functionalDivisions);
-            }
-            if (functionalDivisions.contains(docType)) {
-                return true;
-            }
-        } catch (IOException | DAOException | RulesetNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
-        }
-        return false;
-    }
-
-    /**
      * Create Child for given Process.
      * @param processDTO the process to create a child for.
      * @return path to createProcessForm
@@ -356,25 +214,6 @@ public class ProcessForm extends TemplateBaseForm {
                 e);
         }
         return "processes";
-    }
-
-    /**
-     * Delete without children processes.
-     */
-    public void deleteWithoutChildren() {
-        List<Process> children = new CopyOnWriteArrayList<>(this.process.getChildren());
-        this.process.getChildren().clear();
-
-        for (Process child : children) {
-            child.setParent(null);
-            try {
-                ServiceManager.getProcessService().save(child);
-                ProcessService.deleteProcess(this.process);
-            } catch (DataException | IOException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                        e);
-            }
-        }
     }
 
     /**
@@ -628,83 +467,10 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Export METS.
-     */
-    public void exportMets(int processId) {
-        try {
-            ProcessService.exportMets(processId);
-            Helper.setMessage(EXPORT_FINISHED);
-        } catch (DAOException | DataException | IOException e) {
-            Helper.setErrorMessage("An error occurred while trying to export METS file for process "
-                    + processId, logger, e);
-        }
-    }
-
-    /**
      * Export PDF.
      */
     public void exportPdf() {
         Helper.setErrorMessage("Not implemented");
-    }
-
-    /**
-     * Export DMS.
-     */
-    public void exportDMS() {
-        ExportDms export = new ExportDms();
-        try {
-            export.startExport(this.process);
-            Helper.setMessage(EXPORT_FINISHED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_EXPORTING,
-                new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
-        }
-    }
-
-    /**
-     * Export DMS for selected processes.
-     */
-    public void exportDMSForSelection() {
-        exportDMSForProcesses(this.selectedProcesses);
-    }
-
-    /**
-     * Export DMS for all found processes.
-     */
-    public void exportDMSForAll() {
-        exportDMSForProcesses(getProcessesForActions());
-    }
-
-    private void exportDMSForProcesses(List<Process> processes) {
-        ExportDms export = new ExportDms();
-        for (Process processToExport : processes) {
-            try {
-                export.startExport(processToExport);
-                Helper.setMessage(EXPORT_FINISHED);
-            } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_EXPORTING,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
-            }
-        }
-    }
-
-    /**
-     * Upload all processes from home.
-     */
-    public void uploadFromHomeForAll() {
-        WebDav myDav = new WebDav();
-        List<URI> folder = myDav.uploadAllFromHome(doneDirectoryName);
-        myDav.removeAllFromHome(folder, URI.create(doneDirectoryName));
-        Helper.setMessage("directoryRemovedAll", doneDirectoryName);
-    }
-
-    /**
-     * Upload from home for single process.
-     */
-    public void uploadFromHome() {
-        WebDav myDav = new WebDav();
-        myDav.uploadFromHome(this.process);
-        Helper.setMessage("directoryRemoved", this.process.getTitle());
     }
 
     /**
@@ -733,70 +499,31 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home for single process. First check if this volume is currently
-     * being edited by another user and placed in his home directory, otherwise
-     * download.
-     */
-    public void downloadToHome(int processId) {
-        try {
-            ProcessService.downloadToHome(new WebDav(), processId);
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
-        }
-    }
-
-    /**
      * Set up processing status selection.
      */
     public void setTaskStatusUpForSelection() {
-        setTaskStatusUpForProcesses(this.selectedProcesses);
+        workflowControllerService.setTaskStatusUpForProcesses(this.selectedProcesses);
     }
 
     /**
      * Set up processing status for all found processes.
      */
     public void setTaskStatusUpForAll() {
-        setTaskStatusUpForProcesses(getProcessesForActions());
-    }
-
-    private void setTaskStatusUpForProcesses(List<Process> processes) {
-        for (Process processForStatus : processes) {
-            try {
-                workflowControllerService.setTasksStatusUp(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus);
-                workflowControllerService.updateProcessSortHelperStatus(processForStatus);
-            } catch (DataException | IOException e) {
-                Helper.setErrorMessage("errorChangeTaskStatus",
-                    new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
-            }
-        }
+        workflowControllerService.setTaskStatusUpForProcesses(getProcessesForActions());
     }
 
     /**
      * Set down processing status selection.
      */
     public void setTaskStatusDownForSelection() {
-        setTaskStatusDownForProcesses(this.selectedProcesses);
+        workflowControllerService.setTaskStatusDownForProcesses(this.selectedProcesses);
     }
 
     /**
      * Set down processing status hits.
      */
     public void setTaskStatusDownForAll() {
-        setTaskStatusDownForProcesses(getProcessesForActions());
-    }
-
-    private void setTaskStatusDownForProcesses(List<Process> processes) {
-        for (Process processForStatus : processes) {
-            try {
-                workflowControllerService.setTasksStatusDown(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus);
-                workflowControllerService.updateProcessSortHelperStatus(processForStatus);
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorChangeTaskStatus",
-                    new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
-            }
-        }
+        workflowControllerService.setTaskStatusDownForProcesses(getProcessesForActions());
     }
 
     /**
@@ -810,7 +537,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Task status down.
      */
-    public void setTaskStatusDown() throws DataException {
+    public void setTaskStatusDown() {
         workflowControllerService.setTaskStatusDown(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
     }
@@ -980,75 +707,6 @@ public class ProcessForm extends TemplateBaseForm {
 
     public void setNewProcessTitle(String newProcessTitle) {
         this.newProcessTitle = newProcessTitle;
-    }
-
-    /**
-     * Starts generation of xml logfile for current process.
-     */
-    public void createXML() {
-        try {
-            ExportXmlLog xmlExport = new ExportXmlLog();
-            String directory = new File(ServiceManager.getUserService().getHomeDirectory(getUser())).getPath();
-            String destination = directory + "/" + Helper.getNormalizedTitle(this.process.getTitle()) + "_log.xml";
-            xmlExport.startExport(this.process, destination);
-        } catch (IOException e) {
-            Helper.setErrorMessage("Error creating log file in home directory", logger, e);
-        }
-    }
-
-    /**
-     * Downloads a docket for process.
-     */
-    public void downloadDocket() {
-        try {
-            ServiceManager.getProcessService().downloadDocket(this.process);
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Generate result as PDF.
-     */
-    public void generateResultAsPdf() {
-        try {
-            ServiceManager.getProcessService().generateResultAsPdf(this.filter);
-        } catch (IOException | DocumentException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
-        }
-    }
-
-    /**
-     * Generate result set.
-     */
-    public void generateResult() {
-        try {
-            ServiceManager.getProcessService().generateResult(this.filter);
-        } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
-        }
-    }
-
-    /**
-     * Return whether closed processes should be displayed or not.
-     *
-     * @return parameter controlling whether closed processes should be displayed or
-     *         not
-     */
-    public boolean isShowClosedProcesses() {
-        return this.showClosedProcesses;
-    }
-
-    /**
-     * Set whether closed processes should be displayed or not.
-     *
-     * @param showClosedProcesses
-     *            boolean flag signaling whether closed processes should be
-     *            displayed or not
-     */
-    public void setShowClosedProcesses(boolean showClosedProcesses) {
-        this.showClosedProcesses = showClosedProcesses;
-        ServiceManager.getProcessService().setShowClosedProcesses(showClosedProcesses);
     }
 
     /**
@@ -1308,25 +966,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Returns selected processes.
-     *
-     * @return the list of Process beans
-     */
-    public List<Process> getSelectedProcesses() {
-        return selectedProcesses;
-    }
-
-    /**
-     * Sets selected processes.
-     *
-     * @param selectedProcesses
-     *            the list of Process beans
-     */
-    public void setSelectedProcesses(List<Process> selectedProcesses) {
-        this.selectedProcesses = selectedProcesses;
-    }
-
-    /**
      * Set referring view which will be returned when the user clicks "save" or
      * "cancel" on the task edit page.
      *
@@ -1361,6 +1000,8 @@ public class ProcessForm extends TemplateBaseForm {
         if (!referer.isEmpty()) {
             if ("processes".equals(referer)) {
                 this.processEditReferer = referer + "?keepPagination=true";
+            } else if ("searchResult".equals(referer)) {
+                this.processEditReferer = "searchResult.jsf";
             } else if (!referer.contains("taskEdit") || this.processEditReferer.isEmpty()) {
                 this.processEditReferer = DEFAULT_LINK;
             }
@@ -1438,197 +1079,6 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
             return 0;
         }
-    }
-
-    /**
-     * Shows the state of volumes from the selected processes.
-     */
-    public void showStateOfVolume() {
-        chartMode = ChartMode.PIE;
-        Map<String, Integer> volumeStates = new LinkedHashMap<>();
-        for (Process selectedProcess : selectedProcesses) {
-            Task currentTask = ServiceManager.getProcessService().getCurrentTask(selectedProcess);
-            if (Objects.nonNull(currentTask)) {
-                String currentTaskTitle = currentTask.getTitle();
-                if (volumeStates.containsKey(currentTaskTitle)) {
-                    volumeStates.put(currentTaskTitle, Math.addExact(volumeStates.get(currentTaskTitle), 1));
-                } else {
-                    volumeStates.put(currentTaskTitle, 1);
-                }
-            }
-        }
-        createPieModel(volumeStates);
-    }
-
-    /**
-     * Shows the state of volumes from the selected processes.
-     */
-    public void showDurationOfTasks() {
-        chartMode = ChartMode.BAR;
-        LinkedHashMap<String, LinkedHashMap<String,Integer>> durationOfTasks = new LinkedHashMap<>();
-        for (Process selectedProcess : selectedProcesses) {
-            LinkedHashMap<String,Integer> taskValues = new LinkedHashMap<>();
-            for (Task task  : selectedProcess.getTasks()) {
-                long durationInDays = ServiceManager.getTaskService().getDurationInDays(task);
-                taskValues.put(task.getTitle(), Math.toIntExact(durationInDays));
-            }
-            durationOfTasks.put(selectedProcess.getTitle(), taskValues);
-        }
-        createBarModel(durationOfTasks);
-    }
-
-    /**
-     * Shows the number of images, metadata and structuralElements.
-     */
-    public void showProcessMetadataStatistic() {
-        chartMode = ChartMode.METADATA_STATISTIC;
-        resetGlobalStatisticValues();
-        Workpiece workpiece;
-        for (Process selectedProcess : selectedProcesses) {
-            try {
-                URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(selectedProcess);
-                workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
-            } catch (IOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), selectedProcess.getId() }, logger, e);
-                return;
-            }
-            int numberOfProcessImages = workpiece.getAllMediaUnitsSorted().size();
-            this.numberOfGlobalImages += numberOfProcessImages;
-            int numberOfProcessStructuralElements = workpiece.getAllIncludedStructuralElements().size();
-            this.numberOfGlobalStructuralElements += numberOfProcessStructuralElements;
-            int numberOfProcessMetadata = Math
-                    .toIntExact(ServiceManager.getMetsService().countLogicalMetadata(workpiece));
-            this.numberOfGlobalMetadata += numberOfProcessMetadata;
-
-            processMetadataStatistics.add(new ProcessMetadataStatistic(selectedProcess.getTitle(),
-                    numberOfProcessImages, numberOfProcessStructuralElements, numberOfProcessMetadata));
-        }
-    }
-
-    private void resetGlobalStatisticValues() {
-        this.numberOfGlobalStructuralElements = 0;
-        this.numberOfGlobalImages = 0;
-        this.numberOfGlobalMetadata = 0;
-    }
-
-    private void createPieModel(Map<String, Integer> processValues) {
-        pieModel = new PieChartModel();
-
-        PieChartDataSet dataSet = new PieChartDataSet();
-        List<Number> values = new ArrayList<>();
-        values.addAll(processValues.values());
-        dataSet.setData(values);
-
-        dataSet.setBackgroundColor(bgColors);
-
-        ChartData data = new ChartData();
-        data.addChartDataSet(dataSet);
-        ArrayList<String> labels = new ArrayList<>();
-        for (Map.Entry<String, Integer> processValueEntry : processValues.entrySet()) {
-            labels.add(processValueEntry.getKey().concat(" ").concat(processValueEntry.getValue().toString()));
-        }
-        data.setLabels(labels);
-
-        statisticResult = processValues;
-        pieModel.setData(data);
-    }
-
-    private void createBarModel(LinkedHashMap<String, LinkedHashMap<String, Integer>> taskValues) {
-        ChartData data = new ChartData();
-        boolean isTask;
-        int i = 0;
-        while (true) {
-            isTask = false;
-            HorizontalBarChartDataSet barDataSet = new HorizontalBarChartDataSet();
-            List<Number> taskDurations = new ArrayList<>();
-            for (String processTitle : taskValues.keySet()) {
-                LinkedHashMap<String, Integer> tasksForProcess = taskValues.get(processTitle);
-                ArrayList<Integer> durations = new ArrayList<>(tasksForProcess.values());
-                Integer taskDuration = 0;
-                if (durations.size() > i) {
-                    barDataSet.setLabel(new ArrayList<>(tasksForProcess.keySet()).get(i));
-                    taskDuration = durations.get(i);
-                    isTask = true;
-                }
-                taskDurations.add(taskDuration);
-            }
-            if (isTask) {
-                barDataSet.setStack("Stack 0");
-                barDataSet.setBackgroundColor(bgColors.get(i % bgColors.size()));
-                barDataSet.setData(taskDurations);
-                data.addChartDataSet(barDataSet);
-                i++;
-            } else {
-                break;
-            }
-        }
-        List<String> labels = new ArrayList<>(taskValues.keySet());
-        data.setLabels(labels);
-
-        stackedBarModel = new HorizontalBarChartModel();
-        stackedBarModel.setData(data);
-
-        // Options
-        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
-        linearAxes.setStacked(true);
-        BarChartOptions options = new BarChartOptions();
-
-        Tooltip tooltip = new Tooltip();
-        tooltip.setMode("index");
-        tooltip.setIntersect(false);
-        options.setTooltip(tooltip);
-
-        stackedBarModel.setOptions(options);
-    }
-
-    public boolean showPieModel() {
-        return ChartMode.PIE.equals(chartMode);
-    }
-
-    public boolean showBarModel() {
-        return ChartMode.BAR.equals(chartMode);
-    }
-
-    public boolean showProcessMetadataStatisticTable() {
-        return ChartMode.METADATA_STATISTIC.equals(chartMode);
-    }
-
-    public int getRelativeImageAmount(int numberOfImages) {
-        return numberOfImages == 0 ? 0 : numberOfImages * 100 / this.numberOfGlobalImages;
-    }
-
-    public int getRelativeStructuralElementAmount(int numberOfStructuralElements) {
-        return numberOfStructuralElements == 0 ? 0
-                : numberOfStructuralElements * 100 / this.numberOfGlobalStructuralElements;
-    }
-
-    public int getRelativeMetadataAmount(int numberOfMetadata) {
-        return numberOfMetadata == 0 ? 0 : numberOfMetadata * 100 / this.numberOfGlobalMetadata;
-    }
-
-    public PieChartModel getPieModel() {
-        return pieModel;
-    }
-
-    public void setPieModel(PieChartModel pieModel) {
-        this.pieModel = pieModel;
-    }
-
-    public HorizontalBarChartModel getStackedBarModel() {
-        return stackedBarModel;
-    }
-
-    public void setStackedBarModel(HorizontalBarChartModel stackedBarModel) {
-        this.stackedBarModel = stackedBarModel;
-    }
-
-    public Map<String, Integer> getStatisticResult() {
-        return statisticResult;
-    }
-
-    public List<ProcessMetadataStatistic> getProcessMetadataStatistics() {
-        return processMetadataStatistics;
     }
 
     /**
