@@ -21,6 +21,9 @@ var metadataEditor = {
         } else if (target.closest(".thumbnail-container").length === 1) {
             this.pages.handleMouseDown(event, target.closest(".thumbnail-container"));
         }
+        // set focus for gallery (used for keyboard shortcuts)
+        $(".focusable").removeClass("focused");
+        $("#imagePreviewForm").addClass("focused");
     },
     handleMouseUp(event) {
         let target = $(event.target);
@@ -174,6 +177,56 @@ metadataEditor.shortcuts = {
             }
         }
     },
+    jumpToTreeNode(treeNodes, selectedTreeNode, delta) {
+        let currentIndex = treeNodes.index(selectedTreeNode);
+        let newIndex = currentIndex + delta;
+        if (currentIndex >= 0 && newIndex >= 0 && newIndex < treeNodes.length) {
+            treeNodes.eq(newIndex).children(".ui-treenode-content").children(".ui-treenode-label").click();
+            return true;
+        }
+        return false;
+    },
+    jumpToSelectedTreeNode(tree, delta, vertical) {
+        let lastSelection = tree.find("li.ui-treenode[aria-selected='true']");
+        if (!vertical && lastSelection.length === 1) {
+            lastSelection.children(".ui-treenode-children").is(":visible");
+            if (delta <= -1 && lastSelection.children(".ui-treenode-children").is(":visible")) {
+                lastSelection.children(".ui-treenode-content").children(".ui-tree-toggler").click();
+            } else if (delta >= 1 && lastSelection.children(".ui-treenode-children").is(":hidden")) {
+                lastSelection.children(".ui-treenode-content").children(".ui-tree-toggler").click();
+            }
+        } else if (vertical && lastSelection.length === 1) {
+            let treeNodes = tree.find("li.ui-treenode:visible");
+            if (delta > 0) {
+                for (; delta > 0; delta--) {
+                    if (this.jumpToTreeNode(treeNodes, lastSelection, delta)) {
+                        break;
+                    }
+                }
+            } else if (delta < 0) {
+                for (; delta < 0; delta++) {
+                    if (this.jumpToTreeNode(treeNodes, lastSelection, delta)) {
+                        break;
+                    }
+                }
+            }
+        }
+    },
+    navigateByShortcut(delta, vertical) {
+        let focusedArea = $(".focused");
+        if (focusedArea.length !== 1 || focusedArea[0] === null) {
+            return;
+        }
+        switch (focusedArea[0].id) {
+            case "logicalTree":
+            case "physicalTree":
+                metadataEditor.shortcuts.jumpToSelectedTreeNode(focusedArea.eq(0), delta, vertical);
+                break;
+            case "imagePreviewForm":
+            default:
+                metadataEditor.shortcuts.jumpToSelectedImage(delta, vertical); // gallery
+        }
+    },
     handleShortcut(shortcut) {
         switch (shortcut) {
             case "help":
@@ -188,28 +241,28 @@ metadataEditor.shortcuts = {
                 metadataEditor.shortcuts.changeView("PREVIEW");
                 break;
             case "nextItem":
-                metadataEditor.shortcuts.jumpToSelectedImage(1, false);
+                metadataEditor.shortcuts.navigateByShortcut(1, false);
                 break;
             case "previousItem":
-                metadataEditor.shortcuts.jumpToSelectedImage(-1, false);
+                metadataEditor.shortcuts.navigateByShortcut(-1, false);
                 break;
             case "nextItemMulti":
-                metadataEditor.shortcuts.jumpToSelectedImage(20, false);
+                metadataEditor.shortcuts.navigateByShortcut(20, false);
                 break;
             case "previousItemMulti":
-                metadataEditor.shortcuts.jumpToSelectedImage(-20, false);
+                metadataEditor.shortcuts.navigateByShortcut(-20, false);
                 break;
             case "downItem":
-                metadataEditor.shortcuts.jumpToSelectedImage(1, true);
+                metadataEditor.shortcuts.navigateByShortcut(1, true);
                 break;
             case "upItem":
-                metadataEditor.shortcuts.jumpToSelectedImage(-1, true);
+                metadataEditor.shortcuts.navigateByShortcut(-1, true);
                 break;
             case "downItemMulti":
-                metadataEditor.shortcuts.jumpToSelectedImage(10, true);
+                metadataEditor.shortcuts.navigateByShortcut(20, true);
                 break;
             case "upItemMulti":
-                metadataEditor.shortcuts.jumpToSelectedImage(-10, true);
+                metadataEditor.shortcuts.navigateByShortcut(-20, true);
                 break;
             default:
                 // This default case is only reached when shortcuts exist which are not implemented.
@@ -229,10 +282,14 @@ metadataEditor.shortcuts = {
             }
         });
     },
-    listen(shortcuts) {
+    listen (shortcuts) {
         metadataEditor.shortcuts.KEYS = shortcuts;
         $(document).on("keydown.shortcuts", function (event) {
             metadataEditor.shortcuts.evaluateKeys(event.originalEvent);
+        });
+        $(document).on("click.shortcuts", ".focusable", function (event) {
+            $(".focused").removeClass("focused");
+            event.currentTarget.classList.add("focused");
         });
     },
     ignore() {
