@@ -2604,6 +2604,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public static boolean canCreateProcessWithCalendar(ProcessDTO processDTO)
             throws DAOException, IOException, RulesetNotFoundException {
         Collection<String> functionalDivisions;
+        if (Objects.isNull(processDTO.getRuleset())) {
+            return false;
+        }
         Integer rulesetId = processDTO.getRuleset().getId();
         if (RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.get(rulesetId);
@@ -2628,6 +2631,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public static boolean canCreateChildProcess(ProcessDTO processDTO) throws DAOException,
             IOException, RulesetNotFoundException {
         Collection<String> functionalDivisions;
+        if (Objects.isNull(processDTO.getRuleset())) {
+            return false;
+        }
         Integer rulesetId = processDTO.getRuleset().getId();
         if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.get(rulesetId);
