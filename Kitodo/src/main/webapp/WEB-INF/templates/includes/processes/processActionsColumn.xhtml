@@ -18,6 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
 
     <!--@elvariable id="ProcessListView" type="org.kitodo.production.forms.ProcessListBaseView"-->
+    <!--@elvariable id="referer" type="java.lang.String"-->
     <p:column styleClass="actionsColumn"
               resizable="false"
               width="310"
@@ -54,7 +55,7 @@
                     title="#{msgs.view}"
                     rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                 <i class="fa fa-eye fa-lg"/>
-                <f:param name="referer" value="searchResult"/>
+                <f:param name="referer" value="#{referer}"/>
                 <f:param name="id" value="#{process.id}"/>
             </h:link>
 
@@ -64,7 +65,7 @@
                     title="#{msgs.edit}"
                     rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                 <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
-                <f:param name="referer" value="searchResult"/>
+                <f:param name="referer" value="#{referer}"/>
                 <f:param name="id" value="#{process.id}"/>
             </h:link>
 
