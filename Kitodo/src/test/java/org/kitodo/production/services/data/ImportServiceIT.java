@@ -44,7 +44,7 @@ public class ImportServiceIT {
     private static final ImportService importService = ServiceManager.getImportService();
     private static StubServer server;
     private static final String TEST_FILE_PATH = "src/test/resources/sruTestRecord.xml";
-    private static final String RECORD_ID = "12345";
+    private static final String RECORD_ID = "11111";
     private static final int PORT = 8888;
     private static final String firstProcess = "First process";
 
