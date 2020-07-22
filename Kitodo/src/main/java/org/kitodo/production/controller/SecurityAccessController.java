@@ -329,6 +329,7 @@ public class SecurityAccessController {
     public boolean hasAuthorityToEditTask(int taskId) throws DataException {
         return securityAccessService.hasAuthorityToEditTask(taskId);
     }
+
     /**
      * Check if the current user has the authority to edit the batch.
      *

@@ -49,6 +49,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,7 @@ import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
@@ -101,6 +103,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
@@ -118,6 +121,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
@@ -125,6 +129,7 @@ import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
@@ -144,6 +149,14 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.hbar.HorizontalBarChartDataSet;
+import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
+import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
+import org.primefaces.model.charts.pie.PieChartDataSet;
+import org.primefaces.model.charts.pie.PieChartModel;
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final FileService fileService = ServiceManager.getFileService();
@@ -167,6 +180,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final String NEW_LINE_ENTITY = "\n";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
+    private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_FROM_CALENDAR = new HashMap<>();
+    private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT = new HashMap<>();
+    private static final List<String> BG_COLORS = Arrays
+            .asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -1335,23 +1352,23 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     private double calculateProgressClosed(Map<String, Integer> tasks) {
-        return Double.valueOf(tasks.get(CLOSED) * 100)
-                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+        return (double) (tasks.get(CLOSED) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private double calculateProgressInProcessing(Map<String, Integer> tasks) {
-        return Double.valueOf(tasks.get(IN_PROCESSING) * 100)
-                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+        return (double) (tasks.get(IN_PROCESSING) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private double calculateProgressOpen(Map<String, Integer> tasks) {
-        return Double.valueOf(tasks.get(OPEN) * 100)
-                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+        return (double) (tasks.get(OPEN) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private double calculateProgressLocked(Map<String, Integer> tasks) {
-        return Double.valueOf(tasks.get(LOCKED) * 100)
-                / Double.valueOf(tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+        return (double) (tasks.get(LOCKED) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private Map<String, Integer> getCalculationForProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
@@ -2130,7 +2147,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
             JSONObject xmlJSONObject = XML.toJSONObject(metadataFile);
             Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
-            if (json.keySet().contains("mets")) {
+            if (json.containsKey("mets")) {
                 Map<String, Object> mets = (Map<String, Object>) json.get("mets");
                 Object dmdSec = mets.get("dmdSec");
                 List<Map<String, Object>> metadata = new ArrayList<>();
@@ -2573,5 +2590,182 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         } else {
             return lastTask.getProcessingEnd();
         }
+    }
+
+    /**
+     * Check and return if child process for given ProcessDTO processDTO can be created via calendar or not.
+     *
+     * @param processDTO ProcessDTO for which child processes may be created via calendar
+     * @return whether child processes for the given ProcessDTO can be created via the calendar or not
+     * @throws DAOException if process could not be loaded from database
+     * @throws IOException if ruleset file could not be read
+     * @throws RulesetNotFoundException if ruleset file could not be read
+     */
+    public static boolean canCreateProcessWithCalendar(ProcessDTO processDTO)
+            throws DAOException, IOException, RulesetNotFoundException {
+        Collection<String> functionalDivisions;
+        if (Objects.isNull(processDTO.getRuleset())) {
+            return false;
+        }
+        Integer rulesetId = processDTO.getRuleset().getId();
+        if (RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.containsKey(rulesetId)) {
+            functionalDivisions = RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.get(rulesetId);
+        } else {
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
+            RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.put(rulesetId, functionalDivisions);
+        }
+        return functionalDivisions.contains(processDTO.getBaseType());
+    }
+
+    /**
+     * Check and return if child process for given ProcessDTO processDTO can be created or not.
+     *
+     * @param processDTO ProcessDTO for which child processes may be created
+     * @return whether child processes for the given ProcessDTO can be created via the calendar or not
+     * @throws DAOException if process could not be loaded from database
+     * @throws IOException if ruleset file could not be read
+     * @throws RulesetNotFoundException if ruleset file could not be read
+     */
+    public static boolean canCreateChildProcess(ProcessDTO processDTO) throws DAOException,
+            IOException, RulesetNotFoundException {
+        Collection<String> functionalDivisions;
+        if (Objects.isNull(processDTO.getRuleset())) {
+            return false;
+        }
+        Integer rulesetId = processDTO.getRuleset().getId();
+        if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
+            functionalDivisions = RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.get(rulesetId);
+        } else {
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
+            RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.put(rulesetId, functionalDivisions);
+        }
+        return functionalDivisions.contains(processDTO.getBaseType());
+    }
+
+    /**
+     * Starts generation of xml logfile for current process.
+     */
+    public static void createXML(Process process, User user) throws IOException {
+        ExportXmlLog xmlExport = new ExportXmlLog();
+        String directory = new File(ServiceManager.getUserService().getHomeDirectory(user)).getPath();
+        String destination = directory + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_log.xml";
+        xmlExport.startExport(process, destination);
+    }
+
+    /**
+     * Create and return PieChartModel for given process values.
+     *
+     * @param processValues Map containging process values
+     * @return PieChartModel
+     */
+    public PieChartModel getPieChardModel(Map<String, Integer> processValues) {
+
+        PieChartDataSet dataSet = new PieChartDataSet();
+        List<Number> values = new ArrayList<>(processValues.values());
+        dataSet.setData(values);
+
+        dataSet.setBackgroundColor(BG_COLORS);
+
+        ChartData data = new ChartData();
+        data.addChartDataSet(dataSet);
+        ArrayList<String> labels = new ArrayList<>();
+        for (Map.Entry<String, Integer> processValueEntry : processValues.entrySet()) {
+            labels.add(processValueEntry.getKey().concat(" ").concat(processValueEntry.getValue().toString()));
+        }
+        data.setLabels(labels);
+
+        PieChartModel pieModel = new PieChartModel();
+        pieModel.setData(data);
+        return pieModel;
+    }
+
+    /**
+     * Create and return HorizontalBarChartModel for given processes.
+     *
+     * @param processes List of processes
+     * @return HorizontalBarChartModel
+     */
+    public HorizontalBarChartModel getBarChartModel(List<Process> processes) {
+        LinkedHashMap<String, LinkedHashMap<String,Integer>> durationOfTasks = new LinkedHashMap<>();
+        for (Process selectedProcess : processes) {
+            LinkedHashMap<String,Integer> taskValues = new LinkedHashMap<>();
+            for (Task task  : selectedProcess.getTasks()) {
+                long durationInDays = ServiceManager.getTaskService().getDurationInDays(task);
+                taskValues.put(task.getTitle(), Math.toIntExact(durationInDays));
+            }
+            durationOfTasks.put(selectedProcess.getTitle(), taskValues);
+        }
+        ChartData data = new ChartData();
+        boolean isTask;
+        int i = 0;
+        while (true) {
+            isTask = false;
+            HorizontalBarChartDataSet barDataSet = new HorizontalBarChartDataSet();
+            List<Number> taskDurations = new ArrayList<>();
+            for (String processTitle : durationOfTasks.keySet()) {
+                LinkedHashMap<String, Integer> tasksForProcess = durationOfTasks.get(processTitle);
+                ArrayList<Integer> durations = new ArrayList<>(tasksForProcess.values());
+                Integer taskDuration = 0;
+                if (durations.size() > i) {
+                    barDataSet.setLabel(new ArrayList<>(tasksForProcess.keySet()).get(i));
+                    taskDuration = durations.get(i);
+                    isTask = true;
+                }
+                taskDurations.add(taskDuration);
+            }
+            if (isTask) {
+                barDataSet.setStack("Stack 0");
+                barDataSet.setBackgroundColor(BG_COLORS.get(i % BG_COLORS.size()));
+                barDataSet.setData(taskDurations);
+                data.addChartDataSet(barDataSet);
+                i++;
+            } else {
+                break;
+            }
+        }
+        List<String> labels = new ArrayList<>(durationOfTasks.keySet());
+        data.setLabels(labels);
+
+        HorizontalBarChartModel horizontalBarChartModel = new HorizontalBarChartModel();
+        horizontalBarChartModel.setData(data);
+
+        // Options
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        linearAxes.setStacked(true);
+        BarChartOptions options = new BarChartOptions();
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setMode("index");
+        tooltip.setIntersect(false);
+        options.setTooltip(tooltip);
+
+        horizontalBarChartModel.setOptions(options);
+        return horizontalBarChartModel;
+    }
+
+    /**
+     * Aggregate and return statistical data about task status of given processes.
+     *
+     * @param processes List of processes for which statistical data is aggregated.
+     * @return statistical data about tasks status of given processes
+     */
+    public Map<String, Integer> getProcessTaskStates(List<Process> processes) {
+        Map<String, Integer> processTaskStates = new LinkedHashMap<>();
+        for (Process process : processes) {
+            Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+            if (Objects.nonNull(currentTask)) {
+                String currentTaskTitle = currentTask.getTitle();
+                if (processTaskStates.containsKey(currentTaskTitle)) {
+                    processTaskStates.put(currentTaskTitle, Math.addExact(processTaskStates.get(currentTaskTitle), 1));
+                } else {
+                    processTaskStates.put(currentTaskTitle, 1);
+                }
+            }
+        }
+        return processTaskStates;
     }
 }

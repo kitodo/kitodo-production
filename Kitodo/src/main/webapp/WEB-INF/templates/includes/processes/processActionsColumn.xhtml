@@ -1,0 +1,149 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="ProcessListView" type="org.kitodo.production.forms.ProcessListBaseView"-->
+    <!--@elvariable id="referer" type="java.lang.String"-->
+    <p:column styleClass="actionsColumn"
+              resizable="false"
+              width="310"
+              headerText="#{msgs.actions}">
+        <h:panelGroup layout="block"
+                      styleClass="actionsBlock">
+            <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO"-->
+
+            <h:panelGroup styleClass="action"
+                          title="#{ProcessListView.createProcessAsChildPossible(process)? msgs.createProcessAsChild : msgs.createProcessAsChildNotConfigured}">
+                <h:link id="createChildren"
+                        outcome="#{ProcessForm.createProcessAsChild(process)}"
+                        styleClass="#{ProcessForm.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
+                        disabled="#{not ProcessForm.createProcessAsChildPossible(process)}">
+                    <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
+                    <f:param name="id" value="#{process.id}"/>
+                </h:link>
+            </h:panelGroup>
+
+            <h:panelGroup styleClass="action"
+                          title="#{ProcessListView.createProcessesWithCalendar(process)? msgs.createProcessesWithCalendar : msgs.calendarNotConfigured}">
+                <h:link id="calendarEdit"
+                        outcome="calendarEdit"
+                        styleClass="#{ProcessListView.createProcessesWithCalendar(process) ? '' : 'ui-state-disabled'}"
+                        disabled="#{not ProcessListView.createProcessesWithCalendar(process)}">
+                    <h:outputText><i class="fa fa-calendar fa-lg"/></h:outputText>
+                    <f:param name="id" value="#{process.id}"/>
+                </h:link>
+            </h:panelGroup>
+
+            <h:link styleClass="action"
+                    id="viewProcess"
+                    outcome="processEdit"
+                    title="#{msgs.view}"
+                    rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                <i class="fa fa-eye fa-lg"/>
+                <f:param name="referer" value="#{referer}"/>
+                <f:param name="id" value="#{process.id}"/>
+            </h:link>
+
+            <h:link styleClass="action"
+                    id="editProcess"
+                    outcome="processEdit"
+                    title="#{msgs.edit}"
+                    rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
+                <f:param name="referer" value="#{referer}"/>
+                <f:param name="id" value="#{process.id}"/>
+            </h:link>
+
+            <!-- Open metadata editor -->
+            <h:commandLink id="readXML"
+                           action="#{DataEditorForm.open(process.id, 'searchResult')}"
+                           styleClass="action"
+                           title="#{msgs.metadataEdit}"
+                           rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                <f:actionListener binding="#{CommentForm.setProcessById(process.id)}"/>
+                <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
+            </h:commandLink>
+
+            <p:commandLink id="download"
+                           action="#{ProcessListView.downloadToHome(process.id)}"
+                           styleClass="action"
+                           title="#{msgs.linkHomeDirectory}"
+                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
+                <h:outputText><i class="fa fa-download"/></h:outputText>
+                <!-- TODO: add separate message in case it already exists and alert -->
+            </p:commandLink>
+
+            <p:commandLink id="upload"
+                           action="#{ProcessListView.uploadFromHome(process)}"
+                           styleClass="action"
+                           title="#{msgs.deleteLinkHomeDirectory}"
+                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
+                <h:outputText><i class="fa fa-upload fa-lg"/></h:outputText>
+                <p:confirm header="#{msgs.confirmDelete}"
+                           message="#{msgs.deleteLinkHomeDirectory}?"
+                           icon="ui-icon-alert"/>
+            </p:commandLink>
+
+            <p:commandLink id="exportLogXml"
+                           action="#{ProcessListView.createXML(process)}"
+                           styleClass="action"
+                           title="#{msgs.createXML}">
+                <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
+            </p:commandLink>
+
+            <p:commandLink id="downloadDocket"
+                           action="#{ProcessListView.downloadDocket(process.id)}"
+                           styleClass="action"
+                           title="#{msgs.docketPrint}"
+                           ajax="false"
+                           rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
+                <h:outputText><i class="fa fa-print fa-lg"/></h:outputText>
+            </p:commandLink>
+
+            <h:commandLink action="#{ProcessListView.exportMets(process.id)}"
+                           id="exportMets"
+                           styleClass="action"
+                           title="#{msgs.exportMets}"
+                           rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
+                <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
+            </h:commandLink>
+            <h:commandLink id="exportDms"
+                           action="#{ProcessListView.exportDMS(process.id)}"
+                           styleClass="action"
+                           title="#{msgs.exportDMS}"
+                           rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
+                <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
+            </h:commandLink>
+            <h:panelGroup styleClass="action"
+                          title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
+                <p:commandLink id="deleteProcess"
+                               action="#{ProcessListView.delete(process)}"
+                               title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
+                               disabled="#{process.hasChildren()}"
+                               update="@form">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{msgs.confirmDeleteProcess}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+            </h:panelGroup>
+        </h:panelGroup>
+    </p:column>
+
+</ui:composition>

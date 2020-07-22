@@ -18,6 +18,7 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
         <f:viewParam name="id"/>
         <f:viewAction action="#{ProcessForm.load(id)}" />
         <f:viewAction action="#{ProcessForm.setProcessEditReferer(request.getParameter('referer'))}"/>

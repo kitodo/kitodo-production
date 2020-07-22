@@ -34,10 +34,10 @@ import org.primefaces.model.SortOrder;
 
 public class LazyDTOModel extends LazyDataModel<Object> {
 
-    private transient SearchDatabaseService searchService;
+    private final transient SearchDatabaseService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
-    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
-    private transient List entities = new ArrayList();
+    private static final IndexRestClient indexRestClient = IndexRestClient.getInstance();
+    private transient List entities = new ArrayList<>();
 
     /**
      * Creates a LazyDTOModel instance that allows fetching data from the data
@@ -93,11 +93,11 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                 return entities;
             } catch (DAOException | DataException e) {
                 logger.error(e.getMessage(), e);
-                return new LinkedList();
+                return new LinkedList<>();
             }
         } else {
             logger.info("Index not found!");
-            return new LinkedList();
+            return new LinkedList<>();
         }
     }
 

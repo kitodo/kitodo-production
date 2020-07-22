@@ -17,6 +17,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
+    <!--@elvariable id="ProcessListView" type="org.kitodo.production.forms.ProcessListBaseView"-->
     <p:dialog class="client-select-dialog"
               id="deleteChildrenDialog"
               widgetVar="deleteChildrenDialog"
@@ -26,13 +27,13 @@
               resizable="false"
               closable="false">
         <p><h:outputFormat value="#{msgs['processChildren']}">
-            <f:param value="#{ProcessForm.process.children.size()}" />
+            <f:param value="#{ProcessListView.deleteProcessDialog.process.children.size()}" />
         </h:outputFormat></p>
         <p:panelGrid>
             <p:row>
                 <h:form id="deleteChildrenForm">
                     <p:commandButton id="deleteChildrenButton"
-                                     action="#{ProcessForm.deleteWithChildren}"
+                                     action="#{ProcessListView.deleteProcessDialog.deleteWithChildren}"
                                      onstart="PF('deleteChildrenDialog').hide();"
                                      update="@all"
                                      styleClass="primary right"
@@ -40,7 +41,7 @@
                                      icon="fa fa-check"
                                      iconPos="right"/>
                     <p:commandButton id="preserveChildrenButton"
-                                     action="#{ProcessForm.deleteWithoutChildren}"
+                                     action="#{ProcessListView.deleteProcessDialog.deleteWithoutChildren}"
                                      onstart="PF('deleteChildrenDialog').hide();"
                                      update="@all"
                                      styleClass="secondary right"
