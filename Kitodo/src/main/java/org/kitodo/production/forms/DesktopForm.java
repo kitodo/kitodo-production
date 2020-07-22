@@ -42,7 +42,7 @@ import org.primefaces.model.SortOrder;
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private static final String SORT_TITLE = "title";
-    private static final String SORT_ID = "properties.id";
+    private static final String SORT_ID = "id";
     private List<TaskDTO> taskList = new ArrayList<>();
     private List<ProcessDTO> processList = new ArrayList<>();
     private List<ProjectDTO> projectList = new ArrayList<>();
