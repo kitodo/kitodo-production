@@ -34,6 +34,7 @@ import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
 import org.kitodo.production.services.ServiceManager;
 
+@Ignore
 public class WorkingST extends BaseTestSelenium {
 
     private static CurrentTasksEditPage currentTasksEditPage;

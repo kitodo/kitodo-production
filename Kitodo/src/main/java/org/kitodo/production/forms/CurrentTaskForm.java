@@ -644,13 +644,13 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void saveCurrentProperty() {
         try {
-            ServiceManager.getPropertyService().save(this.property);
+            ServiceManager.getPropertyService().saveToDatabase(this.property);
             if (!this.myProcess.getProperties().contains(this.property)) {
                 this.myProcess.getProperties().add(this.property);
             }
             ServiceManager.getProcessService().save(this.myProcess);
             Helper.setMessage("propertiesSaved");
-        } catch (DataException e) {
+        } catch (DataException | DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();
@@ -664,9 +664,9 @@ public class CurrentTaskForm extends BaseForm {
         try {
             newProperty.getProcesses().add(this.myProcess);
             this.myProcess.getProperties().add(newProperty);
-            ServiceManager.getPropertyService().save(newProperty);
+            ServiceManager.getPropertyService().saveToDatabase(newProperty);
             Helper.setMessage("propertySaved");
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();

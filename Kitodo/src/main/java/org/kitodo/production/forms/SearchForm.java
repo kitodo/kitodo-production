@@ -92,28 +92,12 @@ public class SearchForm {
     public SearchForm(ProcessForm processForm, CurrentTaskForm taskForm) {
         initStepStatus();
         initProjects();
-        initMasterpiecePropertyTitles();
-        initTemplatePropertyTitles();
-        initProcessPropertyTitles();
         initStepTitles();
         initUserList();
         this.processForm = processForm;
         this.taskForm = taskForm;
     }
 
-    /**
-     * Initialise drop down list of master piece property titles.
-     */
-    private void initMasterpiecePropertyTitles() {
-        List<String> workpiecePropertiesTitlesDistinct = new ArrayList<>();
-        try {
-            workpiecePropertiesTitlesDistinct = ServiceManager.getPropertyService()
-                    .findWorkpiecePropertiesTitlesDistinct();
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        this.masterpiecePropertyTitles = workpiecePropertiesTitlesDistinct;
-    }
 
     /**
      * Initialise drop down list of projects.
@@ -129,19 +113,6 @@ public class SearchForm {
         for (ProjectDTO projectSortedByTitle : projectsSortedByTitle) {
             this.projects.add(projectSortedByTitle.getTitle());
         }
-    }
-
-    /**
-     * Initialise drop down list of process property titles.
-     */
-    private void initProcessPropertyTitles() {
-        List<String> processPropertiesTitlesDistinct = new ArrayList<>();
-        try {
-            processPropertiesTitlesDistinct = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        this.processPropertyTitles = processPropertiesTitlesDistinct;
     }
 
     /**
@@ -164,19 +135,6 @@ public class SearchForm {
         this.stepTitles = taskTitles;
     }
 
-    /**
-     * Initialise drop down list of template property titles.
-     */
-    private void initTemplatePropertyTitles() {
-        List<String> templatePropertiesTitlesDistinct = new ArrayList<>();
-        try {
-            templatePropertiesTitlesDistinct = ServiceManager.getPropertyService()
-                    .findTemplatePropertiesTitlesDistinct();
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        this.templatePropertyTitles = templatePropertiesTitlesDistinct;
-    }
 
     /**
      * Initialise drop down list of user list.
@@ -392,12 +350,6 @@ public class SearchForm {
         if (!this.project.isEmpty()) {
             search += "\"" + this.projectOperand + FilterString.PROJECT.getFilterEnglish() + this.project + "\" ";
         }
-        search += createSearchProperty(this.processPropertyTitle, this.processPropertyValue,
-                this.processPropertyOperand, FilterString.PROCESSPROPERTY);
-        search += createSearchProperty(this.masterpiecePropertyTitle, this.masterpiecePropertyValue,
-                this.masterpiecePropertyOperand, FilterString.WORKPIECE);
-        search += createSearchProperty(this.templatePropertyTitle, this.templatePropertyValue,
-                this.templatePropertyOperand, FilterString.TEMPLATE);
         if (!this.stepname.isEmpty()) {
             search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }

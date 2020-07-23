@@ -331,9 +331,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         manageBatchesDependenciesForIndex(process);
         manageProjectDependenciesForIndex(process);
         manageTaskDependenciesForIndex(process);
-        manageTemplatesDependenciesForIndex(process);
-        manageWorkpiecesDependenciesForIndex(process);
-        managePropertiesDependenciesForIndex(process);
     }
 
     /**
@@ -367,26 +364,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             throws CustomResponseException, DataException, IOException {
         if (Objects.nonNull(process.getProject())) {
             ServiceManager.getProjectService().saveToIndex(process.getProject(), false);
-        }
-    }
-
-    /**
-     * Remove properties if process is removed, add properties if process is marked
-     * as indexed.
-     *
-     * @param process
-     *            object
-     */
-    private void managePropertiesDependenciesForIndex(Process process)
-            throws CustomResponseException, DataException, IOException {
-        if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Property property : process.getProperties()) {
-                ServiceManager.getPropertyService().removeFromIndex(property, false);
-            }
-        } else {
-            for (Property property : process.getProperties()) {
-                ServiceManager.getPropertyService().saveToIndex(property, false);
-            }
         }
     }
 
@@ -438,46 +415,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
         for (Integer notNeeded : notNeededInIndex) {
             ServiceManager.getTaskService().removeFromIndex(notNeeded, false);
-        }
-    }
-
-    /**
-     * Remove template if process is removed, add template if process is marked as
-     * template.
-     *
-     * @param process
-     *            object
-     */
-    private void manageTemplatesDependenciesForIndex(Process process)
-            throws CustomResponseException, DataException, IOException {
-        if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Property template : process.getTemplates()) {
-                ServiceManager.getPropertyService().removeFromIndex(template, false);
-            }
-        } else {
-            for (Property template : process.getTemplates()) {
-                ServiceManager.getPropertyService().saveToIndex(template, false);
-            }
-        }
-    }
-
-    /**
-     * Remove workpiece if process is removed, add workpiece if process is marked as
-     * workpiece.
-     *
-     * @param process
-     *            object
-     */
-    private void manageWorkpiecesDependenciesForIndex(Process process)
-            throws CustomResponseException, DataException, IOException {
-        if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Property workpiece : process.getWorkpieces()) {
-                ServiceManager.getPropertyService().removeFromIndex(workpiece, false);
-            }
-        } else {
-            for (Property workpiece : process.getWorkpieces()) {
-                ServiceManager.getPropertyService().saveToIndex(workpiece, false);
-            }
         }
     }
 
@@ -672,54 +609,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Find process by property.
-     *
-     * @param title
-     *            of property as String
-     * @param value
-     *            of property as String
-     * @param contains
-     *            true or false
-     * @return list of process JSONObjects
-     */
-    public List<Map<String, Object>> findByProcessProperty(String title, String value, boolean contains)
-            throws DataException {
-        return findByProperty(title, value, "process", "properties.id", contains);
-    }
-
-    /**
-     * Find process by template.
-     *
-     * @param title
-     *            of property as String
-     * @param value
-     *            of property as String
-     * @param contains
-     *            true or false
-     * @return list of process JSONObjects
-     */
-    public List<Map<String, Object>> findByTemplateProperty(String title, String value, boolean contains)
-            throws DataException {
-        return findByProperty(title, value, "template", "templates.id", contains);
-    }
-
-    /**
-     * Find process by workpiece.
-     *
-     * @param title
-     *            of property as String
-     * @param value
-     *            of property as String
-     * @param contains
-     *            true or false
-     * @return list of process JSONObjects
-     */
-    public List<Map<String, Object>> findByWorkpieceProperty(String title, String value, boolean contains)
-            throws DataException {
-        return findByProperty(title, value, "workpiece", "workpieces.id", contains);
-    }
-
-    /**
      * Get query for projects assigned to selected client.
      *
      * @param id
@@ -749,7 +638,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *             if the search engine fails
      */
     public List<ProcessDTO> findLinkableChildProcesses(String searchInput, int rulesetId,
-            Collection<String> allowedStructuralElementTypes) throws DataException, IOException, DAOException {
+            Collection<String> allowedStructuralElementTypes) throws DataException {
 
         BoolQueryBuilder query = new BoolQueryBuilder()
                 .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput))
@@ -805,22 +694,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            of property
      * @param value
      *            of property
-     * @param contains
-     *            true or false
      * @return list of JSON objects with processes for specific property
      */
-    private List<Map<String, Object>> findByProperty(String title, String value, String type, String key,
-            boolean contains) throws DataException {
-        List<Map<String, Object>> properties;
-        if (Objects.isNull(value)) {
-            properties = ServiceManager.getPropertyService().findByTitle(title, type, contains);
-        } else if (Objects.isNull(title)) {
-            properties = ServiceManager.getPropertyService().findByValue(value, type, contains);
-        } else {
-            properties = ServiceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
-        }
+    private List<ProcessDTO> findByProperty(String title, String value) throws DataException {
+        String titleSearchKey = ProcessTypeField.PROPERTIES + ".title";
+        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value";
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        BoolQueryBuilder pairQuery = new BoolQueryBuilder();
+        pairQuery.must(matchQuery(titleSearchKey, title));
+        pairQuery.must(matchQuery(valueSearchKey, value));
+        query.must(pairQuery);
 
-        return findDocuments(createSetQuery(key, properties, true));
+        return findByQuery(nestedQuery(ProcessTypeField.PROPERTIES.toString(), query, ScoreMode.Total), true);
     }
 
     List<ProcessDTO> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
@@ -887,8 +772,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
             processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
             processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
-            processDTO.setProperties(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.PROPERTIES.getKey(),
-                ServiceManager.getPropertyService()));
             processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
             processDTO.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
             processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));

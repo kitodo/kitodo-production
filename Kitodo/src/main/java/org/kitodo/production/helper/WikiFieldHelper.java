@@ -369,15 +369,11 @@ public class WikiFieldHelper {
             String title = property.getTitle();
             if ("Korrektur notwendig".equals(title) || "Correction required".equals(title)
                     || "Korrektur durchgef\\u00FChrt".equals(title) || "Correction performed".equals(title)) {
-                property.getProcesses().remove(process);
-                try {
-                    ServiceManager.getPropertyService().removeFromIndex(property, true);
-                } catch (CustomResponseException | IOException e) {
-                    throw new DataException(e);
-                }
                 process.getProperties().remove(property);
                 ServiceManager.getProcessService().save(process);
-                ServiceManager.getPropertyService().remove(property);
+                ServiceManager.getPropertyService().removeFromDatabase(property);
+                property.getProcesses().remove(process);
+                ServiceManager.getPropertyService().removeFromDatabase(property);
                 return ServiceManager.getProcessService().getById(process.getId());
             }
         }
