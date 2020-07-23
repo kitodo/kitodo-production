@@ -84,7 +84,7 @@ public class SearchingST extends BaseTestSelenium {
         processesPage.navigateToExtendedSearch();
         SearchingST.extendedSearchPage.searchById("2");
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-                () -> assertEquals("There should be one processes found", 1, processesPage.countListedProcesses()));
+            () -> assertEquals("There should be one processes found", 1, processesPage.countListedProcesses()));
         List<String> processTitles = processesPage.getProcessTitles();
         assertEquals("Wrong process found", "Second process", processTitles.get(0));
 
