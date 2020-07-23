@@ -48,6 +48,12 @@ public enum FunctionalMetadata {
     HIGHERLEVEL_IDENTIFIER("higherlevelIdentifier"),
 
     /**
+     * Create a metadata entry with this key during process creation and write
+     * the process title to it.
+     */
+    PROCESS_TITLE("processTitle"),
+
+    /**
      * Key of the record in the source.
      */
     RECORD_IDENTIFIER("recordIdentifier"),
