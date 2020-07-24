@@ -71,7 +71,7 @@
 
             <!-- Open metadata editor -->
             <h:commandLink id="readXML"
-                           action="#{DataEditorForm.open(process.id, 'searchResult')}"
+                           action="#{DataEditorForm.open(process.id, referer)}"
                            styleClass="action"
                            title="#{msgs.metadataEdit}"
                            rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
