@@ -21,6 +21,7 @@ import static org.awaitility.Awaitility.await;
 
 import com.xebialabs.restito.server.StubServer;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -33,8 +34,11 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 
@@ -44,7 +48,7 @@ public class ImportServiceIT {
     private static final ImportService importService = ServiceManager.getImportService();
     private static StubServer server;
     private static final String TEST_FILE_PATH = "src/test/resources/sruTestRecord.xml";
-    private static final String RECORD_ID = "12345";
+    private static final String RECORD_ID = "11111";
     private static final int PORT = 8888;
     private static final String firstProcess = "First process";
 
@@ -72,7 +76,10 @@ public class ImportServiceIT {
     @Test
     public void testImportProcess() throws Exception {
         Assert.assertEquals("Not the correct amount of processes found",(long) 7, (long) processService.count());
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        ExecutionPermission.setExecutePermission(script);
         Process importedProcess = importService.importProcess(RECORD_ID, 1, 1, "K10Plus");
+        ExecutionPermission.setNoExecutePermission(script);
 
         Assert.assertEquals("WrongProcessTitle", "Kitodo_" + RECORD_ID, importedProcess.getTitle());
         Assert.assertEquals("Wrong project used", 1, (long) importedProcess.getProject().getId());

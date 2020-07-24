@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -67,6 +68,7 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ImportException;
@@ -1065,22 +1067,31 @@ public class ImportService {
      */
     public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
+        TempProcess tempProcess;
         Template template;
         try {
             template = ServiceManager.getTemplateService().getById(templateId);
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
-            List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+            List<Locale.LanguageRange> priorityList = Locale.LanguageRange
+                    .parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId);
-            processTempProcess(processList.get(0), template,
+            tempProcess = processList.get(0);
+            processTempProcess(tempProcess, template,
                 ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
-            ServiceManager.getProcessService().save(processList.get(0).getProcess());
+            ServiceManager.getProcessService().save(tempProcess.getProcess());
+            URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
+            tempProcess.getProcess().setProcessBaseUri(processBaseUri);
+            OutputStream out = ServiceManager.getFileService()
+                    .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
+            tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
+            ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | RulesetNotFoundException | InvalidMetadataValueException
-                | NoSuchMetadataFieldException | DataException e) {
+                | NoSuchMetadataFieldException | DataException | CommandException e) {
             throw new ImportException(
                     Helper.getTranslation("errorImporting", Arrays.asList(Helper.getTranslation("process"), ppn)));
         }
-        return processList.get(0).getProcess();
+        return tempProcess.getProcess();
     }
 }
