@@ -1161,12 +1161,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param tasksBean
      *            list of Task bean objects
-     * @param tasksDTO
-     *            list of TaskDTO objects
      * @return string
      */
-    public String getProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
-        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
+    public String getProgress(List<Task> tasksBean) {
+        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, null);
 
         double closed = calculateProgressClosed(tasks);
         double inProcessing = calculateProgressInProcessing(tasks);

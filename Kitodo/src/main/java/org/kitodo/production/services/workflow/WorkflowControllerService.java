@@ -672,8 +672,10 @@ public class WorkflowControllerService {
      *            object
      */
     public static void updateProcessSortHelperStatus(Process process) {
-        String value = ServiceManager.getProcessService().getProgress(process.getTasks(), null);
-        process.setSortHelperStatus(value);
+        if (!process.getTasks().isEmpty()) {
+            String value = ServiceManager.getProcessService().getProgress(process.getTasks());
+            process.setSortHelperStatus(value);
+        }
     }
 
     /**

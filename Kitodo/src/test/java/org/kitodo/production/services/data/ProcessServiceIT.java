@@ -54,7 +54,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -367,7 +366,7 @@ public class ProcessServiceIT {
     public void shouldGetProgress() throws Exception {
         Process process = processService.getById(1);
 
-        String progress = processService.getProgress(process.getTasks(), null);
+        String progress = processService.getProgress(process.getTasks());
         assertEquals("Progress doesn't match given plain text!", "040020020020", progress);
     }
 

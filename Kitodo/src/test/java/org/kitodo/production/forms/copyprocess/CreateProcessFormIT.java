@@ -13,6 +13,8 @@ package org.kitodo.production.forms.copyprocess;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URI;
@@ -93,6 +95,34 @@ public class CreateProcessFormIT {
         ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
         assertEquals("No process was created!", before + 1, after);
+
+        // clean up database, index and file system
+        Integer processId = newProcess.getId();
+        processService.remove(processId);
+        fileService.delete(URI.create(processId.toString()));
+    }
+    @Test
+    public void shouldCreateNewProcessWithoutWorkflow() throws Exception {
+        CreateProcessForm underTest = new CreateProcessForm();
+        underTest.getProcessDataTab().setDocType("MultiVolumeWork");
+        Process newProcess = new Process();
+        Workpiece newWorkPiece = new Workpiece();
+        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
+        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
+        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
+        underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
+        underTest.getMainProcess().setTitle("title");
+
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        //ExecutionPermission.setExecutePermission(script);
+        long before = processService.count();
+        underTest.createNewProcess();
+        //ExecutionPermission.setNoExecutePermission(script);
+        long after = processService.count();
+        assertEquals("No process was created!", before + 1, after);
+
+        assertTrue("Process should not have tasks", newProcess.getTasks().isEmpty());
+        assertNull("process should not have sortHelperStatus", newProcess.getSortHelperStatus());
 
         // clean up database, index and file system
         Integer processId = newProcess.getId();

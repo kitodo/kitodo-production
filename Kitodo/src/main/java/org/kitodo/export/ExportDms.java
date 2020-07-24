@@ -77,6 +77,9 @@ public class ExportDms extends ExportMets {
         }
         boolean exportSucessfull = startExport(process, (URI) null);
         if (exportSucessfull) {
+            if (allChildsExported(process)) {
+                process.setSortHelperStatus("100000000");
+            }
             if (Objects.nonNull(process.getParent())) {
                 startExport(process.getParent());
             }
@@ -84,6 +87,17 @@ public class ExportDms extends ExportMets {
             process.setExported(false);
             ServiceManager.getProcessService().save(process);
         }
+    }
+
+    private boolean allChildsExported(Process process) {
+        if (process.getChildren().isEmpty()) {
+            boolean allChildsExported = true;
+            for (Process child : process.getChildren()) {
+                allChildsExported &= child.isExported();
+            }
+            return allChildsExported;
+        }
+        return false;
     }
 
     /**
