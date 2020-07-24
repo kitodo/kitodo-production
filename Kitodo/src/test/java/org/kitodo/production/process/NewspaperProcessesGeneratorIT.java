@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -39,12 +40,14 @@ import org.kitodo.MockDatabase;
 import org.kitodo.NewspaperCourse;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.TreeDeleter;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.services.ServiceManager;
@@ -115,11 +118,24 @@ public class NewspaperProcessesGeneratorIT {
         }
         Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
             underTest.getProgress());
+        Assert.assertEquals("Process title missing in newspaper's meta.xml", "NewspaperOverallProcess",
+            readProcessTitleFromMetadata(10));
+        Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1705",
+            readProcessTitleFromMetadata(161));
+        Assert.assertEquals("Process title missing in issue's meta.xml", "NewspaperOverallProcess_17031022",
+            readProcessTitleFromMetadata(33));
 
         // restore backuped meta data file
         FileUtils.deleteQuietly(metaFile);
         FileUtils.moveFile(backupFile, metaFile);
         cleanUp();
+    }
+
+    private String readProcessTitleFromMetadata(int processId) throws DAOException, IOException {
+        return metsService.loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId)))
+                .getRootElement().getMetadata().parallelStream()
+                .filter(metadata -> metadata.getKey().equals("ProcessTitle")).map(MetadataEntry.class::cast)
+                .map(MetadataEntry::getValue).collect(Collectors.joining(" ; "));
     }
 
     /**
