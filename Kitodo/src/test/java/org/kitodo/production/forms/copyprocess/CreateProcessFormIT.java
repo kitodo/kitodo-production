@@ -101,6 +101,11 @@ public class CreateProcessFormIT {
         processService.remove(processId);
         fileService.delete(URI.create(processId.toString()));
     }
+
+    /**
+     * test creation of processes without workflow
+     * @throws Exception
+     */
     @Test
     public void shouldCreateNewProcessWithoutWorkflow() throws Exception {
         CreateProcessForm underTest = new CreateProcessForm();
@@ -114,10 +119,10 @@ public class CreateProcessFormIT {
         underTest.getMainProcess().setTitle("title");
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        //ExecutionPermission.setExecutePermission(script);
+        ExecutionPermission.setExecutePermission(script);
         long before = processService.count();
         underTest.createNewProcess();
-        //ExecutionPermission.setNoExecutePermission(script);
+        ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
         assertEquals("No process was created!", before + 1, after);
 
