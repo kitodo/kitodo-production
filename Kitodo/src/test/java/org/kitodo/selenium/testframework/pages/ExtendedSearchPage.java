@@ -11,13 +11,16 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
 
     private static final String EDIT_FORM = "editForm";
+    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = EDIT_FORM + ":submitProcessSearch")
@@ -44,7 +47,7 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     private WebElement taskAdditional;
 
     @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":searchTabView:taskStatus_3")
+    @FindBy(id = EDIT_FORM + ":searchTabView:taskStatus_4")
     private WebElement taskDone;
 
     public ExtendedSearchPage() {
@@ -71,11 +74,11 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     }
 
     public ProcessesPage seachByTaskStatus() throws InstantiationException, IllegalAccessException {
-        taskNameDropDown.click();
-        taskAdditional.click();
+        clickElement(taskNameDropDown.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(taskNameDropDown.getAttribute("id") + "_1")));
+        clickElement(taskStatusDropDown.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(taskStatusDropDown.getAttribute("id") + "_4")));
 
-        taskStatusDropDown.click();
-        taskDone.click();
         return triggerSearch();
     }
 

@@ -148,6 +148,7 @@ import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
@@ -239,6 +240,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public void save(Process process) throws DataException {
+        WorkflowControllerService.updateProcessSortHelperStatus(process);
         if (Objects.nonNull(process.getParent())) {
             save(process.getParent());
         }

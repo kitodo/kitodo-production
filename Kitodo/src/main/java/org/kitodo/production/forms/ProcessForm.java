@@ -183,7 +183,6 @@ public class ProcessForm extends TemplateBaseForm {
             }
 
             try {
-                workflowControllerService.updateProcessSortHelperStatus(this.process);
                 ServiceManager.getProcessService().save(this.process);
                 return processesPage;
             } catch (DataException e) {
