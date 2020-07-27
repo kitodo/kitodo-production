@@ -120,7 +120,7 @@ public class NewspaperProcessesGeneratorIT {
             underTest.getProgress());
         Assert.assertEquals("Process title missing in newspaper's meta.xml", "NewspaperOverallProcess",
             readProcessTitleFromMetadata(10));
-        Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1705",
+        Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1706",
             readProcessTitleFromMetadata(161));
         Assert.assertEquals("Process title missing in issue's meta.xml", "NewspaperOverallProcess_17031022",
             readProcessTitleFromMetadata(33));
