@@ -12,6 +12,10 @@
  *
 -->
 <opacCatalogues>
+    <doctypes>
+        <type isPeriodical="false" isMultiVolume="false" rulesetType="" title="legacyDocType"/>
+    </doctypes>
+
     <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
