@@ -837,8 +837,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         Set<Integer> ids = new HashSet<>();
         List<String> stringIds = getFilterValuesFromFilterString(filter, filterString);
         for (String tempId : stringIds) {
-            Integer id = Integer.parseInt(tempId);
-            ids.add(id);
+            if (!tempId.isEmpty()) {
+                Integer id = Integer.parseInt(tempId);
+                ids.add(id);
+            }
         }
         return ids;
     }
