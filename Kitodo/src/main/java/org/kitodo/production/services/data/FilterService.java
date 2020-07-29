@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -837,7 +838,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         Set<Integer> ids = new HashSet<>();
         List<String> stringIds = getFilterValuesFromFilterString(filter, filterString);
         for (String tempId : stringIds) {
-            if (!tempId.isEmpty()) {
+            if (!tempId.isEmpty() && StringUtils.isNumeric(tempId)) {
                 Integer id = Integer.parseInt(tempId);
                 ids.add(id);
             }
