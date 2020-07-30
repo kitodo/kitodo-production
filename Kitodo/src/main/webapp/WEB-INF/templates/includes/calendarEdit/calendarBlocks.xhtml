@@ -31,6 +31,7 @@
                                       yearNavigator="true"
                                       yearRange="1605:2025"
                                       pattern="dd.MM.yyyy"
+                                      autocomplete="off"
                                       required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
                             <p:ajax event="dateSelect"
                                     listener="#{CalendarForm.checkBlockPlausibility(block)}"
@@ -46,6 +47,7 @@
                                       yearNavigator="true"
                                       yearRange="1605:2025"
                                       pattern="dd.MM.yyyy"
+                                      autocomplete="off"
                                       required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
                             <p:ajax event="dateSelect"
                                     listener="#{CalendarForm.checkBlockPlausibility(block)}"
