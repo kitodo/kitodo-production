@@ -83,13 +83,8 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
         convertChildrenLinksForExportRecursive(workpiece, workpiece.getRootElement(), prefs);
-        Process parentProcess = process.getParent();
-        while (Objects.nonNull(parentProcess)) {
-            addParentLinkForExport(prefs, workpiece, parentProcess);
-            parentProcess = parentProcess.getParent();
-        }
-
         assignViewsFromChildrenRecursive(workpiece.getRootElement());
+        addLinksToParents(process, prefs, workpiece);
     }
 
     /**
@@ -106,7 +101,7 @@ public class SchemaService {
             for (IncludedStructuralElement child : children) {
                 assignViewsFromChildrenRecursive(child);
             }
-            if (!Objects.nonNull(includedStructuralElement.getType())) {
+            if (Objects.nonNull(includedStructuralElement.getType())) {
                 MetadataEditor.assignViewsFromChildren(includedStructuralElement);
             }
         }
@@ -238,6 +233,14 @@ public class SchemaService {
             }
         }
         return false;
+    }
+
+    private void addLinksToParents(Process process, LegacyPrefsHelper prefs, Workpiece workpiece) throws IOException {
+        Process parentProcess = process.getParent();
+        while (Objects.nonNull(parentProcess)) {
+            addParentLinkForExport(prefs, workpiece, parentProcess);
+            parentProcess = parentProcess.getParent();
+        }
     }
 
     private void addParentLinkForExport(LegacyPrefsHelper prefs, Workpiece workpiece, Process parent)
