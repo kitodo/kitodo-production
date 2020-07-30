@@ -32,6 +32,9 @@
                                       yearRange="1605:2025"
                                       pattern="dd.MM.yyyy"
                                       required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                            <p:ajax event="change"
+                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
                             <p:ajax event="dateSelect"
                                     listener="#{CalendarForm.checkBlockPlausibility(block)}"
                                     update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -47,6 +50,9 @@
                                       yearRange="1605:2025"
                                       pattern="dd.MM.yyyy"
                                       required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                            <p:ajax event="change"
+                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
                             <p:ajax event="dateSelect"
                                     listener="#{CalendarForm.checkBlockPlausibility(block)}"
                                     update="editForm:calendarTabView:calendarDetailsLayout"/>
