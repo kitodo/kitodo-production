@@ -38,11 +38,22 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.dataformat.MetsService;
 
 /**
  * Service for schema manipulations.
  */
 public class SchemaService {
+    /**
+     * A service that can read METS files.
+     */
+    private final MetsService metsService = ServiceManager.getMetsService();
+
+    /**
+     * A service that can access processes.
+     */
+    private final ProcessService processService = ServiceManager.getProcessService();
 
     /**
      * Temporal method for separate file conversion from ExportMets class
@@ -225,12 +236,13 @@ public class SchemaService {
 
         LinkedMetsResource link = structure.getLink();
         if (Objects.nonNull(link)) {
-            int linkedProcessId = ServiceManager.getProcessService().processIdFromUri(link.getUri());
-            Process process = ServiceManager.getProcessService().getById(linkedProcessId);
+            int linkedProcessId = processService.processIdFromUri(link.getUri());
+            Process process = processService.getById(linkedProcessId);
             if (!process.isExported()) {
                 return true;
             }
             setLinkForExport(structure, process, prefs, workpiece);
+            copyLabelAndOrderlabel(process, structure);
         }
         for (Iterator<IncludedStructuralElement> iterator = structure.getChildren().iterator(); iterator.hasNext();) {
             if (convertChildrenLinksForExportRecursive(workpiece, iterator.next(), prefs)) {
@@ -247,6 +259,7 @@ public class SchemaService {
         linkHolder.setLink(new LinkedMetsResource());
         setLinkForExport(linkHolder, parent, prefs, workpiece);
         linkHolder.getChildren().add(workpiece.getRootElement());
+        copyLabelAndOrderlabel(parent, linkHolder);
         workpiece.setRootElement(linkHolder);
     }
 
@@ -261,5 +274,16 @@ public class SchemaService {
         String linkUri = variableReplacer.replace(uriWithVariables);
         link.setUri(URI.create(linkUri));
         structure.setType(ServiceManager.getProcessService().getBaseType(process));
+    }
+
+    private void copyLabelAndOrderlabel(Process source, IncludedStructuralElement destination) throws IOException {
+        URI sourceMetadataUri = processService.getMetadataFileUri(source);
+        IncludedStructuralElement sourceRoot = metsService.loadWorkpiece(sourceMetadataUri).getRootElement();
+        if (Objects.isNull(destination.getLabel())) {
+            destination.setLabel(sourceRoot.getLabel());
+        }
+        if (Objects.isNull(destination.getOrderlabel())) {
+            destination.setOrderlabel(sourceRoot.getOrderlabel());
+        }
     }
 }
