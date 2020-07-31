@@ -42,7 +42,7 @@ public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
      * 
      * @param domain
      *            domain of the METS document where the metadata was read
-     * @param oup
+     * @param xmlMetadataGroup
      *            {@code <kitodo:metadataGroup>} XML element
      */
     MetadataGroupXmlElementAccess(MdSec domain, MetadataGroupType xmlMetadataGroup) {
