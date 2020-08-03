@@ -1297,7 +1297,7 @@ Popup dialogs
     height: 95%;
 }
 
-.ui-dialog div.dialogFieldWrapper {
+.ui-dialog:not(#calendarSettingsDialog) div.dialogFieldWrapper {
     max-height: calc(100% - 100px);
     overflow-y: scroll;
 }
