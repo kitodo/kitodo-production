@@ -783,6 +783,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
             processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
 
+            List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
+            List<PropertyDTO> properties = new ArrayList<>();
+            for (Map<String, Object> stringObjectMap : jsonArray) {
+                for (Map.Entry<String, Object> entry : stringObjectMap.entrySet()) {
+                    PropertyDTO propertyDTO = new PropertyDTO();
+                    propertyDTO.setTitle(entry.getKey());
+                    propertyDTO.setValue(entry.getValue().toString());
+                    properties.add(propertyDTO);
+                }
+            }
+            processDTO.setProperties(properties);
+
             if (!related) {
                 convertRelatedJSONObjects(jsonObject, processDTO);
             } else {
