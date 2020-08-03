@@ -103,8 +103,7 @@ public class CreateProcessFormIT {
     }
 
     /**
-     * test creation of processes without workflow
-     * @throws Exception
+     * tests creation of processes without workflow.
      */
     @Test
     public void shouldCreateNewProcessWithoutWorkflow() throws Exception {
