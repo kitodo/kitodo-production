@@ -554,23 +554,22 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         dateMetadataEntry.setValue(dateMark(monthSimpleMetadataView.getScheme(), individualIssues.get(0).getDate()));
         rootElement.getMetadata().add(dateMetadataEntry);
 
-        for (SimpleMetadataViewInterface issueProcessTitleView : issueProcessTitleViews) {
-            MetadataEditor.writeMetadataEntry(rootElement, issueProcessTitleView, title);
-        }
-
         for (IndividualIssue individualIssue : individualIssues) {
 
             String monthMark = dateMark(monthSimpleMetadataView.getScheme(), individualIssue.getDate());
             IncludedStructuralElement yearMonth = getOrCreateIncludedStructuralElement(yearWorkpiece.getRootElement(),
                 monthType, monthSimpleMetadataView, monthMark);
             String dayMark = dateMark(daySimpleMetadataView.getScheme(), individualIssue.getDate());
-            IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, null,
+            final IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, null,
                 daySimpleMetadataView, dayMark);
             final IncludedStructuralElement yearDay = getOrCreateIncludedStructuralElement(yearMonth, dayType,
                 daySimpleMetadataView, dayMark);
 
             IncludedStructuralElement processIssue = new IncludedStructuralElement();
             processIssue.setType(issueDivisionView.getId());
+            for (SimpleMetadataViewInterface issueProcessTitleView : issueProcessTitleViews) {
+                MetadataEditor.writeMetadataEntry(processIssue, issueProcessTitleView, title);
+            }
             addCustomMetadata(individualIssue, processIssue);
             processDay.getChildren().add(processIssue);
 

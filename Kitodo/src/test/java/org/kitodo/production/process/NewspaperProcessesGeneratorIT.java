@@ -119,11 +119,11 @@ public class NewspaperProcessesGeneratorIT {
         Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
             underTest.getProgress());
         Assert.assertEquals("Process title missing in newspaper's meta.xml", "NewspaperOverallProcess",
-            readProcessTitleFromMetadata(10));
+            readProcessTitleFromMetadata(10, false));
         Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1706",
-            readProcessTitleFromMetadata(161));
+            readProcessTitleFromMetadata(161, false));
         Assert.assertEquals("Process title missing in issue's meta.xml", "NewspaperOverallProcess_17031022",
-            readProcessTitleFromMetadata(33));
+            readProcessTitleFromMetadata(33, true));
 
         // restore backuped meta data file
         FileUtils.deleteQuietly(metaFile);
@@ -131,9 +131,20 @@ public class NewspaperProcessesGeneratorIT {
         cleanUp();
     }
 
-    private String readProcessTitleFromMetadata(int processId) throws DAOException, IOException {
-        return metsService.loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId)))
-                .getRootElement().getMetadata().parallelStream()
+    /*
+     * @param issue
+     *            In the overall process and in the annual processes (both
+     *            {@code false}), the process title is saved in the root
+     *            element. In the issue process ({@code true}), it is in the
+     *            issue, which is two levels below the root element.
+     */
+    private String readProcessTitleFromMetadata(int processId, boolean issue) throws DAOException, IOException {
+        IncludedStructuralElement rootElement = metsService
+                .loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId))).getRootElement();
+        IncludedStructuralElement includedStructuralElement = issue
+                ? rootElement.getChildren().get(0).getChildren().get(0)
+                : rootElement;
+        return includedStructuralElement.getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("ProcessTitle")).map(MetadataEntry.class::cast)
                 .map(MetadataEntry::getValue).collect(Collectors.joining(" ; "));
     }
