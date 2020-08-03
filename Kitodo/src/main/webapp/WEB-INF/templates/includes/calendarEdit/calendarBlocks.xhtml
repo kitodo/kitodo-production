@@ -33,6 +33,9 @@
                                       pattern="dd.MM.yyyy"
                                       autocomplete="off"
                                       required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                            <p:ajax event="change"
+                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
                             <p:ajax event="dateSelect"
                                     listener="#{CalendarForm.checkBlockPlausibility(block)}"
                                     update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -49,6 +52,9 @@
                                       pattern="dd.MM.yyyy"
                                       autocomplete="off"
                                       required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                            <p:ajax event="change"
+                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
                             <p:ajax event="dateSelect"
                                     listener="#{CalendarForm.checkBlockPlausibility(block)}"
                                     update="editForm:calendarTabView:calendarDetailsLayout"/>
