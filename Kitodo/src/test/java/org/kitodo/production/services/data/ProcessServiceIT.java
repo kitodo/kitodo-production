@@ -81,8 +81,12 @@ public class ProcessServiceIT {
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
         fileService.createDirectory(URI.create(""), "1");
-        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+        await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+            return !processService.findByTitle(firstProcess).isEmpty();
+        });
     }
 
     @AfterClass

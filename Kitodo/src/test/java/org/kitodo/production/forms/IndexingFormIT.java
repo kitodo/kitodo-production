@@ -43,7 +43,10 @@ public class IndexingFormIT {
         User user = new User();
         ServiceManager.getUserService().saveToDatabase(user);
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
-        await().until(() -> Objects.nonNull(ServiceManager.getUserService().getAuthenticatedUser()));
+        await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(user, 1);
+            return Objects.nonNull(ServiceManager.getUserService().getAuthenticatedUser());
+        });
     }
 
     @AfterClass

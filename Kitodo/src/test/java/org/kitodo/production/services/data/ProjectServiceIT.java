@@ -29,6 +29,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
@@ -48,8 +49,12 @@ public class ProjectServiceIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().until(() -> !projectService.findByTitle(firstProject, true).isEmpty());
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+        await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+            return !projectService.findByTitle(firstProject, true).isEmpty();
+        });
     }
 
     @AfterClass

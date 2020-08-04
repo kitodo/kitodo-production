@@ -50,8 +50,12 @@ public class RulesetServiceIT {
         MockDatabase.insertClients();
         MockDatabase.insertRulesets();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(new User(), 1);
-        await().until(() -> !rulesetService.findByTitle(slubDD, true).isEmpty());
+        User userOne = new User();
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+        await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+            return !rulesetService.findByTitle(slubDD, true).isEmpty();
+        });
     }
 
     @After

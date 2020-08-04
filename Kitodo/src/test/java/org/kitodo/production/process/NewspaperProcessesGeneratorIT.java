@@ -46,6 +46,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -79,8 +80,12 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessForCalendarHierarchyTests();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        Awaitility.await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+        Awaitility.await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+            return !processService.findByTitle(firstProcess).isEmpty();
+        });
     }
 
     /**

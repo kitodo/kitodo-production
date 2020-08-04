@@ -38,6 +38,7 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 
 public class ImportServiceIT {
@@ -56,8 +57,12 @@ public class ImportServiceIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+        await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+            return !processService.findByTitle(firstProcess).isEmpty();
+        });
         server = new StubServer(PORT).run();
         try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_FILE_PATH))) {
             setupServer(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
