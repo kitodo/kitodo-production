@@ -12,9 +12,9 @@
 package org.kitodo.production.forms;
 
 import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.given;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ public class IndexingFormIT {
         User user = new User();
         ServiceManager.getUserService().saveToDatabase(user);
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(ServiceManager.getUserService().getAuthenticatedUser())));
+        await().until(() -> Objects.nonNull(ServiceManager.getUserService().getAuthenticatedUser()));
     }
 
     @AfterClass
@@ -79,7 +79,8 @@ public class IndexingFormIT {
         IndexAction indexAction = ServiceManager.getProcessService().getById(1).getIndexAction();
         Assert.assertEquals("Index Action should be Index", IndexAction.INDEX, indexAction);
         indexingForm.startAllIndexing();
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(ServiceManager.getProcessService().findById(1).getTitle())));
+        given().ignoreExceptions().await()
+                .until(() -> Objects.nonNull(ServiceManager.getProcessService().findById(1).getTitle()));
         processOne = ServiceManager.getProcessService().findById(1);
         Assert.assertEquals("process should be found", "testIndex",processOne.getTitle());
         indexAction = ServiceManager.getProcessService().getById(1).getIndexAction();

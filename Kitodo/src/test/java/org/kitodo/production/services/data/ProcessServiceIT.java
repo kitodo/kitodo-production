@@ -26,8 +26,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SystemUtils;
 import org.elasticsearch.index.query.Operator;
@@ -84,7 +82,7 @@ public class ProcessServiceIT {
         MockDatabase.setUpAwaitility();
         fileService.createDirectory(URI.create(""), "1");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
+        await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
     }
 
     @AfterClass

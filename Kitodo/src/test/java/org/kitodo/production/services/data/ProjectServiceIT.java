@@ -18,8 +18,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -51,8 +49,7 @@ public class ProjectServiceIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(projectService.findByTitle(firstProject, true))));
-
+        await().until(() -> !projectService.findByTitle(firstProject, true).isEmpty());
     }
 
     @AfterClass

@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
@@ -59,7 +57,7 @@ public class ImportServiceIT {
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
+        await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
         server = new StubServer(PORT).run();
         try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_FILE_PATH))) {
             setupServer(IOUtils.toString(inputStream, StandardCharsets.UTF_8));

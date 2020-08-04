@@ -17,8 +17,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -46,7 +44,7 @@ public class MetadataEditorIT {
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
+        await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
     }
 
     /**

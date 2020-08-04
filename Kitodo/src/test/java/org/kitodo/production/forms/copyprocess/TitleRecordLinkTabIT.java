@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,7 +45,7 @@ public class TitleRecordLinkTabIT {
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
+        await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
     }
 
     /**

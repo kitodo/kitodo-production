@@ -22,7 +22,6 @@ import java.time.MonthDay;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -81,7 +80,7 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.insertProcessForCalendarHierarchyTests();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        Awaitility.await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
+        Awaitility.await().until(() -> !processService.findByTitle(firstProcess).isEmpty());
     }
 
     /**
