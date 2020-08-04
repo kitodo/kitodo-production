@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.kitodo.api.Metadata;
 
-public interface Division<T> {
-    List<T> getChildren();
+public abstract class Division<T> {
+    public abstract List<T> getChildren();
 
-    Collection<Metadata> getMetadata();
+    public abstract Collection<Metadata> getMetadata();
 }
