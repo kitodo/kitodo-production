@@ -32,9 +32,9 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -457,7 +457,8 @@ public class MetadataEditor {
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private static <T> LinkedList<Division<T>> getAncestorsRecursive(Division<T> searched, Division<T> position, Division<T> parent) {
+    private static <T extends Division<T>> LinkedList<Division<T>> getAncestorsRecursive(Division<T> searched,
+            Division<T> position, Division<T> parent) {
         if (position.equals(searched)) {
             if (Objects.isNull(parent)) {
                 return new LinkedList<>();
