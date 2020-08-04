@@ -34,7 +34,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Parent;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -457,18 +457,18 @@ public class MetadataEditor {
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private static <T> LinkedList<Parent<T>> getAncestorsRecursive(Parent<T> searched, Parent<T> position, Parent<T> parent) {
+    private static <T> LinkedList<Division<T>> getAncestorsRecursive(Division<T> searched, Division<T> position, Division<T> parent) {
         if (position.equals(searched)) {
             if (Objects.isNull(parent)) {
                 return new LinkedList<>();
             }
-            LinkedList<Parent<T>> ancestors = new LinkedList<>();
+            LinkedList<Division<T>> ancestors = new LinkedList<>();
             ancestors.add(parent);
             return ancestors;
 
         }
         for (T child : position.getChildren()) {
-            LinkedList<Parent<T>> maybeFound = getAncestorsRecursive(searched, (Parent<T>)child, position);
+            LinkedList<Division<T>> maybeFound = getAncestorsRecursive(searched, (Division<T>)child, position);
             if (!maybeFound.isEmpty()) {
                 if (Objects.nonNull(parent)) {
                     maybeFound.addFirst(parent);

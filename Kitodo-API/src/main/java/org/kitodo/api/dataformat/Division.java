@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.kitodo.api.Metadata;
 
-public interface Parent<T> {
+public interface Division<T> {
     List<T> getChildren();
 
     Collection<Metadata> getMetadata();

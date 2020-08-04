@@ -40,7 +40,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
-import org.kitodo.api.dataformat.Parent;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.primefaces.model.DefaultTreeNode;
@@ -66,7 +66,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     /**
      * The division this panel is related to, if it isn’t a sub-panel.
      */
-    private Parent<?> division;
+    private Division<?> division;
 
     /**
      * Metadata which is excluded by the rule set.
@@ -113,7 +113,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @param divisionView
      *            information about that structure from the rule set
      */
-    public ProcessFieldedMetadata(Parent<?> structure, StructuralElementViewInterface divisionView) {
+    public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView) {
         this(null, structure, divisionView, null, null, structure.getMetadata());
         this.treeNode = new DefaultTreeNode();
         treeNode.setExpanded(true);
@@ -144,7 +144,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @param metadata
      *            metadata, may be empty but must be modifiable
      */
-    private ProcessFieldedMetadata(ProcessFieldedMetadata parent, Parent<?> structure,
+    private ProcessFieldedMetadata(ProcessFieldedMetadata parent, Division<?> structure,
             ComplexMetadataViewInterface metadataView, String label, String metadataKey,
                                    Collection<Metadata> metadata) {
         super(parent, label);

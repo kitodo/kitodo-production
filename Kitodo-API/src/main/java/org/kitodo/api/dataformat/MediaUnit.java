@@ -25,7 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 
-public class MediaUnit implements Parent<MediaUnit> {
+public class MediaUnit implements Division<MediaUnit> {
     /**
      * The subordinate media units of this media unit, which form the media unit
      * tree. The order of the substructures is subordinate media units by the
