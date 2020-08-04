@@ -149,7 +149,7 @@ public class MockDatabase {
     public static void setUpAwaitility() {
         Awaitility.setDefaultPollInterval(10, TimeUnit.MILLISECONDS);
         Awaitility.setDefaultPollDelay(Duration.ZERO);
-        Awaitility.setDefaultTimeout(Durations.TEN_SECONDS);
+        Awaitility.setDefaultTimeout(Durations.ONE_MINUTE);
     }
 
     public static void insertProcessesFull() throws Exception {
