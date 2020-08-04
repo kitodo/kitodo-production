@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.lang.StringUtils;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
@@ -108,11 +109,13 @@ public class SchemaService {
     }
 
     private void set(Workpiece workpiece, MdSec domain, String key, String value) {
-        MetadataEntry entry = new MetadataEntry();
-        entry.setKey(key);
-        entry.setDomain(domain);
-        entry.setValue(value);
-        workpiece.getRootElement().getMetadata().add(entry);
+        if (StringUtils.isNotEmpty(value)) {
+            MetadataEntry entry = new MetadataEntry();
+            entry.setKey(key);
+            entry.setDomain(domain);
+            entry.setValue(value);
+            workpiece.getRootElement().getMetadata().add(entry);
+        }
     }
 
     private void addVirtualFileGroupsToMetsMods(MediaUnit mediaUnit, Process process) {
