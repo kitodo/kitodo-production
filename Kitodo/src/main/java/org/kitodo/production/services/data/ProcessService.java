@@ -698,16 +698,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            of property
      * @return list of JSON objects with processes for specific property
      */
-    private List<ProcessDTO> findByProperty(String title, String value) throws DataException {
-        String titleSearchKey = ProcessTypeField.PROPERTIES + ".title";
-        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value";
-        BoolQueryBuilder query = new BoolQueryBuilder();
+    public List<ProcessDTO> findByProperty(String title, String value) throws DataException {
+        String titleSearchKey = ProcessTypeField.PROPERTIES + ".title.keyword";
+        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value.keyword";
+
         BoolQueryBuilder pairQuery = new BoolQueryBuilder();
         pairQuery.must(matchQuery(titleSearchKey, title));
         pairQuery.must(matchQuery(valueSearchKey, value));
-        query.must(pairQuery);
 
-        return findByQuery(nestedQuery(ProcessTypeField.PROPERTIES.toString(), query, ScoreMode.Total), true);
+        return findByQuery(nestedQuery(ProcessTypeField.PROPERTIES.toString(), pairQuery, ScoreMode.Total), true);
     }
 
     List<ProcessDTO> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {

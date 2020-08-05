@@ -231,6 +231,36 @@ public class ProcessServiceIT {
         processService.findByTitle("Second Process");
         assertEquals(processNotFound, 1, processService.findByAnything("August").size());
     }
+    
+    @Test
+    public void shouldFindByProperty() throws DataException {
+        List<ProcessDTO> processByProperty = processService.findByProperty("Process Property", "first value");
+        assertEquals(1, processByProperty.size());
+    }
+
+    @Test
+    public void shouldNotFindByWrongPropertyTitle() throws DataException {
+        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "first value");
+        assertTrue(processByProperty.isEmpty());
+    }
+
+    @Test
+    public void shouldNotFindByWrongPropertyTitleAndValue() throws DataException {
+        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "test value");
+        assertTrue(processByProperty.isEmpty());
+    }
+
+    @Test
+    public void shouldNotFindByTokenizedPropertyTitle() throws DataException {
+        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "first value");
+        assertTrue(processByProperty.isEmpty());
+    }
+
+    @Test
+    public void shouldNotFindByTokenizedPropertyTitleAndWrongValue() throws DataException {
+        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "test value");
+        assertTrue(processByProperty.isEmpty());
+    }
 
     @Test
     public void shouldFindLinkableParentProcesses() throws DataException {
