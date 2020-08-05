@@ -84,7 +84,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;

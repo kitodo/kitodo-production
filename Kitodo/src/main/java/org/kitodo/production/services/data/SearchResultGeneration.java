@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.flow.helper;
+package org.kitodo.production.services.data;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

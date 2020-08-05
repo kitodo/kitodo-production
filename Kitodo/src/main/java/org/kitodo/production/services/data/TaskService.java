@@ -29,7 +29,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
