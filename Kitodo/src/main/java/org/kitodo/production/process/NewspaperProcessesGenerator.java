@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.naming.ConfigurationException;
@@ -39,6 +40,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -159,6 +161,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     StructuralElementViewInterface issueDivisionView;
 
     /**
+     * Views of metadata to add process title to issue processes.
+     */
+    private Collection<SimpleMetadataViewInterface> issueProcessTitleViews;
+
+    /**
      * An interface view for simple metadata that maps the date of the month.
      */
     private DatesSimpleMetadataViewInterface monthSimpleMetadataView;
@@ -167,6 +174,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * Which included structural element type are the months.
      */
     private String monthType;
+
+    /**
+     * Views of metadata to add process title to the overall newspaper process.
+     */
+    private Collection<SimpleMetadataViewInterface> newspaperProcessTitleViews;
 
     /**
      * Uniform resource identifier of the location of the serialization of the
@@ -206,6 +218,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * This is the annual process which is currently being processed.
      */
     private Process yearProcess;
+
+    /**
+     * Views of metadata to add process title to year processes.
+     */
+    private Collection<SimpleMetadataViewInterface> yearProcessTitleViews;
 
     /**
      * An interface view for simple metadata that maps the date of the year.
@@ -343,6 +360,23 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         dayType = dayDivisionView.getId();
         issueDivisionView = nextSubView(ruleset, dayDivisionView, acquisitionStage);
+
+        final Collection<String> processTitleKeys = ruleset.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
+        newspaperProcessTitleViews = newspaperView
+                .getAddableMetadata(overallWorkpiece.getRootElement().getMetadata().parallelStream()
+                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
+                    Collections.emptyList())
+                .parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
+                .map(SimpleMetadataViewInterface.class::cast)
+                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());
+        yearProcessTitleViews = yearDivisionView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList())
+                .parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
+                .map(SimpleMetadataViewInterface.class::cast)
+                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());
+        issueProcessTitleViews = issueDivisionView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList())
+                .parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
+                .map(SimpleMetadataViewInterface.class::cast)
+                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());
     }
 
     /**
@@ -489,7 +523,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         processService.refresh(getGeneratedProcess());
         getGeneratedProcess().setParent(yearProcess);
         yearProcess.getChildren().add(getGeneratedProcess());
-        createMetadataFileForProcess(individualIssuesForProcess);
+        createMetadataFileForProcess(individualIssuesForProcess, title);
         processService.save(getGeneratedProcess());
 
         if (logger.isTraceEnabled()) {
@@ -511,7 +545,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return title;
     }
 
-    private void createMetadataFileForProcess(List<IndividualIssue> individualIssues)
+    private void createMetadataFileForProcess(List<IndividualIssue> individualIssues, String title)
             throws IOException, CommandException {
 
         IncludedStructuralElement rootElement = new IncludedStructuralElement();
@@ -526,13 +560,16 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             IncludedStructuralElement yearMonth = getOrCreateIncludedStructuralElement(yearWorkpiece.getRootElement(),
                 monthType, monthSimpleMetadataView, monthMark);
             String dayMark = dateMark(daySimpleMetadataView.getScheme(), individualIssue.getDate());
-            IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, null,
+            final IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, null,
                 daySimpleMetadataView, dayMark);
             final IncludedStructuralElement yearDay = getOrCreateIncludedStructuralElement(yearMonth, dayType,
                 daySimpleMetadataView, dayMark);
 
             IncludedStructuralElement processIssue = new IncludedStructuralElement();
             processIssue.setType(issueDivisionView.getId());
+            for (SimpleMetadataViewInterface issueProcessTitleView : issueProcessTitleViews) {
+                MetadataEditor.writeMetadataEntry(processIssue, issueProcessTitleView, title);
+            }
             addCustomMetadata(individualIssue, processIssue);
             processDay.getChildren().add(processIssue);
 
@@ -687,7 +724,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
 
-        getGeneratedProcess().setTitle(makeTitle(yearTitleDefinition.orElse("+'_'+#YEAR"), genericFields));
+        String title = makeTitle(yearTitleDefinition.orElse("+'_'+#YEAR"), genericFields);
+        getGeneratedProcess().setTitle(title);
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
 
@@ -708,6 +746,9 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         IncludedStructuralElement rootElement = new IncludedStructuralElement();
         rootElement.setType(yearType);
         MetadataEditor.writeMetadataEntry(rootElement, yearSimpleMetadataView, yearMark);
+        for (SimpleMetadataViewInterface yearProcessTitleView : yearProcessTitleViews) {
+            MetadataEditor.writeMetadataEntry(rootElement, yearProcessTitleView, title);
+        }
         Workpiece workpiece = new Workpiece();
         workpiece.setRootElement(rootElement);
 
@@ -744,6 +785,10 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         final long begin = System.nanoTime();
 
         saveAndCloseCurrentYearProcess();
+        for (SimpleMetadataViewInterface newspaperProcessTitleView : newspaperProcessTitleViews) {
+            MetadataEditor.writeMetadataEntry(overallWorkpiece.getRootElement(), newspaperProcessTitleView,
+                overallProcess.getTitle());
+        }
         metsService.saveWorkpiece(overallWorkpiece, overallMetadataFileUri);
         ImportService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
         processService.save(overallProcess);

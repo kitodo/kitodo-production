@@ -62,5 +62,8 @@
             <label>Shelf mark</label>
             <label lang="de">Signatur</label>
         </key>
+        <key id="ProcessTitle" use="processTitle">
+            <label>Process title</label>
+        </key>
     </declaration>
 </ruleset>
