@@ -90,7 +90,7 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean allChildrenExported(Process process) {
-        if (process.getChildren().isEmpty()) {
+        if (!process.getChildren().isEmpty()) {
             boolean allChildrenExported = true;
             for (Process child : process.getChildren()) {
                 allChildrenExported &= child.isExported();
