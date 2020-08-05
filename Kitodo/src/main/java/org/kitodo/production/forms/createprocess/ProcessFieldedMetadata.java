@@ -462,7 +462,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     @Override
-    Pair<Method, Object> getStructureFieldValue() {
+    Pair<Collection<Method>, String> getStructureFieldValue() {
         return null;
     }
 
@@ -509,10 +509,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             metadata.clear();
             for (TreeNode child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
-                Pair<Method, Object> metsFieldValue = row.getStructureFieldValue();
+                Pair<Collection<Method>, String> metsFieldValue = row.getStructureFieldValue();
                 if (Objects.nonNull(metsFieldValue)) {
                     try {
-                        metsFieldValue.getKey().invoke(division, metsFieldValue.getValue());
+                        setMetsFieldValue(metsFieldValue);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new IllegalStateException(e);
                     }
@@ -534,6 +534,25 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             metadataGroup.setGroup(metadata);
             container.metadata.add(metadataGroup);
             copy = false;
+        }
+    }
+
+    private void setMetsFieldValue(Pair<Collection<Method>, String> metsFieldValue)
+            throws IllegalAccessException, InvocationTargetException {
+
+        ClassCastException notAnInstace = null;
+        for (Method setter : metsFieldValue.getKey()) {
+            try {
+                setter.invoke(division, metsFieldValue.getValue());
+                notAnInstace = null;
+                break;
+            } catch (ClassCastException e) {
+                notAnInstace = e;
+                continue;
+            }
+        }
+        if (Objects.nonNull(notAnInstace)) {
+            throw notAnInstace;
         }
     }
 

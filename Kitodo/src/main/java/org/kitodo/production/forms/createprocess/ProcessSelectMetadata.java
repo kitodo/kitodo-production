@@ -148,13 +148,14 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     @Override
-    Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    Pair<Collection<Method>, String> getStructureFieldValue()
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
             String value = String.join(" ", selectedItems);
             if (!settings.isValid(value)) {
                 throw new InvalidMetadataValueException(label, value);
             }
-            return Pair.of(super.getStructureFieldSetter(settings), value);
+            return Pair.of(super.getStructureFieldSetters(settings), value);
         } else {
             return null;
         }

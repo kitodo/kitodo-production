@@ -13,14 +13,23 @@ package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.Parent;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
+
+    static final List<Class<? extends Parent<?>>> PARENT_CLASSES = Arrays.asList(IncludedStructuralElement.class,
+        MediaUnit.class);
 
     /**
      * Container to store the ruleset settings.
@@ -46,15 +55,25 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      */
     abstract ProcessSimpleMetadata getClone();
 
-    protected Method getStructureFieldSetter(MetadataViewInterface field) throws NoSuchMetadataFieldException {
+    protected Collection<Method> getStructureFieldSetters(MetadataViewInterface field)
+            throws NoSuchMetadataFieldException {
         String key = field.getId();
-        for (Method method : IncludedStructuralElement.class.getDeclaredMethods()) {
-            if (method.getName().startsWith("set") && method.getParameterTypes().length == 1
-                    && method.getName().substring(3).equalsIgnoreCase(key)) {
-                return method;
+
+        LinkedList<Method> structureFieldSetters = new LinkedList<>();
+        for (Class<? extends Parent<?>> parentClass : PARENT_CLASSES) {
+            for (Method method : parentClass.getMethods()) {
+                if (method.getName().startsWith("set") && method.getParameterTypes().length == 1
+                        && method.getName().substring(3).equalsIgnoreCase(key)
+                        && method.getParameterTypes()[0].isAssignableFrom(String.class)) {
+                    structureFieldSetters.add(method);
+                }
             }
         }
-        throw new NoSuchMetadataFieldException(key, field.getLabel());
+        if (structureFieldSetters.isEmpty()) {
+            throw new NoSuchMetadataFieldException(key, field.getLabel());
+        } else {
+            return structureFieldSetters;
+        }
     }
 
     /**

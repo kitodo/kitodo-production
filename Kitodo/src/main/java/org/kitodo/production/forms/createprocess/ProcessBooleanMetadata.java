@@ -87,12 +87,14 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
     }
 
     @Override
-    Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    Pair<Collection<Method>, String> getStructureFieldValue()
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
             if (!isValid()) {
                 throw new InvalidMetadataValueException(label, settings.convertBoolean(active).orElse(""));
             }
-            return Pair.of(super.getStructureFieldSetter(settings), settings.convertBoolean(active).orElse(null));
+            return Pair.of(super.getStructureFieldSetters(settings), settings.convertBoolean(active).orElse(null));
         } else {
             return null;
         }
