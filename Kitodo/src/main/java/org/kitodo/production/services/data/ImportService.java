@@ -57,7 +57,6 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigMain;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
@@ -541,7 +540,7 @@ public class ImportService {
         File mappingFile = getMappingFile(opac);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
-        String debugFolder = ConfigMain.getParameter("debugFolder", null);
+        File debugFolder = ConfigCore.getKitodoDebugDirectory();
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "catalogRecord.xml"),
                 (String) dataRecord.getOriginalData(), StandardCharsets.UTF_8);

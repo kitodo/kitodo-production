@@ -98,21 +98,9 @@ public enum ParameterCore implements ParameterInterface {
     DIR_MODULES(new Parameter<UndefinedParameter>("directory.modules")),
 
     /**
-     * Points to a folder on the file system that contains <b>legacy</b> Production
-     * plug-in jars. In the folder, there must be subfolders named as defined in
-     * enum PluginType (currently: “import” and “opac”) in which the plug-in jars
-     * must be stored.
-     *
-     * <p>
-     * Must be terminated by the file separator.
+     * Points to a folder on the file system that debug files are written to.
      */
-    DIR_PLUGINS(new Parameter<UndefinedParameter>("directory.plugins")),
-
-    /**
-     * Points to a folder on the file system that <b>legacy</b> plug-ins may use to
-     * write temporary files.
-     */
-    DIR_PLUGINS_TEMP(new Parameter<UndefinedParameter>("directory.debug")),
+    DIR_DEBUG(new Parameter<UndefinedParameter>("directory.debug")),
 
     /*
      * Directory management
