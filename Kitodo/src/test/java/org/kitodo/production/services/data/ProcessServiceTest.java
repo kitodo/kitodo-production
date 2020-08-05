@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import java.net.URI;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
