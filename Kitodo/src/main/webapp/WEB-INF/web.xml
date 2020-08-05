@@ -117,22 +117,6 @@
         <location>/pages/error.jsf</location>
     </error-page>
 
-    <servlet>
-        <servlet-name>Kitodo REST Service based on Jersey</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.goobi.webapi.resources; org.goobi.webapi.provider</param-value>
-        </init-param>
-        <!-- explanation of load-on-startup: http://stackoverflow.com/a/1298984 -->
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>Kitodo REST Service based on Jersey</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
-    </servlet-mapping>
-
     <!-- log4j2 for servlet 3.0 based web applications -->
     <!-- configuration file to use -->
     <context-param>

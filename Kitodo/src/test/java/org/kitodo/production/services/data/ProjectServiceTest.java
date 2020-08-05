@@ -14,8 +14,6 @@ package org.kitodo.production.services.data;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -23,7 +21,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProjectServiceTest {
@@ -50,11 +47,6 @@ public class ProjectServiceTest {
 
         // Add title, still not complete
         project.setTitle("testProject");
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
-
-        // Add templates, still not complete
-        Template template = new Template();
-        project.template = new ArrayList<>(Collections.singleton(template));
         Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
 
         // Add xmls to complete project
