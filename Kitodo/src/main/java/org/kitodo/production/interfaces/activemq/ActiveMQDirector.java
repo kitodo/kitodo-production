@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.mq;
+package org.kitodo.production.interfaces.activemq;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -29,8 +29,6 @@ import javax.servlet.annotation.WebListener;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.mq.processors.CreateNewProcessProcessor;
-import org.goobi.mq.processors.FinaliseStepProcessor;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 

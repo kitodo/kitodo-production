@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.mq;
+package org.kitodo.production.interfaces.activemq;
 
 import java.util.HashMap;
 import java.util.Map;
