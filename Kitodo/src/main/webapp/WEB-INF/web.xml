@@ -18,11 +18,6 @@
     <display-name>Kitodo</display-name>
 
     <context-param>
-        <param-name>javax.faces.CONFIG_FILES</param-name>
-        <param-value>/WEB-INF/metadata-editor-config.xml</param-value>
-    </context-param>
-
-    <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
         <param-value>server</param-value>
     </context-param>

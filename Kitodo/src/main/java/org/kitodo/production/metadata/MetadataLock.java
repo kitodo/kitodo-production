@@ -16,12 +16,17 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.forms.UserForm;
 
 /**
  * Bean for locking the metadata.
  */
+@Named("MetadataLock")
+@ApplicationScoped
 public class MetadataLock implements Serializable {
     private static ConcurrentHashMap<Integer, User> locks = new ConcurrentHashMap<>();
 
