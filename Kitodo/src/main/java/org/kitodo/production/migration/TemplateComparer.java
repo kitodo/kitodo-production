@@ -11,36 +11,34 @@
 
 package org.kitodo.production.migration;
 
-import java.util.Comparator;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.Template;
 
-public class TemplateComparator implements Comparator<Template> {
+public class TemplateComparer {
 
-    @Override
-    public int compare(Template firstTemplate, Template secondTemplate) {
+    public boolean isEqual(Template firstTemplate, Template secondTemplate) {
         if (Objects.isNull(firstTemplate)) {
-            return Objects.isNull(secondTemplate) ? 0 : 1;
+            return Objects.isNull(secondTemplate);
         }
         if (Objects.isNull(secondTemplate)) {
-            return 1;
+            return false;
         }
         if (Objects.isNull(firstTemplate.getWorkflow()) ? Objects.nonNull(secondTemplate.getWorkflow())
                 : Objects.isNull(secondTemplate.getWorkflow())
                         || !firstTemplate.getWorkflow().getId().equals(secondTemplate.getWorkflow().getId())) {
-            return 1;
+            return false;
         }
         if (Objects.isNull(firstTemplate.getRuleset()) ? Objects.nonNull(secondTemplate.getRuleset())
                 : Objects.isNull(secondTemplate.getRuleset())
                         || !firstTemplate.getRuleset().getId().equals(secondTemplate.getRuleset().getId())) {
-            return 1;
+            return false;
         }
         if (Objects.isNull(firstTemplate.getDocket()) ? Objects.nonNull(secondTemplate.getDocket())
                 : Objects.isNull(secondTemplate.getDocket())
                         || !firstTemplate.getDocket().getId().equals(secondTemplate.getDocket().getId())) {
-            return 1;
+            return false;
         }
-        return 0;
+        return true;
     }
 }
