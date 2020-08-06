@@ -22,6 +22,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -50,14 +51,6 @@ public class SearchForm {
     private List<String> processPropertyTitles = new ArrayList<>(); // processeig:
     private String processPropertyTitle = "";
     private String processPropertyValue = "";
-
-    private List<String> masterpiecePropertyTitles = new ArrayList<>(); // werk:
-    private String masterpiecePropertyTitle = "";
-    private String masterpiecePropertyValue = "";
-
-    private List<String> templatePropertyTitles = new ArrayList<>();// vorl:
-    private String templatePropertyTitle = "";
-    private String templatePropertyValue = "";
 
     private List<String> stepTitles = new ArrayList<>(); // step:
     private List<TaskStatus> stepstatus = new ArrayList<>();
@@ -156,22 +149,6 @@ public class SearchForm {
         this.projects = projects;
     }
 
-    public List<String> getMasterpiecePropertyTitles() {
-        return this.masterpiecePropertyTitles;
-    }
-
-    public void setMasterpiecePropertyTitles(List<String> masterpiecePropertyTitles) {
-        this.masterpiecePropertyTitles = masterpiecePropertyTitles;
-    }
-
-    public List<String> getTemplatePropertyTitles() {
-        return this.templatePropertyTitles;
-    }
-
-    public void setTemplatePropertyTitles(List<String> templatePropertyTitles) {
-        this.templatePropertyTitles = templatePropertyTitles;
-    }
-
     public List<String> getProcessPropertyTitles() {
         return this.processPropertyTitles;
     }
@@ -260,38 +237,6 @@ public class SearchForm {
         this.processPropertyValue = processPropertyValue;
     }
 
-    public String getMasterpiecePropertyTitle() {
-        return this.masterpiecePropertyTitle;
-    }
-
-    public void setMasterpiecePropertyTitle(String masterpiecePropertyTitle) {
-        this.masterpiecePropertyTitle = masterpiecePropertyTitle;
-    }
-
-    public String getMasterpiecePropertyValue() {
-        return this.masterpiecePropertyValue;
-    }
-
-    public void setMasterpiecePropertyValue(String masterpiecePropertyValue) {
-        this.masterpiecePropertyValue = masterpiecePropertyValue;
-    }
-
-    public String getTemplatePropertyTitle() {
-        return this.templatePropertyTitle;
-    }
-
-    public void setTemplatePropertyTitle(String templatePropertyTitle) {
-        this.templatePropertyTitle = templatePropertyTitle;
-    }
-
-    public String getTemplatePropertyValue() {
-        return this.templatePropertyValue;
-    }
-
-    public void setTemplatePropertyValue(String templatePropertyValue) {
-        this.templatePropertyValue = templatePropertyValue;
-    }
-
     public String getStatus() {
         return this.status;
     }
@@ -357,6 +302,9 @@ public class SearchForm {
                 && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
             search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
+        }
+        if (StringUtils.isNotBlank(this.processPropertyTitle) && StringUtils.isNotBlank(this.processPropertyValue)) {
+            search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + "=" + this.processPropertyValue + "\" ";
         }
         return search;
     }

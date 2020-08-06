@@ -27,7 +27,8 @@ public enum FilterString {
     PROCESS("process:", "prozess:"),
     WORKPIECE("workpiece:", "werkstueck:"),
     BATCH("batch:", "gruppe:"),
-    TASKAUTOMATIC("stepautomatic:", "schrittautomatisch:");
+    TASKAUTOMATIC("stepautomatic:", "schrittautomatisch:"),
+    PROPERTY("property:","eigenschaft" );
 
     private String filterEnglish;
     private String filterGerman;

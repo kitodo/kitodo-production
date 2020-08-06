@@ -73,6 +73,20 @@
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
+                    <!--properties -->
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="propertyTitle" value="#{msgs.properties}"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="propertyTitle" placeholder="#{msgs.title}" value="#{SearchForm.processPropertyTitle}"
+                                         styleClass="extended-search-input-field"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="propertyValue" placeholder="#{msgs.value}" value="#{SearchForm.processPropertyValue}"
+                                         styleClass="extended-search-input-field"/>
+                        </p:column>
+                    </p:row>
                     <!--steps -->
                     <p:row>
                         <p:column><p:outputLabel value="#{msgs.task}"/></p:column>
