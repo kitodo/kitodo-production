@@ -504,6 +504,7 @@
                 },
                 "properties": {
                     "dynamic": "false",
+                    "type": "nested",
                     "properties": {
                         "title": {
                             "type": "text",

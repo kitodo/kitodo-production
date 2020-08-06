@@ -27,6 +27,9 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
  */
 public class ProcessType extends BaseType<Process> {
 
+    private static final String TITLE_FIELD_KEY = "title";
+    private static final String VALUE_FIELD_KEY = "value";
+
     @Override
     Map<String, Object> getJsonObject(Process process) {
         String processBaseUri = process.getProcessBaseUri() != null ? process.getProcessBaseUri().getRawPath() : "";
@@ -70,19 +73,22 @@ public class ProcessType extends BaseType<Process> {
         List<Map<String, String>> propertiesForIndex = new ArrayList<>();
         for (Property property : properties) {
             HashMap<String, String> propertyMap = new HashMap<>();
-            propertyMap.put(property.getTitle(), property.getValue());
+            propertyMap.put(TITLE_FIELD_KEY, property.getTitle());
+            propertyMap.put(VALUE_FIELD_KEY, property.getValue());
             propertiesForIndex.add(propertyMap);
         }
         properties = process.getTemplates();
         for (Property property : properties) {
             HashMap<String, String> propertyMap = new HashMap<>();
-            propertyMap.put(property.getTitle(), property.getValue());
+            propertyMap.put(TITLE_FIELD_KEY, property.getTitle());
+            propertyMap.put(VALUE_FIELD_KEY, property.getValue());
             propertiesForIndex.add(propertyMap);
         }
         properties = process.getWorkpieces();
         for (Property property : properties) {
             HashMap<String, String> propertyMap = new HashMap<>();
-            propertyMap.put(property.getTitle(), property.getValue());
+            propertyMap.put(TITLE_FIELD_KEY, property.getTitle());
+            propertyMap.put(VALUE_FIELD_KEY, property.getValue());
             propertiesForIndex.add(propertyMap);
         }
         return propertiesForIndex;
