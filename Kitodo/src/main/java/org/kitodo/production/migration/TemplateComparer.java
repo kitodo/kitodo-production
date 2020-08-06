@@ -17,6 +17,10 @@ import org.kitodo.data.database.beans.Template;
 
 public class TemplateComparer {
 
+    /**
+     * Compares two templates, if they are equal for migration purposes.
+     * @return true, if they are equal, false if not
+     */
     public boolean isEqual(Template firstTemplate, Template secondTemplate) {
         if (Objects.isNull(firstTemplate)) {
             return Objects.isNull(secondTemplate);

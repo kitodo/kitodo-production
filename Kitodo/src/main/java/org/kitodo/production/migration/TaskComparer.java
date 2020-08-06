@@ -17,6 +17,10 @@ import org.kitodo.data.database.beans.Task;
 
 public class TaskComparer {
 
+    /**
+     * Compares two tasks, if they are equal for migration purposes.
+     * @return true, if they are equal, false if not
+     */
     public boolean isEqual(Task firstTask, Task secondTask) {
         if (Objects.isNull(firstTask) || Objects.isNull(secondTask)) {
             return false;
@@ -54,10 +58,7 @@ public class TaskComparer {
                 : !firstTask.getScriptPath().equals(secondTask.getScriptPath())) {
             return false;
         }
-        if (firstTask.isBatchStep() != secondTask.isBatchStep()) {
-            return false;
-        }
-        return true;
+        return firstTask.isBatchStep() == secondTask.isBatchStep();
     }
 
     /**
