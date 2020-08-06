@@ -124,10 +124,10 @@ public class NewspaperProcessesGeneratorIT {
             underTest.getProgress());
         Assert.assertEquals("Process title missing in newspaper's meta.xml", "NewspaperOverallProcess",
             readProcessTitleFromMetadata(10, false));
-        Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1706",
-            readProcessTitleFromMetadata(161, false));
-        Assert.assertEquals("Process title missing in issue's meta.xml", "NewspaperOverallProcess_17031022",
-            readProcessTitleFromMetadata(33, true));
+        Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1703",
+            readProcessTitleFromMetadata(11, false));
+        Assert.assertEquals("Process title missing in issue's meta.xml", "NewspaperOverallProcess_17050127",
+            readProcessTitleFromMetadata(28, true));
 
         // restore backuped meta data file
         FileUtils.deleteQuietly(metaFile);

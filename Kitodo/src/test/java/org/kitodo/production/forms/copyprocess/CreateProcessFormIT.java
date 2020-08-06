@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -92,10 +93,14 @@ public class CreateProcessFormIT {
         underTest.getMainProcess().setTitle("title");
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        ExecutionPermission.setExecutePermission(script);
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
         long before = processService.count();
         underTest.createNewProcess();
-        ExecutionPermission.setNoExecutePermission(script);
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
         long after = processService.count();
         assertEquals("No process was created!", before + 1, after);
 
