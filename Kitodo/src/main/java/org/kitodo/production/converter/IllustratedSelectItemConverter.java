@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.kitodo.production.forms.dataeditor.IllustratedSelectItem;
 import org.kitodo.production.helper.Helper;
 
@@ -29,7 +30,7 @@ public class IllustratedSelectItemConverter implements Converter, Serializable {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (Objects.nonNull(value) || !value.isEmpty()) {
+        if (StringUtils.isNotEmpty(value)) {
             List<IllustratedSelectItem> illustratedSelectItems = (List<IllustratedSelectItem>) component.getAttributes()
                     .get("illustratedSelectItems");
             for (IllustratedSelectItem illustratedSelectItem : illustratedSelectItems) {
