@@ -46,7 +46,7 @@
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:inputText>
                 </h:panelGroup>
 
@@ -59,7 +59,7 @@
                                      disabled="#{not item.editable or readOnly}"
                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:inputTextarea>
                 </h:panelGroup>
 
@@ -71,7 +71,7 @@
                                disabled="#{not item.editable or readOnly}"
                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:spinner>
                 </h:panelGroup>
 
@@ -84,7 +84,7 @@
                                 showOn="button"
                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                 disabled="#{not item.editable or readOnly}">
-                        <p:ajax event="dateSelect"/>
+                        <p:ajax event="dateSelect" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:calendar>
                 </h:panelGroup>
 
@@ -97,7 +97,7 @@
                                       disabled="#{not item.editable or readOnly}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change"/>
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:selectManyMenu>
                 </h:panelGroup>
 
@@ -112,7 +112,7 @@
                                      styleClass="#{readOnly ? 'read-only' : ''}">
                         <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change"/>
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
 
@@ -126,7 +126,7 @@
                                       layout="grid"
                                       columns="1">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:selectOneRadio>
                 </h:panelGroup>
 
@@ -135,7 +135,7 @@
                               title="#{item.active.toString()}">
                     <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                              value="#{item.active}">
-                        <p:ajax event="blur"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:selectBooleanCheckbox>
                 </h:panelGroup>
 

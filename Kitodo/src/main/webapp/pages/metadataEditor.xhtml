@@ -218,9 +218,6 @@
             $(document).ready(function () {
                 metadataEditor.shortcuts.listen(#{DataEditorForm.shortcuts});
                 metadataEditor.contextMenu.listen();
-                $("#metadataAccordion input").blur(function () {
-                    preserveMetadata();
-                });
             });
         </h:outputScript>
     </ui:define>
