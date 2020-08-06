@@ -58,9 +58,9 @@
             <version>5.5.13</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
+            <version>1.9.13</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>

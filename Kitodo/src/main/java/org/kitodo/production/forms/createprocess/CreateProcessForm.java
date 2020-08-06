@@ -11,15 +11,10 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import com.sun.jersey.api.NotFoundException;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +28,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -233,9 +229,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @return value of first element in newProcesses
      */
     public Process getMainProcess() {
-        if (processes.isEmpty()) {
-            throw new NotFoundException("Process list is empty!");
-        }
         return processes.get(0).getProcess();
     }
 
@@ -296,8 +289,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         } catch (IOException | ProcessGenerationException e) {
             logger.error(e.getLocalizedMessage());
         } catch (RulesetNotFoundException e) {
-            Helper.setErrorMessage("rulesetNotFound", new Object[] {this.getMainProcess().getRuleset().getFile()},
-                    logger, e);
+            String rulesetFile;
+            try {
+                rulesetFile = getMainProcess().getRuleset().getFile();
+            } catch (IndexOutOfBoundsException noProcess) {
+                logger.catching(Level.TRACE, noProcess);
+                rulesetFile = "Process list is empty!";
+            }
+            Helper.setErrorMessage("rulesetNotFound", new Object[] {rulesetFile }, logger, e);
         }
         return this.stayOnCurrentPage;
     }

@@ -53,7 +53,6 @@
         <hibernate.version>5.4.18.Final</hibernate.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
-        <jersey.version>1.19.4</jersey.version>
         <jhove.version>1.20.1</jhove.version>
         <joda-time.version>2.10.4</joda-time.version>
         <myfaces.version>2.3.4</myfaces.version>
