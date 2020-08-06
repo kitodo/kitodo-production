@@ -13,11 +13,16 @@ package org.kitodo.production.forms;
 
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.TaskSitter;
 
+@Named("TaskManagerForm")
+@RequestScoped
 public class TaskManagerForm {
 
     /**
