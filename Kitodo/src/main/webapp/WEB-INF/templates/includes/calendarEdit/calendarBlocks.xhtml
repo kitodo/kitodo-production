@@ -70,8 +70,7 @@
                                      var="issue"
                                      value="#{block.issues}">
                             <p:column>
-                                <p:inputText value="#{issue.heading}"
-                                             placeholder="#{msgs['calendar.issue']} #{block.issues.indexOf(issue)+1}">
+                                <p:inputText value="#{issue.heading}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
                                 </p:inputText>
