@@ -11,14 +11,20 @@
 
 package org.kitodo.config;
 
+import java.io.File;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.beans.Parameter;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.ConfigParameterException;
 
 public class ConfigCore extends KitodoConfig {
+    private static final Logger logger = LogManager.getLogger(ConfigCore.class);
 
     /**
      * Private constructor to hide the implicit public one.
@@ -131,6 +137,33 @@ public class ConfigCore extends KitodoConfig {
      */
     public static String[] getStringArrayParameter(ParameterCore key) {
         return getConfig().getStringArray(key.getName());
+    }
+
+    /**
+     * Get Kitodo debug directory.
+     *
+     * @return String
+     */
+    public static File getKitodoDebugDirectory() {
+        try {
+            File debugDirectory = new File(ConfigCore.getParameter(ParameterCore.DIR_DEBUG));
+            if (!debugDirectory.exists()) {
+                logger.debug("Cannot save debug output to {}: Directory does not exist", debugDirectory);
+                return null;
+            }
+            if (!debugDirectory.isDirectory()) {
+                logger.debug("Cannot save debug output to {}: Not a directory", debugDirectory);
+                return null;
+            }
+            if (!debugDirectory.canWrite()) {
+                logger.debug("Cannot save debug output to {}: Directory is not writable", debugDirectory);
+                return null;
+            }
+            return debugDirectory;
+        } catch (NoSuchElementException debugDirectoryNotConfigured) {
+            logger.catching(Level.TRACE, debugDirectoryNotConfigured);
+            return null;
+        }
     }
 
     /**
