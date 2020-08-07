@@ -131,6 +131,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
