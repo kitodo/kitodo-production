@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.flow.helper;
+package org.kitodo.production.helper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,7 +32,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
 public class SearchResultGeneration {
