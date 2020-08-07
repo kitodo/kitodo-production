@@ -11,9 +11,11 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.Browser;
@@ -24,9 +26,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.awaitility.Awaitility.await;
-import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
 public class UserEditPage extends EditPage<UserEditPage> {
 
@@ -191,7 +190,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
 
     private void openUserConfig() {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
+                .until(() -> userMenuButton.isDisplayed());
 
         hoverWebElement(userMenuButton);
         hoverWebElement(userConfigButton);

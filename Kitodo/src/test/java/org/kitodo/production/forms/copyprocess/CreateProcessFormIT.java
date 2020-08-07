@@ -20,8 +20,6 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -35,6 +33,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
@@ -60,8 +59,12 @@ public class CreateProcessFormIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+        await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+            return !processService.findByTitle(firstProcess).isEmpty();
+        });
     }
 
     /**

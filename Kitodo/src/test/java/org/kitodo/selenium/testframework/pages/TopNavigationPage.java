@@ -15,7 +15,6 @@ import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -105,7 +104,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     public void logout() throws Exception {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
+                .until(() -> userMenuButton.isDisplayed());
         RemoteWebDriver driver = Browser.getDriver();
         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("logout-form:logout")));
         WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
@@ -114,7 +113,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
 
     public String getSessionClient() throws InterruptedException {
         await("Wait for visible user menu button").atMost(30, TimeUnit.SECONDS).ignoreExceptions()
-            .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
+                .until(() -> userMenuButton.isDisplayed());
 
         hoverWebElement(userMenuButton);
         if (!logoutButton.isDisplayed()) {
@@ -193,7 +192,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         RemoteWebDriver driver = Browser.getDriver();
         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkSystem")));
     }
-    
+
     /**
      * Hovers dashboard menu and checks menu header if all buttons are displayed.
      *

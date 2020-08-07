@@ -20,7 +20,6 @@ import static org.junit.Assume.assumeTrue;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
@@ -112,7 +111,7 @@ public class AddingST extends BaseTestSelenium {
             Pages.getTemplateEditPage().getHeaderText());
 
         Pages.getTemplateEditPage().insertTemplateData(template).save();
-        await().untilTrue(new AtomicBoolean(projectsPage.countListedTemplates()==3));
+        await().until(() -> projectsPage.countListedTemplates() == 3);
         boolean templateAvailable = projectsPage.getTemplateTitles().contains(template.getTitle());
         assertTrue("Created Template was not listed at templates table!", templateAvailable);
     }

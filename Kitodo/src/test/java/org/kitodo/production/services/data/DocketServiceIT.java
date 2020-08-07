@@ -11,14 +11,13 @@
 
 package org.kitodo.production.services.data;
 
-import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.given;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -56,7 +55,7 @@ public class DocketServiceIT {
         MockDatabase.insertDockets();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(new User(), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(docketService.findByTitle(defaultDocket, true))));
+        given().ignoreExceptions().await().until(() -> Objects.nonNull(docketService.findByTitle(defaultDocket, true)));
     }
 
     @AfterClass

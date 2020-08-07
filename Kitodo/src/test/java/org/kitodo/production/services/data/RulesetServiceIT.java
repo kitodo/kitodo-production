@@ -17,8 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -52,8 +50,12 @@ public class RulesetServiceIT {
         MockDatabase.insertClients();
         MockDatabase.insertRulesets();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(new User(), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(rulesetService.findByTitle(slubDD, true))));
+        User userOne = new User();
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+        await().until(() -> {
+            SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+            return !rulesetService.findByTitle(slubDD, true).isEmpty();
+        });
     }
 
     @After

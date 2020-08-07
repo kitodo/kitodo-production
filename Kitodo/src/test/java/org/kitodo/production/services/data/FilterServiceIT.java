@@ -11,13 +11,12 @@
 
 package org.kitodo.production.services.data;
 
-import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.given;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -49,7 +48,7 @@ public class FilterServiceIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        await().untilTrue(new AtomicBoolean(Objects.nonNull(filterService.findByValue(filterValue, true))));
+        given().ignoreExceptions().await().until(() -> Objects.nonNull(filterService.findByValue(filterValue, true)));
     }
 
     @AfterClass
