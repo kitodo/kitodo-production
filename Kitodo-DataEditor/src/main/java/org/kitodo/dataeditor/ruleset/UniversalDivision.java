@@ -174,4 +174,13 @@ public class UniversalDivision extends UniversalKey {
             return false;
         }
     }
+
+    /**
+     * Gets the division.
+     * 
+     * @return the division
+     */
+    public Division getDivision() {
+        return optionalDivision.orElseGet(Division::new);
+    }
 }

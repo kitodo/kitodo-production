@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -81,7 +82,10 @@ public class RulesetManagement implements RulesetManagementInterface {
 
     @Override
     public Collection<String> getDivisionsWithNoWorkflow() {
-        return getDivionsWithNoWorkflow(ruleset.getDivisions());
+        Collection<UniversalDivision> universalDivisions = ruleset.getUniversalDivisions(true, true);
+        List<Division> divisions = universalDivisions.stream().map(universalDivision -> universalDivision.getDivision())
+                .collect(Collectors.toList());
+        return getDivionsWithNoWorkflow(divisions);
     }
 
     private Collection<String> getDivionsWithNoWorkflow(List<Division> divisions) {
