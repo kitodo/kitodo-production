@@ -289,12 +289,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         } catch (IOException | ProcessGenerationException e) {
             logger.error(e.getLocalizedMessage());
         } catch (RulesetNotFoundException e) {
-            String rulesetFile;
-            try {
+            String rulesetFile = "Process list is empty";
+            if (!this.processes.isEmpty() && Objects.nonNull(getMainProcess().getRuleset())) {
                 rulesetFile = getMainProcess().getRuleset().getFile();
-            } catch (IndexOutOfBoundsException noProcess) {
-                logger.catching(Level.TRACE, noProcess);
-                rulesetFile = "Process list is empty!";
             }
             Helper.setErrorMessage("rulesetNotFound", new Object[] {rulesetFile }, logger, e);
         }
