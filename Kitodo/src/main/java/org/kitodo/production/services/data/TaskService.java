@@ -550,8 +550,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @param task
      *            as Task object
      */
-    public void executeDmsExport(Task task) throws DataException {
-        new ExportDms().startExport(task.getProcess());
+    public void executeDmsExport(Task task) throws DataException, IOException {
+        new ExportDms().startExport(task);
     }
 
     public void setTaskStatusRestriction(TaskStatus taskStatus) {

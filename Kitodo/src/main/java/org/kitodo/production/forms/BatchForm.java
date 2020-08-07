@@ -434,8 +434,12 @@ public class BatchForm extends BaseForm {
      *
      * @return the next page to show as named in a &lt;from-outcome&gt; element in
      *         faces_config.xml
+     * @throws IOException
+     *             if I/O fails while running a script for a script condition of
+     *             a subsequent task, or the METS file cannot be read when
+     *             evaluating an XPath condition
      */
-    public String export() {
+    public String export() throws IOException {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
             return this.stayOnCurrentPage;

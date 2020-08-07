@@ -11,6 +11,8 @@
 
 package org.kitodo.production.thread;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
@@ -28,7 +30,7 @@ public class TaskScriptThread extends EmptyTask {
 
     /**
      * Constructor to set up task for script execution.
-     * 
+     *
      * @param task
      *            for script execution
      */
@@ -73,7 +75,7 @@ public class TaskScriptThread extends EmptyTask {
         if (task.isTypeExportDMS()) {
             try {
                 taskService.executeDmsExport(this.task);
-            } catch (DataException e) {
+            } catch (DataException | IOException e) {
                 logger.error("Data Exception occurred", e);
             }
         }
