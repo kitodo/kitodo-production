@@ -786,10 +786,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             List<PropertyDTO> properties = new ArrayList<>();
             for (Map<String, Object> stringObjectMap : jsonArray) {
                 for (Map.Entry<String, Object> entry : stringObjectMap.entrySet()) {
-                    PropertyDTO propertyDTO = new PropertyDTO();
-                    propertyDTO.setTitle(entry.getKey());
-                    propertyDTO.setValue(entry.getValue().toString());
-                    properties.add(propertyDTO);
+                    if (Objects.nonNull(entry) && Objects.nonNull(entry.getValue())) {
+                        PropertyDTO propertyDTO = new PropertyDTO();
+                        propertyDTO.setTitle(entry.getKey());
+                        propertyDTO.setValue(entry.getValue().toString());
+                        properties.add(propertyDTO);
+                    }
                 }
             }
             processDTO.setProperties(properties);
