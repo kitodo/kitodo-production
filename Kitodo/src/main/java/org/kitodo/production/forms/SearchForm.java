@@ -304,7 +304,7 @@ public class SearchForm {
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
         if (StringUtils.isNotBlank(this.processPropertyTitle) && StringUtils.isNotBlank(this.processPropertyValue)) {
-            search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + "=" + this.processPropertyValue + "\" ";
+            search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
         }
         return search;
     }

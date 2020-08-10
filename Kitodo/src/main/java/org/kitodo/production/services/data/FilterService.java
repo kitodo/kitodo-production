@@ -155,6 +155,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     public BoolQueryBuilder queryBuilder(String filter, ObjectType objectType, Boolean onlyOpenTasks,
             Boolean onlyUserAssignedTasks) throws DataException {
 
+        filter = replaceLegacyFilters(filter);
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         // this is needed if we filter task
@@ -222,6 +223,13 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             }
         }
         return query;
+    }
+
+    private String replaceLegacyFilters(String filter) {
+        filter.replace("processproperty","property");
+        filter.replace("workpiece","property");
+        filter.replace("template","property");
+        return filter;
     }
 
     private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks) {
@@ -481,7 +489,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             BoolQueryBuilder propertyQuery = new BoolQueryBuilder();
             Set<String> strings = filterValuesAsStrings(filter, FilterString.PROPERTY);
             for (String string : strings) {
-                String[] split = string.split("=");
+                String[] split = string.split(":");
                 propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
             }
             return propertyQuery;
