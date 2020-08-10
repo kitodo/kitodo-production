@@ -20,6 +20,12 @@ import java.util.Set;
 
 public class ExecutionPermission {
 
+    /**
+     * Sets the executability authorization for a file under Unix.
+     * 
+     * @param file
+     *            file whose authorization is to be set
+     */
     public static void setExecutePermission(File file) throws IOException {
         Set<PosixFilePermission> permissions = setNoExecutePermission();
 
