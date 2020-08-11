@@ -143,7 +143,7 @@ public class SchemaService {
     private void replaceFLocatForExport(Workpiece workpiece, Process process) throws URISyntaxException {
         List<Folder> folders = process.getProject().getFolders();
         VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
-        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
                     if (folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())) {

@@ -209,7 +209,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         if (!treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
-                .allMatch(workpiece.getMediaUnits()::contains)) {
+                .allMatch(workpiece.getAllMediaUnits()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
             error = true;
         }
@@ -231,7 +231,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         Collection<String> messages = new HashSet<>();
 
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
-        unassignedMediaUnits.addAll(workpiece.getMediaUnits());
+        unassignedMediaUnits.addAll(workpiece.getAllMediaUnits());
         treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren).flatMap(structure -> structure.getViews().stream())
                 .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
