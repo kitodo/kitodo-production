@@ -1140,6 +1140,37 @@ h3#headerText {
 }
 
 /*----------------------------------------------------------------------
+Statistics
+----------------------------------------------------------------------*/
+
+#statisticsDialog {
+    overflow-y: hidden;
+}
+
+#statisticsDialog h3#headerText {
+    margin-bottom: 0;
+    overflow: unset;
+}
+
+#statisticPanel {
+    overflow-x: hidden;
+}
+
+#statisticResult {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+}
+
+#pieChartWrapper {
+    display: inline-block;
+    width: 45%;
+    height: 45%;
+    overflow-x: hidden;
+    padding: var(--default-full-size);
+}
+
+/*----------------------------------------------------------------------
 Import form
 ----------------------------------------------------------------------*/
 

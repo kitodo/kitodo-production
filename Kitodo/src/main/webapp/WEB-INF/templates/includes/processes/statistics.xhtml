@@ -16,72 +16,100 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
 
-    <!--@elvariable id="StatisticView" type="org.kitodo.production.forms.ProcessListBaseView"-->
-    <h:panelGroup id="statisticPanel">
-        <p:pieChart rendered="#{StatisticView.showPieModel()}"
-                    model="#{StatisticView.pieModel}"/>
-        <p:dataTable  id="statisticResult"
-                      style="width: 50%;"
-                      rendered="#{StatisticView.showPieModel()}"
-                      value="#{StatisticView.statisticResult}"
-                      var="result">
-            <p:column headerText="#{msgs.task}"
-                      width="50">
-                <h:outputText title="#{result.key}"
-                              value="#{result.key}"/>
-            </p:column>
-            <p:column headerText="#{msgs.amount}"
-                      width="50">
-                <h:outputText title="#{result.value}"
-                              value="#{result.value}"/>
-            </p:column>
-        </p:dataTable>
+    <p:dialog id="statisticsDialog"
+              widgetVar="statisticsDialog"
+              height="80%"
+              width="80%"
+              resizable="false">
 
-        <p:barChart rendered="#{StatisticView.showBarModel()}"
-                    model="#{StatisticView.stackedBarModel}"
-                    style="width: 100%;"/>
+        <!--@elvariable id="StatisticView" type="org.kitodo.production.forms.ProcessListBaseView"-->
+        <h3 id="headerText">
+            <h:outputText value="#{msgs.stateOfVolume}" rendered="#{StatisticView.showPieModel()}"/>
+            <h:outputText value="#{msgs.durationOfTasks}" rendered="#{StatisticView.showBarModel()}"/>
+            <h:outputText value="#{msgs.numberOfMetadata}" rendered="#{StatisticView.showProcessMetadataStatisticTable()}"/>
+        </h3>
 
-        <p:dataTable id="processMetadataTable"
-                     style="width: 50%;"
-                     rendered="#{StatisticView.showProcessMetadataStatisticTable()}"
-                     value="#{StatisticView.processMetadataStatistics}"
-                     var="processStatistic">
-            <p:column headerText="#{msgs.title}"
-                      width="25">
-                <h:outputText title="#{processStatistic.processTitle}"
-                              value="#{processStatistic.processTitle}"/>
-            </p:column>
-            <p:column headerText="#{msgs.images}"
-                      width="10">
-                <h:outputText title="#{processStatistic.numberOfImages}"
-                              value="#{processStatistic.numberOfImages}"/>
-            </p:column>
-            <p:column headerText="#{msgs.relativeAmount}"
-                      width="10">
-                <p:progressBar value="#{StatisticView.getRelativeImageAmount(processStatistic.numberOfImages)}"
-                               displayOnly="true"/>
-            </p:column>
-            <p:column headerText="#{msgs.structuralElement}"
-                      width="10">
-                <h:outputText title="#{processStatistic.numberOfStructuralElements}"
-                              value="#{processStatistic.numberOfStructuralElements}"/>
-            </p:column>
-            <p:column headerText="#{msgs.relativeAmount}"
-                      width="10">
-                <p:progressBar value="#{StatisticView.getRelativeStructuralElementAmount(processStatistic.numberOfStructuralElements)}"
-                               displayOnly="true"/>
-            </p:column>
-            <p:column headerText="#{msgs.metadata}"
-                      width="10">
-                <h:outputText title="#{processStatistic.numberOfMetadata}"
-                              value="#{processStatistic.numberOfMetadata}"/>
-            </p:column>
-            <p:column headerText="#{msgs.relativeAmount}"
-                      width="10">
-                <p:progressBar value="#{StatisticView.getRelativeMetadataAmount(processStatistic.numberOfMetadata)}"
-                               displayOnly="true"/>
-            </p:column>
-        </p:dataTable>
-    </h:panelGroup>
+        <h:panelGroup id="statisticPanel"
+                      layout="block">
+            <h:panelGroup id="pieChartWrapper">
+                <p:pieChart rendered="#{StatisticView.showPieModel()}"
+                            model="#{StatisticView.pieModel}"/>
+            </h:panelGroup>
+            <p:dataTable  id="statisticResult"
+                          rendered="#{StatisticView.showPieModel()}"
+                          value="#{StatisticView.statisticResult}"
+                          scrollable="true"
+                          var="result">
+                <p:column headerText="#{msgs.task}"
+                          width="50">
+                    <h:outputText title="#{result.key}"
+                                  value="#{result.key}"/>
+                </p:column>
+                <p:column headerText="#{msgs.amount}"
+                          width="50">
+                    <h:outputText title="#{result.value}"
+                                  value="#{result.value}"/>
+                </p:column>
+            </p:dataTable>
+
+            <p:barChart rendered="#{StatisticView.showBarModel()}"
+                        model="#{StatisticView.stackedBarModel}"
+                        style="width: 100%;"/>
+
+            <p:dataTable id="processMetadataTable"
+                         scrollable="true"
+                         scrollHeight="350"
+                         styleClass="default-layout"
+                         rendered="#{StatisticView.showProcessMetadataStatisticTable()}"
+                         value="#{StatisticView.processMetadataStatistics}"
+                         var="processStatistic">
+                <p:column headerText="#{msgs.processTitle}"
+                          width="25">
+                    <h:outputText title="#{processStatistic.processTitle}"
+                                  value="#{processStatistic.processTitle}"/>
+                </p:column>
+                <p:column headerText="#{msgs.images}"
+                          width="10">
+                    <h:outputText title="#{processStatistic.numberOfImages}"
+                                  value="#{processStatistic.numberOfImages}"/>
+                </p:column>
+                <p:column headerText="#{msgs.relativeAmount}"
+                          width="10">
+                    <p:progressBar value="#{StatisticView.getRelativeImageAmount(processStatistic.numberOfImages)}"
+                                   displayOnly="true"/>
+                </p:column>
+                <p:column headerText="#{msgs.structuralElement}"
+                          width="10">
+                    <h:outputText title="#{processStatistic.numberOfStructuralElements}"
+                                  value="#{processStatistic.numberOfStructuralElements}"/>
+                </p:column>
+                <p:column headerText="#{msgs.relativeAmount}"
+                          width="10">
+                    <p:progressBar value="#{StatisticView.getRelativeStructuralElementAmount(processStatistic.numberOfStructuralElements)}"
+                                   displayOnly="true"/>
+                </p:column>
+                <p:column headerText="#{msgs.metadata}"
+                          width="10">
+                    <h:outputText title="#{processStatistic.numberOfMetadata}"
+                                  value="#{processStatistic.numberOfMetadata}"/>
+                </p:column>
+                <p:column headerText="#{msgs.relativeAmount}"
+                          width="10">
+                    <p:progressBar value="#{StatisticView.getRelativeMetadataAmount(processStatistic.numberOfMetadata)}"
+                                   displayOnly="true"/>
+                </p:column>
+            </p:dataTable>
+        </h:panelGroup>
+
+        <h:form id="closeButtonForm">
+            <p:commandButton id="close"
+                             value="#{msgs.close}"
+                             icon="fa fa-times fa-lg"
+                             iconPos="right"
+                             styleClass="secondary"
+                             onclick="PF('statisticsDialog').hide();"/>
+        </h:form>
+
+    </p:dialog>
 
 </ui:composition>

@@ -255,24 +255,17 @@
                 <p:menuitem id="stateOfVolume"
                             value="#{msgs.stateOfVolume}"
                             action="#{ProcessForm.showStateOfVolume}"
-                            update="processesTabView:processesForm:statisticPanel"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="durationOfTasks"
                             value="#{msgs.durationOfTasks}"
                             action="#{ProcessForm.showDurationOfTasks}"
-                            update="processesTabView:processesForm:statisticPanel"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="processMetadataStatistic"
                             value="#{msgs.numberOfMetadata}"
                             action="#{ProcessForm.showProcessMetadataStatistic}"
-                            update="processesTabView:processesForm:statisticPanel"
                             icon="fa fa-arrow-circle-o-up"/>
             </p:menu>
         </div>
-
-        <ui:include src="/WEB-INF/templates/includes/processes/statistics.xhtml">
-            <ui:param name="StatisticView" value="#{ProcessForm}"/>
-        </ui:include>
 
     </h:form>
 </ui:composition>
