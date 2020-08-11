@@ -203,16 +203,16 @@ public class Workpiece {
      *
      * @return list of all media units with type "page", sorted by their "ORDER" attribute.
      */
-    public List<MediaUnit> getAllMediaUnitsSorted() {
+    public List<MediaUnit> getAllMediaUnitsFilteredByTypePageAndSorted() {
         List<MediaUnit> mediaUnits = getAllMediaUnits();
         mediaUnits.sort(Comparator.comparing(MediaUnit::getOrder));
         return mediaUnits.stream().filter(m -> m.getType().equals(MediaUnit.TYPE_PAGE)).collect(Collectors.toList());
     }
 
     /**
-     * Recursively search for all media units with type "page".
+     * Recursively search for all media units.
      *
-     * @return list of all media units with type "page".
+     * @return list of all media units.
      */
     public List<MediaUnit> getAllMediaUnits() {
         List<MediaUnit> mediaUnits = new LinkedList<>(mediaUnit.getChildren());

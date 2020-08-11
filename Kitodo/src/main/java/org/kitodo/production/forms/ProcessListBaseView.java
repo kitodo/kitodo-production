@@ -114,7 +114,7 @@ public class ProcessListBaseView extends BaseForm {
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), selectedProcess.getId() }, logger, e);
                 return;
             }
-            int numberOfProcessImages = workpiece.getAllMediaUnitsSorted().size();
+            int numberOfProcessImages = workpiece.getAllMediaUnitsFilteredByTypePageAndSorted().size();
             this.numberOfGlobalImages += numberOfProcessImages;
             int numberOfProcessStructuralElements = workpiece.getAllIncludedStructuralElements().size();
             this.numberOfGlobalStructuralElements += numberOfProcessStructuralElements;
