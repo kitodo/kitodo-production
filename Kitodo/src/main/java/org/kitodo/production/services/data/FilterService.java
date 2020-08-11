@@ -477,7 +477,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder createProcessTitleFilter(String filter, ObjectType objectType) {
         String processTitle = getFilterValueFromFilterString(filter, FilterString.PROCESS);
         if (objectType == ObjectType.PROCESS) {
-            return ServiceManager.getProcessService().getQueryTitle(processTitle, true);
+            return ServiceManager.getProcessService().getWildcardQueryTitle(processTitle);
         } else if (objectType == ObjectType.TASK) {
             return createSimpleQuery(TaskTypeField.PROCESS_TITLE.getKey(), processTitle, true, Operator.AND);
         }
@@ -883,7 +883,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     private QueryBuilder createDefaultQuery(String filter, boolean negate, ObjectType objectType) throws DataException {
-        QueryBuilder titleQuery = ServiceManager.getProcessService().getQueryTitle(filter, !negate);
+        QueryBuilder titleQuery = ServiceManager.getProcessService().getWildcardQueryTitle(filter);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
     }
 
