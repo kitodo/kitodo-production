@@ -114,8 +114,6 @@
                                     <p:outputPanel styleClass="thumbnail-parent">
                                         <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
                                         <p:outputPanel styleClass="thumbnail-container"
-                                                       deferred="true"
-                                                       deferredMode="visible"
                                                        a:data-order="#{media.order}"
                                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
@@ -200,8 +198,6 @@
                                         <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
                                             <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
                                             <p:outputPanel styleClass="thumbnail-container"
-                                                           deferred="true"
-                                                           deferredMode="visible"
                                                            a:data-order="#{media.order}"
                                                            a:data-stripe="0">
                                                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
@@ -272,9 +268,7 @@
                      a:ondragstart="metadataEditor.handleDragStart(event)">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
-                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"
-                                       deferred="true"
-                                       deferredMode="visible">
+                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
                             <p:panel a:data-order="#{media.order}">
                                 <h:panelGroup layout="block" styleClass="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
@@ -314,8 +308,6 @@
                                         <h:panelGroup layout="block" styleClass="thumbnail-parent">
                                             <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"/>
                                             <p:outputPanel layout="block"
-                                                           deferred="true"
-                                                           deferredMode="visible"
                                                            styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
