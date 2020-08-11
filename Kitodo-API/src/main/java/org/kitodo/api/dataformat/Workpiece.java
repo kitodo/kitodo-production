@@ -228,4 +228,16 @@ public class Workpiece {
     public static <T extends Division<T>> Stream<T> treeStream(Division<T> tree) {
         return Stream.concat(Stream.of((T) tree), tree.getChildren().stream().flatMap(Workpiece::treeStream));
     }
+
+    /**
+     * Generates a stream of nodes from structure tree.
+     *
+     * @param tree
+     *            starting node
+     * @return all nodes as stream
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Division<T>> Stream<T> treeStream(Division<T> tree) {
+        return Stream.concat(Stream.of((T) tree), tree.getChildren().stream().flatMap(child -> treeStream(child)));
+    }
 }
