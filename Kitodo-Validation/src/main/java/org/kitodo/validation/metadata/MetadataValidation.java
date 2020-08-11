@@ -120,14 +120,12 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (IncludedStructuralElement includedStructuralElement : Workpiece.treeStream(workpiece.getRootElement())
-                .collect(Collectors.toList())) {
+        for (IncludedStructuralElement includedStructuralElement : workpiece.getAllIncludedStructuralElements()) {
             results.addAll(checkMetadataRules(includedStructuralElement.toString(), includedStructuralElement.getType(),
                 getMetadata(includedStructuralElement), ruleset, metadataLanguage, translations));
         }
 
-        for (MediaUnit mediaUnit : Workpiece.treeStream(workpiece.getMediaUnit())
-                .collect(Collectors.toList())) {
+        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
             results.addAll(checkMetadataRules(mediaUnit.toString(), mediaUnit.getType(), getMetadata(mediaUnit),
                     ruleset, metadataLanguage, translations));
         }
