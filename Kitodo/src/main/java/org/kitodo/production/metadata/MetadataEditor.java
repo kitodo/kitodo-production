@@ -467,10 +467,9 @@ public class MetadataEditor {
             LinkedList<Division<T>> ancestors = new LinkedList<>();
             ancestors.add(parent);
             return ancestors;
-
         }
-        for (T child : position.getChildren()) {
-            LinkedList<Division<T>> maybeFound = getAncestorsRecursive(searched, (Division<T>)child, position);
+        for (Division<T> child : position.getChildren()) {
+            LinkedList<Division<T>> maybeFound = getAncestorsRecursive(searched, child, position);
             if (!maybeFound.isEmpty()) {
                 if (Objects.nonNull(parent)) {
                     maybeFound.addFirst(parent);
