@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 
+<<<<<<< HEAD
 /**
  * A tree-shaped description of the media unit of the digital representation of
  * a digital medium. Each leaf of the physical structure tree represents a
@@ -40,6 +41,11 @@ import org.kitodo.api.dataformat.mets.KitodoUUID;
  * a record along with its digitized soundtrack.
  */
 public class MediaUnit extends Division<MediaUnit> {
+    // TODO: we probably need a way to configure MediaUnit types to be considered for renumbering/pagination!
+    public static final String TYPE_PAGE = "page";
+    public static final String TYPE_TRACK = "track";
+    public static final String TYPE_OTHER = "other";
+
     /**
      * Each media unit can be available in different variants, for each of which
      * a media file is available. This is in this map.

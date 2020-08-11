@@ -295,7 +295,8 @@ public class PaginationPanel {
         MediaUnit selectedMediaUnit = null;
         Optional<MediaUnit> optionalSelectedMediaUnit = dataEditor.getSelectedMediaUnit();
         if (dataEditor.getStructurePanel().isSeparateMedia() && Objects.nonNull(optionalSelectedMediaUnit)
-                && optionalSelectedMediaUnit.isPresent() && "page".equals(optionalSelectedMediaUnit.get().getType())) {
+                && optionalSelectedMediaUnit.isPresent()
+                && Objects.equals(optionalSelectedMediaUnit.get().getType(), MediaUnit.TYPE_PAGE)) {
             selectedMediaUnit = optionalSelectedMediaUnit.get();
         } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData();

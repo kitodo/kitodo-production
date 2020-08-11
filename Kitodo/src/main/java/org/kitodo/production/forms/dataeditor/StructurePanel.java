@@ -678,7 +678,7 @@ public class StructurePanel implements Serializable {
     private void buildMediaTreeRecursively(MediaUnit mediaUnit, DefaultTreeNode parentTreeNode) {
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 mediaUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        DefaultTreeNode treeNode = addTreeNode("page".equals(mediaUnit.getType())
+        DefaultTreeNode treeNode = addTreeNode(Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)
                         ? divisionView.getLabel().concat(" " + mediaUnit.getOrderlabel()) : divisionView.getLabel(),
                 false, false, mediaUnit, parentTreeNode);
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, treeNode)) {

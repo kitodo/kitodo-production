@@ -25,10 +25,6 @@ import java.util.stream.Stream;
  * a Production workflow.
  */
 public class Workpiece {
-
-    // TODO: we probably need a way to configure MediaUnit types to be considered for renumbering/pagination!
-    private static final String PAGE = "page";
-
     /**
      * The time this file was first created.
      */
@@ -210,7 +206,7 @@ public class Workpiece {
     public List<MediaUnit> getAllMediaUnitsSorted() {
         List<MediaUnit> mediaUnits = getAllMediaUnits();
         mediaUnits.sort(Comparator.comparing(MediaUnit::getOrder));
-        return mediaUnits.stream().filter(m -> m.getType().equals(PAGE)).collect(Collectors.toList());
+        return mediaUnits.stream().filter(m -> m.getType().equals(MediaUnit.TYPE_PAGE)).collect(Collectors.toList());
     }
 
     /**

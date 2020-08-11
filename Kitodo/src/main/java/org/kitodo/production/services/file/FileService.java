@@ -1121,7 +1121,7 @@ public class FileService {
     private MediaUnit createMediaUnit(Map<Subfolder, URI> data) {
         MediaUnit mediaUnit = new MediaUnit();
         if (!data.entrySet().isEmpty()) {
-            mediaUnit.setType("page");
+            mediaUnit.setType(MediaUnit.TYPE_PAGE);
         }
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
@@ -1177,7 +1177,7 @@ public class FileService {
             if (Objects.nonNull(orderlabel) && !mediaUnit.getMediaFiles().isEmpty()) {
                 first = i + 1;
                 value = orderlabel;
-                mediaUnits.get(i).setType("page");
+                mediaUnits.get(i).setType(MediaUnit.TYPE_PAGE);
                 break;
             }
         }

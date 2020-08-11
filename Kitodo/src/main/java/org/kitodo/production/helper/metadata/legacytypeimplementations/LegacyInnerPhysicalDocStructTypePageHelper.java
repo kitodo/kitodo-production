@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
+import org.kitodo.api.dataformat.MediaUnit;
+
 /**
  * Represents the only existing legacy doc struct type from the physical map
  * named “page”. This is a soldering class to keep legacy code operational which
@@ -31,7 +33,7 @@ public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDoc
     @Override
     @Deprecated
     public String getName() {
-        return "page";
+        return MediaUnit.TYPE_PAGE;
     }
 
     @Override
