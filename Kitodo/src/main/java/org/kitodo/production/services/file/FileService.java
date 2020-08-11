@@ -37,6 +37,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
@@ -1024,8 +1025,24 @@ public class FileService {
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
             repaginateMediaUnits(workpiece);
         }
+        if (Workpiece.treeStream(workpiece.getRootElement())
+                .allMatch(includedStructuralElement -> includedStructuralElement.getViews().isEmpty())) {
+            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getRootElement());
+        }
         if (logger.isTraceEnabled()) {
             logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+    }
+
+    private void automaticallyAssignMediaUnitsToEffectiveRootRecursive(Workpiece workpiece,
+            IncludedStructuralElement includedStructuralElement) {
+
+        if (Objects.nonNull(includedStructuralElement.getType())) {
+            Workpiece.treeStream(workpiece.getMediaUnit()).filter(mediaUnit -> !mediaUnit.getMediaFiles().isEmpty())
+                    .map(View::of).forEachOrdered(includedStructuralElement.getViews()::add);
+        } else if (includedStructuralElement.getChildren().size() == 1) {
+            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece,
+                includedStructuralElement.getChildren().get(0));
         }
     }
 
