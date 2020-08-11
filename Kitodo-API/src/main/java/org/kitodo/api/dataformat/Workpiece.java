@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The administrative structure of the product of an element that passes through
@@ -238,5 +239,17 @@ public class Workpiece {
             }
         }
         return allMediaUnits;
+    }
+
+    /**
+     * Generates a stream of nodes from structure tree.
+     *
+     * @param tree
+     *            starting node
+     * @return all nodes as stream
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Division<T>> Stream<T> treeStream(Division<T> tree) {
+        return Stream.concat(Stream.of((T) tree), tree.getChildren().stream().flatMap(child -> treeStream(child)));
     }
 }
