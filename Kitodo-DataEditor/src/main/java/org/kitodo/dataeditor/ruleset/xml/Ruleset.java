@@ -155,17 +155,16 @@ public class Ruleset {
      */
     public Map<String, String> getDivisions(List<LanguageRange> priorityList, boolean all, boolean subdivisionsByDate) {
         Collection<UniversalDivision> universalDivisions = getUniversalDivisions(all, subdivisionsByDate);
-        Map<String, String> map = all || !universalDivisions.isEmpty() ? Labeled.listByTranslatedLabel(this,
+        return all || !universalDivisions.isEmpty() ? Labeled.listByTranslatedLabel(this,
             universalDivisions, UniversalDivision::getId, UniversalDivision::getLabels, priorityList)
                 : getDivisions(priorityList, true, subdivisionsByDate);
-        return map;
     }
 
     /**
-     * get all universialDivisions as Collection.
+     * get all universalDivisions as Collection.
      * @param all if all divisions should be respected.
      * @param subdivisionsByDate if subdivisionsByDate should be respected.
-     * @return a collection of universialDivisions.
+     * @return a collection of universalDivisions.
      */
     public Collection<UniversalDivision> getUniversalDivisions(boolean all, boolean subdivisionsByDate) {
         Collection<UniversalDivision> universalDivisions = new LinkedList<>();

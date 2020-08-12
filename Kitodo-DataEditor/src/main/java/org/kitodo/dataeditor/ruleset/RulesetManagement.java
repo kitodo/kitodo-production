@@ -83,7 +83,7 @@ public class RulesetManagement implements RulesetManagementInterface {
     @Override
     public Collection<String> getDivisionsWithNoWorkflow() {
         Collection<UniversalDivision> universalDivisions = ruleset.getUniversalDivisions(true, true);
-        List<Division> divisions = universalDivisions.stream().map(universalDivision -> universalDivision.getDivision())
+        List<Division> divisions = universalDivisions.stream().map(UniversalDivision::getDivision)
                 .collect(Collectors.toList());
         return getDivionsWithNoWorkflow(divisions);
     }
