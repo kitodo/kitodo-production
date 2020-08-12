@@ -155,6 +155,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     public BoolQueryBuilder queryBuilder(String filter, ObjectType objectType, Boolean onlyOpenTasks,
             Boolean onlyUserAssignedTasks) throws DataException {
 
+        filter = replaceLegacyFilters(filter);
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         // this is needed if we filter task
@@ -191,6 +192,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 query.must(createProcessIdFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PARENTPROCESSID, null)) {
                 query.must(createParentProcessIdFilter(tokenizedFilter, objectType));
+            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROPERTY, null)) {
+                query.must(createProcessPropertyFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PROCESS, null)) {
                 query.must(createProcessTitleFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, null)) {
@@ -220,6 +223,13 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             }
         }
         return query;
+    }
+
+    private String replaceLegacyFilters(String filter) {
+        filter.replace("processproperty","property");
+        filter.replace("workpiece","property");
+        filter.replace("template","property");
+        return filter;
     }
 
     private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks) {
@@ -470,6 +480,19 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         } else if (objectType == ObjectType.TASK) {
             return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), filterValuesAsIntegers(filter, FilterString.ID),
                 true);
+        }
+        return new BoolQueryBuilder();
+    }
+
+    private QueryBuilder createProcessPropertyFilter(String filter, ObjectType objectType) {
+        if (objectType == ObjectType.PROCESS) {
+            BoolQueryBuilder propertyQuery = new BoolQueryBuilder();
+            Set<String> strings = filterValuesAsStrings(filter, FilterString.PROPERTY);
+            for (String string : strings) {
+                String[] split = string.split(":");
+                propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+            }
+            return propertyQuery;
         }
         return new BoolQueryBuilder();
     }
