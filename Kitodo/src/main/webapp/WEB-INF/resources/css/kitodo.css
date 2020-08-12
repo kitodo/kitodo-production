@@ -1170,6 +1170,11 @@ Statistics
     padding: var(--default-full-size);
 }
 
+#statisticsDialog #closeButtonForm\:close {
+    float: right;
+    margin-right: var(--default-full-size);
+}
+
 /*----------------------------------------------------------------------
 Import form
 ----------------------------------------------------------------------*/
