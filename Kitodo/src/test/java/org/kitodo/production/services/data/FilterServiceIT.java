@@ -185,7 +185,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).size());
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-batch:1 2\"", ObjectType.PROCESS, false, false);
-        assertEquals("Incorrect amount of processes for batch with not id 1 or 2!", 3,
+        assertEquals("Incorrect amount of processes for batch with not id 1 or 2!", 2,
             processService.findByQuery(thirdQuery, true).size());
     }
 

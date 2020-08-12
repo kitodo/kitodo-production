@@ -194,7 +194,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PROCESS, null)) {
                 query.must(createProcessTitleFilter(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, null)) {
-                query.must(createBatchIdFilter(tokenizedFilter, objectType));
+                query.must(createBatchIdFilter(tokenizedFilter, objectType, true));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, "-")) {
                 query.must(
                     createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, true, objectType));
@@ -212,6 +212,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PROJECT, "-")) {
                 query.must(filterProject(tokenizedFilter, true, objectType));
+            } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, "-")) {
+                query.must(createBatchIdFilter(tokenizedFilter, objectType, false));
             } else if (tokenizedFilter.startsWith("-")) {
                 query.must(createDefaultQuery(tokenizedFilter.substring(1), true, objectType));
             } else {
@@ -484,13 +486,13 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return new BoolQueryBuilder();
     }
 
-    private QueryBuilder createBatchIdFilter(String filter, ObjectType objectType) throws DataException {
+    private QueryBuilder createBatchIdFilter(String filter, ObjectType objectType, boolean negate) throws DataException {
         if (objectType == ObjectType.PROCESS) {
-            return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true);
+            return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), negate);
         } else if (objectType == ObjectType.TASK) {
             List<ProcessDTO> processDTOS = ServiceManager.getProcessService().findByQuery(
-                createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
-            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true);
+                createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), negate), true);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), negate);
         }
         return new BoolQueryBuilder();
     }
