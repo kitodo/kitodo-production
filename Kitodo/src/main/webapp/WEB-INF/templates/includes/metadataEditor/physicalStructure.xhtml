@@ -60,7 +60,7 @@
                         collapsedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                 <!--@elvariable id="physicalElementType" type="java.lang.String"-->
                 <ui:param name="physicalElementType" value="#{physicalNode.label}"/>
-                <h:outputText value="#{empty physicalElementType ? msgs['dataEditor.unknownType'] : physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText value="#{empty physicalElementType ? msgs['dataEditor.withoutType'] : physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
                 <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
                 <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
             </p:treeNode>
