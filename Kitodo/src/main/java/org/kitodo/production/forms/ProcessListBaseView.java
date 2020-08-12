@@ -49,7 +49,7 @@ public class ProcessListBaseView extends BaseForm {
     private HorizontalBarChartModel stackedBarModel;
     private PieChartModel pieModel;
     private Map<String,Integer> statisticResult;
-    private final List<ProcessMetadataStatistic> processMetadataStatistics = new ArrayList<>();
+    private List<ProcessMetadataStatistic> processMetadataStatistics = new ArrayList<>();
     private int numberOfGlobalImages;
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
@@ -82,6 +82,8 @@ public class ProcessListBaseView extends BaseForm {
     public void showDurationOfTasks() {
         chartMode = ChartMode.BAR;
         stackedBarModel = ServiceManager.getProcessService().getBarChartModel(selectedProcesses);
+        PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
+        PrimeFaces.current().ajax().update("statisticsDialog");
     }
 
     /**
@@ -91,6 +93,8 @@ public class ProcessListBaseView extends BaseForm {
         chartMode = ChartMode.PIE;
         statisticResult = ServiceManager.getProcessService().getProcessTaskStates(selectedProcesses);
         pieModel = ServiceManager.getProcessService().getPieChardModel(statisticResult);
+        PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
+        PrimeFaces.current().ajax().update("statisticsDialog");
     }
 
     /**
@@ -98,6 +102,7 @@ public class ProcessListBaseView extends BaseForm {
      */
     public void showProcessMetadataStatistic() {
         chartMode = ChartMode.METADATA_STATISTIC;
+        processMetadataStatistics = new ArrayList<>();
         resetGlobalStatisticValues();
         Workpiece workpiece;
         for (Process selectedProcess : selectedProcesses) {
@@ -120,6 +125,8 @@ public class ProcessListBaseView extends BaseForm {
             processMetadataStatistics.add(new ProcessMetadataStatistic(selectedProcess.getTitle(),
                     numberOfProcessImages, numberOfProcessStructuralElements, numberOfProcessMetadata));
         }
+        PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
+        PrimeFaces.current().ajax().update("statisticsDialog");
     }
 
     /**
