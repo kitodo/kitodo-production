@@ -98,7 +98,7 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      *            of the searched process
      * @return query
      */
-    private QueryBuilder getWildcardQueryTitle(String title) {
+    public QueryBuilder getWildcardQueryTitle(String title) {
         return createSimpleWildcardQuery(TITLE, title);
     }
 

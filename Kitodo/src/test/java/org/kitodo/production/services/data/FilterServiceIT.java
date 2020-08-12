@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import static org.awaitility.Awaitility.given;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
@@ -185,11 +186,30 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).size());
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-batch:1 2\"", ObjectType.PROCESS, false, false);
-        assertEquals("Incorrect amount of processes for batch with not id 1 or 2!", 3,
+        assertEquals("Incorrect amount of processes for batch with not id 1 or 2!", 2,
             processService.findByQuery(thirdQuery, true).size());
     }
 
-    // TODO: filters are not working for search only by title
+    @Test
+    public void shouldBuildQueryAndFindByTitle() throws DataException {
+        ProcessService processService = ServiceManager.getProcessService();
+
+        QueryBuilder query = filterService.queryBuilder("\"DBConnectionTest\"", ObjectType.PROCESS, false, false);
+        assertEquals("Incorrect amount of processes title 'DBConnectionTest'", 1,
+                processService.findByQuery(query, true).size());
+
+        query = filterService.queryBuilder("\"ocess\"", ObjectType.PROCESS, false, false);
+        assertEquals("Incorrect amount of processes where title contains 'ocess''", 2,
+                processService.findByQuery(query, true).size());
+
+        query = filterService.queryBuilder("\"\"", ObjectType.PROCESS, false, false);
+        assertEquals("Incorrect amount of processes with empty query'", 3,
+                processService.findByQuery(query, true).size());
+
+        query = filterService.queryBuilder("\"notAvailable\"", ObjectType.PROCESS, false, false);
+        assertTrue("Incorrect amount of processes with wrong title",
+                processService.findByQuery(query, true).isEmpty());
+    }
 
     /**
      * find by properties.
