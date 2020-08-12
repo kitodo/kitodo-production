@@ -29,6 +29,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportException;
@@ -47,6 +48,7 @@ import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
@@ -65,18 +67,34 @@ public class ExportDms extends ExportMets {
     /**
      * Export to DMS.
      *
+     * @param task
+     *            Task object
+     * @throws IOException
+     *             if I/O fails while running a script for a script condition of
+     *             a subsequent task, or the METS file cannot be read when
+     *             evaluating an XPath condition
+     */
+    public void startExport(Task task) throws DataException, IOException {
+        if (startExport(task.getProcess())) {
+            new WorkflowControllerService().close(task);
+        }
+    }
+
+    /**
+     * Export to DMS.
+     *
      * @param process
      *            Process object
      */
     @Override
-    public void startExport(Process process) throws DataException {
+    public boolean startExport(Process process) throws DataException {
         boolean wasNotAlreadyExported = !process.isExported();
         if (wasNotAlreadyExported) {
             process.setExported(true);
             ServiceManager.getProcessService().save(process);
         }
-        boolean exportSucessfull = startExport(process, (URI) null);
-        if (exportSucessfull) {
+        boolean exportSuccessful = startExport(process, (URI) null);
+        if (exportSuccessful) {
             if (allChildrenExported(process)) {
                 process.setSortHelperStatus("100000000");
             }
@@ -87,6 +105,7 @@ public class ExportDms extends ExportMets {
             process.setExported(false);
             ServiceManager.getProcessService().save(process);
         }
+        return exportSuccessful;
     }
 
     private boolean allChildrenExported(Process process) {
