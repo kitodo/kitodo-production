@@ -15,7 +15,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  * This bean contains properties common for Template and Process.
@@ -40,7 +39,6 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
      *
      * @return value of title
      */
-    @XmlAttribute(name = "key")
     public String getTitle() {
         return this.title;
     }

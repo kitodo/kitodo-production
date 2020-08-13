@@ -29,17 +29,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.kitodo.data.database.persistence.ProcessDAO;
 
-@XmlAccessorType(XmlAccessType.NONE)
-// This annotation is to instruct the Jersey API not to generate arbitrary XML
-// elements. Further XML elements can be
-// added as needed by annotating with @XmlElement, but their respective names
-// should be wisely chosen according to
-// the Coding Guidelines (e.g. *english* names).
 @Entity
 @Table(name = "process")
 public class Process extends BaseTemplateBean {

@@ -196,7 +196,7 @@ public class ProcessDataTab {
             String processTitle = docTypeView.getProcessTitle().orElse("");
             if (processTitle.isEmpty()) {
                 Helper.setErrorMessage("newProcess.titleGeneration.creationRuleNotFound",
-                        new Object[] {getDocTypeLabel(docType), createProcessForm.getMainProcess().getRuleset().getTitle()});
+                    new Object[] {getDocTypeLabel(docType), process.getRuleset().getTitle() });
             }
             this.atstsl = ProcessService.generateProcessTitle(this.atstsl, processDetails,
                 processTitle, process);

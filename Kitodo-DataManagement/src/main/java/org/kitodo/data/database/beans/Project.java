@@ -25,30 +25,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.kitodo.data.database.persistence.ProjectDAO;
 
-@XmlAccessorType(XmlAccessType.NONE)
-// This annotation is to instruct the Jersey API not to generate arbitrary XML
-// elements. Further XML elements can be
-// added as needed by annotating with @XmlElement, but their respective names
-// should be wisely chosen according to
-// the Coding Guidelines (e.g. *english* names).
-// TODO: get rid of this xml attributes
-@XmlType(propOrder = {"template", "fieldConfig" })
-// This annotation declares the desired order of XML elements generated and
-// rather serves for better legibility of
-// the generated XML. The list must be exhaustive and the properties have to be
-// named according to their respective
-// getter function, e.g. @XmlElement(name="field") getFieldConfig() must be
-// referenced as "fieldConfig" here, not
-// "field" as one might expect.
 @Entity
 @Table(name = "project")
 public class Project extends BaseIndexedBean implements Comparable<Project> {
@@ -148,17 +127,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private Folder preview;
 
     /**
-     * The variable {@code template} is populated from
-     * {@link org.goobi.webapi.resources.Projects} when calling
-     * <code><i>${SERVLET_CONTEXT}</i>/rest/projects</code> to output the
-     * templates available within a project as XML child nodes of the respective
-     * project.
-     */
-    @Transient
-    @XmlElement(name = "template")
-    public List<Template> template;
-
-    /**
      * Constructor.
      */
     public Project() {
@@ -168,7 +136,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.dmsImportRootPath = "";
     }
 
-    @XmlAttribute(name = "key")
     public String getTitle() {
         return this.title;
     }
