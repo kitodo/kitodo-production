@@ -63,7 +63,7 @@
                         styleClass="#{logicalNode.linked ? 'linked' : ''} #{logicalNode.undefined ? 'undefined' : ''}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
-                <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.unknownType'] : logicalElementType}"
+                <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.withoutType'] : logicalElementType}"
                               title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"/>
                 <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"/>
                 <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
