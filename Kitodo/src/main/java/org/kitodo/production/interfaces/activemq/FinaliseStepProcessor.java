@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.mq.processors;
+package org.kitodo.production.interfaces.activemq;
 
 import java.util.Date;
 import java.util.List;
@@ -17,8 +17,6 @@ import java.util.Map;
 
 import javax.jms.JMSException;
 
-import org.goobi.mq.ActiveMQProcessor;
-import org.goobi.mq.MapMessageObjectReader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Comment;
@@ -54,7 +52,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * @param ticket
      *            the incoming message
      *
-     * @see org.goobi.mq.ActiveMQProcessor#process(org.goobi.mq.MapMessageObjectReader)
+     * @see org.kitodo.production.interfaces.activemq.ActiveMQProcessor#process(org.kitodo.production.interfaces.activemq.MapMessageObjectReader)
      */
     @Override
     protected void process(MapMessageObjectReader ticket) throws DAOException, JMSException {
