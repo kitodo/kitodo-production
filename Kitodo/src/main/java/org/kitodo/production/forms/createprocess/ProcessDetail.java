@@ -134,7 +134,7 @@ public abstract class ProcessDetail implements Serializable {
      * @throws NoSuchMetadataFieldException
      *             if the field configured in the rule set does not exist
      */
-    abstract Pair<Method, Object> getStructureFieldValue()
+    abstract Pair<Collection<Method>, String> getStructureFieldValue()
             throws InvalidMetadataValueException, NoSuchMetadataFieldException;
 
     /**

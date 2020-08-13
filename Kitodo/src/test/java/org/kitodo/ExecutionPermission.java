@@ -18,20 +18,26 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.SystemUtils;
+
 public class ExecutionPermission {
 
     public static void setExecutePermission(File file) throws IOException {
-        Set<PosixFilePermission> permissions = setNoExecutePermission();
+        if (SystemUtils.IS_OS_UNIX) {
+            Set<PosixFilePermission> permissions = setNoExecutePermission();
 
-        permissions.add(PosixFilePermission.OWNER_EXECUTE);
-        permissions.add(PosixFilePermission.OTHERS_EXECUTE);
-        permissions.add(PosixFilePermission.GROUP_EXECUTE);
+            permissions.add(PosixFilePermission.OWNER_EXECUTE);
+            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+            permissions.add(PosixFilePermission.GROUP_EXECUTE);
 
-        Files.setPosixFilePermissions(file.toPath(), permissions);
+            Files.setPosixFilePermissions(file.toPath(), permissions);
+        }
     }
 
     public static void setNoExecutePermission(File file) throws IOException {
-        Files.setPosixFilePermissions(file.toPath(), setNoExecutePermission());
+        if (SystemUtils.IS_OS_UNIX) {
+            Files.setPosixFilePermissions(file.toPath(), setNoExecutePermission());
+        }
     }
 
     private static Set<PosixFilePermission> setNoExecutePermission() {

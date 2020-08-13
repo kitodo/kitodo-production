@@ -92,12 +92,13 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     }
 
     @Override
-    Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    Pair<Collection<Method>, String> getStructureFieldValue()
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
             if (!settings.isValid(value)) {
                 throw new InvalidMetadataValueException(label, value);
             }
-            return Pair.of(super.getStructureFieldSetter(settings), value);
+            return Pair.of(super.getStructureFieldSetters(settings), value);
         } else {
             return null;
         }
