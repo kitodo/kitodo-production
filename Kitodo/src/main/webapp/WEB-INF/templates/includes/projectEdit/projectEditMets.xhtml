@@ -180,7 +180,7 @@
     <p:selectOneMenu id="preview" value="#{ProjectForm.preview}" styleClass="so-folder-use"
                      disabled="#{ProjectForm.locked}">
         <f:selectItem itemLabel="#{msgs['folderUse.preview.disabled']}" itemValue="#{null}" noSelectionOption="true" />
-        <f:selectItems value="#{ProjectForm.folderList}" />
+        <f:selectItems value="#{ProjectForm.selectableFolders}" />
         <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 
@@ -189,7 +189,7 @@
     <p:selectOneMenu id="mediaView" value="#{ProjectForm.mediaView}" styleClass="so-folder-use"
                      disabled="#{ProjectForm.locked}">
         <f:selectItem itemLabel="#{msgs['folderUse.mediaView.disabled']}" itemValue="#{null}" noSelectionOption="true" />
-        <f:selectItems value="#{ProjectForm.folderList}" />
+        <f:selectItems value="#{ProjectForm.selectableFolders}" />
         <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 
@@ -198,7 +198,7 @@
     <p:selectOneMenu id="generatorSource" value="#{ProjectForm.generatorSource}" styleClass="so-folder-use"
                      disabled="#{ProjectForm.locked}">
         <f:selectItem itemLabel="#{msgs['folderUse.generatorSource.disabled']}" itemValue="#{null}" noSelectionOption="true" />
-        <f:selectItems value="#{ProjectForm.folderList}" />
+        <f:selectItems value="#{ProjectForm.selectableFolders}" />
         <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 </ui:composition>

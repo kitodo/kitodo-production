@@ -29,6 +29,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -483,8 +484,21 @@ public class ProjectForm extends BaseForm {
         return filteredFolderList;
     }
 
+    /**
+     * The need to commit deleted folders only after the save action requires a
+     * filter, so that those folders marked for delete are not shown anymore.
+     *
+     * @return modified ArrayList
+     */
+    public List<SelectItem> getSelectableFolders() {
+        List<SelectItem> folderList = getFolderList().stream()
+                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString())).collect(Collectors.toList());
+        return folderList;
+    }
+
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::toString, Function.identity()));
+        return getFolderList().parallelStream()
+                .collect(Collectors.toMap(Folder::toString, Function.identity()));
     }
 
     /**
@@ -535,7 +549,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getGeneratorSource() {
         Folder source = project.getGeneratorSource();
-        return Objects.isNull(source) ? null : source.toString();
+        return Objects.isNull(source) ? null : source.getFileGroup();
     }
 
     /**
@@ -556,7 +570,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getMediaView() {
         Folder mediaView = project.getMediaView();
-        return Objects.isNull(mediaView) ? null : mediaView.toString();
+        return Objects.isNull(mediaView) ? null : mediaView.getFileGroup();
     }
 
     /**
@@ -576,7 +590,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getPreview() {
         Folder preview = project.getPreview();
-        return Objects.isNull(preview) ? null : preview.toString();
+        return Objects.isNull(preview) ? null : preview.getFileGroup();
     }
 
     /**
