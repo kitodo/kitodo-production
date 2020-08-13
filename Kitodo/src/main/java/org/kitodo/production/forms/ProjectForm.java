@@ -317,7 +317,7 @@ public class ProjectForm extends BaseForm {
      * Save folder.
      */
     public void saveFolder() {
-        if (Objects.isNull(myFolder.getId()) || !this.project.getFolders().contains(this.myFolder)) {
+        if (!this.project.getFolders().contains(this.myFolder)) {
             this.project.getFolders().add(this.myFolder);
         }
     }
