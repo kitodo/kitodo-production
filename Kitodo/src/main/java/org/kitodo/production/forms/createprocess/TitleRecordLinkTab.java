@@ -165,7 +165,7 @@ public class TitleRecordLinkTab {
                     .getValue();
         } else {
             selectedInsertionPosition = null;
-            Helper.setMessage("createProcessForm.titleRecordLinkTab.noInsertionPosition");
+            Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.noInsertionPosition");
         }
     }
 
