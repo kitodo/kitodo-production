@@ -29,7 +29,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.HibernateException;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.enums.LinkingMode;
@@ -392,20 +391,14 @@ public class Folder extends BaseBean {
 
     /**
      * Sets the file group of the folder. The file group is the business key of
-     * the folder and may therefore only be set if the object is not yet
-     * persisted ({@code id} is null) or the object is being created
-     * ({@code fileGroup} is null).
+     * the folder and should therefore only be set if the object is not yet
+     * persisted.
      *
      * @param fileGroup
      *            file group to set
      */
     public void setFileGroup(String fileGroup) {
-        if (fileGroup.equals(this.fileGroup) || Objects.isNull(this.fileGroup) || Objects.isNull(id)) {
-            this.fileGroup = fileGroup;
-        } else {
-            throw new HibernateException(
-                    "Changing the business key after the object has been persisted is not allowed");
-        }
+        this.fileGroup = fileGroup;
     }
 
     /**
