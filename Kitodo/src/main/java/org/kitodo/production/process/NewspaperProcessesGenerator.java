@@ -719,13 +719,14 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void createNewYearProcess(String yearMark, Map<String, String> genericFields)
-            throws ProcessGenerationException, DataException, IOException, CommandException {
+            throws ProcessGenerationException, DataException, IOException, CommandException, RulesetNotFoundException {
         final long begin = System.nanoTime();
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
 
         String title = makeTitle(yearTitleDefinition.orElse("+'_'+#YEAR"), genericFields);
         getGeneratedProcess().setTitle(title);
+        ImportService.checkTasks(getGeneratedProcess(), yearType);
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
 
