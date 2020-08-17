@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -214,6 +215,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         Collection<Metadata> displayMetadata = metadata;
         if (Objects.nonNull(division)) {
             displayMetadata = new ArrayList<>(metadata);
+            for (URI contentId : division.getContentIds()) {
+                MetadataEntry contentIdEntry = new MetadataEntry();
+                contentIdEntry.setKey("CONTENTIDS");
+                contentIdEntry.setValue(contentId.toString());
+                displayMetadata.add(contentIdEntry);
+            }
             if (Objects.nonNull(division.getLabel())) {
                 MetadataEntry label = new MetadataEntry();
                 label.setKey("LABEL");
