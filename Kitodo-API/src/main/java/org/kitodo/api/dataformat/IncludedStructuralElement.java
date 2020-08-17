@@ -26,13 +26,6 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
  */
 public class IncludedStructuralElement extends Division<IncludedStructuralElement> {
     /**
-     * The label for this included structural element. The label is displayed in
-     * the graphical representation of the included structural element tree for
-     * this level.
-     */
-    private String label;
-
-    /**
      * Specifies the link if there is one.
      */
     private LinkedMetsResource link;
@@ -59,28 +52,8 @@ public class IncludedStructuralElement extends Division<IncludedStructuralElemen
      */
     protected IncludedStructuralElement(IncludedStructuralElement source) {
         super(source);
-        label = source.label;
         link = source.link;
         views = source.views;
-    }
-
-    /**
-     * Returns the label of this included structural element.
-     *
-     * @return the label
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * Sets the label of this included structural element.
-     *
-     * @param label
-     *            label to set
-     */
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     /**
@@ -113,7 +86,7 @@ public class IncludedStructuralElement extends Division<IncludedStructuralElemen
 
     @Override
     public String toString() {
-        return getType() + " \"" + label + "\"";
+        return getType() + " \"" + getLabel() + "\"";
     }
 
     @Override
@@ -128,7 +101,7 @@ public class IncludedStructuralElement extends Division<IncludedStructuralElemen
             return false;
         }
         IncludedStructuralElement other = (IncludedStructuralElement) o;
-        return Objects.equals(label, other.label) && Objects.equals(link, other.link)
+        return Objects.equals(link, other.link)
                 && Objects.equals(views, other.views);
     }
 
@@ -136,7 +109,6 @@ public class IncludedStructuralElement extends Division<IncludedStructuralElemen
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((label == null) ? 0 : label.hashCode());
         result = prime * result + ((link == null) ? 0 : link.hashCode());
         result = prime * result + ((views == null) ? 0 : views.hashCode());
         return result;
