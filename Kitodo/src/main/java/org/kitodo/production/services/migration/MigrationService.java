@@ -36,8 +36,8 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.migration.TaskComparator;
-import org.kitodo.production.migration.TemplateComparator;
+import org.kitodo.production.migration.TaskComparer;
+import org.kitodo.production.migration.TemplateComparer;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -95,14 +95,14 @@ public class MigrationService {
      * @return true, if the lists are equal, false otherwise.
      */
     public boolean tasksAreEqual(List<Task> firstProcessTasks, List<Task> secondProcessTasks) {
-        TaskComparator taskComparator = new TaskComparator();
+        TaskComparer taskComparer = new TaskComparer();
 
         Iterator<Task> firstTaskIterator = firstProcessTasks.iterator();
         Iterator<Task> secondTaskIterator = secondProcessTasks.iterator();
         while (firstTaskIterator.hasNext() && secondTaskIterator.hasNext()) {
             Task firstTask = firstTaskIterator.next();
             Task secondTask = secondTaskIterator.next();
-            if (taskComparator.compare(firstTask, secondTask) != 0) {
+            if (!taskComparer.isEqual(firstTask, secondTask)) {
                 return false;
             }
         }
@@ -117,7 +117,7 @@ public class MigrationService {
     public String createTaskString(List<Task> processTasks) {
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
         String taskString = processTasks.stream().map(Task::getTitle).collect(Collectors.joining(", "));
-        String hashCode = Integer.toHexString(processTasks.parallelStream().mapToInt(TaskComparator::hashCode).sum());
+        String hashCode = Integer.toHexString(processTasks.parallelStream().mapToInt(TaskComparer::hashCode).sum());
         return taskString + SEPARATOR + hashCode;
     }
 
@@ -163,12 +163,12 @@ public class MigrationService {
      */
     public Map<Template, Template> getMatchingTemplates(Set<Template> templates) throws DAOException {
         Map<Template, Template> matchingTemplates = new HashMap<>();
-        TemplateComparator templateComparator = new TemplateComparator();
+        TemplateComparer templateComparer = new TemplateComparer();
         List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
 
         for (Template templateToCreate : templates) {
             for (Template existingTemplate : existingTemplates) {
-                if (templateComparator.compare(templateToCreate, existingTemplate) == 0) {
+                if (templateComparer.isEqual(templateToCreate, existingTemplate)) {
                     matchingTemplates.put(templateToCreate, existingTemplate);
                 }
             }
