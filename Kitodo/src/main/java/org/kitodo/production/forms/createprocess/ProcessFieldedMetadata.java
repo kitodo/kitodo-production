@@ -511,6 +511,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
+            division.getContentIds().clear();
             metadata.clear();
             for (TreeNode child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
