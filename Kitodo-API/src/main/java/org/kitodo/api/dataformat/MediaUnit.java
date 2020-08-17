@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 
-<<<<<<< HEAD
 /**
  * A tree-shaped description of the media unit of the digital representation of
  * a digital medium. Each leaf of the physical structure tree represents a

@@ -200,8 +200,7 @@ public class Workpiece {
      */
     public List<MediaUnit> getAllMediaUnitsFilteredByTypePageAndSorted() {
         List<MediaUnit> mediaUnits = treeStream(mediaUnit).filter(m -> Objects.equals(m.getType(), MediaUnit.TYPE_PAGE))
-                .collect(Collectors.toList());
-        mediaUnits.sort(Comparator.comparing(MediaUnit::getOrder));
+                .sorted(Comparator.comparing(MediaUnit::getOrder)).collect(Collectors.toList());
         return Collections.unmodifiableList(mediaUnits);
     }
 
@@ -226,6 +225,6 @@ public class Workpiece {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Division<T>> Stream<T> treeStream(Division<T> tree) {
-        return Stream.concat(Stream.of((T) tree), tree.getChildren().stream().flatMap(child -> treeStream(child)));
+        return Stream.concat(Stream.of((T) tree), tree.getChildren().stream().flatMap(Workpiece::treeStream));
     }
 }
