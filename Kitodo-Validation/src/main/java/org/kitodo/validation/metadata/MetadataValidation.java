@@ -205,7 +205,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         if (!Workpiece.treeStream(workpiece.getRootElement())
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
-                .allMatch(workpiece.getMediaUnits()::contains)) {
+                .allMatch(workpiece.getAllMediaUnits()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
             error = true;
         }
@@ -227,7 +227,8 @@ public class MetadataValidation implements MetadataValidationInterface {
         Collection<String> messages = new HashSet<>();
 
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
-        unassignedMediaUnits.addAll(workpiece.getMediaUnits());
+        unassignedMediaUnits.addAll(Workpiece.treeStream(workpiece.getMediaUnit())
+                .filter(mediaUnit -> !mediaUnit.getMediaFiles().isEmpty()).collect(Collectors.toList()));
         Workpiece.treeStream(workpiece.getRootElement()).flatMap(structure -> structure.getViews().stream())
                 .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
