@@ -199,7 +199,8 @@ public class Workpiece {
      * @return all media units with type "page", sorted by their {@code order}
      */
     public List<MediaUnit> getAllMediaUnitsFilteredByTypePageAndSorted() {
-        List<MediaUnit> mediaUnits = treeStream(mediaUnit).filter(m -> Objects.equals(m.getType(), MediaUnit.TYPE_PAGE))
+        List<MediaUnit> mediaUnits = treeStream(mediaUnit)
+                .filter(mediaUnitToCheck -> Objects.equals(mediaUnitToCheck.getType(), MediaUnit.TYPE_PAGE))
                 .sorted(Comparator.comparing(MediaUnit::getOrder)).collect(Collectors.toList());
         return Collections.unmodifiableList(mediaUnits);
     }
