@@ -256,6 +256,18 @@ public class WorkflowControllerService {
         activateTasksForClosedTask(task);
     }
 
+    private boolean allChildrenClosed(Process process) {
+        if (!process.getChildren().isEmpty()) {
+            boolean allChildrenClosed = true;
+            for (Process child : process.getChildren()) {
+                allChildrenClosed &= child.getSortHelperStatus().equals("100000000")
+                        || child.getSortHelperStatus().equals("100000000000");
+            }
+            return allChildrenClosed;
+        }
+        return false;
+    }
+
     /**
      * Taken from CurrentTaskForm.
      *
@@ -430,7 +442,7 @@ public class WorkflowControllerService {
             ServiceManager.getProcessService().save(process);
         }
 
-        updateProcessSortHelperStatus(process);
+        ServiceManager.getProcessService().save(process);
 
         for (Task automaticTask : automaticTasks) {
             automaticTask.setProcessingBegin(new Date());
@@ -439,6 +451,10 @@ public class WorkflowControllerService {
         }
         for (Task finish : tasksToFinish) {
             close(finish);
+        }
+
+        if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
+            process.getParent().setSortHelperStatus("100000000");
         }
     }
 
