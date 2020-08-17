@@ -597,7 +597,6 @@ public class CalendarForm implements Serializable {
     public void addIssue(Block block) {
         if (Objects.nonNull(block)) {
             Issue issue = block.addIssue();
-            issue.setHeading(Helper.getTranslation("calendar.issue") + " " + (block.getIssues().indexOf(issue) + 1));
         }
     }
 
