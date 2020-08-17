@@ -74,7 +74,7 @@ public class ExportDms extends ExportMets {
      *             a subsequent task, or the METS file cannot be read when
      *             evaluating an XPath condition
      */
-    public void startExport(Task task) throws DataException, IOException {
+    public void startExport(Task task) throws DataException, IOException, DAOException {
         if (startExport(task.getProcess())) {
             new WorkflowControllerService().close(task);
         }

@@ -16,6 +16,7 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.EmptyTask;
@@ -75,7 +76,7 @@ public class TaskScriptThread extends EmptyTask {
         if (task.isTypeExportDMS()) {
             try {
                 taskService.executeDmsExport(this.task);
-            } catch (DataException | IOException e) {
+            } catch (DataException | IOException | DAOException e) {
                 logger.error("Data Exception occurred", e);
             }
         }

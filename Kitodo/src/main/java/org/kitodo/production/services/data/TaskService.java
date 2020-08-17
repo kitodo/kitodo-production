@@ -458,7 +458,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             CommandResult commandResult = commandService.runCommand(script);
             executedSuccessful = commandResult.isSuccessful();
             finishOrReturnAutomaticTask(task, automatic, commandResult.isSuccessful());
-        } catch (IOException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return executedSuccessful;
@@ -499,7 +499,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *             if the task cannot be closed
      */
     private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
-            throws DataException, IOException {
+            throws DataException, IOException, DAOException {
         if (automatic) {
             task.setEditType(TaskEditType.AUTOMATIC);
             if (successful) {
@@ -539,7 +539,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             generator.setSupervisor(executingThread);
             generator.run();
             finishOrReturnAutomaticTask(task, automatic, Objects.isNull(executingThread.getException()));
-        } catch (IOException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -550,7 +550,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @param task
      *            as Task object
      */
-    public void executeDmsExport(Task task) throws DataException, IOException {
+    public void executeDmsExport(Task task) throws DataException, IOException, DAOException {
         new ExportDms().startExport(task);
     }
 
