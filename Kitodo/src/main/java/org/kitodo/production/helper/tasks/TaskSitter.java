@@ -11,6 +11,9 @@
 
 package org.kitodo.production.helper.tasks;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -21,7 +24,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.joda.time.Duration;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
@@ -155,9 +157,9 @@ public class TaskSitter implements Runnable, ServletContextListener {
         int successfulMaxCount = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL);
         int failedMaxCount = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.TASK_MANAGER_KEEP_FAILED);
         Duration successfulMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL_MINS,
-            TimeUnit.MINUTES);
+                ChronoUnit.MINUTES);
         Duration failedMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_FAILED_MINS,
-            TimeUnit.MINUTES);
+                ChronoUnit.MINUTES);
 
         ListIterator<EmptyTask> position = taskManager.taskList.listIterator();
         EmptyTask task;
@@ -193,8 +195,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
                                 Duration durationDead = task.getDurationDead();
                                 if (Objects.isNull(durationDead)) {
                                     task.setTimeOfDeath();
-                                } else if (durationDead
-                                        .isLongerThan(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge)) {
+                                } else if (durationDead.compareTo(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge) > 0) {
                                     position.remove();
                                     break;
                                 }

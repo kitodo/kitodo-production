@@ -16,8 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,7 +51,6 @@ import org.elasticsearch.transport.Netty4Plugin;
 import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.joda.time.LocalDate;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
@@ -517,8 +519,8 @@ public class MockDatabase {
         Process firstProcess = new Process();
         firstProcess.setTitle("First process");
         firstProcess.setWikiField("field");
-        LocalDate localDate = new LocalDate(2017, 1, 20);
-        firstProcess.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 20);
+        firstProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcess.setSortHelperImages(30);
         firstProcess.setInChoiceListShown(true);
         firstProcess.setDocket(ServiceManager.getDocketService().getById(1));
@@ -530,8 +532,8 @@ public class MockDatabase {
         Process secondProcess = new Process();
         secondProcess.setTitle("Second process");
         secondProcess.setWikiField("problem");
-        localDate = new LocalDate(2017, 2, 10);
-        secondProcess.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 2, 10);
+        secondProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcess.setDocket(ServiceManager.getDocketService().getById(1));
         secondProcess.setProject(projectOne);
         secondProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
@@ -602,8 +604,8 @@ public class MockDatabase {
 
         Template firstTemplate = new Template();
         firstTemplate.setTitle("First template");
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        firstTemplate.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2016, 10, 20);
+        firstTemplate.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstTemplate.setInChoiceListShown(true);
         firstTemplate.setClient(project.getClient());
         firstTemplate.setDocket(ServiceManager.getDocketService().getById(2));
@@ -614,8 +616,8 @@ public class MockDatabase {
         Project thirdProject = ServiceManager.getProjectService().getById(3);
         Template secondTemplate = new Template();
         secondTemplate.setTitle("Second template");
-        localDate = new LocalDate(2017, 2, 10);
-        secondTemplate.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 2, 10);
+        secondTemplate.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondTemplate.setDocket(ServiceManager.getDocketService().getById(1));
         secondTemplate.setClient(thirdProject.getClient());
         secondTemplate.getProjects().add(thirdProject);
@@ -627,8 +629,8 @@ public class MockDatabase {
         thirdProject = ServiceManager.getProjectService().getById(3);
         Template thirdTemplate = new Template();
         thirdTemplate.setTitle("Third template");
-        localDate = new LocalDate(2018, 2, 10);
-        thirdTemplate.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2018, 2, 10);
+        thirdTemplate.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdTemplate.setClient(thirdProject.getClient());
         thirdTemplate.setDocket(ServiceManager.getDocketService().getById(1));
         thirdTemplate.getProjects().add(thirdProject);
@@ -639,8 +641,8 @@ public class MockDatabase {
 
         Template fourthTemplate = new Template();
         fourthTemplate.setTitle("Fourth template");
-        localDate = new LocalDate(2016, 10, 20);
-        fourthTemplate.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2016, 10, 20);
+        fourthTemplate.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         fourthTemplate.setInChoiceListShown(true);
         fourthTemplate.setClient(project.getClient());
         fourthTemplate.setDocket(ServiceManager.getDocketService().getById(2));
@@ -659,8 +661,8 @@ public class MockDatabase {
         firstProcessProperty.setObligatory(true);
         firstProcessProperty.setDataType(PropertyType.STRING);
         firstProcessProperty.setChoice(CHOICE);
-        LocalDate localDate = new LocalDate(2017, 1, 14);
-        firstProcessProperty.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 14);
+        firstProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcessProperty.getProcesses().add(firstProcess);
         ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
 
@@ -670,8 +672,8 @@ public class MockDatabase {
         secondProcessProperty.setObligatory(false);
         secondProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         secondProcessProperty.setChoice("chosen");
-        localDate = new LocalDate(2017, 1, 15);
-        secondProcessProperty.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 1, 15);
+        secondProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcessProperty.getProcesses().add(firstProcess);
         ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
 
@@ -681,8 +683,8 @@ public class MockDatabase {
         thirdProcessProperty.setObligatory(false);
         thirdProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         thirdProcessProperty.setChoice("chosen");
-        localDate = new LocalDate(2017, 7, 15);
-        thirdProcessProperty.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 7, 15);
+        thirdProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdProcessProperty.getProcesses().add(firstProcess);
         ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
 
@@ -693,8 +695,8 @@ public class MockDatabase {
         fourthProcessProperty.setObligatory(false);
         fourthProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         fourthProcessProperty.setChoice("chosen");
-        localDate = new LocalDate(2017, 7, 15);
-        fourthProcessProperty.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 7, 15);
+        fourthProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         fourthProcessProperty.getProcesses().add(secondProcess);
         ServiceManager.getPropertyService().saveToDatabase(fourthProcessProperty);
 
@@ -717,8 +719,8 @@ public class MockDatabase {
         firstProcessProperty.setObligatory(true);
         firstProcessProperty.setDataType(PropertyType.STRING);
         firstProcessProperty.setChoice(CHOICE);
-        LocalDate localDate = new LocalDate(2017, 1, 14);
-        firstProcessProperty.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 14);
+        firstProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcessProperty.getProcesses().add(firstProcess);
         ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
 
@@ -728,8 +730,8 @@ public class MockDatabase {
         secondProcessProperty.setObligatory(false);
         secondProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         secondProcessProperty.setChoice("chosen");
-        localDate = new LocalDate(2017, 1, 15);
-        secondProcessProperty.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 1, 15);
+        secondProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcessProperty.getProcesses().add(firstProcess);
         ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
 
@@ -739,8 +741,8 @@ public class MockDatabase {
         thirdProcessProperty.setObligatory(false);
         thirdProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         thirdProcessProperty.setChoice("chosen");
-        localDate = new LocalDate(2017, 7, 15);
-        thirdProcessProperty.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 7, 15);
+        thirdProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdProcessProperty.getProcesses().add(firstProcess);
         ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
 
@@ -778,10 +780,10 @@ public class MockDatabase {
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        firstProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017, 10, 20);
-        firstProject.setEndDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2016, 10, 20);
+        firstProject.setStartDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2017, 10, 20);
+        firstProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProject.setNumberOfPages(30);
         firstProject.setNumberOfVolumes(2);
         firstProject.setMetsRightsOwner("Test Owner");
@@ -793,10 +795,10 @@ public class MockDatabase {
 
         Project secondProject = new Project();
         secondProject.setTitle("Second project");
-        localDate = new LocalDate(2016, 11, 10);
-        secondProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017, 9, 15);
-        secondProject.setEndDate(localDate.toDate());
+        localDate = LocalDate.of(2016, 11, 10);
+        secondProject.setStartDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2017, 9, 15);
+        secondProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
@@ -811,10 +813,10 @@ public class MockDatabase {
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Inactive project");
-        localDate = new LocalDate(2014, 11, 10);
-        thirdProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2016, 9, 15);
-        thirdProject.setEndDate(localDate.toDate());
+        localDate = LocalDate.of(2014, 11, 10);
+        thirdProject.setStartDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2016, 9, 15);
+        thirdProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
         thirdProject.setActive(false);
@@ -976,8 +978,8 @@ public class MockDatabase {
         eleventhTask.setTitle("Additional");
         eleventhTask.setOrdering(1);
         eleventhTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        LocalDate localDate = new LocalDate(2016, 9, 25);
-        eleventhTask.setProcessingBegin(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2016, 9, 25);
+        eleventhTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         eleventhTask.setProcessingUser(firstUser);
         eleventhTask.setProcessingStatus(TaskStatus.DONE);
         eleventhTask.setProcess(secondProcess);
@@ -993,8 +995,8 @@ public class MockDatabase {
         twelfthTask.setTitle("Processed and Some");
         twelfthTask.setOrdering(2);
         twelfthTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2016, 10, 25);
-        twelfthTask.setProcessingBegin(localDate.toDate());
+        localDate = LocalDate.of(2016, 10, 25);
+        twelfthTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         twelfthTask.setProcessingUser(firstUser);
         twelfthTask.setProcessingStatus(TaskStatus.INWORK);
         twelfthTask.setProcess(secondProcess);
@@ -1009,8 +1011,8 @@ public class MockDatabase {
         thirteenTask.setTitle("Next Open");
         thirteenTask.setOrdering(3);
         thirteenTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2016, 10, 25);
-        thirteenTask.setProcessingBegin(localDate.toDate());
+        localDate = LocalDate.of(2016, 10, 25);
+        thirteenTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirteenTask.setProcessingStatus(TaskStatus.OPEN);
         thirteenTask.setProcess(secondProcess);
         thirteenTask.getRoles().add(role);
@@ -1026,22 +1028,22 @@ public class MockDatabase {
         firstTask.setCorrection(false);
         firstTask.setOrdering(1);
         firstTask.setEditType(TaskEditType.ADMIN);
-        LocalDate localDate = new LocalDate(2016, 8, 20);
-        firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2016, 9, 24);
-        firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2016, 9, 24);
-        firstTask.setProcessingEnd(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2016, 8, 20);
+        firstTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2016, 9, 24);
+        firstTask.setProcessingTime(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2016, 9, 24);
+        firstTask.setProcessingEnd(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstTask.setProcessingStatus(TaskStatus.DONE);
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
         secondTask.setOrdering(2);
         secondTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2016, 9, 25);
-        secondTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2016, 11, 25);
-        secondTask.setProcessingEnd(localDate.toDate());
+        localDate = LocalDate.of(2016, 9, 25);
+        secondTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2016, 11, 25);
+        secondTask.setProcessingEnd(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondTask.setProcessingStatus(TaskStatus.DONE);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
@@ -1052,8 +1054,8 @@ public class MockDatabase {
         thirdTask.setCorrection(true);
         thirdTask.setEditType(TaskEditType.MANUAL_SINGLE);
         thirdTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 1, 25);
-        thirdTask.setProcessingBegin(localDate.toDate());
+        localDate = LocalDate.of(2017, 1, 25);
+        thirdTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdTask.setProcessingStatus(TaskStatus.INWORK);
 
         Task fourthTask = new Task();
@@ -1083,8 +1085,8 @@ public class MockDatabase {
         firstTemplateProperty.setObligatory(true);
         firstTemplateProperty.setDataType(PropertyType.STRING);
         firstTemplateProperty.setChoice(CHOICE);
-        LocalDate localDate = new LocalDate(2017, 1, 14);
-        firstTemplateProperty.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 14);
+        firstTemplateProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstTemplateProperty.getTemplates().add(template);
         ServiceManager.getPropertyService().saveToDatabase(firstTemplateProperty);
 
@@ -1094,8 +1096,8 @@ public class MockDatabase {
         secondTemplateProperty.setObligatory(false);
         secondTemplateProperty.setDataType(PropertyType.STRING);
         secondTemplateProperty.setChoice("chosen");
-        localDate = new LocalDate(2017, 1, 15);
-        secondTemplateProperty.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 1, 15);
+        secondTemplateProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondTemplateProperty.getTemplates().add(template);
         ServiceManager.getPropertyService().saveToDatabase(secondTemplateProperty);
 
@@ -1284,15 +1286,15 @@ public class MockDatabase {
 
         Filter firstUserFilter = new Filter();
         firstUserFilter.setValue("\"id:1\"");
-        LocalDate localDate = new LocalDate(2017, 1, 14);
-        firstUserFilter.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 14);
+        firstUserFilter.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstUserFilter.setUser(user);
         ServiceManager.getFilterService().save(firstUserFilter);
 
         Filter secondUserFilter = new Filter();
         secondUserFilter.setValue("\"id:2\"");
-        localDate = new LocalDate(2017, 1, 15);
-        secondUserFilter.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 1, 15);
+        secondUserFilter.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondUserFilter.setUser(user);
         ServiceManager.getFilterService().save(secondUserFilter);
 
@@ -1310,8 +1312,8 @@ public class MockDatabase {
         firstWorkpieceProperty.setObligatory(true);
         firstWorkpieceProperty.setDataType(PropertyType.STRING);
         firstWorkpieceProperty.setChoice(CHOICE);
-        LocalDate localDate = new LocalDate(2017, 1, 13);
-        firstWorkpieceProperty.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 13);
+        firstWorkpieceProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstWorkpieceProperty.getWorkpieces().add(workpiece);
         ServiceManager.getPropertyService().saveToDatabase(firstWorkpieceProperty);
 
@@ -1321,8 +1323,8 @@ public class MockDatabase {
         secondWorkpieceProperty.setObligatory(false);
         secondWorkpieceProperty.setDataType(PropertyType.STRING);
         secondWorkpieceProperty.setChoice("chosen");
-        localDate = new LocalDate(2017, 1, 14);
-        secondWorkpieceProperty.setCreationDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 1, 14);
+        secondWorkpieceProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondWorkpieceProperty.getWorkpieces().add(workpiece);
         ServiceManager.getPropertyService().saveToDatabase(secondWorkpieceProperty);
 

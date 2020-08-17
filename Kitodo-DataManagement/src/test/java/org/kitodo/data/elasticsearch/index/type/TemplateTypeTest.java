@@ -13,12 +13,13 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Project;
@@ -63,8 +64,8 @@ public class TemplateTypeTest {
         Template firstTemplate = new Template();
         firstTemplate.setId(1);
         firstTemplate.setTitle("Testing");
-        LocalDate localDate = new LocalDate(2017, 1, 1);
-        firstTemplate.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 1);
+        firstTemplate.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstTemplate.setActive(false);
         firstTemplate.setTasks(tasks);
         firstTemplate.getProjects().add(project);

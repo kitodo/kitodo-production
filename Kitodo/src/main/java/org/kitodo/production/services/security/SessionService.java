@@ -11,11 +11,12 @@
 
 package org.kitodo.production.services.security;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.joda.time.LocalDateTime;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.security.SecurityConfig;
 import org.kitodo.production.security.SecuritySession;
@@ -72,7 +73,8 @@ public class SessionService {
                     SecuritySession securitySession = new SecuritySession();
                     securitySession.setUserName(user.getUsername());
                     securitySession.setSessionId(sessionInformation.getSessionId());
-                    securitySession.setLastRequest(new LocalDateTime(sessionInformation.getLastRequest()));
+                    securitySession.setLastRequest(sessionInformation.getLastRequest().toInstant()
+                            .atZone(ZoneId.systemDefault()).toLocalDateTime());
 
                     activeSessions.add(securitySession);
                 }

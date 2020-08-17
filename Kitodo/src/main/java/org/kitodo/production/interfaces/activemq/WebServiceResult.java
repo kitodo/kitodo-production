@@ -11,6 +11,8 @@
 
 package org.kitodo.production.interfaces.activemq;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import javax.jms.JMSException;
@@ -19,8 +21,6 @@ import javax.jms.MapMessage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 import org.kitodo.production.enums.ReportLevel;
 
 public class WebServiceResult {
@@ -79,8 +79,7 @@ public class WebServiceResult {
             try {
                 MapMessage report = ActiveMQDirector.getSession().createMapMessage();
 
-                DateTime now = new DateTime();
-                report.setString("timestamp", ISODateTimeFormat.dateTime().print(now));
+                report.setString("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
                 report.setString("queue", queueName);
                 report.setString("id", id);
                 report.setString("level", level.toLowerCase());

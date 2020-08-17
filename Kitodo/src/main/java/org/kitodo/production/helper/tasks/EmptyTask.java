@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper.tasks;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.Duration;
 import org.kitodo.production.helper.Helper;
 
 /**
@@ -194,7 +195,7 @@ public class EmptyTask extends Thread {
             return null;
         }
         long elapsed = System.nanoTime() - passedAway;
-        return new Duration(TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
+        return Duration.of(elapsed, ChronoUnit.NANOS);
     }
 
     /**

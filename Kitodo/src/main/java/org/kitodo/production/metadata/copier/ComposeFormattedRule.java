@@ -11,6 +11,9 @@
 
 package org.kitodo.production.metadata.copier;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +24,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Data copy rule that either overwrites the metadata described by the selector
@@ -80,7 +82,8 @@ public class ComposeFormattedRule extends DataCopyrule {
                         continue;
                     case 'T':
                     case 't':
-                        typecastedObjects[i] = ISODateTimeFormat.dateElementParser().parseMillis(elements.get(i));
+                        typecastedObjects[i] = LocalDateTime.parse(elements.get(i), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                         continue;
                     case 'X':
                     case 'd':

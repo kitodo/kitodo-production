@@ -15,11 +15,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
@@ -73,12 +75,12 @@ public class TaskTypeTest {
         firstTask.setOrdering(1);
         firstTask.setProcessingStatus(TaskStatus.DONE);
         firstTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        LocalDate localDate = new LocalDate(2017, 2, 17);
-        firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2017, 2, 1);
-        firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2017, 2, 17);
-        firstTask.setProcessingEnd(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 2, 17);
+        firstTask.setProcessingTime(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2017, 2, 1);
+        firstTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2017, 2, 17);
+        firstTask.setProcessingEnd(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstTask.setHomeDirectory((short) 1);
         firstTask.setTypeMetadata(true);
         firstTask.setTypeAutomatic(false);
@@ -93,10 +95,10 @@ public class TaskTypeTest {
         secondTask.setTitle("Rendering");
         secondTask.setOrdering(2);
         secondTask.setProcessingStatus(TaskStatus.INWORK);
-        localDate = new LocalDate(2017, 2, 17);
-        secondTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2017, 2, 10);
-        secondTask.setProcessingBegin(localDate.toDate());
+        localDate = LocalDate.of(2017, 2, 17);
+        secondTask.setProcessingTime(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2017, 2, 10);
+        secondTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondTask.setProcessingUser(users.get(1));
         secondTask.setRoles(roles);
         tasks.add(secondTask);
