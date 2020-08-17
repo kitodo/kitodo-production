@@ -39,7 +39,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.primefaces.model.DefaultTreeNode;
@@ -213,18 +212,18 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     private Collection<Metadata> addLabels(Collection<Metadata> metadata) {
         Collection<Metadata> displayMetadata = metadata;
-        if (Objects.nonNull(division) && division instanceof IncludedStructuralElement) {
+        if (Objects.nonNull(division)) {
             displayMetadata = new ArrayList<>(metadata);
-            if (Objects.nonNull(((IncludedStructuralElement) division).getLabel())) {
+            if (Objects.nonNull(division.getLabel())) {
                 MetadataEntry label = new MetadataEntry();
                 label.setKey("LABEL");
-                label.setValue(((IncludedStructuralElement) division).getLabel());
+                label.setValue(division.getLabel());
                 displayMetadata.add(label);
             }
-            if (Objects.nonNull(((IncludedStructuralElement) division).getOrderlabel())) {
+            if (Objects.nonNull(division.getOrderlabel())) {
                 MetadataEntry label = new MetadataEntry();
                 label.setKey("ORDERLABEL");
-                label.setValue(((IncludedStructuralElement) division).getOrderlabel());
+                label.setValue(division.getOrderlabel());
                 displayMetadata.add(label);
             }
         }
