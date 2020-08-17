@@ -12,6 +12,7 @@
 package org.kitodo.dataformat.access;
 
 import java.math.BigInteger;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
@@ -103,6 +104,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      */
     DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> mediaUnitsMap, int parentOrder) {
         super();
+        div.getCONTENTIDS().parallelStream().map(URI::create).forEachOrdered(super.getContentIds()::add);
         super.setLabel(div.getLABEL());
         for (Object mdSecType : div.getDMDID()) {
             super.getMetadata().addAll(readMetadata((MdSecType) mdSecType, MdSec.DMD_SEC));
@@ -238,6 +240,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     DivType toDiv(Map<MediaUnit, String> mediaUnitIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
         div.setID(metsReferrerId);
+        super.getContentIds().parallelStream().map(URI::toString).forEachOrdered(div.getCONTENTIDS()::add);
         div.setLABEL(super.getLabel());
         if (getOrder() > 0) {
             div.setORDER(BigInteger.valueOf(getOrder()));
