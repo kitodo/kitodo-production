@@ -12,12 +12,10 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
@@ -55,24 +53,17 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      */
     abstract ProcessSimpleMetadata getClone();
 
-    protected Collection<Method> getStructureFieldSetters(MetadataViewInterface field)
+    protected BiConsumer<Division<?>, String> getStructureFieldSetters(MetadataViewInterface field)
             throws NoSuchMetadataFieldException {
         String key = field.getId();
 
-        LinkedList<Method> structureFieldSetters = new LinkedList<>();
-        for (Class<? extends Division<?>> parentClass : PARENT_CLASSES) {
-            for (Method method : parentClass.getMethods()) {
-                if (method.getName().startsWith("set") && method.getParameterTypes().length == 1
-                        && method.getName().substring(3).equalsIgnoreCase(key)
-                        && method.getParameterTypes()[0].isAssignableFrom(String.class)) {
-                    structureFieldSetters.add(method);
-                }
-            }
-        }
-        if (structureFieldSetters.isEmpty()) {
-            throw new NoSuchMetadataFieldException(key, field.getLabel());
-        } else {
-            return structureFieldSetters;
+        switch (key.toUpperCase()) {
+            case "LABEL":
+                return Division::setLabel;
+            case "ORDERLABEL":
+                return Division::setOrderlabel;
+            default:
+                throw new NoSuchMetadataFieldException(key, field.getLabel());
         }
     }
 

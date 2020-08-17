@@ -13,10 +13,10 @@ package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -26,6 +26,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -134,7 +135,7 @@ public abstract class ProcessDetail implements Serializable {
      * @throws NoSuchMetadataFieldException
      *             if the field configured in the rule set does not exist
      */
-    abstract Pair<Collection<Method>, String> getStructureFieldValue()
+    abstract Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue()
             throws InvalidMetadataValueException, NoSuchMetadataFieldException;
 
     /**

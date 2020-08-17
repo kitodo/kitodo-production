@@ -12,8 +12,6 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -462,7 +461,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     @Override
-    Pair<Collection<Method>, String> getStructureFieldValue() {
+    Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue() {
         return null;
     }
 
@@ -509,13 +508,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             metadata.clear();
             for (TreeNode child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
-                Pair<Collection<Method>, String> metsFieldValue = row.getStructureFieldValue();
+                Pair<BiConsumer<Division<?>, String>, String> metsFieldValue = row.getStructureFieldValue();
                 if (Objects.nonNull(metsFieldValue)) {
-                    try {
-                        setMetsFieldValue(metsFieldValue);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new IllegalStateException(e);
-                    }
+                    metsFieldValue.getKey().accept(division, metsFieldValue.getValue());
                 } else {
                     metadata.addAll(row.getMetadata());
                 }
@@ -534,25 +529,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             metadataGroup.setGroup(metadata);
             container.metadata.add(metadataGroup);
             copy = false;
-        }
-    }
-
-    private void setMetsFieldValue(Pair<Collection<Method>, String> metsFieldValue)
-            throws IllegalAccessException, InvocationTargetException {
-
-        ClassCastException notAnInstace = null;
-        for (Method setter : metsFieldValue.getKey()) {
-            try {
-                setter.invoke(division, metsFieldValue.getValue());
-                notAnInstace = null;
-                break;
-            } catch (ClassCastException e) {
-                notAnInstace = e;
-                continue;
-            }
-        }
-        if (Objects.nonNull(notAnInstace)) {
-            throw notAnInstace;
         }
     }
 
