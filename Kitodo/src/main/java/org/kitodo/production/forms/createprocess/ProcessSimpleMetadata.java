@@ -21,14 +21,14 @@ import java.util.Objects;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Parent;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
 
-    static final List<Class<? extends Parent<?>>> PARENT_CLASSES = Arrays.asList(IncludedStructuralElement.class,
+    static final List<Class<? extends Division<?>>> PARENT_CLASSES = Arrays.asList(IncludedStructuralElement.class,
         MediaUnit.class);
 
     /**
@@ -60,7 +60,7 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
         String key = field.getId();
 
         LinkedList<Method> structureFieldSetters = new LinkedList<>();
-        for (Class<? extends Parent<?>> parentClass : PARENT_CLASSES) {
+        for (Class<? extends Division<?>> parentClass : PARENT_CLASSES) {
             for (Method method : parentClass.getMethods()) {
                 if (method.getName().startsWith("set") && method.getParameterTypes().length == 1
                         && method.getName().substring(3).equalsIgnoreCase(key)
@@ -94,5 +94,4 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
     public boolean isRequired() {
         return Objects.nonNull(settings) && settings.getMinOccurs() > 0;
     }
-
 }
