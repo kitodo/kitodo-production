@@ -12,9 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,49 +20,31 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
-import org.kitodo.api.Metadata;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 
-public class MediaUnit implements Parent<MediaUnit> {
-    /**
-     * The subordinate media units of this media unit, which form the media unit
-     * tree. The order of the substructures is subordinate media units by the
-     * order of the {@code <div>} elements in the
-     * {@code <structMap TYPE="PHYSICAL">} in the METS file.
-     */
-    private List<MediaUnit> children = new LinkedList<>();
-
+/**
+ * A tree-shaped description of the media unit of the digital representation of
+ * a digital medium. Each leaf of the physical structure tree represents a
+ * single medium, possibly in several forms of digital representation. For
+ * books, this is typically flat, meaning the {@link Workpiece#getMediaUnit()}
+ * represents the book, and its immediate children represent the individual
+ * views (front cover, inside cover, first page, second page, third page, …) For
+ * other media, this may well be more complex, such as an archival box
+ * containing envelopes with booklets and loose sheets and a dust jacket with a
+ * phonographic record in it, etc.
+ *
+ * <p>
+ * Media files that represent different representations of the same medium can
+ * be attached to a media unit. This can be still images in different
+ * resolutions with equal image content, but also the photography of the side of
+ * a record along with its digitized soundtrack.
+ */
+public class MediaUnit extends Division<MediaUnit> {
     /**
      * Each media unit can be available in different variants, for each of which
      * a media file is available. This is in this map.
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
-
-    /**
-     * The metadata for this media unit. This media unit can be described with
-     * any metadata.
-     */
-    private Collection<Metadata> metadata = new HashSet<>();
-
-    /**
-     * Sequence number of the media unit. The playback order of the media units
-     * when referenced from an included structural element is determined by this
-     * attribute (not by the order of the references).
-     */
-    private int order;
-
-    /**
-     * A human readable label for the order of this media unit. This need not be
-     * directly related to the order number. Examples of order labels could be
-     * “I, II, III, IV, V,  - , 1, 2, 3”, meanwhile the order would be “1, 2, 3,
-     * 4, 5, 6, 7, 8, 9”.
-     */
-    private String orderlabel;
-
-    /**
-     * The type of the media unit.
-     */
-    private String type;
 
     /**
      * Saves the METS identifier for the division.
@@ -74,7 +54,7 @@ public class MediaUnit implements Parent<MediaUnit> {
     /**
      * List of IncludedStructuralElements this view is assigned to.
      */
-    private List<IncludedStructuralElement> includedStructuralElements;
+    private transient List<IncludedStructuralElement> includedStructuralElements;
 
     /**
      * Creates a new MediaUnit.
@@ -85,16 +65,6 @@ public class MediaUnit implements Parent<MediaUnit> {
 
 
     /**
-     * Returns the subordinate media units associated with this media unit.
-     *
-     * @return the subordinate media units
-     */
-    @Override
-    public List<MediaUnit> getChildren() {
-        return children;
-    }
-
-    /**
      * Returns the map of available media variants with the corresponding media
      * file URIs.
      *
@@ -102,72 +72,6 @@ public class MediaUnit implements Parent<MediaUnit> {
      */
     public Map<MediaVariant, URI> getMediaFiles() {
         return mediaFiles;
-    }
-
-    /**
-     * Returns the metadata on this structure.
-     *
-     * @return the metadata
-     */
-    public Collection<Metadata> getMetadata() {
-        return metadata;
-    }
-
-    /**
-     * Returns the order number for this media unit.
-     *
-     * @return the order number
-     */
-    public int getOrder() {
-        return order;
-    }
-
-    /**
-     * Sets the order number for this media unit.
-     *
-     * @param order
-     *            order number to set
-     */
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-    /**
-     * Returns the order label for this media unit.
-     *
-     * @return the order label
-     */
-    public String getOrderlabel() {
-        return orderlabel;
-    }
-
-    /**
-     * Sets the order label for this media unit.
-     *
-     * @param orderlabel
-     *            order label to set
-     */
-    public void setOrderlabel(String orderlabel) {
-        this.orderlabel = orderlabel;
-    }
-
-    /**
-     * Returns the type of this media unit.
-     *
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the type of this media unit.
-     *
-     * @param type
-     *            type to set
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**
@@ -193,9 +97,12 @@ public class MediaUnit implements Parent<MediaUnit> {
     }
 
     /**
-     * Get includedStructuralElements.
+     * The list is available to assist to render the front-end by holding the
+     * elements of the root element that reference this media unit. It is
+     * transient, meaning that its content is not saved and is not restored when
+     * it is loaded.
      *
-     * @return value of includedStructuralElements
+     * @return a list that you can use
      */
     public List<IncludedStructuralElement> getIncludedStructuralElements() {
         return includedStructuralElements;
@@ -208,8 +115,8 @@ public class MediaUnit implements Parent<MediaUnit> {
             URI uri = mediaFiles.entrySet().iterator().next().getValue();
             fileName = FilenameUtils.getBaseName(uri.getPath()).concat(" (");
         }
-        if (Objects.nonNull(type)) {
-            fileName = type + ' ' + fileName;
+        if (Objects.nonNull(getType())) {
+            fileName = getType() + ' ' + fileName;
         }
         return mediaFiles.keySet().stream().map(MediaVariant::getUse)
                 .collect(Collectors.joining(", ", fileName, ")"));
@@ -220,27 +127,21 @@ public class MediaUnit implements Parent<MediaUnit> {
         if (this == o) {
             return true;
         }
+        if (!super.equals(o)) {
+            return false;
+        }
         if (!(o instanceof MediaUnit)) {
             return false;
         }
         MediaUnit mediaUnit = (MediaUnit) o;
-        return order == mediaUnit.order
-                && Objects.equals(children, mediaUnit.children)
-                && Objects.equals(mediaFiles, mediaUnit.mediaFiles)
-                && Objects.equals(metadata, mediaUnit.metadata)
-                && Objects.equals(orderlabel, mediaUnit.orderlabel)
-                && Objects.equals(type, mediaUnit.type);
+        return Objects.equals(mediaFiles, mediaUnit.mediaFiles);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
-        int hashCode = 1;
-        hashCode = prime * hashCode + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
-        hashCode = prime * hashCode + order;
-        hashCode = prime * hashCode + ((orderlabel == null) ? 0 : orderlabel.hashCode());
-        hashCode = prime * hashCode + (Objects.isNull(type) ? 0 : type.hashCode());
-        return hashCode;
+        int result = super.hashCode();
+        result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
+        return result;
     }
-
 }
