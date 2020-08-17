@@ -181,8 +181,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final String NEW_LINE_ENTITY = "\n";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
-    private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_FROM_CALENDAR = new HashMap<>();
-    private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT = new HashMap<>();
+    private static Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_FROM_CALENDAR = new HashMap<>();
+    private static Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT = new HashMap<>();
     private static final List<String> BG_COLORS = Arrays
             .asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
 
@@ -211,6 +211,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
         return localReference;
+    }
+
+    /**
+     * Emptys the cache generated from ruleset, so changes in Ruleset are recognized in new session.
+     */
+    public static void emptyCache() {
+        RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.clear();
+        RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.clear();
     }
 
     @Override
