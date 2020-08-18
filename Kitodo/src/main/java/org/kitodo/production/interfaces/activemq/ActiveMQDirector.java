@@ -57,7 +57,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     private static Collection<? extends ActiveMQProcessor> services;
 
     static {
-        services = Arrays.asList(new CreateNewProcessProcessor(), new FinaliseStepProcessor());
+        services = Arrays.asList(new FinaliseStepProcessor());
     }
 
     private static Connection connection = null;
