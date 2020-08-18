@@ -35,6 +35,11 @@ public abstract class Division<T extends Division<T>> {
     private List<T> children = new LinkedList<>();
 
     /**
+     * The label for this divison.
+     */
+    private String label;
+
+    /**
      * The metadata for this division.
      */
     private Collection<Metadata> metadata = new HashSet<>();
@@ -94,6 +99,7 @@ public abstract class Division<T extends Division<T>> {
      */
     protected Division(Division<T> source) {
         children = source.children;
+        label = source.label;
         metadata = source.metadata;
         order = source.order;
         orderlabel = source.orderlabel;
@@ -107,6 +113,25 @@ public abstract class Division<T extends Division<T>> {
      */
     public List<T> getChildren() {
         return children;
+    }
+
+    /**
+     * Returns the label of this included structural element.
+     *
+     * @return the label
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Sets the label of this included structural element.
+     *
+     * @param label
+     *            label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     /**
@@ -187,7 +212,8 @@ public abstract class Division<T extends Division<T>> {
             return false;
         }
         Division<?> other = (Division<?>) compared;
-        return Objects.equals(children, other.children) && Objects.equals(metadata, other.metadata)
+        return Objects.equals(children, other.children) && Objects.equals(label, other.label)
+                && Objects.equals(metadata, other.metadata)
                 && order == other.order && Objects.equals(orderlabel, other.orderlabel)
                 && Objects.equals(type, other.type);
     }
@@ -197,6 +223,7 @@ public abstract class Division<T extends Division<T>> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((children == null) ? 0 : children.hashCode());
+        result = prime * result + ((label == null) ? 0 : label.hashCode());
         result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
         result = prime * result + order;
         result = prime * result + ((orderlabel == null) ? 0 : orderlabel.hashCode());
