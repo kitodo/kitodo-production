@@ -105,7 +105,7 @@ public class Folder extends BaseBean {
      * contents of this folder will be linked.
      */
     @Column(name = "fileGroup")
-    private String fileGroup = "";
+    private String fileGroup;
 
     /**
      * An encapsulation of the content generator properties of the folder in a
@@ -215,7 +215,9 @@ public class Folder extends BaseBean {
      */
     public Collection<String> getFileGroups() {
         Collection<String> fileGroups = new TreeSet<>(DFG_VIEWER_FILEGRPS);
-        fileGroups.add(this.fileGroup);
+        if (Objects.nonNull(fileGroup)) {
+            fileGroups.add(this.fileGroup);
+        }
         return fileGroups;
     }
 
@@ -388,7 +390,9 @@ public class Folder extends BaseBean {
     }
 
     /**
-     * Sets the file group of the folder.
+     * Sets the file group of the folder. The file group is the business key of
+     * the folder and should therefore only be set if the object is not yet
+     * persisted.
      *
      * @param fileGroup
      *            file group to set
@@ -443,9 +447,7 @@ public class Folder extends BaseBean {
 
     /**
      * Sets the path pattern, containing the path to the folder relative to the
-     * process directory, and maybe an extra file name pattern. This getter is
-     * here to be used by Hibernate and JSF to access the field value, but
-     * should not be used for other purpose, unless you know what you are doing.
+     * process directory, and maybe an extra file name pattern.
      *
      * @param path
      *            pat to set
@@ -489,13 +491,7 @@ public class Folder extends BaseBean {
         if (this == object) {
             return true;
         }
-
-        if (object instanceof Folder) {
-            Folder folder = (Folder) object;
-            return Objects.equals(this.getId(), folder.getId());
-        }
-
-        return false;
+        return object instanceof Folder ? Objects.equals(this.fileGroup, ((Folder) object).fileGroup) : false;
     }
 
     /**
@@ -503,8 +499,7 @@ public class Folder extends BaseBean {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(fileGroup, urlStructure, mimeType, path, copyFolder, createFolder, derivative, dpi,
-                imageScale, imageSize, linkingMode);
+        return fileGroup.hashCode();
     }
 
     @Override
