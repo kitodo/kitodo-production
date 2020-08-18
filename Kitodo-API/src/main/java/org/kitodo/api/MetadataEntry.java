@@ -18,39 +18,28 @@ public class MetadataEntry extends Metadata {
     /**
      * The value of the metadata.
      */
-    private String value;
+    private String value = "";
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (Objects.isNull(obj)) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
         MetadataEntry other = (MetadataEntry) obj;
-        if (key == null) {
-            if (other.key != null) {
-                return false;
-            }
-        } else if (!key.equals(other.key)) {
+        if (!Objects.equals(key, other.key)) {
             return false;
         }
         if ((Objects.nonNull(domain) ? domain : MdSec.DMD_SEC) != (Objects.nonNull(other.domain) ? other.domain
                 : MdSec.DMD_SEC)) {
             return false;
         }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(value, other.value);
     }
 
     @Override
