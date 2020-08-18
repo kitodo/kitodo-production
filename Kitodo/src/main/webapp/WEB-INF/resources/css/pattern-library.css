@@ -1412,7 +1412,7 @@ Popup dialogs
 .ui-tabs-nav .ui-state-default a:link,
 .ui-tabs-nav .ui-state-default a:visited,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
-    color: var(--medium-gray);
+    color: var(--blue);
 }
 
 .ui-tabs-nav .ui-state-default a:hover,
