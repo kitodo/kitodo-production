@@ -71,7 +71,7 @@ public class PaginationPanel {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
         Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsSorted();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
         for (int i = 1; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
             mediaUnit.setOrder(i);
@@ -83,7 +83,7 @@ public class PaginationPanel {
      * This method is invoked if the generate dummy images button is clicked.
      */
     public void generateDummyImagesButtonClick() {
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsSorted();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
         int order = mediaUnits.isEmpty() ? 1 : mediaUnits.get(mediaUnits.size() - 1).getOrder() + 1;
         boolean withAutomaticPagination = ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION);
         Paginator orderlabel = new Paginator(metsEditorDefaultPagination(order));
@@ -281,7 +281,7 @@ public class PaginationPanel {
     }
 
     private void preparePaginationSelectionItems() {
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsSorted();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
         paginationSelectionItems = new ArrayList<>(mediaUnits.size());
         for (int i = 0; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
@@ -295,7 +295,8 @@ public class PaginationPanel {
         MediaUnit selectedMediaUnit = null;
         Optional<MediaUnit> optionalSelectedMediaUnit = dataEditor.getSelectedMediaUnit();
         if (dataEditor.getStructurePanel().isSeparateMedia() && Objects.nonNull(optionalSelectedMediaUnit)
-                && optionalSelectedMediaUnit.isPresent() && "page".equals(optionalSelectedMediaUnit.get().getType())) {
+                && optionalSelectedMediaUnit.isPresent()
+                && Objects.equals(optionalSelectedMediaUnit.get().getType(), MediaUnit.TYPE_PAGE)) {
             selectedMediaUnit = optionalSelectedMediaUnit.get();
         } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData();
@@ -305,7 +306,7 @@ public class PaginationPanel {
             }
         }
         if (Objects.nonNull(selectedMediaUnit)) {
-            List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsSorted();
+            List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
             for (int i = 0; i < mediaUnits.size(); i++) {
                 MediaUnit mediaUnit = mediaUnits.get(i);
                 if (mediaUnit.equals(selectedMediaUnit)) {
@@ -363,7 +364,7 @@ public class PaginationPanel {
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
                 paginationStartValue, fictitiousCheckboxChecked, selectPaginationSeparatorSelectedItem);
         Paginator paginator = new Paginator(initializer);
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsSorted();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
         if (selectPaginationScopeSelectedItem) {
             for (int i = paginationSelectionSelectedItems.get(0); i < mediaUnits.size(); i++) {
                 mediaUnits.get(i).setOrderlabel(paginator.next());

@@ -459,6 +459,7 @@ public class MetadataEditor {
 
     private static <T extends Division<T>> LinkedList<Division<T>> getAncestorsRecursive(Division<T> searched,
             Division<T> position, Division<T> parent) {
+
         if (position.equals(searched)) {
             if (Objects.isNull(parent)) {
                 return new LinkedList<>();

@@ -12,22 +12,19 @@
 package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The administrative structure of the product of an element that passes through
  * a Production workflow.
  */
 public class Workpiece {
-
-    // TODO: we probably need a way to configure MediaUnit types to be considered for renumbering/pagination!
-    private static final String PAGE = "page";
-
     /**
      * The time this file was first created.
      */
@@ -180,63 +177,55 @@ public class Workpiece {
     }
 
     /**
-     * Recursively search for all logical elements.
+     * Returns all included structural elements of the root element of the
+     * workpiece as a flat list. The list isn’t backed by the included
+     * structural elements, which means that insertions and deletions in the
+     * list would not change the included structural elements. Therefore a list
+     * that cannot be modified is returned.
      *
-     * @return list of all logical elements
+     * @return all included structural elements as an unmodifiable list
      */
     public List<IncludedStructuralElement> getAllIncludedStructuralElements() {
-        List<IncludedStructuralElement> includedStructuralElements = new LinkedList<>();
-        includedStructuralElements.add(rootElement);
-        includedStructuralElements.addAll(getAllIncludedStructuralElementsRecursive(rootElement));
-        return includedStructuralElements;
-    }
-
-    private List<IncludedStructuralElement> getAllIncludedStructuralElementsRecursive(IncludedStructuralElement parent) {
-        List<IncludedStructuralElement> includedStructuralElements = new LinkedList<>(parent.getChildren());
-        for (IncludedStructuralElement child : parent.getChildren()) {
-            if (Objects.nonNull(child)) {
-                includedStructuralElements.addAll(getAllIncludedStructuralElementsRecursive(child));
-            }
-        }
-        return includedStructuralElements;
+        return Collections.unmodifiableList(treeStream(rootElement).collect(Collectors.toList()));
     }
 
     /**
-     * Recursively search for all media units with type "page".
+     * Returns all media units of the media unit of the workpiece with type
+     * "page" sorted by their {@code order} as a flat list. The list isn’t
+     * backed by the media units, which means that insertions and deletions in
+     * the list would not change the media units. Therefore a list that cannot
+     * be modified is returned.
      *
-     * @return list of all media units with type "page", sorted by their "ORDER" attribute.
+     * @return all media units with type "page", sorted by their {@code order}
      */
-    public List<MediaUnit> getAllMediaUnitsSorted() {
-        List<MediaUnit> mediaUnits = getAllMediaUnits();
-        mediaUnits.sort(Comparator.comparing(MediaUnit::getOrder));
-        return mediaUnits.stream().filter(m -> m.getType().equals(PAGE)).collect(Collectors.toList());
+    public List<MediaUnit> getAllMediaUnitsFilteredByTypePageAndSorted() {
+        List<MediaUnit> mediaUnits = treeStream(mediaUnit)
+                .filter(mediaUnitToCheck -> Objects.equals(mediaUnitToCheck.getType(), MediaUnit.TYPE_PAGE))
+                .sorted(Comparator.comparing(MediaUnit::getOrder)).collect(Collectors.toList());
+        return Collections.unmodifiableList(mediaUnits);
     }
 
     /**
-     * Recursively search for all media units with type "page".
+     * Returns all media units of the media unit of the workpiece as a flat
+     * list. The list isn’t backed by the media units, which means that
+     * insertions and deletions in the list would not change the media units.
+     * Therefore a list that cannot be modified is returned.
      *
-     * @return list of all media units with type "page".
+     * @return all media units as an unmodifiable list
      */
     public List<MediaUnit> getAllMediaUnits() {
-        List<MediaUnit> mediaUnits = new LinkedList<>(mediaUnit.getChildren());
-        for (MediaUnit mediaUnit : mediaUnit.getChildren()) {
-            if (Objects.nonNull(mediaUnit)) {
-                mediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
-            }
-        }
-        return mediaUnits;
+        return Collections.unmodifiableList(treeStream(mediaUnit).collect(Collectors.toList()));
     }
 
-    private List<MediaUnit> getAllMediaUnitsRecursive(MediaUnit parent, List<MediaUnit> mediaUnits) {
-        List<MediaUnit> allMediaUnits = mediaUnits;
-        for (MediaUnit mediaUnit : parent.getChildren()) {
-            if (Objects.nonNull(mediaUnit)) {
-                allMediaUnits.add(mediaUnit);
-                if (!mediaUnit.getChildren().isEmpty()) {
-                    allMediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
-                }
-            }
-        }
-        return allMediaUnits;
+    /**
+     * Generates a stream of nodes from structure tree.
+     *
+     * @param tree
+     *            starting node
+     * @return all nodes as stream
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Division<T>> Stream<T> treeStream(Division<T> tree) {
+        return Stream.concat(Stream.of((T) tree), tree.getChildren().stream().flatMap(Workpiece::treeStream));
     }
 }

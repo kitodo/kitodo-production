@@ -32,7 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentHashMap.KeySetView;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -121,15 +120,12 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getRootElement(),
-            IncludedStructuralElement::getChildren)
-                .collect(Collectors.toList())) {
+        for (IncludedStructuralElement includedStructuralElement : workpiece.getAllIncludedStructuralElements()) {
             results.addAll(checkMetadataRules(includedStructuralElement.toString(), includedStructuralElement.getType(),
                 getMetadata(includedStructuralElement), ruleset, metadataLanguage, translations));
         }
 
-        for (MediaUnit mediaUnit : treeStream(workpiece.getMediaUnit(), MediaUnit::getChildren)
-                .collect(Collectors.toList())) {
+        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
             results.addAll(checkMetadataRules(mediaUnit.toString(), mediaUnit.getType(), getMetadata(mediaUnit),
                     ruleset, metadataLanguage, translations));
         }
@@ -198,7 +194,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> structuresWithoutMedia = treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
+        Collection<String> structuresWithoutMedia = Workpiece.treeStream(workpiece.getRootElement())
                 .filter(struc -> Objects.nonNull(struc.getType()) && struc.getViews().isEmpty() && struc.getChildren().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
@@ -207,7 +203,7 @@ public class MetadataValidation implements MetadataValidationInterface {
             warning = true;
         }
 
-        if (!treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
+        if (!Workpiece.treeStream(workpiece.getRootElement())
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
                 .allMatch(workpiece.getMediaUnits()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
@@ -232,7 +228,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
         unassignedMediaUnits.addAll(workpiece.getMediaUnits());
-        treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren).flatMap(structure -> structure.getViews().stream())
+        Workpiece.treeStream(workpiece.getRootElement()).flatMap(structure -> structure.getViews().stream())
                 .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
         if (!unassignedMediaUnits.isEmpty()) {
@@ -441,19 +437,5 @@ public class MetadataValidation implements MetadataValidationInterface {
         }
 
         return new ValidationResult(error ? State.ERROR : warning ? State.WARNING : State.SUCCESS, messages);
-    }
-
-    /**
-     * Generates a stream of nodes from a tree-like structure.
-     *
-     * @param tree
-     *            starting node
-     * @param childAccessor
-     *            function to access the children of the node
-     * @return all nodes as stream
-     */
-    private static <T> Stream<T> treeStream(T tree, Function<T, Collection<T>> childAccessor) {
-        return Stream.concat(Stream.of(tree),
-            childAccessor.apply(tree).stream().flatMap(child -> treeStream(child, childAccessor)));
     }
 }

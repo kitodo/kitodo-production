@@ -18,9 +18,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -114,9 +116,10 @@ public class ProcessListBaseView extends BaseForm {
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), selectedProcess.getId() }, logger, e);
                 return;
             }
-            int numberOfProcessImages = workpiece.getAllMediaUnitsSorted().size();
+            int numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getMediaUnit())
+                    .filter(mediaUnit -> Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)).count();
             this.numberOfGlobalImages += numberOfProcessImages;
-            int numberOfProcessStructuralElements = workpiece.getAllIncludedStructuralElements().size();
+            int numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getRootElement()).count();
             this.numberOfGlobalStructuralElements += numberOfProcessStructuralElements;
             int numberOfProcessMetadata = Math
                     .toIntExact(MetsService.countLogicalMetadata(workpiece));

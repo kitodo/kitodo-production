@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterDataEditor;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
@@ -76,12 +77,12 @@ public class PhysicalStructMapType extends StructMapType {
 
     private String getPhysicalDivTypeByFileType(FileType file) {
         if (file.getMIMETYPE().contains("image")) {
-            return "page";
+            return MediaUnit.TYPE_PAGE;
         }
         if (file.getMIMETYPE().contains("audio")) {
-            return "track";
+            return MediaUnit.TYPE_TRACK;
         }
-        return "other";
+        return MediaUnit.TYPE_OTHER;
     }
 
     private DivType getDivById(String id) {
@@ -95,7 +96,7 @@ public class PhysicalStructMapType extends StructMapType {
 
     /**
      * Returns a list of divs with the given ids.
-     * 
+     *
      * @param ids
      *            The list of ids as String objects.
      * @return The list of DivType objects.
