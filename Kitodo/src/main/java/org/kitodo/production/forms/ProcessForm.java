@@ -90,6 +90,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public ProcessForm() {
         super();
+        ProcessService.emptyCache();
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProcessService()));
     }
 
