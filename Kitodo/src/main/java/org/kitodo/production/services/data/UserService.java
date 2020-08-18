@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,7 +33,6 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.LocalDateTime;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
@@ -406,10 +406,9 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      *            String
      */
     private void addFilterToUser(User user, String userFilter) throws DataException {
-        LocalDateTime localDateTime = new LocalDateTime();
         Filter filter = new Filter();
         filter.setValue(userFilter);
-        filter.setCreationDate(localDateTime.toDate());
+        filter.setCreationDate(new Date());
         filter.setUser(user);
         ServiceManager.getFilterService().save(filter);
         refresh(user);

@@ -11,7 +11,8 @@
 
 package org.kitodo.production.security;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Class for storing information of user sessions.
@@ -72,7 +73,7 @@ public class SecuritySession {
      * @return The lastRequest.
      */
     public String getLastRequestAsString() {
-        return lastRequest.toString("yyyy-MM-dd HH:mm:ss");
+        return lastRequest.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     /**

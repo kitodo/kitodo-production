@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -23,7 +24,6 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -100,7 +100,7 @@ public class MetsKitodoWriterTest {
             metsKitodoWrapper.getDmdSecs().size(), savedMetsKitodoWrapper.getDmdSecs().size());
 
         Assert.assertEquals("Lastmoddate of Mets header was wrong", savedMetsKitodoWrapper.getMets().getMetsHdr().getLASTMODDATE().getHour(),
-            new DateTime().getHourOfDay());
+            LocalDateTime.now().getHour());
 
         String result = metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
 

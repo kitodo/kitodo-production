@@ -17,12 +17,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
@@ -88,8 +89,8 @@ public class ProcessTypeTest {
         Process firstProcess = new Process();
         firstProcess.setId(1);
         firstProcess.setTitle("Testing");
-        LocalDate localDate = new LocalDate(2017, 1, 1);
-        firstProcess.setCreationDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 1);
+        firstProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcess.setSortHelperImages(20);
         firstProcess.setBatches(batches);
         firstProcess.setTasks(tasks);

@@ -12,13 +12,14 @@
 package org.kitodo.config;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.Duration;
 import org.kitodo.config.beans.Parameter;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.ConfigParameterException;
@@ -119,13 +120,13 @@ public class ConfigCore extends KitodoConfig {
      *
      * @param key
      *            as Parameter whose value is to be returned
-     * @param timeUnit
-     *            as TimeUnit
+     * @param temporalUnit
+     *            as TemporalUnit
      * @return Parameter as Duration
      */
-    public static Duration getDurationParameter(ParameterCore key, TimeUnit timeUnit) {
+    public static Duration getDurationParameter(ParameterCore key, TemporalUnit temporalUnit) {
         long duration = getLongParameterOrDefaultValue(key);
-        return new Duration(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
+        return Duration.of(duration, temporalUnit);
     }
 
     /**

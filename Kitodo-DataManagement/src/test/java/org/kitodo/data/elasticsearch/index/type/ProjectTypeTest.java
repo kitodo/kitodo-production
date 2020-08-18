@@ -16,11 +16,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
@@ -135,10 +137,10 @@ public class ProjectTypeTest {
         Project firstProject = new Project();
         firstProject.setId(1);
         firstProject.setTitle("Testing");
-        LocalDate localDate = new LocalDate(2017, 1, 1);
-        firstProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017, 3, 1);
-        firstProject.setEndDate(localDate.toDate());
+        LocalDate localDate = LocalDate.of(2017, 1, 1);
+        firstProject.setStartDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2017, 3, 1);
+        firstProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProject.setNumberOfPages(100);
         firstProject.setNumberOfVolumes(10);
         firstProject.setTemplates(templates);
@@ -151,10 +153,10 @@ public class ProjectTypeTest {
         Project secondProject = new Project();
         secondProject.setId(2);
         secondProject.setTitle("Rendering");
-        localDate = new LocalDate(2017, 1, 10);
-        secondProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017, 9, 10);
-        secondProject.setEndDate(localDate.toDate());
+        localDate = LocalDate.of(2017, 1, 10);
+        secondProject.setStartDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        localDate = LocalDate.of(2017, 9, 10);
+        secondProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProject.setNumberOfPages(2000);
         secondProject.setNumberOfVolumes(20);
         secondProject.setTemplates(templates);
