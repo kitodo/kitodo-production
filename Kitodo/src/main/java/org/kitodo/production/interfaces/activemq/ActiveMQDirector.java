@@ -54,17 +54,16 @@ import org.kitodo.config.enums.ParameterCore;
 public class ActiveMQDirector implements ServletContextListener, ExceptionListener {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
-    // *** CONFIGURATION ***
-    // When implementing new Services, add them to this list:
-    protected static ActiveMQProcessor[] services;
+    // When implementing new services, add them to this list
+    private static ActiveMQProcessor[] services;
 
     static {
         services = new ActiveMQProcessor[] {new CreateNewProcessProcessor(), new FinaliseStepProcessor() };
     }
 
-    protected static Connection connection = null;
-    protected static Session session = null;
-    protected static MessageProducer resultsTopic;
+    private static Connection connection = null;
+    private static Session session = null;
+    private static MessageProducer resultsTopic;
 
     /**
      * The method is called by the web container on startup
@@ -96,7 +95,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      *            that the server is run inside the same virtual machine
      * @return the session object or “null” upon error
      */
-    protected Session connectToServer(String server) {
+    private Session connectToServer(String server) {
         try {
             connection = new ActiveMQConnectionFactory(server).createConnection();
             connection.start();
@@ -117,7 +116,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      * service process the message. The message checker is saved inside the
      * service to be able to shut it down later.
      */
-    protected void registerListeners(ActiveMQProcessor[] processors) {
+    private void registerListeners(ActiveMQProcessor[] processors) {
         for (ActiveMQProcessor processor : processors) {
             if (Objects.nonNull(processor.getQueueName())) {
                 MessageConsumer messageChecker;
@@ -148,7 +147,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      *            name of the active MQ topic
      * @return a MessageProducer object ready for writing or “null” on error
      */
-    protected MessageProducer setUpReportChannel(String topic) {
+    private MessageProducer setUpReportChannel(String topic) {
         MessageProducer reportChannel;
         try {
             Destination channel = session.createTopic(topic);
