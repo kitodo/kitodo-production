@@ -51,8 +51,6 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      *
      * @param ticket
      *            the incoming message
-     *
-     * @see org.kitodo.production.interfaces.activemq.ActiveMQProcessor#process(org.kitodo.production.interfaces.activemq.MapMessageObjectReader)
      */
     @Override
     protected void process(MapMessageObjectReader ticket) throws DAOException, JMSException {

@@ -68,8 +68,6 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      * The method is called by the web container on startup
      * and is used to start up the active MQ connection. All processors from
      * {@link #services} are registered.
-     *
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
     @Override
     public void contextInitialized(ServletContextEvent initialisation) {
@@ -193,8 +191,6 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     /**
      * The method contextDestroyed is called by the web container on shutdown.
      * It shuts down all listeners, the session and last, the connection.
-     *
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
     @Override
     public void contextDestroyed(ServletContextEvent destruction) {
