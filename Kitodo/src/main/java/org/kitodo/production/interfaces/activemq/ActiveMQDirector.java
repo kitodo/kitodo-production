@@ -19,7 +19,6 @@ import java.util.Optional;
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
-import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
@@ -50,7 +49,7 @@ import org.kitodo.config.enums.ParameterCore;
  * implementation as required for the connection.
  */
 @WebListener
-public class ActiveMQDirector implements ServletContextListener, ExceptionListener {
+public class ActiveMQDirector implements ServletContextListener {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
     // When implementing new services, add them to this list
@@ -96,7 +95,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
         try {
             connection = new ActiveMQConnectionFactory(server).createConnection();
             connection.start();
-            connection.setExceptionListener(this); // ActiveMQDirector.onException()
+            connection.setExceptionListener(exception -> logger.error(exception));
             return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (JMSException | RuntimeException e) {
             logger.fatal("Error connecting to ActiveMQ server, giving up.", e);
@@ -156,16 +155,6 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);
         }
         return null;
-    }
-
-    /**
-     * This method is referenced from this.connectToServer() − see there.
-     *
-     * @see javax.jms.ExceptionListener#onException(javax.jms.JMSException)
-     */
-    @Override
-    public void onException(JMSException exce) {
-        logger.error(exce);
     }
 
     /**
