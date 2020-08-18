@@ -116,12 +116,12 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     private void registerListeners(Collection<? extends ActiveMQProcessor> processors) {
         for (ActiveMQProcessor processor : processors) {
             if (Objects.nonNull(processor.getQueueName())) {
-                MessageConsumer messageChecker;
+                MessageConsumer messageConsumer;
                 try {
                     Destination queue = session.createQueue(processor.getQueueName());
-                    messageChecker = session.createConsumer(queue);
-                    messageChecker.setMessageListener(processor);
-                    processor.saveChecker(messageChecker);
+                    messageConsumer = session.createConsumer(queue);
+                    messageConsumer.setMessageListener(processor);
+                    processor.setMessageConsumer(messageConsumer);
                 } catch (JMSException | RuntimeException e) {
                     logger.fatal("Error setting up monitoring for \"" + processor.getQueueName() + "\": Giving up.", e);
                 }
@@ -194,12 +194,12 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      */
     @Override
     public void contextDestroyed(ServletContextEvent destruction) {
-        // Shut down all watchers on any queues
+        // Shut down all message consumers on any queues
         for (ActiveMQProcessor service : services) {
-            MessageConsumer watcher = service.getChecker();
-            if (Objects.nonNull(watcher)) {
+            MessageConsumer messageConsumer = service.getMessageConsumer();
+            if (Objects.nonNull(messageConsumer)) {
                 try {
-                    watcher.close();
+                    messageConsumer.close();
                 } catch (JMSException e) {
                     logger.error(e.getMessage(), e);
                 }

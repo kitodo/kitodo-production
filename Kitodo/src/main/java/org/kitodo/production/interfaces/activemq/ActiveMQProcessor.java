@@ -35,7 +35,7 @@ import org.kitodo.production.helper.Helper;
 public abstract class ActiveMQProcessor implements MessageListener {
 
     private String queueName; // the queue name will be available here
-    private MessageConsumer checker;
+    private MessageConsumer messageConsumer;
 
     /**
      * Implement the method process() to let your service actually do what you
@@ -130,12 +130,12 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * the method onMessage() is saved inside the class, to have it lately for
      * shutting down the service again.
      *
-     * @param checker
+     * @param messageConsumer
      *            the MessageConsumer object responsible for checking messages
      */
 
-    public void saveChecker(MessageConsumer checker) {
-        this.checker = checker;
+    public void setMessageConsumer(MessageConsumer messageConsumer) {
+        this.messageConsumer = messageConsumer;
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      *
      * @return the MessageConsumer object responsible for checking messages
      */
-    public MessageConsumer getChecker() {
-        return checker;
+    public MessageConsumer getMessageConsumer() {
+        return messageConsumer;
     }
 }
