@@ -11,6 +11,8 @@
 
 package org.kitodo.forms;
 
+import java.util.Objects;
+
 import org.kitodo.data.database.beans.Folder;
 
 /**
@@ -65,6 +67,11 @@ public class FolderGenerator {
      */
     public FolderGenerator(Folder folder) {
         this.folder = folder;
+        if (Objects.nonNull(folder)) {
+            this.width = folder.getImageSize().orElse(width);
+            this.factor = folder.getImageScale().orElse(factor);
+            this.dpi = folder.getDpi().orElse(dpi);
+        }
     }
 
     /**

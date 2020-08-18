@@ -45,6 +45,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
+import org.kitodo.forms.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
@@ -62,6 +63,12 @@ public class ProjectForm extends BaseForm {
     private List<Template> deletedTemples = new ArrayList<>();
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
+
+    /**
+     * An encapsulation of the content generator properties of the folder in a
+     * way suitable to the JSF design.
+     */
+    private FolderGenerator generator = new FolderGenerator(this.myFolder);
 
     /**
      * Initialize the list of displayed list columns.
@@ -308,6 +315,7 @@ public class ProjectForm extends BaseForm {
     public String addFolder() {
         this.myFolder = new Folder();
         this.myFolder.setProject(this.project);
+        this.generator = new FolderGenerator(myFolder);
         this.newFolders.add(this.myFolder.getId());
         return this.stayOnCurrentPage;
     }
@@ -515,6 +523,17 @@ public class ProjectForm extends BaseForm {
      */
     public void setMyFolder(Folder myFolder) {
         this.myFolder = myFolder;
+        this.generator = new FolderGenerator(myFolder);
+    }
+
+    /**
+     * Returns an encapsulation to access the generator properties of the folder
+     * in a JSF-friendly way.
+     *
+     * @return the generator controller
+     */
+    public FolderGenerator getGenerator() {
+        return generator;
     }
 
     /**
