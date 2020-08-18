@@ -49,32 +49,21 @@ public class MetadataGroup extends Metadata {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (Objects.isNull(obj)) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
         MetadataGroup other = (MetadataGroup) obj;
-        if (key == null) {
-            if (other.key != null) {
-                return false;
-            }
-        } else if (!key.equals(other.key)) {
+        if (!Objects.equals(key, other.key)) {
             return false;
         }
         if ((Objects.nonNull(domain) ? domain : MdSec.DMD_SEC) != (Objects.nonNull(other.domain) ? other.domain
                 : MdSec.DMD_SEC)) {
             return false;
         }
-        if (group == null) {
-            if (other.group != null) {
-                return false;
-            }
-        } else if (!group.equals(other.group)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(group, other.group);
     }
 
     @Override
