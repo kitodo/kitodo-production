@@ -11,6 +11,8 @@
 
 package org.kitodo.production.interfaces.activemq;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -55,10 +57,10 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
     // When implementing new services, add them to this list
-    private static ActiveMQProcessor[] services;
+    private static Collection<? extends ActiveMQProcessor> services;
 
     static {
-        services = new ActiveMQProcessor[] {new CreateNewProcessProcessor(), new FinaliseStepProcessor() };
+        services = Arrays.asList(new CreateNewProcessProcessor(), new FinaliseStepProcessor());
     }
 
     private static Connection connection = null;
@@ -68,7 +70,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     /**
      * The method is called by the web container on startup
      * and is used to start up the active MQ connection. All processors from
-     * services[] are registered.
+     * {@link #services} are registered.
      *
      * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
@@ -116,7 +118,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      * service process the message. The message checker is saved inside the
      * service to be able to shut it down later.
      */
-    private void registerListeners(ActiveMQProcessor[] processors) {
+    private void registerListeners(Collection<? extends ActiveMQProcessor> processors) {
         for (ActiveMQProcessor processor : processors) {
             if (Objects.nonNull(processor.getQueueName())) {
                 MessageConsumer messageChecker;
