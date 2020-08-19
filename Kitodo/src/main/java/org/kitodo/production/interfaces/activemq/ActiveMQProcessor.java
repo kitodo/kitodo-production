@@ -33,17 +33,23 @@ import org.kitodo.production.helper.Helper;
  * shut it down later.
  */
 public abstract class ActiveMQProcessor implements MessageListener {
+    /**
+     * The name of the queue from which this processor is processing messages.
+     */
+    private String queueName;
 
-    private String queueName; // the queue name will be available here
+    /**
+     * The message consumer object that actually receives the messages and
+     * executes {@link #process(MapMessageObjectReader)}.
+     */
     private MessageConsumer messageConsumer;
 
     /**
-     * Implement the method process() to let your service actually do what you
-     * want him to do.
+     * Must be implemented to let the service do what it should do.
      *
      * @param ticket
-     *            A MapMessage which can be processor-specific except that it
-     *            requires to have a field “id”.
+     *            an object providing access to the fields of the received map
+     *            message
      */
     protected abstract void process(MapMessageObjectReader ticket) throws DAOException, JMSException;
 
@@ -79,22 +85,20 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * <p>
      * Since this will be the same for all processors which use MapMessages, I
      * extracted the portion into the abstract class.
-     *
-     * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
      */
     @Override
     public void onMessage(Message arg) {
-        MapMessageObjectReader ticket;
+        MapMessageObjectReader message;
         String ticketID = null;
 
         try {
-            // Basic check ticket
+            // Basic check message
             if (arg instanceof MapMessage) {
-                ticket = new MapMessageObjectReader((MapMessage) arg);
+                message = new MapMessageObjectReader((MapMessage) arg);
             } else {
                 throw new IllegalArgumentException("Incompatible types.");
             }
-            ticketID = ticket.getMandatoryString("id");
+            ticketID = message.getMandatoryString("id");
 
             // turn on logging
             Map<String, String> loggingConfig = new HashMap<>();
@@ -102,8 +106,8 @@ public abstract class ActiveMQProcessor implements MessageListener {
             loggingConfig.put("id", ticketID);
             Helper.setActiveMQReporting(loggingConfig);
 
-            // process ticket
-            process(ticket);
+            // process message
+            process(message);
 
             // turn off logging again
             Helper.setActiveMQReporting(null);
@@ -117,7 +121,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     /**
-     * This method is used to get the queue name upon initialisation.
+     * Returns the queue name. Maybe null if the processor is not active.
      *
      * @return the queue name
      */
@@ -126,9 +130,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     /**
-     * The parent object which is there to check for new messages and to trigger
-     * the method onMessage() is saved inside the class, to have it lately for
-     * shutting down the service again.
+     * Sets the message consumer to have it later for shutting down the service.
      *
      * @param messageConsumer
      *            the MessageConsumer object responsible for checking messages
@@ -139,10 +141,9 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     /**
-     * This method is used to get back the message checking object upon
-     * shutdown.
+     * Returns the message consumer. Maybe null. Used for shutdown.
      *
-     * @return the MessageConsumer object responsible for checking messages
+     * @return the message consumer
      */
     public MessageConsumer getMessageConsumer() {
         return messageConsumer;
