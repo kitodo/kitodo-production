@@ -531,6 +531,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setTaskStatusUp() throws DataException, IOException, DAOException {
         workflowControllerService.setTaskStatusUp(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
+        refreshParent();
     }
 
     /**
@@ -539,6 +540,18 @@ public class ProcessForm extends TemplateBaseForm {
     public void setTaskStatusDown() {
         workflowControllerService.setTaskStatusDown(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
+        refreshParent();
+    }
+
+    private void refreshParent() {
+        try {
+            if (Objects.nonNull(process.getParent())) {
+                this.process.setParent(ServiceManager.getProcessService().getById(process.getParent().getId()));
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getParent().getId() }, logger, e);
+        }
     }
 
     /**
