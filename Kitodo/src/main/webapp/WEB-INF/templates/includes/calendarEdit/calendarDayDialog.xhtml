@@ -19,22 +19,23 @@
     <p:dialog id="calendarDayDialog"
               widgetVar="calendarDayDialog"
               resizable="false"
-              width="800"
-              height="900"
+              width="640"
+              height="480"
               showHeader="false"
               dynamic="true"
+              position="center center"
               modal="true">
+        <!--@elvariable id="date" type="java.time.LocalDate"-->
+        <ui:param name="date" value="#{CalendarForm.selectedDate}"/>
+        <h3>
+            #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
+            #{date.toString()}
+            (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
+        </h3>
         <h:form id="calendarDayForm">
-            <ui:param name="date" value="#{CalendarForm.selectedDate}"/>
-            <p:panelGrid columns="1" layout="grid">
-                <h3>
-                    #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
-                    #{date.toString()}
-                    (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
-                </h3>
-                <h:panelGroup layout="block"
-                              styleClass="dialogFieldWrapper">
-
+            <h:panelGroup layout="block"
+                          styleClass="dialogFieldWrapper">
+                <p:panelGrid columns="1" layout="grid">
                     <p:repeat value="#{CalendarForm.calendarSheet.get(date.dayOfMonth - 1).get(date.monthValue - 1).issues}"
                               var="issue">
                         <h:panelGroup layout="block"
@@ -135,24 +136,23 @@
                                                  icon="fa fa-plus"
                                                  iconPos="right"
                                                  styleClass="secondary"
+                                                 oncomplete="PF('calendarDayDialog').initPosition();"
                                                  update="editForm:calendarTabView:calendarDetailsLayout
                                                          calendarDayForm"/>
                             </p:fragment>
-
-
                         </h:panelGroup>
                     </p:repeat>
-                </h:panelGroup>
-                <h:panelGroup layout="block"
-                              styleClass="dialogButtonWrapper">
-                    <p:commandButton id="close"
-                                     onclick="PF('calendarDayDialog').hide()"
-                                     value="#{msgs.close}"
-                                     icon="fa fa-times"
-                                     iconPos="right"
-                                     styleClass="primary right"/>
-                </h:panelGroup>
-            </p:panelGrid>
+                </p:panelGrid>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="close"
+                                 onclick="PF('calendarDayDialog').hide()"
+                                 value="#{msgs.close}"
+                                 icon="fa fa-times"
+                                 iconPos="right"
+                                 styleClass="primary right"/>
+            </h:panelGroup>
         </h:form>
     </p:dialog>
 </ui:composition>

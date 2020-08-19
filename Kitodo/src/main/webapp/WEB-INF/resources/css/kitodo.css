@@ -1502,7 +1502,11 @@ h3#headerText.calendar-heading {
 #calendarDayDialog form > .ui-panelgrid,
 #calendarDayDialog form > .ui-panelgrid > .ui-panelgrid-content {
     box-sizing: border-box;
-    height: 100%;
+}
+
+#calendarDayDialog form {
+    height: calc(100% - 100px);
+    overflow-y: scroll;
 }
 
 #calendarDayDialog .dialogButtonWrapper {
@@ -1513,8 +1517,7 @@ h3#headerText.calendar-heading {
 
 #calendarDayDialog .dialogFieldWrapper {
     margin-bottom: 0;
-    max-height: 715px;
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 
 #calendarDayDialog .issue-wrapper:not(:last-child) {
