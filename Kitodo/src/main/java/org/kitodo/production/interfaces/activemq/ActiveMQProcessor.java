@@ -13,6 +13,8 @@ package org.kitodo.production.interfaces.activemq;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -20,9 +22,19 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ReportLevel;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.security.SecurityUserDetails;
+import org.kitodo.production.services.ServiceManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * The class ActiveMQProcessor offers general services, such as making the
@@ -106,8 +118,29 @@ public abstract class ActiveMQProcessor implements MessageListener {
             loggingConfig.put("id", ticketID);
             Helper.setActiveMQReporting(loggingConfig);
 
+            // set default user
+            Optional<String> optionalLogin = ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_USER);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            if (optionalLogin.isPresent()) {
+                if (Objects.isNull(securityContext.getAuthentication())) {
+                    User user = ServiceManager.getUserService().getByLogin(optionalLogin.get());
+                    SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
+                    Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
+                            securityUserDetails.getAuthorities());
+                    Client clientId = ServiceManager.getClientService().getById(user.getClients().get(0).getId());
+                    securityUserDetails.setSessionClient(clientId);
+                    securityContext.setAuthentication(auth);
+                } else {
+                    optionalLogin = Optional.empty();
+                }
+            }
+
             // process message
             process(message);
+
+            if (optionalLogin.isPresent()) {
+                securityContext.setAuthentication(null);
+            }
 
             // turn off logging again
             Helper.setActiveMQReporting(null);
