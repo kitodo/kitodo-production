@@ -36,17 +36,14 @@ import org.kitodo.config.enums.ParameterCore;
 
 /**
  * The class ActiveMQDirector is the head of all Active MQ processors. It
- * implements the ServletContextListener interface and is − if configured in
- * web.xml − called automatically upon server startup. Its job is to connect to
- * the Active MQ server and register the listeners configured.
+ * implements the ServletContextListener interface and is called automatically
+ * upon server startup. Its job is to connect to the Active MQ server and
+ * register the listeners configured.
  *
  * <p>
- * The ActiveMQDirector should ALWAYS be declared in web.xml. The Active MQ
- * services are intended to be run in case that “activeMQ.hostURL” is configured
- * in the kitodo_config.properties file. To disable the service, the entry there
- * should be emptied or commented out. Otherwise, a valid configuration would
- * not start working and an administrator will hardly have a chance to find out
- * why without inspecting the source code.
+ * The Active MQ services are intended to be run in case that
+ * {@code activeMQ.hostURL} is configured in the kitodo_config.properties file.
+ * To disable the service, the entry there should be commented out.
  *
  * <p>
  * The class ActiveMQDirector also provides a basic ExceptionListener
