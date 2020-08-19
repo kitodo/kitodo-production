@@ -79,7 +79,7 @@ public class WorkflowControllerService {
      * @param task
      *            to change status up
      */
-    public void setTaskStatusUp(Task task) throws DataException, IOException {
+    public void setTaskStatusUp(Task task) throws DataException, IOException, DAOException {
         setTaskStatusUp(Collections.singletonList(task));
     }
 
@@ -89,7 +89,7 @@ public class WorkflowControllerService {
      * @param tasks
      *            to change status up
      */
-    public void setTaskStatusUp(List<Task> tasks) throws DataException, IOException {
+    public void setTaskStatusUp(List<Task> tasks) throws DataException, IOException, DAOException {
         for (Task task : tasks) {
             if (task.getProcessingStatus() != TaskStatus.DONE) {
                 setProcessingStatusUp(task);
@@ -99,6 +99,7 @@ public class WorkflowControllerService {
                 } else {
                     task.setProcessingTime(new Date());
                     taskService.replaceProcessingUser(task, getCurrentUser());
+                    ServiceManager.getTaskService().save(task);
                 }
             }
         }
@@ -141,7 +142,7 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void setTasksStatusUp(Process process) throws DataException, IOException {
+    public void setTasksStatusUp(Process process) throws DataException, IOException, DAOException {
         List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
         if (currentTask.isEmpty()) {
             activateNextTasks(process.getTasks());
@@ -238,7 +239,7 @@ public class WorkflowControllerService {
      * @param task
      *            as Task object
      */
-    public void close(Task task) throws DataException, IOException {
+    public void close(Task task) throws DataException, IOException, DAOException {
         task.setProcessingStatus(TaskStatus.DONE);
         task.setProcessingTime(new Date());
         User user = null;
@@ -254,6 +255,18 @@ public class WorkflowControllerService {
         tasksToFinish = new ArrayList<>();
 
         activateTasksForClosedTask(task);
+    }
+
+    private boolean allChildrenClosed(Process process) {
+        if (!process.getChildren().isEmpty()) {
+            boolean allChildrenClosed = true;
+            for (Process child : process.getChildren()) {
+                allChildrenClosed &= child.getSortHelperStatus().equals("100000000")
+                        || child.getSortHelperStatus().equals("100000000000");
+            }
+            return allChildrenClosed;
+        }
+        return false;
     }
 
     /**
@@ -407,7 +420,7 @@ public class WorkflowControllerService {
         }
     }
 
-    private void activateTasksForClosedTask(Task closedTask) throws DataException, IOException {
+    private void activateTasksForClosedTask(Task closedTask) throws DataException, IOException, DAOException {
         Process process = closedTask.getProcess();
 
         // check if there are tasks that take place in parallel but are not yet
@@ -430,7 +443,8 @@ public class WorkflowControllerService {
             ServiceManager.getProcessService().save(process);
         }
 
-        updateProcessSortHelperStatus(process);
+        ServiceManager.getProcessService().save(process);
+        process = ServiceManager.getProcessService().getById(process.getId());
 
         for (Task automaticTask : automaticTasks) {
             automaticTask.setProcessingBegin(new Date());
@@ -439,6 +453,16 @@ public class WorkflowControllerService {
         }
         for (Task finish : tasksToFinish) {
             close(finish);
+        }
+
+        closeParent(process);
+    }
+
+    private void closeParent(Process process) throws DataException {
+        if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
+            process.getParent().setSortHelperStatus("100000000");
+            ServiceManager.getProcessService().save(process.getParent());
+            closeParent(process.getParent());
         }
     }
 
@@ -526,7 +550,7 @@ public class WorkflowControllerService {
     /**
      * Activate the concurrent tasks.
      */
-    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DataException, IOException {
+    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DataException, IOException, DAOException {
         for (Task concurrentTask : concurrentTasks) {
             if (concurrentTask.getProcessingStatus().equals(TaskStatus.LOCKED)) {
                 activateTask(concurrentTask);
@@ -537,7 +561,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    public void activateNextTasks(List<Task> allHigherTasks) throws DataException, IOException {
+    public void activateNextTasks(List<Task> allHigherTasks) throws DataException, IOException, DAOException {
         List<Task> nextTasks = getNextTasks(allHigherTasks);
 
         for (Task nextTask : nextTasks) {
@@ -594,7 +618,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    private void activateTask(Task task) throws DataException, IOException {
+    private void activateTask(Task task) throws DataException, IOException, DAOException {
         if (isWorkflowConditionFulfilled(task.getProcess(), task.getWorkflowCondition())) {
             // activate the task if it is not fully automatic
             task.setProcessingStatus(TaskStatus.OPEN);
@@ -703,9 +727,7 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusUp(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus);
-                updateProcessSortHelperStatus(processForStatus);
-            } catch (DataException | IOException e) {
+            } catch (DataException | IOException | DAOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                         new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
             }
