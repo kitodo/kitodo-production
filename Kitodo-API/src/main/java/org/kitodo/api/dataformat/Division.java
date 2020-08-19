@@ -11,6 +11,8 @@
 
 package org.kitodo.api.dataformat;
 
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -33,6 +35,8 @@ public abstract class Division<T extends Division<T>> {
      * The children of this division, which form the structure tree.
      */
     private List<T> children = new LinkedList<>();
+
+    private List<URI> contentIds = new ArrayList<>(0);
 
     /**
      * The label for this divison.
@@ -113,6 +117,15 @@ public abstract class Division<T extends Division<T>> {
      */
     public List<T> getChildren() {
         return children;
+    }
+
+    /**
+     * Returns the content IDs list of this division.
+     *
+     * @return the children
+     */
+    public List<URI> getContentIds() {
+        return contentIds;
     }
 
     /**

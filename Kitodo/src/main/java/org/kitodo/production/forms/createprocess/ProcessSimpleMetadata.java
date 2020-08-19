@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -62,6 +63,8 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
                 return Division::setLabel;
             case "ORDERLABEL":
                 return Division::setOrderlabel;
+            case "CONTENTIDS":
+                return (division, value) -> division.getContentIds().add(URI.create(value));
             default:
                 throw new NoSuchMetadataFieldException(key, field.getLabel());
         }
