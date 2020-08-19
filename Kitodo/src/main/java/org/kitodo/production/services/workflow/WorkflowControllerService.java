@@ -99,6 +99,7 @@ public class WorkflowControllerService {
                 } else {
                     task.setProcessingTime(new Date());
                     taskService.replaceProcessingUser(task, getCurrentUser());
+                    ServiceManager.getTaskService().save(task);
                 }
             }
         }
@@ -726,8 +727,6 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusUp(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus);
-                updateProcessSortHelperStatus(processForStatus);
             } catch (DataException | IOException | DAOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                         new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
