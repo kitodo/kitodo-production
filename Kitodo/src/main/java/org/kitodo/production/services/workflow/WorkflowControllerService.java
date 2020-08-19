@@ -454,9 +454,14 @@ public class WorkflowControllerService {
             close(finish);
         }
 
+        closeParent(process);
+    }
+
+    private void closeParent(Process process) throws DataException {
         if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
             process.getParent().setSortHelperStatus("100000000");
             ServiceManager.getProcessService().save(process.getParent());
+            closeParent(process.getParent());
         }
     }
 
