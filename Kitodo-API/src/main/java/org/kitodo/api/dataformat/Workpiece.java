@@ -108,17 +108,6 @@ public class Workpiece {
     }
 
     /**
-     * Returns the media units of this workpiece.
-     *
-     * @return the media units
-     * @deprecated Use {@code getMediaUnit().getChildren()}.
-     */
-    @Deprecated
-    public List<MediaUnit> getMediaUnits() {
-        return mediaUnit.getChildren();
-    }
-
-    /**
      * Returns the root element of the included structural element.
      *
      * @return root element of the included structural element

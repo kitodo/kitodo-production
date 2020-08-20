@@ -54,7 +54,7 @@ public class MetsXmlElementAccessIT {
                 .read(new FileInputStream(new File("src/test/resources/meta.xml")));
 
         // METS file has 183 associated images
-        assertEquals(183, workpiece.getMediaUnits().size());
+        assertEquals(183, workpiece.getMediaUnit().getChildren().size());
 
         // METS file has 17 unstructured images
         assertEquals(17, workpiece.getRootElement().getViews().size());
@@ -67,7 +67,7 @@ public class MetsXmlElementAccessIT {
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
-            workpiece.getMediaUnits().get(0).getMediaFiles().entrySet().iterator().next().getValue());
+            workpiece.getMediaUnit().getChildren().get(0).getMediaFiles().entrySet().iterator().next().getValue());
 
         // pagination can be read
         assertEquals(
@@ -86,7 +86,7 @@ public class MetsXmlElementAccessIT {
                 "uncounted", "uncounted", "113", "114", "115", "116", "117", "118", "uncounted", "uncounted", "119",
                 "120", "uncounted", "uncounted", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
                 "131", "132", "133", "134", "uncounted", "uncounted", "uncounted"),
-            workpiece.getMediaUnits().stream().map(MediaUnit::getOrderlabel)
+            workpiece.getMediaUnit().getChildren().stream().map(MediaUnit::getOrderlabel)
                     .collect(Collectors.toList()));
     }
 
@@ -105,7 +105,7 @@ public class MetsXmlElementAccessIT {
             numImages.setDomain(MdSec.TECH_MD);
             numImages.setValue("100");
             partialOrder.getMetadata().add(numImages);
-            workpiece.getMediaUnits().add(partialOrder);
+            workpiece.getMediaUnit().getChildren().add(partialOrder);
         }
 
         // add files
@@ -118,7 +118,7 @@ public class MetsXmlElementAccessIT {
             mediaUnit.setOrder(i);
             mediaUnit.getMediaFiles().put(local, path);
             pages.add(mediaUnit);
-            workpiece.getMediaUnits().add(mediaUnit);
+            workpiece.getMediaUnit().getChildren().add(mediaUnit);
         }
 
         // create document structure
@@ -200,7 +200,7 @@ public class MetsXmlElementAccessIT {
         MediaVariant max = new MediaVariant();
         max.setUse("MAX");
         max.setMimeType("image/jpeg");
-        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+        for (MediaUnit mediaUnit : workpiece.getMediaUnit().getChildren()) {
             URI tiffFile = mediaUnit.getMediaFiles().get(local);
             if (tiffFile != null) {
                 String jpgFile = tiffFile.toString().replaceFirst("^.*?(\\d+)\\.tif$", "images/max/$1.jpg");
@@ -226,7 +226,7 @@ public class MetsXmlElementAccessIT {
         Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
 
         assertEquals(1, reread.getEditHistory().size());
-        List<MediaUnit> mediaUnits = reread.getMediaUnits();
+        List<MediaUnit> mediaUnits = reread.getMediaUnit().getChildren();
         assertEquals(8, mediaUnits.size());
         for (int i = 0; i <= 3; i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
