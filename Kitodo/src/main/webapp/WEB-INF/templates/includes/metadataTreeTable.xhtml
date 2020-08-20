@@ -142,10 +142,10 @@
                 <!-- button to add metadata to group -->
                 <p:commandButton id="addMetadataToGroup"
                                  action="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true, node.getChildren())}"
-                                 rendered="#{item.input eq 'dataTable'}"
+                                 rendered="#{request.requestURI.contains('metadataEditor') and item.input eq 'dataTable'}"
                                  icon="fa fa-plus"
                                  styleClass="secondary"
-                                 update="#{request.requestURI.contains('metadataEditor') ? 'addMetadataForm' : ''}"
+                                 update="addMetadataForm"
                                  oncomplete="PF('addMetadataDialog').show()">
                     <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{node}"/>
                 </p:commandButton>
