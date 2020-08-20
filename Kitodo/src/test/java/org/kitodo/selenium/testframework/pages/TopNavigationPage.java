@@ -115,11 +115,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         await("Wait for visible user menu button").atMost(30, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> userMenuButton.isDisplayed());
 
-        hoverWebElement(userMenuButton);
-        if (!logoutButton.isDisplayed()) {
-            userMenuButton.click();
-            Thread.sleep(Browser.getDelayAfterHoverMenu());
-        }
+        userMenuButton.click();
         WebElement element = Browser.getDriver().findElementById("sessionClient").findElement(By.tagName("b"));
         return element.getText();
     }
@@ -194,12 +190,12 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     }
 
     /**
-     * Hovers dashboard menu and checks menu header if all buttons are displayed.
+     * Clicks dashboard menu and checks menu header if all buttons are displayed.
      *
      * @return True if "Admin" is displayed.
      */
     public boolean isShowingAllLinks() {
-        hoverWebElement(dashboardMenuButton);
+        dashboardMenuButton.click();
         if (!linkHelp.isDisplayed()) {
             return false;
         }
