@@ -49,8 +49,6 @@ public class FileManagement implements FileManagementInterface {
 
     private final CommandInterface commandService = new KitodoServiceLoader<CommandInterface>(CommandInterface.class)
             .loadModule();
-    private final String scriptCreateDirMeta = KitodoConfig.getParameter("script_createDirMeta");
-
     @Override
     public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
         if (file) {
