@@ -350,7 +350,7 @@
                             oncomplete="PF('dialogAddDocStrucType').show()"
                             update="dialogAddDocStrucTypeDialog">
                     <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
-                    <f:actionListener binding="#{DataEditorForm.structurePanel.setSelectedLogicalNode(DataEditorForm.structurePanel.logicalTree.children.get(0))}"/>
+                    <f:actionListener binding="#{DataEditorForm.structurePanel.setSelectedLogicalNode(DataEditorForm.structurePanel.logicalTree.children.get(DataEditorForm.structurePanel.logicalTree.childCount - 1))}"/>
                 </p:menuitem>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
