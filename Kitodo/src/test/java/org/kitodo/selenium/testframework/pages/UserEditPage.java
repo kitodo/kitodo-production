@@ -192,7 +192,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> userMenuButton.isDisplayed());
 
-        hoverWebElement(userMenuButton);
+        userMenuButton.click();
         hoverWebElement(userConfigButton);
         userConfigButton.click();
     }

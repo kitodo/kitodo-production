@@ -275,20 +275,19 @@ body.first-visit #portal-header {
     color: var(--pure-white);
 }
 
+#header-nav .ui-overlaypanel-content {
+    padding: 0;
+}
+
 #header-nav li ul {
-    position: fixed;
     list-style: none;
     border-radius: var(--default-border-radius);
     text-align: left;
     color: var(--carbon-blue);
+    overflow: hidden;
     width: -webkit-calc(100% - 60px);
     width: -moz-calc(100% - 60px);
     width: calc(100% - 60px);
-    right: 30px;
-    top: 60px;
-    max-height: 0;
-    visibility: hidden;
-    overflow: hidden;
     -webkit-transition: max-height 0.5s linear;
     -moz-transition: max-height 0.5s linear;
     transition: max-height 0.5s linear;
@@ -312,37 +311,10 @@ body.first-visit #portal-header {
     color: inherit;
 }
 
-#header-nav #dashboard-menu + ul li:hover a {
+#header-nav #dashboard-menu + .ui-overlaypanel ul li:hover a {
     background-color: var(--carbon-blue) !important;
     color: #fff;
     border-color: var(--carbon-blue) !important;
-}
-
-.menu-active {
-    max-height: 800px !important;
-    visibility: visible !important;
-}
-
-#header-nav .batch-count {
-    position: absolute;
-    top: -14px;
-    right: -14px;
-    min-width: 13px;
-    height: 22px;
-    text-align: center;
-    padding: 0 5px;
-    font-size: 12px;
-    line-height: 22px;
-    border-radius: 11px;
-    color: var(--pure-white) !important;
-}
-
-#header-nav .bc-alert {
-    background-color: var(--orange);
-}
-
-#header-nav .bc-info {
-    background-color: var(--green);
 }
 
 #header-nav h3 {
@@ -447,18 +419,18 @@ body.first-visit #portal-header {
     color: var(--orange);
 }
 
-#dashboard-menu + ul {
+#dashboard-menu + .ui-overlaypanel ul {
     background: var(--light-gray);
     box-sizing: border-box;
     padding: calc(32px - 8px);
 }
 
-#dashboard-menu + ul #dashboard-menu-header h3 {
+#dashboard-menu + .ui-overlaypanel ul #dashboard-menu-header h3 {
     padding: 0 8px 8px 8px;
 }
 
-#dashboard-menu + ul .nav-pic-text,
-#dashboard-menu + ul .nav-pic-text:last-child {
+#dashboard-menu + .ui-overlaypanel ul .nav-pic-text,
+#dashboard-menu + .ui-overlaypanel ul .nav-pic-text:last-child {
     display: inline-block;
     width: calc(32.6% - 16px);
     margin: 8px;
@@ -466,13 +438,13 @@ body.first-visit #portal-header {
     box-sizing: border-box;
 }
 
-#dashboard-menu + ul .nav-pic-text a {
+#dashboard-menu + .ui-overlaypanel ul .nav-pic-text a {
     border: none;
     padding: 16px;
     text-align: center;
 }
 
-#dashboard-menu + ul .nav-pic-text a i {
+#dashboard-menu + .ui-overlaypanel ul .nav-pic-text a i {
     display: block;
     color: var(--blue);
     font-size: 22px;
@@ -2980,10 +2952,7 @@ min 700px
     }
 
     #header-nav li ul {
-        position: absolute;
         width: 500px;
-        right: 0;
-        top: 30px;
     }
 
     #header-nav h3 {
