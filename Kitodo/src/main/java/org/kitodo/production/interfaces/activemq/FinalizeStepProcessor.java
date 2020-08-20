@@ -31,7 +31,7 @@ import org.kitodo.production.services.ServiceManager;
  * id as “id”; you can add a field “message” which will be added to the wiki
  * field.
  */
-public class FinaliseStepProcessor extends ActiveMQProcessor {
+public class FinalizeStepProcessor extends ActiveMQProcessor {
 
     /**
      * The default constructor looks up the queue name to use in
@@ -39,7 +39,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * to the super constructor, this will prevent
      * ActiveMQDirector.registerListeners() from starting this service.
      */
-    public FinaliseStepProcessor() {
+    public FinalizeStepProcessor() {
         super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_FINALIZE_STEP_QUEUE).orElse(null));
     }
 
@@ -51,8 +51,6 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      *
      * @param ticket
      *            the incoming message
-     *
-     * @see org.kitodo.production.interfaces.activemq.ActiveMQProcessor#process(org.kitodo.production.interfaces.activemq.MapMessageObjectReader)
      */
     @Override
     protected void process(MapMessageObjectReader ticket) throws DAOException, JMSException {

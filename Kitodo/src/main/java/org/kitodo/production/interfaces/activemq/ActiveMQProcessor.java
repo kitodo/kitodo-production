@@ -13,6 +13,8 @@ package org.kitodo.production.interfaces.activemq;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -20,9 +22,19 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ReportLevel;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.security.SecurityUserDetails;
+import org.kitodo.production.services.ServiceManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * The class ActiveMQProcessor offers general services, such as making the
@@ -33,17 +45,23 @@ import org.kitodo.production.helper.Helper;
  * shut it down later.
  */
 public abstract class ActiveMQProcessor implements MessageListener {
-
-    private String queueName; // the queue name will be available here
-    private MessageConsumer checker;
+    /**
+     * The name of the queue from which this processor is processing messages.
+     */
+    private String queueName;
 
     /**
-     * Implement the method process() to let your service actually do what you
-     * want him to do.
+     * The message consumer object that actually receives the messages and
+     * executes {@link #process(MapMessageObjectReader)}.
+     */
+    private MessageConsumer messageConsumer;
+
+    /**
+     * Must be implemented to let the service do what it should do.
      *
      * @param ticket
-     *            A MapMessage which can be processor-specific except that it
-     *            requires to have a field “id”.
+     *            an object providing access to the fields of the received map
+     *            message
      */
     protected abstract void process(MapMessageObjectReader ticket) throws DAOException, JMSException;
 
@@ -79,22 +97,20 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * <p>
      * Since this will be the same for all processors which use MapMessages, I
      * extracted the portion into the abstract class.
-     *
-     * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
      */
     @Override
     public void onMessage(Message arg) {
-        MapMessageObjectReader ticket;
+        MapMessageObjectReader message;
         String ticketID = null;
 
         try {
-            // Basic check ticket
+            // Basic check message
             if (arg instanceof MapMessage) {
-                ticket = new MapMessageObjectReader((MapMessage) arg);
+                message = new MapMessageObjectReader((MapMessage) arg);
             } else {
                 throw new IllegalArgumentException("Incompatible types.");
             }
-            ticketID = ticket.getMandatoryString("id");
+            ticketID = message.getMandatoryString("id");
 
             // turn on logging
             Map<String, String> loggingConfig = new HashMap<>();
@@ -102,8 +118,29 @@ public abstract class ActiveMQProcessor implements MessageListener {
             loggingConfig.put("id", ticketID);
             Helper.setActiveMQReporting(loggingConfig);
 
-            // process ticket
-            process(ticket);
+            // set default user
+            Optional<String> optionalLogin = ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_USER);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            if (optionalLogin.isPresent()) {
+                if (Objects.isNull(securityContext.getAuthentication())) {
+                    User user = ServiceManager.getUserService().getByLogin(optionalLogin.get());
+                    SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
+                    Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
+                            securityUserDetails.getAuthorities());
+                    Client clientId = ServiceManager.getClientService().getById(user.getClients().get(0).getId());
+                    securityUserDetails.setSessionClient(clientId);
+                    securityContext.setAuthentication(auth);
+                } else {
+                    optionalLogin = Optional.empty();
+                }
+            }
+
+            // process message
+            process(message);
+
+            if (optionalLogin.isPresent()) {
+                securityContext.setAuthentication(null);
+            }
 
             // turn off logging again
             Helper.setActiveMQReporting(null);
@@ -117,7 +154,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     /**
-     * This method is used to get the queue name upon initialisation.
+     * Returns the queue name. Maybe null if the processor is not active.
      *
      * @return the queue name
      */
@@ -126,25 +163,22 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     /**
-     * The parent object which is there to check for new messages and to trigger
-     * the method onMessage() is saved inside the class, to have it lately for
-     * shutting down the service again.
+     * Sets the message consumer to have it later for shutting down the service.
      *
-     * @param checker
+     * @param messageConsumer
      *            the MessageConsumer object responsible for checking messages
      */
 
-    public void saveChecker(MessageConsumer checker) {
-        this.checker = checker;
+    public void setMessageConsumer(MessageConsumer messageConsumer) {
+        this.messageConsumer = messageConsumer;
     }
 
     /**
-     * This method is used to get back the message checking object upon
-     * shutdown.
+     * Returns the message consumer. Maybe null. Used for shutdown.
      *
-     * @return the MessageConsumer object responsible for checking messages
+     * @return the message consumer
      */
-    public MessageConsumer getChecker() {
-        return checker;
+    public MessageConsumer getMessageConsumer() {
+        return messageConsumer;
     }
 }

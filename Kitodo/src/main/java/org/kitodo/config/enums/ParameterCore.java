@@ -595,9 +595,9 @@ public enum ParameterCore implements ParameterInterface {
 
     ACTIVE_MQ_HOST_URL(new Parameter<UndefinedParameter>("activeMQ.hostURL")),
 
-    ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE(new Parameter<UndefinedParameter>("activeMQ.createNewProcess.queue")),
+    ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
 
-    ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finaliseStep.queue")),
+    ACTIVE_MQ_USER(new Parameter<UndefinedParameter>("activeMQ.user")),
 
     ACTIVE_MQ_RESULTS_TOPIC(new Parameter<UndefinedParameter>("activeMQ.results.topic")),
 

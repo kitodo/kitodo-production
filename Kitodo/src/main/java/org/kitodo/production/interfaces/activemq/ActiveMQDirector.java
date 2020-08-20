@@ -11,13 +11,14 @@
 
 package org.kitodo.production.interfaces.activemq;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
-import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
@@ -34,44 +35,38 @@ import org.kitodo.config.enums.ParameterCore;
 
 /**
  * The class ActiveMQDirector is the head of all Active MQ processors. It
- * implements the ServletContextListener interface and is − if configured in
- * web.xml − called automatically upon server startup. Its job is to connect to
- * the Active MQ server and register the listeners configured.
+ * implements the ServletContextListener interface and is called automatically
+ * upon server startup. Its job is to connect to the Active MQ server and
+ * register the listeners configured.
  *
  * <p>
- * The ActiveMQDirector should ALWAYS be declared in web.xml. The Active MQ
- * services are intended to be run in case that “activeMQ.hostURL” is configured
- * in the kitodo_config.properties file. To disable the service, the entry there
- * should be emptied or commented out. Otherwise, a valid configuration would
- * not start working and an administrator will hardly have a chance to find out
- * why without inspecting the source code.
+ * The Active MQ services are intended to be run in case that
+ * {@code activeMQ.hostURL} is configured in the kitodo_config.properties file.
+ * To disable the service, the entry there should be commented out.
  *
  * <p>
  * The class ActiveMQDirector also provides a basic ExceptionListener
  * implementation as required for the connection.
  */
 @WebListener
-public class ActiveMQDirector implements ServletContextListener, ExceptionListener {
+public class ActiveMQDirector implements ServletContextListener {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
-    // *** CONFIGURATION ***
-    // When implementing new Services, add them to this list:
-    protected static ActiveMQProcessor[] services;
+    // When implementing new services, add them to this list
+    private static Collection<? extends ActiveMQProcessor> services;
 
     static {
-        services = new ActiveMQProcessor[] {new CreateNewProcessProcessor(), new FinaliseStepProcessor() };
+        services = Arrays.asList(new FinalizeStepProcessor());
     }
 
-    protected static Connection connection = null;
-    protected static Session session = null;
-    protected static MessageProducer resultsTopic;
+    private static Connection connection = null;
+    private static Session session = null;
+    private static MessageProducer resultsTopic;
 
     /**
      * The method is called by the web container on startup
      * and is used to start up the active MQ connection. All processors from
-     * services[] are registered.
-     *
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     * {@link #services} are registered.
      */
     @Override
     public void contextInitialized(ServletContextEvent initialisation) {
@@ -96,11 +91,11 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      *            that the server is run inside the same virtual machine
      * @return the session object or “null” upon error
      */
-    protected Session connectToServer(String server) {
+    private Session connectToServer(String server) {
         try {
             connection = new ActiveMQConnectionFactory(server).createConnection();
             connection.start();
-            connection.setExceptionListener(this); // ActiveMQDirector.onException()
+            connection.setExceptionListener(exception -> logger.error(exception));
             return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (JMSException | RuntimeException e) {
             logger.fatal("Error connecting to ActiveMQ server, giving up.", e);
@@ -117,15 +112,15 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      * service process the message. The message checker is saved inside the
      * service to be able to shut it down later.
      */
-    protected void registerListeners(ActiveMQProcessor[] processors) {
+    private void registerListeners(Collection<? extends ActiveMQProcessor> processors) {
         for (ActiveMQProcessor processor : processors) {
             if (Objects.nonNull(processor.getQueueName())) {
-                MessageConsumer messageChecker;
+                MessageConsumer messageConsumer;
                 try {
                     Destination queue = session.createQueue(processor.getQueueName());
-                    messageChecker = session.createConsumer(queue);
-                    messageChecker.setMessageListener(processor);
-                    processor.saveChecker(messageChecker);
+                    messageConsumer = session.createConsumer(queue);
+                    messageConsumer.setMessageListener(processor);
+                    processor.setMessageConsumer(messageConsumer);
                 } catch (JMSException | RuntimeException e) {
                     logger.fatal("Error setting up monitoring for \"" + processor.getQueueName() + "\": Giving up.", e);
                 }
@@ -148,7 +143,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      *            name of the active MQ topic
      * @return a MessageProducer object ready for writing or “null” on error
      */
-    protected MessageProducer setUpReportChannel(String topic) {
+    private MessageProducer setUpReportChannel(String topic) {
         MessageProducer reportChannel;
         try {
             Destination channel = session.createTopic(topic);
@@ -160,16 +155,6 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);
         }
         return null;
-    }
-
-    /**
-     * This method is referenced from this.connectToServer() − see there.
-     *
-     * @see javax.jms.ExceptionListener#onException(javax.jms.JMSException)
-     */
-    @Override
-    public void onException(JMSException exce) {
-        logger.error(exce);
     }
 
     /**
@@ -195,17 +180,15 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     /**
      * The method contextDestroyed is called by the web container on shutdown.
      * It shuts down all listeners, the session and last, the connection.
-     *
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
     @Override
     public void contextDestroyed(ServletContextEvent destruction) {
-        // Shut down all watchers on any queues
+        // Shut down all message consumers on any queues
         for (ActiveMQProcessor service : services) {
-            MessageConsumer watcher = service.getChecker();
-            if (Objects.nonNull(watcher)) {
+            MessageConsumer messageConsumer = service.getMessageConsumer();
+            if (Objects.nonNull(messageConsumer)) {
                 try {
-                    watcher.close();
+                    messageConsumer.close();
                 } catch (JMSException e) {
                     logger.error(e.getMessage(), e);
                 }
