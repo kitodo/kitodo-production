@@ -371,6 +371,7 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public URI createProcessLocation(String processId) throws IOException {
         File processRootDirectory = new File(KitodoConfig.getKitodoDataDirectory() + File.separator + processId);
+        String scriptCreateDirMeta = KitodoConfig.getParameter("script_createDirMeta");
         String command = scriptCreateDirMeta + ' ' + processRootDirectory.getPath();
         if (!processRootDirectory.exists() && !commandService.runCommand(command.hashCode(), command).isSuccessful()) {
             throw new IOException("Could not create processRoot directory.");
