@@ -20,6 +20,20 @@ import java.util.Objects;
  * {@code MediaUnit} as a whole.
  */
 public class View {
+
+    /**
+     * Creates a new view with a media unit.
+     * 
+     * @param mediaUnit
+     *            media unit to set in the view
+     * @return a new view with a media unit
+     */
+    public static View of(MediaUnit mediaUnit) {
+        View view = new View();
+        view.setMediaUnit(mediaUnit);
+        return view;
+    }
+
     /**
      * Media unit in view.
      */
