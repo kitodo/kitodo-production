@@ -36,6 +36,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
@@ -50,6 +51,8 @@ public class FileManagementTest {
     private static final String SYMLINK_TARGET = "symLinkTarget";
     private static final String FILE_NOT_CREATED = "File not created";
 
+    private static final File script = new File(KitodoConfig.getParameter("script_createDirMeta"));
+
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
@@ -59,6 +62,7 @@ public class FileManagementTest {
         fileManagement.create(URI.create(""), DIRECTORY_SIZE, false);
         URI directory = fileManagement.create(URI.create(""), "2", false);
         fileManagement.create(directory, "meta.xml", true);
+        ExecutionPermission.setExecutePermission(script);
     }
 
     @AfterClass
@@ -66,6 +70,7 @@ public class FileManagementTest {
         fileManagement.delete(URI.create(FILE_TEST));
         fileManagement.delete(URI.create(DIRECTORY_SIZE));
         fileManagement.delete(URI.create("2"));
+        ExecutionPermission.setNoExecutePermission(script);
     }
 
     @Test

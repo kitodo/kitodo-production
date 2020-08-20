@@ -32,11 +32,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.command.CommandInterface;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterFileManagement;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class FileManagement implements FileManagementInterface {
 
@@ -45,6 +47,8 @@ public class FileManagement implements FileManagementInterface {
 
     private static final String IMAGES_DIRECTORY_NAME = "images";
 
+    private final CommandInterface commandService = new KitodoServiceLoader<CommandInterface>(CommandInterface.class)
+            .loadModule();
     @Override
     public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
         if (file) {
@@ -365,7 +369,9 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public URI createProcessLocation(String processId) throws IOException {
         File processRootDirectory = new File(KitodoConfig.getKitodoDataDirectory() + File.separator + processId);
-        if (!processRootDirectory.exists() && !processRootDirectory.mkdir()) {
+        String scriptCreateDirMeta = KitodoConfig.getParameter("script_createDirMeta");
+        String command = scriptCreateDirMeta + ' ' + processRootDirectory.getPath();
+        if (!processRootDirectory.exists() && !commandService.runCommand(command.hashCode(), command).isSuccessful()) {
             throw new IOException("Could not create processRoot directory.");
         }
         return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(processRootDirectory.getPath()).toUri());
