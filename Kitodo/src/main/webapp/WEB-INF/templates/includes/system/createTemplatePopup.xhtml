@@ -21,55 +21,78 @@
               header="#{msgs.editTemplate}"
               width="800px"
               modal="true"
+              resizable="false"
               dynamic="true">
-        <h:form id="createTemplateForm">
-            <p:dataTable id="createTemplatesTable" value="#{MigrationForm.getTemplatesToCreate()}" var="template">
-                <!--@elvariable id="existingTemplate" type="Template"-->
-                <ui:param name="existingTemplate" value="#{MigrationForm.getMatchingTemplate(template)}"/>
-                <p:column headerText="#{msgs.template}">
+        <p:dataTable id="createTemplatesTable"
+                     value="#{MigrationForm.getTemplatesToCreate()}"
+                     var="template">
+            <!--@elvariable id="existingTemplate" type="Template"-->
+            <ui:param name="existingTemplate"
+                      value="#{MigrationForm.getMatchingTemplate(template)}"/>
+            <p:column headerText="#{msgs.template}">
+                <h:form id="createNewTemplateForm">
                     <p:panelGrid columns="2">
                         <h:outputText value="#{msgs.title}"/>
                         <h:inputText id="templateTitle"
                                      value="#{template.title}"
-                                     style="width: 90%;"
-                                     required="#{empty param['createTemplateForm:close']}"/>
-                        <h:outputText value="#{msgs.docket}"/>
-                        <h:outputText value="#{template.docket.title}"/>
-                        <h:outputText value="#{msgs.ruleset}"/>
-                        <h:outputText value="#{template.ruleset.title}"/>
-                        <h:outputText value="#{msgs.workflow}"/>
-                        <h:outputText value="#{template.workflow.title}"/>
+                                     required="#{true}"/>
+                        <h:outputText value="#{msgs.docket}"
+                                      title="#{msgs.docket}"/>
+                        <h:outputText value="#{template.docket.title}"
+                                      title="#{template.docket.title}"/>
+                        <h:outputText value="#{msgs.ruleset}"
+                                      title="#{msgs.ruleset}"/>
+                        <h:outputText value="#{template.ruleset.title}"
+                                      title="#{template.ruleset.title}"/>
+                        <h:outputText value="#{msgs.workflow}"
+                                      title="#{msgs.workflow}"/>
+                        <h:outputText value="#{template.workflow.title}"
+                                      title="#{template.workflow.title}"/>
                     </p:panelGrid>
-                    <p:commandButton id="createNewTemplate" action="#{MigrationForm.createNewTemplate(template)}"
+                    <p:commandButton id="createNewTemplate"
+                                     action="#{MigrationForm.createNewTemplate(template)}"
                                      value="#{msgs.addNewTemplate}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
-                                     update="createTemplateForm"
+                                     update="createTemplatesTable"
                                      styleClass="button-filled-blue"/>
-                </p:column>
-                <p:column headerText="#{msgs.existingTemplate}"
-                          styleClass="actionsColumn">
-                    <p:panelGrid id="existingTemplates" rendered="#{existingTemplate ne null}" columns="2">
-                        <h:outputText value="#{msgs.title}"/>
-                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.title}"/>
-                        <h:outputText value="#{msgs.docket}"/>
-                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.docket.title}"/>
-                        <h:outputText value="#{msgs.ruleset}"/>
-                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.ruleset.title}"/>
-                        <h:outputText value="#{msgs.workflow}"/>
-                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.workflow.title}"/>
+                </h:form>
+            </p:column>
+            <p:column headerText="#{msgs.existingTemplate}">
+                <h:form id="useExistingTemplateForm">
+                    <p:panelGrid id="existingTemplates"
+                                 rendered="#{existingTemplate ne null}"
+                                 columns="2">
+                        <h:outputText value="#{msgs.title}"
+                                      title="#{msgs.title}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.title}"
+                                      title="#{existingTemplate eq null ? '' :existingTemplate.title}"/>
+                        <h:outputText value="#{msgs.docket}"
+                                      title="#{msgs.docket}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.docket.title}"
+                                      title="#{existingTemplate eq null ? '' :existingTemplate.docket.title}"/>
+                        <h:outputText value="#{msgs.ruleset}"
+                                      title="#{msgs.ruleset}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.ruleset.title}"
+                                      title="#{existingTemplate eq null ? '' :existingTemplate.ruleset.title}"/>
+                        <h:outputText value="#{msgs.workflow}"
+                                      title="#{msgs.workflow}"/>
+                        <h:outputText value="#{existingTemplate eq null ? '' :existingTemplate.workflow.title}"
+                                      title="#{existingTemplate eq null ? '' :existingTemplate.workflow.title}"/>
+                    </p:panelGrid>
                         <p:commandButton process="@this existingTemplates"
                                          action="#{MigrationForm.useExistingTemplate(template,existingTemplate)}"
                                          value="#{msgs.useExistingTemplate}"
                                          icon="fa fa-floppy-o fa-lg"
                                          iconPos="right"
-                                         update="createTemplateForm"
+                                         update="createTemplatesTable"
                                          styleClass="action button-filled-blue"/>
-                    </p:panelGrid>
-                </p:column>
-            </p:dataTable>
-            <h:panelGroup layout="block"
-                          styleClass="dialogButtonWrapper">
+                </h:form>
+            </p:column>
+        </p:dataTable>
+        <h:panelGroup layout="block"
+                      styleClass="dialogButtonWrapper">
+            <h:form id="closeForm">
                 <p:commandButton id="close"
                                  onclick="PF('createTemplatePopup').hide();"
                                  update="systemTabView:migrationForm:aggregatedTasksTable"
@@ -79,7 +102,7 @@
                                  styleClass="secondary right close">
                     <f:actionListener binding="#{MigrationForm.showAggregatedProcesses()}"/>
                 </p:commandButton>
-            </h:panelGroup>
-        </h:form>
+            </h:form>
+        </h:panelGroup>
     </p:dialog>
 </ui:composition>

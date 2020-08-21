@@ -65,15 +65,15 @@ public class SystemPage extends Page<SystemPage> {
     private WebElement createNewWorkflowButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "createTemplateForm:createTemplatesTable:0:createNewTemplate")
+    @FindBy(id = "createTemplatesTable:0:createNewTemplateForm:createNewTemplate")
     private WebElement createNewTemplateButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "createTemplateForm:createTemplatesTable:0:templateTitle")
+    @FindBy(id = "createTemplatesTable:0:createNewTemplateForm:templateTitle")
     private WebElement templateTitleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "createTemplateForm:close")
+    @FindBy(id = "closeForm:close")
     private WebElement closePopupButton;
 
 
@@ -164,7 +164,7 @@ public class SystemPage extends Page<SystemPage> {
     }
 
     public WorkflowEditPage createNewWorkflow()
-            throws IllegalAccessException, InstantiationException, InterruptedException {
+            throws IllegalAccessException, InstantiationException {
         WebElement element = Browser.getDriver()
                 .findElement(By.xpath(
                     "//*[@id=\"systemTabView:migrationForm:aggregatedTasksTable:1:createWorkflowActionButton\"]"));
