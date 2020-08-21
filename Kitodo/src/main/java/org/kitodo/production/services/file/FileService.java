@@ -295,9 +295,9 @@ public class FileService {
         }
         int beforeTail = data.lastIndexOf(tail, resourceLength);
         int cutPosition = beforeTail >= 0 ? beforeTail : resourceLength;
-        String buffer = data.substring(0, cutPosition) +
-                insert +
-                data.substring(cutPosition, dataLength);
+        String buffer = data.substring(0, cutPosition)
+                + insert
+                + data.substring(cutPosition, dataLength);
         return URI.create(buffer);
     }
 
