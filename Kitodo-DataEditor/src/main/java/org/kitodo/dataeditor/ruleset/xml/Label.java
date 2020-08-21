@@ -35,9 +35,42 @@ public class Label {
     private String value;
 
     /**
+     * <b>Constructor.</b> Creates a new label.
+     */
+    /*
+     * The default constructor is used by JAXB to create a new label. It must be
+     * made explicit because another constructos are provided.
+     */
+    public Label() {
+    }
+
+    /**
+     * <b>Constructor.</b> Creates a new default label.
+     *
+     * @param value
+     *            text content of the label
+     */
+    Label(String value) {
+        this.value = value;
+    }
+
+    /**
+     * <b>Constructor.</b> Creates a new label for a given language.
+     *
+     * @param lang
+     *            language code of the label
+     * @param value
+     *            text content of the label
+     */
+    Label(String lang, String value) {
+        this.lang = lang;
+        this.value = value;
+    }
+
+    /**
      * Returns the language if one is specified. Otherwise it is the default
      * value. There should always be.
-     * 
+     *
      * @return the language, if any
      */
     public Optional<Locale> getLanguage() {
@@ -46,7 +79,7 @@ public class Label {
 
     /**
      * Returns for the text on the label.
-     * 
+     *
      * @return the text on the label
      */
     public String getValue() {

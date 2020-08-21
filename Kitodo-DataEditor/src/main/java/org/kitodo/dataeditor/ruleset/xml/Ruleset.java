@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.dataeditor.ruleset.Labeled;
 import org.kitodo.dataeditor.ruleset.Settings;
 import org.kitodo.dataeditor.ruleset.UniversalDivision;
@@ -64,6 +65,8 @@ public class Ruleset {
      */
     @XmlElement(name = "editing", namespace = "http://names.kitodo.org/ruleset/v2")
     private EditingElement editing;
+
+    transient private List<Key> keys;
 
     /**
      * Returns an acquisition stage by name.
@@ -212,7 +215,62 @@ public class Ruleset {
      * @return all keys of the rule set
      */
     public List<Key> getKeys() {
-        return declaration.getKeys();
+        if (Objects.isNull(keys)) {
+            keys = defineMetsDivKeys(declaration.getKeys());
+        }
+        return keys;
+    }
+
+    /**
+     * Hard define keys for METS attributes CONTENTIDS, ORDER, and ORDERLABEL.
+     *
+     * @param keys
+     *            keys defined in the ruleset
+     * @return completed definition
+     */
+    private static List<Key> defineMetsDivKeys(List<Key> keys) {
+        defineKey(keys, "CONTENTIDS", Type.ANY_URI, new Label("METS content ID"), new Label("de", "METS-Inhalts-ID"));
+        defineKey(keys, "LABEL", Type.STRING, new Label("METS label"), new Label("de", "METS-Beschriftung"));
+        defineKey(keys, "ORDERLABEL", Type.STRING, new Label("METS order label"),
+            new Label("de", "METS-Anordnungsbeschriftung"));
+        return keys;
+    }
+
+    /**
+     * Hard defines a key which represents a METS attribute
+     * ({@code domain="mets:div"}).
+     *
+     * @param keys
+     *            key definition list, may already contain the key. If so, the
+     *            key is updated (if necessary), else it is added.
+     * @param id
+     *            ID of the key
+     * @param type
+     *            type of the key
+     * @param labels
+     *            labels for the key if it is not defined
+     */
+    private static void defineKey(List<Key> keys, String id, Type type, Label... labels) {
+        Optional<Key> definition = keys.parallelStream().filter(key -> key.getId().equalsIgnoreCase(id)).findAny();
+        Key key;
+        if (definition.isPresent()) {
+            key = definition.get();
+        } else {
+            key = new Key();
+            Collections.addAll(key.getLabels(), labels);
+            keys.add(key);
+        }
+        key.setId(id);
+        /*
+         * If the key type is string (broadest type), but the required type is
+         * narrower, set it. Do not set it if the user explicitly defined a
+         * narrower type in the ruleset file.
+         */
+        Type currentType = key.getType();
+        if (Objects.equals(currentType, Type.STRING) && !Objects.equals(currentType, type)) {
+            key.setType(type);
+        }
+        key.setDomain(Domain.METS_DIV);
     }
 
     /**

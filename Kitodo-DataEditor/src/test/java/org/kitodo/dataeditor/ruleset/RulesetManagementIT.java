@@ -232,7 +232,7 @@ public class RulesetManagementIT {
             Collections.emptyList());
 
         assertThat(ids(mviColl), contains("optionalMultiLineSingleSelection", "optionalOneLineSingleSelection",
-            "optionalMultipleSelection"));
+            "CONTENTIDS", "LABEL", "ORDERLABEL", "optionalMultipleSelection"));
 
         // 3. The input types have been calculated correctly
         assertThat(
@@ -245,6 +245,7 @@ public class RulesetManagementIT {
             mviColl.stream().map(mvi -> ((SimpleMetadataViewInterface) mvi).getInputType())
                     .collect(Collectors.toList()),
             contains(InputType.MULTI_LINE_SINGLE_SELECTION, InputType.ONE_LINE_SINGLE_SELECTION,
+                InputType.ONE_LINE_TEXT, InputType.ONE_LINE_TEXT, InputType.ONE_LINE_TEXT,
                 InputType.MULTIPLE_SELECTION));
 
         // 4. In the optional single selections, one empty element is in it, not
@@ -448,7 +449,8 @@ public class RulesetManagementIT {
         Collection<MetadataViewInterface> mviCollNoMetadata = sevi.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
         assertThat(ids(mviCollNoMetadata), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline",
-            "testAlwaysShowingEditable", "testAlwaysShowingMultiline", "testEditableMultiline", "testNestedSettings"));
+            "testAlwaysShowingEditable", "testAlwaysShowingMultiline", "testEditableMultiline", "testNestedSettings",
+            "CONTENTIDS", "LABEL", "ORDERLABEL"));
 
         // 1a. In the nested metadata field, the only value that should be
         // visible is the one marked as always showing. The field has to be
@@ -595,14 +597,14 @@ public class RulesetManagementIT {
         // Now a first view on a book
         StructuralElementViewInterface view = underTest.getStructuralElementView(BOOK, "", ENGL);
         assertEquals(1, view.getAllowedSubstructuralElements().entrySet().size());
-        assertEquals(5, view.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
+        assertEquals(5 + 3, view.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
         assertTrue(view.isComplex());
         assertFalse(view.isUndefined());
 
         // Now a nonsense view
         StructuralElementViewInterface nonsenseView = underTest.getStructuralElementView("bosh", "", ENGL);
         assertEquals(1, nonsenseView.getAllowedSubstructuralElements().entrySet().size());
-        assertEquals(5, nonsenseView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
+        assertEquals(5 + 3, nonsenseView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
         assertTrue(nonsenseView.isUndefined());
     }
 
@@ -926,7 +928,8 @@ public class RulesetManagementIT {
         Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
 
-        assertThat(ids(mviColl), contains("author", "year", "title", "journal", "journalAbbr", "issue", "abstract"));
+        assertThat(ids(mviColl), contains("author", "year", "title", "journal", "journalAbbr", "issue", "abstract",
+            "CONTENTIDS", "LABEL", "ORDERLABEL"));
     }
 
     /**

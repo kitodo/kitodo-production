@@ -47,4 +47,15 @@ class CodomainElement {
     Type getType() {
         return type;
     }
+
+    /**
+     * Sets the type of the codomain.
+     *
+     * @param type
+     *            the type of the codomain
+     */
+    void setType(Type type) {
+        this.type = type;
+    }
+
 }
