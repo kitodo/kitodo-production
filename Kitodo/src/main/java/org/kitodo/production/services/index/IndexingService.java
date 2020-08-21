@@ -51,10 +51,10 @@ public class IndexingService {
 
     private static volatile IndexingService instance = null;
 
-    private static List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
-    private Map<ObjectType, SearchService> searchServices = new EnumMap<>(ObjectType.class);
-    private Map<ObjectType, List<IndexWorker>> indexWorkers = new EnumMap<>(ObjectType.class);
-    private Map<ObjectType, IndexStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
+    private static final List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
+    private final Map<ObjectType, SearchService> searchServices = new EnumMap<>(ObjectType.class);
+    private final Map<ObjectType, List<IndexWorker>> indexWorkers = new EnumMap<>(ObjectType.class);
+    private final Map<ObjectType, IndexStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
     private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
 
     // messages for web socket communication
@@ -79,7 +79,7 @@ public class IndexingService {
 
     private Thread indexerThread = null;
 
-    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
+    private static final IndexRestClient indexRestClient = IndexRestClient.getInstance();
 
     /**
      * Return singleton variable of type IndexingService.

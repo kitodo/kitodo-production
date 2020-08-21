@@ -23,7 +23,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
 
     private int itemIndex;
     private String label;
-    private boolean possibleInsertionPosition;
+    private final boolean possibleInsertionPosition;
     private List<String> tooltip;
 
     /**

@@ -11,12 +11,10 @@
 
 package org.kitodo.production.security.password;
 
-import org.kitodo.production.security.password.ValidPassword;
-
 public class KitodoPassword {
 
     @ValidPassword
-    private String password;
+    private final String password;
 
     public KitodoPassword(String password) {
         this.password = password;

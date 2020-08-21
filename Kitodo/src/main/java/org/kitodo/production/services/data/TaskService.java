@@ -116,7 +116,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery(String filter) throws DataException {
+    private BoolQueryBuilder createUserTaskQuery(String filter) {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         BoolQueryBuilder query = new BoolQueryBuilder();

@@ -20,8 +20,8 @@ import org.kitodo.production.helper.Helper;
 
 public class IndexAllThread extends Thread {
 
-    private PushContext context;
-    private IndexingService indexingService;
+    private final PushContext context;
+    private final IndexingService indexingService;
 
     IndexAllThread(PushContext pushContext, IndexingService service) {
         context = pushContext;

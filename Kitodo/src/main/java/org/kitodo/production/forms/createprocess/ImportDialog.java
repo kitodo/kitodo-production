@@ -56,9 +56,9 @@ import org.xml.sax.SAXException;
 
 public class ImportDialog implements Serializable {
     private static final Logger logger = LogManager.getLogger(ImportDialog.class);
-    private LazyHitModel hitModel = new LazyHitModel();
+    private final LazyHitModel hitModel = new LazyHitModel();
 
-    private CreateProcessForm createProcessForm;
+    private final CreateProcessForm createProcessForm;
     private static final int ADDITIONAL_FIELDS_TAB_INDEX = 1;
     private static final int TITLE_RECORD_LINK_TAB_INDEX = 3;
     private static final String ID_PARAMETER_NAME = "ID";

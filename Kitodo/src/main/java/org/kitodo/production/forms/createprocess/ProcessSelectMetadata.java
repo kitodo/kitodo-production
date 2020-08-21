@@ -54,7 +54,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     /**
      * Elements the user can choose from.
      */
-    private List<SelectItem> items;
+    private final List<SelectItem> items;
 
     /**
      * Elements selected by the user.

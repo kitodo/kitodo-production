@@ -19,8 +19,8 @@ public enum ImportReturnValue {
     DATA_ALREADY_EXISTS(3, "Data already exists"),
     WRITE_ERROR(4, "Data could not be written");
 
-    private int id;
-    private String value;
+    private final int id;
+    private final String value;
 
     ImportReturnValue(int id, String title) {
         this.id = id;

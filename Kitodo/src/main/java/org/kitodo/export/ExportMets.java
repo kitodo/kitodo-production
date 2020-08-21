@@ -22,7 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.xml.transform.TransformerException;
@@ -155,7 +155,7 @@ public class ExportMets {
                 try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {
                     URI xslFile = XsltHelper.getXsltFileFromConfig(process);
                     if (!Files.exists(Paths.get(xslFile))) {
-                        String message = Helper.getTranslation("xsltFileNotFound", Arrays.asList(xslFile.toString()));
+                        String message = Helper.getTranslation("xsltFileNotFound", Collections.singletonList(xslFile.toString()));
                         throw new FileNotFoundException(message);
                     }
                     bufferedOutputStream.write(XsltHelper.transformXmlByXslt(source, xslFile).toByteArray());

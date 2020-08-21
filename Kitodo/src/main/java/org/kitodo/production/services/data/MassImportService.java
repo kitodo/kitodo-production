@@ -57,7 +57,7 @@ public class MassImportService {
      */
     public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId)
             throws IOException, ImportException {
-        CSVReader reader = null;
+        CSVReader reader;
         List<String> ppns = new ArrayList<>();
         reader = new CSVReader(new InputStreamReader(file.getInputstream()));
         String[] line;

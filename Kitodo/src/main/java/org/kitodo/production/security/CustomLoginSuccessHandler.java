@@ -37,7 +37,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
     private static final String DESKTOP_LANDING_PAGE = "/pages/desktop.jsf";
     private static final String EMPTY_LANDING_PAGE = "/pages/checks.jsf";
     private static final String SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,

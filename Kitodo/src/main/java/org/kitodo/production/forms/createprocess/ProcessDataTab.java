@@ -33,7 +33,7 @@ public class ProcessDataTab {
     private static final Logger logger = LogManager.getLogger(ProcessDataTab.class);
 
     private List<SelectItem> allDocTypes;
-    private CreateProcessForm createProcessForm;
+    private final CreateProcessForm createProcessForm;
     private String docType;
     private String atstsl = "";
     private String tiffHeaderImageDescription = "";

@@ -26,22 +26,22 @@ public class ContentToBeGenerated {
     /**
      * The canonical part of the file name.
      */
-    private String canonical;
+    private final String canonical;
 
     /**
      * The source URI of the content to be generated.
      */
-    private URI sourceURI;
+    private final URI sourceURI;
 
     /**
      * Specifies the subfolders for which content is to be generated. What
      * content is specified in the subfolder.
      */
-    private List<Subfolder> subfoldersWhoseContentsAreToBeGenerated;
+    private final List<Subfolder> subfoldersWhoseContentsAreToBeGenerated;
 
     /**
      * Creates a new content to generate.
-     * 
+     *
      * @param canonical
      *            the canonical part of the file name
      * @param sourceURI
@@ -59,7 +59,7 @@ public class ContentToBeGenerated {
     /**
      * Returns the canonical part of the file name of the content to be
      * generated.
-     * 
+     *
      * @return the canonical part of the file name
      */
     public String getCanonical() {
@@ -69,7 +69,7 @@ public class ContentToBeGenerated {
     /**
      * Returns the subfolders for which content is to be generated of the
      * content to be generated.
-     * 
+     *
      * @return the subfolders for which content is to be generated
      */
     public List<Subfolder> getSubfoldersWhoseContentsAreToBeGenerated() {
@@ -78,7 +78,7 @@ public class ContentToBeGenerated {
 
     /**
      * Returns the source URI of the content to be generated.
-     * 
+     *
      * @return the source URI
      */
     public URI getSourceURI() {

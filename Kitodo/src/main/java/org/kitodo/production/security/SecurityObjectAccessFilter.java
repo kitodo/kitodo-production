@@ -36,8 +36,8 @@ import org.springframework.web.filter.GenericFilterBean;
  * authority for the current id.
  */
 public class SecurityObjectAccessFilter extends GenericFilterBean {
-    private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
-    private SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
+    private final AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
+    private final SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

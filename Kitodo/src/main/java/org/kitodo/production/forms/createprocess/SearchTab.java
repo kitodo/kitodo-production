@@ -30,7 +30,7 @@ public class SearchTab {
 
     private static final Logger logger = LogManager.getLogger(SearchTab.class);
 
-    private CreateProcessForm createProcessForm;
+    private final CreateProcessForm createProcessForm;
     private Process originalProcess;
 
     SearchTab(CreateProcessForm createProcessForm) {

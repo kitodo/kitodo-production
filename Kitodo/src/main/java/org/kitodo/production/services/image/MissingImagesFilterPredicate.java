@@ -36,7 +36,7 @@ public class MissingImagesFilterPredicate implements Predicate<Subfolder> {
      * name. This is configured in the folder and separated in the content
      * folder.
      */
-    private String canonical;
+    private final String canonical;
 
     /**
      * Creates a filter predicate that checks if the file exists in the folder.

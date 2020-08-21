@@ -495,10 +495,9 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * @return the metadata entries as map
      */
     private static Map<String, String> getMetadataEntries(Collection<Metadata> metadata) {
-        Map<String, String> metadataEntries = metadata.parallelStream().filter(MetadataEntry.class::isInstance)
+        return metadata.parallelStream().filter(MetadataEntry.class::isInstance)
                 .map(MetadataEntry.class::cast).collect(Collectors.toMap(Metadata::getKey, MetadataEntry::getValue,
                     (one, another) -> one + ", " + another));
-        return metadataEntries;
     }
 
     private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException,
