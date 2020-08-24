@@ -1164,7 +1164,7 @@ public class FileService {
     public void renumberMediaUnits(Workpiece workpiece, boolean sortByOrder) {
         int order = 1;
         for (MediaUnit mediaUnit : sortByOrder ? workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted()
-                : workpiece.getAllMediaUnits()) {
+                : workpiece.getMediaUnit().getAllChildren()) {
             mediaUnit.setOrder(order++);
         }
     }
