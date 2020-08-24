@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 public class DivisionTest {
+
+    /**
+     * Tests the method {@code Division.getAllChildren()}.
+     */
     @Test
     public void getAllChildrenTest() {
         IncludedStructuralElement parent = new IncludedStructuralElement();
