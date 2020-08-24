@@ -14,10 +14,12 @@ package org.kitodo.api.dataformat;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.kitodo.api.Metadata;
 
@@ -108,6 +110,19 @@ public abstract class Division<T extends Division<T>> {
         order = source.order;
         orderlabel = source.orderlabel;
         type = source.type;
+    }
+
+    /**
+     * Returns all children of this division as a flat list. The list isn’t
+     * backed by the division, which means that insertions and deletions in the
+     * list would not change the division. Therefore a list that cannot be
+     * modified is returned.
+     *
+     * @return the children
+     */
+    public List<T> getAllChildren() {
+        return Collections
+                .unmodifiableList(children.stream().flatMap(Workpiece::treeStream).collect(Collectors.toList()));
     }
 
     /**
