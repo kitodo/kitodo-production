@@ -1018,7 +1018,7 @@ public class FileService {
         }
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
-        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getAllMediaUnitsFilteredByTypePageAndSorted(), canonicals);
+        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted(), canonicals);
         mediaToAdd.keySet().removeAll(canonicals);
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
         renumberMediaUnits(workpiece, true);
@@ -1059,7 +1059,7 @@ public class FileService {
         if (!baseUriString.endsWith("/")) {
             baseUriString = baseUriString.concat("/");
         }
-        for (MediaUnit mediaUnit : workpiece.getAllMediaUnitsFilteredByTypePageAndSorted()) {
+        for (MediaUnit mediaUnit : workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted()) {
             String unitCanonical = "";
             for (Entry<MediaVariant, URI> entry : mediaUnit.getMediaFiles().entrySet()) {
                 Subfolder subfolder = subfolders.get(entry.getKey().getUse());
@@ -1163,7 +1163,8 @@ public class FileService {
      */
     public void renumberMediaUnits(Workpiece workpiece, boolean sortByOrder) {
         int order = 1;
-        for (MediaUnit mediaUnit : sortByOrder ? workpiece.getAllMediaUnitsFilteredByTypePageAndSorted() : workpiece.getAllMediaUnits()) {
+        for (MediaUnit mediaUnit : sortByOrder ? workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted()
+                : workpiece.getAllMediaUnits()) {
             mediaUnit.setOrder(order++);
         }
     }
@@ -1174,7 +1175,7 @@ public class FileService {
      * intermediate places are marked uncounted.
      */
     private void repaginateMediaUnits(Workpiece workpiece) {
-        List<MediaUnit> mediaUnits = workpiece.getAllMediaUnitsFilteredByTypePageAndSorted();
+        List<MediaUnit> mediaUnits = workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted();
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
