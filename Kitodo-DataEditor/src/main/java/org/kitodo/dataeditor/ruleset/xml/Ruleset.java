@@ -66,7 +66,7 @@ public class Ruleset {
     @XmlElement(name = "editing", namespace = "http://names.kitodo.org/ruleset/v2")
     private EditingElement editing;
 
-    transient private List<Key> keys;
+    private transient List<Key> keys;
 
     /**
      * Returns an acquisition stage by name.
