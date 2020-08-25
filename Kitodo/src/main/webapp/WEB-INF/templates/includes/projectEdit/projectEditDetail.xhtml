@@ -33,7 +33,7 @@
                 <p:inputText id="title" placeholder="#{msgs.title}" class="input"
                              value="#{ProjectForm.project.title}"
                              disabled="#{ProjectForm.locked}"
-                             required="#{empty param['editForm:en']}">
+                             required="#{not empty param['editForm:save']}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:inputText>
             </div>
