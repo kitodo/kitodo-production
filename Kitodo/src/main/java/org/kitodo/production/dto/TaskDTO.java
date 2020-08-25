@@ -35,7 +35,7 @@ public class TaskDTO extends BaseDTO {
     private String processingEnd;
     private ProcessDTO process;
     private TemplateDTO template;
-    private List<RoleDTO> roles = new ArrayList<>();
+    private List<Integer> roleIds = new ArrayList<>();
     private int rolesSize;
     private boolean correction;
     private boolean typeAutomatic;
@@ -295,20 +295,20 @@ public class TaskDTO extends BaseDTO {
     /**
      * Get list of roles.
      *
-     * @return list of roles as RoleDTO
+     * @return list of role ids as Integer
      */
-    public List<RoleDTO> getRoles() {
-        return roles;
+    public List<Integer> getRoleIds() {
+        return roleIds;
     }
 
     /**
      * Set list of roles.
      *
-     * @param roles
-     *            list of roles as RoleDTO
+     * @param roleIds
+     *            list of role ids as Integer
      */
-    public void setRoles(List<RoleDTO> roles) {
-        this.roles = roles;
+    public void setRoleIds(List<Integer> roleIds) {
+        this.roleIds = roleIds;
     }
 
     /**
