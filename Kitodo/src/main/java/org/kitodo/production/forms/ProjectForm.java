@@ -492,7 +492,7 @@ public class ProjectForm extends BaseForm {
      */
     public List<SelectItem> getSelectableFolders() {
         List<SelectItem> folderList = getFolderList().stream()
-                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString())).collect(Collectors.toList());
+                .map(folder -> new SelectItem(folder.toString(), folder.toString())).collect(Collectors.toList());
         return folderList;
     }
 
@@ -570,7 +570,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getMediaView() {
         Folder mediaView = project.getMediaView();
-        return Objects.isNull(mediaView) ? null : mediaView.getFileGroup();
+        return Objects.isNull(mediaView) ? null : mediaView.toString();
     }
 
     /**
@@ -590,7 +590,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getPreview() {
         Folder preview = project.getPreview();
-        return Objects.isNull(preview) ? null : preview.getFileGroup();
+        return Objects.isNull(preview) ? null : preview.toString();
     }
 
     /**
