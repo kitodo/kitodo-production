@@ -151,12 +151,11 @@ public class MetsService {
      * @return the number of tags
      */
     public static long countLogicalMetadata(Workpiece workpiece) {
-        long count = Workpiece.treeStream(workpiece.getRootElement())
+        return Workpiece.treeStream(workpiece.getRootElement())
                 .flatMap(includedStructuralElement -> includedStructuralElement.getMetadata().parallelStream())
                 .filter(metadata -> !(metadata instanceof MetadataEntry)
                         || Objects.nonNull(((MetadataEntry) metadata).getValue())
                                 && !((MetadataEntry) metadata).getValue().isEmpty())
                 .mapToInt(metadata -> 1).count();
-        return count;
     }
 }

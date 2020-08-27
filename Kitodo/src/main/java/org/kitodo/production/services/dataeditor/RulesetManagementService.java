@@ -18,7 +18,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class RulesetManagementService {
     private static volatile RulesetManagementService instance = null;
-    private KitodoServiceLoader<RulesetManagementInterface> rulesetManagementLoader;
+    private final KitodoServiceLoader<RulesetManagementInterface> rulesetManagementLoader;
 
     /**
      * Return singleton variable of type MetsService.
@@ -38,14 +38,14 @@ public class RulesetManagementService {
         }
         return localReference;
     }
-    
+
     private RulesetManagementService() {
         rulesetManagementLoader = new KitodoServiceLoader<>(RulesetManagementInterface.class);
     }
 
     /**
      * Returns a new ruleset management.
-     * 
+     *
      * @return a new ruleset management
      */
     public RulesetManagementInterface getRulesetManagement() {

@@ -66,8 +66,8 @@ public class UserForm extends BaseForm {
     private User userObject = new User();
     private boolean hideInactiveUsers = true;
     private static final Logger logger = LogManager.getLogger(UserForm.class);
-    private transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
-    private transient UserService userService = ServiceManager.getUserService();
+    private final transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+    private final transient UserService userService = ServiceManager.getUserService();
     private static final List<String> AVAILABLE_SHORTCUTS = Arrays.asList(
             "detailView",
             "help",
@@ -87,7 +87,7 @@ public class UserForm extends BaseForm {
     private SortedMap<String, String> shortcuts;
 
     @Named("LoginForm")
-    private LoginForm loginForm;
+    private final LoginForm loginForm;
 
     private final String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
@@ -439,7 +439,7 @@ public class UserForm extends BaseForm {
                 shortcuts = mapShortcuts(new ObjectMapper().readValue(userObject.getShortcuts(),
                         new TypeReference<TreeMap<String, String>>() {}));
             } else {
-                shortcuts = mapShortcuts(new TreeMap<String, String>());
+                shortcuts = mapShortcuts(new TreeMap<>());
             }
             setSaveDisabled(true);
         } catch (DAOException e) {

@@ -19,7 +19,7 @@ import javax.xml.namespace.NamespaceContext;
 
 public class KitodoNamespaceContext implements NamespaceContext {
 
-    private Map<String, String> namespaces;
+    private final Map<String, String> namespaces;
 
     /**
      * Constructor which creates the map of namespaces used on kitodo meta.xml.

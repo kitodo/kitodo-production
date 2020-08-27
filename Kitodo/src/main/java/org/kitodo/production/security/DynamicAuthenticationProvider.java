@@ -38,7 +38,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private boolean ldapAuthentication;
     private DefaultSpringSecurityContextSource ldapContextSource = null;
     private BindAuthenticator bindAuthenticator = null;
-    private LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
+    private final LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
 
     /**
      * The private Constructor which initially reads the local config.

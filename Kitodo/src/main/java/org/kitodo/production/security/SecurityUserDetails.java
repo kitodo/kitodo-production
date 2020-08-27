@@ -37,7 +37,7 @@ public class SecurityUserDetails extends User implements UserDetails {
      * The client which was selected by user after login.
      */
     private Client sessionClient;
-    private User user;
+    private final User user;
 
     public SecurityUserDetails(final User user) {
         super(user);

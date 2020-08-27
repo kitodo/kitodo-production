@@ -27,8 +27,8 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class CommandService {
 
-    private ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
-    private Random random = new Random(1000000);
+    private final ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
+    private final Random random = new Random(1000000);
 
     /**
      * Method executes a script string.

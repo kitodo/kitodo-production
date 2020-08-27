@@ -14,7 +14,7 @@ package org.kitodo.production.services.migration;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -136,8 +136,8 @@ public class MigrationService {
                 template.setRuleset(process.getRuleset());
                 template.setWorkflow(workflowToUse);
                 template.setClient(process.getProject().getClient());
-                template.setProjects(new ArrayList<>(Arrays.asList(process.getProject())));
-                newTemplates.put(template, new ArrayList<>(Arrays.asList(process)));
+                template.setProjects(new ArrayList<>(Collections.singletonList(process.getProject())));
+                newTemplates.put(template, new ArrayList<>(Collections.singletonList(process)));
             }
         }
         return newTemplates;

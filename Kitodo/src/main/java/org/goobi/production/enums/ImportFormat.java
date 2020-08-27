@@ -20,8 +20,8 @@ public enum ImportFormat {
     MARCXML("3", "marcxml"),
     DC("4", "dc");
 
-    private String value;
-    private String title;
+    private final String value;
+    private final String title;
 
     ImportFormat(String inValue, String inTitle) {
         this.value = inValue;

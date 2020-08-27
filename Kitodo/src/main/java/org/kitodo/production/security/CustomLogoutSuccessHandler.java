@@ -31,8 +31,8 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
  */
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
-    private String onSuccessUrl;
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final String onSuccessUrl;
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     public CustomLogoutSuccessHandler(String onSuccessUrl) {
         this.onSuccessUrl = onSuccessUrl;

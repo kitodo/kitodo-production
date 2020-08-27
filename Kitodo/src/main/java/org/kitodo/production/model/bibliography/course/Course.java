@@ -323,7 +323,7 @@ public class Course extends ArrayList<Block> {
                         throw new NullPointerException(ATTRIBUTE_DATE);
                     }
                     String after = ((Element) issueNode).getAttribute(ATTRIBUTE_AFTER);
-                    List<String> before = Objects.isNull(after) ? Collections.<String>emptyList()
+                    List<String> before = Objects.isNull(after) ? Collections.emptyList()
                             : splitAtSpaces(after);
                     LocalDate localDate = LocalDate.parse(date);
                     IndividualIssue individualIssue = addAddition(variant, before, issue, localDate);
@@ -679,7 +679,7 @@ public class Course extends ArrayList<Block> {
      *            string to tokenize
      * @return list of split strings
      */
-    private static final String joinQuoting(Collection<String> input) {
+    private static String joinQuoting(Collection<String> input) {
         StringBuilder result = new StringBuilder(16 * input.size());
         boolean first = true;
         for (String item : input) {
@@ -745,7 +745,7 @@ public class Course extends ArrayList<Block> {
      *            string to tokenize
      * @return list of split strings
      */
-    private static final List<String> splitAtSpaces(String input) {
+    private static List<String> splitAtSpaces(String input) {
         List<String> result = new ArrayList<>();
         Matcher matcher = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
         while (matcher.find()) {

@@ -257,10 +257,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            for which label is going to be created
      */
     public String createLabel(Batch batch) {
-        StringBuilder result = new StringBuilder(
-                Objects.nonNull(batch.getTitle()) ? batch.getTitle().length() + 20 : 30);
-        result.append(prepareLabel(batch));
-        return result.toString();
+        return prepareLabel(batch);
     }
 
     private String prepareLabel(Batch batch) {

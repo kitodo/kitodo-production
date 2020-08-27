@@ -25,7 +25,7 @@ public class TaskImageGeneratorThread extends EmptyTask {
     /**
      * Image generator to be run by this thread.
      */
-    private ImageGenerator imageGenerator;
+    private final ImageGenerator imageGenerator;
 
     /**
      * Creates a new process title.

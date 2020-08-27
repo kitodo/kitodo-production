@@ -75,7 +75,7 @@ public class Block {
     /**
      * Metadata associated with this block.
      */
-    private List<CountableMetadata> metadata = new ArrayList<>();
+    private final List<CountableMetadata> metadata = new ArrayList<>();
 
     /**
      * Default constructor. Creates a Block object without any data.

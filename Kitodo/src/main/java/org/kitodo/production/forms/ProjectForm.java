@@ -491,9 +491,8 @@ public class ProjectForm extends BaseForm {
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        List<SelectItem> folderList = getFolderList().stream()
+        return getFolderList().stream()
                 .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString())).collect(Collectors.toList());
-        return folderList;
     }
 
     private Map<String, Folder> getFolderMap() {

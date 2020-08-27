@@ -31,7 +31,7 @@ import org.kitodo.production.services.ServiceManager;
 public abstract class ProjectSearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
         extends ClientSearchService<T, S, V> {
 
-    private String projectKey;
+    private final String projectKey;
 
     /**
      * Constructor necessary to use searcher in child classes.

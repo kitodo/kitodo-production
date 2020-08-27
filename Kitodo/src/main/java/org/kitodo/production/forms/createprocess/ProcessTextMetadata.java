@@ -77,7 +77,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     }
 
     @Override
-    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadata() {
         value = value.trim();
         if (value.isEmpty()) {
             return Collections.emptyList();

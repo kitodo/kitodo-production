@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.security;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class SessionService {
 
     private static volatile SessionService instance = null;
-    private SessionRegistry sessionRegistry;
+    private final SessionRegistry sessionRegistry;
 
     /**
      * Private constructor which is getting the SessionRegistry from the main SecurityConfig class.

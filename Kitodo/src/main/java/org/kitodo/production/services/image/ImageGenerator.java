@@ -62,7 +62,7 @@ public class ImageGenerator implements Runnable {
     /**
      * Output folders.
      */
-    private Collection<Subfolder> outputs;
+    private final Collection<Subfolder> outputs;
 
     /**
      * Current position in list.
@@ -72,7 +72,7 @@ public class ImageGenerator implements Runnable {
     /**
      * Folder with source images.
      */
-    private Subfolder sourceFolder;
+    private final Subfolder sourceFolder;
 
     /**
      * List of possible source images.
@@ -92,12 +92,12 @@ public class ImageGenerator implements Runnable {
     /**
      * List of elements to be generated.
      */
-    private List<ContentToBeGenerated> contentToBeGenerated;
+    private final List<ContentToBeGenerated> contentToBeGenerated;
 
     /**
      * Variant of image generation, see there.
      */
-    private GenerationMode mode;
+    private final GenerationMode mode;
 
     /**
      * Creates a new image generator.

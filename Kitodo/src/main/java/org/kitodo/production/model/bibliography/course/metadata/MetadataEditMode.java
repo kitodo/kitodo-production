@@ -33,5 +33,5 @@ public enum MetadataEditMode {
     /**
      * The counter is defined on a later issue, or has been deleted on a previous one.
      */
-    HIDDEN;
+    HIDDEN
 }

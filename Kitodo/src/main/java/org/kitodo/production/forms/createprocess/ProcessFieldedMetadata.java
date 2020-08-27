@@ -58,7 +58,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     /**
      * Fields the user has selected to show in addition, with no data yet.
      */
-    private Collection<String> additionallySelectedFields = new ArrayList<>();
+    private final Collection<String> additionallySelectedFields = new ArrayList<>();
 
     private boolean copy;
 
@@ -75,7 +75,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     /**
      * The metadata object with the content of this panel.
      */
-    private Collection<Metadata> metadata;
+    private final Collection<Metadata> metadata;
 
     /**
      * The key of the metadata group displaying here.

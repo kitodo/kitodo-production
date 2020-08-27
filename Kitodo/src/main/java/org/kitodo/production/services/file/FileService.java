@@ -78,7 +78,7 @@ public class FileService {
      */
     private static final String APPENDIX_YEAR = "_year";
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-    private volatile FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+    private final FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
             FileManagementInterface.class).loadModule();
 
     /**
@@ -117,7 +117,7 @@ public class FileService {
             List<String> commandParameter = Collections.singletonList(path);
             File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
             if (!script.exists()) {
-                throw new CommandException(Helper.getTranslation("fileNotFound", Arrays.asList(script.getName())));
+                throw new CommandException(Helper.getTranslation("fileNotFound", Collections.singletonList(script.getName())));
             }
             CommandResult commandResult = commandService.runCommand(script, commandParameter);
             if (!commandResult.isSuccessful()) {
@@ -295,11 +295,10 @@ public class FileService {
         }
         int beforeTail = data.lastIndexOf(tail, resourceLength);
         int cutPosition = beforeTail >= 0 ? beforeTail : resourceLength;
-        StringBuilder buffer = new StringBuilder(dataLength + insert.length());
-        buffer.append(data, 0, cutPosition);
-        buffer.append(insert);
-        buffer.append(data, cutPosition, dataLength);
-        return URI.create(buffer.toString());
+        String buffer = data.substring(0, cutPosition)
+                + insert
+                + data.substring(cutPosition, dataLength);
+        return URI.create(buffer);
     }
 
     /**

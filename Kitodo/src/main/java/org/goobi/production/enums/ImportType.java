@@ -17,8 +17,8 @@ public enum ImportType {
     FILE("3", "file"),
     FOLDER("4", "folder");
 
-    private String id;
-    private String title;
+    private final String id;
+    private final String title;
 
     ImportType(String id, String title) {
         this.id = id;

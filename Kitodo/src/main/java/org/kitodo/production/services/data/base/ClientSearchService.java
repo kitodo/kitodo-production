@@ -36,7 +36,7 @@ import org.kitodo.production.services.ServiceManager;
 public abstract class ClientSearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
         extends TitleSearchService<T, S, V> {
 
-    private String clientKey;
+    private final String clientKey;
 
     /**
      * Constructor necessary to use searcher in child classes.

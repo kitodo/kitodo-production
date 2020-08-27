@@ -178,7 +178,6 @@ function setSizes() {
 }
 
 function setHeight() {
-    console.log("setting height");
     wrapper.height(window.innerHeight - wrapper.offset().top - $('footer').height());
     setSectionHeight();
 }

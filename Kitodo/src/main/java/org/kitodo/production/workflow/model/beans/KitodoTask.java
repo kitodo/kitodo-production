@@ -17,32 +17,32 @@ import org.camunda.bpm.model.bpmn.instance.Task;
 
 public class KitodoTask {
 
-    private String workflowId;
-    private String title;
-    private Integer editType;
-    private Integer processingStatus;
-    private boolean concurrent;
-    private boolean typeMetadata;
-    private boolean separateStructure;
-    private boolean typeAutomatic;
-    private boolean typeExportDms;
-    private boolean typeImagesRead;
-    private boolean typeImagesWrite;
-    private boolean typeGenerateImages;
-    private boolean typeValidateImages;
-    private boolean typeAcceptClose;
-    private boolean typeCloseVerify;
-    private boolean batchStep;
-    private boolean repeatOnCorrection;
-    private String conditionType;
-    private String conditionValue;
-    private String userRoles;
+    private final String workflowId;
+    private final String title;
+    private final Integer editType;
+    private final Integer processingStatus;
+    private final boolean concurrent;
+    private final boolean typeMetadata;
+    private final boolean separateStructure;
+    private final boolean typeAutomatic;
+    private final boolean typeExportDms;
+    private final boolean typeImagesRead;
+    private final boolean typeImagesWrite;
+    private final boolean typeGenerateImages;
+    private final boolean typeValidateImages;
+    private final boolean typeAcceptClose;
+    private final boolean typeCloseVerify;
+    private final boolean batchStep;
+    private final boolean repeatOnCorrection;
+    private final String conditionType;
+    private final String conditionValue;
+    private final String userRoles;
 
     static final String NAMESPACE = "http://www.kitodo.org/template";
 
     /**
      * Constructor.
-     * 
+     *
      * @param task
      *            BPMN model task
      */

@@ -24,7 +24,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
  */
 public class LongTermPreservationValidationService {
 
-    private LongTermPreservationValidationInterface longTermPreservationValidation;
+    private final LongTermPreservationValidationInterface longTermPreservationValidation;
 
     public LongTermPreservationValidationService() {
         longTermPreservationValidation = getValidationModule();
@@ -32,7 +32,7 @@ public class LongTermPreservationValidationService {
 
     /**
      * Loads the module for long-term archival validation.
-     * 
+     *
      * @return the loaded module
      */
     private LongTermPreservationValidationInterface getValidationModule() {

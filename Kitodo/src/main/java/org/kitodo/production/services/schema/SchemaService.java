@@ -280,7 +280,7 @@ public class SchemaService {
     }
 
     private void setLinkForExport(IncludedStructuralElement structure, Process process, LegacyPrefsHelper prefs,
-            Workpiece workpiece) throws IOException {
+            Workpiece workpiece) {
 
         LinkedMetsResource link = structure.getLink();
         link.setLoctype("URL");

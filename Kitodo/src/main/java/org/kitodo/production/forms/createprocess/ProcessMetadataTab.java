@@ -24,7 +24,7 @@ import org.primefaces.model.TreeNode;
 public class ProcessMetadataTab {
     private static final Logger logger = LogManager.getLogger(ProcessMetadataTab.class);
 
-    private CreateProcessForm createProcessForm;
+    private final CreateProcessForm createProcessForm;
 
     private ProcessFieldedMetadata processDetails = ProcessFieldedMetadata.EMPTY;
 

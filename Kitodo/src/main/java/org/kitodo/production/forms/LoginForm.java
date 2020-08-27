@@ -42,12 +42,10 @@ public class LoginForm implements Serializable {
      * @return The user object or null if no user is authenticated.
      */
     public User getLoggedUser() {
-        if (Objects.nonNull(loggedUser)) {
-            return this.loggedUser;
-        } else {
+        if (Objects.isNull(loggedUser)) {
             this.loggedUser = ServiceManager.getUserService().getAuthenticatedUser();
-            return this.loggedUser;
         }
+        return this.loggedUser;
     }
 
     public void setLoggedUser(User myClass) {
