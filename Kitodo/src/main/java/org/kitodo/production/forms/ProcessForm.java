@@ -43,6 +43,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
@@ -1166,4 +1167,15 @@ public class ProcessForm extends TemplateBaseForm {
     public String getProcessingEndOfLastTask(ProcessDTO processDTO) {
         return ServiceManager.getProcessService().getLastProcessingEnd(processDTO);
     }
+
+
+    /**
+     * Get all tasks of given process which should be visible to the user.
+     * @param processDTO process as DTO object
+     * @return List of filtered tasks as DTO objects
+     */
+    public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO) {
+        return ServiceManager.getProcessService().getCurrentTasksForUser(processDTO, ServiceManager.getUserService().getCurrentUser());
+    }
+
 }

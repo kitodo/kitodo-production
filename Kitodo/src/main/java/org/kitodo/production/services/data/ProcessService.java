@@ -2681,4 +2681,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         return processTaskStates;
     }
+
+    /**
+     * Get all tasks of given process which should be visible to the user.
+     * @param processDTO process as DTO object
+     * @param user user to filter the tasks for
+     * @return List of filtered tasks as DTO objects
+     */
+    public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO, User user) {
+        Set<Integer> userRoles = user.getRoles().stream()
+                .map(Role::getId)
+                .collect(Collectors.toSet());
+        return processDTO.getTasks().stream()
+                .filter(task -> TaskStatus.OPEN.equals(task.getProcessingStatus()) || TaskStatus.INWORK.equals(task.getProcessingStatus()))
+                .filter(task -> !task.getRoleIds().stream()
+                        .filter(userRoles::contains)
+                        .collect(Collectors.toSet()).isEmpty())
+                .collect(Collectors.toList());
+    }
 }

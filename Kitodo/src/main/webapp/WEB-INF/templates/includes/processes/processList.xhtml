@@ -43,7 +43,7 @@
 
             <p:column styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
             <p:column styleClass="hierarchy-info">
-                <p:rowToggler rendered="#{process.getParentID() ne 0 or process.hasChildren()}"/>
+                <p:rowToggler rendered="#{process.getParentID() ne 0 or process.hasChildren() or ProcessForm.getCurrentTasksForUser(process).size() gt 0}"/>
                 <h:outputText rendered="#{process.getParentID() ne 0 and not process.hasChildren()}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
                 <h:outputText rendered="#{process.getParentID() eq 0 and process.hasChildren()}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
                 <h:outputText rendered="#{process.getParentID() ne 0 and process.hasChildren()}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
@@ -183,6 +183,38 @@
                             </h:panelGroup>
                         </p:panelGrid>
                     </p:panelGrid>
+                    <p:panel header="#{msgs.tasks}:" rendered="#{ProcessForm.getCurrentTasksForUser(process).size() gt 0}">
+                        <p:dataList value="#{ProcessForm.getCurrentTasksForUser(process)}" var="task">
+                            <h:outputText value="#{task.title}"/>
+                                <!-- assign task -->
+                                <h:commandLink id="take"
+                                               action="#{CurrentTaskForm.takeOverTask}"
+                                               styleClass="action"
+                                               rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
+                                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                                    <h:outputText><i class="fa fa-bell-o"/></h:outputText>
+                                    <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
+                                </h:commandLink>
+                                <!-- already assigned task (this user) -->
+                                <h:commandLink id="editOwnTask"
+                                               action="#{CurrentTaskForm.editTask}"
+                                               styleClass="action"
+                                               rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
+                                               title="#{msgs.inBearbeitungDurch}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
+                                    <h:outputText><i class="fa fa-bell"/></h:outputText>
+                                    <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
+                                </h:commandLink>
+                                <!-- already assigned task (different user) -->
+                                <h:commandLink id="editOtherTask"
+                                               action="#{CurrentTaskForm.editTask}"
+                                               styleClass="action"
+                                               rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
+                                               title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
+                                    <h:outputText><i class="fa fa-bell-slash"/></h:outputText>
+                                    <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
+                                </h:commandLink>
+                        </p:dataList>
+                    </p:panel>
                 </div>
             </p:rowExpansion>
 

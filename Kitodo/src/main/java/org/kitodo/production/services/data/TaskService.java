@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -289,6 +290,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
         taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
+        taskDTO.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
         taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
 
         /*
@@ -314,6 +316,14 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             taskDTO.setProcessingUser(userDTO);
         }
         return taskDTO;
+    }
+
+    private List<Integer> convertJSONValuesToList(List<Map<String, Object>> jsonObject) {
+        return jsonObject.stream()
+                .flatMap(map -> map.values().stream())
+                .filter(o -> StringUtils.isNumeric(o.toString()))
+                .map(o -> (Integer) o)
+                .collect(Collectors.toList());
     }
 
     /**
