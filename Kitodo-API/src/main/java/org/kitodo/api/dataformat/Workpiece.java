@@ -179,16 +179,16 @@ public class Workpiece {
     }
 
     /**
-     * Returns all media units of the media unit of the workpiece with type
-     * "page" sorted by their {@code order} as a flat list. The list isn’t
-     * backed by the media units, which means that insertions and deletions in
-     * the list would not change the media units. Therefore a list that cannot
-     * be modified is returned.
+     * Returns all child media units of the media unit of the workpiece with
+     * type "page" sorted by their {@code order} as a flat list. The root media
+     * unit is not contained. The list isn’t backed by the media units, which
+     * means that insertions and deletions in the list would not change the
+     * media units. Therefore a list that cannot be modified is returned.
      *
      * @return all media units with type "page", sorted by their {@code order}
      */
-    public List<MediaUnit> getAllMediaUnitsFilteredByTypePageAndSorted() {
-        List<MediaUnit> mediaUnits = treeStream(mediaUnit)
+    public List<MediaUnit> getAllMediaUnitChildrenFilteredByTypePageAndSorted() {
+        List<MediaUnit> mediaUnits = mediaUnit.getChildren().stream().flatMap(Workpiece::treeStream)
                 .filter(mediaUnitToCheck -> Objects.equals(mediaUnitToCheck.getType(), MediaUnit.TYPE_PAGE))
                 .sorted(Comparator.comparing(MediaUnit::getOrder)).collect(Collectors.toList());
         return Collections.unmodifiableList(mediaUnits);

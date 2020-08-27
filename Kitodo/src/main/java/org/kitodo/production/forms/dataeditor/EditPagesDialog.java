@@ -206,7 +206,7 @@ public class EditPagesDialog {
 
     private List<View> getViewsToAdd(List<Integer> pages) {
         return pages.parallelStream()
-                .map(dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted()::get)
+                .map(dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted()::get)
                 .map(MetadataEditor::getFirstViewForMediaUnit)
                 .collect(Collectors.toList());
     }
@@ -232,7 +232,7 @@ public class EditPagesDialog {
         paginationSubSelectionItems = new ArrayList<>();
         paginationSelectionItems = new ArrayList<>();
 
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
         int capacity = (int) Math.ceil(mediaUnits.size() / .75);
         Set<Integer> assigneds = new HashSet<>(capacity);
         Set<Integer> unassigneds = new HashSet<>(capacity);

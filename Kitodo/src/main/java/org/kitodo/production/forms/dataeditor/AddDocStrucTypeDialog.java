@@ -599,7 +599,7 @@ public class AddDocStrucTypeDialog {
     }
 
     private void prepareSelectPageOnAddNodeItems() {
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
         selectPageOnAddNodeItems = new ArrayList<>(mediaUnits.size());
         for (int i = 0; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);

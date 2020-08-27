@@ -390,7 +390,7 @@ public class GalleryPanel {
     void show() {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
 
         Folder previewSettings = project.getPreview();
         previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, mediaUnits) : null;
@@ -719,7 +719,7 @@ public class GalleryPanel {
 
     private void selectMedia(String mediaUnitOrder, String stripeIndex, String selectionType) {
         MediaUnit selectedMediaUnit = null;
-        for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnitsFilteredByTypePageAndSorted()) {
+        for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted()) {
             if (Objects.equals(mediaUnit.getOrder(), Integer.parseInt(mediaUnitOrder))) {
                 selectedMediaUnit = mediaUnit;
                 break;
