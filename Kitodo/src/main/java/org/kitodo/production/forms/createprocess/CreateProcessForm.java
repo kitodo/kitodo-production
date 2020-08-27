@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -229,6 +228,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @return value of first element in newProcesses
      */
     public Process getMainProcess() {
+        if (processes.isEmpty()) {
+            try {
+                ProcessGenerator processGenerator = new ProcessGenerator();
+                processGenerator.generateProcess(template.getId(), project.getId());
+                processes.add(new TempProcess(processGenerator.getGeneratedProcess(), new Workpiece()));
+            } catch (ProcessGenerationException exception) {
+                Helper.setErrorMessage(exception.getLocalizedMessage(), logger, exception);
+            }
+        }
         return processes.get(0).getProcess();
     }
 
