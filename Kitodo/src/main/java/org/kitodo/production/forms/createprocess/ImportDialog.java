@@ -257,7 +257,7 @@ public class ImportDialog implements Serializable {
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException
                     | DAOException | ConfigException e) {
-                Helper.setErrorMessage(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
