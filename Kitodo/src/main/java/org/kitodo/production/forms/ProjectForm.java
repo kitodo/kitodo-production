@@ -497,7 +497,7 @@ public class ProjectForm extends BaseForm {
 
     private Map<String, Folder> getFolderMap() {
         return getFolderList().parallelStream()
-                .collect(Collectors.toMap(Folder::toString, Function.identity()));
+                .collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
     }
 
     /**
