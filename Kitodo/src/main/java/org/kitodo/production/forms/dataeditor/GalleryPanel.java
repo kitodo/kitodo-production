@@ -156,7 +156,7 @@ public class GalleryPanel {
     }
 
     String getMediaViewMimeType() {
-        return mediaViewVariant.getMimeType();
+        return Objects.isNull(mediaViewVariant) ? "" : mediaViewVariant.getMimeType();
     }
 
     /**
