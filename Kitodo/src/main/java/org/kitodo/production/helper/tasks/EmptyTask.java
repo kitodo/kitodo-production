@@ -236,14 +236,24 @@ public class EmptyTask extends Thread {
                     return label;
                 }
             case CRASHED:
-                logger.error(exception.getMessage(), exception);
-                if (Objects.nonNull(exception.getMessage())) {
-                    return label + " (" + exception.getMessage() + ")";
-                } else if (Objects.nonNull(detail)) {
-                    return label + " (" + detail + ")";
-                } else {
-                    return label + " (" + exception.getClass().getSimpleName() + ")";
+                Throwable rootCause = exception;
+                while (Objects.nonNull(rootCause.getCause())) {
+                    rootCause = rootCause.getCause();
                 }
+                StringBuilder stateDescription = new StringBuilder(255);
+                stateDescription.append(label);
+                stateDescription.append(" (");
+                if (Objects.nonNull(detail)) {
+                    stateDescription.append(detail);
+                    stateDescription.append(": ");
+                }
+                stateDescription.append(rootCause.getClass().getSimpleName());
+                if (Objects.nonNull(rootCause.getLocalizedMessage())) {
+                    stateDescription.append(": ");
+                    stateDescription.append(rootCause.getLocalizedMessage());
+                }
+                stateDescription.append(')');
+                return stateDescription.toString();
             default:
                 return label;
         }
