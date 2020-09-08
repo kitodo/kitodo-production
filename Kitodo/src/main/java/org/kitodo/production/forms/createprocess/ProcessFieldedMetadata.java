@@ -169,7 +169,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     private void createMetadataTable() {
         // the existing metadata is passed to the rule set, which sorts it
         Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
-                .collect(Collectors.toMap(Function.identity(), Metadata::getKey, (duplicate1, duplicate2) -> duplicate1));
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey, (duplicateOne, duplicateTwo) -> duplicateOne));
         List<MetadataViewWithValuesInterface<Metadata>> tableData = metadataView
                 .getSortedVisibleMetadata(metadataWithKeys, additionallySelectedFields);
 
