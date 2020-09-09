@@ -165,6 +165,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static volatile ProcessService instance = null;
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
+    private static final String JSON_TITLE = "title";
+    private static final String JSON_VALUE = "value";
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_PREFIX, "orig");
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX, "tif");
     private static final String SUFFIX = ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_SUFFIX, "");
@@ -800,13 +802,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
             List<PropertyDTO> properties = new ArrayList<>();
             for (Map<String, Object> stringObjectMap : jsonArray) {
-                for (Map.Entry<String, Object> entry : stringObjectMap.entrySet()) {
-                    if (Objects.nonNull(entry) && Objects.nonNull(entry.getValue())) {
-                        PropertyDTO propertyDTO = new PropertyDTO();
-                        propertyDTO.setTitle(entry.getKey());
-                        propertyDTO.setValue(entry.getValue().toString());
-                        properties.add(propertyDTO);
-                    }
+                PropertyDTO propertyDTO = new PropertyDTO();
+                Object title = stringObjectMap.get(JSON_TITLE);
+                Object value = stringObjectMap.get(JSON_VALUE);
+                if (Objects.nonNull(title)) {
+                    propertyDTO.setTitle(title.toString());
+                    propertyDTO.setValue(Objects.nonNull(value) ? value.toString() : "");
+                    properties.add(propertyDTO);
                 }
             }
             processDTO.setProperties(properties);
