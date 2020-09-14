@@ -12,11 +12,8 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -36,17 +33,15 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     private static final Logger logger = LogManager.getLogger(ProcessTextMetadata.class);
 
     private String value;
-    private Date date;
 
     ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry value) {
         super(container, settings, Objects.isNull(settings) ? value.getKey() : settings.getLabel());
         this.value = Objects.isNull(value) ? settings.getDefaultValue() : value.getValue();
     }
 
-    private ProcessTextMetadata(ProcessTextMetadata template) {
+    ProcessTextMetadata(ProcessTextMetadata template) {
         super(template.container, template.settings, template.label);
         this.value = template.value;
-        this.date = Objects.isNull(template.date) ? null : new Date(template.date.getTime());
     }
 
     @Override
@@ -132,33 +127,4 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     public void setValue(String value) {
         this.value = value;
     }
-
-    /**
-     * Get date.
-     *
-     * @return value of date
-     */
-    public Date getDate() {
-        if (Objects.isNull(date) && Objects.nonNull(getValue())) {
-            try {
-                date = new SimpleDateFormat("yyyy-MM-dd").parse(getValue());
-            } catch (ParseException e) {
-                logger.error(e.getLocalizedMessage(), e);
-            }
-        }
-        return date;
-    }
-
-    /**
-     * Set date.
-     *
-     * @param date as java.util.Date
-     */
-    public void setDate(Date date) {
-        this.date = date;
-        if (Objects.nonNull(date)) {
-            this.value = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        }
-    }
-
 }
