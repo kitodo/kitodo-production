@@ -42,9 +42,9 @@ import org.xml.sax.SAXException;
 
 abstract class XmlResponseHandler {
 
-    private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    private static XMLOutputter xmlOutputter = new XMLOutputter();
-    private static XPath xPath = XPathFactory.newInstance().newXPath();
+    private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    private static final XMLOutputter xmlOutputter = new XMLOutputter();
+    private static final XPath xPath = XPathFactory.newInstance().newXPath();
 
     static {
         documentBuilderFactory.setNamespaceAware(true);

@@ -16,16 +16,18 @@ public enum SearchInterfaceType {
             "maximumRecords", "query", "numberOfRecords",
             ".//*[local-name()='diagnostic']/*[local-name()='message']/text()"),
     OAI("oai", "http://www.openarchives.org/OAI/2.0/", "record", null,
-            null, null, null, ".//*[local-name()='error']/text()");
+            null, null, null, ".//*[local-name()='error']/text()"),
+    FTP("ftp", null, null, null, null, null, null,
+            null);
 
-    private String typeString;
-    private String namespace;
-    private String recordString;
-    private String startRecordString;
-    private String maxRecordsString;
-    private String queryString;
-    private String numberOfRecordsString;
-    private String errorMessageXpath;
+    private final String typeString;
+    private final String namespace;
+    private final String recordString;
+    private final String startRecordString;
+    private final String maxRecordsString;
+    private final String queryString;
+    private final String numberOfRecordsString;
+    private final String errorMessageXpath;
 
     SearchInterfaceType(String type, String namespace, String record, String startRecord, String maxRecords,
                         String query, String numberOfRecords, String errorMessageXpath) {

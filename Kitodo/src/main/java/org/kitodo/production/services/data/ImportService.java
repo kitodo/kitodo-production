@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -50,6 +51,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
+import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
@@ -206,15 +208,23 @@ public class ImportService {
      */
     public List<String> getAvailableSearchFields(String opac) {
         try {
-            HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opac);
-            List<String> fields = new ArrayList<>();
-            for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
-                if ("true".equals(searchField.getString("[@hide]"))) {
-                    continue;
+            // FTP server do not support query parameters but only use the filename for OPAC search!
+            if (SearchInterfaceType.FTP.equals(OPACConfig.getInterfaceType(opac))) {
+                return Collections.singletonList("Filename");
+            } else {
+                List<String> fields = new ArrayList<>();
+                HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opac);
+
+                if (Objects.nonNull(searchFields)) {
+                    for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
+                        if ("true".equals(searchField.getString("[@hide]"))) {
+                            continue;
+                        }
+                        fields.add(searchField.getString("[@label]"));
+                    }
                 }
-                fields.add(searchField.getString("[@label]"));
+                return fields;
             }
-            return fields;
         } catch (IllegalArgumentException e) {
             logger.error(e.getLocalizedMessage());
             throw new IllegalArgumentException("Error: OPAC '" + opac + "' is not supported!");
