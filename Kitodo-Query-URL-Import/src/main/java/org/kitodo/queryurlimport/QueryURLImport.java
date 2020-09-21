@@ -229,10 +229,12 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private DataRecord performFTPQueryToRecord(String catalog, String identifier) {
         if (StringUtils.isBlank(host) || StringUtils.isBlank(path)) {
-            throw new CatalogException("Missing host or path configuration for FTP import in OPAC configuration for catalog '" + catalog + "'");
+            throw new CatalogException("Missing host or path configuration for FTP import in OPAC configuration "
+                    + "for catalog '" + catalog + "'");
         }
         if (StringUtils.isBlank(ftpUsername) || StringUtils.isBlank(ftpPassword)) {
-            throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration for catalog '" + catalog + "'");
+            throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration "
+                    + "for catalog '" + catalog + "'");
         }
         try {
             ftpLogin();
@@ -340,7 +342,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private SearchResult performFTPRequest(String filenamepart, String catalog, int startIndex, int rows) {
         if (StringUtils.isBlank(ftpUsername) || StringUtils.isBlank(ftpPassword)) {
-            throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration for catalog '" + catalog + "'");
+            throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration for "
+                    + "catalog '" + catalog + "'");
         }
         SearchResult searchResult = new SearchResult();
         FTPFileFilter searchFilter = file -> file.isFile() && file.getName().contains(filenamepart);
@@ -402,26 +405,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static void loadOPACConfiguration(String opacName) {
         try {
             // XML configuration of OPAC
-            HierarchicalConfiguration opacConfig = OPACConfig.getOPACConfiguration(opacName);
-
-            for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
-                switch (queryConfigParam.getString(NAME_ATTRIBUTE)) {
-                    case SCHEME_CONFIG:
-                        protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                        break;
-                    case HOST_CONFIG:
-                        host = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                        break;
-                    case PATH_CONFIG:
-                        path = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                        break;
-                    case PORT_CONFIG:
-                        port = queryConfigParam.getInt(VALUE_ATTRIBUTE);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + queryConfigParam.getString(NAME_ATTRIBUTE));
-                }
-            }
+            loadServerConfiguration(OPACConfig.getOPACConfiguration(opacName));
 
             interfaceType = OPACConfig.getInterfaceType(opacName);
             idParameter = OPACConfig.getIdentifierParameter(opacName);
@@ -452,6 +436,27 @@ public class QueryURLImport implements ExternalDataImportInterface {
             }
         } catch (IllegalArgumentException | ParameterNotFoundException e) {
             logger.error(e.getLocalizedMessage());
+        }
+    }
+
+    private static void loadServerConfiguration(HierarchicalConfiguration opacConfig) {
+        for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
+            switch (queryConfigParam.getString(NAME_ATTRIBUTE)) {
+                case SCHEME_CONFIG:
+                    protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                    break;
+                case HOST_CONFIG:
+                    host = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                    break;
+                case PATH_CONFIG:
+                    path = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                    break;
+                case PORT_CONFIG:
+                    port = queryConfigParam.getInt(VALUE_ATTRIBUTE);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + queryConfigParam.getString(NAME_ATTRIBUTE));
+            }
         }
     }
 
@@ -490,8 +495,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
         } else {
             ftpClient.connect(host);
         }
-        boolean login_successful = ftpClient.login(ftpUsername, ftpPassword);
-        if (!login_successful) {
+        boolean loginSuccessful = ftpClient.login(ftpUsername, ftpPassword);
+        if (!loginSuccessful) {
             String replyString = ftpClient.getReplyString();
             int replyCode = ftpClient.getReplyCode();
             ftpClient.logout();
