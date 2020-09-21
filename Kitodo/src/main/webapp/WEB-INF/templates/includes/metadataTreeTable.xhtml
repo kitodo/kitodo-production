@@ -79,7 +79,7 @@
                 <h:panelGroup rendered="#{item.input eq 'calendar'}">
                     <p:calendar id="calendar"
                                 value="#{item.date}"
-                                pattern="yyyy-mm-dd"
+                                pattern="yyyy-MM-dd"
                                 styleClass="input-with-button #{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                 showOn="button"
                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
