@@ -94,12 +94,32 @@ public class Key {
     }
 
     /**
+     * Sets the domain of the key.
+     *
+     * @param domain
+     *            domain of the key to set
+     */
+    void setDomain(Domain domain) {
+        this.domain = domain;
+    }
+
+    /**
      * Returns the ID of the relation.
      *
      * @return the ID of the relation
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Sets the ID of the relation.
+     *
+     * @param id
+     *            ID of the relation to set
+     */
+    void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -157,6 +177,19 @@ public class Key {
      */
     public List<String> getPresets() {
         return presets;
+    }
+
+    /**
+     * Sets the type.
+     *
+     * @param type
+     *            type to set
+     */
+    void setType(Type type) {
+        if (codomain == null) {
+            codomain = new CodomainElement();
+        }
+        codomain.setType(type);
     }
 
     /**
