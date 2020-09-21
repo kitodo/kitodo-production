@@ -331,8 +331,11 @@ public class MetadataValidation implements MetadataValidationInterface {
         List<MetadataViewWithValuesInterface<Metadata>> metadataViewsWithValues = containingMetadataView
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
         for (MetadataViewWithValuesInterface<Metadata> metadataViewWithValues : metadataViewsWithValues) {
-            MetadataViewInterface metadataView = metadataViewWithValues.getMetadata()
-                    .orElseThrow(IllegalStateException::new);
+            Optional<MetadataViewInterface> optionalMetadataView = metadataViewWithValues.getMetadata();
+            if (!optionalMetadataView.isPresent()) {
+                continue;
+            }
+            MetadataViewInterface metadataView = optionalMetadataView.orElseThrow(IllegalStateException::new);
             for (Metadata metadata : metadataViewWithValues.getValues()) {
                 if (metadata instanceof MetadataEntry
                         && metadataView instanceof SimpleMetadataViewInterface) {
