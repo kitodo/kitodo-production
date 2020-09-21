@@ -28,7 +28,7 @@
         <p:row>
             <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
             <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
-                         value="#{WorkflowForm.workflow.title}" required="true" disabled="#{isViewMode}"/>
+                         value="#{WorkflowForm.workflow.title}" required="#{not empty param['editForm:save']}" disabled="#{isViewMode}"/>
             <div class="workflow-editor-hidden">
                 <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
                 <h:inputHidden value="#{WorkflowForm.language}" id="editor_language"/>
