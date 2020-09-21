@@ -132,4 +132,23 @@
             <searchField label="ParentID" value="context.ead.id" parentElement="true" hide="true"/>
         </searchFields>
     </catalogue>
+
+    <!-- FTP server example configuration (replace placeholders in brackets with real values) -->
+    <!--
+        <catalogue title="[Catalog name]" description="[Catalog description]">
+        <interfaceType>ftp</interfaceType>
+        <returnFormat>xml</returnFormat>
+        <metadataFormat>[Metadata format of files on FTP server]</metadataFormat>
+        <config>
+            <param name="host" value="[FTP server host]" />
+            <param name="scheme" value="ftp" />
+            <param name="path" value="[Path on FTP server where files are stored]" />
+        </config>
+        <searchFields/>
+        <credentials>
+            <username>[Username]</username>
+            <password>[Password]</password>
+        </credentials>
+    </catalogue>
+    -->
 </opacCatalogues>
