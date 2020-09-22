@@ -241,11 +241,12 @@ public class QueryURLImport implements ExternalDataImportInterface {
             InputStream inputStream = ftpClient.retrieveFileStream(path + "/" + identifier);
             String stringContent = IOUtils.toString(inputStream, Charset.defaultCharset());
             inputStream.close();
+            DataRecord dataRecord = createRecordFromXMLElement(stringContent);
             if (!ftpClient.completePendingCommand()) {
                 throw new CatalogException("Unable to import '" + identifier + "'!");
             }
             ftpLogout();
-            return createRecordFromXMLElement(stringContent);
+            return dataRecord;
         } catch (IOException e) {
             throw new CatalogException(e.getLocalizedMessage());
         } finally {
