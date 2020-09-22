@@ -691,17 +691,20 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                     .getById(processService.processIdFromUri(firstLevelChildLink.getUri()));
             URI metadataFileUri = processService.getMetadataFileUri(linkedProcess);
             Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri);
-            MetadataEntry yearMetadataEntry = null;
+            String yearMetadataEntry = null;
+            if (yearSimpleMetadataView.getId().equals("ORDERLABEL")) {
+                yearMetadataEntry = workpiece.getRootElement().getOrderlabel();
+            }
             for (Metadata metadata : workpiece.getRootElement().getMetadata()) {
                 if (metadata.getKey().equals(yearSimpleMetadataView.getId()) && metadata instanceof MetadataEntry) {
-                    yearMetadataEntry = (MetadataEntry) metadata;
+                    yearMetadataEntry = ((MetadataEntry) metadata).getValue();
                     break;
                 }
             }
             if (Objects.isNull(yearMetadataEntry)) {
                 continue;
             }
-            couldOpenExistingProcess = yearMetadataEntry.getValue().equals(yearMark);
+            couldOpenExistingProcess = yearMetadataEntry.equals(yearMark);
             if (couldOpenExistingProcess) {
                 this.yearProcess = linkedProcess;
                 this.yearWorkpiece = workpiece;
