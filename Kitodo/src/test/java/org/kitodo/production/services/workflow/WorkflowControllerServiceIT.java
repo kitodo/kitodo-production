@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
@@ -34,8 +35,11 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.FileService;
@@ -319,6 +323,65 @@ public class WorkflowControllerServiceIT {
         nextTask = taskService.getById(58);
         assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
             nextTask.getProcessingStatus());
+    }
+
+    @Test
+    public void shouldCloseForProcessWithSkippedTask() throws DataException, DAOException, IOException {
+        Process process = new Process();
+        process.setProcessBaseUri(URI.create("4"));
+        ServiceManager.getProcessService().save(process);
+        WorkflowCondition workflowCondition = new WorkflowCondition("xpath", "/mets:nothing");
+        ServiceManager.getWorkflowConditionService().saveToDatabase(workflowCondition);
+        Task taskToClose =  createAndSaveTask(TaskStatus.INWORK, 1, process, null);
+        Task skippedTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, workflowCondition);
+        Task secondSkippedTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, workflowCondition);
+        Task thirdTaskToSkip = createAndSaveTask(TaskStatus.LOCKED, 3, process, workflowCondition);
+        Task taskToOpen = createAndSaveTask(TaskStatus.LOCKED, 3, process, null);
+        Task secondTaskToOpen = createAndSaveTask(TaskStatus.LOCKED, 3, process, null);
+
+        List<Task> tasks = process.getTasks();
+        tasks.add(taskToClose);
+        tasks.add(skippedTask);
+        tasks.add(secondSkippedTask);
+        tasks.add(thirdTaskToSkip);
+        tasks.add(taskToOpen);
+        tasks.add(secondTaskToOpen);
+
+        ServiceManager.getProcessService().save(process);
+
+        workflowService.close(taskToClose);
+
+        assertEquals("Task '" + taskToClose.getTitle() + "' was not closed!", TaskStatus.DONE,
+                taskToClose.getProcessingStatus());
+        assertEquals("Task '" + skippedTask.getTitle() + "' was not skipped!", TaskStatus.DONE,
+                skippedTask.getProcessingStatus());
+        assertEquals("Task '" + secondSkippedTask.getTitle() + "' was not skipped!", TaskStatus.DONE,
+                secondSkippedTask.getProcessingStatus());
+        assertEquals("Task '" + taskToOpen.getTitle() + "' was not opened!", TaskStatus.OPEN,
+                taskToOpen.getProcessingStatus());
+        assertEquals("Task '" + secondTaskToOpen.getTitle() + "' was not opened!", TaskStatus.OPEN,
+                secondTaskToOpen.getProcessingStatus());
+        assertEquals("Task '" + thirdTaskToSkip.getTitle() + "' was not skipped!", TaskStatus.DONE,
+                thirdTaskToSkip.getProcessingStatus());
+
+        taskService.remove(taskToClose);
+        taskService.remove(skippedTask);
+        taskService.remove(secondSkippedTask);
+        taskService.remove(taskToOpen);
+        taskService.remove(secondTaskToOpen);
+        taskService.remove(thirdTaskToSkip);
+        ServiceManager.getProcessService().remove(process);
+    }
+
+    private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,
+            WorkflowCondition workflowCondition) throws DataException {
+        Task task = new Task();
+        task.setProcessingStatus(taskStatus);
+        task.setOrdering(ordering);
+        task.setProcess(process);
+        task.setWorkflowCondition(workflowCondition);
+        taskService.save(task);
+        return task;
     }
 
     @Test
