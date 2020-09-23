@@ -61,6 +61,7 @@ public class BaseForm implements Serializable {
     protected static final String ERROR_RELOADING = "errorReloading";
     protected static final String ERROR_SAVING = "errorSaving";
     protected static final String ERROR_CREATING = "errorCreating";
+    protected static final String ERROR_PARAMETER_MISSING = "parameterMissing";
     protected static final String EXPORT_FINISHED = "exportFinished";
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
@@ -70,6 +71,8 @@ public class BaseForm implements Serializable {
     protected final String processesPage = MessageFormat.format(LIST_PAGE, "processes");
     protected final String projectsPage = MessageFormat.format(LIST_PAGE, "projects");
     protected final String tasksPage = MessageFormat.format(LIST_PAGE, "tasks");
+
+    protected static final String ID_PARAMETER = "ID";
 
     protected List<SelectItem> columns;
     protected List<ListColumn> selectedColumns;

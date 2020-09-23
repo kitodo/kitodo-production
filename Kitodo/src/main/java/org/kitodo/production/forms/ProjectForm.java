@@ -62,8 +62,6 @@ public class ProjectForm extends BaseForm {
     private List<Template> deletedTemples = new ArrayList<>();
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
-    private static final String ID = "ID";
-    private static final String PARAMETER_MISSING = "parameterMissing";
 
     /**
      * Initialize the list of displayed list columns.
@@ -360,7 +358,7 @@ public class ProjectForm extends BaseForm {
      */
     public String addTemplate() {
         int templateId = 0;
-        String templateIdString = Helper.getRequestParameter(ID);
+        String templateIdString = Helper.getRequestParameter(ID_PARAMETER);
         if (Objects.nonNull(templateIdString)) {
             try {
                 templateId = Integer.parseInt(templateIdString);
@@ -376,7 +374,7 @@ public class ProjectForm extends BaseForm {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         } else {
-            Helper.setErrorMessage(PARAMETER_MISSING, new Object[] {ID});
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
@@ -387,7 +385,7 @@ public class ProjectForm extends BaseForm {
      * @return stay on the same page
      */
     public String deleteTemplate() {
-        String templateIdString = Helper.getRequestParameter(ID);
+        String templateIdString = Helper.getRequestParameter(ID_PARAMETER);
         if (Objects.nonNull(templateIdString)) {
             try {
                 int templateId = Integer.parseInt(templateIdString);
@@ -403,7 +401,7 @@ public class ProjectForm extends BaseForm {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         } else {
-            Helper.setErrorMessage(PARAMETER_MISSING, new Object[] {ID});
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }

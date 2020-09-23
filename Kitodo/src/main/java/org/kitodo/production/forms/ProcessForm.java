@@ -435,11 +435,16 @@ public class ProcessForm extends TemplateBaseForm {
      * @return stay on the same page
      */
     public String deleteRole() {
-        try {
-            int roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            this.task.getRoles().removeIf(role -> role.getId().equals(roleId));
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        String idParameter = Helper.getRequestParameter(ID_PARAMETER);
+        if (Objects.nonNull(idParameter)) {
+            try {
+                int roleId = Integer.parseInt(idParameter);
+                this.task.getRoles().removeIf(role -> role.getId().equals(roleId));
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
@@ -450,19 +455,24 @@ public class ProcessForm extends TemplateBaseForm {
      * @return stay on the same page
      */
     public String addRole() {
-        int roleId = 0;
-        try {
-            roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Role role = ServiceManager.getRoleService().getById(roleId);
+        String idParameter = Helper.getRequestParameter(ID_PARAMETER);
+        if (Objects.nonNull(idParameter)) {
+            int roleId = 0;
+            try {
+                roleId = Integer.parseInt(idParameter);
+                Role role = ServiceManager.getRoleService().getById(roleId);
 
-            if (!this.task.getRoles().contains(role)) {
-                this.task.getRoles().add(role);
+                if (!this.task.getRoles().contains(role)) {
+                    this.task.getRoles().add(role);
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_DATABASE_READING,
+                        new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
