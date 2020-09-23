@@ -210,7 +210,7 @@ public class ImportService {
         try {
             // FTP server do not support query parameters but only use the filename for OPAC search!
             if (SearchInterfaceType.FTP.equals(OPACConfig.getInterfaceType(opac))) {
-                return Collections.singletonList("Filename");
+                return Collections.singletonList(Helper.getTranslation("filename"));
             } else {
                 List<String> fields = new ArrayList<>();
                 HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opac);
