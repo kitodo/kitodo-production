@@ -214,6 +214,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private SearchResult performQuery(String queryURL) throws ResponseHandlerNotFoundException {
         try {
+            httpClient = HttpClientBuilder.create().build();
             HttpResponse response = httpClient.execute(new HttpGet(queryURL));
             int responseStatusCode = response.getStatusLine().getStatusCode();
             if (Objects.equals(responseStatusCode, SC_OK)) {
