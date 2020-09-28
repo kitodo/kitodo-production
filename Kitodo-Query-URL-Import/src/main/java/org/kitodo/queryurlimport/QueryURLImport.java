@@ -14,6 +14,7 @@ package org.kitodo.queryurlimport;
 import static org.apache.http.HttpStatus.SC_OK;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -46,7 +47,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -90,6 +95,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String RETURN_FORMAT_TAG = "returnFormat";
     private static final String METADATA_FORMAT_TAG = "metadataFormat";
     private static final String MODS_RECORD_TAG = "mods";
+    private static final String HTTP_PROTOCOL = "http";
+    private static final String FTP_PROTOCOL = "ftp";
 
     private static SearchInterfaceType interfaceType;
     private static String protocol;
@@ -100,12 +107,15 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static String idPrefix;
     private static String fileFormat;
     private static String metadataFormat;
+    private static String ftpUsername;
+    private static String ftpPassword;
     private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
-    private static HashMap<String, String> searchFieldMapping = new HashMap<>();
-    private static String equalsOperand = "=";
-    private static HttpClient httpClient = HttpClientBuilder.create().build();
+    private static final HashMap<String, String> searchFieldMapping = new HashMap<>();
+    private static final String equalsOperand = "=";
+    private static final HttpClient httpClient = HttpClientBuilder.create().build();
+    private static final FTPClient ftpClient = new FTPClient();
 
-    private static HashMap<String, XmlResponseHandler> formatHandlers;
+    private static final HashMap<String, XmlResponseHandler> formatHandlers;
 
     static {
         formatHandlers = new HashMap<>();
@@ -119,8 +129,12 @@ public class QueryURLImport implements ExternalDataImportInterface {
         loadOPACConfiguration(catalogId);
         LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
         try {
-            URI queryURL = createQueryURI(queryParameters);
-            return performQueryToRecord(queryURL.toString(), identifier);
+            if (SearchInterfaceType.FTP.equals(interfaceType)) {
+                return performFTPQueryToRecord(catalogId, identifier);
+            } else {
+                URI queryURL = createQueryURI(queryParameters);
+                return performQueryToRecord(queryURL.toString(), identifier);
+            }
         } catch (URISyntaxException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
@@ -164,47 +178,24 @@ public class QueryURLImport implements ExternalDataImportInterface {
     @Override
     public SearchResult search(String catalogId, String field, String term, int rows) {
         loadOPACConfiguration(catalogId);
-        HashMap<String, String> searchFields = new HashMap<>();
-        searchFields.put(field, term);
-        return search(catalogId, searchFields, 1, rows);
+        return search(catalogId, field, term, 1, rows);
     }
 
     @Override
-    public SearchResult search(String catalogId, String field, String term, int start, int rows) {
+    public SearchResult search(String catalogId, String key, String value, int start, int numberOfRecords) {
         loadOPACConfiguration(catalogId);
-        HashMap<String, String> searchFields = new HashMap<>();
-        searchFields.put(field, term);
-        return search(catalogId, searchFields, start, rows);
-    }
-
-    private SearchResult search(String catalogId, Map<String, String> searchParameters, int start, int numberOfRecords) {
-        loadOPACConfiguration(catalogId);
-        if (searchFieldMapping.keySet().containsAll(searchParameters.keySet())) {
-            // Query parameters for HTTP request
-            LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
-            // Search fields and terms of query
-            LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchParameters);
-
-            try {
-                URI queryURL = createQueryURI(queryParameters);
-                String queryString = queryURL.toString() + "&";
-                if (Objects.nonNull(interfaceType)) {
-                    if (start > 0 && Objects.nonNull(interfaceType.getStartRecordString())) {
-                        queryString += interfaceType.getStartRecordString() + equalsOperand + start + "&";
-                    }
-                    if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
-                        queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + numberOfRecords + "&";
-                    }
-                    if (Objects.nonNull(interfaceType.getQueryString())) {
-                        queryString = queryString + interfaceType.getQueryString() + equalsOperand;
-                    }
+        switch (protocol) {
+            case FTP_PROTOCOL:
+                return performFTPRequest(value, catalogId, start, numberOfRecords);
+            case HTTP_PROTOCOL:
+                if (searchFieldMapping.containsKey(key)) {
+                    return performHTTPRequest(Collections.singletonMap(key, value), start, numberOfRecords);
                 }
-                return performQuery(queryString + createSearchFieldString(searchFieldMap));
-            } catch (URISyntaxException | UnsupportedEncodingException | ResponseHandlerNotFoundException e) {
-                logger.error(e.getLocalizedMessage());
-            }
+                return null;
+            default:
+                throw new CatalogException("Error: unknown protocol '" + protocol + "' configured for catalog '"
+                        + catalogId + "' (supported protocols are http and ftp)!");
         }
-        return null;
     }
 
     @Override
@@ -230,10 +221,44 @@ public class QueryURLImport implements ExternalDataImportInterface {
             }
         } catch (UnknownHostException e) {
             throw new CatalogException("Unknown host: " + e.getMessage());
+        } catch (ClientProtocolException e) {
+            throw new CatalogException("ClientProtocolException: " + e.getMessage());
         } catch (IOException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new CatalogException(e.getLocalizedMessage());
         }
-        return new SearchResult();
+    }
+
+    private DataRecord performFTPQueryToRecord(String catalog, String identifier) {
+        if (StringUtils.isBlank(host) || StringUtils.isBlank(path)) {
+            throw new CatalogException("Missing host or path configuration for FTP import in OPAC configuration "
+                    + "for catalog '" + catalog + "'");
+        }
+        if (StringUtils.isBlank(ftpUsername) || StringUtils.isBlank(ftpPassword)) {
+            throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration "
+                    + "for catalog '" + catalog + "'");
+        }
+        try {
+            ftpLogin();
+            InputStream inputStream = ftpClient.retrieveFileStream(path + "/" + identifier);
+            String stringContent = IOUtils.toString(inputStream, Charset.defaultCharset());
+            inputStream.close();
+            DataRecord dataRecord = createRecordFromXMLElement(stringContent);
+            if (!ftpClient.completePendingCommand()) {
+                throw new CatalogException("Unable to import '" + identifier + "'!");
+            }
+            ftpLogout();
+            return dataRecord;
+        } catch (IOException e) {
+            throw new CatalogException(e.getLocalizedMessage());
+        } finally {
+            if (ftpClient.isConnected()) {
+                try {
+                    ftpClient.disconnect();
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        }
     }
 
     private DataRecord performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
@@ -291,8 +316,63 @@ public class QueryURLImport implements ExternalDataImportInterface {
         } catch (ConnectTimeoutException e) {
             throw new CatalogException("Connection exception: OPAC did not respond within the configured time limit!");
         }
-
         return records;
+    }
+
+    private SearchResult performHTTPRequest(Map<String, String> searchParameters, int start, int numberOfRecords) {
+        // Query parameters for search request
+        LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
+        // Search fields and terms of query
+        LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchParameters);
+        try {
+            URI queryURL = createQueryURI(queryParameters);
+            String queryString = queryURL.toString() + "&";
+            if (Objects.nonNull(interfaceType)) {
+                if (start > 0 && Objects.nonNull(interfaceType.getStartRecordString())) {
+                    queryString += interfaceType.getStartRecordString() + equalsOperand + start + "&";
+                }
+                if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
+                    queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + numberOfRecords + "&";
+                }
+                if (Objects.nonNull(interfaceType.getQueryString())) {
+                    queryString = queryString + interfaceType.getQueryString() + equalsOperand;
+                }
+            }
+            return performQuery(queryString + createSearchFieldString(searchFieldMap));
+        } catch (URISyntaxException | UnsupportedEncodingException | ResponseHandlerNotFoundException e) {
+            throw new CatalogException(e.getLocalizedMessage());
+        }
+    }
+
+    private SearchResult performFTPRequest(String filenamepart, String catalog, int startIndex, int rows) {
+        if (StringUtils.isBlank(ftpUsername) || StringUtils.isBlank(ftpPassword)) {
+            throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration for "
+                    + "catalog '" + catalog + "'");
+        }
+        SearchResult searchResult = new SearchResult();
+        FTPFileFilter searchFilter = file -> file.isFile() && file.getName().contains(filenamepart);
+        try {
+            ftpLogin();
+            FTPFile[] files = ftpClient.listFiles(path, searchFilter);
+            searchResult.setNumberOfHits(files.length);
+            LinkedList<SingleHit> hits = new LinkedList<>();
+            for (int i = startIndex; i < Math.min(startIndex + rows, files.length); i++) {
+                hits.add(new SingleHit(files[i].getName(), files[i].getName()));
+            }
+            searchResult.setHits(hits);
+            ftpLogout();
+        } catch (IOException e) {
+            throw new CatalogException(e.getMessage());
+        } finally {
+            if (ftpClient.isConnected()) {
+                try {
+                    ftpClient.disconnect();
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        }
+        return searchResult;
     }
 
     private DataRecord createRecordFromXMLElement(String xmlContent) {
@@ -329,32 +409,22 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static void loadOPACConfiguration(String opacName) {
         try {
             // XML configuration of OPAC
-            HierarchicalConfiguration opacConfig = OPACConfig.getOPACConfiguration(opacName);
-
-            for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
-                switch (queryConfigParam.getString(NAME_ATTRIBUTE)) {
-                    case SCHEME_CONFIG:
-                        protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                        break;
-                    case HOST_CONFIG:
-                        host = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                        break;
-                    case PATH_CONFIG:
-                        path = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                        break;
-                    case PORT_CONFIG:
-                        port = queryConfigParam.getInt(VALUE_ATTRIBUTE);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + queryConfigParam.getString(NAME_ATTRIBUTE));
-                }
-            }
+            loadServerConfiguration(OPACConfig.getOPACConfiguration(opacName));
 
             interfaceType = OPACConfig.getInterfaceType(opacName);
             idParameter = OPACConfig.getIdentifierParameter(opacName);
             idPrefix = OPACConfig.getIdentifierPrefix(opacName);
             fileFormat = OPACConfig.getConfigValue(opacName, RETURN_FORMAT_TAG);
             metadataFormat = OPACConfig.getConfigValue(opacName, METADATA_FORMAT_TAG);
+            // ftpUserName and ftpPassword are only required for FTP servers
+            if (SearchInterfaceType.FTP.equals(interfaceType)) {
+                try {
+                    ftpUsername = OPACConfig.getFtpUsername(opacName);
+                    ftpPassword = OPACConfig.getFtpPassword(opacName);
+                } catch (ConfigException e) {
+                    throw new CatalogException("FTP credentials for OPAC '" + opacName + "' are not defined!");
+                }
+            }
 
             HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opacName);
 
@@ -370,6 +440,27 @@ public class QueryURLImport implements ExternalDataImportInterface {
             }
         } catch (IllegalArgumentException | ParameterNotFoundException e) {
             logger.error(e.getLocalizedMessage());
+        }
+    }
+
+    private static void loadServerConfiguration(HierarchicalConfiguration opacConfig) {
+        for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
+            switch (queryConfigParam.getString(NAME_ATTRIBUTE)) {
+                case SCHEME_CONFIG:
+                    protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                    break;
+                case HOST_CONFIG:
+                    host = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                    break;
+                case PATH_CONFIG:
+                    path = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                    break;
+                case PORT_CONFIG:
+                    port = queryConfigParam.getInt(VALUE_ATTRIBUTE);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + queryConfigParam.getString(NAME_ATTRIBUTE));
+            }
         }
     }
 
@@ -400,5 +491,26 @@ public class QueryURLImport implements ExternalDataImportInterface {
             }
         }
         return searchFieldMap;
+    }
+
+    private void ftpLogin() throws IOException {
+        if (port != -1) {
+            ftpClient.connect(host, port);
+        } else {
+            ftpClient.connect(host);
+        }
+        boolean loginSuccessful = ftpClient.login(ftpUsername, ftpPassword);
+        if (!loginSuccessful) {
+            String replyString = ftpClient.getReplyString();
+            int replyCode = ftpClient.getReplyCode();
+            ftpClient.logout();
+            ftpClient.disconnect();
+            throw new CatalogException("FTP server login failed: " + replyString + " (" + replyCode + ")");
+        }
+    }
+
+    private void ftpLogout() throws IOException {
+        ftpClient.logout();
+        ftpClient.disconnect();
     }
 }
