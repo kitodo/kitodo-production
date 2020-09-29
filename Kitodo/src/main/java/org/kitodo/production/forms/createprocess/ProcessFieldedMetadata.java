@@ -300,6 +300,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                     data = new ProcessBooleanMetadata(this, simpleMetadataView, oneValue(values, MetadataEntry.class));
                     break;
                 case DATE:
+                    data = new ProcessDateMetadata(this, simpleMetadataView, oneValue(values, MetadataEntry.class));
+                    break;
                 case INTEGER:
                 case MULTI_LINE_TEXT:
                 case ONE_LINE_TEXT:
