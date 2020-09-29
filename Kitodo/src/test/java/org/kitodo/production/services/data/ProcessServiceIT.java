@@ -420,8 +420,9 @@ public class ProcessServiceIT {
 
     @Test
     public void testGetQueryForClosedProcesses() throws DataException, DAOException {
-        ProcessService processService = ServiceManager.getProcessService();Process secondProcess = processService.getById(2);
-        String sortHelperStatusOld = secondProcess.getSortHelperStatus();
+        ProcessService processService = ServiceManager.getProcessService();
+        Process secondProcess = processService.getById(2);
+        final String sortHelperStatusOld = secondProcess.getSortHelperStatus();
         secondProcess.setSortHelperStatus("100000000");
         processService.save(secondProcess);
 
