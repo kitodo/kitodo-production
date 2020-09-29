@@ -239,16 +239,21 @@ public class UserForm extends BaseForm {
      * @return empty String
      */
     public String deleteFromRole() {
-        try {
-            int roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Role role : this.userObject.getRoles()) {
-                if (role.getId().equals(roleId)) {
-                    this.userObject.getRoles().remove(role);
-                    break;
+        String idParameter = Helper.getRequestParameter("ID");
+        if (Objects.nonNull(idParameter)) {
+            try {
+                int roleId = Integer.parseInt(idParameter);
+                for (Role role : this.userObject.getRoles()) {
+                    if (role.getId().equals(roleId)) {
+                        this.userObject.getRoles().remove(role);
+                        break;
+                    }
                 }
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
@@ -259,19 +264,24 @@ public class UserForm extends BaseForm {
      * @return stay on the same page
      */
     public String addToRole() {
-        int roleId = 0;
-        try {
-            roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Role role = ServiceManager.getRoleService().getById(roleId);
+        String idParameter = Helper.getRequestParameter("ID");
+        if (Objects.nonNull(idParameter)) {
+            int roleId = 0;
+            try {
+                roleId = Integer.parseInt(idParameter);
+                Role role = ServiceManager.getRoleService().getById(roleId);
 
-            if (!this.userObject.getRoles().contains(role)) {
-                this.userObject.getRoles().add(role);
+                if (!this.userObject.getRoles().contains(role)) {
+                    this.userObject.getRoles().add(role);
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_DATABASE_READING,
+                        new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
@@ -282,16 +292,21 @@ public class UserForm extends BaseForm {
      * @return empty String
      */
     public String deleteFromClient() {
-        try {
-            int clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Client client : this.userObject.getClients()) {
-                if (client.getId().equals(clientId)) {
-                    this.userObject.getClients().remove(client);
-                    break;
+        String idParameter = Helper.getRequestParameter(ID_PARAMETER);
+        if (Objects.nonNull(idParameter)) {
+            try {
+                int clientId = Integer.parseInt(idParameter);
+                for (Client client : this.userObject.getClients()) {
+                    if (client.getId().equals(clientId)) {
+                        this.userObject.getClients().remove(client);
+                        break;
+                    }
                 }
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
@@ -302,19 +317,24 @@ public class UserForm extends BaseForm {
      * @return null
      */
     public String addToClient() {
-        int clientId = 0;
-        try {
-            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Client client = ServiceManager.getClientService().getById(clientId);
+        String idParameter = Helper.getRequestParameter("ID");
+        if (Objects.nonNull(idParameter)) {
+            int clientId = 0;
+            try {
+                clientId = Integer.parseInt(idParameter);
+                Client client = ServiceManager.getClientService().getById(clientId);
 
-            if (!this.userObject.getClients().contains(client)) {
-                this.userObject.getClients().add(client);
+                if (!this.userObject.getClients().contains(client)) {
+                    this.userObject.getClients().add(client);
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_DATABASE_READING,
+                        new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
@@ -325,16 +345,21 @@ public class UserForm extends BaseForm {
      * @return empty String
      */
     public String deleteFromProject() {
-        try {
-            int projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Project project : this.userObject.getProjects()) {
-                if (project.getId().equals(projectId)) {
-                    this.userObject.getProjects().remove(project);
-                    break;
+        String idParameter = Helper.getRequestParameter("ID");
+        if (Objects.nonNull(idParameter)) {
+            try {
+                int projectId = Integer.parseInt(idParameter);
+                for (Project project : this.userObject.getProjects()) {
+                    if (project.getId().equals(projectId)) {
+                        this.userObject.getProjects().remove(project);
+                        break;
+                    }
                 }
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
@@ -345,19 +370,24 @@ public class UserForm extends BaseForm {
      * @return empty String or null
      */
     public String addToProject() {
-        int projectId = 0;
-        try {
-            projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Project project = ServiceManager.getProjectService().getById(projectId);
+        String idParameter = Helper.getRequestParameter("ID");
+        if (Objects.nonNull(idParameter)) {
+            int projectId = 0;
+            try {
+                projectId = Integer.parseInt(idParameter);
+                Project project = ServiceManager.getProjectService().getById(projectId);
 
-            if (!this.userObject.getProjects().contains(project)) {
-                this.userObject.getProjects().add(project);
+                if (!this.userObject.getProjects().contains(project)) {
+                    this.userObject.getProjects().add(project);
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_DATABASE_READING,
+                        new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectId }, logger, e);
+            } catch (NumberFormatException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectId }, logger, e);
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } else {
+            Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
         return this.stayOnCurrentPage;
     }
