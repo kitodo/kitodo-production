@@ -112,7 +112,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private static final HashMap<String, String> searchFieldMapping = new HashMap<>();
     private static final String equalsOperand = "=";
-    private static final HttpClient httpClient = HttpClientBuilder.create().build();
+    private static HttpClient httpClient = HttpClientBuilder.create().build();
     private static final FTPClient ftpClient = new FTPClient();
 
     private static final HashMap<String, XmlResponseHandler> formatHandlers;
