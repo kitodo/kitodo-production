@@ -110,7 +110,10 @@
                                      autoWidth="false"
                                      disabled="#{not item.editable or readOnly}"
                                      styleClass="#{readOnly ? 'read-only' : ''}">
-                        <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                        <f:selectItem itemValue="#{null}"
+                                      itemDisabled="#{item.required}"
+                                      itemLabel="#{msgs.notSelected}"
+                                      noSelectionOption="true"/>
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:selectOneMenu>
