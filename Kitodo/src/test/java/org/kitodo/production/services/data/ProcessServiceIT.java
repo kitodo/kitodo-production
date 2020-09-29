@@ -419,6 +419,21 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void testGetQueryForClosedProcesses() throws DataException, DAOException {
+        ProcessService processService = ServiceManager.getProcessService();Process secondProcess = processService.getById(2);
+        String sortHelperStatusOld = secondProcess.getSortHelperStatus();
+        secondProcess.setSortHelperStatus("100000000");
+        processService.save(secondProcess);
+
+        QueryBuilder querySortHelperStatusTrue = processService.getQueryForClosedProcesses();
+        List<ProcessDTO> byQuery = processService.findByQuery(querySortHelperStatusTrue, true);
+
+        Assert.assertEquals("Found the wrong amount of Processes", 1 ,byQuery.size());
+        secondProcess.setSortHelperStatus(sortHelperStatusOld);
+        processService.save(secondProcess);
+    }
+
+    @Test
     public void shouldGetProgressOpen() throws Exception {
         Process process = processService.getById(1);
 

@@ -104,7 +104,7 @@ public class SearchResultGeneration {
         }
 
         if (!this.showClosedProcesses) {
-            query.mustNot(ServiceManager.getProcessService().getQuerySortHelperStatus(true));
+            query.mustNot(ServiceManager.getProcessService().getQueryForClosedProcesses());
         }
         if (!this.showInactiveProjects) {
             query.mustNot(ServiceManager.getProcessService().getQueryProjectActive(false));
