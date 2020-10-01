@@ -159,7 +159,7 @@
         <!-- add button -->
         <p:commandButton actionListener="#{ProjectForm.addFolder()}"
                          update="@(.editDialog)"
-                         oncomplete="PF('editFolderDialog').show()"
+                         oncomplete="PF('editFolderDialog').show();toggleSave()"
                          value="#{msgs.fileGroupAdd}"
                          styleClass="callto"
                          icon="fa fa-plus-circle fa-lg"

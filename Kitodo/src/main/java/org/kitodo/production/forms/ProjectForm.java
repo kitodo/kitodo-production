@@ -326,6 +326,16 @@ public class ProjectForm extends BaseForm {
     public void saveFolder() {
         if (!this.project.getFolders().contains(this.myFolder)) {
             this.project.getFolders().add(this.myFolder);
+        } else {
+            List<Folder> folders = this.project.getFolders();
+            for (Folder folder : folders) {
+                if (this.myFolder.getFileGroup().equals(folder.getFileGroup()) && !Objects.isNull(folder.getId())
+                        ? Objects.isNull(myFolder.getId())
+                        : folder.getId().equals(myFolder.getId())) {
+                    Helper.setErrorMessage("errorDuplicateFilegroup",
+                        new Object[] {ObjectType.FOLDER.getTranslationPlural() });
+                }
+            }
         }
     }
 
