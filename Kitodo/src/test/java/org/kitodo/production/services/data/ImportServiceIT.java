@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -80,9 +81,13 @@ public class ImportServiceIT {
     public void testImportProcess() throws Exception {
         Assert.assertEquals("Not the correct amount of processes found",(long) 7, (long) processService.count());
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        ExecutionPermission.setExecutePermission(script);
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
         Process importedProcess = importService.importProcess(RECORD_ID, 1, 1, "K10Plus");
-        ExecutionPermission.setNoExecutePermission(script);
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
 
         Assert.assertEquals("WrongProcessTitle", "Kitodo_" + RECORD_ID, importedProcess.getTitle());
         Assert.assertEquals("Wrong project used", 1, (long) importedProcess.getProject().getId());
