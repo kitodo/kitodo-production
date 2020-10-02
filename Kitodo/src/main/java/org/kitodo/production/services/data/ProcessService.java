@@ -319,7 +319,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
 
         if (!this.showClosedProcesses) {
-            query.mustNot(getQuerySortHelperStatus(true));
+            query.mustNot(getQueryForClosedProcesses());
         }
 
         if (!this.showInactiveProjects) {
@@ -732,16 +732,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Get query for sort helper status.
+     * Get Query for closed processes.
      *
-     * @param closed
-     *            true or false
      * @return query as QueryBuilder
      */
-    public QueryBuilder getQuerySortHelperStatus(boolean closed) {
+    public QueryBuilder getQueryForClosedProcesses() {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000", closed));
-        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000000", closed));
+        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000", true));
+        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000000", true));
         return query;
     }
 
