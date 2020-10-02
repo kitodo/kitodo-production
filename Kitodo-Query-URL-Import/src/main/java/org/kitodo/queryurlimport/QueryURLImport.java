@@ -96,6 +96,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String METADATA_FORMAT_TAG = "metadataFormat";
     private static final String MODS_RECORD_TAG = "mods";
     private static final String HTTP_PROTOCOL = "http";
+    private static final String HTTPS_PROTOCOL = "https";
     private static final String FTP_PROTOCOL = "ftp";
 
     private static SearchInterfaceType interfaceType;
@@ -188,13 +189,14 @@ public class QueryURLImport implements ExternalDataImportInterface {
             case FTP_PROTOCOL:
                 return performFTPRequest(value, catalogId, start, numberOfRecords);
             case HTTP_PROTOCOL:
+            case HTTPS_PROTOCOL:
                 if (searchFieldMapping.containsKey(key)) {
                     return performHTTPRequest(Collections.singletonMap(key, value), start, numberOfRecords);
                 }
                 return null;
             default:
                 throw new CatalogException("Error: unknown protocol '" + protocol + "' configured for catalog '"
-                        + catalogId + "' (supported protocols are http and ftp)!");
+                        + catalogId + "' (supported protocols are http, https and ftp)!");
         }
     }
 
