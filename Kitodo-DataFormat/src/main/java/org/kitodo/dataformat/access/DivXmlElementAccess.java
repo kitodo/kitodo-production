@@ -240,7 +240,9 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     DivType toDiv(Map<MediaUnit, String> mediaUnitIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
         div.setID(metsReferrerId);
-        super.getContentIds().parallelStream().map(URI::toString).forEachOrdered(div.getCONTENTIDS()::add);
+        if (!super.getContentIds().isEmpty()) {
+            super.getContentIds().parallelStream().map(URI::toString).forEachOrdered(div.getCONTENTIDS()::add);
+        }
         div.setLABEL(super.getLabel());
         if (getOrder() > 0) {
             div.setORDER(BigInteger.valueOf(getOrder()));
