@@ -86,8 +86,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
         Optional<MetadataViewInterface> optionalKeyView = divisionView
                 .getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).parallelStream()
                 .filter(keyView -> keyView.getId().equals(metadata.getMetadataType().getName())).findFirst();
@@ -134,8 +133,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
         Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(metadataEntriesMappedToKeyNames,
             Collections.emptyList());
         ArrayList<LegacyMetadataTypeHelper> addableMetadataTypes = new ArrayList<>(addableKeys.size());
@@ -159,8 +157,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
         List<LegacyMetadataHelper> allMetadata = new LinkedList<>();
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
         for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
@@ -182,8 +179,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> allMetadata = new LinkedList<>();
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
         for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {

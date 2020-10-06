@@ -11,7 +11,12 @@
 
 package org.kitodo.api;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Metadata {
     /**
@@ -73,5 +78,18 @@ public class Metadata {
         Metadata metadata = (Metadata) o;
         return domain == metadata.domain
                 && Objects.equals(key, metadata.key);
+    }
+
+    /**
+     * Map Collection of Metadata objects to a Map of Metadata and String objects.
+     * @param metadataCollection Collection of Metadata objects
+     * @return Map of Metadata and String objects as java.util.Map
+     */
+    public static Map<Metadata, String> mapToKey(Collection<Metadata> metadataCollection) {
+        if (Objects.isNull(metadataCollection)) {
+            return Collections.emptyMap();
+        }
+        return metadataCollection.parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey, (duplicateOne, duplicateTwo) -> duplicateOne));
     }
 }

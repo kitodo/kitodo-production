@@ -170,11 +170,9 @@ public class MetadataValidation implements MetadataValidationInterface {
         Collection<ValidationResult> results = new ArrayList<>();
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(type, null,
                 metadataLanguage);
-        results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(metadata.parallelStream().collect(
-                Collectors.toMap(Function.identity(), Metadata::getKey)),
+        results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(Metadata.mapToKey(metadata),
                 divisionView, elementString.concat(": "), translations));
-        results.add(checkForDetailsInTheMetadataRecursive(metadata.parallelStream().collect(
-                Collectors.toMap(Function.identity(), Metadata::getKey)),
+        results.add(checkForDetailsInTheMetadataRecursive(Metadata.mapToKey(metadata),
                 divisionView, elementString.concat(": "), translations));
         return results;
     }
@@ -288,8 +286,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 for (Metadata metadata : metadataViewWithValues.getValue()) {
                     if (metadata instanceof MetadataGroup) {
                         ValidationResult validationResult = checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                            ((MetadataGroup) metadata).getGroup().parallelStream()
-                                    .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
+                            Metadata.mapToKey(((MetadataGroup) metadata).getGroup()),
                             (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                             translations);
                         if (validationResult.getState().equals(State.WARNING)) {
@@ -348,8 +345,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 } else if (metadata instanceof MetadataGroup
                         && metadataView instanceof ComplexMetadataViewInterface) {
                     ValidationResult validationResult = checkForDetailsInTheMetadataRecursive(
-                        ((MetadataGroup) metadata).getGroup().parallelStream()
-                                .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
+                        Metadata.mapToKey(((MetadataGroup) metadata).getGroup()),
                         (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                         translations);
                     if (validationResult.getState().equals(State.ERROR)) {
