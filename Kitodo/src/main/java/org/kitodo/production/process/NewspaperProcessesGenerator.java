@@ -363,9 +363,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         final Collection<String> processTitleKeys = ruleset.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
         newspaperProcessTitleViews = newspaperView
-                .getAddableMetadata(overallWorkpiece.getRootElement().getMetadata().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                    Collections.emptyList())
+                .getAddableMetadata(Metadata.mapToKey(overallWorkpiece.getRootElement().getMetadata()), Collections.emptyList())
                 .parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
                 .map(SimpleMetadataViewInterface.class::cast)
                 .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());

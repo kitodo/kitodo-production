@@ -507,8 +507,7 @@ public class AddDocStrucTypeDialog {
         try {
             if (Objects.nonNull(selectedMetadataTreeNode)
                     && Objects.nonNull(selectedMetadataTreeNode.getData())) {
-                existingMetadata = ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadata().stream()
-                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+                existingMetadata = Metadata.mapToKey(((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadata());
                 ComplexMetadataViewInterface metadataView = dataEditor.getRuleset().getMetadataView(
                         ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadataID(),
                         dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
