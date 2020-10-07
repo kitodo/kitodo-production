@@ -11,6 +11,7 @@
 
 package org.kitodo.config;
 
+import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
@@ -84,10 +85,9 @@ public class KitodoConfig extends Config {
      * @throws NoSuchElementException
      *             if parameter taken from config file is null or exception occurred
      */
-    //TODO: there is still image management where it is needed
     public static String getParameter(String key) {
         try {
-            return getConfig().getString(key);
+            return resolveOsSpecific(getConfig().getString(key));
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("No configuration found in " + CONFIG_FILE + " for key " + key + "!");
         }
@@ -230,7 +230,7 @@ public class KitodoConfig extends Config {
      */
     public static Optional<String> getOptionalString(ParameterInterface key) {
         try {
-            return Optional.of(getConfig().getString(key.getName()));
+            return Optional.of(resolveOsSpecific(getConfig().getString(key.getName())));
         } catch (NoSuchElementException e) {
             logger.catching(Level.TRACE, e);
             return Optional.empty();
@@ -267,5 +267,17 @@ public class KitodoConfig extends Config {
      */
     public static URI getUriParameter(ParameterInterface key, String fullFilenameToAdd) {
         return Paths.get(FilenameUtils.concat(getParameter(key), fullFilenameToAdd)).toUri();
+    }
+
+    /**
+     * Parameter value like "foo(.bar|.baz)" will resolve to "foo.bar" on Unix
+     * and to "foo.baz" on Windows.
+     *
+     * @param string
+     *            string to process
+     * @return OS-specific string
+     */
+    private static String resolveOsSpecific(String string) {
+        return string.replaceFirst("\\((\\p{Graph}*)\\|(\\p{Graph}*)\\)$", File.separatorChar == '/' ? "$1" : "$2");
     }
 }
