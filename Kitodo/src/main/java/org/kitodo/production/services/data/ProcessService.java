@@ -1592,12 +1592,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return externalContext;
     }
 
-    private PdfPTable getPdfTable(List<List<HSSFCell>> rowList) {
+    private PdfPTable getPdfTable(List<List<HSSFCell>> rowList) throws DocumentException {
         // create formatter for cells with default locale
         DataFormatter formatter = new DataFormatter();
 
-        PdfPTable table = new PdfPTable(9);
+        PdfPTable table = new PdfPTable(8);
         table.setSpacingBefore(20);
+        table.setWidths(new int[] {4, 1, 2, 1, 1, 1, 2, 2 });
         for (List<HSSFCell> row : rowList) {
             for (HSSFCell hssfCell : row) {
                 String stringCellValue = formatter.formatCellValue(hssfCell);
