@@ -49,7 +49,7 @@ import org.kitodo.config.enums.ParameterCore;
  * implementation as required for the connection.
  */
 @WebListener
-public class ActiveMQDirector implements ServletContextListener {
+public class ActiveMQDirector implements Runnable, ServletContextListener {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
     // When implementing new services, add them to this list
@@ -70,16 +70,25 @@ public class ActiveMQDirector implements ServletContextListener {
      */
     @Override
     public void contextInitialized(ServletContextEvent initialisation) {
-        Optional<String> activeMQHost = ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_HOST_URL);
-        if (activeMQHost.isPresent()) {
-            session = connectToServer(activeMQHost.get());
-            if (Objects.nonNull(session)) {
-                registerListeners(services);
-                Optional<String> activeMQResultsTopic = ConfigCore
-                        .getOptionalString(ParameterCore.ACTIVE_MQ_RESULTS_TOPIC);
-                activeMQResultsTopic.ifPresent(topic -> resultsTopic = setUpReportChannel(topic));
-            }
+        if (ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_HOST_URL).isPresent()) {
+            Thread connectAsynchronously = new Thread(new ActiveMQDirector());
+            connectAsynchronously.setName(ActiveMQDirector.class.getSimpleName());
+            connectAsynchronously.setDaemon(true);
+            connectAsynchronously.start();
         }
+    }
+
+    @Override
+    public void run() {
+        String activeMQHost = ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_HOST_URL);
+        logger.info("Connecting to Active MQ server: {}", activeMQHost);
+        session = connectToServer(activeMQHost);
+        if (Objects.nonNull(session)) {
+            registerListeners(services);
+            Optional<String> activeMQResultsTopic = ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_RESULTS_TOPIC);
+            activeMQResultsTopic.ifPresent(topic -> resultsTopic = setUpReportChannel(topic));
+        }
+        logger.info("Connection to Active MQ server established.");
     }
 
     /**
