@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.schema;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -148,7 +147,7 @@ public class SchemaService {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
                     if (folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())) {
-                        int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf(File.separator);
+                        int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf('/');
                         String lastSegment = mediaFileForMediaVariant.getValue().toString()
                                 .substring(lastSeparator + 1);
                         mediaFileForMediaVariant
