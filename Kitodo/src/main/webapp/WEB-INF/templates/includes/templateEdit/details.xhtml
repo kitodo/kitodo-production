@@ -23,7 +23,7 @@
                 <p:inputText id="title" placeholder="#{msgs.templateTitle}"
                              value="#{TemplateForm.template.title}"
                              class="input" disabled="#{isViewMode}"
-                             required="#{empty param['editForm:saveButtonToggler']}">
+                             required="#{not empty param['editForm:save']}">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
@@ -31,7 +31,7 @@
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
                 <p:selectManyCheckbox  id="project" value="#{TemplateForm.assignedProjects}" layout="grid" columns="1" converter="#{projectConverter}"
-                                 required="#{empty param['editForm:saveButtonToggler']}" disabled="#{isViewMode}">
+                                 required="#{not empty param['editForm:save']}" disabled="#{isViewMode}">
                     <f:selectItems value="#{TemplateForm.projects}" var="project" itemLabel="#{project.title}"
                                    itemValue="#{project}" itemDisabled="#{TemplateForm.isUserNotAssignedToProject(project)}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
@@ -42,7 +42,7 @@
                 <p:outputLabel for="workflow" value="#{msgs.workflow}"/>
                 <p:selectOneMenu id="workflow" value="#{TemplateForm.template.workflow}" disabled="#{isViewMode}"
                                  converter="#{workflowConverter}"
-                                 required="#{empty param['editForm:saveButtonToggler']}">
+                                 required="#{not empty param['editForm:save']}">
                     <f:selectItems value="#{TemplateForm.workflows}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
@@ -53,7 +53,7 @@
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
                 <p:selectOneMenu id="ruleset" value="#{TemplateForm.template.ruleset}" converter="#{rulesetConverter}"
-                                 required="#{empty param['editForm:saveButtonToggler']}" disabled="#{isViewMode}">
+                                 required="#{not empty param['editForm:save']}" disabled="#{isViewMode}">
                     <f:selectItems value="#{TemplateForm.rulesets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
@@ -62,7 +62,7 @@
             <div>
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
                 <p:selectOneMenu id="docket" value="#{TemplateForm.template.docket}" converter="#{docketConverter}"
-                                 required="#{empty param['editForm:saveButtonToggler']}" disabled="#{isViewMode}">
+                                 required="#{not empty param['editForm:save']}" disabled="#{isViewMode}">
                     <f:selectItems value="#{TemplateForm.dockets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
