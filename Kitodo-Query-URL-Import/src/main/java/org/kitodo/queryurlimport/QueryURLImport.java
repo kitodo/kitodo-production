@@ -52,11 +52,11 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
@@ -113,7 +113,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private static final HashMap<String, String> searchFieldMapping = new HashMap<>();
     private static final String equalsOperand = "=";
-    private static HttpClient httpClient = HttpClientBuilder.create().build();
+    private static CloseableHttpClient httpClient = HttpClientBuilder.create().build();
     private static final FTPClient ftpClient = new FTPClient();
 
     private static final HashMap<String, XmlResponseHandler> formatHandlers;
@@ -207,6 +207,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private SearchResult performQuery(String queryURL) throws ResponseHandlerNotFoundException {
         try {
+            httpClient.close();
             httpClient = HttpClientBuilder.create().build();
             HttpResponse response = httpClient.execute(new HttpGet(queryURL));
             int responseStatusCode = response.getStatusLine().getStatusCode();
@@ -279,6 +280,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
             fullUrl = fullUrl + idParameter + equalsOperand + identifier;
         }
         try {
+            httpClient.close();
+            httpClient = HttpClientBuilder.create().build();
             HttpResponse response = httpClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
                 if (Objects.isNull(response.getEntity())) {
