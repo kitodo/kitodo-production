@@ -265,27 +265,27 @@ public class Subfolder {
     }
 
     private List<String> getUriComponents(String canonical) {
-        List<String> x = new ArrayList<>(3);
         int lastSeparator = folder.getPath().lastIndexOf(File.separator);
         String lastSegment = folder.getPath().substring(lastSeparator + 1);
-        x.add(process.getId().toString());
+        List<String> components = new ArrayList<>(3);
+        components.add(process.getId().toString());
 
         if (lastSegment.indexOf('*') == -1) {
             String localName = canonical + getFileFormat().getExtension(true);
-            x.add(variableReplacer.replace(folder.getPath()));
-            x.add(localName);
+            components.add(variableReplacer.replace(folder.getPath()));
+            components.add(localName);
         } else {
             String realPath = folder.getPath().substring(0, lastSeparator);
             String localName = lastSegment.replaceFirst("\\*", canonical).replaceFirst("\\*$",
                 getFileFormat().getExtension(false));
             if (realPath.isEmpty()) {
-                x.add(localName);
+                components.add(localName);
             } else {
-                x.add(variableReplacer.replace(realPath));
-                x.add(localName);
+                components.add(variableReplacer.replace(realPath));
+                components.add(localName);
             }
         }
-        return x;
+        return components;
     }
 
     /**
