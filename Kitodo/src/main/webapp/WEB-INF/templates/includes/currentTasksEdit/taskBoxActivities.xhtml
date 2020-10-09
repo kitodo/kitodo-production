@@ -124,7 +124,7 @@
                     <!-- Close button -->
                     <p:commandLink id="close" action="#{CurrentTaskForm.closeTaskByUser}" title="#{msgs.closeTask}">
                         <h:outputText><i class="fa fa-check"/> #{msgs.closeTask}</h:outputText>
-                        <p:confirm header="#{msgs.confirmClose}" message="#{msgs.closeTask}" icon="ui-icon-alert"/>
+                        <p:confirm header="#{msgs.confirmClose}" message="#{msgs.closeTask}?" icon="ui-icon-alert"/>
                     </p:commandLink>
                 </h:panelGrid>
             </ui:fragment>
