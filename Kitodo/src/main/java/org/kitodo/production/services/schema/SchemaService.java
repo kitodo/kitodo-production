@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.schema;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -148,7 +147,7 @@ public class SchemaService {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
                     if (folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())) {
-                        int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf(File.separator);
+                        int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf('/');
                         String lastSegment = mediaFileForMediaVariant.getValue().toString()
                                 .substring(lastSeparator + 1);
                         mediaFileForMediaVariant
@@ -202,18 +201,18 @@ public class SchemaService {
     /**
      * Adds a use to a media unit.
      *
-     * @param useFolder
-     *            use folder for the use
+     * @param subfolder
+     *            subfolder for the use
      * @param canonical
      *            the canonical part of the file name of the media file
      * @param mediaUnit
      *            media unit to add to
      */
-    private void addUse(Subfolder useFolder, String canonical, MediaUnit mediaUnit) {
+    private void addUse(Subfolder subfolder, String canonical, MediaUnit mediaUnit) {
         MediaVariant mediaVariant = new MediaVariant();
-        mediaVariant.setUse(useFolder.getFolder().getFileGroup());
-        mediaVariant.setMimeType(useFolder.getFolder().getMimeType());
-        URI mediaFile = useFolder.getUri(canonical);
+        mediaVariant.setUse(subfolder.getFolder().getFileGroup());
+        mediaVariant.setMimeType(subfolder.getFolder().getMimeType());
+        URI mediaFile = subfolder.getRelativeFilePath(canonical);
         mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
     }
 
