@@ -24,7 +24,6 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <h:outputScript name="js/filter.js" target="body" />
         <h3>#{msgs.tasks}</h3>
 
         <!-- filters -->
@@ -33,9 +32,12 @@
                   outcome="extendedSearch"/>
         <h:form id="filterMenu">
             <div class="ui-inputgroup">
-                <p:inputText forceId="true" id="filterfield" value="#{CurrentTaskForm.filter}" placeholder="#{msgs.filter}">
+                <p:inputText forceId="true"
+                             id="filterfield"
+                             value="#{CurrentTaskForm.filter}"
+                             placeholder="#{msgs.filter}">
                     <p:ajax event="change"
-                            oncomplete="filter.filterTasks()"/>
+                            update="tasksTabView:tasksForm:taskTable"/>
                 </p:inputText>
                 <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                 <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">

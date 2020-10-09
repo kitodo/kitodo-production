@@ -779,6 +779,7 @@ public class CurrentTaskForm extends BaseForm {
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
+        this.lazyDTOModel.setFilterString(filter);
     }
 
     /**

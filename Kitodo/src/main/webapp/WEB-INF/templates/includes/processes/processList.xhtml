@@ -53,15 +53,13 @@
                       styleClass="numeric"
                       resizable="false"
                       headerText="#{msgs.id}"
-                      sortBy="#{process.id}"
-                      filterBy="#{process.id}">
+                      sortBy="#{process.id}">
                 <h:outputText value="#{process.id}"
                               title="#{process.id}"/>
             </p:column>
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
                       sortBy="#{process.title.keyword}"
-                      filterBy="#{process.title}"
                       rendered="#{ProcessForm.showColumn('process.title')}">
                 <h:outputText value="#{process.title}"
                               title="#{process.title}"/>
