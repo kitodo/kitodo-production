@@ -90,7 +90,7 @@ public class RulesetForm extends BaseForm {
                 ServiceManager.getRulesetService().save(this.ruleset);
                 return projectsPage;
             } else {
-                Helper.setErrorMessage("rulesetNotFound", this.ruleset.getFile());
+                Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
                 return this.stayOnCurrentPage;
             }
         } catch (DataException e) {
