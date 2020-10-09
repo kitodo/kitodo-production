@@ -202,18 +202,18 @@ public class SchemaService {
     /**
      * Adds a use to a media unit.
      *
-     * @param useFolder
-     *            use folder for the use
+     * @param subfolder
+     *            subfolder for the use
      * @param canonical
      *            the canonical part of the file name of the media file
      * @param mediaUnit
      *            media unit to add to
      */
-    private void addUse(Subfolder useFolder, String canonical, MediaUnit mediaUnit) {
+    private void addUse(Subfolder subfolder, String canonical, MediaUnit mediaUnit) {
         MediaVariant mediaVariant = new MediaVariant();
-        mediaVariant.setUse(useFolder.getFolder().getFileGroup());
-        mediaVariant.setMimeType(useFolder.getFolder().getMimeType());
-        URI mediaFile = useFolder.getUri(canonical);
+        mediaVariant.setUse(subfolder.getFolder().getFileGroup());
+        mediaVariant.setMimeType(subfolder.getFolder().getMimeType());
+        URI mediaFile = subfolder.getRelativeFilePath(canonical);
         mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
     }
 

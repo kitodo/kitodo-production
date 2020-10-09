@@ -16,6 +16,8 @@ import java.io.FilenameFilter;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -221,6 +223,17 @@ public class Subfolder {
     }
 
     /**
+     * Returns the relative path to a (fictious) media file in the folder,
+     * relative to the process dierctory.
+     *
+     * @return relative path to the file
+     */
+    public URI getRelativeFilePath(String canonical) {
+        List<String> components = getUriComponents(canonical);
+        return URI.create(components.size() > 2 ? components.get(1) + '/' + components.get(2) : components.get(1));
+    }
+
+    /**
      * Returns the relative path to the directory storing the files.
      *
      * @return relative path to the directory
@@ -246,24 +259,33 @@ public class Subfolder {
      * @return composed URI
      */
     public URI getUri(String canonical) {
+        List<String> uriComponents = getUriComponents(canonical);
+        return Paths.get(ConfigCore.getKitodoDataDirectory(), uriComponents.toArray(new String[uriComponents.size()]))
+                .toUri();
+    }
+
+    private List<String> getUriComponents(String canonical) {
+        List<String> x = new ArrayList<>(3);
         int lastSeparator = folder.getPath().lastIndexOf(File.separator);
         String lastSegment = folder.getPath().substring(lastSeparator + 1);
-        String processId = process.getId().toString();
+        x.add(process.getId().toString());
+
         if (lastSegment.indexOf('*') == -1) {
             String localName = canonical + getFileFormat().getExtension(true);
-            return Paths.get(ConfigCore.getKitodoDataDirectory(), processId, variableReplacer.replace(folder.getPath()),
-                localName).toUri();
+            x.add(variableReplacer.replace(folder.getPath()));
+            x.add(localName);
         } else {
             String realPath = folder.getPath().substring(0, lastSeparator);
             String localName = lastSegment.replaceFirst("\\*", canonical).replaceFirst("\\*$",
                 getFileFormat().getExtension(false));
             if (realPath.isEmpty()) {
-                return Paths.get(ConfigCore.getKitodoDataDirectory(), processId, localName).toUri();
+                x.add(localName);
             } else {
-                return Paths.get(ConfigCore.getKitodoDataDirectory(), processId, variableReplacer.replace(realPath),
-                    localName).toUri();
+                x.add(variableReplacer.replace(realPath));
+                x.add(localName);
             }
         }
+        return x;
     }
 
     /**
