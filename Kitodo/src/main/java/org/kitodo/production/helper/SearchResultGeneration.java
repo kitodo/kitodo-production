@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper;
 
+import java.io.IOException;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,19 +22,20 @@ import java.util.TimeZone;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataformat.MetsService;
 
 public class SearchResultGeneration {
 
@@ -118,7 +121,7 @@ public class SearchResultGeneration {
 
         HSSFRow title = sheet.createRow(0);
         title.createCell(0).setCellValue(this.filter);
-        for (int i = 1; i < 9; i++) {
+        for (int i = 1; i < 8; i++) {
             title.createCell(i).setCellValue("");
         }
 
@@ -127,11 +130,10 @@ public class SearchResultGeneration {
         rowHeader.createCell(1).setCellValue(Helper.getTranslation("ID"));
         rowHeader.createCell(2).setCellValue(Helper.getTranslation("Datum"));
         rowHeader.createCell(3).setCellValue(Helper.getTranslation("CountImages"));
-        rowHeader.createCell(4).setCellValue(Helper.getTranslation("CountMetadata"));
-        rowHeader.createCell(5).setCellValue(Helper.getTranslation("Project"));
-        rowHeader.createCell(6).setCellValue(Helper.getTranslation("Status"));
-        rowHeader.createCell(7).setCellValue(Helper.getTranslation("AltRefNo"));
-        rowHeader.createCell(8).setCellValue(Helper.getTranslation("b-number"));
+        rowHeader.createCell(4).setCellValue(Helper.getTranslation("CountStructuralElements"));
+        rowHeader.createCell(5).setCellValue(Helper.getTranslation("CountMetadata"));
+        rowHeader.createCell(6).setCellValue(Helper.getTranslation("Project"));
+        rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
 
         int rowCounter = 2;
         for (Process process : processes) {
@@ -149,26 +151,33 @@ public class SearchResultGeneration {
         df.setTimeZone(TimeZone.getTimeZone("GMT"));
         String gmtCreationDate = df.format(process.getCreationDate());
         row.createCell(2).setCellValue(gmtCreationDate);
-        row.createCell(3).setCellValue(process.getSortHelperImages());
-        row.createCell(4).setCellValue(process.getSortHelperDocstructs());
-        row.createCell(5).setCellValue(process.getProject().getTitle());
+
+        URI metadataFilePath;
+        int numberOfProcessImages = 0;
+        int numberOfProcessStructuralElements = 0;
+        int numberOfProcessMetadata = 0;
+        try {
+            metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+            numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getMediaUnit())
+                    .filter(mediaUnit -> Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)).count();
+            numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getRootElement()).count();
+            numberOfProcessMetadata = Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
+
+        } catch (IOException e) {
+            logger.debug("Metadata file not found for process with id: " + process.getId());
+        }
+
+        row.createCell(3).setCellValue(numberOfProcessImages);
+        row.createCell(4).setCellValue(numberOfProcessStructuralElements);
+        row.createCell(5).setCellValue(numberOfProcessMetadata);
+        row.createCell(6).setCellValue(process.getProject().getTitle());
         String sortHelperStatus = "";
         if (Objects.nonNull(process.getSortHelperStatus())) {
             sortHelperStatus = process.getSortHelperStatus().substring(0, 3) + " / "
                     + process.getSortHelperStatus().substring(3, 6) + " / "
                     + process.getSortHelperStatus().substring(6);
         }
-        row.createCell(6).setCellValue(sortHelperStatus);
-        HSSFCell cellSeven = row.createCell(7);
-        cellSeven.setCellValue("");
-        HSSFCell cellEight = row.createCell(8);
-        cellEight.setCellValue("");
-        for (Property property : process.getProperties()) {
-            if (property.getTitle().equals("AltRefNo")) {
-                cellSeven.setCellValue(property.getValue());
-            } else if (property.getTitle().equals("b-number")) {
-                cellEight.setCellValue(property.getValue());
-            }
-        }
+        row.createCell(7).setCellValue(sortHelperStatus);
     }
 }
