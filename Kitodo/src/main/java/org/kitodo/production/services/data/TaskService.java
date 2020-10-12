@@ -188,7 +188,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        String filter = ServiceManager.getFilterService().parsePrimeFacesFilter(filters);
+        String filter = ServiceManager.getFilterService().parseFilterString(filters);
         return findByQuery(createUserTaskQuery(filter), getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 

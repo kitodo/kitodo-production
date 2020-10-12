@@ -59,6 +59,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;
+    public static final String FILTER_STRING = "filterString";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -971,30 +972,18 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * Parses the passed Map and returns the value. The Map should contain only one or no Entry.
-     * This method should be used to parse a Map passed by PrimeFaces' DataTable default filter functionality.
-     * It passes currently only one Entry because our custom filter input passes the complete filter string to
-     * the first input of PrimeFaces' default filter functionality.
-     * This triggers PrimeFaces to pass the filter string and update the DataTable automatically.
+     * Checks the given map for an entry with the key 'FILTER_STRING' and parses the corresponding value of the
+     * entry as a filter.
      *
      * @param filters
-     *      a Map containing only one String value
+     *      a Map containing a filter String
      * @return
      *      the only Entry's value as java.lang.String
      */
-    String parsePrimeFacesFilter(Map<?, ?> filters) {
-        if (Objects.nonNull(filters)) {
-            int count = filters.size();
-            if (count == 1) {
-                Object value = filters.entrySet().iterator().next().getValue();
-                if (value instanceof String) {
-                    return (String) value;
-                } else {
-                    logger.warn("Given filter is not a String. Ignoring filter.");
-                }
-            } else if (count > 1) {
-                logger.warn("Filter map contains too many entries (only 0 or 1 allowed). Ignoring filter map.");
-            }
+    String parseFilterString(Map<?, ?> filters) {
+        if (Objects.nonNull(filters) && filters.containsKey(FILTER_STRING)
+                && filters.get(FILTER_STRING) instanceof String) {
+            return (String) filters.get(FILTER_STRING);
         }
         return "";
     }

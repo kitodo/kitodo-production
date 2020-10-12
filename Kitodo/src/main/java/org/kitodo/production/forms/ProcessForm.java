@@ -1061,6 +1061,7 @@ public class ProcessForm extends TemplateBaseForm {
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
+        this.lazyDTOModel.setFilterString(filter);
     }
 
     /**

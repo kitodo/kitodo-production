@@ -293,7 +293,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     @Override
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
-        String filter = ServiceManager.getFilterService().parsePrimeFacesFilter(filters);
+        String filter = ServiceManager.getFilterService().parseFilterString(filters);
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, this.showClosedProcesses,
                 this.showInactiveProjects);
         return findByQuery(searchResultGeneration.getQueryForFilter(ObjectType.PROCESS),

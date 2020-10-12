@@ -15,12 +15,16 @@ import static java.lang.Math.toIntExact;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.index.query.QueryShardException;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -28,6 +32,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
+import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -38,6 +43,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
     private static final IndexRestClient indexRestClient = IndexRestClient.getInstance();
     private transient List entities = new ArrayList<>();
+    private String filterString = "";
 
     /**
      * Creates a LazyDTOModel instance that allows fetching data from the data
@@ -87,11 +93,15 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (indexRunning()) {
             try {
-                setRowCount(toIntExact(searchService.countResults(filters)));
-                entities = searchService.loadData(first, pageSize, sortField, sortOrder, filters);
+                HashMap<String, String> filterMap = new HashMap<>();
+                if (!StringUtils.isBlank(this.filterString)) {
+                    filterMap.put(FilterService.FILTER_STRING, this.filterString);
+                }
+                setRowCount(toIntExact(searchService.countResults(filterMap)));
+                entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
                 logger.info("{} entities loaded!", entities.size());
                 return entities;
-            } catch (DAOException | DataException e) {
+            } catch (DAOException | DataException | ElasticsearchStatusException | QueryShardException e) {
                 logger.error(e.getMessage(), e);
                 return new LinkedList<>();
             }
@@ -128,5 +138,15 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      */
     public List getEntities() {
         return entities;
+    }
+
+    /**
+     * Set filter String.
+     *
+     * @param filter
+     *      as String
+     */
+    public void setFilterString(String filter) {
+        this.filterString = filter;
     }
 }
