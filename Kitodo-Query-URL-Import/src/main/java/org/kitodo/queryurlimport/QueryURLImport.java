@@ -98,23 +98,25 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String HTTP_PROTOCOL = "http";
     private static final String HTTPS_PROTOCOL = "https";
     private static final String FTP_PROTOCOL = "ftp";
-
-    private static SearchInterfaceType interfaceType;
-    private static String protocol;
-    private static String host;
-    private static String path;
-    private static int port = -1;
-    private static String idParameter;
-    private static String idPrefix;
-    private static String fileFormat;
-    private static String metadataFormat;
-    private static String ftpUsername;
-    private static String ftpPassword;
-    private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
-    private static final HashMap<String, String> searchFieldMapping = new HashMap<>();
     private static final String equalsOperand = "=";
-    private static CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-    private static final FTPClient ftpClient = new FTPClient();
+
+    private SearchInterfaceType interfaceType;
+    private String protocol;
+    private String host;
+    private String path;
+    private int port = -1;
+    private String idParameter;
+    private String idPrefix;
+    private String fileFormat;
+    private String metadataFormat;
+    private String ftpUsername;
+    private String ftpPassword;
+
+    private LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
+    private final HashMap<String, String> searchFieldMapping = new HashMap<>();
+
+    private CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+    private final FTPClient ftpClient = new FTPClient();
 
     private static final HashMap<String, XmlResponseHandler> formatHandlers;
 
@@ -411,7 +413,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private static void loadOPACConfiguration(String opacName) {
+    private void loadOPACConfiguration(String opacName) {
         try {
             // XML configuration of OPAC
             loadServerConfiguration(OPACConfig.getOPACConfiguration(opacName));
@@ -448,7 +450,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private static void loadServerConfiguration(HierarchicalConfiguration opacConfig) {
+    private void loadServerConfiguration(HierarchicalConfiguration opacConfig) {
         for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
             switch (queryConfigParam.getString(NAME_ATTRIBUTE)) {
                 case SCHEME_CONFIG:
@@ -484,7 +486,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return writer.toString();
     }
 
-    private static LinkedHashMap<String, String> getSearchFieldMap(Map<String, String> searchFields) {
+    private LinkedHashMap<String, String> getSearchFieldMap(Map<String, String> searchFields) {
         LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : searchFields.entrySet()) {
             String searchField = searchFieldMapping.get(entry.getKey());
