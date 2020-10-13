@@ -13,4 +13,6 @@
 -- Migration: Changing the columns for process id in template table to not null
 --
 
+SET FOREIGN_KEY_CHECKS = 0;
 ALTER TABLE template MODIFY process_id INT(11) NOT NULL;
+SET FOREIGN_KEY_CHECKS = 1;

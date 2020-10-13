@@ -99,6 +99,12 @@ DELETE batch_x_process FROM batch_x_process
 -- 11. Remove templates from process table
 --
 
+SET FOREIGN_KEY_CHECKS = 0;
+DELETE FROM property WHERE id IN (SELECT property_id FROM `template_x_property` WHERE process_id IN (SELECT id FROM process WHERE template = 1));
+DELETE FROM `template_x_property` WHERE process_id IN (SELECT id FROM process WHERE template = 1);
+DELETE FROM property WHERE id IN (SELECT property_id FROM `workpiece_x_property` WHERE process_id IN (SELECT id FROM process WHERE template = 1));
+DELETE FROM `workpiece_x_property` WHERE process_id IN (SELECT id FROM process WHERE template = 1);
+SET FOREIGN_KEY_CHECKS = 1; 
 DELETE FROM process
 WHERE template = 1;
 

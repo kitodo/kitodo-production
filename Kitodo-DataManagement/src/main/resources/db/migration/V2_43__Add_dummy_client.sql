@@ -23,4 +23,6 @@ SET projectTable.client_id = dummyClient.id WHERE projectTable.client_id IS NULL
 SET SQL_SAFE_UPDATES = 1;
 
 -- 5. Set the client_id column of project table to NOT NULL
+SET FOREIGN_KEY_CHECKS = 0;
 ALTER TABLE project CHANGE COLUMN `client_id` `client_id` INT(11) NOT NULL;
+SET FOREIGN_KEY_CHECKS = 1;

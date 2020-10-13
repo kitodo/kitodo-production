@@ -41,7 +41,9 @@ UPDATE client_x_user client_x_userTable, (SELECT * FROM client WHERE name = 'Cli
 SET client_x_userTable.client_id = dummyClient.id WHERE client_x_userTable.client_id IS NULL;
 
 -- 6. Set client_id column to not null
+SET FOREIGN_KEY_CHECKS = 0;
 ALTER TABLE client_x_user MODIFY COLUMN client_id INT(11) NOT NULL;
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 7. Add '_globalAssignable' to every existing authority entry
 UPDATE authority set title=concat(title,'_globalAssignable');
