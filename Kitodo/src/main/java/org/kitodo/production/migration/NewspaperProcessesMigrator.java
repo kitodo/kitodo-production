@@ -218,7 +218,7 @@ public class NewspaperProcessesMigrator {
      */
     public static List<BatchDTO> getNewspaperBatches() throws DataException, DAOException, IOException {
         List<BatchDTO> newspaperBatches = new ArrayList<>();
-        for (BatchDTO batchTransfer : batchService.findAll()) {
+        for (BatchDTO batchTransfer : batchService.findAll(true)) {
             if (isNewspaperBatch(batchTransfer)) {
                 newspaperBatches.add(batchTransfer);
             }

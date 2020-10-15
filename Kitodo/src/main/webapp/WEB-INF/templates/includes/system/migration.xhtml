@@ -91,9 +91,10 @@
         <h:panelGroup id="newspaperMigration" rendered="#{MigrationForm.newspaperMigrationRendered}">
             <div style="margin: 0 10px;"><h:outputText value="#{msgs.batchesForMigration}:"/></div>
             <p:selectManyCheckbox id="newspaperBatches"
-                layout="grid" columns="1"
+                layout="grid" columns="3"
                 value="#{MigrationForm.newspaperBatchesSelectedItems}"  style="margin: 10px;">
-                <f:selectItems value="#{MigrationForm.newspaperBatchesItems}"/>
+                <f:selectItems value="#{MigrationForm.newspaperBatchesItems}" var="batch" itemLabel="#{batch.title}"
+                               itemValue="#{batch.id}"/>
             </p:selectManyCheckbox>
             <p:commandButton id="startNewspaperMigration" value="#{msgs.ok}"
                 action="#{MigrationForm.startNewspaperMigration}"
