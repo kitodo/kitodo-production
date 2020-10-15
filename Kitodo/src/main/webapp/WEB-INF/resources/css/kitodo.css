@@ -1719,8 +1719,7 @@ form#metadata div label,
     margin-left: 8px;
 }
 
-#metadataPanel .ui-inputfield ~ .ui-button,
-#metadataPanel .ui-inputfield ~ span > .ui-button {
+#metadataPanel .input-wrapper .ui-button {
     vertical-align: top;
 }
 
