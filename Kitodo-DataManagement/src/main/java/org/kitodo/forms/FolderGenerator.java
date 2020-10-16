@@ -69,7 +69,7 @@ public class FolderGenerator {
         this.folder = folder;
         if (Objects.nonNull(folder)) {
             this.width = folder.getImageSize().orElse(width);
-            this.factor = folder.getImageScale().orElse(factor);
+            this.factor = folder.getDerivative().orElse(factor);
             this.dpi = folder.getDpi().orElse(dpi);
         }
     }

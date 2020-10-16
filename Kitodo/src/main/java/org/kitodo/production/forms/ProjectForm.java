@@ -329,7 +329,7 @@ public class ProjectForm extends BaseForm {
         } else {
             List<Folder> folders = this.project.getFolders();
             for (Folder folder : folders) {
-                if (this.myFolder.getFileGroup().equals(folder.getFileGroup()) && folder!=myFolder) {
+                if (this.myFolder.getFileGroup().equals(folder.getFileGroup()) && folder != myFolder) {
                     Helper.setErrorMessage("errorDuplicateFilegroup",
                         new Object[] {ObjectType.FOLDER.getTranslationPlural() });
                 }
@@ -343,9 +343,11 @@ public class ProjectForm extends BaseForm {
      * @return page
      */
     public String deleteFolder() {
-        // to be deleted folder IDs are listed
-        // and deleted after a commit
-        this.deletedFolders.add(this.myFolder.getId());
+        if (Objects.isNull(myFolder.getId())) {
+            project.getFolders().remove(myFolder);
+        } else {
+            deletedFolders.add(this.myFolder.getId());
+        }
         return this.stayOnCurrentPage;
     }
 
