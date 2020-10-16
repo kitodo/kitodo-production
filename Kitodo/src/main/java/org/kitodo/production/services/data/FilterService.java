@@ -996,7 +996,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * keys and filter values as values.
      *
      * @param filters Map containing filterString to parse
-     * @return HashMap<String,String> containing filter fields as keys and filter values as values
+     * @return HashMap containing filter fields as keys and filter values as values
      */
     public HashMap<String, Object> getSQLFilterMap(Map<?, ?> filters, Class<?> baseClass) throws NoSuchFieldException {
         HashMap<String, Object> filterMap = new HashMap<>();
@@ -1035,7 +1035,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * Create and return an SQL statement to filter users.
      *
      * @param filters
-     *          as Set<String>
+     *          as Set of filter Strings
      * @return SQL statement to filter users
      */
     public String mapToSQLFilterString(Set<String> filters) {

@@ -111,8 +111,8 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                 logger.error(e.getMessage(), e);
             } catch (FilterException e) {
                 setRowCount(0);
-                PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage(" +
-                        "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
+                PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
+                        + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
                 logger.error(e.getMessage(), e);
             }
         } else {
