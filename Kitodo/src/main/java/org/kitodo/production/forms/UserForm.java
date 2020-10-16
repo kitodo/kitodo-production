@@ -637,4 +637,22 @@ public class UserForm extends BaseForm {
         }
         return shortcuts;
     }
+
+    /**
+     * Changes the filter of the UserForm and reloads it.
+     *
+     * @param filter
+     *            the filter to apply.
+     * @return reload path of the page.
+     */
+    public String changeFilter(String filter) {
+        setFilter(filter);
+        return usersPage;
+    }
+
+    @Override
+    public void setFilter(String filter) {
+        super.filter = filter;
+        this.lazyDTOModel.setFilterString(filter);
+    }
 }

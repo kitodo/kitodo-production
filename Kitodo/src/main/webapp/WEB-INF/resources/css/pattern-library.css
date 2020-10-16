@@ -1457,6 +1457,10 @@ Popup dialogs
     padding: 32px 16px 16px 16px;
 }
 
+.ui-growl-error .ui-growl-item {
+    background: var(--orange);
+}
+
 .ui-growl-item p {
     overflow-x: hidden;
     text-overflow: ellipsis;

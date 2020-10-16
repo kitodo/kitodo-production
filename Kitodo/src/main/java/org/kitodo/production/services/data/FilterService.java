@@ -11,14 +11,17 @@
 
 package org.kitodo.production.services.data;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -986,5 +989,60 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             return (String) filters.get(FILTER_STRING);
         }
         return "";
+    }
+
+    /**
+     * Parse Map 'filters' and create a map containing filter fields as
+     * keys and filter values as values.
+     *
+     * @param filters Map containing filterString to parse
+     * @return HashMap<String,String> containing filter fields as keys and filter values as values
+     */
+    public HashMap<String, Object> getSQLFilterMap(Map<?, ?> filters, Class<?> baseClass) throws NoSuchFieldException {
+        HashMap<String, Object> filterMap = new HashMap<>();
+        List<String> declaredFields = Arrays.stream(baseClass.getDeclaredFields()).map(Field::getName)
+                .collect(Collectors.toList());
+        for (String filter : prepareFilters(parseFilterString(filters))) {
+            if (StringUtils.countMatches(filter, ":") == 1) {
+                String[] filterComponents = filter.split(":");
+                String parameterName = filterComponents[0].trim();
+                String parameterValue = filterComponents[1].trim();
+                if (declaredFields.contains(parameterName)) {
+                    // class contains parameter as column
+                    if (Objects.equals(baseClass.getDeclaredField(parameterName).getType().getSuperclass(),
+                            Number.class)) {
+                        filterMap.put(parameterName, Integer.parseInt(parameterValue));
+                    } else {
+                        filterMap.put(parameterName, parameterValue);
+                    }
+                } else {
+                    // otherwise check if parent class contains parameter as column
+                    if (Objects.nonNull(baseClass.getSuperclass())) {
+                        Field field = baseClass.getSuperclass().getDeclaredField(parameterName);
+                        if (Objects.equals(field.getType().getSuperclass(), Number.class)) {
+                            filterMap.put(parameterName, Integer.parseInt(parameterValue));
+                        } else {
+                            filterMap.put(parameterName, parameterValue);
+                        }
+                    }
+                }
+            }
+        }
+        return filterMap;
+    }
+
+    /**
+     * Create and return an SQL statement to filter users.
+     *
+     * @param filters
+     *          as Set<String>
+     * @return SQL statement to filter users
+     */
+    public String mapToSQLFilterString(Set<String> filters) {
+        StringBuilder sqlUserFilter = new StringBuilder();
+        for (String filter : filters) {
+            sqlUserFilter.append(" AND ").append(filter).append(" = :").append(filter);
+        }
+        return sqlUserFilter.toString();
     }
 }
