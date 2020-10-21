@@ -138,7 +138,7 @@
                               title="#{item.active.toString()}">
                     <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                              value="#{item.active}">
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:selectBooleanCheckbox>
                 </h:panelGroup>
 
