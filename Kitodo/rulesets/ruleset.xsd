@@ -22,6 +22,19 @@
            targetNamespace="http://names.kitodo.org/ruleset/v2">
 
     <xs:complexType name="AcquisitionStage">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Acquisition levels are used to define which metadata must be recorded in which levels. There are
+                currently two hard-coded levels called "create" and "edit", "create" is when creating a new process in
+                the system, "edit" is when editing the metadata in the metadata editor. (The development goal here is
+                that any data entry level names can be used in the ruleset, which can then be assigned to individual
+                workflow steps in the workflow editor. This is not yet possible as of October 2020.) For each
+                acquisition stage, the &lt;settings/&gt; ("alwaysShowing", "editable", "excluded", "multiline") can be
+                determined individually. The &lt;settings/&gt; in the current acquisition stage go before the general
+                &lt;settings/&gt; of the ruleset. This makes it possible, for example, to edit a metadata entry when
+                creating the process, but only to be able to display it later or even to hide it without losing it.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="setting" minOccurs="1" maxOccurs="unbounded" type="ruleset:Setting"/>
         </xs:sequence>
@@ -29,11 +42,27 @@
     </xs:complexType>
 
     <xs:complexType name="CodomainElement">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The codomain defines which technical value range a metadata entry can accept. If no codomain is
+                defined, the internal type is a character string. If a namespace is specified, the internal type is any
+                URI; if the type is specified, this applies. If a namespace has been specified, Production looks for an
+                XML file in the same directory whose file name is the same as the last segment of the namespace URI
+                and, if it finds it, makes the namespace elements available as a selection list.
+            </xs:documentation>
+        </xs:annotation>
         <xs:attribute type="ruleset:Type" name="type"/>
         <xs:attribute type="xs:anyURI" name="namespace"/>
     </xs:complexType>
 
     <xs:complexType name="DeclarationElement">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                In section &lt;declaration&gt;, the divisions and metadata keys defined by therule set are declared
+                (announced to the system). Both the divisions and the metadata keys have an "id" that must be unique;
+                the same "id" may be used both once for a division and once for a metadata key.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="division" minOccurs="1" maxOccurs="unbounded" type="ruleset:Division" />
             <xs:element name="key" minOccurs="0" maxOccurs="unbounded" type="ruleset:Key"/>
@@ -41,6 +70,30 @@
     </xs:complexType>
 
     <xs:complexType name="Division">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Divisions (&lt;mets:div&gt;) serve to subdivide the logical or physical structure of the medium being
+                described. A division is considered a possible root of the logical description if it has an attribute
+                "processTitle". The value of the attribute consists of fixed text in single quotation marks (') and
+                metadata keys, the values of which are to be inserted, separated by pluses (+). It can also be empty
+                if the process title should be entered manually. In this case, the attribute "withWorkflow" has an
+                effect if it is "false". (A work usually has a workflow, but this can be switched off for a
+                higher-level unit, for example a series.) The "use" attribute can be used to define a technical use of
+                the value. Several uses are to be recorded in ONE attribute with several values separated ​​by spaces.
+                
+                If a division is defined within &lt;subdivisionByDate&gt;, the attribute "dates" indicates in which
+                metadata key is stored, when this division dates, and the attribute "scheme" indicates the pattern
+                (date format). 'yyyy' stands for a year, 'yyyy/yyyy' for a period of two consecutive years, 'MM' for
+                the month and 'dd' for the day. The number of letters defines a minimum length of the number (leading
+                zeros).
+                
+                The root of the physical structure must be called "physSequence". There are three structures for
+                physical objects, a "page" for the page of a bound or stitched publication, "track" for an aural or
+                audiovisual recording, and "other" for another linked physical entity. In between there can be
+                intermediate levels that describe the physical structure, for example boxes and folders. This can be
+                freely designed.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element type="ruleset:Label" minOccurs="1" maxOccurs="unbounded" name="label"/>
             <xs:element type="ruleset:SubdivisionByDateElement" minOccurs="0" maxOccurs="1" name="subdivisionByDate"/>
@@ -54,6 +107,32 @@
     </xs:complexType>
 
     <xs:simpleType name="DomainAttribute">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The attribute specifies in which section of the METS file the metadata key is stored. The areas have a
+                rough semantic meaning:
+                
+                'description' is the standard value, the metadata entry is written to the &lt;dmdSec&gt;. It describes
+                    the digital resource, sometimes referred to as workpiece properties.
+
+                'digitalProvenance' is rarely needed. Information on the further development of the digital resource is
+                    stored in this area if this happens after the original creation process of the digital resource,
+                    for example if video was converted into another format. (This is mostly outside the scope of
+                    Production).
+
+                'rights' describes the legal situation, i.e. how far the digital resource may be made publicly
+                    accessible.
+
+                'source' stores information on the digitized template of the digital work is stored. The area is
+                    sometimes referred to as the template properties.
+
+                'technical' is to store internal data that must be saved during processing, for example scanner and OCR
+                    settings. The area is sometimes referred to simply as properties.
+
+                'mets:div' writes the value in an attribute of the &tl;mets:div&gt; XML element. Only the "id"s
+                    'LABEL', 'ORDERLABEL' (type: character string) and 'CONTENTIDS' (type: any URI) are permitted here.
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="description"/>
             <xs:enumeration value="digitalProvenance"/>
@@ -65,6 +144,12 @@
     </xs:simpleType>
 
     <xs:complexType name="EditingElement">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Section &lt;editing&gt; defines how the individual metadata entries can be edited in the metadata
+                editor.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="setting" minOccurs="0" maxOccurs="unbounded" type="ruleset:Setting"/>
             <xs:element name="acquisitionStage" minOccurs="0" maxOccurs="unbounded" type="ruleset:AcquisitionStage"/>
@@ -72,6 +157,27 @@
     </xs:complexType>
 
     <xs:complexType name="Key">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A possible metadata key is defined with the &lt;key&gt; element. A key must have an "id" that is
+                unique. For the key, attribute "domain" can be used to determine in which domain (area of ​​the METS
+                file) it is saved, and attribute "use" whether it has a specific technical use. Multiple usages must be
+                coded in the same attribute "use" as being separated by spaces.
+
+                Each key must have at least one &lt;label&gt;. Several &lt;label&gt;s can be specified in different
+                languages. Element &lt;codomain&gt; can be used to define a technical set of values ​​(e.g. 'integer',
+                'anyURI' or a valid calendar 'date'). The application then offers appropriate input controls. If a
+                selection is to be made from a value list, the individual values ​​must be recorded as &lt;option&gt;
+                elements. The element &lt;pattern&gt; can be used to specify a regular expression that entered values
+                must meet. The element &lt;preset&gt; can be used to specify a value (in the case of the multiple
+                selection type, several) that should be automatically entered when adding the metadata entry.
+
+                Alternatively, keys can be nested. In this case the above elements except &lt;label&gt; are omitted,
+                instead the lt;key&gt; contains several &lt;key&gt; elements. If &lt;key&gt;s are nested, the "id" of a
+                subkey within the key must be unique, but multiple keys can have subkeys with the same "id" as it
+                appears in another key.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="label" minOccurs="1" maxOccurs="unbounded" type="ruleset:Label"/>
             <xs:element name="codomain" minOccurs="0" maxOccurs="1" type="ruleset:CodomainElement"/>
@@ -86,6 +192,14 @@
     </xs:complexType>
 
     <xs:complexType name="Label">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The &lt;division&gt;s and metadata &lt;key&gt;s are labeled with &lt;label&gt;s; labels can optionally
+                be assigned for &lt;option&gt;s. A label without a "lang" attribute defines the standard case, which is
+                English, unless otherwise specified. For other languages, further variants of the label with a "lang"
+                attribute can be specified.
+            </xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute type="xs:string" name="lang"/>
@@ -94,6 +208,16 @@
     </xs:complexType>
 
     <xs:element name="namespace">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The elements of a namespace can be stored in a &lt;namespace&gt; file in order to be offered as a
+                selection. The attribute "about" indicates which namespace is described in the file. The file must have
+                the same name as the last segment of the URI and be in the rule set directory. (Example: for the
+                namespace 'http://id.loc.gov/vocabulary/relators/', the file must be called relators.xml.) If a
+                reference is made to the namespace from a ruleset with the element &lt;codomain namespace="..."/&gt;,
+                this file is searched for and the elements are offered as a selection list.
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="option" minOccurs="0" maxOccurs="unbounded" type="ruleset:Option"/>
@@ -103,6 +227,13 @@
     </xs:element>
 
     <xs:complexType name="Option">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                With the &lt;option&gt; element, the possible options of a selection list are offered. The "value" to
+                be set must be specified as an attribute; &lt;label&gt;s, also in multiple languages, can optionally be
+                specified for the display.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="label" minOccurs="0" maxOccurs="unbounded" type="ruleset:Label"/>
         </xs:sequence>
@@ -110,6 +241,19 @@
     </xs:complexType>
 
     <xs:complexType name="Rule">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                With rules regarding &lt;restriction&gt;s and &lt;permit&gt;s on how divisions and metadata may be
+                combined, the input options of the operator can be restricted to meaningful combinations. A rule
+                describes either a &lt;restriction&gt; or &lt;permit&gt; of a "division", a metadata "key" or an option
+                "value". The attributes "minOccurs" and "maxOccurs" indicate the minimum and maximum number of
+                occurrences of a metadata key, the attribute "unspecified" inicates whether the divisions, keys or
+                options not mentioned are 'forbidden' and may not be offered, or whether they are 'unrestricted', and
+                are to be arranged afterwards to explicitly named entries. This allows the few regularly used entries
+                of a large set of values, for example a namespace, to be placed at the top without completely
+                blocking the other entries.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="permit" minOccurs="0" maxOccurs="unbounded" type="ruleset:Rule"/>
         </xs:sequence>
@@ -122,6 +266,16 @@
     </xs:complexType>
 
     <xs:element name="ruleset">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A &lt;ruleset&gt; technically describes the description of digital objects in structure and the
+                assignment of metadata. The assumed default language of &lt;label&gt;s without the "lang" attribute is
+                English, unless another language is specified as default with the "lang" attribute here. Section
+                &lt;declaration&gt; defines the possible &lt;division&gt;s and metadata &lt;key&gt;s. In section
+                &lt;restriction&gt;, the possible combinations of the former can be restricted. In section
+                &lt;editing&gt;, settings for displaying the input fields in the metadata editor can be made.
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="declaration" minOccurs="1" maxOccurs="1" type="ruleset:DeclarationElement"/>
@@ -139,6 +293,19 @@
     </xs:element>
 
     <xs:complexType name="Setting">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A &lt;setting&gt; describes how the input field for a specific metadata "key" should be displayed. With
+                "alwaysShowing", it can be requested that an empty input field is automatically offered. Usually, you
+                have to manually add a field that does not yet exist. With "editable" a field can be set as read-only.
+                This can be used if a certain metadata entry must not be changed at a certain point in time. (If no
+                changes are to be made to the metadata in its whole, this should be mapped via the authorization
+                management, not via the ruleset.) With "excluded", a metadata entry can be hidden. It is not deleted,
+                it is simply not displayed. With "multiline", a larger input box can be requested for a metadata key.
+                This makes sense for entries that contain a lot of text, for example an abstract. Settings must be
+                nested in order to define properties of subkeys.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="setting" minOccurs="0" maxOccurs="unbounded" type="ruleset:Setting"/>
         </xs:sequence>
@@ -150,8 +317,19 @@
     </xs:complexType>
 
     <xs:complexType name="SubdivisionByDateElement">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                For regular publications, the issues of which are identified by a calendar date, for example
+                newspapers, a logical root &lt;division&gt; can be subdivided with divisions by date. It takes three of
+                them, one for the year, one for the month and one for the day. In this case, the "use" attribute with
+                the value 'createChildrenWithCalendar' at the root division can be used to activate the mass creation
+                of processes with the calendar selection. The attribute "yearBegin" specifies the calendar day on which
+                the year change takes place, if a business year does not start on January 1ˢᵗ. THE SAME VALUE MUST BE
+                SET IN when using the calendar selection.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="division" minOccurs="1" maxOccurs="unbounded" type="ruleset:Division"/>
+            <xs:element name="division" minOccurs="3" maxOccurs="3" type="ruleset:Division"/>
         </xs:sequence>
         <xs:attribute name="yearBegin">
             <xs:simpleType>
@@ -163,6 +341,25 @@
     </xs:complexType>
 
     <xs:simpleType name="Type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Production supports the following data types as a range of values for metadata keys:
+
+                'anyURI' allows any valid URI to be entered (e.g. URL, URN, ...). It is also selected automatically
+                    if a "namespace" is specified.
+
+                'boolean' is a truth value, either present or absent, with a fixed value. Exactly one &lt;option&gt;
+                    element with the "value" that is written in the case of selection must be specified for 'boolean'.
+                    A switch for input will appear.
+
+                'date' allows any valid calendar dates to be entered. A calendar is displayed for input support.
+
+                'integer' requires an integer. In combination with the &lt;pattern&gt; element, this can be limited
+                    to positive values. A spinner is displayed as the input element.
+
+                'string' is the default, meaning any values can be entered.
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="anyURI"/>
             <xs:enumeration value="boolean"/>
@@ -173,6 +370,16 @@
     </xs:simpleType>
 
     <xs:simpleType name="Unspecified">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The attribute "unspecified" inicates whether the divisions, keys or options not mentioned in a
+                &lt;restriction&gt; or &lt;permit&gt; are 'forbidden' and may not be offered, or whether they are
+                'unrestricted', and are to be arranged afterwards to explicitly named entries. The latter allows the
+                few regularly used entries of a large set of values, for example a namespace, to be placed at the top
+                without completely blocking the other entries, or to define a &lt;permit&gt; on a sub-key without
+                having to name all the other sub-keys of its parent key.
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="unrestricted"/>
             <xs:enumeration value="forbidden"/>
@@ -180,6 +387,28 @@
     </xs:simpleType>
 
     <xs:simpleType name="KeyUseAttribute">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A key can have the following automated uses in the application:
+
+                'authorLastName' The value is used as the author's last name to form the author-title key.
+
+                'dataSource' Internal identifier of the data source in order to be able to update the imported
+                    metadata entries from the data source later.
+
+                'displaySummary' will be displayed as summary on the Title Record Link tab when creating a new process.
+
+                'higherlevelIdentifier' must be available when fetching a data record from a data source in order to
+                    fetch a higher-level data record as well.
+
+                'processTitle' The generated author-title key is written in this field.
+
+                'recordIdentifier' Identifier of the data record fetched from an external data source, so that the
+                    imported metadata entries from the data source can be updated later.
+
+                'title' This field is used as the title to form the author-title key.
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction>
             <xs:simpleType>
                 <xs:list>
@@ -201,6 +430,18 @@
     </xs:simpleType>
 
     <xs:simpleType name="DivisionUseAttribute">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A division can have the following automated uses in the application:
+
+                'createChildrenFromParent' This division is a superordinate unit to which child processes can be
+                    created directly. This makes sense for a hierarchical superordinate type, such as a serial publication (serial, multi-volume work).
+
+                'createChildrenWithCalendar' This division is a superordinate unit to which child processes with a
+                    calendar structure can be created. This attribute can only be set on a division that has a
+                    &lt;subdivisionByDate&gt;.
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction>
             <xs:simpleType>
                 <xs:list>
