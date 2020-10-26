@@ -13,7 +13,6 @@ package org.kitodo.api.dataeditor.rulesetmanagement;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
