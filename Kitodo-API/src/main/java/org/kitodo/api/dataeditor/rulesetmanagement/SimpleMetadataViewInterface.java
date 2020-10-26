@@ -33,7 +33,7 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      */
     default Optional<String> convertBoolean(boolean value) {
         if (value) {
-            return getSelectItems().entrySet().stream().map(Entry::getKey).filter(StringUtils::isNotEmpty).findAny();
+            return getSelectItems().keySet().stream().filter(StringUtils::isNotEmpty).findAny();
         } else {
             return Optional.empty();
         }
