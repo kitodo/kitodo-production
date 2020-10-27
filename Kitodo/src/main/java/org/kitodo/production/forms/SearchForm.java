@@ -86,11 +86,18 @@ public class SearchForm {
         initStepStatus();
         initProjects();
         initStepTitles();
+        initProcessPropertyTitles();
         initUserList();
         this.processForm = processForm;
         this.taskForm = taskForm;
     }
 
+    /**
+     * Initialise drop down list of process property titles.
+     */
+    private void initProcessPropertyTitles() {
+        this.processPropertyTitles = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
+    }
 
     /**
      * Initialise drop down list of projects.
