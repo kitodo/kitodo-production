@@ -208,17 +208,7 @@ public class UniversalRule {
      * @return the selection items
      */
     Map<String, String> getSelectItems(Map<String, String> selectItems) {
-        Map<String, String> filteredOptions = filterPossibilitiesBasedOnRule(selectItems, Rule::getValue);
-        if (!isRepeatable() && (!optionalRule.isPresent() || optionalRule.get().getMinOccurs() == null
-                || optionalRule.get().getMinOccurs() < 1)) {
-            Map<String, String> mapWithANonselectedElement = new LinkedHashMap<>(
-                    (int) Math.ceil((filteredOptions.size() + 1) / 0.75));
-            mapWithANonselectedElement.put("", "");
-            mapWithANonselectedElement.putAll(filteredOptions);
-            return mapWithANonselectedElement;
-        } else {
-            return filteredOptions;
-        }
+        return filterPossibilitiesBasedOnRule(selectItems, Rule::getValue);
     }
 
     /**
