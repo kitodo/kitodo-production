@@ -143,8 +143,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
      */
     @Override
     public Map<String, String> getSelectItems() {
-        Map<String, String> selectItems = universal.getSelectItems(priorityList);
-        return universalRule.getSelectItems(selectItems);
+        return universalRule.getSelectItems(universal.getSelectItems(priorityList));
     }
 
     @Override
@@ -233,7 +232,8 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
         }
 
         // If the key has options, then the value must be in it.
-        if (universal.isHavingOptions() && !universalRule.getSelectItems(universal.getSelectItems()).contains(value)) {
+        if (universal.isHavingOptions()
+                && !universalRule.getSelectItems(universal.getSelectItems(priorityList)).containsKey(value)) {
             return false;
         }
 

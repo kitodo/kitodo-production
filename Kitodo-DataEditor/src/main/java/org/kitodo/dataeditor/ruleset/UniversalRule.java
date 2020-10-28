@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.kitodo.dataeditor.ruleset.xml.Rule;
@@ -183,18 +181,6 @@ public class UniversalRule {
             universalPermitRuleForKey.merge(ruleset.getUniversalRestrictionRuleForKey(keyId));
         }
         return universalPermitRuleForKey;
-    }
-
-    /**
-     * Returns the selection items.
-     *
-     * @param selectItems
-     *            the selection items
-     * @return the selection items
-     */
-    Set<String> getSelectItems(Set<String> selectItems) {
-        return getSelectItems(selectItems.stream().collect(Collectors.toMap(Function.identity(), Function.identity())))
-                .keySet();
     }
 
     /**
