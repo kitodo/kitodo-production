@@ -162,9 +162,20 @@ public class Helper implements Observer, Serializable {
     public static void setErrorMessage(String title, Logger logger, Exception exception) {
         logger.error(title, exception);
         if (Objects.isNull(exception.getMessage()) || exception.getMessage().equals(title)) {
-            setErrorMessage(title);
+            setErrorMessage(getRootCause(exception));
         } else {
             setErrorMessage(title, exception.getMessage());
+        }
+    }
+
+    private static String getRootCause(Throwable problem) {
+        Throwable cause = problem.getCause();
+        String className = problem.getClass().getSimpleName();
+        if (Objects.nonNull(cause)) {
+            return className + " / " + getRootCause(cause);
+        } else {
+            String message = problem.getLocalizedMessage();
+            return StringUtils.isEmpty(message) ? className : className + ": " + message;
         }
     }
 
@@ -269,18 +280,11 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
-     * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control
-     * übergeben.
+     * Transfer an error message for a specific control to the current form.
      */
     private static void setMessage(String control, String message, String description, MessageLevel level) {
-        // Never forget: Strings are immutable
-        message = Objects.toString(message).replaceAll("<", "&lt;");
-        message = message.replaceAll(">", "&gt;");
-        description = Objects.toString(description).replaceAll("<", "&lt;");
-        description = description.replaceAll(">", "&gt;");
-
-        String msg = getTranslation(message);
-        String descript = getTranslation(description);
+        String msg = getTranslation(Objects.toString(message));
+        String descript = getTranslation(Objects.toString(description));
 
         String compoundMessage = msg.replaceFirst(":\\s*$", "");
         if (StringUtils.isNotEmpty(descript)) {
