@@ -184,10 +184,7 @@ public class UniversalRule {
     }
 
     /**
-     * Returns the selection items. This is with filter, and besides, if it is
-     * not multiple choice but optional then the first field is empty with empty
-     * to select nothing as option. The question is if this must be here but I
-     * have now made it for convenience, otherwise goes elsewhere.
+     * Returns the selection items allowed by the rule.
      *
      * @param selectItems
      *            the selection items
