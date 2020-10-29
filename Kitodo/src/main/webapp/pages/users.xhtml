@@ -18,6 +18,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
+        <!--@elvariable id="tabIndex" type="java.lang.Integer"-->
         <f:viewParam name="tabIndex"/>
         <f:viewAction action="#{UserForm.setActiveTabIndexFromTemplate(tabIndex)}" />
         <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
@@ -71,11 +72,51 @@
                         update="usersTabView"/>
             </p:selectCheckboxMenu>
         </h:form>
+        <h:panelGroup id="filterMenuWrapper">
+            <h:form id="filterMenu"
+                    rendered="#{UserForm.activeTabIndex eq 0}">
+                <h:panelGroup layout="block"
+                              styleClass="ui-inputgroup">
+                    <p:inputText id="filterfield"
+                                 value="#{UserForm.filter}"
+                                 placeholder="#{msgs.filter}">
+                        <p:ajax event="change"
+                                update="@all"/>
+                    </p:inputText>
+                    <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
+                    <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
+                        <ul>
+                            <li>
+                                <p:commandButton id="addFilter"
+                                                 action="#{UserForm.addFilterToUser}"
+                                                 icon="fa fa-floppy-o fa-lg"
+                                                 value="#{msgs.addFilter}" update="@form"/>
+                            </li>
+                            <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
+                                <li>
+                                    <p:commandLink value="#{filter}"
+                                                   action="#{UserForm.changeFilter(filter)}"
+                                                   title="#{filter}"/>
+                                    <p:commandLink title="#{msgs.removeFilter}"
+                                                   action="#{UserForm.removeFilterFromUser(filter)}"
+                                                   styleClass="filter-delete plain"
+                                                   update="@form">
+                                        <i class="fa fa-trash-o fa-lg"/>
+                                    </p:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </p:overlayPanel>
+                </h:panelGroup>
+            </h:form>
+        </h:panelGroup>
     </ui:define>
 
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{UserForm.activeTabIndex}" id="usersTabView">
-            <p:ajax event="tabChange" listener="#{UserForm.onTabChange}"/>
+            <p:ajax event="tabChange"
+                    listener="#{UserForm.onTabChange}"
+                    update="filterMenuWrapper"/>
             <p:tab id="usersTab" title="#{msgs.users}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewUserList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>

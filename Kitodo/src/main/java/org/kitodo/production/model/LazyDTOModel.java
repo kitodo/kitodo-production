@@ -25,15 +25,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.index.query.QueryShardException;
+import org.hibernate.exception.SQLGrammarException;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -90,7 +93,8 @@ public class LazyDTOModel extends LazyDataModel<Object> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object>
+            filters) {
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
@@ -101,14 +105,20 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
                 logger.info("{} entities loaded!", entities.size());
                 return entities;
-            } catch (DAOException | DataException | ElasticsearchStatusException | QueryShardException e) {
+            } catch (DAOException | DataException | ElasticsearchStatusException | QueryShardException
+                    | SQLGrammarException e) {
+                setRowCount(0);
                 logger.error(e.getMessage(), e);
-                return new LinkedList<>();
+            } catch (FilterException e) {
+                setRowCount(0);
+                PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
+                        + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
+                logger.error(e.getMessage(), e);
             }
         } else {
             logger.info("Index not found!");
-            return new LinkedList<>();
         }
+        return new LinkedList<>();
     }
 
     /**

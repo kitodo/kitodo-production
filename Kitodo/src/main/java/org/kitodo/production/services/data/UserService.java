@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
@@ -97,14 +99,22 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
 
     @Override
     public Long countResults(Map filters) throws DAOException {
+        HashMap<String, Object> filterMap;
+        try {
+            filterMap = ServiceManager.getFilterService().getSQLFilterMap(filters, User.class);
+        } catch (NoSuchFieldException | NumberFormatException e) {
+            throw new FilterException(e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+        String sqlFilterString = ServiceManager.getFilterService().mapToSQLFilterString(filterMap.keySet());
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return countDatabaseRows();
+            return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = 0" + sqlFilterString, filterMap);
         }
 
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            filterMap.put(CLIENT_ID, getSessionClientId());
             return countDatabaseRows(
-                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
-                Collections.singletonMap(CLIENT_ID, getSessionClientId()));
+                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
+                        + sqlFilterString, filterMap);
         }
         return 0L;
     }
@@ -122,17 +132,24 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        HashMap<String, Object> filterMap;
+        try {
+            filterMap = ServiceManager.getFilterService().getSQLFilterMap(filters, User.class);
+        } catch (NoSuchFieldException | NumberFormatException e) {
+            throw new FilterException(e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+        String sqlFilterString = ServiceManager.getFilterService().mapToSQLFilterString(filterMap.keySet());
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return dao.getByQuery("FROM User WHERE deleted = 0" + getSort(sortField, sortOrder), filters, first,
-                pageSize);
+            return dao.getByQuery("FROM User WHERE deleted = 0" + sqlFilterString + getSort(sortField, sortOrder),
+                    filterMap, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            filterMap.put(CLIENT_ID, getSessionClientId());
             return dao.getByQuery(
                 "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
-                        + getSort(sortField, sortOrder),
-                Collections.singletonMap(CLIENT_ID, getSessionClientId()), first, pageSize);
+                        + sqlFilterString + getSort(sortField, sortOrder),
+                filterMap, first, pageSize);
         }
         return new ArrayList<>();
     }

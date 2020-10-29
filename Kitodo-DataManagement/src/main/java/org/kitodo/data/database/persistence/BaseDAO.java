@@ -13,6 +13,7 @@ package org.kitodo.data.database.persistence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +23,7 @@ import javax.persistence.PersistenceException;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -158,11 +160,13 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters, int first, int max) {
         try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
+            Query<T> q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
             addParameters(q, parameters);
             return q.list();
+        } catch (SQLGrammarException e) {
+            return Collections.emptyList();
         }
     }
 
@@ -178,7 +182,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
         try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
+            Query<T> q = session.createQuery(query);
             addParameters(q, parameters);
             return q.list();
         }
@@ -213,7 +217,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public Long count(String query, Map<String, Object> parameters) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
+            Query<?> q = session.createQuery(query);
             addParameters(q, parameters);
             return (Long) q.uniqueResult();
         } catch (PersistenceException e) {
@@ -247,8 +251,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @throws DAOException
      *             if a HibernateException is thrown
      */
-    @SuppressWarnings("unchecked")
-    static void removeObject(Class cls, Integer objectId) throws DAOException {
+    static void removeObject(Class<?> cls, Integer objectId) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
             Transaction transaction = session.beginTransaction();
             synchronized (lockObject) {
@@ -287,10 +290,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *            object id
      * @return Object may be null if object with ID doesn't exist
      */
-    @SuppressWarnings({"unchecked" })
-    T retrieveObject(Class cls, Integer id) throws DAOException {
+    T retrieveObject(Class<T> cls, Integer id) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            return (T) session.get(cls, id);
+            return session.get(cls, id);
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
@@ -310,7 +312,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> retrieveObjects(String query, int first, int max) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            Query sessionQuery = session.createQuery(query);
+            Query<T> sessionQuery = session.createQuery(query);
             sessionQuery.setFirstResult(first);
             sessionQuery.setMaxResults(max);
             return sessionQuery.list();
@@ -327,9 +329,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return List of all objects
      */
     @SuppressWarnings("unchecked")
-    List<T> retrieveAllObjects(Class cls) throws DAOException {
+    List<T> retrieveAllObjects(Class<T> cls) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            Query query = session.createQuery("FROM " + cls.getSimpleName() + " ORDER BY id ASC");
+            Query<T> query = session.createQuery(String.format("FROM %s ORDER BY id ASC", cls.getSimpleName()));
             return query.list();
         } catch (PersistenceException e) {
             throw new DAOException(e);
@@ -412,11 +414,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         }
     }
 
-    private void addParameters(Query query, Map<String, Object> parameters) {
+    private void addParameters(Query<?> query, Map<String, Object> parameters) {
         if (Objects.nonNull(parameters)) {
             for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
                 if (parameter.getValue() instanceof List) {
-                    query.setParameterList(parameter.getKey(), (List) parameter.getValue());
+                    query.setParameterList(parameter.getKey(), (List<?>) parameter.getValue());
                 } else {
                     query.setParameter(parameter.getKey(), parameter.getValue());
                 }

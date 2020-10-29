@@ -671,10 +671,15 @@ public class ProcessForm extends TemplateBaseForm {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private List<Process> getProcessesForActions() {
         // TODO: find a way to pass filters
-        List<ProcessDTO> filteredProcesses = lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null);
+        List<ProcessDTO> filteredProcesses = new ArrayList<>();
+        for (Object object : lazyDTOModel.load(0, 100000, "",
+                SortOrder.ASCENDING, null)) {
+            if (object instanceof ProcessDTO) {
+                filteredProcesses.add((ProcessDTO) object);
+            }
+        }
         List<Process> processesForActions = new ArrayList<>();
 
         try {
