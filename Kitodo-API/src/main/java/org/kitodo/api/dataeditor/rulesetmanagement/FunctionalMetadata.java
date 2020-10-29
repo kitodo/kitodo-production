@@ -12,8 +12,8 @@
 package org.kitodo.api.dataeditor.rulesetmanagement;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -86,6 +86,27 @@ public enum FunctionalMetadata {
     }
 
     /**
+     * Iterates over the {@code enum} constants, and if the candidate value has
+     * the searched mark, it is added to the list.
+     *
+     * @param mark
+     *            a character string defining how the special field is to be
+     *            marked in the ruleset
+     * @param to
+     *            object to add value, return value of {@link #valuesOf(String)}
+     * @return whether the loop has to continue
+     */
+    private static boolean addEnumByMark(String mark, Set<FunctionalMetadata> to) {
+        for (FunctionalMetadata candidate : FunctionalMetadata.values()) {
+            if (mark.equals(candidate.mark)) {
+                to.add(candidate);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns a string which defines how the special field is to be marked in
      * the ruleset.
      *
@@ -105,16 +126,13 @@ public enum FunctionalMetadata {
      * @return fields
      */
     public static Set<FunctionalMetadata> valuesOf(String marks) {
-        Set<FunctionalMetadata> values = new HashSet<>(7);
+        Set<FunctionalMetadata> values = new TreeSet<>();
         for (String mark : marks.split("\\s+", 0)) {
-            for (FunctionalMetadata candidate : FunctionalMetadata.values()) {
-                if (mark.equals(candidate.mark)) {
-                    values.add(candidate);
-                    break;
-                }
+            if (addEnumByMark(mark, values)) {
+                continue;
             }
-            logger.warn("Ruleset declares undefined field use '{}', must be one of: {}", mark,
-                Arrays.stream(values()).map(FunctionalMetadata::toString).collect(Collectors.joining(", ")));
+            logger.warn("Ruleset declares undefined division use '{}', must be one of: {}", mark,
+                    Arrays.stream(values()).map(FunctionalMetadata::getMark).collect(Collectors.joining(", ")));
         }
         return values;
     }

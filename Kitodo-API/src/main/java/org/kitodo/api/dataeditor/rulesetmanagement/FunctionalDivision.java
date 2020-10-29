@@ -12,26 +12,27 @@
 package org.kitodo.api.dataeditor.rulesetmanagement;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/*
- Divisions that have a function.
+/**
+ * Divisions that have a function.
  */
 public enum FunctionalDivision {
-
     /**
-     * Childrens are created by calendar form.
+     * Children are created by calendar form.
      */
     CREATE_CHILDREN_WITH_CALENDAR("createChildrenWithCalendar"),
+
     /**
-     * A division which childs are created from this division directly.
+     * A division whose children are created from this division directly.
      */
     CREATE_CHILDREN_FROM_PARENT("createChildrenFromParent");
+
     /**
      * With the logger, text can be written to a log file or to the console.
      */
@@ -95,12 +96,12 @@ public enum FunctionalDivision {
      * @return fields
      */
     public static Set<FunctionalDivision> valuesOf(String marks) {
-        Set<FunctionalDivision> values = new HashSet<>();
+        Set<FunctionalDivision> values = new TreeSet<>();
         for (String mark : marks.split("\\s+", 0)) {
             if (addEnumByMark(mark, values)) {
                 continue;
             }
-            logger.warn("Ruleset declares undefined field use '{}', must be one of: {}", mark,
+            logger.warn("Ruleset declares undefined division use '{}', must be one of: {}", mark,
                     Arrays.stream(values()).map(FunctionalDivision::getMark).collect(Collectors.joining(", ")));
         }
         return values;
