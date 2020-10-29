@@ -247,20 +247,6 @@ public class RulesetManagementIT {
             contains(InputType.MULTI_LINE_SINGLE_SELECTION, InputType.ONE_LINE_SINGLE_SELECTION,
                 InputType.ONE_LINE_TEXT, InputType.ONE_LINE_TEXT, InputType.ONE_LINE_TEXT,
                 InputType.MULTIPLE_SELECTION));
-
-        // 4. In the optional single selections, one empty element is in it, not
-        // in the others.
-
-        assertThat(((SimpleMetadataViewInterface) mvwviList.get(0).getMetadata().get()).getSelectItems(),
-            not(hasEntry("", "")));
-        assertThat(((SimpleMetadataViewInterface) mvwviList.get(1).getMetadata().get()).getSelectItems(),
-            not(hasEntry("", "")));
-        assertThat(((SimpleMetadataViewInterface) mvwviList.get(2).getMetadata().get()).getSelectItems(),
-            not(hasEntry("", "")));
-        List<MetadataViewInterface> mviList = (List<MetadataViewInterface>) mviColl;
-        assertThat(((SimpleMetadataViewInterface) mviList.get(0)).getSelectItems(), hasEntry("", ""));
-        assertThat(((SimpleMetadataViewInterface) mviList.get(1)).getSelectItems(), hasEntry("", ""));
-        assertThat(((SimpleMetadataViewInterface) mviList.get(2)).getSelectItems(), not(hasEntry("", "")));
     }
 
     /**
