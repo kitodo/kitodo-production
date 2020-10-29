@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor.ruleset;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -340,12 +341,18 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      *            metadata keys that the user has already selected
      */
     @Override
-    public <V> Collection<MetadataViewInterface> getAddableMetadata(Map<V, String> currentEntries,
+    public Collection<MetadataViewInterface> getAddableMetadata(Map<?, String> currentEntries,
             Collection<String> additionalKeys) {
 
+        return getPossibleMetadata(currentEntries, additionalKeys, false);
+    }
+
+    private Collection<MetadataViewInterface> getPossibleMetadata(Map<?, String> currentEntries,
+            Collection<String> additionalKeys, boolean all) {
+
         Collection<MetadataViewInterface> addableMetadata = new LinkedList<>();
-        for (AuxiliaryTableRow<V> auxiliaryTableRow : createAuxiliaryTable(currentEntries, additionalKeys)) {
-            if (auxiliaryTableRow.isPossibleToExpandAnotherField()) {
+        for (AuxiliaryTableRow<?> auxiliaryTableRow : createAuxiliaryTable(currentEntries, additionalKeys)) {
+            if (all || auxiliaryTableRow.isPossibleToExpandAnotherField()) {
                 MetadataViewInterface keyView = auxiliaryTableRow
                         .isRequiringAComplexUniversalKey()
                                 ? getNestedKeyView(auxiliaryTableRow.getId())
@@ -356,6 +363,17 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
             }
         }
         return addableMetadata;
+    }
+
+    /**
+     * Returns a full list of all metadata entries that are allowed as children
+     * of this nested key view.
+     *
+     * @return all allowed children
+     */
+    @Override
+    public Collection<MetadataViewInterface> getAllowedMetadata() {
+        return getPossibleMetadata(Collections.emptyMap(), Collections.emptySet(), true);
     }
 
     /**

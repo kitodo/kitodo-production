@@ -27,7 +27,13 @@ public class DummyMetadataView implements ComplexMetadataViewInterface {
     }
 
     @Override
-    public <T> Collection<MetadataViewInterface> getAddableMetadata(Map<T, String> entered, Collection<String> additionallySelected) {
+    public Collection<MetadataViewInterface> getAddableMetadata(Map<?, String> entered,
+            Collection<String> additionallySelected) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<MetadataViewInterface> getAllowedMetadata() {
         throw new UnsupportedOperationException();
     }
 
