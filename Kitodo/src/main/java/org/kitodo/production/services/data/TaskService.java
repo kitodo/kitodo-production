@@ -172,7 +172,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return countDocuments(createUserTaskQuery(null));
+        return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters)));
     }
 
     @Override
