@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Provides an interface for the metadata key view service. The metadata key
  * view service provides a filtered view on metadata keys.
@@ -29,10 +31,11 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      *         metadata entry.
      */
     default Optional<String> convertBoolean(boolean value) {
-        if (getSelectItems().isEmpty()) {
+        if (value) {
+            return getSelectItems().keySet().stream().filter(StringUtils::isNotEmpty).findAny();
+        } else {
             return Optional.empty();
         }
-        return value ? Optional.of(getSelectItems().entrySet().iterator().next().getKey()) : Optional.empty();
     }
 
     /**
@@ -89,7 +92,7 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
 
     /**
      * Returns whether values under this key can be edited in this view.
-     * 
+     *
      * @return whether values can be edited
      */
     boolean isEditable();
