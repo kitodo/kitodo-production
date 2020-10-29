@@ -42,6 +42,7 @@ body.first-visit {
 .flex-container {
     height: 100%;
     overflow: auto;
+    overflow-x: hidden;
     z-index: 1;
     position: relative;
     display: flex;
