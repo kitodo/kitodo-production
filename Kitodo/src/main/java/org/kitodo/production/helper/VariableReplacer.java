@@ -11,9 +11,6 @@
 
 package org.kitodo.production.helper;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +18,6 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -34,9 +30,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.file.FileService;
 
 public class VariableReplacer {
 
@@ -48,45 +41,37 @@ public class VariableReplacer {
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
-    private LegacyMetsModsDigitalDocumentHelper dd;
+    private LegacyMetsModsDigitalDocumentHelper digitalDocument;
     private LegacyPrefsHelper prefs;
     // $(meta.abc)
     private static final String NAMESPACE_META = "\\$\\(meta\\.([\\w.-]*)\\)";
 
     private Process process;
     private Task task;
-    private final FileService fileService = ServiceManager.getFileService();
-    private final ProcessService processService = ServiceManager.getProcessService();
-
-    protected VariableReplacer() {
-    }
-
-    VariableReplacer(Process process) {
-        this.process = process;
-    }
 
     /**
      * Constructor.
      *
-     * @param inDigitalDocument
+     * @param digitalDocument
      *            DigitalDocument object
-     * @param inPrefs
+     * @param prefs
      *            Prefs object
-     * @param p
+     * @param process
      *            Process object
-     * @param s
+     * @param task
      *            Task object
      */
-    public VariableReplacer(LegacyMetsModsDigitalDocumentHelper inDigitalDocument, LegacyPrefsHelper inPrefs, Process p, Task s) {
-        this.dd = inDigitalDocument;
-        this.prefs = inPrefs;
-        this.process = p;
-        this.task = s;
+    public VariableReplacer(LegacyMetsModsDigitalDocumentHelper digitalDocument, LegacyPrefsHelper prefs,
+            Process process, Task task) {
+        this.digitalDocument = digitalDocument;
+        this.prefs = prefs;
+        this.process = process;
+        this.task = task;
     }
 
     /**
-     * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die
-     * Variablen durchlaufen und aus dem Digital Document holen
+     * Replace variables within a string. Like ant, run through the variables
+     * and fetch them from the digital document.
      *
      * @param inString
      *            to replacement
@@ -99,54 +84,17 @@ public class VariableReplacer {
         inString = replaceMetadata(inString);
 
         // replace paths and files
-        try {
+        String prefs = ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile();
+        inString = replaceString(inString, "(prefs)", prefs);
 
-            String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process.getId(),
-                    this.process.getTitle(), this.process.getProcessBaseUri()));
-            inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
-            inString = replaceString(inString, "(tifpath)", tifPath);
+        inString = replaceString(inString, "(processtitle)", this.process.getTitle());
+        inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
 
-            String origPath = replaceSlashAndSeparator(processService.getImagesOriginDirectory(false, this.process));
-            inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);
-            inString = replaceString(inString, "(origpath)", origPath);
+        inString = replaceStringForTask(inString);
 
-            String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
-            inString = replaceStringAccordingToOS(inString, "(imageurl)", imagePath);
-            inString = replaceString(inString, "(imagepath)", imagePath);
-
-            String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
-            inString = replaceString(inString, "(processpath)", processPath);
-
-            String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
-            inString = replaceString(inString, "(importpath)", importPath);
-
-            String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
-            inString = replaceString(inString, "(sourcepath)", sourcePath);
-
-            String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
-            inString = replaceString(inString, "(ocrbasispath)", ocrBasisPath);
-
-            String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
-            inString = replaceString(inString, "(ocrplaintextpath)", ocrPlaintextPath);
-
-            String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process, false, false));
-            inString = replaceString(inString, "(metaFile)", metaFile);
-
-            String prefs = ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile();
-            inString = replaceString(inString, "(prefs)", prefs);
-
-            inString = replaceString(inString, "(processtitle)", this.process.getTitle());
-            inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
-
-            inString = replaceStringForTask(inString);
-
-            inString = replaceForWorkpieceProperty(inString);
-            inString = replaceForTemplateProperty(inString);
-            inString = replaceForProcessProperty(inString);
-
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
+        inString = replaceForWorkpieceProperty(inString);
+        inString = replaceForTemplateProperty(inString);
+        inString = replaceForProcessProperty(inString);
 
         return inString;
     }
@@ -171,32 +119,6 @@ public class VariableReplacer {
             }
         }
 
-        return input;
-    }
-
-    private String replaceSlash(URI directory) {
-        return fileService.getFileName(directory).replace("\\", "/");
-    }
-
-    private String replaceSeparator(String input) {
-        if (input.endsWith(File.separator)) {
-            input = input.substring(0, input.length() - File.separator.length()).replace("\\", "/");
-        }
-        return input;
-    }
-
-    private String replaceSlashAndSeparator(URI directory) {
-        return replaceSeparator(replaceSlash(directory));
-    }
-
-    private String replaceStringAccordingToOS(String input, String condition, String replacer) {
-        if (input.contains(condition)) {
-            if (SystemUtils.IS_OS_WINDOWS) {
-                input = input.replace(condition, "file:/" + replacer);
-            } else {
-                input = input.replace(condition, "file://" + replacer);
-            }
-        }
         return input;
     }
 
@@ -280,19 +202,19 @@ public class VariableReplacer {
     }
 
     /**
-     * Metadatum von FirstChild oder TopStruct ermitteln (vorzugsweise vom
-     * FirstChild) und zurückgeben.
+     * Determine metadata from first child or top struct, preferably from first
+     * child.
      */
     private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
-        if (Objects.nonNull(this.dd)) {
-            /* TopStruct und FirstChild ermitteln */
-            LegacyDocStructHelperInterface topstruct = this.dd.getLogicalDocStruct();
+        if (Objects.nonNull(this.digitalDocument)) {
+            /* determine top struct and first child */
+            LegacyDocStructHelperInterface topstruct = this.digitalDocument.getLogicalDocStruct();
             LegacyDocStructHelperInterface firstchildstruct = null;
             if (!topstruct.getAllChildren().isEmpty()) {
                 firstchildstruct = topstruct.getAllChildren().get(0);
             }
 
-            /* MetadataType ermitteln und ggf. Fehler melden */
+            /* determine metadata type and likely report error */
             LegacyMetadataTypeHelper mdt;
             try {
                 mdt = LegacyPrefsHelper.getMetadataType(this.prefs, metadata);
@@ -317,7 +239,7 @@ public class VariableReplacer {
         String resultAccordingToMetadataLevel = "";
         switch (metadataLevel) {
             case FIRSTCHILD:
-                // without existing FirstChild, this cannot be returned
+                // without existing first child, this cannot be returned
                 if (Objects.isNull(resultFirst)) {
                     logger.info("Can not replace firstChild-variable for METS: {}", metadata);
                 } else {
@@ -347,8 +269,8 @@ public class VariableReplacer {
     }
 
     /**
-     * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
-     * zurückgegeben.
+     * Determine the metadata of the transferred doc struct. In the event of an
+     * error, {code null} is returned.
      */
     private String getMetadataValue(LegacyDocStructHelperInterface inDocstruct, LegacyMetadataTypeHelper mdt) {
         List<? extends LegacyMetadataHelper> mds = inDocstruct.getAllMetadataByType(mdt);
@@ -360,8 +282,8 @@ public class VariableReplacer {
     }
 
     /**
-     * Suche nach regulären Ausdrücken in einem String, liefert alle gefundenen
-     * Treffer als Liste zurück.
+     * Searches for regular expressions in a string, returns all hits found as a
+     * list.
      */
     private static Iterable<MatchResult> findRegexMatches(String pattern, CharSequence s) {
         List<MatchResult> results = new ArrayList<>();
