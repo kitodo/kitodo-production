@@ -1289,12 +1289,14 @@ public class StructurePanel implements Serializable {
             } else if (((StructureTreeNode) child.getData()).getDataObject() instanceof View) {
                 View view = (View) ((StructureTreeNode) child.getData()).getDataObject();
                 structure.getViews().add(view);
-                view.getMediaUnit().setOrder(order);
+                if (!dataEditor.getWorkpiece().getAllMediaUnits().contains(view.getMediaUnit())) {
+                    view.getMediaUnit().setOrder(order);
+                    dataEditor.getWorkpiece().getMediaUnit().getChildren().add(view.getMediaUnit());
+                    order++;
+                }
                 if (!view.getMediaUnit().getIncludedStructuralElements().contains(structure)) {
                     view.getMediaUnit().getIncludedStructuralElements().add(structure);
                 }
-                dataEditor.getWorkpiece().getMediaUnit().getChildren().add(view.getMediaUnit());
-                order++;
             }
         }
         return structure;
