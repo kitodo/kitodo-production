@@ -95,7 +95,7 @@ public class SchemaService {
 
         convertChildrenLinksForExportRecursive(workpiece, workpiece.getRootElement(), prefs);
         assignViewsFromChildrenRecursive(workpiece.getRootElement());
-        enumerateIssues(workpiece.getRootElement(), 1, false);
+        enumerateLogicalDivisions(workpiece.getRootElement(), 0, 1, false);
         addLinksToParents(process, prefs, workpiece);
     }
 
@@ -250,13 +250,16 @@ public class SchemaService {
         return false;
     }
 
-    private int enumerateIssues(IncludedStructuralElement includedStructuralElement, int order, boolean count) {
+    private int enumerateLogicalDivisions(IncludedStructuralElement includedStructuralElement, int elementCount,
+            int journalIssueCount, boolean journalIssue) {
+
         boolean untyped = Objects.isNull(includedStructuralElement.getType());
-        includedStructuralElement.setOrder(!untyped && count ? order++ : 0);
-        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
-            order = enumerateIssues(child, order, untyped);
+        includedStructuralElement.setOrder(untyped ? 0 : (journalIssue ? journalIssueCount++ : elementCount));
+        for (int i = 0; i < includedStructuralElement.getChildren().size(); i++) {
+            journalIssueCount = enumerateLogicalDivisions(includedStructuralElement.getChildren().get(i), i + 1,
+                journalIssueCount, untyped);
         }
-        return order;
+        return journalIssueCount;
     }
 
     private void addLinksToParents(Process process, LegacyPrefsHelper prefs, Workpiece workpiece) throws IOException {
