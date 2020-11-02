@@ -259,7 +259,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                     MetadataGroup metadataGroup = (MetadataGroup) nextMetadata;
                     value = metadataGroup.getGroup();
                 } else {
-                    throw new IllegalStateException("Got simple metadata entry with key \"" + metadataKey
+                    throw new IllegalStateException("Got simple metadata entry with key \"" + nextMetadata.getKey()
                             + "\" which is declared as substructured key in the rule set.");
                 }
                 break;
