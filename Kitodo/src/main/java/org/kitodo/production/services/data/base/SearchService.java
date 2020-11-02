@@ -131,13 +131,22 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Get all DTO objects from index an convert them for frontend wit all
+     * Get all DTO objects from index an convert them for frontend with all
      * relations.
      *
      * @return List of DTO objects
      */
     public List<S> findAll() throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(), false);
+        return findAll(false);
+    }
+    
+    /**
+     * Get all DTO objects from index.
+     *
+     * @return List of DTO objects
+     */
+    public List<S> findAll(boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(), related);
     }
 
     /**
