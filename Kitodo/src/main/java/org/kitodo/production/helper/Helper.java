@@ -33,6 +33,7 @@ import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -281,7 +282,10 @@ public class Helper implements Observer, Serializable {
         String msg = getTranslation(message);
         String descript = getTranslation(description);
 
-        String compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + descript;
+        String compoundMessage = msg.replaceFirst(":\\s*$", "");
+        if (StringUtils.isNotEmpty(descript)) {
+            compoundMessage += ": " + descript;
+        }
         if (Objects.nonNull(activeMQReporting)) {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
                     MessageLevel.ERROR.equals(level) ? ReportLevel.ERROR :
@@ -292,7 +296,7 @@ public class Helper implements Observer, Serializable {
         if (Objects.nonNull(context)) {
             context.addMessage(control,
                 new FacesMessage(MessageLevel.ERROR.equals(level) ? FacesMessage.SEVERITY_ERROR : MessageLevel.WARN.equals(level)
-                        ? FacesMessage.SEVERITY_WARN : FacesMessage.SEVERITY_INFO, msg, descript));
+                        ? FacesMessage.SEVERITY_WARN : FacesMessage.SEVERITY_INFO, null, compoundMessage));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
             logger.log(MessageLevel.ERROR.equals(level) ? Level.ERROR : MessageLevel.WARN.equals(level) ? Level.WARN : Level.INFO,
