@@ -58,7 +58,7 @@
                         <p:row>
                             <p:column>
                                 <p:outputLabel for="generator" value="#{msgs['editFolderDialog.generator']}"/>
-                                <p:selectOneMenu id="generator" value="#{ProjectForm.myFolder.generator.method}">
+                                <p:selectOneMenu id="generator" value="#{ProjectForm.generator.method}">
                                     <f:selectItem itemLabel="#{msgs.notSelected}" itemValue=""/>
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.dpi']}"
                                                   itemValue="changeDpi"/>
@@ -71,25 +71,25 @@
                             </p:column>
                             <p:column>
                                 <p:outputLabel for="dpi" value="#{msgs['editFolderDialog.dpi']}"
-                                               rendered="#{ProjectForm.myFolder.generator.method == 'changeDpi'}"/>
+                                               rendered="#{ProjectForm.generator.method == 'changeDpi'}"/>
                                 <p:outputLabel for="factor" value="#{msgs['editFolderDialog.derivative']}"
-                                               rendered="#{ProjectForm.myFolder.generator.method == 'createDerivative'}"/>
+                                               rendered="#{ProjectForm.generator.method == 'createDerivative'}"/>
                                 <p:outputLabel for="factor" value="#{msgs['editFolderDialog.imageScale']}"
-                                               rendered="#{ProjectForm.myFolder.generator.method =='getScaledWebImage'}"/>
+                                               rendered="#{ProjectForm.generator.method =='getScaledWebImage'}"/>
                                 <p:outputLabel for="width" value="#{msgs['editFolderDialog.imageSize']}"
-                                               rendered="#{ProjectForm.myFolder.generator.method == 'getSizedWebImage'}"/>
+                                               rendered="#{ProjectForm.generator.method == 'getSizedWebImage'}"/>
                                 <div>
-                                    <p:inputNumber id="dpi" value="#{ProjectForm.myFolder.generator.dpi}" decimalPlaces="0"
+                                    <p:inputNumber id="dpi" value="#{ProjectForm.generator.dpi}" decimalPlaces="0"
                                                    symbol=" DPI" symbolPosition="s"
-                                                   rendered="#{ProjectForm.myFolder.generator.method == 'changeDpi'}"
+                                                   rendered="#{ProjectForm.generator.method == 'changeDpi'}"
                                                    styleClass="input editDialog"/>
-                                    <p:inputNumber id="factor" value="#{ProjectForm.myFolder.generator.factor}"
+                                    <p:inputNumber id="factor" value="#{ProjectForm.generator.factor}"
                                                    decimalPlaces="1" symbol="%" symbolPosition="s"
-                                                   rendered="#{ProjectForm.myFolder.generator.method == 'createDerivative' or ProjectForm.myFolder.generator.method == 'getScaledWebImage'}"
+                                                   rendered="#{ProjectForm.generator.method == 'createDerivative' or ProjectForm.generator.method == 'getScaledWebImage'}"
                                                    styleClass="input editDialog"/>
-                                    <p:inputNumber id="width" value="#{ProjectForm.myFolder.generator.width}" decimalPlaces="0"
+                                    <p:inputNumber id="width" value="#{ProjectForm.generator.width}" decimalPlaces="0"
                                                    symbol=" px" symbolPosition="s"
-                                                   rendered="#{ProjectForm.myFolder.generator.method == 'getSizedWebImage'}"
+                                                   rendered="#{ProjectForm.generator.method == 'getSizedWebImage'}"
                                                    styleClass="input editDialog"/>
                                 </div>
                             </p:column>
@@ -141,7 +141,7 @@
                               styleClass="dialogButtonWrapper">
                     <p:commandButton action="#{ProjectForm.saveFolder()}"
                                      update="editForm"
-                                     oncomplete="PF('editFolderDialog').hide();toggleSave()"
+                                     oncomplete="PF('editFolderDialog').hide();"
                                      value="#{msgs.apply}"
                                      styleClass="primary right"/>
                     <p:commandButton value="#{msgs.cancel}"
