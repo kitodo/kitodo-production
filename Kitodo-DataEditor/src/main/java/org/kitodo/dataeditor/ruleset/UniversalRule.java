@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.kitodo.dataeditor.ruleset.xml.Rule;
@@ -186,39 +184,14 @@ public class UniversalRule {
     }
 
     /**
-     * Returns the selection items.
-     *
-     * @param selectItems
-     *            the selection items
-     * @return the selection items
-     */
-    Set<String> getSelectItems(Set<String> selectItems) {
-        return getSelectItems(selectItems.stream().collect(Collectors.toMap(Function.identity(), Function.identity())))
-                .keySet();
-    }
-
-    /**
-     * Returns the selection items. This is with filter, and besides, if it is
-     * not multiple choice but optional then the first field is empty with empty
-     * to select nothing as option. The question is if this must be here but I
-     * have now made it for convenience, otherwise goes elsewhere.
+     * Returns the selection items allowed by the rule.
      *
      * @param selectItems
      *            the selection items
      * @return the selection items
      */
     Map<String, String> getSelectItems(Map<String, String> selectItems) {
-        Map<String, String> filteredOptions = filterPossibilitiesBasedOnRule(selectItems, Rule::getValue);
-        if (!isRepeatable() && (!optionalRule.isPresent() || optionalRule.get().getMinOccurs() == null
-                || optionalRule.get().getMinOccurs() < 1)) {
-            Map<String, String> mapWithANonselectedElement = new LinkedHashMap<>(
-                    (int) Math.ceil((filteredOptions.size() + 1) / 0.75));
-            mapWithANonselectedElement.put("", "");
-            mapWithANonselectedElement.putAll(filteredOptions);
-            return mapWithANonselectedElement;
-        } else {
-            return filteredOptions;
-        }
+        return filterPossibilitiesBasedOnRule(selectItems, Rule::getValue);
     }
 
     /**
