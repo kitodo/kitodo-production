@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.naming.ConfigurationException;
@@ -321,11 +320,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         ConfigProject configProject = new ConfigProject(overallProcess.getProject().getTitle());
 
-        Collection<MetadataViewInterface> addableDivisions = rulesetService.openRuleset(overallProcess.getRuleset())
+        Collection<MetadataViewInterface> allowedMetadata = rulesetService.openRuleset(overallProcess.getRuleset())
                 .getStructuralElementView(overallWorkpiece.getRootElement().getType(), acquisitionStage, ENGLISH)
-                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList());
+                .getAllowedMetadata();
 
-        titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece , addableDivisions);
+        titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece, allowedMetadata);
 
         processesToCreate = course.getProcesses();
 
@@ -363,15 +362,15 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         final Collection<String> processTitleKeys = ruleset.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
         newspaperProcessTitleViews = newspaperView
-                .getAddableMetadata(Metadata.mapToKey(overallWorkpiece.getRootElement().getMetadata()), Collections.emptyList())
+                .getAllowedMetadata()
                 .parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
                 .map(SimpleMetadataViewInterface.class::cast)
                 .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());
-        yearProcessTitleViews = yearDivisionView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList())
+        yearProcessTitleViews = yearDivisionView.getAllowedMetadata()
                 .parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
                 .map(SimpleMetadataViewInterface.class::cast)
                 .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());
-        issueProcessTitleViews = issueDivisionView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList())
+        issueProcessTitleViews = issueDivisionView.getAllowedMetadata()
                 .parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
                 .map(SimpleMetadataViewInterface.class::cast)
                 .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());
@@ -399,12 +398,12 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *
      * @param configProject
      *            the config project
-     * @param addableDivisions
-     *            addable Metadata views
+     * @param allowedMetadata
+     *            allowed Metadata views
      * @return the initialized title generator
      */
     private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
-                                                           Collection<MetadataViewInterface> addableDivisions)
+            Collection<MetadataViewInterface> allowedMetadata)
             throws DoctypeMissingException {
 
         IncludedStructuralElement rootElement = workpiece.getRootElement();
@@ -430,7 +429,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             if (isDocTypeAndNotIsNotDoctype(additionalField, docType)) {
                 String value = metadata.getOrDefault(additionalField.getDocStruct(), Collections.emptyMap())
                         .get(additionalField.getMetadata());
-                List<MetadataViewInterface> filteredViews = addableDivisions
+                List<MetadataViewInterface> filteredViews = allowedMetadata
                         .stream()
                         .filter(v -> v.getId().equals(additionalField.getMetadata()))
                         .collect(Collectors.toList());

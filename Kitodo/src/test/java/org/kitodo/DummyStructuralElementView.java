@@ -31,8 +31,13 @@ public class DummyStructuralElementView implements StructuralElementViewInterfac
     }
 
     @Override
-    public <T> Collection<MetadataViewInterface> getAddableMetadata(Map<T, String> entered,
+    public Collection<MetadataViewInterface> getAddableMetadata(Map<?, String> entered,
             Collection<String> additionallySelected) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<MetadataViewInterface> getAllowedMetadata() {
         throw new UnsupportedOperationException();
     }
 

@@ -25,8 +25,6 @@ public interface ComplexMetadataViewInterface extends MetadataViewInterface {
      * list contains only metadata keys that are still allowed at this point,
      * minus those that are already displayed anyway but have no value yet.
      *
-     * @param <T>
-     *            the type of metadata objects
      * @param entered
      *            metadata objects that have already been entered, along with
      *            their key
@@ -34,14 +32,23 @@ public interface ComplexMetadataViewInterface extends MetadataViewInterface {
      *            metadata keys that the user has already selected
      * @return the metadata keys that the user can add
      */
-    <T> Collection<MetadataViewInterface> getAddableMetadata(Map<T, String> entered,
+    Collection<MetadataViewInterface> getAddableMetadata(Map<?, String> entered,
             Collection<String> additionallySelected);
 
     /**
-     * Returns the metadata keys to display. The list consists of the keys to
-     * be displayed, keys that are displayed because there are values for them,
-     * and keys that the user has already manually added. The list is created
-     * and then sorted according to the given sorting rules.
+     * Returns the metadata keys that are allowed on this complex metadata view.
+     * This function exists for internal use to check whether a metadata record
+     * is generally allowed in some place.
+     *
+     * @return the metadata keys that are allowed here
+     */
+    Collection<MetadataViewInterface> getAllowedMetadata();
+
+    /**
+     * Returns the metadata keys to display. The list consists of the keys to be
+     * displayed, keys that are displayed because there are values for them, and
+     * keys that the user has already manually added. The list is created and
+     * then sorted according to the given sorting rules.
      *
      * @param <T>
      *            the type of metadata objects
