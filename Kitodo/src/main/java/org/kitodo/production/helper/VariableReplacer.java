@@ -138,6 +138,8 @@ public class VariableReplacer {
             inString = replaceString(inString, "(processtitle)", this.process.getTitle());
             inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
 
+            inString = replaceString(inString, "(projectid)", String.valueOf(this.process.getProject().getId().intValue()));
+
             inString = replaceStringForTask(inString);
 
             inString = replaceForWorkpieceProperty(inString);
