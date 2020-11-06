@@ -61,7 +61,7 @@ public class FileManagement implements FileManagementInterface {
         parentFolderUri = fileMapper.mapUriToKitodoDataDirectoryUri(parentFolderUri);
         File directory = new File(Paths.get(new File(parentFolderUri).getPath(), directoryName).toUri());
         if (!directory.exists() && !directory.mkdir()) {
-            throw new IOException("Could not create directory.");
+            throw new IOException("Could not create directory: " + directory);
         }
         return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(directory.getPath()).toUri());
     }
