@@ -350,37 +350,23 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * Save the structure and metadata.
      */
     public void save() {
-        metadataPanel.preserve();
-        try {
-            structurePanel.preserve();
-            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
-                ServiceManager.getMetsService().save(workpiece, out);
-                ServiceManager.getProcessService().saveToIndex(process,false);
-                PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
-                        + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
-        PrimeFaces.current().ajax().update("notifications");
+        save(false);
     }
 
-    /**
-     * Save the structure and metadata.
-     *
-     * @return navigation target
-     */
-    public String saveAndExit() {
+    private String save(boolean close) {
         metadataPanel.preserve();
         try {
             structurePanel.preserve();
+            ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
                 ServiceManager.getProcessService().saveToIndex(process,false);
-                return close();
+                if (close) {
+                    return close();
+                } else {
+                    PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
+                            + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
+                }
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
@@ -390,6 +376,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         PrimeFaces.current().executeScript("PF('sticky-notifications').removeAll();");
         PrimeFaces.current().ajax().update("notifications");
         return null;
+    }
+
+    /**
+     * Save the structure and metadata.
+     *
+     * @return navigation target
+     */
+    public String saveAndExit() {
+        return save(true);
     }
 
     private void initSeveralAssignments(MediaUnit mediaUnit, List<MediaUnit> severalAssignments) {
