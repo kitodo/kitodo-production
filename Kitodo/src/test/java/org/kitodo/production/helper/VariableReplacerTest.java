@@ -17,9 +17,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 
 public class VariableReplacerTest {
+    
+    int projectId = 12;
 
     @Test
     public void shouldReplaceTitle() {
@@ -50,6 +53,16 @@ public class VariableReplacerTest {
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }
+    
+    @Test
+    public void shouldReplaceProjectId() {
+        VariableReplacer variableReplacer = new VariableReplacer(prepareProcess());
+
+        String replaced = variableReplacer.replace("-processpath (projectid) -hardcoded test");
+        String expected = "-processpath " + projectId + " -hardcoded test";
+
+        assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
 
     private Process prepareProcess() {
         Process process = new Process();
@@ -60,6 +73,9 @@ public class VariableReplacerTest {
         ruleset.setFile("ruleset_test.xml");
         process.setRuleset(ruleset);
         process.setProcessBaseUri(URI.create("2"));
+        Project project = new Project();
+        project.setId(projectId);
+        process.setProject(project);
 
         return process;
     }
