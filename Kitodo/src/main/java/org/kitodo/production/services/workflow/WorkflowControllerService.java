@@ -51,8 +51,11 @@ import org.kitodo.data.database.enums.WorkflowConditionType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.metadata.ImageHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
@@ -649,7 +652,7 @@ public class WorkflowControllerService {
             return true;
         } else {
             if (workflowCondition.getType().equals(WorkflowConditionType.SCRIPT)) {
-                return runScriptCondition(workflowCondition.getValue());
+                return runScriptCondition(workflowCondition.getValue(), process);
             }
 
             if (workflowCondition.getType().equals(WorkflowConditionType.XPATH)) {
@@ -659,8 +662,23 @@ public class WorkflowControllerService {
         }
     }
 
-    private boolean runScriptCondition(String scriptPath) throws IOException {
-        CommandResult commandResult = ServiceManager.getCommandService().runCommand(new File(scriptPath));
+    private boolean runScriptCondition(String script, Process process) throws IOException {
+        LegacyMetsModsDigitalDocumentHelper dd = null;
+
+        LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+
+        try {
+            dd = ServiceManager.getProcessService()
+                    .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(process), prefs)
+                    .getDigitalDocument();
+        } catch (IOException e2) {
+            logger.error(e2);
+        }
+        VariableReplacer replacer = new VariableReplacer(dd, prefs, process, null);
+
+        script = replacer.replace(script);
+
+        CommandResult commandResult = ServiceManager.getCommandService().runCommand(script);
         return commandResult.isSuccessful();
     }
 
