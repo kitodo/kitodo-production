@@ -663,18 +663,13 @@ public class WorkflowControllerService {
     }
 
     private boolean runScriptCondition(String script, Process process) throws IOException {
-        LegacyMetsModsDigitalDocumentHelper dd = null;
+        LegacyPrefsHelper legacyPrefsHelper = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
 
-        LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-
-        try {
-            dd = ServiceManager.getProcessService()
-                    .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(process), prefs)
-                    .getDigitalDocument();
-        } catch (IOException e2) {
-            logger.error(e2);
-        }
-        VariableReplacer replacer = new VariableReplacer(dd, prefs, process, null);
+        LegacyMetsModsDigitalDocumentHelper legacyMetsModsDigitalDocumentHelper = ServiceManager.getProcessService()
+                .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(process), legacyPrefsHelper)
+                .getDigitalDocument();
+        VariableReplacer replacer = new VariableReplacer(legacyMetsModsDigitalDocumentHelper, legacyPrefsHelper,
+                process, null);
 
         script = replacer.replace(script);
 
