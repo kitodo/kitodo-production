@@ -645,7 +645,7 @@ public class WorkflowControllerService {
 
     private boolean isWorkflowConditionFulfilled(Process process, WorkflowCondition workflowCondition)
             throws IOException {
-        if (Objects.isNull(workflowCondition)) {
+        if (Objects.isNull(workflowCondition) || workflowCondition.getType().equals(WorkflowConditionType.NONE)) {
             return true;
         } else {
             if (workflowCondition.getType().equals(WorkflowConditionType.SCRIPT)) {
