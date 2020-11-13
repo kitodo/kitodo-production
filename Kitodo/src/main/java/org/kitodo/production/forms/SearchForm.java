@@ -310,8 +310,16 @@ public class SearchForm {
             search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
-        if (StringUtils.isNotBlank(this.processPropertyTitle) && StringUtils.isNotBlank(this.processPropertyValue)) {
-            search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
+        if (StringUtils.isNotBlank(this.processPropertyValue)) {
+            if (StringUtils.isNotBlank(this.processPropertyTitle)) {
+                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
+            } else {
+                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + "*:" + this.processPropertyValue + "\" ";
+            }
+        } else {
+            if (StringUtils.isNotBlank(this.processPropertyTitle)) {
+                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":*\" ";
+            }
         }
         return search;
     }

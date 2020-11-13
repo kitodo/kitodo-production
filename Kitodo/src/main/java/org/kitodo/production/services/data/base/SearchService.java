@@ -68,6 +68,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     protected Searcher searcher;
     protected Indexer indexer;
     protected BaseType type;
+    protected static final String WILDCARD = "*";
 
     /**
      * Constructor necessary to use searcher in child classes.
@@ -399,7 +400,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             throw new DataException(e);
         }
     }
-    
+
     /**
      * Display all documents for exact type in a given range.
      *
@@ -909,7 +910,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     /**
      * Removes all objects from index, which are no longer in Database.
      * @param baseIndexedBeansId the list of beans to check for missing db eintries.
-     * 
+     *
      */
     public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException, CustomResponseException {
         for (Integer baseIndexedBeanId : baseIndexedBeansId) {
