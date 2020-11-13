@@ -44,12 +44,21 @@ public class WorkflowCondition extends BaseBean {
      *            of workflow condition
      */
     public WorkflowCondition(String type, String value) {
-        if (type.equalsIgnoreCase("script")) {
-            this.type = WorkflowConditionType.SCRIPT;
-        } else if (type.equalsIgnoreCase("xpath")) {
-            this.type = WorkflowConditionType.XPATH;
-        } else {
-            throw new InvalidParameterException("Type should be script or XPath, but was " +  type);
+        switch (type.toLowerCase()) {
+            case "none": {
+                this.type = WorkflowConditionType.NONE;
+                break;
+            }
+            case "script": {
+                this.type = WorkflowConditionType.SCRIPT;
+                break;
+            }
+            case "xpath": {
+                this.type = WorkflowConditionType.XPATH;
+                break;
+            }
+            default:
+                throw new InvalidParameterException("Type should be none, script or XPath, but was " + type);
         }
         this.value = value;
     }

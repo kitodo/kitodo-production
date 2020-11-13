@@ -22,6 +22,7 @@ package org.kitodo.data.database.enums;
  * </dl>
  */
 public enum WorkflowConditionType {
+    NONE,
     SCRIPT,
     XPATH
 }
