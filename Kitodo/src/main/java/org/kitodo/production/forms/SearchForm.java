@@ -312,7 +312,8 @@ public class SearchForm {
         }
         if (StringUtils.isNotBlank(this.processPropertyValue)) {
             if (StringUtils.isNotBlank(this.processPropertyTitle)) {
-                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
+                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":"
+                        + this.processPropertyValue + "\" ";
             } else {
                 search += "\"" + FilterString.PROPERTY.getFilterEnglish() + "*:" + this.processPropertyValue + "\" ";
             }
