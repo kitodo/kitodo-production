@@ -490,15 +490,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return new BoolQueryBuilder();
     }
 
-    private QueryBuilder createProcessPropertyFilter(String filter, ObjectType objectType) {
+    private QueryBuilder createProcessPropertyFilter(String filter, ObjectType objectType) throws DataException {
+        BoolQueryBuilder propertyQuery = new BoolQueryBuilder();
+        Set<String> strings = filterValuesAsStrings(filter, FilterString.PROPERTY);
+        for (String string : strings) {
+            String[] split = string.split(":");
+            propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+        }
         if (objectType == ObjectType.PROCESS) {
-            BoolQueryBuilder propertyQuery = new BoolQueryBuilder();
-            Set<String> strings = filterValuesAsStrings(filter, FilterString.PROPERTY);
-            for (String string : strings) {
-                String[] split = string.split(":");
-                propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
-            }
             return propertyQuery;
+        } else if (objectType == ObjectType.TASK) {
+            return getQueryAccordingToObjectTypeAndSearchInObject(ObjectType.TASK, ObjectType.PROCESS, propertyQuery);
         }
         return new BoolQueryBuilder();
     }
