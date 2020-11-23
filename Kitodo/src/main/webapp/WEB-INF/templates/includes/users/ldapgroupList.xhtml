@@ -80,20 +80,4 @@
             </h:form>
         </p:column>
     </p:dataTable>
-
-    <!--TODO Find a better place for this ... e.g. separate page in system area-->
-    <h:form>
-        <p:panelGrid id="actions-grid" columns="2" layout="grid">
-            <p:row>
-                <div>
-                    <p:outputLabel for="useLdap" value="#{msgs.ldapActiveNote}"/>
-                    <p:selectBooleanCheckbox id="useLdap" styleClass="switch input"
-                                             value="#{AuthenticationController.ldapAuthentication}">
-                        <p:ajax event="change"/>
-                    </p:selectBooleanCheckbox>
-                </div>
-            </p:row>
-        </p:panelGrid>
-    </h:form>
-
 </ui:composition>
