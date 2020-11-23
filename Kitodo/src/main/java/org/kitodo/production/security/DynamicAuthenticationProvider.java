@@ -15,11 +15,13 @@ import java.util.Objects;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
@@ -33,7 +35,8 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     private static volatile DynamicAuthenticationProvider instance = null;
-    private AuthenticationProvider authenticationProvider = null;
+    private AuthenticationProvider daoAuthenticationProvider = null;
+    private AuthenticationProvider ldapAuthenticationProvider = null;
 
     private boolean ldapAuthentication;
     private DefaultSpringSecurityContextSource ldapContextSource = null;
@@ -68,16 +71,22 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) {
-        if (ldapAuthentication) {
-            User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
-            configureAuthenticationProvider(user.getLdapGroup().getLdapServer().getUrl(), user.getLdapGroup().getUserDN());
+        User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
+        LdapGroup ldapGroup = user.getLdapGroup();
+        if (ldapAuthentication && Objects.nonNull(ldapGroup)) {
+            if (Objects.isNull(ldapGroup.getLdapServer())) {
+                throw new AuthenticationServiceException("No LDAP server specified on user's LDAP group");
+            }
+            configureAuthenticationProvider(ldapGroup.getLdapServer().getUrl(), ldapGroup.getUserDN());
+            return ldapAuthenticationProvider.authenticate(authentication);
+        } else {
+            return daoAuthenticationProvider.authenticate(authentication);
         }
-        return authenticationProvider.authenticate(authentication);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authenticationProvider.supports(authentication);
+        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 
     /**
@@ -90,34 +99,29 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      *            The user dn pattern.
      */
     private void configureAuthenticationProvider(String url, String userDn) {
-        if (Objects.nonNull(url) && Objects.nonNull(userDn)) {
-
-            if (Objects.isNull(this.ldapContextSource)) {
-                this.ldapContextSource = new DefaultSpringSecurityContextSource(url);
-            } else {
-                this.ldapContextSource.setUrl(url);
-            }
-            this.ldapContextSource.afterPropertiesSet();
-
-            if (Objects.isNull(this.bindAuthenticator)) {
-                this.bindAuthenticator = new BindAuthenticator(ldapContextSource);
-            }
-            bindAuthenticator.setUserDnPatterns(convertUserDn(userDn));
-
-            LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(bindAuthenticator);
-            ldapAuthenticationProvider.setUserDetailsContextMapper(this.ldapUserDetailsContextMapper);
-
-            this.authenticationProvider = ldapAuthenticationProvider;
+        if (Objects.isNull(this.ldapContextSource)) {
+            this.ldapContextSource = new DefaultSpringSecurityContextSource(url);
         } else {
-            throw new AuthenticationServiceException("No ldap-server specified on users ldap-group");
+            this.ldapContextSource.setUrl(url);
         }
+        this.ldapContextSource.afterPropertiesSet();
+
+        if (Objects.isNull(this.bindAuthenticator)) {
+            this.bindAuthenticator = new BindAuthenticator(ldapContextSource);
+        }
+        bindAuthenticator.setUserDnPatterns(convertUserDn(userDn));
+
+        LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(bindAuthenticator);
+        ldapAuthenticationProvider.setUserDetailsContextMapper(this.ldapUserDetailsContextMapper);
+
+        this.ldapAuthenticationProvider = ldapAuthenticationProvider;
     }
 
     private void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(ServiceManager.getUserService());
         daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
-        this.authenticationProvider = daoAuthenticationProvider;
+        this.daoAuthenticationProvider = daoAuthenticationProvider;
     }
 
     /**
@@ -156,8 +160,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         this.ldapAuthentication = ldapAuthentication;
         if (ldapAuthentication) {
             activateLdapAuthentication();
-        } else {
-            activateDatabaseAuthentication();
         }
+        activateDatabaseAuthentication();
     }
 }
