@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -214,7 +215,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldCopyDataWithValue() throws Exception {
-        KitodoScriptService kitodoScript = new KitodoScriptService();
         Process process = ServiceManager.getProcessService().getById(2);
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -226,6 +226,7 @@ public class KitodoScriptServiceIT {
         String script = "action:addData " + metadataKey + "=PDM1.0";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
         final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
@@ -236,7 +237,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldCopyDataWithRoot() throws Exception {
-        KitodoScriptService kitodoScript = new KitodoScriptService();
         Process process = ServiceManager.getProcessService().getById(2);
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -248,6 +248,7 @@ public class KitodoScriptServiceIT {
         String script = "action:addData " + metadataKey + "=@TSL_ATS";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);

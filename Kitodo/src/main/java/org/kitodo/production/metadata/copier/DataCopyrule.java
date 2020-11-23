@@ -47,48 +47,42 @@ public class DataCopyrule {
      * @param data
      *            data to apply yourself on
      */
-    public void apply(CopierData data){
+    public void apply(CopierData data) {
         Workpiece workpiece = data.getDigitalDocument().getWorkpiece();
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
-        System.out.println("allChildrenSize" + allIncludedStructuralElements.size());
         for (IncludedStructuralElement child : allIncludedStructuralElements) {
-            System.out.println(child.getLabel());
             Collection<Metadata> metadata = child.getMetadata();
-            System.out.println("metadatasize" + metadata.size());
             MdSec domain = null;
-            for (Metadata metadatum : metadata) {
-                domain = metadatum.getDomain();
-                System.out.println("key: " + metadatum.getKey());
-
-                if(metadatum instanceof MetadataEntry) {
-                    if (metadatum.getKey().equals(this.command.get(0))) {
-                        ((MetadataEntry) metadatum).setValue(this.command.get(2));
-                        break;
-                    }
-                    System.out.println("value: " + ((MetadataEntry) metadatum).getValue());
-                }
-                if (metadatum instanceof MetadataGroup){
-                    Collection<Metadata> group = ((MetadataGroup) metadatum).getGroup();
-                    if (metadatum.getKey().equals(this.command.get(0))) {
-                        
-                    }
-                    for (Metadata groupelement : group) {
-                        System.out.println("value: " + ((MetadataEntry) groupelement).getValue());
-                    }
-
-                }
-
-            }
+            // TODO: should be replaced by further methodes
+            // for (Metadata metadatum : metadata) {
+            // domain = metadatum.getDomain();
+            //
+            // if (metadatum instanceof MetadataEntry) {
+            // if (metadatum.getKey().equals(this.command.get(0))) {
+            // ((MetadataEntry) metadatum).setValue(this.command.get(2));
+            // break;
+            // }
+            // }
+            // if (metadatum instanceof MetadataGroup) {
+            // Collection<Metadata> group = ((MetadataGroup) metadatum).getGroup();
+            // if (metadatum.getKey().equals(this.command.get(0))) {
+            //
+            // }
+            // for (Metadata groupelement : group) {
+            // }
+            // }
+            // }
             MetadataEntry metadataEntry = new MetadataEntry();
             metadataEntry.setKey(command.get(0));
             metadataEntry.setValue(command.get(2));
             metadataEntry.setDomain(domain);
             child.getMetadata().add(metadataEntry);
 
-            try (OutputStream out = ServiceManager.getFileService().write(ServiceManager.getFileService().getMetadataFilePath(data.getProcess()))) {
+            try (OutputStream out = ServiceManager.getFileService()
+                    .write(ServiceManager.getFileService().getMetadataFilePath(data.getProcess()))) {
                 ServiceManager.getMetsService().save(workpiece, out);
-                ServiceManager.getProcessService().saveToIndex(data.getProcess(),false);
+                ServiceManager.getProcessService().saveToIndex(data.getProcess(), false);
             } catch (IOException | CustomResponseException | DataException e) {
                 System.out.println("log me");
             }
