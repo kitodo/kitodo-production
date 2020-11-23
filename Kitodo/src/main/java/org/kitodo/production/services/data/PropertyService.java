@@ -13,9 +13,11 @@ package org.kitodo.production.services.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -97,12 +99,12 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
     }
 
     private List<String> findDistinctTitles(String type) {
-        List<Property> byQuery = getByQuery("FROM Property AS property GROUP BY title");
-        List<String> titles = new ArrayList<>();
+        List<Property> byQuery = getByQuery("SELECT DISTINCT property FROM Property AS property GROUP BY property.id");
+        HashSet<String> titles = new HashSet<>();
         for (Property property : byQuery) {
             titles.add(property.getTitle());
         }
-        return titles;
+        return titles.stream().sorted().collect(Collectors.toList());
     }
 
     /**
