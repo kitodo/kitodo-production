@@ -155,7 +155,13 @@ public class KitodoScriptService {
                 }
                 deleteProcess(processes, contentOnly);
                 break;
-            case "copyData":
+            case "addData":
+                addData(processes, script);
+                break;
+            case "overwriteData":
+                copyData(processes, script);
+                break;
+            case "deleteData":
                 copyData(processes, script);
                 break;
             case "generateImages":
@@ -179,6 +185,9 @@ public class KitodoScriptService {
                 return false;
         }
         return true;
+    }
+
+    private void overwriteData(List<Process> processes, String script) {
     }
 
     private void updateContentFiles(List<Process> processes) {
@@ -234,6 +243,25 @@ public class KitodoScriptService {
         }
     }
 
+    private void addData(List<Process> processes, String script) {
+        String currentProcessTitle = null;
+        try {
+            script = script.replaceFirst("\\s*action:addData\\s+(.*?)[\r\n\\s]*", "$1");
+            AddDataScript addDataScript = new AddDataScript();
+            for (Process process : processes) {
+                currentProcessTitle = process.getTitle();
+                LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                        .readMetadataFile(process);
+                addDataScript.process(metadataFile, process, script);
+                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
+                        ServiceManager.getProcessService().getMetadataFileUri(process));
+                Helper.setMessage("addDataOk", currentProcessTitle);
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("addDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
+        }
+    }
+
     private void copyData(List<Process> processes, String inScript) {
         String currentProcessTitele = null;
         try {
@@ -241,14 +269,14 @@ public class KitodoScriptService {
             DataCopier dataCopier = new DataCopier(rules);
             for (Process process : processes) {
                 currentProcessTitele = process.getTitle();
-                LegacyMetsModsDigitalDocumentHelper gdzfile = ServiceManager.getProcessService()
+                LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                         .readMetadataFile(process);
-                dataCopier.process(new CopierData(gdzfile, process));
-                ServiceManager.getMetsService().saveWorkpiece(gdzfile.getWorkpiece(),
+                dataCopier.process(new CopierData(metadataFile, process));
+                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
                     ServiceManager.getProcessService().getMetadataFileUri(process));
                 Helper.setMessage("copyDataOk", currentProcessTitele);
             }
-        } catch (ConfigurationException | IOException | UnsupportedOperationException e) {
+        } catch (ConfigurationException | IOException e) {
             StringBuilder message = new StringBuilder(127);
             if (currentProcessTitele != null) {
                 message.append(currentProcessTitele);

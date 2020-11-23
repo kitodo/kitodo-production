@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.production.services.ServiceManager;
 
 /**
  * A data copier is a class that can be parametrised to copy data in processes
@@ -48,7 +49,7 @@ public class DataCopier {
         List<List<String>> commands = parseDataCopyRules(program);
         rules = new ArrayList<>(commands.size());
         for (List<String> command : commands) {
-            rules.add(DataCopyrule.createFor(command));
+            rules.add(new DataCopyrule(command));
         }
     }
 
@@ -100,7 +101,7 @@ public class DataCopier {
             try {
                 rule.apply(data);
             } catch (RuntimeException notApplicable) {
-                logger.info("Rule not applicable for \"{}\", skipped: {}", data.getProcessTitle(), rule);
+                logger.info("Rule not applicable for \"{}\", skipped: {}", data.getProcess().getTitle(), rule);
             }
         }
     }

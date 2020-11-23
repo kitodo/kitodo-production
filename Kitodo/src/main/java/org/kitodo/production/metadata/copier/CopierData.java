@@ -41,8 +41,6 @@ public class CopierData {
      */
     private final Process process;
 
-    private final Template template;
-
     /**
      * Creates a new CopierData bean with an additional destination metadata
      * selector.
@@ -56,7 +54,6 @@ public class CopierData {
         this.fileformat = data.fileformat;
         this.process = data.process;
         this.destination = destination;
-        this.template = new Template();
     }
 
     /**
@@ -71,7 +68,6 @@ public class CopierData {
         this.fileformat = fileformat;
         this.process = process;
         this.destination = null;
-        this.template = new Template();
     }
 
     /**
@@ -84,7 +80,6 @@ public class CopierData {
      */
     public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Template template) {
         this.fileformat = fileformat;
-        this.template = template;
         this.destination = null;
         this.process = new Process();
     }
@@ -132,8 +127,8 @@ public class CopierData {
      *
      * @return the process title
      */
-    public String getProcessTitle() {
-        return process.getTitle();
+    public Process getProcess() {
+        return process;
 
     }
 
@@ -145,6 +140,6 @@ public class CopierData {
      */
     @Override
     public String toString() {
-        return "{fileformat: " + fileformat.toString() + ", process: " + getProcessTitle() + '}';
+        return "{fileformat: " + fileformat.toString() + ", process: " + getProcess().getTitle() + '}';
     }
 }
