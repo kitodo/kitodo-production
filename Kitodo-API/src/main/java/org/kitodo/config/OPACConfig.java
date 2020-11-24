@@ -107,7 +107,7 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by its title
      * @return HierarchicalConfiguration for catalog's "mappingFile"
      */
-    public static String getXsltMappingFile(String catalogName) {
+    public static String getXsltMappingFiles(String catalogName) {
         return getCatalog(catalogName).getString("mappingFile");
     }
 

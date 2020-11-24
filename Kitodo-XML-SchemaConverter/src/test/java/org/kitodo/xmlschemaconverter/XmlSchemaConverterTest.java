@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,7 +29,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
@@ -63,7 +63,7 @@ public class XmlSchemaConverterTest {
 
         try (InputStream inputStream = Files.newInputStream(Paths.get(MODS_TEST_FILE_PATH))) {
             testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
-            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, null);
+            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, Collections.emptyList());
         }
 
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
@@ -110,7 +110,7 @@ public class XmlSchemaConverterTest {
 
         try (InputStream inputStream = Files.newInputStream(Paths.get(MARC_TEST_FILE_PATH))) {
             testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
-            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, null);
+            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, Collections.emptyList());
         }
 
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
