@@ -11,6 +11,12 @@
 
 package org.kitodo.production.services.command;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
@@ -21,12 +27,6 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public abstract class EditDataScript {
 
@@ -76,6 +76,11 @@ public abstract class EditDataScript {
         }
     }
 
+    /**
+     * Saves the changed workpiece and process.
+     * @param workpiece the workpiece to save
+     * @param process the process to save
+     */
     public void saveChanges(Workpiece workpiece, Process process) {
         try (OutputStream out = ServiceManager.getFileService()
                 .write(ServiceManager.getFileService().getMetadataFilePath(process))) {

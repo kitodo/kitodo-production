@@ -11,6 +11,11 @@
 
 package org.kitodo.production.services.command;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
@@ -18,13 +23,14 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
 public class DeleteDataScript extends EditDataScript {
 
+    /**
+     * Executes the given script on the given file for the given process.
+     * @param metadataFile the file to edit
+     * @param process the related process
+     * @param metadataScript the script to execute
+     */
     public void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
                                MetadataScript metadataScript) {
         Workpiece workpiece = metadataFile.getWorkpiece();

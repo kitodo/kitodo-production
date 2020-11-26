@@ -28,6 +28,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
@@ -41,6 +42,8 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
@@ -65,6 +68,9 @@ public class KitodoScriptServiceIT {
         MockDatabase.cleanDatabase();
     }
 
+    /**
+     * makes a copy of the meta.xml, because it's changed in the tests.
+     */
     @Before
     public void prepareFileCopy() throws IOException {
         File copied = new File(
@@ -74,14 +80,19 @@ public class KitodoScriptServiceIT {
         FileUtils.copyFile(original, copied);
     }
 
+    /**
+     * restores the meta.xml which was changed in the tests.
+     */
     @After
-    public void restoreMetaFile() throws IOException {
+    public void restoreMetaFile() throws IOException, DataException, DAOException {
         File copied = new File(
                 "src/test/resources/metadata/2/metaBackup.xml");
         File original = new File(
                 "src/test/resources/metadata/2/meta.xml");
         FileUtils.copyFile(copied, original);
         FileUtils.deleteQuietly(copied);
+        Process process = ServiceManager.getProcessService().getById(2);
+        ServiceManager.getProcessService().save(process);
     }
 
     @Test
