@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.command;
 
+import java.util.Objects;
+
 public class MetadataScript {
 
     private String goal;
@@ -22,13 +24,18 @@ public class MetadataScript {
      * @param command the given command.
      */
     public MetadataScript(String command) {
-        String[] commandParts = command.split("=");
-        goal = commandParts[0];
-        String rootOrValue = commandParts[1];
-        if (rootOrValue.startsWith("@")) {
-            root = rootOrValue;
-        } else {
-            value = rootOrValue;
+        if (command.contains("=")) {
+            String[] commandParts = command.split("=");
+            goal = commandParts[0];
+            String rootOrValue = commandParts[1];
+            if (rootOrValue.startsWith("@")) {
+                root = rootOrValue;
+            } else {
+                value = rootOrValue;
+            }
+        }
+        else {
+            goal = command;
         }
     }
 
@@ -69,6 +76,6 @@ public class MetadataScript {
      * @return the name of the root metadata.
      */
     public String getRootName() {
-        return root.substring(1);
+        return Objects.isNull(root) ? null : root.substring(1);
     }
 }

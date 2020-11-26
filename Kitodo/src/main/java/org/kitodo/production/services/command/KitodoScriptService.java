@@ -162,7 +162,7 @@ public class KitodoScriptService {
                 copyData(processes, script);
                 break;
             case "deleteData":
-                copyData(processes, script);
+                deleteData(processes, script);
                 break;
             case "generateImages":
                 String folders = parameters.get("folders");
@@ -185,6 +185,25 @@ public class KitodoScriptService {
                 return false;
         }
         return true;
+    }
+
+    private void deleteData(List<Process> processes, String script) {
+        String currentProcessTitle = null;
+        try {
+            script = script.replaceFirst("\\s*action:deleteData\\s+(.*?)[\r\n\\s]*", "$1");
+            DeleteDataScript deleteDataScript = new DeleteDataScript();
+            for (Process process : processes) {
+                currentProcessTitle = process.getTitle();
+                LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                        .readMetadataFile(process);
+                deleteDataScript.process(metadataFile, process, script);
+                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
+                        ServiceManager.getProcessService().getMetadataFileUri(process));
+                Helper.setMessage("deleteDataOk", currentProcessTitle);
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("addDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
+        }
     }
 
     private void overwriteData(List<Process> processes, String script) {

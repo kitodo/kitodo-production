@@ -31,24 +31,11 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 
-public class AddDataScript {
+public class AddDataScript extends EditDataScript{
 
     private static final Logger logger = LogManager.getLogger(AddDataScript.class);
 
-    /**
-     * Processes the given script for the given process.
-     * @param metadataFile - the file to be changed
-     * @param process - the process to run the script on
-     * @param script - the script to run
-     */
-    public void process(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process, String script) {
-        List<MetadataScript> scripts = parseScript(script);
-        for (MetadataScript metadataScript : scripts) {
-            executeScript(metadataFile, process, metadataScript);
-        }
-    }
-
-    private void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
+    public void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
             MetadataScript metadataScript) {
         Workpiece workpiece = metadataFile.getWorkpiece();
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
@@ -79,20 +66,4 @@ public class AddDataScript {
         }
     }
 
-    private void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection) {
-        for (Metadata metadata : metadataCollection) {
-            if (metadata.getKey().equals(metadataScript.getRootName())) {
-                metadataScript.setValue(((MetadataEntry) metadata).getValue());
-            }
-        }
-    }
-
-    private List<MetadataScript> parseScript(String script) {
-        String[] commands = script.split(";");
-        List<MetadataScript> metadataScripts = new ArrayList<>();
-        for (String command : commands) {
-            metadataScripts.add(new MetadataScript(command));
-        }
-        return metadataScripts;
-    }
 }
