@@ -354,7 +354,7 @@ public class KitodoScriptServiceIT {
         List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
-        String script = "action:deleteData=SecondMetaLong" + metadataKey;
+        String script = "action:deleteData" + metadataKey + "=SecondMetaLong";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
         KitodoScriptService kitodoScript = new KitodoScriptService();
