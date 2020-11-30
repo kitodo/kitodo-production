@@ -159,7 +159,7 @@ public class KitodoScriptService {
                 addData(processes, script);
                 break;
             case "overwriteData":
-                copyData(processes, script);
+                overwriteData(processes, script);
                 break;
             case "deleteData":
                 deleteData(processes, script);
@@ -207,6 +207,22 @@ public class KitodoScriptService {
     }
 
     private void overwriteData(List<Process> processes, String script) {
+        String currentProcessTitle = null;
+        try {
+            script = script.replaceFirst("\\s*action:overwriteData\\s+(.*?)[\r\n\\s]*", "$1");
+            OverwriteDataScript overwriteDataScript = new OverwriteDataScript();
+            for (Process process : processes) {
+                currentProcessTitle = process.getTitle();
+                LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                        .readMetadataFile(process);
+                overwriteDataScript.process(metadataFile, process, script);
+                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
+                        ServiceManager.getProcessService().getMetadataFileUri(process));
+                Helper.setMessage("overwriteDataOk", currentProcessTitle);
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("overwriteDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
+        }
     }
 
     private void updateContentFiles(List<Process> processes) {
@@ -278,35 +294,6 @@ public class KitodoScriptService {
             }
         } catch (IOException e) {
             Helper.setErrorMessage("addDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
-        }
-    }
-
-    private void copyData(List<Process> processes, String inScript) {
-        String currentProcessTitele = null;
-        try {
-            String rules = inScript.replaceFirst("\\s*action:copyData\\s+(.*?)[\r\n\\s]*", "$1");
-            DataCopier dataCopier = new DataCopier(rules);
-            for (Process process : processes) {
-                currentProcessTitele = process.getTitle();
-                LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
-                        .readMetadataFile(process);
-                dataCopier.process(new CopierData(metadataFile, process));
-                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
-                    ServiceManager.getProcessService().getMetadataFileUri(process));
-                Helper.setMessage("copyDataOk", currentProcessTitele);
-            }
-        } catch (ConfigurationException | IOException e) {
-            StringBuilder message = new StringBuilder(127);
-            if (currentProcessTitele != null) {
-                message.append(currentProcessTitele);
-                message.append(": ");
-            }
-            message.append(e.getClass().getSimpleName());
-            if (e.getMessage() != null) {
-                message.append(": ");
-                message.append(e.getMessage());
-            }
-            Helper.setErrorMessage("copyDataError", message.toString(), logger, e);
         }
     }
 

@@ -54,25 +54,6 @@ public class DataCopyrule {
         for (IncludedStructuralElement child : allIncludedStructuralElements) {
             Collection<Metadata> metadata = child.getMetadata();
             MdSec domain = null;
-            // TODO: should be replaced by further methodes
-            // for (Metadata metadatum : metadata) {
-            // domain = metadatum.getDomain();
-            //
-            // if (metadatum instanceof MetadataEntry) {
-            // if (metadatum.getKey().equals(this.command.get(0))) {
-            // ((MetadataEntry) metadatum).setValue(this.command.get(2));
-            // break;
-            // }
-            // }
-            // if (metadatum instanceof MetadataGroup) {
-            // Collection<Metadata> group = ((MetadataGroup) metadatum).getGroup();
-            // if (metadatum.getKey().equals(this.command.get(0))) {
-            //
-            // }
-            // for (Metadata groupelement : group) {
-            // }
-            // }
-            // }
             MetadataEntry metadataEntry = new MetadataEntry();
             metadataEntry.setKey(command.get(0));
             metadataEntry.setValue(command.get(2));
