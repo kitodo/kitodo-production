@@ -52,9 +52,7 @@ public class AddDataScript extends EditDataScript {
             domain = metadata.getDomain();
         }
 
-        if (Objects.isNull(metadataScript.getValue())) {
-            generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
-        }
+        generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 
         MetadataEntry metadataEntry = new MetadataEntry();
         metadataEntry.setKey(metadataScript.getGoal());
@@ -62,13 +60,7 @@ public class AddDataScript extends EditDataScript {
         metadataEntry.setDomain(domain);
         metadataCollection.add(metadataEntry);
 
-        try (OutputStream out = ServiceManager.getFileService()
-                .write(ServiceManager.getFileService().getMetadataFilePath(process))) {
-            ServiceManager.getMetsService().save(workpiece, out);
-            ServiceManager.getProcessService().saveToIndex(process, false);
-        } catch (IOException | CustomResponseException | DataException e) {
-            logger.error(e.getMessage());
-        }
+        saveChanges(workpiece, process);
     }
 
 }

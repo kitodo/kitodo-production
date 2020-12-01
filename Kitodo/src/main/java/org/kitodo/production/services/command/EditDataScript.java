@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,20 +73,23 @@ public abstract class EditDataScript {
      * @param process the process to replace variables
      * @param metadataFile the metadatafile to read metadata
      */
-    public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection, Process process, LegacyMetsModsDigitalDocumentHelper metadataFile) {
-        if (metadataScript.getRoot().startsWith("@")) {
-            for (Metadata metadata : metadataCollection) {
-                if (metadata.getKey().equals(metadataScript.getRootName())) {
-                    metadataScript.setValue(((MetadataEntry) metadata).getValue());
+    public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection,
+            Process process, LegacyMetsModsDigitalDocumentHelper metadataFile) {
+        if (Objects.isNull(metadataScript.getValue()) && Objects.nonNull(metadataScript.getRoot())) {
+            if (metadataScript.getRoot().startsWith("@")) {
+                for (Metadata metadata : metadataCollection) {
+                    if (metadata.getKey().equals(metadataScript.getRootName())) {
+                        metadataScript.setValue(((MetadataEntry) metadata).getValue());
+                    }
                 }
-            }
-        } else if (metadataScript.getRoot().startsWith("$")) {
-            LegacyPrefsHelper legacyPrefsHelper = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-            VariableReplacer replacer = new VariableReplacer(metadataFile, legacyPrefsHelper,
-                    process, null);
+            } else if (metadataScript.getRoot().startsWith("$")) {
+                LegacyPrefsHelper legacyPrefsHelper = ServiceManager.getRulesetService()
+                        .getPreferences(process.getRuleset());
+                VariableReplacer replacer = new VariableReplacer(metadataFile, legacyPrefsHelper, process, null);
 
-            String replaced = replacer.replace(metadataScript.getRootName());
-            metadataScript.setValue(replaced);
+                String replaced = replacer.replace(metadataScript.getRootName());
+                metadataScript.setValue(replaced);
+            }
         }
     }
 

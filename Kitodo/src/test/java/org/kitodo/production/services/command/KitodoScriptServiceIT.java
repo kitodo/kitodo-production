@@ -451,7 +451,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldOverwriteDataWithVariable() throws Exception {
-        Process process = ServiceManager.getProcessService().getById(2);
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -465,6 +464,7 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         Assert.assertEquals("should contain new metadata value", 0, processByMetadata.size());
 
+        Process process = ServiceManager.getProcessService().getById(2);
         String script = "action:overwriteData " + metadataKey + "=$(processid)";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
