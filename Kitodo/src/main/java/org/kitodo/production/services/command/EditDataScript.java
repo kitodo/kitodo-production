@@ -25,7 +25,9 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public abstract class EditDataScript {
@@ -67,12 +69,23 @@ public abstract class EditDataScript {
      * Generates the script value when a metadata root is given.
      * @param metadataScript the script to set the value
      * @param metadataCollection the metadata collection to extract the value from
+     * @param process the process to replace variables
+     * @param metadataFile the metadatafile to read metadata
      */
-    public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection) {
-        for (Metadata metadata : metadataCollection) {
-            if (metadata.getKey().equals(metadataScript.getRootName())) {
-                metadataScript.setValue(((MetadataEntry) metadata).getValue());
+    public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection, Process process, LegacyMetsModsDigitalDocumentHelper metadataFile) {
+        if (metadataScript.getRoot().startsWith("@")) {
+            for (Metadata metadata : metadataCollection) {
+                if (metadata.getKey().equals(metadataScript.getRootName())) {
+                    metadataScript.setValue(((MetadataEntry) metadata).getValue());
+                }
             }
+        } else if (metadataScript.getRoot().startsWith("$")) {
+            LegacyPrefsHelper legacyPrefsHelper = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+            VariableReplacer replacer = new VariableReplacer(metadataFile, legacyPrefsHelper,
+                    process, null);
+
+            String replaced = replacer.replace(metadataScript.getRootName());
+            metadataScript.setValue(replaced);
         }
     }
 

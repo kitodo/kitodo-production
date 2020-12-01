@@ -53,7 +53,7 @@ public class AddDataScript extends EditDataScript {
         }
 
         if (Objects.isNull(metadataScript.getValue())) {
-            generateValueForMetadataScript(metadataScript, metadataCollection);
+            generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
         }
 
         MetadataEntry metadataEntry = new MetadataEntry();

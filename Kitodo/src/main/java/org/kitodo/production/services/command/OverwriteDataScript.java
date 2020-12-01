@@ -35,7 +35,7 @@ public class OverwriteDataScript extends EditDataScript {
         IncludedStructuralElement child = allIncludedStructuralElements.get(0);
         Collection<Metadata> metadata = child.getMetadata();
         if (Objects.isNull(metadataScript.getValue())) {
-            generateValueForMetadataScript(metadataScript, metadata);
+            generateValueForMetadataScript(metadataScript, metadata, process, metadataFile);
         }
         for (Metadata metadatum : metadata) {
             if (metadatum instanceof MetadataEntry) {

@@ -28,7 +28,7 @@ public class MetadataScript {
             String[] commandParts = command.split("=");
             goal = commandParts[0];
             String rootOrValue = commandParts[1];
-            if (rootOrValue.startsWith("@")) {
+            if (rootOrValue.startsWith("@") || rootOrValue.startsWith("$")) {
                 root = rootOrValue;
             } else {
                 value = rootOrValue;
