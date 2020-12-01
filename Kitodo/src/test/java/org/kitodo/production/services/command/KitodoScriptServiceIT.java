@@ -368,7 +368,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldOverwriteDataWithValue() throws Exception {
-        Process process = ServiceManager.getProcessService().getById(2);
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -382,6 +381,7 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         Assert.assertEquals("should contain new metadata value", 0, processByMetadata.size());
 
+        Process process = ServiceManager.getProcessService().getById(2);
         String script = "action:overwriteData " + metadataKey + "=Overwritten";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -396,9 +396,9 @@ public class KitodoScriptServiceIT {
         Assert.assertEquals("should contain new metadata value", 1, processByMetadata.size());
 
     }
+
     @Test
     public void shouldOverwriteDataWithRoot() throws Exception {
-        Process process = ServiceManager.getProcessService().getById(2);
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -412,6 +412,7 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         Assert.assertEquals("should contain new metadata value", 0, processByMetadata.size());
 
+        Process process = ServiceManager.getProcessService().getById(2);
         String script = "action:overwriteData " + metadataKey + "=@TSL_ATS";
         List<Process> processes = new ArrayList<>();
         processes.add(process);

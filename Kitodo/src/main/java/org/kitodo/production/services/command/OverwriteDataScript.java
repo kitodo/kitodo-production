@@ -11,7 +11,10 @@
 
 package org.kitodo.production.services.command;
 
-import org.kitodo.api.MdSec;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
@@ -19,10 +22,6 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
 public class OverwriteDataScript extends EditDataScript {
 
