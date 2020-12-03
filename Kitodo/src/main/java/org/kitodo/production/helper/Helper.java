@@ -300,7 +300,7 @@ public class Helper implements Observer, Serializable {
         if (Objects.nonNull(context)) {
             context.addMessage(control,
                 new FacesMessage(MessageLevel.ERROR.equals(level) ? FacesMessage.SEVERITY_ERROR : MessageLevel.WARN.equals(level)
-                        ? FacesMessage.SEVERITY_WARN : FacesMessage.SEVERITY_INFO, null, compoundMessage));
+                        ? FacesMessage.SEVERITY_WARN : FacesMessage.SEVERITY_INFO, compoundMessage, null));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
             logger.log(MessageLevel.ERROR.equals(level) ? Level.ERROR : MessageLevel.WARN.equals(level) ? Level.WARN : Level.INFO,
