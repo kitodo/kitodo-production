@@ -114,6 +114,15 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve the "queryDelimiter" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by its title
+     * @return configration for catalog's "queryDelimiter"
+     */
+    public static String getQueryDelimiter(String catalogName) {
+        return getCatalog(catalogName).getString("queryDelimiter");
+    }
+
+    /**
      * Retrieve the "parentElement" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
      * @return HierarchicalConfiguration for catalog's "parentElement"
