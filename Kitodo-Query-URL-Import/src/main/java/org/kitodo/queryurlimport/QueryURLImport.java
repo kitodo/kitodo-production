@@ -345,7 +345,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
                     queryString = queryString + interfaceType.getQueryString() + equalsOperand;
                 }
             }
-            return performQuery(queryString + "\"" + createSearchFieldString(searchFieldMap) + "\"");
+            return performQuery(queryString + createSearchFieldString(searchFieldMap));
         } catch (URISyntaxException | UnsupportedEncodingException | ResponseHandlerNotFoundException e) {
             throw new CatalogException(e.getLocalizedMessage());
         }
