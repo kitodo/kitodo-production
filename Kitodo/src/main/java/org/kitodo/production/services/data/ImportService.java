@@ -364,7 +364,7 @@ public class ImportService {
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
                                                  int projectID, int templateID)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
-            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, ConfigException {
 
         Document internalDocument = importDocument(opac, recordId, allProcesses.isEmpty());
         TempProcess tempProcess = createTempProcessFromDocument(internalDocument, templateID, projectID);
@@ -403,7 +403,8 @@ public class ImportService {
     public LinkedList<TempProcess> importProcessHierarchy(String recordId, String opac, int projectId, int templateId,
                                                           int importDepth, Collection<String> parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
-            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException,
+            ConfigException {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
@@ -511,7 +512,7 @@ public class ImportService {
     public LinkedList<TempProcess> getChildProcesses(String opac, String elementID, int projectId, int templateId,
                                                      int rows)
             throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
-            NoRecordFoundException, IOException, ProcessGenerationException {
+            NoRecordFoundException, IOException, ProcessGenerationException, ConfigException {
         loadOpacConfiguration(opac);
         importModule = initializeImportModule();
         List<DataRecord> childRecords = searchChildRecords(opac, elementID, rows);
@@ -534,7 +535,7 @@ public class ImportService {
 
     private Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
             UnsupportedFormatException, URISyntaxException, IOException, XPathExpressionException,
-            ParserConfigurationException, SAXException {
+            ParserConfigurationException, SAXException, ConfigException {
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);
@@ -578,16 +579,16 @@ public class ImportService {
         return kitodoNode.getChildNodes();
     }
 
-    private List<File> getMappingFiles(String opac) throws URISyntaxException {
+    private List<File> getMappingFiles(String opac) throws URISyntaxException, ConfigException {
         List<File> mappingFiles = new ArrayList<>();
-
-        String mappingFileNames = OPACConfig.getXsltMappingFiles(opac);
-        if (!StringUtils.isBlank(mappingFileNames)) {
-            for (String mappingFileName : mappingFileNames.split(",")) {
+        try {
+            for (String mappingFileName : OPACConfig.getXsltMappingFiles(opac)) {
                 URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
                         .resolve(new URI(mappingFileName.trim()));
                 mappingFiles.add(ServiceManager.getFileService().getFile(xsltFile));
             }
+        } catch (IllegalArgumentException e) {
+            throw new ConfigException(e.getMessage(), e);
         }
         return mappingFiles;
     }

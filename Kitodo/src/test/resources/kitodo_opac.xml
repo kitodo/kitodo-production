@@ -50,7 +50,9 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MODS</metadataFormat>
-        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <mappingFiles>
+            <file>mods2kitodo.xsl</file>
+        </mappingFiles>
         <config>
             <param name="host" value="sru.gbv.de" />
             <param name="scheme" value="http" />
@@ -77,7 +79,9 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MODS</metadataFormat>
-        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <mappingFiles>
+            <file>mods2kitodo.xsl</file>
+        </mappingFiles>
         <config>
             <param name="host" value="localhost" />
             <param name="scheme" value="http" />

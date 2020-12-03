@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -103,12 +104,13 @@ public class OPACConfig {
     }
 
     /**
-     * Retrieve the "mappingFile" of the catalog identified by its title.
+     * Retrieve list of "mappingFiles" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
-     * @return HierarchicalConfiguration for catalog's "mappingFile"
+     * @return List of Strings containing mapping files names for catalog
      */
-    public static String getXsltMappingFiles(String catalogName) {
-        return getCatalog(catalogName).getString("mappingFile");
+    public static List<String> getXsltMappingFiles(String catalogName) {
+        return getCatalog(catalogName).configurationAt("mappingFiles").configurationsAt("file").stream()
+                .map(c -> c.getRoot().getValue().toString()).collect(Collectors.toList());
     }
 
     /**

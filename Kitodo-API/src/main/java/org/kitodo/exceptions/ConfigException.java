@@ -14,13 +14,13 @@ package org.kitodo.exceptions;
 public class ConfigException extends RuntimeException {
 
     /**
-     * Constructor with given parameter name for exception message.
+     * Constructor with given parameter catalogName for exception message.
      *
-     * @param name
+     * @param catalogName
      *            as String
      */
-    public ConfigException(String name) {
-        super("The catalog '" + name + "' is not found!");
+    public ConfigException(String catalogName) {
+        super("The catalog '" + catalogName + "' is not found!");
     }
 
     /**
