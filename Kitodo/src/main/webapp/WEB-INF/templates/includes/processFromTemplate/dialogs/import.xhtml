@@ -33,6 +33,7 @@
                         <p:outputLabel for="catalogueSelectMenu"
                                        value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
                         <p:selectOneMenu id="catalogueSelectMenu"
+                                         autoWidth="false"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          immediate="true"
                                          value="#{CreateProcessForm.importDialog.hitModel.selectedCatalog}">
