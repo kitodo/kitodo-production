@@ -26,14 +26,14 @@ public enum FilterString {
     PROCESS("process:", "prozess:"),
     BATCH("batch:", "gruppe:"),
     TASKAUTOMATIC("stepautomatic:", "schrittautomatisch:"),
-    PROPERTY("property:","eigenschaft" );
+    PROPERTY("property:","eigenschaft:");
 
     private String filterEnglish;
     private String filterGerman;
 
     /**
      * Constructor.
-     * 
+     *
      * @param filterEnglish
      *            English version of filter string
      * @param filterGerman
@@ -46,7 +46,7 @@ public enum FilterString {
 
     /**
      * Get English version of filter string.
-     * 
+     *
      * @return English version of filter string
      */
     public String getFilterEnglish() {
@@ -55,7 +55,7 @@ public enum FilterString {
 
     /**
      * Get German version of filter string.
-     * 
+     *
      * @return German version of filter string
      */
     public String getFilterGerman() {
