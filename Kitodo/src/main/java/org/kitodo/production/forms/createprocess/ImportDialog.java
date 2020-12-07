@@ -130,7 +130,7 @@ public class ImportDialog implements Serializable {
             return;
         }
         if (hits.size() == 1) {
-            getRecordById(((SingleHit) hits.get(0)).getIdentifier());
+            getRecordById(hitModel.getSearchTermWithDelimiter(((SingleHit) hits.get(0)).getIdentifier()));
         } else {
             try {
                 ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();

@@ -54,18 +54,22 @@ public class LazyHitModel extends LazyDataModel<Object> {
     @Override
     public List<Object> load(int first, int resultSize, String sortField, SortOrder sortOrder, Map filters) {
 
-        String searchTermWithDelimiter = this.searchTerm;
-        String queryDelimiter = OPACConfig.getQueryDelimiter(this.selectedCatalog);
-        if (Objects.nonNull(queryDelimiter)) {
-            searchTermWithDelimiter = queryDelimiter + searchTermWithDelimiter + queryDelimiter;
-        }
         searchResult = ServiceManager.getImportService().performSearch(
-                this.selectedField, searchTermWithDelimiter, this.selectedCatalog, first, resultSize);
+                this.selectedField, getSearchTermWithDelimiter(this.searchTerm), this.selectedCatalog, first, resultSize);
 
         if (Objects.isNull(searchResult) || Objects.isNull(searchResult.getHits())) {
             return Collections.emptyList();
         }
         return searchResult.getHits().stream().map(r -> (Object)r).collect(Collectors.toList());
+    }
+
+    public String getSearchTermWithDelimiter(String searchTerm) {
+        String searchTermWithDelimiter = searchTerm;
+        String queryDelimiter = OPACConfig.getQueryDelimiter(this.selectedCatalog);
+        if (Objects.nonNull(queryDelimiter)) {
+            searchTermWithDelimiter = queryDelimiter + searchTermWithDelimiter + queryDelimiter;
+        }
+        return searchTermWithDelimiter;
     }
 
     /**
