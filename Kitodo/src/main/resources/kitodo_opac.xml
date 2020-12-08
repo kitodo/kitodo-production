@@ -81,6 +81,7 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>PICA</metadataFormat>
+        <queryDelimiter></queryDelimiter>
         <mappingFiles>
             <file>pica2kitodo.xsl</file>
         </mappingFiles>
