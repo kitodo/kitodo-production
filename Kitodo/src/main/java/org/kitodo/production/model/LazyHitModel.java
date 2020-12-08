@@ -63,6 +63,11 @@ public class LazyHitModel extends LazyDataModel<Object> {
         return searchResult.getHits().stream().map(r -> (Object)r).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the searchTerm with configured Delimiter.
+     * @param searchTerm the searchterm to add delimiters.
+     * @return searchTermWithDelimiter
+     */
     public String getSearchTermWithDelimiter(String searchTerm) {
         String searchTermWithDelimiter = searchTerm;
         String queryDelimiter = OPACConfig.getQueryDelimiter(this.selectedCatalog);
