@@ -193,28 +193,28 @@ public class DesktopForm extends BaseForm {
         try {
             switch (objectType) {
                 case TASK:
-                    return ServiceManager.getTaskService().countResults(null);
+                    return ServiceManager.getTaskService().countDatabaseRows();
                 case USER:
-                    return ServiceManager.getUserService().countResults(null);
+                    return ServiceManager.getUserService().countDatabaseRows();
                 case DOCKET:
-                    return ServiceManager.getDocketService().countResults(null);
+                    return ServiceManager.getDocketService().countDatabaseRows();
                 case PROCESS:
-                    return ServiceManager.getProcessService().countResults(null);
+                    return ServiceManager.getProcessService().countDatabaseRows();
                 case PROJECT:
-                    return ServiceManager.getProjectService().countResults(null);
+                    return ServiceManager.getProjectService().countDatabaseRows();
                 case RULESET:
-                    return ServiceManager.getRulesetService().countResults(null);
+                    return ServiceManager.getRulesetService().countDatabaseRows();
                 case TEMPLATE:
-                    return ServiceManager.getTemplateService().countResults(null);
+                    return ServiceManager.getTemplateService().countDatabaseRows();
                 case ROLE:
-                    return ServiceManager.getRoleService().countResults(null);
+                    return ServiceManager.getRoleService().countDatabaseRows();
                 case WORKFLOW:
-                    return ServiceManager.getWorkflowService().countResults(null);
+                    return ServiceManager.getWorkflowService().countDatabaseRows();
                 default:
                     return 0L;
             }
 
-        } catch (DAOException | DataException | JsonException | ElasticsearchStatusException e) {
+        } catch (DAOException | JsonException | ElasticsearchStatusException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
         return 0L;
