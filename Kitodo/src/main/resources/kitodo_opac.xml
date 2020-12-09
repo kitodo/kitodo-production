@@ -81,7 +81,9 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>PICA</metadataFormat>
-        <mappingFile>pica2kitodo.xsl</mappingFile>
+        <mappingFiles>
+            <file>pica2kitodo.xsl</file>
+        </mappingFiles>
         <config>
             <param name="host" value="sru.k10plus.de" />
             <param name="scheme" value="https" />
@@ -109,7 +111,9 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MODS</metadataFormat>
-        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <mappingFiles>
+            <file>mods2kitodo.xsl</file>
+        </mappingFiles>
         <config>
             <param name="host" value="kalliope-verbund.info" />
             <param name="scheme" value="http" />

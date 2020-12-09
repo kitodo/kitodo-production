@@ -81,12 +81,12 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
      * @param record DataRecord to be converted
      * @param targetMetadataFormat MetadataFormat to which the given DataRecord is converted
      * @param targetFileFormat FileFormat to which the given DataRecord is converted
-     * @param mappingFile mapping file; if null, the schema converter module uses a default mapping
+     * @param mappingFiles list of mapping files; if empty, the schema converter module uses a default mapping
      * @return The result of the conversion as a DataRecord.
      */
     @Override
     public DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat,
-                              File mappingFile) throws IOException, URISyntaxException {
+                              List<File> mappingFiles) throws IOException, URISyntaxException {
         if (!(supportsSourceMetadataFormat(record.getMetadataFormat())
                 && supportsSourceFileFormat(record.getFileFormat())
                 && supportsTargetMetadataFormat(targetMetadataFormat)
@@ -99,11 +99,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             String xmlString = (String)record.getOriginalData();
             String conversionResult;
 
-            if (Objects.nonNull(mappingFile)) {
-                try (InputStream fileStream = Files.newInputStream(mappingFile.toPath())) {
-                    conversionResult = transformXmlByXslt(xmlString, fileStream);
-                }
-            } else {
+            if (mappingFiles.isEmpty()) {
                 List<MetadataFormatConversion> xslFiles = supportedSourceMetadataFormats.get(record.getMetadataFormat());
                 URI xsltDir = Paths.get(KitodoConfig.getParameter("directory.xslt")).toUri();
                 for (MetadataFormatConversion metadataFormatConversion : xslFiles) {
@@ -116,8 +112,14 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
                         xmlString = transformXmlByXslt(xmlString, fileStream);
                     }
                 }
-                conversionResult = xmlString;
+            } else {
+                for (File mappingFile : mappingFiles) {
+                    try (InputStream fileStream = Files.newInputStream(mappingFile.toPath())) {
+                        xmlString = transformXmlByXslt(xmlString, fileStream);
+                    }
+                }
             }
+            conversionResult = xmlString;
 
             DataRecord resultRecord = new DataRecord();
             resultRecord.setOriginalData(conversionResult);

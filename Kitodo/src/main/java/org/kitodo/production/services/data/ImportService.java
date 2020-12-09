@@ -518,9 +518,9 @@ public class ImportService {
         LinkedList<TempProcess> childProcesses = new LinkedList<>();
         if (!childRecords.isEmpty()) {
             SchemaConverterInterface converter = getSchemaConverter(childRecords.get(0));
-            File mappingFile = getMappingFile(opac);
+            List<File> mappingFiles = getMappingFiles(opac);
             for (DataRecord childRecord : childRecords) {
-                DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
+                DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
                 Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
                 childProcesses.add(createTempProcessFromDocument(childDocument, templateId, projectId));
             }
@@ -547,7 +547,7 @@ public class ImportService {
         // depending on metadata and return form, call corresponding schema converter module!
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
-        File mappingFile = getMappingFile(opac);
+        List<File> mappingFiles = getMappingFiles(opac);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
         File debugFolder = ConfigCore.getKitodoDebugDirectory();
@@ -555,7 +555,7 @@ public class ImportService {
             FileUtils.writeStringToFile(new File(debugFolder, "catalogRecord.xml"),
                 (String) dataRecord.getOriginalData(), StandardCharsets.UTF_8);
         }
-        DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFile);
+        DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "internalRecord.xml"),
                 (String) internalRecord.getOriginalData(), StandardCharsets.UTF_8);
@@ -578,16 +578,18 @@ public class ImportService {
         return kitodoNode.getChildNodes();
     }
 
-    private File getMappingFile(String opac) throws URISyntaxException {
-        File mappingFile = null;
-
-        String mappingFileName = OPACConfig.getXsltMappingFile(opac);
-        if (!StringUtils.isBlank(mappingFileName)) {
-            URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
-                    .resolve(new URI(mappingFileName));
-            mappingFile = ServiceManager.getFileService().getFile(xsltFile);
+    private List<File> getMappingFiles(String opac) throws URISyntaxException {
+        List<File> mappingFiles = new ArrayList<>();
+        try {
+            for (String mappingFileName : OPACConfig.getXsltMappingFiles(opac)) {
+                URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
+                        .resolve(new URI(mappingFileName.trim()));
+                mappingFiles.add(ServiceManager.getFileService().getFile(xsltFile));
+            }
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
         }
-        return mappingFile;
+        return mappingFiles;
     }
 
     /**
