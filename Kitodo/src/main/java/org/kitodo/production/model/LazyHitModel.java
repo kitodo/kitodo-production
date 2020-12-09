@@ -69,12 +69,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
      * @return searchTermWithDelimiter
      */
     public String getSearchTermWithDelimiter(String searchTerm) {
-        String searchTermWithDelimiter = searchTerm;
-        String queryDelimiter = OPACConfig.getQueryDelimiter(this.selectedCatalog);
-        if (Objects.nonNull(queryDelimiter)) {
-            searchTermWithDelimiter = queryDelimiter + searchTermWithDelimiter + queryDelimiter;
-        }
-        return searchTermWithDelimiter;
+       return OPACConfig.getSearchTermWithDelimiter(searchTerm, this.selectedCatalog);
     }
 
     /**

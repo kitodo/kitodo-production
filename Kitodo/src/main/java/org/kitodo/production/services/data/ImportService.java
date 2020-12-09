@@ -383,7 +383,7 @@ public class ImportService {
         }
 
         allProcesses.add(tempProcess);
-        return getParentID(internalDocument);
+        return OPACConfig.getSearchTermWithDelimiter(getParentID(internalDocument),opac);
     }
 
     /**
