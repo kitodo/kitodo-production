@@ -13,6 +13,8 @@ package org.kitodo.config;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -111,6 +113,14 @@ public class OPACConfig {
     public static List<String> getXsltMappingFiles(String catalogName) {
         return getCatalog(catalogName).configurationAt("mappingFiles").configurationsAt("file").stream()
                 .map(c -> c.getRoot().getValue().toString()).collect(Collectors.toList());
+    }
+    /**
+     * Retrieve the "parentMappingFile" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by its title
+     * @return HierarchicalConfiguration for catalog's "parentMappingFile"
+     */
+    public static List<String> getXsltMappingFileForParentInRecord(String catalogName) {
+        return Arrays.asList(getCatalog(catalogName).getString("parentMappingFile"));
     }
 
     /**
@@ -245,6 +255,15 @@ public class OPACConfig {
      */
     public static String getFtpPassword(String catalogName) {
         return getCatalog(catalogName).configurationAt("credentials").getString("password");
+    }
+
+    /**
+     * If a mappingFile for parentInRecord is configured
+     * @param catalogName OPAC for witch to get the config
+     * @return true, if mapping file is configured
+     */
+    public static boolean isParentInRecord(String catalogName) {
+        return !getXsltMappingFileForParentInRecord(catalogName).isEmpty();
     }
 
     /**
