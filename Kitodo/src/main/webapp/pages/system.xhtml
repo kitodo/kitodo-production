@@ -34,16 +34,20 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{MigrationForm.activeTabIndex}" id="systemTabView" widgetVar="systemTabView">
             <p:ajax event="tabChange" listener="#{MigrationForm.onTabChange}"/>
-            <p:tab id="taskManagerTab" title="#{msgs.taskManager}">
+            <p:tab id="taskManagerTab" title="#{msgs.taskManager}"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewTaskManagerPage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/taskmanager.xhtml" />
             </p:tab>
-            <p:tab id="termsTab" title="#{msgs.legal}">
+            <p:tab id="termsTab" title="#{msgs.legal}"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewTermsPage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/legalTextEditor.xhtml" />
             </p:tab>
-            <p:tab id="indexingTab" title="#{msgs.indexing}">
+            <p:tab id="indexingTab" title="#{msgs.indexing}"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewIndexPage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/indexing.xhtml" />
             </p:tab>
-            <p:tab id="migrationTab" title="#{msgs.migration}">
+            <p:tab id="migrationTab" title="#{msgs.migration}"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewMigrationPage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/migration.xhtml" />
             </p:tab>
         </p:tabView>
