@@ -446,9 +446,11 @@ public class ImportService {
                 Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
                 if (Objects.isNull(parentProcess)) {
                     if (OPACConfig.isParentInRecord(opac)) {
-                        parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId, true);
-                    } else{
-                        parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId, false);
+                        parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId,
+                            true);
+                    } else {
+                        parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId,
+                            false);
                     }
                     level++;
                 } else {
@@ -552,9 +554,9 @@ public class ImportService {
         }
     }
 
-    private Document importDocument(String opac, String identifier, boolean extractExemplars, boolean isParentInRecord) throws NoRecordFoundException,
-            UnsupportedFormatException, URISyntaxException, IOException, XPathExpressionException,
-            ParserConfigurationException, SAXException {
+    private Document importDocument(String opac, String identifier, boolean extractExemplars, boolean isParentInRecord)
+            throws NoRecordFoundException, UnsupportedFormatException, URISyntaxException, IOException,
+            XPathExpressionException, ParserConfigurationException, SAXException {
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);

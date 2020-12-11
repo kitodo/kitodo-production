@@ -114,6 +114,7 @@ public class OPACConfig {
         return getCatalog(catalogName).configurationAt("mappingFiles").configurationsAt("file").stream()
                 .map(c -> c.getRoot().getValue().toString()).collect(Collectors.toList());
     }
+
     /**
      * Retrieve the "parentMappingFile" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
@@ -258,7 +259,7 @@ public class OPACConfig {
     }
 
     /**
-     * If a mappingFile for parentInRecord is configured
+     * If a mappingFile for parentInRecord is configured.
      * @param catalogName OPAC for witch to get the config
      * @return true, if mapping file is configured
      */
