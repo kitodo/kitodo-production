@@ -13,6 +13,7 @@ package org.kitodo.production.services.command;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,13 +37,15 @@ public class DeleteDataScript extends EditDataScript {
         Workpiece workpiece = metadataFile.getWorkpiece();
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
-        IncludedStructuralElement child = allIncludedStructuralElements.get(0);
-        Collection<Metadata> metadataCollection = child.getMetadata();
+        Collection<Metadata> metadataCollection = Collections.EMPTY_LIST;
+        if (!allIncludedStructuralElements.isEmpty()) {
+            IncludedStructuralElement child = allIncludedStructuralElements.get(0);
+            metadataCollection = child.getMetadata();
+        }
 
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 
-        List<Metadata> metadataCollectionCopy = new ArrayList<>();
-        metadataCollectionCopy.addAll(metadataCollection);
+        List<Metadata> metadataCollectionCopy = new ArrayList<>(metadataCollection);
 
         for (Metadata metadata : metadataCollectionCopy) {
             if (metadata.getKey().equals(metadataScript.getGoal())) {

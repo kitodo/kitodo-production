@@ -12,8 +12,8 @@
 package org.kitodo.production.services.command;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -32,12 +32,15 @@ public class OverwriteDataScript extends EditDataScript {
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece
                 .getAllIncludedStructuralElements();
 
-        IncludedStructuralElement child = allIncludedStructuralElements.get(0);
-        Collection<Metadata> metadata = child.getMetadata();
+        Collection<Metadata> metadataCollection = Collections.EMPTY_LIST;
+        if (!allIncludedStructuralElements.isEmpty()) {
+            IncludedStructuralElement child = allIncludedStructuralElements.get(0);
+            metadataCollection = child.getMetadata();
+        }
 
-        generateValueForMetadataScript(metadataScript, metadata, process, metadataFile);
+        generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 
-        for (Metadata metadatum : metadata) {
+        for (Metadata metadatum : metadataCollection) {
             if (metadatum instanceof MetadataEntry) {
                 if (metadatum.getKey().equals(metadataScript.getGoal())) {
                     ((MetadataEntry) metadatum).setValue(metadataScript.getValue());

@@ -11,11 +11,9 @@
 
 package org.kitodo.production.services.command;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,14 +23,9 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.services.ServiceManager;
 
 public class AddDataScript extends EditDataScript {
-
-    private static final Logger logger = LogManager.getLogger(AddDataScript.class);
 
     /**
      * Executes the given script on the given file for the given process.
@@ -45,8 +38,11 @@ public class AddDataScript extends EditDataScript {
         Workpiece workpiece = metadataFile.getWorkpiece();
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
-        IncludedStructuralElement child = allIncludedStructuralElements.get(0);
-        Collection<Metadata> metadataCollection = child.getMetadata();
+        Collection<Metadata> metadataCollection = Collections.EMPTY_LIST;
+        if (!allIncludedStructuralElements.isEmpty()) {
+            IncludedStructuralElement child = allIncludedStructuralElements.get(0);
+            metadataCollection = child.getMetadata();
+        }
         MdSec domain = null;
         for (Metadata metadata : metadataCollection) {
             domain = metadata.getDomain();

@@ -14,26 +14,21 @@ package org.kitodo.production.metadata.copier;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.configuration.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
-import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.MetadataException;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
-import org.primefaces.PrimeFaces;
 
 public class DataCopyrule {
+
+    private static final Logger logger = LogManager.getLogger(DataCopyrule.class);
 
     List<String> command;
 
@@ -52,7 +47,6 @@ public class DataCopyrule {
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
         for (IncludedStructuralElement child : allIncludedStructuralElements) {
-            Collection<Metadata> metadata = child.getMetadata();
             MdSec domain = null;
             MetadataEntry metadataEntry = new MetadataEntry();
             metadataEntry.setKey(command.get(0));
@@ -65,7 +59,7 @@ public class DataCopyrule {
                 ServiceManager.getMetsService().save(workpiece, out);
                 ServiceManager.getProcessService().saveToIndex(data.getProcess(), false);
             } catch (IOException | CustomResponseException | DataException e) {
-                System.out.println("log me");
+                logger.error("Exception while saving Metadata file", e, e.getMessage());
             }
         }
     }
