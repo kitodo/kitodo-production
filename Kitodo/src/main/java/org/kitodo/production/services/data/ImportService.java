@@ -437,6 +437,14 @@ public class ImportService {
         if (Objects.isNull(template.getRuleset())) {
             throw new ProcessGenerationException("Ruleset of template " + template.getId() + " is null!");
         }
+        importParents(recordId, opac, projectId, templateId, importDepth, processes, parentID, template);
+        return processes;
+    }
+
+    private void importParents(String recordId, String opac, int projectId, int templateId, int importDepth,
+            LinkedList<TempProcess> processes, String parentID, Template template)
+            throws ProcessGenerationException, IOException, XPathExpressionException, ParserConfigurationException,
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
         int level = 1;
         this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
@@ -461,17 +469,18 @@ public class ImportService {
                     break;
                 }
             } catch (SAXParseException | DAOException e) {
-                // this happens for example if a document is part of a "Virtueller Bestand" in Kalliope for which a
+                // this happens for example if a document is part of a "Virtueller Bestand" in
+                // Kalliope for which a
                 // proper "record" is not returned from its SRU interface
                 logger.error(e.getLocalizedMessage());
                 break;
             }
         }
-        // always try to find a parent for last imported process (e.g. level == importDepth) in the database!
+        // always try to find a parent for last imported process (e.g. level ==
+        // importDepth) in the database!
         if (Objects.nonNull(parentID) && level == importDepth) {
             this.parentTempProcess = checkForParent(parentID, template.getRuleset().getId(), projectId);
         }
-        return processes;
     }
 
     private TempProcess checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
