@@ -344,7 +344,7 @@ public class ImportService {
         }
     }
 
-    private TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
+    public TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
             throws ProcessGenerationException {
         String docType = getRecordDocType(document);
         NodeList metadataNodes = extractMetadataNodeList(document);
@@ -573,8 +573,10 @@ public class ImportService {
             exemplarRecords = extractExemplarRecords(dataRecord, opac);
         }
 
-        // ################# CONVERT ################
-        // depending on metadata and return form, call corresponding schema converter module!
+        return convertDataRecordToInternal(dataRecord, opac);
+    }
+
+    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac) throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException, SAXException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         List<File> mappingFiles = getMappingFiles(opac, isParentInRecord);
@@ -583,12 +585,12 @@ public class ImportService {
         File debugFolder = ConfigCore.getKitodoDebugDirectory();
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "catalogRecord.xml"),
-                (String) dataRecord.getOriginalData(), StandardCharsets.UTF_8);
+                    (String) dataRecord.getOriginalData(), StandardCharsets.UTF_8);
         }
         DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "internalRecord.xml"),
-                (String) internalRecord.getOriginalData(), StandardCharsets.UTF_8);
+                    (String) internalRecord.getOriginalData(), StandardCharsets.UTF_8);
         }
 
         if (!(internalRecord.getOriginalData() instanceof String)) {

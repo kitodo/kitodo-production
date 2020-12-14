@@ -63,7 +63,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private static final Logger logger = LogManager.getLogger(CreateProcessForm.class);
 
-    private final ImportDialog importDialog = new ImportDialog(this);
+    private final CatalogImportDialog catalogImportDialog = new CatalogImportDialog(this);
+    private final FileUploadDialog fileUploadDialog = new FileUploadDialog(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
     private final ProcessMetadataTab processMetadataTab = new ProcessMetadataTab(this);
     private final SearchTab searchTab = new SearchTab(this);
@@ -139,10 +140,19 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     /**
      * Get importTab.
      *
-     * @return value of importDialog
+     * @return value of catalogImportDialog
      */
-    public ImportDialog getImportDialog() {
-        return importDialog;
+    public CatalogImportDialog getCatalogImportDialog() {
+        return catalogImportDialog;
+    }
+
+    /**
+     * Get fileUploadDialog.
+     *
+     * @return value of fileUploadDialog
+     */
+    public FileUploadDialog getFileUploadDialog() {
+        return fileUploadDialog;
     }
 
     /**
@@ -391,7 +401,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             throw new IOException("Unable to create directories for process hierarchy!");
         }
 
-        if (this.importDialog.isImportChildren() && !createProcessesLocation(this.childProcesses)) {
+        if (this.catalogImportDialog.isImportChildren() && !createProcessesLocation(this.childProcesses)) {
             throw new IOException("Unable to create directories for child processes!");
         }
         saveProcessHierarchyMetadata();
@@ -413,7 +423,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
                 Collections.singletonList(titleRecordLinkTab.getTitleRecordProcess().getTitle()));
-            importDialog.showGrowlMessage(summary, detail);
+            catalogImportDialog.showGrowlMessage(summary, detail);
         } else {
             // add links between consecutive processes in list
             for (int i = 0; i < this.processes.size() - 1; i++) {

@@ -26,7 +26,7 @@
                          value="#{MassImportForm.selectedCatalog}">
             <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"
                           itemDisabled="true"/>
-            <f:selectItems value="#{CreateProcessForm.importDialog.catalogs}" var="catalog" itemLabel="#{catalog}"
+            <f:selectItems value="#{CreateProcessForm.catalogImportDialog.catalogs}" var="catalog" itemLabel="#{catalog}"
                            itemValue="#{catalog}"/>
             <p:ajax update="fileMassImportForm"/>
         </p:selectOneMenu>

@@ -319,4 +319,8 @@ public class OPACConfig {
         config.setReloadingStrategy(new FileChangedReloadingStrategy());
         return config;
     }
+
+    public static boolean getFileUploadConfig(String catalogName) {
+        return getCatalog(catalogName).getBoolean("fileUpload");
+    }
 }
