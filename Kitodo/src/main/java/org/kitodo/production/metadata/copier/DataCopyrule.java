@@ -11,79 +11,29 @@
 
 package org.kitodo.production.metadata.copier;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.kitodo.exceptions.MetadataException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MdSec;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.services.ServiceManager;
 
-/**
- * The abstract class DataCopyrule defines method signatures to implement a rule
- * which may later be used to modify metadata depending on various conditions,
- * and provides a factory method to create the matching metadata copy rule
- * implementation from a given command string.
- */
-public abstract class DataCopyrule {
+public class DataCopyrule {
 
-    /**
-     * The final Map AVAILABLE_RULES maps the operators of the available
-     * metadata copyrules to their respective classes. If more metadata
-     * copyrules are to be added to this implementation, they will have to be
-     * listed named here.
-     */
-    private static final Map<String, Class<? extends DataCopyrule>> AVAILABLE_RULES = new HashMap<>(4);
+    private static final Logger logger = LogManager.getLogger(DataCopyrule.class);
 
-    static {
-        // FIXME: here is possible deadlock!
-        AVAILABLE_RULES.put(ComposeFormattedRule.OPERATOR, ComposeFormattedRule.class);
-        AVAILABLE_RULES.put(CopyIfMetadataIsAbsentRule.OPERATOR, CopyIfMetadataIsAbsentRule.class);
-        AVAILABLE_RULES.put(OverwriteOrCreateRule.OPERATOR, OverwriteOrCreateRule.class);
-    }
+    List<String> command;
 
-    /**
-     * Factory method to create a class implementing the metadata copy rule
-     * referenced by a given command string.
-     *
-     * @param arguments
-     *            A list of strings consisting of subject (aka. patiens),
-     *            operator (aka. agens) and (optional) objects (depending on
-     *            what objects the operator requires).
-     * @return a class implementing the metadata copy rule referenced
-     * @throws ConfigurationException
-     *             if the operator cannot be resolved or the number of arguments
-     *             doesn’t match
-     */
-    public static DataCopyrule createFor(List<String> arguments) throws ConfigurationException {
-        String operator;
-        try {
-            operator = arguments.get(1);
-        } catch (IndexOutOfBoundsException e) {
-            throw new ConfigurationException(
-                    "Missing operator (second argument) in line: " + String.join(" ", arguments));
-        }
-        Class<? extends DataCopyrule> ruleClass = AVAILABLE_RULES.get(operator);
-        if (ruleClass == null) {
-            throw new ConfigurationException("Unknown operator: " + operator);
-        }
-        DataCopyrule ruleImplementation;
-        try {
-            ruleImplementation = ruleClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new MetadataException(e.getMessage(), e);
-        }
-        ruleImplementation.setSubject(arguments.get(0));
-        if (ruleImplementation.getMaxObjects() > 0) {
-            List<String> objects = arguments.subList(2, arguments.size());
-            if (objects.size() < ruleImplementation.getMinObjects()) {
-                throw new ConfigurationException("Too few arguments in line: " + String.join(" ", arguments));
-            }
-            if (objects.size() > ruleImplementation.getMaxObjects()) {
-                throw new ConfigurationException("Too many arguments in line: " + String.join(" ", arguments));
-            }
-            ruleImplementation.setObjects(objects);
-        }
-        return ruleImplementation;
+    public DataCopyrule(List<String> command) {
+        this.command = command;
     }
 
     /**
@@ -92,44 +42,26 @@ public abstract class DataCopyrule {
      * @param data
      *            data to apply yourself on
      */
-    protected abstract void apply(CopierData data);
+    public void apply(CopierData data) {
+        Workpiece workpiece = data.getDigitalDocument().getWorkpiece();
+        List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
-    /**
-     * The function getMinObject must return the maximal number of objects
-     * required by the rule to work as expected. If it returns 0, the
-     * setObjects() method will not be called.
-     *
-     * @return the maximal number of objects required by the rule
-     */
-    protected abstract int getMaxObjects();
+        for (IncludedStructuralElement child : allIncludedStructuralElements) {
+            MdSec domain = null;
+            MetadataEntry metadataEntry = new MetadataEntry();
+            metadataEntry.setKey(command.get(0));
+            metadataEntry.setValue(command.get(2));
+            metadataEntry.setDomain(domain);
+            child.getMetadata().add(metadataEntry);
 
-    /**
-     * The function getMinObject must return the minimal number of objects
-     * required by the rule to work as expected.
-     *
-     * @return the minimal number of objects required by the rule
-     */
-    protected abstract int getMinObjects();
+            try (OutputStream out = ServiceManager.getFileService()
+                    .write(ServiceManager.getFileService().getMetadataFilePath(data.getProcess()))) {
+                ServiceManager.getMetsService().save(workpiece, out);
+                ServiceManager.getProcessService().saveToIndex(data.getProcess(), false);
+            } catch (IOException | CustomResponseException | DataException e) {
+                logger.error("Exception while saving Metadata file", e, e.getMessage());
+            }
+        }
+    }
 
-    /**
-     * The method is called to pass the rule its objects. The list
-     * passed is reliable to the restrictions defined by getMinObjects() and
-     * getMaxObjects().
-     *
-     * @param objects
-     *            a list of objects to be used by the rule
-     * @throws ConfigurationException
-     *             may be thrown if one of the objects cannot be processed
-     */
-    protected abstract void setObjects(List<String> objects) throws ConfigurationException;
-
-    /**
-     * The method is called to pass the rule its subject.
-     *
-     * @param subject
-     *            a subject to be used by the rule
-     * @throws ConfigurationException
-     *             may be thrown if the subject cannot be processed
-     */
-    protected abstract void setSubject(String subject) throws ConfigurationException;
 }

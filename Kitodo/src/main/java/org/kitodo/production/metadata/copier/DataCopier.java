@@ -48,7 +48,7 @@ public class DataCopier {
         List<List<String>> commands = parseDataCopyRules(program);
         rules = new ArrayList<>(commands.size());
         for (List<String> command : commands) {
-            rules.add(DataCopyrule.createFor(command));
+            rules.add(new DataCopyrule(command));
         }
     }
 
@@ -100,7 +100,7 @@ public class DataCopier {
             try {
                 rule.apply(data);
             } catch (RuntimeException notApplicable) {
-                logger.info("Rule not applicable for \"{}\", skipped: {}", data.getProcessTitle(), rule);
+                logger.info("Rule not applicable for \"{}\", skipped: {}", data.getProcess().getTitle(), rule);
             }
         }
     }

@@ -16,15 +16,23 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.TreeDeleter;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -32,7 +40,11 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.services.ServiceManager;
@@ -46,12 +58,41 @@ public class KitodoScriptServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+    }
+
+    /**
+     * makes a copy of the meta.xml, because it's changed in the tests.
+     */
+    @Before
+    public void prepareFileCopy() throws IOException {
+        File copied = new File(
+                "src/test/resources/metadata/2/metaBackup.xml");
+        File original = new File(
+                "src/test/resources/metadata/2/meta.xml");
+        FileUtils.copyFile(original, copied);
+    }
+
+    /**
+     * restores the meta.xml which was changed in the tests.
+     */
+    @After
+    public void restoreMetaFile() throws IOException, DataException, DAOException {
+        File copied = new File(
+                "src/test/resources/metadata/2/metaBackup.xml");
+        File original = new File(
+                "src/test/resources/metadata/2/meta.xml");
+        FileUtils.copyFile(copied, original);
+        FileUtils.deleteQuietly(copied);
+        Process process = ServiceManager.getProcessService().getById(2);
+        ServiceManager.getProcessService().save(process);
     }
 
     @Test
@@ -192,5 +233,301 @@ public class KitodoScriptServiceIT {
 
         maxJpg.delete();
         thumbsJpg.delete();
+    }
+
+    @Test
+    public void shouldAddDataWithValue() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "LegalNoteAndTermsOfUse";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "PDM1.0");
+
+        final List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
+
+        String script = "action:addData " + metadataKey + "=PDM1.0";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
+                .findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size() );
+
+    }
+
+    @Test
+    public void shouldAddDataWithWhitespace() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "LegalNoteAndTermsOfUse";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "legal note");
+
+        final List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
+
+        String script = "action:addData " + metadataKey + "=legal note";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
+                .findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size() );
+
+    }
+
+    @Test
+    public void shouldAddDataWithMultipleScripts() throws Exception {
+        String metadataKey = "LegalNoteAndTermsOfUse";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "legal note");
+
+        HashMap<String, String> secondMetadataSearchMap = new HashMap<>();
+        secondMetadataSearchMap.put(metadataKey, "secondNote");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
+
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(secondMetadataSearchMap);
+        Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
+
+        String script = "action:addData " + metadataKey + "=legal note;" + metadataKey + "=secondNote";
+        List<Process> processes = new ArrayList<>();
+        Process process = ServiceManager.getProcessService().getById(2);
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size());
+        processByMetadataAfter = ServiceManager.getProcessService().findByMetadata(secondMetadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size());
+
+    }
+
+    @Test
+    public void shouldCopyDataWithRoot() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "LegalNoteAndTermsOfUse";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "Proc");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 0, processByMetadata.size() );
+
+        String script = "action:addData " + metadataKey + "=@TSL_ATS";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 1, processByMetadata.size() );
+    }
+
+    @Test
+    public void shouldAddDataWithVariable() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "LegalNoteAndTermsOfUse";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "2");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 0, processByMetadata.size() );
+
+        String script = "action:addData " + metadataKey + "=$(processid)";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 1, processByMetadata.size() );
+    }
+
+    @Test
+    public void shouldDeleteData() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TitleDocMainShort";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "SecondMetaShort");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        String script = "action:deleteData " + metadataKey;
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata", 0, processByMetadata.size() );
+
+    }
+
+    @Test
+    public void shouldDeleteDataWithValue() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TitleDocMainShort";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "SecondMetaShort");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        String script = "action:deleteData " + metadataKey + "=SecondMetaShort";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata", 0, processByMetadata.size() );
+
+    }
+
+    @Test
+    public void shouldDeleteDataWithRoot() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TitleDocMainShort";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "SecondMetaShort");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        String script = "action:deleteData " + metadataKey + "=@TitleDocMainShort";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata", 0, processByMetadata.size() );
+
+    }
+
+    @Test
+    public void shouldNotDeleteDataWithValue() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TitleDocMainShort";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "SecondMetaShort");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        String script = "action:deleteData" + metadataKey + "=SecondMetaLong";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should still contain metadata", 1, processByMetadata.size() );
+
+    }
+
+    @Test
+    public void shouldOverwriteDataWithValue() throws Exception {
+        String metadataKey = "TitleDocMainShort";
+        HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
+        oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
+
+        HashMap<String, String> newMetadataSearchMap = new HashMap<>();
+        newMetadataSearchMap.put(metadataKey, "Overwritten");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
+        Assert.assertEquals("should contain new metadata value", 0, processByMetadata.size());
+
+        Process process = ServiceManager.getProcessService().getById(2);
+        String script = "action:overwriteData " + metadataKey + "=Overwritten";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        Assert.assertEquals("should not contain metadata anymore", 0, processByMetadata.size());
+
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
+        Assert.assertEquals("should contain new metadata value", 1, processByMetadata.size());
+
+    }
+
+    @Test
+    public void shouldOverwriteDataWithRoot() throws Exception {
+        String metadataKey = "TitleDocMainShort";
+        HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
+        oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
+
+        HashMap<String, String> newMetadataSearchMap = new HashMap<>();
+        newMetadataSearchMap.put(metadataKey, "Proc");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
+        Assert.assertEquals("should contain new metadata value", 0, processByMetadata.size());
+
+        Process process = ServiceManager.getProcessService().getById(2);
+        String script = "action:overwriteData " + metadataKey + "=@TSL_ATS";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        Assert.assertEquals("should not contain metadata anymore", 0, processByMetadata.size());
+
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
+        Assert.assertEquals("should contain new metadata value", 1, processByMetadata.size());
+
+    }
+
+    @Test
+    public void shouldOverwriteDataWithVariable() throws Exception {
+        String metadataKey = "TitleDocMainShort";
+        HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
+        oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
+
+        HashMap<String, String> newMetadataSearchMap = new HashMap<>();
+        newMetadataSearchMap.put(metadataKey, "2");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
+        Assert.assertEquals("should contain new metadata value", 0, processByMetadata.size());
+
+        Process process = ServiceManager.getProcessService().getById(2);
+        String script = "action:overwriteData " + metadataKey + "=$(processid)";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        Assert.assertEquals("should not contain metadata anymore", 0, processByMetadata.size());
+
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
+        Assert.assertEquals("should contain new metadata value", 1, processByMetadata.size());
+
     }
 }
