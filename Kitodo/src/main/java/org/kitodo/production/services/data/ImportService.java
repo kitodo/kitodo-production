@@ -344,6 +344,13 @@ public class ImportService {
         }
     }
 
+    /**
+     * Creates a temporary Process from the given document with templateID und projectID.
+     * @param document the given document
+     * @param templateID the template to use
+     * @param projectID the project to use
+     * @return a temporary process
+     */
     public TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
             throws ProcessGenerationException {
         String docType = getRecordDocType(document);
@@ -576,7 +583,14 @@ public class ImportService {
         return convertDataRecordToInternal(dataRecord, opac);
     }
 
-    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac) throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException, SAXException {
+    /**
+     * Converts a given dataRecord to an internal document.
+     * @param dataRecord the dataRecord to convert.
+     * @param opac the opac to use (for configuration)
+     * @return the converted Document
+     */
+    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac) throws UnsupportedFormatException,
+            URISyntaxException, IOException, ParserConfigurationException, SAXException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         List<File> mappingFiles = getMappingFiles(opac, isParentInRecord);

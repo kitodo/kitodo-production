@@ -1,23 +1,31 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.forms.createprocess;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kitodo.api.schemaconverter.ExemplarRecord;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.exceptions.ParameterNotFoundException;
-import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.TempProcess;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
-import org.omnifaces.util.Ajax;
-import org.primefaces.PrimeFaces;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
 import javax.faces.model.SelectItem;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.services.ServiceManager;
+import org.omnifaces.util.Ajax;
+import org.primefaces.PrimeFaces;
 
 public abstract class MetadataImportDialog {
 

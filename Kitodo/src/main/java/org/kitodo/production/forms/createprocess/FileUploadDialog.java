@@ -17,12 +17,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-
 import java.util.List;
-import java.util.Objects;
+
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,11 +51,6 @@ public class FileUploadDialog extends MetadataImportDialog {
 
     public FileUploadDialog(CreateProcessForm createProcessForm) {
         super(createProcessForm);
-    }
-
-    @Override
-    void showRecord() {
-        super.showRecord();
     }
 
     /**
@@ -108,8 +101,8 @@ public class FileUploadDialog extends MetadataImportDialog {
 
     @Override
     public List<String> getCatalogs() {
-        List<String> catalogsWithFileUpload = new ArrayList<>();
         List<String> catalogs = super.getCatalogs();
+        List<String> catalogsWithFileUpload = new ArrayList<>();
         for (String catalog : catalogs) {
             boolean isFileUpload = OPACConfig.getFileUploadConfig(catalog);
             if (isFileUpload) {

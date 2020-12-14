@@ -82,6 +82,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         this.createProcessForm.setProcesses(new LinkedList<>());
         getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
     }
+    
     /**
      * Get list of search fields.
      *
