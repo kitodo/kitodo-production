@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -38,16 +36,16 @@ public class AddDataScript extends EditDataScript {
         Workpiece workpiece = metadataFile.getWorkpiece();
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
-        Collection<Metadata> metadataCollection = Collections.EMPTY_LIST;
+        Collection<Metadata> metadataCollection = Collections.emptyList();
         if (!allIncludedStructuralElements.isEmpty()) {
-            IncludedStructuralElement child = allIncludedStructuralElements.get(0);
-            metadataCollection = child.getMetadata();
+            for (IncludedStructuralElement allIncludedStructuralElement : allIncludedStructuralElements) {
+                if (!allIncludedStructuralElement.getMetadata().isEmpty()) {
+                    metadataCollection = allIncludedStructuralElement.getMetadata();
+                    break;
+                }
+            }
         }
-        MdSec domain = null;
-        for (Metadata metadata : metadataCollection) {
-            domain = metadata.getDomain();
-        }
-
+        MdSec domain = MdSec.DMD_SEC;
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 
         MetadataEntry metadataEntry = new MetadataEntry();
