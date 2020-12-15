@@ -21,6 +21,7 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -54,22 +55,15 @@ public class LazyHitModel extends LazyDataModel<Object> {
     @Override
     public List<Object> load(int first, int resultSize, String sortField, SortOrder sortOrder, Map filters) {
 
-        searchResult = ServiceManager.getImportService().performSearch(
-                this.selectedField, getSearchTermWithDelimiter(this.searchTerm), this.selectedCatalog, first, resultSize);
+        ImportService importService = ServiceManager.getImportService();
+        searchResult = importService.performSearch(this.selectedField,
+            importService.getSearchTermWithDelimiter(this.searchTerm, this.selectedCatalog), this.selectedCatalog,
+            first, resultSize);
 
         if (Objects.isNull(searchResult) || Objects.isNull(searchResult.getHits())) {
             return Collections.emptyList();
         }
         return searchResult.getHits().stream().map(r -> (Object)r).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the searchTerm with configured Delimiter.
-     * @param searchTerm the searchterm to add delimiters.
-     * @return searchTermWithDelimiter
-     */
-    public String getSearchTermWithDelimiter(String searchTerm) {
-       return OPACConfig.getSearchTermWithDelimiter(searchTerm, this.selectedCatalog);
     }
 
     /**

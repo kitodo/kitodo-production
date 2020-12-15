@@ -383,7 +383,22 @@ public class ImportService {
         }
 
         allProcesses.add(tempProcess);
-        return OPACConfig.getSearchTermWithDelimiter(getParentID(internalDocument),opac);
+        return getSearchTermWithDelimiter(getParentID(internalDocument),opac);
+    }
+
+    /**
+     * Returns the searchTerm with configured Delimiter.
+     * @param searchTerm the searchterm to add delimiters.
+     * @param catalog the catalog to check
+     * @return searchTermWithDelimiter
+     */
+    public String getSearchTermWithDelimiter(String searchTerm, String catalog) {
+        String searchTermWithDelimiter = searchTerm;
+        String queryDelimiter = OPACConfig.getQueryDelimiter(catalog);
+        if (Objects.nonNull(queryDelimiter)) {
+            searchTermWithDelimiter = queryDelimiter + searchTermWithDelimiter + queryDelimiter;
+        }
+        return searchTermWithDelimiter;
     }
 
     /**

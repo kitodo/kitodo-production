@@ -116,25 +116,10 @@ public class OPACConfig {
     /**
      * Retrieve the "queryDelimiter" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
-     * @return configration for catalog's "queryDelimiter"
+     * @return configuration for catalog's "queryDelimiter"
      */
     public static String getQueryDelimiter(String catalogName) {
         return getCatalog(catalogName).getString("queryDelimiter");
-    }
-
-    /**
-     * Returns the searchTerm with configured Delimiter.
-     * @param searchTerm the searchterm to add delimiters.
-     * @param catalog the catalog to check
-     * @return searchTermWithDelimiter
-     */
-    public static String getSearchTermWithDelimiter(String searchTerm, String catalog) {
-        String searchTermWithDelimiter = searchTerm;
-        String queryDelimiter = OPACConfig.getQueryDelimiter(catalog);
-        if (Objects.nonNull(queryDelimiter)) {
-            searchTermWithDelimiter = queryDelimiter + searchTermWithDelimiter + queryDelimiter;
-        }
-        return searchTermWithDelimiter;
     }
 
     /**
