@@ -37,15 +37,7 @@ public class DeleteDataScript extends EditDataScript {
         Workpiece workpiece = metadataFile.getWorkpiece();
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
-        Collection<Metadata> metadataCollection = Collections.emptyList();
-        if (!allIncludedStructuralElements.isEmpty()) {
-            for (IncludedStructuralElement allIncludedStructuralElement : allIncludedStructuralElements) {
-                if (!allIncludedStructuralElement.getMetadata().isEmpty()) {
-                    metadataCollection = allIncludedStructuralElement.getMetadata();
-                    break;
-                }
-            }
-        }
+        Collection<Metadata> metadataCollection = getMetadataCollection(allIncludedStructuralElements);
 
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
         List<Metadata> metadataCollectionCopy = new ArrayList<>(metadataCollection);
