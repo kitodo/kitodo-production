@@ -96,7 +96,7 @@ public class SearchForm {
      * Initialise drop down list of process property titles.
      */
     private void initProcessPropertyTitles() {
-        this.processPropertyTitles = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
+        this.processPropertyTitles = ServiceManager.getPropertyService().findDistinctTitles();
     }
 
     /**

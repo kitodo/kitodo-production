@@ -108,9 +108,9 @@ public class PropertyServiceIT {
     @Test
     public void shouldFindDistinctTitles() throws Exception {
         assertEquals("Incorrect size of distinct titles for process properties!", 2,
-            propertyService.findProcessPropertiesTitlesDistinct().size());
+            propertyService.findDistinctTitles().size());
 
-        List<String> processPropertiesTitlesDistinct = propertyService.findProcessPropertiesTitlesDistinct();
+        List<String> processPropertiesTitlesDistinct = propertyService.findDistinctTitles();
 
         String title = processPropertiesTitlesDistinct.get(0);
         assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
@@ -163,22 +163,22 @@ public class PropertyServiceIT {
     @Test
     public void shouldFindByValue() {
         assertEquals("Properties were not found in database!", 2,
-            propertyService.findByValue("second", null, true).size());
+            propertyService.findByValue("second").size());
 
         assertEquals("Property was not found in database!", 1,
-            propertyService.findByValue("second value", null, true).size());
+            propertyService.findByValue("second value").size());
     }
 
     @Test
     public void shouldFindByTitleAndValue() {
         assertEquals("Property was not found in database!", 1,
-            propertyService.findByTitleAndValue("Korrektur notwendig", "second value", null, true).size());
+            propertyService.findByTitleAndValue("Korrektur notwendig", "second value").size());
     }
 
     @Test
     public void shouldNotFindByTitleAndValue() {
         assertEquals("Property was found in database!", 0,
-            propertyService.findByTitleAndValue("Korrektur notwendig", "third", null, true).size());
+            propertyService.findByTitleAndValue("Korrektur notwendig", "third").size());
     }
 
 }
