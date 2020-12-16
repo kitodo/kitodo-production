@@ -277,8 +277,12 @@ public class MockDatabase {
         authorities.add(new Authority("viewClient" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("editClient" + CLIENT_ASSIGNABLE));
 
+        // System page
         authorities.add(new Authority("viewIndex" + GLOBAL_ASSIGNABLE));
         authorities.add(new Authority("editIndex" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewTaskManager" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewTerms" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewMigration" + GLOBAL_ASSIGNABLE));
 
         // Role
         authorities.add(new Authority("viewAllRoles" + GLOBAL_ASSIGNABLE));
