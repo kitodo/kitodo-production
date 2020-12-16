@@ -99,7 +99,7 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
     }
 
     private List<String> findDistinctTitles(String type) {
-        List<Property> byQuery = getByQuery("SELECT DISTINCT property FROM Property AS property GROUP BY property.id");
+        List<Property> byQuery = getByQuery("SELECT DISTINCT property FROM Property AS property GROUP BY property.title");
         HashSet<String> titles = new HashSet<>();
         for (Property property : byQuery) {
             titles.add(property.getTitle());
