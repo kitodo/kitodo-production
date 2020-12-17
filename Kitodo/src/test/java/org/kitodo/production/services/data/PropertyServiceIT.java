@@ -12,16 +12,12 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -102,21 +98,20 @@ public class PropertyServiceIT {
     }
 
     /**
-     * test distinc titles.
+     * test distinct titles.
      */
-    @Ignore
     @Test
-    public void shouldFindDistinctTitles() throws Exception {
-        assertEquals("Incorrect size of distinct titles for process properties!", 2,
+    public void shouldFindDistinctTitles() {
+        assertEquals("Incorrect size of distinct titles for process properties!", 6,
             propertyService.findDistinctTitles().size());
 
         List<String> processPropertiesTitlesDistinct = propertyService.findDistinctTitles();
 
         String title = processPropertiesTitlesDistinct.get(0);
-        assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
+        assertEquals("Incorrect sorting of distinct titles for process properties!", "FirstWorkpiece Property", title);
 
         title = processPropertiesTitlesDistinct.get(1);
-        assertEquals("Incorrect sorting of distinct titles for process properties!", "Process Property", title);
+        assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
     }
 
     @Test

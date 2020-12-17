@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -76,9 +75,7 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      * @return a list of titles.
      */
     public List<String> findDistinctTitles() {
-        List<Property> properties =
-                getByQuery("SELECT DISTINCT property FROM Property AS property GROUP BY property.title");
-        return properties.stream().map(Property::getTitle).sorted().collect(Collectors.toList());
+        return dao.retrieveDistinctTitles();
     }
 
     /**
