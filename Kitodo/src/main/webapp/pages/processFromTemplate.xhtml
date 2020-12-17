@@ -59,6 +59,7 @@
                          update="catalogSearchForm"
                          styleClass="secondary">
             <p:resetInput target="catalogSearchForm"/>
+        </p:commandButton>
         <p:commandButton id="fileUpload"
                          process="@this"
                          value="#{msgs['newProcess.fileUpload.heading']}"
@@ -68,7 +69,6 @@
                          update="fileUploadForm"
                          styleClass="secondary">
             <p:resetInput target="fileUploadForm"/>
-        </p:commandButton>
         </p:commandButton>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
