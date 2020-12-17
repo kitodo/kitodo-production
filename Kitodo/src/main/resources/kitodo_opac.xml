@@ -20,6 +20,7 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MARC</metadataFormat>
+        <fileUpload>false</fileUpload>
         <parentElement trimMode="parenthesis"/>
         <exemplarField xpath=".//*[local-name()='datafield'][@tag='954']"
                        ownerSubPath=".//*[local-name()='subfield'][@code='0']"
@@ -53,6 +54,7 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MARC</metadataFormat>
+        <fileUpload>false</fileUpload>
         <parentElement trimMode="parenthesis"/>
         <config>
             <param name="host" value="sru.k10plus.de" />
@@ -81,6 +83,7 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>PICA</metadataFormat>
+        <fileUpload>false</fileUpload>
         <queryDelimiter></queryDelimiter>
         <mappingFiles>
             <file>pica2kitodo.xsl</file>
@@ -112,6 +115,7 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MODS</metadataFormat>
+        <fileUpload>false</fileUpload>
         <mappingFiles>
             <file>mods2kitodo.xsl</file>
         </mappingFiles>
