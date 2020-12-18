@@ -602,16 +602,6 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
-     * Check if the current user has the authority to view the index. Edit authority
-     * includes also view.
-     *
-     * @return true if the current user has the authority to view the index
-     */
-    public boolean hasAuthorityToViewIndex() {
-        return hasAnyAuthorityGlobal("viewIndex, editIndex");
-    }
-
-    /**
      * Check if current user has authority to view task list. It returns true if
      * user has "viewAllTasks" authority for client.
      *
@@ -862,13 +852,41 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
-     * Check if the current user has the authority to view the system page.
+     * Check if the current user has the authority to view the index page.
      *
-     * @return true if the current user has the authority to view the system page
+     * @return true if the current user has the authority to view the index page
      */
-    public boolean hasAuthorityToViewSystemPage() {
-        return hasAnyAuthorityGlobal("viewIndex, viewIndex");
+    public boolean hasAuthorityToViewIndexPage() {
+        return hasAnyAuthorityGlobal("viewIndex, editIndex");
     }
+
+    /**
+     * Check if the current user has the authority to view the task manager page.
+     *
+     * @return true if the current user has the authority to view the task manager page
+     */
+    public boolean hasAuthorityToViewTaskManagerPage() {
+        return hasAnyAuthorityGlobal("viewTaskManager");
+    }
+
+    /**
+     * Check if the current user has the authority to view the terms page.
+     *
+     * @return true if the current user has the authority to view the terms page
+     */
+    public boolean hasAuthorityToViewTermsPage() {
+        return hasAnyAuthorityGlobal("viewTerms");
+    }
+
+    /**
+     * Check if the current user has the authority to view the migration page.
+     *
+     * @return true if the current user has the authority to view the migration page
+     */
+    public boolean hasAuthorityToViewMigrationPage() {
+        return hasAnyAuthorityGlobal("viewMigration");
+    }
+
 
     private boolean hasAuthorityForTask(int taskId) throws DataException {
         Integer processId = ServiceManager.getTaskService().findById(taskId).getProcess().getId();

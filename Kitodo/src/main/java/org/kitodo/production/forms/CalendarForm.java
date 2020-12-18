@@ -662,7 +662,7 @@ public class CalendarForm implements Serializable {
     public String createProcesses() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(parentId);
         TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
-        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewSystemPage()) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskManagerPage()) {
             return TASK_MANAGER_REFERER;
         }
         return DEFAULT_REFERER;

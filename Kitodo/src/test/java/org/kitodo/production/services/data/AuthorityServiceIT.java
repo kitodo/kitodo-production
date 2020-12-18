@@ -28,7 +28,7 @@ import org.kitodo.production.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = ServiceManager.getAuthorityService();
-    private static final int EXPECTED_AUTHORITIES_COUNT = 84;
+    private static final int EXPECTED_AUTHORITIES_COUNT = 87;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -61,7 +61,7 @@ public class AuthorityServiceIT {
     @Test
     public void shouldGetByTitle() throws Exception {
         Authority authority = authorityService.getByTitle("viewAllRoles_globalAssignable");
-        assertEquals("Authorizations were not found database!", 10, authority.getId().intValue());
+        assertEquals("Authorizations were not found database!", 13, authority.getId().intValue());
     }
 
     @Test

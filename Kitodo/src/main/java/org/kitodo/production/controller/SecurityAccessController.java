@@ -589,15 +589,6 @@ public class SecurityAccessController {
     }
 
     /**
-     * Check if the current user has the authority to view the index.
-     *
-     * @return true if the current user has the authority to view the index
-     */
-    public boolean hasAuthorityToViewIndex() {
-        return securityAccessService.hasAuthorityToViewIndex();
-    }
-
-    /**
      * Check if current user has authority to view process page. It returns true if
      * user has at least one of below given authorities.
      *
@@ -625,10 +616,49 @@ public class SecurityAccessController {
      * Check if current user has authority to view system page. It returns true if
      * user has at least one of below given authorities.
      *
-     * @return true if user has authority 'viewIndex' or 'viewIndex' globally
+     * @return true if user has authority to 'viewIndex', 'viewTaskManager', 'viewTerms' or 'viewMigration'.
      */
     public boolean hasAuthorityToViewSystemPage() {
-        return securityAccessService.hasAuthorityToViewSystemPage();
+        return securityAccessService.hasAuthorityToViewIndexPage()
+                || securityAccessService.hasAuthorityToViewTaskManagerPage()
+                || securityAccessService.hasAuthorityToViewTermsPage()
+                || securityAccessService.hasAuthorityToViewMigrationPage();
+    }
+
+    /**
+     * Check if current user has authority to view index page.
+     *
+     * @return true if user has authority to 'viewIndex' page.
+     */
+    public boolean hasAuthorityToViewIndexPage() {
+        return securityAccessService.hasAuthorityToViewIndexPage();
+    }
+
+    /**
+     * Check if current user has authority to view task manager page.
+     *
+     * @return true if user has authority to 'viewTaskManager' page.
+     */
+    public boolean hasAuthorityToViewTaskManagerPage() {
+        return securityAccessService.hasAuthorityToViewTaskManagerPage();
+    }
+
+    /**
+     * Check if current user has authority to view terms page.
+     *
+     * @return true if user has authority to 'viewTerms' page.
+     */
+    public boolean hasAuthorityToViewTermsPage() {
+        return securityAccessService.hasAuthorityToViewTermsPage();
+    }
+
+    /**
+     * Check if current user has authority to view migration page.
+     *
+     * @return true if user has authority to 'viewMigration' page.
+     */
+    public boolean hasAuthorityToViewMigrationPage() {
+        return securityAccessService.hasAuthorityToViewMigrationPage();
     }
 
     /**

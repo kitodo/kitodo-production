@@ -26,6 +26,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.controller.SessionClientController;
 import org.kitodo.production.security.CustomLoginSuccessHandler;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.security.SecurityAccessService;
 import org.primefaces.PrimeFaces;
 
 @Named("LoginForm")
@@ -33,8 +34,9 @@ import org.primefaces.PrimeFaces;
 public class LoginForm implements Serializable {
     private User loggedUser;
     private boolean firstVisit = true;
-    private static final String INDEXING_PAGE = "system.jsf?tabIndex=2";
+    private static final String INDEXING_PAGE = "system.jsf?tabIndex=";
     private static final String DESKTOP_VIEW = "desktop.jsf";
+    private final SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
     /**
      * Gets current authenticated User.
@@ -104,7 +106,7 @@ public class LoginForm implements Serializable {
                     && Objects.isNull(controller.getCurrentSessionClient())) {
                 controller.showClientSelectDialog();
             } else if (ServiceManager.getIndexingService().isIndexCorrupted()) {
-                context.redirect(INDEXING_PAGE);
+                context.redirect(INDEXING_PAGE + determineIndexingTab());
             } else {
                 redirect(context);
             }
@@ -128,5 +130,16 @@ public class LoginForm implements Serializable {
         } else {
             context.redirect(context.getRequestContextPath() + originalRequest);
         }
+    }
+
+    private int determineIndexingTab() {
+        int indexingTabIndex = 2;
+        if (!securityAccessService.hasAuthorityToViewTermsPage()) {
+            indexingTabIndex -= 1;
+        }
+        if (!securityAccessService.hasAuthorityToViewTaskManagerPage()) {
+            indexingTabIndex -= 1;
+        }
+        return indexingTabIndex;
     }
 }
