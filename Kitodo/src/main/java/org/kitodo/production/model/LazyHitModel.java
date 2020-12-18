@@ -19,9 +19,7 @@ import java.util.stream.Collectors;
 
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
-import org.kitodo.config.OPACConfig;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -55,10 +53,8 @@ public class LazyHitModel extends LazyDataModel<Object> {
     @Override
     public List<Object> load(int first, int resultSize, String sortField, SortOrder sortOrder, Map filters) {
 
-        ImportService importService = ServiceManager.getImportService();
-        searchResult = importService.performSearch(this.selectedField,
-            importService.getSearchTermWithDelimiter(this.searchTerm, this.selectedCatalog), this.selectedCatalog,
-            first, resultSize);
+        searchResult = ServiceManager.getImportService().performSearch(
+                this.selectedField, this.searchTerm, this.selectedCatalog, first, resultSize);
 
         if (Objects.isNull(searchResult) || Objects.isNull(searchResult.getHits())) {
             return Collections.emptyList();

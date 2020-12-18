@@ -190,6 +190,7 @@ public class ImportService {
     public SearchResult performSearch(String searchField, String searchTerm, String catalogName, int start, int rows) {
         importModule = initializeImportModule();
         loadOpacConfiguration(catalogName);
+        searchTerm = getSearchTermWithDelimiter(searchTerm, catalogName);
         return importModule.search(catalogName, searchField, searchTerm, start, rows);
     }
 
@@ -383,7 +384,7 @@ public class ImportService {
         }
 
         allProcesses.add(tempProcess);
-        return getSearchTermWithDelimiter(getParentID(internalDocument),opac);
+        return getParentID(internalDocument);
     }
 
     /**
