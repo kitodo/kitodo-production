@@ -112,14 +112,26 @@ public class FileUploadDialog extends MetadataImportDialog {
         return catalogsWithFileUpload;
     }
 
+    /**
+     * Set the file.
+     * @param file the file to upload
+     */
     public void setFile(UploadedFile file) {
         this.file = file;
     }
 
+    /**
+     * Get selectedCatalog.
+     * @return the selected catalog.
+     */
     public String getSelectedCatalog() {
         return selectedCatalog;
     }
 
+    /**
+     * Set selected catalog.
+     * @param selectedCatalog the selected catalog.
+     */
     public void setSelectedCatalog(String selectedCatalog) {
         this.selectedCatalog = selectedCatalog;
     }
