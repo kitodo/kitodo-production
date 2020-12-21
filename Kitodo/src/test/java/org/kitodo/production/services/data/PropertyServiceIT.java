@@ -12,16 +12,12 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -102,21 +98,20 @@ public class PropertyServiceIT {
     }
 
     /**
-     * test distinc titles.
+     * test distinct titles.
      */
-    @Ignore
     @Test
-    public void shouldFindDistinctTitles() throws Exception {
-        assertEquals("Incorrect size of distinct titles for process properties!", 2,
-            propertyService.findProcessPropertiesTitlesDistinct().size());
+    public void shouldFindDistinctTitles() {
+        assertEquals("Incorrect size of distinct titles for process properties!", 6,
+            propertyService.findDistinctTitles().size());
 
-        List<String> processPropertiesTitlesDistinct = propertyService.findProcessPropertiesTitlesDistinct();
+        List<String> processPropertiesTitlesDistinct = propertyService.findDistinctTitles();
 
         String title = processPropertiesTitlesDistinct.get(0);
-        assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
+        assertEquals("Incorrect sorting of distinct titles for process properties!", "FirstWorkpiece Property", title);
 
         title = processPropertiesTitlesDistinct.get(1);
-        assertEquals("Incorrect sorting of distinct titles for process properties!", "Process Property", title);
+        assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
     }
 
     @Test
@@ -163,22 +158,22 @@ public class PropertyServiceIT {
     @Test
     public void shouldFindByValue() {
         assertEquals("Properties were not found in database!", 2,
-            propertyService.findByValue("second", null, true).size());
+            propertyService.findByValue("second").size());
 
         assertEquals("Property was not found in database!", 1,
-            propertyService.findByValue("second value", null, true).size());
+            propertyService.findByValue("second value").size());
     }
 
     @Test
     public void shouldFindByTitleAndValue() {
         assertEquals("Property was not found in database!", 1,
-            propertyService.findByTitleAndValue("Korrektur notwendig", "second value", null, true).size());
+            propertyService.findByTitleAndValue("Korrektur notwendig", "second value").size());
     }
 
     @Test
     public void shouldNotFindByTitleAndValue() {
         assertEquals("Property was found in database!", 0,
-            propertyService.findByTitleAndValue("Korrektur notwendig", "third", null, true).size());
+            propertyService.findByTitleAndValue("Korrektur notwendig", "third").size());
     }
 
 }

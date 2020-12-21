@@ -70,39 +70,12 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
     }
 
     /**
-     * Find all distinct titles from workpiece properties.
+     * Find all distinct property titles.
      *
      * @return a list of titles.
      */
-    public List<String> findWorkpiecePropertiesTitlesDistinct() {
-        return findDistinctTitles("workpiece");
-    }
-
-    /**
-     * Find all distinct titles from template properties.
-     *
-     * @return a list of titles.
-     */
-    public List<String> findTemplatePropertiesTitlesDistinct() {
-        return findDistinctTitles("template");
-    }
-
-    /**
-     * Find all distinct titles from process properties.
-     *
-     * @return a list of titles.
-     */
-    public List<String> findProcessPropertiesTitlesDistinct() {
-        return findDistinctTitles("process");
-    }
-
-    private List<String> findDistinctTitles(String type) {
-        List<Property> byQuery = getByQuery("SELECT DISTINCT property.title from Property as property");
-        List<String> titles = new ArrayList<>();
-        for (Property property : byQuery) {
-            titles.add(property.getTitle());
-        }
-        return titles;
+    public List<String> findDistinctTitles() {
+        return dao.retrieveDistinctTitles();
     }
 
     /**
@@ -110,14 +83,10 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      *
      * @param title
      *            of the searched property
-     * @param type
-     *            "process", "workpiece" or "template" as String
-     * @param contains
-     *            of the searched property
      * @return list of JSON objects with properties
      */
-    public List<Property> findByTitle(String title, String type, boolean contains) {
-        HashMap parameters = new HashMap<String, String>();
+    public List<Property> findByTitle(String title) {
+        HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("title", title);
         return getByQuery("from Property as property where property.title=:title", parameters);
     }
@@ -127,14 +96,10 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      *
      * @param value
      *            of the searched property
-     * @param type
-     *            "process", "workpiece" or "template" as String
-     * @param contains
-     *            of the searched property
      * @return list of JSON objects with properties
      */
-    List<Property> findByValue(String value, String type, boolean contains) {
-        HashMap parameters = new HashMap<String, String>();
+    List<Property> findByValue(String value) {
+        HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("value", value);
         return getByQuery("from Property as property where property.value=:value", parameters);
     }
@@ -147,14 +112,10 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
      *            of the searched property
      * @param value
      *            of the searched property
-     * @param type
-     *            "process", "workpiece" or "template" as String
-     * @param contains
-     *            true or false
      * @return list of JSON objects with batches of exact type
      */
-    List<Property> findByTitleAndValue(String title, String value, String type, boolean contains) {
-        HashMap parameters = new HashMap<String, String>();
+    List<Property> findByTitleAndValue(String title, String value) {
+        HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("title", title);
         parameters.put("value", value);
         return getByQuery("from Property as property where property.title=:title and property.value=:value", parameters);

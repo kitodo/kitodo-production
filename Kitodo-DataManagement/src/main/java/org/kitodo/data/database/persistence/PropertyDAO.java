@@ -11,8 +11,13 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.persistence.PersistenceException;
+
+import org.hibernate.Session;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 
@@ -46,5 +51,19 @@ public class PropertyDAO extends BaseDAO<Property> {
     @Override
     public void remove(Integer propertyId) throws DAOException {
         removeObject(Property.class, propertyId);
+    }
+
+    /**
+     * Retrieve and return distinct Property titles from database.
+     *
+     * @return list of distinct Property titles sorted alphabetically.
+     */
+    public List<String> retrieveDistinctTitles() {
+        try (Session session = HibernateUtil.getSession()) {
+            List<?> titles = session.createQuery("SELECT DISTINCT title FROM Property").list();
+            return titles.stream().map(Object::toString).sorted().collect(Collectors.toList());
+        } catch (PersistenceException e) {
+            return Collections.emptyList();
+        }
     }
 }

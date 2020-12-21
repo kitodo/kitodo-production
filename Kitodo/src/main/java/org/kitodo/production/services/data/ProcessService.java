@@ -721,8 +721,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         String valueSearchKey = ProcessTypeField.PROPERTIES + ".value.keyword";
 
         BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-        pairQuery.must(matchQuery(titleSearchKey, title));
-        pairQuery.must(matchQuery(valueSearchKey, value));
+        if (!WILDCARD.equals(title)) {
+            pairQuery.must(matchQuery(titleSearchKey, title));
+        }
+        if (!WILDCARD.equals(value)) {
+            pairQuery.must(matchQuery(valueSearchKey, value));
+        }
         return nestedQuery(ProcessTypeField.PROPERTIES.toString(), pairQuery, ScoreMode.Total);
     }
 

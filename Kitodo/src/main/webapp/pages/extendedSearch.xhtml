@@ -76,14 +76,24 @@
                     <!--properties -->
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="propertyTitle" value="#{msgs.properties}"/>
+                            <p:outputLabel for="processProperty" value="#{msgs.processProperties}"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="propertyTitle" placeholder="#{msgs.title}" value="#{SearchForm.processPropertyTitle}"
-                                         styleClass="extended-search-input-field"/>
+                            <p:selectOneMenu value="#{SearchForm.processPropertyOperand}">
+                                <f:selectItems value="#{SearchForm.operands}"/>
+                            </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:inputText id="propertyValue" placeholder="#{msgs.value}" value="#{SearchForm.processPropertyValue}"
+                            <p:selectOneMenu value="#{SearchForm.processPropertyTitle}">
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                                <f:selectItems value="#{SearchForm.processPropertyTitles}"
+                                               var="proc" itemLabel="#{proc}"
+                                               itemValue="#{proc}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="processProperty"
+                                         value="#{SearchForm.processPropertyValue}"
                                          styleClass="extended-search-input-field"/>
                         </p:column>
                     </p:row>
