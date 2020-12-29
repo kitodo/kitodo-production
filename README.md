@@ -5,6 +5,8 @@ Kitodo.Production is a workflow management tool for mass digitization and is par
 
 Kitodo.Production supports various types of materials such as prints, periodicals, manuscripts, sheet music and typical documents of a *Nachlass*. The software is written in Java, uses Java Server Faces web technology to run on a [Tomcat Servlet container](http://tomcat.apache.org/), and is backed by a [MySQL](http://www.mysql.com) database utilizing the [Hibernate framework](http://www.hibernate.org) to access it.
 
+For a complete overview of all features, visit the [Kitodo homepage](https://www.kitodo.org/software/kitodoproduction/features).
+
 Kitodo. Digital Library Modules
 -------------------------------
 
