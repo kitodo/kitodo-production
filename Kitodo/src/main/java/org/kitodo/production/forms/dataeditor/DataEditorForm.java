@@ -46,7 +46,6 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -218,7 +217,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 return referringView;
             }
 
-            ruleset = openRuleset(process.getRuleset());
+            String metadataLanguage = user.getMetadataLanguage();
+            priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+            ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
             openMetsFile();
             if (!workpiece.getId().equals(process.getId().toString())) {
                 Helper.setErrorMessage("metadataConfusion", new Object[] {process.getId(), workpiece.getId() });
@@ -249,17 +250,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             workpiece.setId(process.getId().toString());
         }
         ServiceManager.getFileService().searchForMedia(process, workpiece);
-    }
-
-    private RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
-        final long begin = System.nanoTime();
-        String metadataLanguage = user.getMetadataLanguage();
-        priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-        RulesetManagementInterface openRuleset = ServiceManager.getRulesetService().openRuleset(ruleset);
-        if (logger.isTraceEnabled()) {
-            logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
-        }
-        return openRuleset;
     }
 
     private void init() {
