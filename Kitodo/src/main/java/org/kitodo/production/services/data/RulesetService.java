@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -227,14 +226,12 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
      * @return a Ruleset Management in which the ruleset has been loaded
      */
     public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
-        return openRulesetFile(ruleset.getFile());
-    }
-
-    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
         final long begin = System.nanoTime();
-        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
+                .getRulesetManagement();
+        String fileName = ruleset.getFile();
         try {
-            ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+            rulesetManagement.load(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toFile());
         } catch (FileNotFoundException e) {
             throw new RulesetNotFoundException(fileName);
         }
@@ -242,6 +239,6 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
         if (logger.isTraceEnabled()) {
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
-        return ruleset;
+        return rulesetManagement;
     }
 }
