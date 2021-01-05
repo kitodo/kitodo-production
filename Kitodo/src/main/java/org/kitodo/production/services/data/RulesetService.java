@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.RulesetDTO;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
@@ -238,9 +236,7 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
         try {
             ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
         } catch (FileNotFoundException e) {
-            List<String> param = new ArrayList<>();
-            param.add(fileName);
-            throw new RulesetNotFoundException(Helper.getTranslation("rulesetNotFound", param));
+            throw new RulesetNotFoundException(fileName);
         }
 
         if (logger.isTraceEnabled()) {
