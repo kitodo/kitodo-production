@@ -190,6 +190,7 @@ public class ImportService {
     public SearchResult performSearch(String searchField, String searchTerm, String catalogName, int start, int rows) {
         importModule = initializeImportModule();
         loadOpacConfiguration(catalogName);
+        searchTerm = getSearchTermWithDelimiter(searchTerm, catalogName);
         return importModule.search(catalogName, searchField, searchTerm, start, rows);
     }
 
@@ -384,6 +385,21 @@ public class ImportService {
 
         allProcesses.add(tempProcess);
         return getParentID(internalDocument);
+    }
+
+    /**
+     * Returns the searchTerm with configured Delimiter.
+     * @param searchTerm the searchterm to add delimiters.
+     * @param catalog the catalog to check
+     * @return searchTermWithDelimiter
+     */
+    public String getSearchTermWithDelimiter(String searchTerm, String catalog) {
+        String searchTermWithDelimiter = searchTerm;
+        String queryDelimiter = OPACConfig.getQueryDelimiter(catalog);
+        if (Objects.nonNull(queryDelimiter)) {
+            searchTermWithDelimiter = queryDelimiter + searchTermWithDelimiter + queryDelimiter;
+        }
+        return searchTermWithDelimiter;
     }
 
     /**
