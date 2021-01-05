@@ -44,7 +44,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.tasks.NewspaperMigrationTask;
@@ -278,7 +277,7 @@ public class NewspaperProcessesMigrator {
      *            the ID of the newspaper division in the ruleset
      */
     private void initializeMigrator(Process process, String newspaperIncludedStructalElementDivision)
-            throws IOException, ConfigurationException, RulesetNotFoundException {
+            throws IOException, ConfigurationException {
 
         title = process.getTitle().replaceFirst(INDIVIDUAL_PART, "");
         logger.trace("Newspaper is: {}", title);
@@ -312,7 +311,7 @@ public class NewspaperProcessesMigrator {
      *            index of process to convert in the processes transfer object
      *            list passed to the constructor—<b>not</b> the process ID
      */
-    public void convertProcess(int index) throws DAOException, IOException, ConfigurationException, RulesetNotFoundException {
+    public void convertProcess(int index) throws DAOException, IOException, ConfigurationException {
         final long begin = System.nanoTime();
         Integer processId = transferredProcess.get(index).getId();
         Process process = processService.getById(processId);
@@ -548,7 +547,7 @@ public class NewspaperProcessesMigrator {
      *             An error has occurred in the disk drive.
      */
     public void createOverallProcess() throws ProcessGenerationException, IOException, DataException, DAOException,
-            CommandException, RulesetNotFoundException {
+            CommandException {
         final long begin = System.nanoTime();
         logger.info("Creating overall process {}...", title);
 
@@ -583,7 +582,7 @@ public class NewspaperProcessesMigrator {
      *             if a process cannot be load from the database
      */
     public void createNextYearProcess() throws ProcessGenerationException, IOException, DataException, DAOException,
-            CommandException, RulesetNotFoundException {
+            CommandException {
         final long begin = System.nanoTime();
         Entry<String, IncludedStructuralElement> yearToCreate = yearsIterator.next();
         String yearTitle = getYearTitle(yearToCreate.getKey());

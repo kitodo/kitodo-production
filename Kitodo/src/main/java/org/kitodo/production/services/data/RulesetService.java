@@ -226,11 +226,11 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
      *            database object that references the ruleset
      * @return a Ruleset Management in which the ruleset has been loaded
      */
-    public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException, RulesetNotFoundException {
+    public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
         return openRulesetFile(ruleset.getFile());
     }
 
-    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException, RulesetNotFoundException {
+    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
         final long begin = System.nanoTime();
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
         try {

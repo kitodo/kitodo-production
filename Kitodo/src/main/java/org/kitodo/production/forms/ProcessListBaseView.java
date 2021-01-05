@@ -29,7 +29,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ChartMode;
@@ -316,7 +315,7 @@ public class ProcessListBaseView extends BaseForm {
     public boolean createProcessesWithCalendar(ProcessDTO processDTO) {
         try {
             return ProcessService.canCreateProcessWithCalendar(processDTO);
-        } catch (IOException | DAOException | RulesetNotFoundException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                     e);
         }
@@ -333,7 +332,7 @@ public class ProcessListBaseView extends BaseForm {
     public boolean createProcessAsChildPossible(ProcessDTO processDTO) {
         try {
             return ProcessService.canCreateChildProcess(processDTO);
-        } catch (IOException | DAOException | RulesetNotFoundException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                     e);
         }

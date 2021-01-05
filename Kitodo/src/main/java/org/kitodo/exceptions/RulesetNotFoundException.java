@@ -11,11 +11,12 @@
 
 package org.kitodo.exceptions;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 import org.kitodo.production.helper.Helper;
 
-public class RulesetNotFoundException extends Exception {
+public class RulesetNotFoundException extends FileNotFoundException {
     /**
      * Creates a new ruleset not found exception.
      *

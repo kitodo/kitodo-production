@@ -294,14 +294,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
-        } catch (IOException | ProcessGenerationException e) {
-            logger.error(e.getLocalizedMessage());
         } catch (RulesetNotFoundException e) {
             String rulesetFile = "Process list is empty";
             if (!this.processes.isEmpty() && Objects.nonNull(getMainProcess().getRuleset())) {
                 rulesetFile = getMainProcess().getRuleset().getFile();
             }
             Helper.setErrorMessage("rulesetNotFound", new Object[] {rulesetFile }, logger, e);
+        } catch (IOException | ProcessGenerationException e) {
+            logger.error(e.getLocalizedMessage(), e);
         }
         return this.stayOnCurrentPage;
     }
@@ -370,7 +370,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
                 }
             }
-        } catch (ProcessGenerationException | RulesetNotFoundException | DataException | DAOException | IOException e) {
+        } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -379,7 +379,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * Create process hierarchy.
      */
     private void createProcessHierarchy()
-            throws DataException, ProcessGenerationException, IOException, RulesetNotFoundException {
+            throws DataException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
         if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
@@ -462,7 +462,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             ImportService.processProcessChildren(getMainProcess(), this.childProcesses, template,
                     rulesetManagement, acquisitionStage, priorityList);
         } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
-                | ProcessGenerationException | IOException | RulesetNotFoundException e) {
+                | ProcessGenerationException | IOException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
         }
     }
@@ -493,10 +493,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                             acquisitionStage, priorityList);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
+                } catch (RulesetNotFoundException e) {
+                    throw new ProcessGenerationException(
+                            "Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
                 } catch (IOException e) {
                     throw new ProcessGenerationException("Error reading Ruleset: " + tempProcess.getProcess().getRuleset().getTitle());
-                } catch (RulesetNotFoundException e) {
-                    throw new ProcessGenerationException("Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
                 }
             }
         }
