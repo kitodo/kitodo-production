@@ -69,7 +69,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private final SearchTab searchTab = new SearchTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
-    private RulesetManagementInterface rulesetManagementInterface;
+    private RulesetManagementInterface rulesetManagement;
     private List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
     private String acquisitionStage = "create";
     private Project project;
@@ -87,7 +87,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     @Override
     public RulesetManagementInterface getRuleset() {
-        return rulesetManagementInterface;
+        return rulesetManagement;
     }
 
     /**
@@ -102,14 +102,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private void setRulesetManagementInterface(Ruleset ruleset) throws RulesetNotFoundException {
         try {
-            this.rulesetManagementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
+            this.rulesetManagement = ServiceManager.getRulesetService().openRuleset(ruleset);
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());
         }
     }
 
     private List<SelectItem> getAllRulesetDivisions() {
-        List<SelectItem> allDocTypes = rulesetManagementInterface
+        List<SelectItem> allDocTypes = rulesetManagement
                 .getStructuralElements(priorityList).entrySet()
                 .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
@@ -460,7 +460,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         // set parent relations between main process and its imported child processes!
         try {
             ImportService.processProcessChildren(getMainProcess(), this.childProcesses, template,
-                    rulesetManagementInterface, acquisitionStage, priorityList);
+                    rulesetManagement, acquisitionStage, priorityList);
         } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
                 | ProcessGenerationException | IOException | RulesetNotFoundException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
@@ -489,7 +489,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 ImportService.updateTasks(process);
             } else if (Objects.nonNull(tempProcess.getMetadataNodes())) {
                 try {
-                    ImportService.processTempProcess(tempProcess, template, rulesetManagementInterface,
+                    ImportService.processTempProcess(tempProcess, template, rulesetManagement,
                             acquisitionStage, priorityList);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
