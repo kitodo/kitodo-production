@@ -92,20 +92,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     /**
      * Update ruleset and docType.
-     * @param ruleset as Ruleset
-     * @throws RulesetNotFoundException thrown if ruleset could not be found
+     * 
+     * @param ruleset
+     *            as Ruleset
+     * @throws IOException
+     *             thrown if ruleset could not be read
      */
-    public void updateRulesetAndDocType(Ruleset ruleset) throws RulesetNotFoundException {
-        setRulesetManagement(ruleset);
+    public void updateRulesetAndDocType(Ruleset ruleset) throws IOException {
+        rulesetManagement = ServiceManager.getRulesetService().openRuleset(ruleset);
         processDataTab.setAllDocTypes(getAllRulesetDivisions());
-    }
-
-    private void setRulesetManagement(Ruleset ruleset) throws RulesetNotFoundException {
-        try {
-            this.rulesetManagement = ServiceManager.getRulesetService().openRuleset(ruleset);
-        } catch (IOException e) {
-            logger.error(e.getLocalizedMessage());
-        }
     }
 
     private List<SelectItem> getAllRulesetDivisions() {
