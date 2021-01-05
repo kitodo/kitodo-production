@@ -227,7 +227,7 @@ public class ImportDialog implements Serializable {
                 // import ancestors
                 LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
                         this.currentRecordId, opac, projectId, templateId, this.importDepth,
-                        this.createProcessForm.getRuleset().getFunctionalKeys(
+                        this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
                 this.createProcessForm.setProcesses(processes);
 

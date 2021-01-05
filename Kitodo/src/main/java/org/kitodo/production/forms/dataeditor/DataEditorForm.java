@@ -521,7 +521,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     @Override
-    public RulesetManagementInterface getRuleset() {
+    public RulesetManagementInterface getRulesetManagement() {
         return ruleset;
     }
 

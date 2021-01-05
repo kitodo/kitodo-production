@@ -83,10 +83,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     /**
      * Returns the ruleset management to access the ruleset.
      *
-     * @return the ruleset
+     * @return the ruleset management
      */
     @Override
-    public RulesetManagementInterface getRuleset() {
+    public RulesetManagementInterface getRulesetManagement() {
         return rulesetManagement;
     }
 
@@ -96,11 +96,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @throws RulesetNotFoundException thrown if ruleset could not be found
      */
     public void updateRulesetAndDocType(Ruleset ruleset) throws RulesetNotFoundException {
-        setRulesetManagementInterface(ruleset);
+        setRulesetManagement(ruleset);
         processDataTab.setAllDocTypes(getAllRulesetDivisions());
     }
 
-    private void setRulesetManagementInterface(Ruleset ruleset) throws RulesetNotFoundException {
+    private void setRulesetManagement(Ruleset ruleset) throws RulesetNotFoundException {
         try {
             this.rulesetManagement = ServiceManager.getRulesetService().openRuleset(ruleset);
         } catch (IOException e) {

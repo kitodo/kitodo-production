@@ -437,7 +437,7 @@ public class AddDocStrucTypeDialog {
 
     private void prepareDocStructAddTypeSelectionItemsForChildren() {
         docStructAddTypeSelectionItemsForChildren = new ArrayList<>();
-        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
             dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
@@ -448,11 +448,11 @@ public class AddDocStrucTypeDialog {
     private void prepareDocStructAddTypeSelectionItemsForParent() {
         docStructAddTypeSelectionItemsForParent = new ArrayList<>();
         if (!parents.isEmpty()) {
-            StructuralElementViewInterface parentDivisionView = dataEditor.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface parentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
             for (Entry<String, String> entry : parentDivisionView.getAllowedSubstructuralElements().entrySet()) {
                 String newParent = entry.getKey();
-                StructuralElementViewInterface newParentDivisionView = dataEditor.getRuleset().getStructuralElementView(
+                StructuralElementViewInterface newParentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                     newParent, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                 if (newParentDivisionView.getAllowedSubstructuralElements().containsKey(
                     dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType())) {
@@ -465,7 +465,7 @@ public class AddDocStrucTypeDialog {
     private void prepareDocStructAddTypeSelectionItemsForSiblings() {
         docStructAddTypeSelectionItemsForSiblings = new ArrayList<>();
         if (!parents.isEmpty()) {
-            StructuralElementViewInterface parentDivisionView = dataEditor.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface parentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
             for (Entry<String, String> entry : parentDivisionView.getAllowedSubstructuralElements().entrySet()) {
                 docStructAddTypeSelectionItemsForSiblings.add(new SelectItem(entry.getKey(), entry.getValue()));
@@ -508,7 +508,7 @@ public class AddDocStrucTypeDialog {
             if (Objects.nonNull(selectedMetadataTreeNode)
                     && Objects.nonNull(selectedMetadataTreeNode.getData())) {
                 existingMetadata = Metadata.mapToKey(((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadata());
-                ComplexMetadataViewInterface metadataView = dataEditor.getRuleset().getMetadataView(
+                ComplexMetadataViewInterface metadataView = dataEditor.getRulesetManagement().getMetadataView(
                         ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadataID(),
                         dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                 addableMetadata = metadataView.getAddableMetadata(existingMetadata, Collections.emptyList());
@@ -518,7 +518,7 @@ public class AddDocStrucTypeDialog {
                 addableMetadata = structure.getAddableMetadata(existingMetadata,
                         Collections.emptyList());
             } else {
-                structure = dataEditor.getRuleset()
+                structure = dataEditor.getRulesetManagement()
                         .getStructuralElementView(docStructAddTypeSelectionSelectedItem,
                                 dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                 addableMetadata = structure.getAddableMetadata(existingMetadata,
@@ -575,7 +575,7 @@ public class AddDocStrucTypeDialog {
     private StructuralElementViewInterface getStructuralElementView() {
         Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
-            return dataEditor.getRuleset()
+            return dataEditor.getRulesetManagement()
                     .getStructuralElementView(
                             selectedStructure.get().getType(),
                             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
@@ -587,7 +587,7 @@ public class AddDocStrucTypeDialog {
                 if (structureTreeNode.getDataObject() instanceof View) {
                     View view = (View) structureTreeNode.getDataObject();
                     if (Objects.nonNull(view.getMediaUnit())) {
-                        return dataEditor.getRuleset().getStructuralElementView(view.getMediaUnit().getType(),
+                        return dataEditor.getRulesetManagement().getStructuralElementView(view.getMediaUnit().getType(),
                                 dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                     }
                 }
@@ -770,7 +770,7 @@ public class AddDocStrucTypeDialog {
      */
     public String getCurrentStructureLabel() {
         if (dataEditor.getSelectedStructure().isPresent()) {
-            StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                     dataEditor.getSelectedStructure().get().getType(), dataEditor.getAcquisitionStage(),
                     dataEditor.getPriorityList());
             return divisionView.getLabel();

@@ -451,7 +451,7 @@ public class StructurePanel implements Serializable {
     private Collection<View> buildStructureTreeRecursively(IncludedStructuralElement structure, TreeNode result) {
         StructureTreeNode node;
         if (Objects.isNull(structure.getLink())) {
-            StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
             node = new StructureTreeNode(divisionView.getLabel(),
                     divisionView.isUndefined() && Objects.nonNull(structure.getType()), false, structure);
@@ -462,7 +462,7 @@ public class StructurePanel implements Serializable {
                     String type = ServiceManager.getProcessService().getBaseType(child.getId());
                     if (child.getId() == ServiceManager.getProcessService()
                             .processIdFromUri(structure.getLink().getUri())) {
-                        StructuralElementViewInterface view = dataEditor.getRuleset().getStructuralElementView(
+                        StructuralElementViewInterface view = dataEditor.getRulesetManagement().getStructuralElementView(
                             type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                         node = new StructureTreeNode(view.getLabel(), view.isUndefined(), true, structure);
                     }
@@ -563,7 +563,7 @@ public class StructurePanel implements Serializable {
      * @return the generated node so that you can add children to it
      */
     private DefaultTreeNode addTreeNode(String type, boolean linked, Object dataObject, DefaultTreeNode parent) {
-        StructuralElementViewInterface structuralElementView = dataEditor.getRuleset().getStructuralElementView(type,
+        StructuralElementViewInterface structuralElementView = dataEditor.getRulesetManagement().getStructuralElementView(type,
             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         return addTreeNode(structuralElementView.getLabel(), structuralElementView.isUndefined(), linked, dataObject,
             parent);
@@ -676,7 +676,7 @@ public class StructurePanel implements Serializable {
     }
 
     private void buildMediaTreeRecursively(MediaUnit mediaUnit, DefaultTreeNode parentTreeNode) {
-        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 mediaUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         DefaultTreeNode treeNode = addTreeNode(Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)
                         ? divisionView.getLabel().concat(" " + mediaUnit.getOrderlabel()) : divisionView.getLabel(),
@@ -1196,7 +1196,7 @@ public class StructurePanel implements Serializable {
         IncludedStructuralElement dragStructure = (IncludedStructuralElement) dragNode.getDataObject();
         IncludedStructuralElement dropStructure = (IncludedStructuralElement) dropNode.getDataObject();
 
-        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
         LinkedList<IncludedStructuralElement> dragParents;
@@ -1232,7 +1232,7 @@ public class StructurePanel implements Serializable {
         MediaUnit dragUnit = (MediaUnit) dragNode.getDataObject();
         MediaUnit dropUnit = (MediaUnit) dropNode.getDataObject();
 
-        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 dropUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
         LinkedList<MediaUnit> dragParents;

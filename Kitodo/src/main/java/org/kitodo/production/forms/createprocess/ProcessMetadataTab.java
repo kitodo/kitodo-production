@@ -38,7 +38,7 @@ public class ProcessMetadataTab {
      *          which its Metadata are wanted to be shown
      */
     public ProcessFieldedMetadata initializeProcessDetails(IncludedStructuralElement structure) {
-        return ImportService.initializeProcessDetails(structure, this.createProcessForm.getRuleset(),
+        return ImportService.initializeProcessDetails(structure, this.createProcessForm.getRulesetManagement(),
                 this.createProcessForm.getAcquisitionStage(), this.createProcessForm.getPriorityList());
     }
 
