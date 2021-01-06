@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -46,6 +48,24 @@ public abstract class EditDataScript {
         for (MetadataScript metadataScript : scripts) {
             executeScript(metadataFile, process, metadataScript);
         }
+    }
+
+    /**
+     * gets the corresponding metadata as collection.
+     * @param allIncludedStructuralElements the structural Elements to check.
+     * @return a list of metadata of a structural element selected from the list.
+     */
+    public Collection<Metadata> getMetadataCollection(List<IncludedStructuralElement> allIncludedStructuralElements) {
+        Collection<Metadata> metadataCollection = Collections.emptyList();
+        if (!allIncludedStructuralElements.isEmpty()) {
+            for (IncludedStructuralElement allIncludedStructuralElement : allIncludedStructuralElements) {
+                if (!allIncludedStructuralElement.getMetadata().isEmpty()) {
+                    metadataCollection = allIncludedStructuralElement.getMetadata();
+                    break;
+                }
+            }
+        }
+        return metadataCollection;
     }
 
     /**

@@ -32,11 +32,7 @@ public class OverwriteDataScript extends EditDataScript {
         List<IncludedStructuralElement> allIncludedStructuralElements = workpiece
                 .getAllIncludedStructuralElements();
 
-        Collection<Metadata> metadataCollection = Collections.EMPTY_LIST;
-        if (!allIncludedStructuralElements.isEmpty()) {
-            IncludedStructuralElement child = allIncludedStructuralElements.get(0);
-            metadataCollection = child.getMetadata();
-        }
+        Collection<Metadata> metadataCollection = getMetadataCollection(allIncludedStructuralElements);
 
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 

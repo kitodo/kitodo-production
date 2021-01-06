@@ -74,11 +74,7 @@ public class KitodoScriptService {
         StrTokenizer tokenizer = new StrTokenizer(script, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
-            if (Objects.isNull(tok) || !tok.contains(":")) {
-                if (Objects.nonNull(parameters.get("action")) && !parameters.get("action").equals("copyData")) {
-                    Helper.setErrorMessage("missing delimiter / unknown parameter: ", tok);
-                }
-            } else {
+            if (Objects.nonNull(tok) && tok.contains(":")) {
                 String key = tok.substring(0, tok.indexOf(':'));
                 String value = tok.substring(tok.indexOf(':') + 1);
                 this.parameters.put(key, value);
