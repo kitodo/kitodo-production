@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
@@ -51,7 +52,7 @@ public class ProcessDateMetadata extends ProcessTextMetadata {
      * @return value of date
      */
     public Date getDate() {
-        if (Objects.isNull(date) && Objects.nonNull(getValue())) {
+        if (Objects.isNull(date) && StringUtils.isNotBlank(getValue())) {
             try {
                 date = new SimpleDateFormat("yyyy-MM-dd").parse(getValue());
             } catch (ParseException e) {
