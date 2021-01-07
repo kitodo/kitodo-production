@@ -64,7 +64,7 @@ public class FileUploadDialog extends MetadataImportDialog {
         ImportService importService = ServiceManager.getImportService();
         try {
             Document internalDocument = importService.convertDataRecordToInternal(
-                createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())), selectedCatalog);
+                createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())), selectedCatalog, false);
             TempProcess tempProcess = importService.createTempProcessFromDocument(internalDocument,
                 createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
 

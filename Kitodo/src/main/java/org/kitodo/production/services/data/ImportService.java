@@ -580,16 +580,17 @@ public class ImportService {
             exemplarRecords = extractExemplarRecords(dataRecord, opac);
         }
 
-        return convertDataRecordToInternal(dataRecord, opac);
+        return convertDataRecordToInternal(dataRecord, opac, isParentInRecord);
     }
 
     /**
      * Converts a given dataRecord to an internal document.
      * @param dataRecord the dataRecord to convert.
      * @param opac the opac to use (for configuration)
+     * @param isParentInRecord
      * @return the converted Document
      */
-    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac) throws UnsupportedFormatException,
+    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac, boolean isParentInRecord) throws UnsupportedFormatException,
             URISyntaxException, IOException, ParserConfigurationException, SAXException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
