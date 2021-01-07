@@ -20,6 +20,7 @@
     <h:form id="processesForm">
         <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO"-->
         <p:dataTable id="processesTable"
+                     widgetVar="processesTable"
                      styleClass="default-layout"
                      var="process"
                      value="#{ProcessForm.lazyDTOModel}"
