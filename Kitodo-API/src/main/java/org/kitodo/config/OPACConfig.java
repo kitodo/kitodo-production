@@ -13,8 +13,6 @@ package org.kitodo.config;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -118,7 +116,7 @@ public class OPACConfig {
     /**
      * Retrieve the "parentMappingFile" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
-     * @return HierarchicalConfiguration for catalog's "parentMappingFile"
+     * @return String containing given catalogs "parentMappingFile"
      */
     public static String getXsltMappingFileForParentInRecord(String catalogName) {
         return getCatalog(catalogName).getString("parentMappingFile");

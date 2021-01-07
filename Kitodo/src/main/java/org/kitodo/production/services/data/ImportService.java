@@ -615,7 +615,7 @@ public class ImportService {
         List<String> mappingFileNames;
         try {
             if (forParentInRecord) {
-                mappingFileNames = Arrays.asList(OPACConfig.getXsltMappingFileForParentInRecord(opac));
+                mappingFileNames = Collections.singletonList(OPACConfig.getXsltMappingFileForParentInRecord(opac));
             } else {
                 mappingFileNames = OPACConfig.getXsltMappingFiles(opac);
             }
