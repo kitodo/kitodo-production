@@ -363,11 +363,11 @@ public class ImportService {
     }
 
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
-                                                 int projectID, int templateID)
+                                                 int projectID, int templateID, boolean isParentInRecord)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
 
-        Document internalDocument = importDocument(opac, recordId, allProcesses.isEmpty());
+        Document internalDocument = importDocument(opac, recordId, allProcesses.isEmpty(), isParentInRecord);
         TempProcess tempProcess = createTempProcessFromDocument(internalDocument, templateID, projectID);
 
         // Workaround for classifying MultiVolumeWorks with insufficient information
@@ -384,7 +384,7 @@ public class ImportService {
         }
 
         allProcesses.add(tempProcess);
-        return getParentID(internalDocument);
+        return isParentInRecord ? null : getParentID(internalDocument);
     }
 
     /**
@@ -432,11 +432,19 @@ public class ImportService {
             parentXpath = parentXpath.replace(REPLACE_ME, parentIdMetadata.toArray()[0].toString());
         }
 
-        String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId);
+        String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId, false);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         if (Objects.isNull(template.getRuleset())) {
             throw new ProcessGenerationException("Ruleset of template " + template.getId() + " is null!");
         }
+        importParents(recordId, opac, projectId, templateId, importDepth, processes, parentID, template);
+        return processes;
+    }
+
+    private void importParents(String recordId, String opac, int projectId, int templateId, int importDepth,
+            LinkedList<TempProcess> processes, String parentID, Template template)
+            throws ProcessGenerationException, IOException, XPathExpressionException, ParserConfigurationException,
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
         int level = 1;
         this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
@@ -445,7 +453,13 @@ public class ImportService {
             try {
                 Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
                 if (Objects.isNull(parentProcess)) {
-                    parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId);
+                    if (OPACConfig.isParentInRecord(opac)) {
+                        parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId,
+                            true);
+                    } else {
+                        parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId,
+                            false);
+                    }
                     level++;
                 } else {
                     logger.info("Process with ID '" + parentID + "' already in database. Stop hierarchical import.");
@@ -455,17 +469,18 @@ public class ImportService {
                     break;
                 }
             } catch (SAXParseException | DAOException e) {
-                // this happens for example if a document is part of a "Virtueller Bestand" in Kalliope for which a
+                // this happens for example if a document is part of a "Virtueller Bestand" in
+                // Kalliope for which a
                 // proper "record" is not returned from its SRU interface
                 logger.error(e.getLocalizedMessage());
                 break;
             }
         }
-        // always try to find a parent for last imported process (e.g. level == importDepth) in the database!
+        // always try to find a parent for last imported process (e.g. level ==
+        // importDepth) in the database!
         if (Objects.nonNull(parentID) && level == importDepth) {
             this.parentTempProcess = checkForParent(parentID, template.getRuleset().getId(), projectId);
         }
-        return processes;
     }
 
     private TempProcess checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
@@ -548,9 +563,9 @@ public class ImportService {
         }
     }
 
-    private Document importDocument(String opac, String identifier, boolean extractExemplars) throws NoRecordFoundException,
-            UnsupportedFormatException, URISyntaxException, IOException, XPathExpressionException,
-            ParserConfigurationException, SAXException {
+    private Document importDocument(String opac, String identifier, boolean extractExemplars, boolean isParentInRecord)
+            throws NoRecordFoundException, UnsupportedFormatException, URISyntaxException, IOException,
+            XPathExpressionException, ParserConfigurationException, SAXException {
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);
@@ -563,7 +578,7 @@ public class ImportService {
         // depending on metadata and return form, call corresponding schema converter module!
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
-        List<File> mappingFiles = getMappingFiles(opac);
+        List<File> mappingFiles = getMappingFiles(opac, isParentInRecord);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
         File debugFolder = ConfigCore.getKitodoDebugDirectory();
@@ -594,10 +609,17 @@ public class ImportService {
         return kitodoNode.getChildNodes();
     }
 
-    private List<File> getMappingFiles(String opac) throws URISyntaxException {
+    private List<File> getMappingFiles(String opac, boolean forParentInRecord) throws URISyntaxException {
         List<File> mappingFiles = new ArrayList<>();
+
+        List<String> mappingFileNames;
         try {
-            for (String mappingFileName : OPACConfig.getXsltMappingFiles(opac)) {
+            if (forParentInRecord) {
+                mappingFileNames = Collections.singletonList(OPACConfig.getXsltMappingFileForParentInRecord(opac));
+            } else {
+                mappingFileNames = OPACConfig.getXsltMappingFiles(opac);
+            }
+            for (String mappingFileName : mappingFileNames) {
                 URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
                         .resolve(new URI(mappingFileName.trim()));
                 mappingFiles.add(ServiceManager.getFileService().getFile(xsltFile));
@@ -606,6 +628,10 @@ public class ImportService {
             logger.error(e.getMessage());
         }
         return mappingFiles;
+    }
+
+    private List<File> getMappingFiles(String opac) throws URISyntaxException {
+        return getMappingFiles(opac, false);
     }
 
     /**
@@ -1101,7 +1127,7 @@ public class ImportService {
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             List<Locale.LanguageRange> priorityList = Locale.LanguageRange
                     .parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-            importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId);
+            importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId, false);
             tempProcess = processList.get(0);
             processTempProcess(tempProcess, template,
                 ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);

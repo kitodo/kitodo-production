@@ -114,6 +114,15 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve the "parentMappingFile" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by its title
+     * @return String containing given catalogs "parentMappingFile"
+     */
+    public static String getXsltMappingFileForParentInRecord(String catalogName) {
+        return getCatalog(catalogName).getString("parentMappingFile");
+    }
+
+    /**
      * Retrieve the "queryDelimiter" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
      * @return configuration for catalog's "queryDelimiter"
@@ -245,6 +254,15 @@ public class OPACConfig {
      */
     public static String getFtpPassword(String catalogName) {
         return getCatalog(catalogName).configurationAt("credentials").getString("password");
+    }
+
+    /**
+     * If a mappingFile for parentInRecord is configured.
+     * @param catalogName OPAC for witch to get the config
+     * @return true, if mapping file is configured
+     */
+    public static boolean isParentInRecord(String catalogName) {
+        return StringUtils.isNotBlank(getXsltMappingFileForParentInRecord(catalogName));
     }
 
     /**

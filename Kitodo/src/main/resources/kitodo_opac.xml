@@ -115,6 +115,7 @@
         <mappingFiles>
             <file>mods2kitodo.xsl</file>
         </mappingFiles>
+        <parentMappingFile>parentMapping.xsl</parentMappingFile>
         <config>
             <param name="host" value="kalliope-verbund.info" />
             <param name="scheme" value="http" />
