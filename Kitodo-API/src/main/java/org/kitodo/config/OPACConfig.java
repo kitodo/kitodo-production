@@ -120,8 +120,8 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by its title
      * @return HierarchicalConfiguration for catalog's "parentMappingFile"
      */
-    public static List<String> getXsltMappingFileForParentInRecord(String catalogName) {
-        return Arrays.asList(getCatalog(catalogName).getString("parentMappingFile"));
+    public static String getXsltMappingFileForParentInRecord(String catalogName) {
+        return getCatalog(catalogName).getString("parentMappingFile");
     }
 
     /**
@@ -264,7 +264,7 @@ public class OPACConfig {
      * @return true, if mapping file is configured
      */
     public static boolean isParentInRecord(String catalogName) {
-        return !getXsltMappingFileForParentInRecord(catalogName).isEmpty();
+        return StringUtils.isNotBlank(getXsltMappingFileForParentInRecord(catalogName));
     }
 
     /**
