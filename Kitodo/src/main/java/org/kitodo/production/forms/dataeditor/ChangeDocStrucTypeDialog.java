@@ -131,7 +131,7 @@ public class ChangeDocStrucTypeDialog {
         IncludedStructuralElement rootElement = dataEditor.getWorkpiece().getRootElement();
         if (rootElement.equals(includedStructuralElement)) {
             if (Objects.isNull(dataEditor.getProcess().getParent())) {
-                return dataEditor.getRuleset().getStructuralElements(dataEditor.getPriorityList());
+                return dataEditor.getRulesetManagement().getStructuralElements(dataEditor.getPriorityList());
             } else {
                 return getAllowedChildTypesFromParentalProcess();
             }
@@ -159,7 +159,7 @@ public class ChangeDocStrucTypeDialog {
     }
 
     private Map<String, String> getAllowedSubstructuralElements(String parentType) {
-        StructuralElementViewInterface parentView = dataEditor.getRuleset().getStructuralElementView(parentType,
+        StructuralElementViewInterface parentView = dataEditor.getRulesetManagement().getStructuralElementView(parentType,
             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         return parentView.getAllowedSubstructuralElements();
     }
@@ -176,7 +176,7 @@ public class ChangeDocStrucTypeDialog {
         for (Iterator<Entry<String, String>> possibleTypesIterator = possibleTypes.entrySet()
                 .iterator(); possibleTypesIterator.hasNext();) {
             String typeToCheck = possibleTypesIterator.next().getKey();
-            StructuralElementViewInterface viewOnTypeToCheck = dataEditor.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface viewOnTypeToCheck = dataEditor.getRulesetManagement().getStructuralElementView(
                 typeToCheck, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
             if (!viewOnTypeToCheck.getAllowedSubstructuralElements().keySet().containsAll(childTypes)) {
                 possibleTypesIterator.remove();

@@ -27,7 +27,7 @@ public interface RulesetSetupInterface {
      *
      * @return the ruleset
      */
-    RulesetManagementInterface getRuleset();
+    RulesetManagementInterface getRulesetManagement();
 
     /**
      * Returns the current acquisition stage to adapt the displaying of fields

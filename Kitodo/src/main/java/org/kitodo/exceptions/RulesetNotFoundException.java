@@ -11,15 +11,19 @@
 
 package org.kitodo.exceptions;
 
-public class RulesetNotFoundException extends Exception {
-    /**
-     * Constructor with given exception message.
-     *
-     * @param exceptionMessage
-     *            as String
-     */
-    public RulesetNotFoundException(String exceptionMessage) {
-        super(exceptionMessage);
-    }
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 
+import org.kitodo.production.helper.Helper;
+
+public class RulesetNotFoundException extends FileNotFoundException {
+    /**
+     * Creates a new ruleset not found exception.
+     *
+     * @param missingFile
+     *            name of missing ruleset file
+     */
+    public RulesetNotFoundException(String missingFile) {
+        super(Helper.getTranslation("rulesetNotFound", Arrays.asList(missingFile)));
+    }
 }

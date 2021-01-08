@@ -36,7 +36,6 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -126,7 +125,7 @@ public class TitleRecordLinkTab {
             try {
                 titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
                 createInsertionPositionSelectionTree();
-            } catch (DAOException | DataException | IOException | RulesetNotFoundException e) {
+            } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("errorLoadingOne",
                         new Object[] {possibleParentProcesses.parallelStream()
                                 .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
@@ -142,7 +141,7 @@ public class TitleRecordLinkTab {
      * @throws IOException
      *             if the METS file cannot be read
      */
-    public void createInsertionPositionSelectionTree() throws DAOException, DataException, IOException, RulesetNotFoundException {
+    public void createInsertionPositionSelectionTree() throws DAOException, DataException, IOException {
         if (Objects.isNull(titleRecordProcess)) {
             return;
         }

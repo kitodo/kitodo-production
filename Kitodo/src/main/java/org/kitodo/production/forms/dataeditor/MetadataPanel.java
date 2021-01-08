@@ -126,7 +126,7 @@ public class MetadataPanel implements Serializable {
 
     void showLogical(Optional<IncludedStructuralElement> optionalStructure) {
         if (optionalStructure.isPresent()) {
-            StructuralElementViewInterface divisionView = dataEditorForm.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
                     optionalStructure.get().getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             logicalMetadataTable = new ProcessFieldedMetadata(optionalStructure.get(), divisionView);
             dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true,
@@ -139,7 +139,7 @@ public class MetadataPanel implements Serializable {
 
     void showPageInLogical(MediaUnit mediaUnit) {
         if (Objects.nonNull(mediaUnit)) {
-            StructuralElementViewInterface divisionView = dataEditorForm.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
                     mediaUnit.getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             logicalMetadataTable = new ProcessFieldedMetadata(mediaUnit, divisionView);
             dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true,
@@ -152,7 +152,7 @@ public class MetadataPanel implements Serializable {
 
     void showPhysical(Optional<MediaUnit> optionalMediaUnit) {
         if (optionalMediaUnit.isPresent() && Objects.nonNull(optionalMediaUnit.get().getType())) {
-            StructuralElementViewInterface divisionView = dataEditorForm.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
                     optionalMediaUnit.get().getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             physicalMetadataTable = new ProcessFieldedMetadata(optionalMediaUnit.get(), divisionView);
             dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true);

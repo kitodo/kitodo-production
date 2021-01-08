@@ -11,11 +11,9 @@
 
 package org.kitodo.production.services.data;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +40,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.RulesetDTO;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
@@ -228,24 +225,20 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
      *            database object that references the ruleset
      * @return a Ruleset Management in which the ruleset has been loaded
      */
-    public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException, RulesetNotFoundException {
-        return openRulesetFile(ruleset.getFile());
-    }
-
-    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException, RulesetNotFoundException {
+    public RulesetManagementInterface openRuleset(Ruleset ruleset) throws IOException {
         final long begin = System.nanoTime();
-        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
+                .getRulesetManagement();
+        String fileName = ruleset.getFile();
         try {
-            ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toString()));
+            rulesetManagement.load(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toFile());
         } catch (FileNotFoundException e) {
-            List<String> param = new ArrayList<>();
-            param.add(fileName);
-            throw new RulesetNotFoundException(Helper.getTranslation("rulesetNotFound", param));
+            throw new RulesetNotFoundException(fileName);
         }
 
         if (logger.isTraceEnabled()) {
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
-        return ruleset;
+        return rulesetManagement;
     }
 }

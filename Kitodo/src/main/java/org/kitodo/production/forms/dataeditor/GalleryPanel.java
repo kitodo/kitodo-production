@@ -188,7 +188,7 @@ public class GalleryPanel {
     }
 
     RulesetManagementInterface getRuleset() {
-        return dataEditor.getRuleset();
+        return dataEditor.getRulesetManagement();
     }
 
     /**

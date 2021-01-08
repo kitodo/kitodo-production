@@ -55,7 +55,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
@@ -289,7 +288,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             but its value cannot be evaluated to an integer
      */
     public void nextStep() throws ConfigurationException, DAOException, DataException, IOException,
-            ProcessGenerationException, DoctypeMissingException, RulesetNotFoundException, CommandException {
+            ProcessGenerationException, DoctypeMissingException, CommandException {
 
         if (currentStep == 0) {
             initialize();
@@ -310,7 +309,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      */
-    private void initialize() throws ConfigurationException, IOException, DoctypeMissingException, RulesetNotFoundException {
+    private void initialize() throws ConfigurationException, IOException, DoctypeMissingException {
         final long begin = System.nanoTime();
 
         overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
@@ -345,7 +344,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      */
-    private void initializeRulesetFields(String newspaperType) throws ConfigurationException, IOException, RulesetNotFoundException {
+    private void initializeRulesetFields(String newspaperType) throws ConfigurationException, IOException {
         RulesetManagementInterface ruleset = rulesetService.openRuleset(overallProcess.getRuleset());
         StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, acquisitionStage, ENGLISH);
         StructuralElementViewInterface yearDivisionView = nextSubView(ruleset, newspaperView, acquisitionStage);
@@ -498,7 +497,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException,
-            CommandException, RulesetNotFoundException {
+            CommandException {
         final long begin = System.nanoTime();
 
         List<IndividualIssue> individualIssuesForProcess = processesToCreate.get(index);
@@ -642,8 +641,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void prepareTheAppropriateYearProcess(String yearMark, Map<String, String> genericFields)
-            throws DAOException, DataException, ProcessGenerationException, IOException, CommandException,
-            RulesetNotFoundException {
+            throws DAOException, DataException, ProcessGenerationException, IOException, CommandException {
 
         if (yearMark.equals(currentYear)) {
             return;
@@ -655,7 +653,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    private void saveAndCloseCurrentYearProcess() throws DataException, IOException, RulesetNotFoundException {
+    private void saveAndCloseCurrentYearProcess() throws DataException, IOException {
         final long begin = System.nanoTime();
 
         metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
@@ -718,7 +716,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void createNewYearProcess(String yearMark, Map<String, String> genericFields)
-            throws ProcessGenerationException, DataException, IOException, CommandException, RulesetNotFoundException {
+            throws ProcessGenerationException, DataException, IOException, CommandException {
         final long begin = System.nanoTime();
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
@@ -781,7 +779,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return createdChild;
     }
 
-    private void finish() throws DataException, IOException, RulesetNotFoundException {
+    private void finish() throws DataException, IOException {
         final long begin = System.nanoTime();
 
         saveAndCloseCurrentYearProcess();

@@ -191,7 +191,7 @@ public class ProcessDataTab {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Process process = this.createProcessForm.getMainProcess();
         try {
-            StructuralElementViewInterface docTypeView = createProcessForm.getRuleset().getStructuralElementView(
+            StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement().getStructuralElementView(
                 docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
             String processTitle = docTypeView.getProcessTitle().orElse("");
             if (processTitle.isEmpty()) {

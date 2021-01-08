@@ -120,7 +120,6 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
@@ -2515,10 +2514,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return whether child processes for the given ProcessDTO can be created via the calendar or not
      * @throws DAOException if process could not be loaded from database
      * @throws IOException if ruleset file could not be read
-     * @throws RulesetNotFoundException if ruleset file could not be read
      */
     public static boolean canCreateProcessWithCalendar(ProcessDTO processDTO)
-            throws DAOException, IOException, RulesetNotFoundException {
+            throws DAOException, IOException {
         Collection<String> functionalDivisions;
         if (Objects.isNull(processDTO.getRuleset())) {
             return false;
@@ -2542,10 +2540,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return whether child processes for the given ProcessDTO can be created via the calendar or not
      * @throws DAOException if process could not be loaded from database
      * @throws IOException if ruleset file could not be read
-     * @throws RulesetNotFoundException if ruleset file could not be read
      */
     public static boolean canCreateChildProcess(ProcessDTO processDTO) throws DAOException,
-            IOException, RulesetNotFoundException {
+            IOException {
         Collection<String> functionalDivisions;
         if (Objects.isNull(processDTO.getRuleset())) {
             return false;

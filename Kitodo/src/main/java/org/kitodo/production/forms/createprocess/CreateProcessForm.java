@@ -69,7 +69,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private final SearchTab searchTab = new SearchTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
-    private RulesetManagementInterface rulesetManagementInterface;
+    private RulesetManagementInterface rulesetManagement;
     private List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
     private String acquisitionStage = "create";
     private Project project;
@@ -83,33 +83,28 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     /**
      * Returns the ruleset management to access the ruleset.
      *
-     * @return the ruleset
+     * @return the ruleset management
      */
     @Override
-    public RulesetManagementInterface getRuleset() {
-        return rulesetManagementInterface;
+    public RulesetManagementInterface getRulesetManagement() {
+        return rulesetManagement;
     }
 
     /**
      * Update ruleset and docType.
-     * @param ruleset as Ruleset
-     * @throws RulesetNotFoundException thrown if ruleset could not be found
+     * 
+     * @param ruleset
+     *            as Ruleset
+     * @throws IOException
+     *             thrown if ruleset could not be read
      */
-    public void updateRulesetAndDocType(Ruleset ruleset) throws RulesetNotFoundException {
-        setRulesetManagementInterface(ruleset);
+    public void updateRulesetAndDocType(Ruleset ruleset) throws IOException {
+        rulesetManagement = ServiceManager.getRulesetService().openRuleset(ruleset);
         processDataTab.setAllDocTypes(getAllRulesetDivisions());
     }
 
-    private void setRulesetManagementInterface(Ruleset ruleset) throws RulesetNotFoundException {
-        try {
-            this.rulesetManagementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
-        } catch (IOException e) {
-            logger.error(e.getLocalizedMessage());
-        }
-    }
-
     private List<SelectItem> getAllRulesetDivisions() {
-        List<SelectItem> allDocTypes = rulesetManagementInterface
+        List<SelectItem> allDocTypes = rulesetManagement
                 .getStructuralElements(priorityList).entrySet()
                 .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
@@ -294,14 +289,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
-        } catch (IOException | ProcessGenerationException e) {
-            logger.error(e.getLocalizedMessage());
         } catch (RulesetNotFoundException e) {
             String rulesetFile = "Process list is empty";
             if (!this.processes.isEmpty() && Objects.nonNull(getMainProcess().getRuleset())) {
                 rulesetFile = getMainProcess().getRuleset().getFile();
             }
             Helper.setErrorMessage("rulesetNotFound", new Object[] {rulesetFile }, logger, e);
+        } catch (IOException | ProcessGenerationException e) {
+            logger.error(e.getLocalizedMessage(), e);
         }
         return this.stayOnCurrentPage;
     }
@@ -370,7 +365,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
                 }
             }
-        } catch (ProcessGenerationException | RulesetNotFoundException | DataException | DAOException | IOException e) {
+        } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -379,7 +374,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * Create process hierarchy.
      */
     private void createProcessHierarchy()
-            throws DataException, ProcessGenerationException, IOException, RulesetNotFoundException {
+            throws DataException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
         if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
@@ -460,9 +455,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         // set parent relations between main process and its imported child processes!
         try {
             ImportService.processProcessChildren(getMainProcess(), this.childProcesses, template,
-                    rulesetManagementInterface, acquisitionStage, priorityList);
+                    rulesetManagement, acquisitionStage, priorityList);
         } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
-                | ProcessGenerationException | IOException | RulesetNotFoundException e) {
+                | ProcessGenerationException | IOException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
         }
     }
@@ -489,14 +484,15 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 ImportService.updateTasks(process);
             } else if (Objects.nonNull(tempProcess.getMetadataNodes())) {
                 try {
-                    ImportService.processTempProcess(tempProcess, template, rulesetManagementInterface,
+                    ImportService.processTempProcess(tempProcess, template, rulesetManagement,
                             acquisitionStage, priorityList);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
+                } catch (RulesetNotFoundException e) {
+                    throw new ProcessGenerationException(
+                            "Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
                 } catch (IOException e) {
                     throw new ProcessGenerationException("Error reading Ruleset: " + tempProcess.getProcess().getRuleset().getTitle());
-                } catch (RulesetNotFoundException e) {
-                    throw new ProcessGenerationException("Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
                 }
             }
         }

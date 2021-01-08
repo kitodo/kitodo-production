@@ -104,7 +104,7 @@ public class AddMediaUnitDialog {
 
             if (InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT.equals(selectedPosition)
                     || InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT.equals(selectedPosition)) {
-                divisionView = dataEditor.getRuleset().getStructuralElementView(
+                divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                     selectedMediaUnit.orElseThrow(IllegalStateException::new).getType(),
                         dataEditor.getAcquisitionStage(),
                         dataEditor.getPriorityList()
@@ -116,7 +116,7 @@ public class AddMediaUnitDialog {
                     selectedMediaUnit.get(),
                         dataEditor.getWorkpiece().getMediaUnit());
                 if (!parents.isEmpty()) {
-                    divisionView = dataEditor.getRuleset().getStructuralElementView(
+                    divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                             parents.getLast().getType(),
                             dataEditor.getAcquisitionStage(),
                             dataEditor.getPriorityList());

@@ -78,7 +78,6 @@ import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
@@ -982,7 +981,7 @@ public class ImportService {
                                               Template template, RulesetManagementInterface managementInterface,
                                               String acquisitionStage, List<Locale.LanguageRange> priorityList)
             throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
-            ProcessGenerationException, IOException, RulesetNotFoundException {
+            ProcessGenerationException, IOException {
         for (TempProcess tempProcess : childProcesses) {
             if (Objects.isNull(tempProcess) || Objects.isNull(tempProcess.getProcess())) {
                 logger.error("Child process " + (childProcesses.indexOf(tempProcess) + 1) + " is null => Skip!");
@@ -1083,8 +1082,8 @@ public class ImportService {
     public static void processTempProcess(TempProcess tempProcess, Template template,
                                           RulesetManagementInterface managementInterface, String acquisitionStage,
                                           List<Locale.LanguageRange> priorityList)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException, IOException,
-            RulesetNotFoundException {
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
+            IOException {
         List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
                 acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getRootElement().getType();
@@ -1101,7 +1100,7 @@ public class ImportService {
      * @param process the process to check.
      * @param docType the doctype to check in the ruleset.
      */
-    public static void checkTasks(Process process, String docType) throws IOException, RulesetNotFoundException {
+    public static void checkTasks(Process process, String docType) throws IOException {
         // remove tasks from process, if doctype is configured not to use a workflow
         Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService()
                 .openRuleset(process.getRuleset()).getDivisionsWithNoWorkflow();
@@ -1140,7 +1139,7 @@ public class ImportService {
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
-                | URISyntaxException | SAXException | RulesetNotFoundException | InvalidMetadataValueException
+                | URISyntaxException | SAXException | InvalidMetadataValueException
                 | NoSuchMetadataFieldException | DataException | CommandException e) {
             throw new ImportException(
                     Helper.getTranslation("errorImporting", Arrays.asList(Helper.getTranslation("process"), ppn)));
