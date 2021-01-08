@@ -46,8 +46,7 @@
             <p:panelGrid>
                 <p:row>
                     <div>
-                        <p:fileUpload value="#{CreateProcessForm.fileUploadDialog.file}"
-                                      rendered="#{CreateProcessForm.fileUploadDialog.selectedCatalog ne null}"
+                        <p:fileUpload rendered="#{CreateProcessForm.fileUploadDialog.selectedCatalog ne null}"
                                       fileUploadListener="#{CreateProcessForm.fileUploadDialog.handleFileUpload}"
                                       allowTypes="/(\.|\/)(xml)$/"
                                       skinSimple="true"

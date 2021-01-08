@@ -109,7 +109,8 @@ public class OPACConfig {
      * @return boolean if catalog is configured to use FileUpload
      */
     public static boolean getFileUploadConfig(String catalogName) {
-        return getCatalog(catalogName).getBoolean("fileUpload");
+        return getCatalog(catalogName).containsKey("fileUpload")
+                && getCatalog(catalogName).getBoolean("fileUpload");
     }
 
     /**

@@ -45,7 +45,6 @@ import org.xml.sax.SAXException;
 
 public class FileUploadDialog extends MetadataImportDialog {
 
-    private UploadedFile file;
     private String selectedCatalog;
     private static final Logger logger = LogManager.getLogger(FileUploadDialog.class);
 
@@ -111,14 +110,6 @@ public class FileUploadDialog extends MetadataImportDialog {
             }
         }
         return catalogsWithFileUpload;
-    }
-
-    /**
-     * Set the file.
-     * @param file the file to upload
-     */
-    public void setFile(UploadedFile file) {
-        this.file = file;
     }
 
     /**
