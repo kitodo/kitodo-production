@@ -40,6 +40,7 @@
                              value="#{ProcessForm.filter}"
                              placeholder="#{msgs.filter}">
                     <p:ajax event="change"
+                            onstart="PF('processesTable').getPaginator().setPage(0);"
                             update="processesTabView:processesForm:processesTable"/>
                 </p:inputText>
                 <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>

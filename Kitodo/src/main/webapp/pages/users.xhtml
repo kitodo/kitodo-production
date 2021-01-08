@@ -81,7 +81,8 @@
                                  value="#{UserForm.filter}"
                                  placeholder="#{msgs.filter}">
                         <p:ajax event="change"
-                                update="@all"/>
+                                onstart="PF('usersTable').getPaginator().setPage(0);"
+                                update="usersTabView:usersTable sticky-notifications"/>
                     </p:inputText>
                     <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                     <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
