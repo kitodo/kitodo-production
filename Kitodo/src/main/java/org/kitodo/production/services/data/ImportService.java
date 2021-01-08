@@ -587,11 +587,12 @@ public class ImportService {
      * Converts a given dataRecord to an internal document.
      * @param dataRecord the dataRecord to convert.
      * @param opac the opac to use (for configuration)
-     * @param isParentInRecord
+     * @param isParentInRecord if parentRecord is in childRecord
      * @return the converted Document
      */
-    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac, boolean isParentInRecord) throws UnsupportedFormatException,
-            URISyntaxException, IOException, ParserConfigurationException, SAXException {
+    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac, boolean isParentInRecord)
+            throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException,
+            SAXException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         List<File> mappingFiles = getMappingFiles(opac, isParentInRecord);
