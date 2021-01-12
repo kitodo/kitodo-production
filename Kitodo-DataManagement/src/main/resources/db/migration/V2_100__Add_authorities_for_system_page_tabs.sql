@@ -16,4 +16,8 @@ INSERT IGNORE INTO authority (title) VALUES ('viewTerms_globalAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('viewMigration_globalAssignable');
 
 INSERT IGNORE INTO role_x_authority (role_id, authority_id)
-SELECT (SELECT id FROM role WHERE title = 'Administration'), id FROM authority WHERE title LIKE '%Authority_globalAssignable';
+SELECT (SELECT id FROM role WHERE title = 'Administration'), id FROM authority WHERE title = 'viewTaskManager_globalAssignable';
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
+SELECT (SELECT id FROM role WHERE title = 'Administration'), id FROM authority WHERE title = 'viewTerms_globalAssignable';
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
+SELECT (SELECT id FROM role WHERE title = 'Administration'), id FROM authority WHERE title = 'viewMigration_globalAssignable';
