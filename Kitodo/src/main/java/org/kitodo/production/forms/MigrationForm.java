@@ -517,7 +517,7 @@ public class MigrationForm extends BaseForm {
             }
             newspaperMigrationRendered = false;
             newspaperBatchesSelectedItems = new ArrayList<>();
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
