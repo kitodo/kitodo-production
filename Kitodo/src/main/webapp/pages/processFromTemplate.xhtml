@@ -60,6 +60,16 @@
                          styleClass="secondary">
             <p:resetInput target="catalogSearchForm"/>
         </p:commandButton>
+        <p:commandButton id="fileUpload"
+                         process="@this"
+                         value="#{msgs['newProcess.fileUpload.heading']}"
+                         oncomplete="PF('fileUploadDialog').show();"
+                         icon="fa fa-book"
+                         iconPos="right"
+                         update="fileUploadForm"
+                         styleClass="secondary">
+            <p:resetInput target="fileUploadForm"/>
+        </p:commandButton>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
@@ -88,6 +98,7 @@
 
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/import.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/fileUpload.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/hitlistDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/exemplarRecords.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/errorPopup.xhtml"/>

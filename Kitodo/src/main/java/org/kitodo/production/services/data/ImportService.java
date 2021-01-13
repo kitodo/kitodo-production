@@ -344,7 +344,14 @@ public class ImportService {
         }
     }
 
-    private TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
+    /**
+     * Creates a temporary Process from the given document with templateID und projectID.
+     * @param document the given document
+     * @param templateID the template to use
+     * @param projectID the project to use
+     * @return a temporary process
+     */
+    public TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
             throws ProcessGenerationException {
         String docType = getRecordDocType(document);
         NodeList metadataNodes = extractMetadataNodeList(document);
@@ -573,8 +580,19 @@ public class ImportService {
             exemplarRecords = extractExemplarRecords(dataRecord, opac);
         }
 
-        // ################# CONVERT ################
-        // depending on metadata and return form, call corresponding schema converter module!
+        return convertDataRecordToInternal(dataRecord, opac, isParentInRecord);
+    }
+
+    /**
+     * Converts a given dataRecord to an internal document.
+     * @param dataRecord the dataRecord to convert.
+     * @param opac the opac to use (for configuration)
+     * @param isParentInRecord if parentRecord is in childRecord
+     * @return the converted Document
+     */
+    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac, boolean isParentInRecord)
+            throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException,
+            SAXException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         List<File> mappingFiles = getMappingFiles(opac, isParentInRecord);
@@ -583,12 +601,12 @@ public class ImportService {
         File debugFolder = ConfigCore.getKitodoDebugDirectory();
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "catalogRecord.xml"),
-                (String) dataRecord.getOriginalData(), StandardCharsets.UTF_8);
+                    (String) dataRecord.getOriginalData(), StandardCharsets.UTF_8);
         }
         DataRecord internalRecord = converter.convert(dataRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
         if (Objects.nonNull(debugFolder)) {
             FileUtils.writeStringToFile(new File(debugFolder, "internalRecord.xml"),
-                (String) internalRecord.getOriginalData(), StandardCharsets.UTF_8);
+                    (String) internalRecord.getOriginalData(), StandardCharsets.UTF_8);
         }
 
         if (!(internalRecord.getOriginalData() instanceof String)) {

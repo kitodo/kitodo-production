@@ -22,7 +22,7 @@
                      styleClass="confirm-delete"
                      style="padding-left: var(--default-double-size); padding-right: var(--default-double-size);"
                      appendTo="@(body)"
-                     message="#{CreateProcessForm.importDialog.getNumberOfChildProcessesWarning()}"
+                     message="#{CreateProcessForm.catalogImportDialog.getNumberOfChildProcessesWarning()}"
                      widgetVar="manyChildrenWarningDialog"
                      id="manyChildrenWarningDialog">
         <h:form id="importManyChildrenForm">
@@ -36,7 +36,7 @@
                     styleClass="ui-confirmdialog-yes primary right"
                     icon="fa fa-check fa-lg"
                     iconPos="right"
-                    action="#{CreateProcessForm.importDialog.getRecordHierarchy()}"
+                    action="#{CreateProcessForm.catalogImportDialog.getRecordHierarchy()}"
                     onclick="PF('manyChildrenWarningDialog').hide();"/>
             <p:commandButton
                     id="cancelButton"

@@ -104,6 +104,16 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve the "fileUpload" configuration of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by its title
+     * @return boolean if catalog is configured to use FileUpload
+     */
+    public static boolean getFileUploadConfig(String catalogName) {
+        return getCatalog(catalogName).containsKey("fileUpload")
+                && getCatalog(catalogName).getBoolean("fileUpload");
+    }
+
+    /**
      * Retrieve list of "mappingFiles" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
      * @return List of Strings containing mapping files names for catalog

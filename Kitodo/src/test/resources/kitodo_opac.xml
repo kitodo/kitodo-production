@@ -49,6 +49,7 @@
     <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
+        <fileUpload>false</fileUpload>
         <metadataFormat>MODS</metadataFormat>
         <mappingFiles>
             <file>mods2kitodo.xsl</file>
@@ -78,6 +79,7 @@
     <catalogue title="Kalliope" description="Kalliope Verbundkatalog">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
+        <fileUpload>false</fileUpload>
         <metadataFormat>MODS</metadataFormat>
         <mappingFiles>
             <file>mods2kitodo.xsl</file>
@@ -106,6 +108,7 @@
     <catalogue title="K10Plus" description="K10Plus OPAC">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
+        <fileUpload>false</fileUpload>
         <metadataFormat>PICA</metadataFormat>
         <mappingFile>pica2kitodo.xsl</mappingFile>
         <config>

@@ -14,7 +14,6 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -35,7 +33,6 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
@@ -54,19 +51,12 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
-public class ImportDialog implements Serializable {
-    private static final Logger logger = LogManager.getLogger(ImportDialog.class);
+public class CatalogImportDialog  extends MetadataImportDialog implements Serializable {
+    private static final Logger logger = LogManager.getLogger(CatalogImportDialog.class);
     private final LazyHitModel hitModel = new LazyHitModel();
 
-    private final CreateProcessForm createProcessForm;
-    private static final int ADDITIONAL_FIELDS_TAB_INDEX = 1;
-    private static final int TITLE_RECORD_LINK_TAB_INDEX = 3;
     private static final String ID_PARAMETER_NAME = "ID";
-    private static final String FORM_CLIENTID = "editForm";
     private static final String HITSTABLE_NAME = "hitlistDialogForm:hitlistDialogTable";
-    private static final String INSERTION_TREE = "editForm:processFromTemplateTabView:insertionTree";
-    private static final String GROWL_MESSAGE =
-            "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
     private static final int NUMBER_OF_CHILDREN_WARNING_THRESHOLD = 5;
 
     private String currentRecordId = "";
@@ -80,24 +70,19 @@ public class ImportDialog implements Serializable {
      *
      * @param createProcessForm CreateProcessForm instance to which this ImportTab is assigned.
      */
-    ImportDialog(CreateProcessForm createProcessForm) {
-        this.createProcessForm = createProcessForm;
+    CatalogImportDialog(CreateProcessForm createProcessForm) {
+        super(createProcessForm);
     }
 
     /**
-     * Get list of catalogs.
-     *
-     * @return list of catalogs
+     * Get the full record with the given ID from the catalog.
      */
-    public List<String> getCatalogs() {
-        try {
-            return ServiceManager.getImportService().getAvailableCatalogs();
-        } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return new LinkedList<>();
-        }
+    public void getSelectedRecord() {
+        this.createProcessForm.setChildProcesses(new LinkedList<>());
+        this.createProcessForm.setProcesses(new LinkedList<>());
+        getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
     }
-
+    
     /**
      * Get list of search fields.
      *
@@ -154,40 +139,9 @@ public class ImportDialog implements Serializable {
         }
     }
 
-    /**
-     * Get the full record with the given ID from the catalog.
-     */
-    public void getSelectedRecord() {
-        this.createProcessForm.setChildProcesses(new LinkedList<>());
-        this.createProcessForm.setProcesses(new LinkedList<>());
-        getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
-    }
-
-    private void showRecord() {
-        Ajax.update(FORM_CLIENTID);
-
-        // if fewer processes are imported than configured in the frontend, it can mean that
-        // - the OPAC does not have as many processes in the hierarchy or
-        // - one process of the hierarchy was already in the DB and import ended at this point
-        int numberOfProcesses = this.createProcessForm.getProcesses().size();
-
-        if (numberOfProcesses < 1) {
-            Helper.setErrorMessage("Error: list of processes is empty!");
-            return;
-        }
-
-        TempProcess parentTempProcess = ServiceManager.getImportService().getParentTempProcess();
-        if (numberOfProcesses == 1 && Objects.nonNull(parentTempProcess)) {
-            // case 1: only one process was imported => load DB parent into "TitleRecordLinkTab"
-            setParentAsTitleRecord(parentTempProcess.getProcess());
-        } else {
-            // case 2: multiple processes imported and one ancestor found in DB => add ancestor to list
-            if (Objects.nonNull(parentTempProcess)) {
-                this.createProcessForm.getProcesses().add(parentTempProcess);
-            }
-            this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
-        }
-
+    @Override
+    void showRecord() {
+        super.showRecord();
         // if more than one exemplar record was found, display a selection dialog to the user
         LinkedList<ExemplarRecord> exemplarRecords = ServiceManager.getImportService().getExemplarRecords();
         if (exemplarRecords.size() == 1) {
@@ -195,16 +149,6 @@ public class ImportDialog implements Serializable {
         } else if (exemplarRecords.size() > 1) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
         }
-    }
-
-    private void setParentAsTitleRecord(Process parentProcess) {
-        this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
-        ArrayList<SelectItem> parentCandidates = new ArrayList<>();
-        parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
-        this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
-        this.createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
-        this.createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
-        Ajax.update(INSERTION_TREE);
     }
 
     /**
@@ -287,18 +231,6 @@ public class ImportDialog implements Serializable {
      */
     public LazyHitModel getHitModel() {
         return this.hitModel;
-    }
-
-    /**
-     * Show growl message.
-     *
-     * @param summary General message
-     * @param detail Message detail
-     */
-    public void showGrowlMessage(String summary, String detail) {
-        String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
-                .replace("SEVERITY", "info");
-        PrimeFaces.current().executeScript(script);
     }
 
     /**
