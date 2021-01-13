@@ -345,6 +345,17 @@ public class ImportService {
     }
 
     /**
+     * Gets Parent id with a specific higherLevelIdentifier.
+     * @param document the document to search for parentIds
+     * @param higherLevelIdentifier the given identifier
+     * @return the parentID from the record.
+     */
+    public String getParentID(Document document, String higherLevelIdentifier) throws XPathExpressionException {
+        parentXpath = parentXpath.replace(REPLACE_ME, higherLevelIdentifier);
+        return getParentID(document);
+    }
+
+    /**
      * Creates a temporary Process from the given document with templateID und projectID.
      * @param document the given document
      * @param templateID the template to use
