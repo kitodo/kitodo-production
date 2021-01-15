@@ -15,11 +15,11 @@ import java.io.IOException;
 
 import javax.naming.ConfigurationException;
 
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
 
 /**
@@ -69,14 +69,14 @@ public class NewspaperMigrationTask extends EmptyTask {
     /**
      * Creates a new newspaper migration task.
      *
-     * @param transferredBatch
-     *            an object that transfers a newspaper batch from index
+     * @param batch
+     *            the batch object which holds together the newspaper processes
      */
-    public NewspaperMigrationTask(BatchDTO transferredBatch) {
-        super(transferredBatch.getTitle());
-        this.numberOfProcesses = transferredBatch.getProcesses().size();
+    public NewspaperMigrationTask(Batch batch) {
+        super(batch.getTitle());
+        this.numberOfProcesses = batch.getProcesses().size();
         this.part = Part.CONVERT_PROCESSES;
-        this.migrator = new NewspaperProcessesMigrator(transferredBatch);
+        this.migrator = new NewspaperProcessesMigrator(batch);
     }
 
     /**

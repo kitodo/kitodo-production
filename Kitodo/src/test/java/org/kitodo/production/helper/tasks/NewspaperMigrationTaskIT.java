@@ -102,7 +102,7 @@ public class NewspaperMigrationTaskIT {
         Assert.assertEquals("should not yet have created overall process", 0,
             processService.findByTitle("NewsMiTe").size());
 
-        NewspaperMigrationTask underTest = new NewspaperMigrationTask(batchService.findById(5));
+        NewspaperMigrationTask underTest = new NewspaperMigrationTask(batchService.getById(5));
         underTest.start();
         Assert.assertTrue("should be running", underTest.isAlive());
         underTest.join();
@@ -117,10 +117,12 @@ public class NewspaperMigrationTaskIT {
         Assert.assertEquals("should have added date for day", "1850-03-12",
             rootElement.getChildren().get(0).getOrderlabel());
 
+        Process newspaperProcess = processService.getById(4);
+        processService.save(newspaperProcess);
+        Process yearProcess = processService.getById(5);
+        processService.save(yearProcess);
         Assert.assertEquals("should have created year process", 1, processService.findByTitle("NewsMiTe_1850").size());
         Assert.assertEquals("should have created overall process", 1, processService.findByTitle("NewsMiTe").size());
-        Process newspaperProcess = processService.getById(4);
-        Process yearProcess = processService.getById(5);
         Assert.assertTrue("should have added link from newspaper process to year process",
             newspaperProcess.getChildren().contains(yearProcess));
         List<Process> linksInYear = yearProcess.getChildren();

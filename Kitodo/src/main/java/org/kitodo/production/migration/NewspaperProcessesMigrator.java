@@ -137,9 +137,9 @@ public class NewspaperProcessesMigrator {
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     /**
-     * List of transferred processes.
+     * List of processes.
      */
-    private final List<ProcessDTO> transferredProcess;
+    private final List<Process> processes;
 
     /**
      * Record ID of the process template.
@@ -196,12 +196,12 @@ public class NewspaperProcessesMigrator {
     /**
      * Creates a new process migrator.
      *
-     * @param batchTransfer
+     * @param batch
      *            transfers Production v. 2 newspaper batch
      */
-    public NewspaperProcessesMigrator(BatchDTO batchTransfer) {
-        this.batchNumber = batchTransfer.getId();
-        this.transferredProcess = batchTransfer.getProcesses();
+    public NewspaperProcessesMigrator(Batch batch) {
+        this.batchNumber = batch.getId();
+        this.processes = batch.getProcesses();
     }
 
     /**
@@ -263,8 +263,8 @@ public class NewspaperProcessesMigrator {
      * @throws DataException
      *             if a search engine error occurs
      */
-    public static void initializeMigration(Integer batchId) throws DataException {
-        BatchDTO batchTransfer = ServiceManager.getBatchService().findById(batchId);
+    public static void initializeMigration(Integer batchId) throws DAOException {
+        Batch batchTransfer = ServiceManager.getBatchService().getById(batchId);
         TaskManager.addTask(new NewspaperMigrationTask(batchTransfer));
     }
 
@@ -313,7 +313,7 @@ public class NewspaperProcessesMigrator {
      */
     public void convertProcess(int index) throws DAOException, IOException, ConfigurationException {
         final long begin = System.nanoTime();
-        Integer processId = transferredProcess.get(index).getId();
+        Integer processId = processes.get(index).getId();
         Process process = processService.getById(processId);
         String processTitle = process.getTitle();
         logger.info("Starting to convert process {} (ID {})...", processTitle, processId);
@@ -556,7 +556,7 @@ public class NewspaperProcessesMigrator {
         overallProcess = processGenerator.getGeneratedProcess();
         overallProcess.setTitle(getTitle());
         ImportService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
-        processService.save(overallProcess);
+        processService.saveToDatabase(overallProcess);
         ServiceManager.getFileService().createProcessLocation(overallProcess);
         overallWorkpiece.setId(overallProcess.getId().toString());
         overallWorkpiece.getRootElement().getMetadata().addAll(overallMetadata);
@@ -592,7 +592,7 @@ public class NewspaperProcessesMigrator {
         Process yearProcess = processGenerator.getGeneratedProcess();
         yearProcess.setTitle(yearTitle);
         ImportService.checkTasks(yearProcess, yearToCreate.getValue().getType());
-        processService.save(yearProcess);
+        processService.saveToDatabase(yearProcess);
 
         MetadataEditor.addLink(overallWorkpiece.getRootElement(), yearProcess.getId());
         if (!yearsIterator.hasNext()) {
@@ -601,7 +601,7 @@ public class NewspaperProcessesMigrator {
 
         yearProcess.setParent(overallProcess);
         overallProcess.getChildren().add(yearProcess);
-        processService.save(yearProcess);
+        processService.saveToDatabase(yearProcess);
 
         ServiceManager.getFileService().createProcessLocation(yearProcess);
 
@@ -615,9 +615,9 @@ public class NewspaperProcessesMigrator {
             Process child = processService.getById(childId);
             child.setParent(yearProcess);
             yearProcess.getChildren().add(child);
-            processService.save(child);
+            processService.saveToDatabase(child);
         }
-        processService.save(yearProcess);
+        processService.saveToDatabase(yearProcess);
         addToBatch(yearProcess);
 
         logger.info("Process {} (ID {}) successfully created.", yearProcess.getTitle(), yearProcess.getId());
@@ -633,12 +633,12 @@ public class NewspaperProcessesMigrator {
      * @param process
      *            process to be added
      */
-    private void addToBatch(Process process) throws DAOException, DataException {
+    private void addToBatch(Process process) throws DAOException {
         Batch batch = batchService.getById(batchNumber);
         process.getBatches().add(batch);
         batch.getProcesses().add(process);
-        processService.save(process);
-        batchService.save(batch);
+        processService.saveToDatabase(process);
+        batchService.saveToDatabase(batch);
     }
 
     /**
@@ -667,7 +667,7 @@ public class NewspaperProcessesMigrator {
      * @return the process title
      */
     public String getProcessTitle(int transferIndex) {
-        return transferredProcess.get(transferIndex).getTitle();
+        return processes.get(transferIndex).getTitle();
     }
 
     /**
