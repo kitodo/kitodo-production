@@ -1151,8 +1151,25 @@ Popup dialogs
 
 .ui-dialog,
 .ui-dialog .ui-panelgrid-content,
-.ui-dialog .ui-panelgrid-cell {
+.ui-dialog .ui-panelgrid-cell,
+.ui-fileupload-buttonbar,
+.ui-fileupload-content,
+.ui-fileupload-content .ui-fileupload-cancel {
     background-color: var(--light-gray);
+}
+
+.ui-fileupload-buttonbar,
+.ui-fileupload-content {
+    float: right;
+    padding: 0;
+}
+
+.ui-fileupload-buttonbar > button.ui-button {
+    margin-left: var(--default-full-size);
+}
+
+.ui-fileupload-choose .ui-button-text {
+    line-height: 1.8em;
 }
 
 .ui-dialog-titlebar {
