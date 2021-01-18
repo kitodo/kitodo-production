@@ -79,6 +79,17 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
+     * Set error message with empty description, e.g. only with title. That means no compound message is created.
+     * This is a convenience function for calling "setMessage" with parameters "level" = "MessageLevel.ERROR" and
+     * "createCompoundMessage" = "false".
+     *
+     * @param message message String to be displayed.
+     */
+    public static void setErrorMessagesWithoutDescription(String message) {
+        setMessage(null, message, "", MessageLevel.ERROR, false);
+    }
+
+    /**
      * Set error message and description for user.
      *
      * @param message
@@ -254,6 +265,17 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
+     * Set message with empty description, e.g. only with title. That means no compound message is created.
+     * This is a convenience function for calling "setMessage" with parameters "level" = "MessageLevel.INFO" and
+     * "createCompoundMessage" = "false".
+     *
+     * @param message message String to be displayed.
+     */
+    public static void setMessageWithoutDescription(String message) {
+        setMessage(null, message, "", MessageLevel.INFO, false);
+    }
+
+    /**
      * Set message and description for user.
      *
      * @param message
@@ -279,16 +301,25 @@ public class Helper implements Observer, Serializable {
         setMessage(control, message, description, MessageLevel.INFO);
     }
 
+    private static void setMessage(String control, String message, String description, MessageLevel level) {
+        setMessage(control, message, description, level, true);
+    }
+
     /**
      * Transfer an error message for a specific control to the current form.
      */
-    private static void setMessage(String control, String message, String description, MessageLevel level) {
+    private static void setMessage(String control, String message, String description, MessageLevel level,
+                                   boolean createCompoundMessage) {
         String msg = getTranslation(Objects.toString(message));
         String descript = getTranslation(Objects.toString(description));
+        String detail = descript;
 
         String compoundMessage = msg.replaceFirst(":\\s*$", "");
-        if (StringUtils.isNotEmpty(descript)) {
-            compoundMessage += ": " + descript;
+        if (createCompoundMessage) {
+            if (StringUtils.isNotEmpty(descript)) {
+                compoundMessage += ": " + descript;
+            }
+            detail = null;
         }
         if (Objects.nonNull(activeMQReporting)) {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
@@ -300,7 +331,7 @@ public class Helper implements Observer, Serializable {
         if (Objects.nonNull(context)) {
             context.addMessage(control,
                 new FacesMessage(MessageLevel.ERROR.equals(level) ? FacesMessage.SEVERITY_ERROR : MessageLevel.WARN.equals(level)
-                        ? FacesMessage.SEVERITY_WARN : FacesMessage.SEVERITY_INFO, compoundMessage, null));
+                        ? FacesMessage.SEVERITY_WARN : FacesMessage.SEVERITY_INFO, compoundMessage, detail));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
             logger.log(MessageLevel.ERROR.equals(level) ? Level.ERROR : MessageLevel.WARN.equals(level) ? Level.WARN : Level.INFO,
