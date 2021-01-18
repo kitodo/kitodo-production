@@ -79,17 +79,6 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
-     * Set error message with empty description, e.g. only with title. That means no compound message is created.
-     * This is a convenience function for calling "setMessage" with parameters "level" = "MessageLevel.ERROR" and
-     * "createCompoundMessage" = "false".
-     *
-     * @param message message String to be displayed.
-     */
-    public static void setErrorMessagesWithoutDescription(String message) {
-        setMessage(null, message, "", MessageLevel.ERROR, false);
-    }
-
-    /**
      * Set error message and description for user.
      *
      * @param message
@@ -232,6 +221,17 @@ public class Helper implements Observer, Serializable {
     public static void setErrorMessage(String title, String description, Logger logger, Exception exception) {
         logger.error(title, exception);
         setErrorMessage(title, description);
+    }
+
+    /**
+     * Set error message with empty description, e.g. only with title. That means no compound message is created.
+     * This is a convenience function for calling "setMessage" with parameters "level" = "MessageLevel.ERROR" and
+     * "createCompoundMessage" = "false".
+     *
+     * @param message message String to be displayed.
+     */
+    public static void setErrorMessagesWithoutDescription(String message) {
+        setMessage(null, message, "", MessageLevel.ERROR, false);
     }
 
     private static String getExceptionMessage(Throwable e) {
