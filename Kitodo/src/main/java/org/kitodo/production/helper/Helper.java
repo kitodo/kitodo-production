@@ -168,17 +168,6 @@ public class Helper implements Observer, Serializable {
         }
     }
 
-    private static String getRootCause(Throwable problem) {
-        Throwable cause = problem.getCause();
-        String className = problem.getClass().getSimpleName();
-        if (Objects.nonNull(cause)) {
-            return className + " / " + getRootCause(cause);
-        } else {
-            String message = problem.getLocalizedMessage();
-            return StringUtils.isEmpty(message) ? className : className + ": " + message;
-        }
-    }
-
     /**
      * Set error message to message tag with given name 'title'. Substitute all
      * placeholders in message tag with elements of given array 'parameters'.
@@ -234,6 +223,17 @@ public class Helper implements Observer, Serializable {
         setMessage(null, message, "", MessageLevel.ERROR, false);
     }
 
+    private static String getRootCause(Throwable problem) {
+        Throwable cause = problem.getCause();
+        String className = problem.getClass().getSimpleName();
+        if (Objects.nonNull(cause)) {
+            return className + " / " + getRootCause(cause);
+        } else {
+            String message = problem.getLocalizedMessage();
+            return StringUtils.isEmpty(message) ? className : className + ": " + message;
+        }
+    }
+
     private static String getExceptionMessage(Throwable e) {
         String message = e.getMessage();
         if (Objects.isNull(message)) {
@@ -262,17 +262,6 @@ public class Helper implements Observer, Serializable {
      */
     public static void setMessage(String message) {
         setMessage(null, message, "", MessageLevel.INFO);
-    }
-
-    /**
-     * Set message with empty description, e.g. only with title. That means no compound message is created.
-     * This is a convenience function for calling "setMessage" with parameters "level" = "MessageLevel.INFO" and
-     * "createCompoundMessage" = "false".
-     *
-     * @param message message String to be displayed.
-     */
-    public static void setMessageWithoutDescription(String message) {
-        setMessage(null, message, "", MessageLevel.INFO, false);
     }
 
     /**
@@ -337,6 +326,17 @@ public class Helper implements Observer, Serializable {
             logger.log(MessageLevel.ERROR.equals(level) ? Level.ERROR : MessageLevel.WARN.equals(level) ? Level.WARN : Level.INFO,
                     compoundMessage);
         }
+    }
+
+    /**
+     * Set message with empty description, e.g. only with title. That means no compound message is created.
+     * This is a convenience function for calling "setMessage" with parameters "level" = "MessageLevel.INFO" and
+     * "createCompoundMessage" = "false".
+     *
+     * @param message message String to be displayed.
+     */
+    public static void setMessageWithoutDescription(String message) {
+        setMessage(null, message, "", MessageLevel.INFO, false);
     }
 
     /**
