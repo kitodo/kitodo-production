@@ -197,7 +197,7 @@ public class NewspaperProcessesMigrator {
      * Creates a new process migrator.
      *
      * @param batch
-     *            transfers Production v. 2 newspaper batch
+     *            the batch to process
      */
     public NewspaperProcessesMigrator(Batch batch) {
         this.batchNumber = batch.getId();
@@ -208,49 +208,44 @@ public class NewspaperProcessesMigrator {
      * Returns all newspaper batches.
      *
      * @return all newspaper batches
-     * @throws DataException
-     *             if a search engine error occurs
      * @throws DAOException
-     *             if a process cannot be load from the database
+     *             if a batch cannot be load from the database
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
      */
-    public static List<BatchDTO> getNewspaperBatches() throws DataException, DAOException, IOException {
-        List<BatchDTO> newspaperBatches = new ArrayList<>();
-        for (BatchDTO batchTransfer : batchService.findAll(true)) {
-            if (isNewspaperBatch(batchTransfer)) {
-                newspaperBatches.add(batchTransfer);
+    public static List<Batch> getNewspaperBatches() throws DAOException, IOException {
+        List<Batch> newspaperBatches = new ArrayList<>();
+        for (Batch batch : batchService.getAll()) {
+            if (isNewspaperBatch(batch)) {
+                newspaperBatches.add(batch);
             }
         }
         return newspaperBatches;
     }
 
     /**
-     * Returns whether the batch in the transfer object is a newspaper batch. A
+     * Returns whether the batch is a newspaper batch. A
      * batch is a newspaper batch, if all of its processes are newspaper
      * processes. A process is a newspaper process if it has a
      * {@code meta_year.xml} file.
      *
-     * @param batchTransfer
-     *            object transferring a batch
+     * @param batch
+     *            the batch to check
      * @return whether the batch is a newspaper batch
-     * @throws DAOException
-     *             if a process cannot be load from the database
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
      */
-    private static boolean isNewspaperBatch(BatchDTO batchTransfer) throws DAOException, IOException {
+    private static boolean isNewspaperBatch(Batch batch) throws IOException {
 
-        logger.trace("Examining batch {}...", batchTransfer.getTitle());
+        logger.trace("Examining batch {}...", batch.getTitle());
         boolean newspaperBatch = true;
-        for (ProcessDTO processTransfer : batchTransfer.getProcesses()) {
-            Process process = processService.getById(processTransfer.getId());
+        for (Process process : batch.getProcesses()) {
             if (!fileService.processOwnsYearXML(process)) {
                 newspaperBatch = false;
                 break;
             }
         }
-        logger.trace("{} {} newspaper batch.", batchTransfer.getTitle(), newspaperBatch ? "is a" : "is not a");
+        logger.trace("{} {} newspaper batch.", batch.getTitle(), newspaperBatch ? "is a" : "is not a");
         return newspaperBatch;
     }
 
@@ -260,12 +255,12 @@ public class NewspaperProcessesMigrator {
      *
      * @param batchId
      *            number of batch to migrate
-     * @throws DataException
-     *             if a search engine error occurs
+     * @throws DAOException
+     *             if a db error occurs
      */
     public static void initializeMigration(Integer batchId) throws DAOException {
-        Batch batchTransfer = ServiceManager.getBatchService().getById(batchId);
-        TaskManager.addTask(new NewspaperMigrationTask(batchTransfer));
+        Batch batch = ServiceManager.getBatchService().getById(batchId);
+        TaskManager.addTask(new NewspaperMigrationTask(batch));
     }
 
     /**
@@ -308,7 +303,7 @@ public class NewspaperProcessesMigrator {
      * Converts one newspaper process.
      *
      * @param index
-     *            index of process to convert in the processes transfer object
+     *            index of process to convert in the processes object
      *            list passed to the constructor—<b>not</b> the process ID
      */
     public void convertProcess(int index) throws DAOException, IOException, ConfigurationException {
@@ -546,7 +541,7 @@ public class NewspaperProcessesMigrator {
      * @throws IOException
      *             An error has occurred in the disk drive.
      */
-    public void createOverallProcess() throws ProcessGenerationException, IOException, DataException, DAOException,
+    public void createOverallProcess() throws ProcessGenerationException, IOException, DAOException,
             CommandException {
         final long begin = System.nanoTime();
         logger.info("Creating overall process {}...", title);
@@ -581,7 +576,7 @@ public class NewspaperProcessesMigrator {
      * @throws DAOException
      *             if a process cannot be load from the database
      */
-    public void createNextYearProcess() throws ProcessGenerationException, IOException, DataException, DAOException,
+    public void createNextYearProcess() throws ProcessGenerationException, IOException, DAOException,
             CommandException {
         final long begin = System.nanoTime();
         Entry<String, IncludedStructuralElement> yearToCreate = yearsIterator.next();

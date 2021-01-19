@@ -28,6 +28,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -69,7 +70,7 @@ public class MigrationForm extends BaseForm {
     private boolean workflowRendered;
     private boolean newspaperMigrationRendered = false;
     private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
-    private List<BatchDTO> newspaperBatchesItems;
+    private List<Batch> newspaperBatchesItems;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -495,11 +496,11 @@ public class MigrationForm extends BaseForm {
      *
      * @return the items of the newspaperBatches select box
      */
-    public List<BatchDTO> getNewspaperBatchesItems() {
+    public List<Batch> getNewspaperBatchesItems() {
         if (Objects.isNull(newspaperBatchesItems)) {
             try {
                 newspaperBatchesItems = NewspaperProcessesMigrator.getNewspaperBatches();
-            } catch (DataException | DAOException | IOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return Collections.emptyList();
             }
