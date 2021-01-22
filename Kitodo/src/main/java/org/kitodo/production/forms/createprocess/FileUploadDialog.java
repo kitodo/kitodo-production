@@ -18,14 +18,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -70,19 +73,47 @@ public class FileUploadDialog extends MetadataImportDialog {
 
             LinkedList<TempProcess> processes = new LinkedList<>();
             processes.add(tempProcess);
-            this.createProcessForm.setProcesses(processes);
-            if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
-                TempProcess firstProcess = processes.getFirst();
-                this.createProcessForm.getProcessDataTab()
-                        .setDocType(firstProcess.getWorkpiece().getRootElement().getType());
-                Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
-                    MdSec.DMD_SEC);
-                createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+
+            TempProcess parentProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
+            if (Objects.nonNull(parentProcess)) {
+                processes.add(parentProcess);
             }
+            fillCreateProcessForm(processes);
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
-                | UnsupportedFormatException | SAXException | ConfigException e) {
+                | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private TempProcess extractParentRecordFromFile(UploadedFile uploadedFile, Document internalDocument)
+            throws XPathExpressionException, UnsupportedFormatException, URISyntaxException, IOException,
+            ParserConfigurationException, SAXException, ProcessGenerationException {
+        Collection<String> higherLevelIdentifier = this.createProcessForm.getRulesetManagement()
+                .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
+
+        ImportService importService = ServiceManager.getImportService();
+        String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString());
+        if (Objects.nonNull(parentID) && OPACConfig.isParentInRecord(selectedCatalog)) {
+            Document internalParentDocument = importService.convertDataRecordToInternal(
+                createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
+                selectedCatalog, true);
+            TempProcess tempParentProcess = importService.createTempProcessFromDocument(internalParentDocument,
+                createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
+            return tempParentProcess;
+        }
+        return null;
+    }
+
+    private void fillCreateProcessForm(LinkedList<TempProcess> processes) {
+        this.createProcessForm.setProcesses(processes);
+        if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
+            TempProcess firstProcess = processes.getFirst();
+            this.createProcessForm.getProcessDataTab()
+                    .setDocType(firstProcess.getWorkpiece().getRootElement().getType());
+            Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
+                MdSec.DMD_SEC);
+            createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
         }
     }
 
