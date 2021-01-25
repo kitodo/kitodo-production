@@ -66,7 +66,10 @@
                                         <p:selectOneMenu id="metadataType"
                                                          value="#{metadata.metadataType}"
                                                          title="#{msgs.type}">
-                                            <f:selectItems value="#{CalendarForm.allMetadataTypes}"/>
+                                            <f:selectItems value="#{CalendarForm.allMetadataTypes}"
+                                                           var="metadataType"
+                                                           itemValue="#{metadataType}"
+                                                           itemLabel="#{metadataType.label}"/>
                                             <p:ajax event="change"
                                                     update="editForm:calendarTabView:calendarDetailsLayout
                                                             calendarDayForm"/>

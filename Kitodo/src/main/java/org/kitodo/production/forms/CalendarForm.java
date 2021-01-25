@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.xml.transform.TransformerException;
@@ -42,6 +41,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -110,7 +110,7 @@ public class CalendarForm implements Serializable {
     private UploadedFile uploadedFile;
     private LocalDate selectedDate;
     private Block selectedBlock = null;
-    private List<SelectItem> metadataTypes = null;
+    private List<MetadataViewInterface> metadataTypes = null;
 
     /**
      * The field course holds the course of appearance currently under edit by
@@ -745,7 +745,7 @@ public class CalendarForm implements Serializable {
         if (!selectedBlock.getIssues().isEmpty() && Objects.nonNull(selectedIssue)) {
             CountableMetadata metadata = new CountableMetadata(selectedBlock, Pair.of(selectedIssue.getDate(), selectedIssue.getIssue()));
             if (!getAllMetadataTypes().isEmpty()) {
-                metadata.setMetadataType((String) getAllMetadataTypes().get(0).getValue());
+                metadata.setMetadataType(getAllMetadataTypes().get(0).getLabel());
             }
             selectedBlock.addMetadata(metadata);
         } else {
@@ -818,7 +818,7 @@ public class CalendarForm implements Serializable {
      *
      * @return the map of metadata types
      */
-    public List<SelectItem> getAllMetadataTypes() {
+    public List<MetadataViewInterface> getAllMetadataTypes() {
         if (Objects.isNull(metadataTypes)) {
             try {
                 Process process = ServiceManager.getProcessService().getById(parentId);
