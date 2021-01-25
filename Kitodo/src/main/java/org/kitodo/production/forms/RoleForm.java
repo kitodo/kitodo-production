@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +28,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DualListModel;
@@ -163,11 +161,11 @@ public class RoleForm extends BaseForm {
      *
      * @return list of Client objects
      */
-    public List<SelectItem> getClients() {
+    public List<Client> getClients() {
         try {
-            return SelectItemList.getClients(ServiceManager.getClientService().getAll());
+            return ServiceManager.getClientService().getAll();
         } catch (DAOException e) {
-            return SelectItemList.getClients(new ArrayList<>());
+            return new ArrayList<>();
         }
     }
 

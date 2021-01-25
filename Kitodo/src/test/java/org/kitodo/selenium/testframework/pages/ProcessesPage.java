@@ -211,7 +211,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .atMost(30, TimeUnit.SECONDS).until(() -> processesSelect.isDisplayed());
         Select processSelect = new Select(processesSelect);
         processSelect.deselectAll();
-        processSelect.selectByVisibleText("First process");
+        processSelect.selectByVisibleText("First process [1]");
 
         await(WAIT_FOR_ACTIONS_BUTTON).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS).until(() -> possibleProcessActionsButton.isDisplayed());

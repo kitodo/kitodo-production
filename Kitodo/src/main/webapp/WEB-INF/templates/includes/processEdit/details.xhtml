@@ -38,7 +38,10 @@
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProcessForm.projects}"/>
+                    <f:selectItems value="#{ProcessForm.projects}"
+                                   var="project"
+                                   itemValue="#{project}"
+                                   itemLabel="#{project.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
@@ -53,7 +56,10 @@
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProcessForm.rulesets}"/>
+                    <f:selectItems value="#{ProcessForm.rulesets}"
+                                   var="ruleset"
+                                   itemValue="#{ruleset}"
+                                   itemLabel="#{ruleset.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
@@ -66,7 +72,10 @@
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProcessForm.dockets}"/>
+                    <f:selectItems value="#{ProcessForm.dockets}"
+                                   var="docket"
+                                   itemValue="#{docket}"
+                                   itemLabel="#{docket.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>

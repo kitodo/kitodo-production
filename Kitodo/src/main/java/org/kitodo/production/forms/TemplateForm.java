@@ -25,16 +25,18 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TemplateService;
@@ -224,10 +226,10 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Get list of dockets for select list.
      *
-     * @return list of SelectItem objects
+     * @return list of dockets
      */
-    public List<SelectItem> getDockets() {
-        return SelectItemList.getDockets(ServiceManager.getDocketService().getAllForSelectedClient());
+    public List<Docket> getDockets() {
+        return ServiceManager.getDocketService().getAllForSelectedClient();
     }
 
     /**
@@ -242,19 +244,19 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Get list of rulesets for select list.
      *
-     * @return list of SelectItem objects
+     * @return list of ruleset
      */
-    public List<SelectItem> getRulesets() {
-        return SelectItemList.getRulesets(ServiceManager.getRulesetService().getAllForSelectedClient());
+    public List<Ruleset> getRulesets() {
+        return ServiceManager.getRulesetService().getAllForSelectedClient();
     }
 
     /**
      * Get list of workflows for select list.
      *
-     * @return list of SelectItem objects
+     * @return list of workflows
      */
-    public List<SelectItem> getWorkflows() {
-        return SelectItemList.getWorkflows(ServiceManager.getWorkflowService().getAvailableWorkflows());
+    public List<Workflow> getWorkflows() {
+        return ServiceManager.getWorkflowService().getAvailableWorkflows();
     }
 
     /**

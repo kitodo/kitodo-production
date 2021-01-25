@@ -42,7 +42,10 @@
                                          styleClass="input select-box"
                                          converter="#{batchConverter}"
                                          valueChangeListener="#{BatchForm.changeSelectedBatch}">
-                        <f:selectItems value="#{BatchForm.batchesSelectItems}"/>
+                        <f:selectItems value="#{BatchForm.currentBatches}"
+                                       var="batch"
+                                       itemValue="#{batch}"
+                                       itemLabel="#{BatchForm.getBatchLabel(batch)}"/>
                         <p:ajax event="change"
                                 update="processesTabView:batchForm:selectProcesses"/>
                     </h:selectManyListbox>
@@ -113,7 +116,7 @@
                                          converter="#{processConverter}"
                                          styleClass="input select-box"
                                          size="20">
-                        <f:selectItems value="#{BatchForm.processesSelectItems}"/>
+                        <f:selectItems value="#{BatchForm.currentProcesses}"/>
                     </h:selectManyListbox>
                 </div>
 

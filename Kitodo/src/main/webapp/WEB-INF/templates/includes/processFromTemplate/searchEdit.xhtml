@@ -26,7 +26,10 @@
                 <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
                 <p:selectOneMenu id="processSelect" value="#{CreateProcessForm.searchTab.originalProcess}"
                                  converter="#{processConverter}">
-                    <f:selectItems value="#{CreateProcessForm.searchTab.processesForChoiceList}"/>
+                    <f:selectItems value="#{CreateProcessForm.searchTab.processesForChoiceList}"
+                                   var="process"
+                                   itemLabel="#{process.title}"
+                                   itemValue="#{process}"/>
                 </p:selectOneMenu>
             </div>
             <div>

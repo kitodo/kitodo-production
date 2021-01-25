@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -40,7 +39,6 @@ import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.batch.BatchProcessHelper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
@@ -167,19 +165,19 @@ public class BatchForm extends BaseForm {
     /**
      * Get current processes as select items.
      *
-     * @return list of select items
+     * @return list of processes
      */
-    public List<SelectItem> getProcessesSelectItems() {
-        return SelectItemList.getProcesses(this.currentProcesses);
+    public List<Process> getCurrentProcesses() {
+        return currentProcesses;
     }
 
     /**
      * Get current batches as select items.
      *
-     * @return list of select items
+     * @return list of bacthes
      */
-    public List<SelectItem> getBatchesSelectItems() {
-        return SelectItemList.getBatches(this.currentBatches);
+    public List<Batch> getCurrentBatches() {
+        return currentBatches;
     }
 
     public String getBatchfilter() {
@@ -497,5 +495,14 @@ public class BatchForm extends BaseForm {
      */
     public void setSelectedBatchId(int selectedBatchId) {
         this.selectedBatchId = selectedBatchId;
+    }
+
+    /**
+     * Creates the label for the batchlist.
+     * @param batch the batch to create the label for.
+     * @return the label.
+     */
+    public String getBatchLabel(Batch batch) {
+        return ServiceManager.getBatchService().createLabel(batch);
     }
 }

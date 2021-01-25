@@ -13,16 +13,16 @@ package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
-
-import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 
@@ -60,8 +60,13 @@ public class SearchTab {
      *
      * @return list of SelectItem objects
      */
-    public List<SelectItem> getProcessesForChoiceList() {
-        return SelectItemList.getProcessesForChoiceList();
+    public List<ProcessDTO> getProcessesForChoiceList() {
+        try {
+            return ServiceManager.getProcessService().findAll();
+        } catch (DataException e) {
+            Helper.setErrorMessage(CreateProcessForm.ERROR_READING, logger, e);
+        }
+        return Collections.EMPTY_LIST;
     }
 
     /**

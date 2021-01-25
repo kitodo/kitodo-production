@@ -33,12 +33,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.controller.SecurityAccessController;
@@ -47,7 +51,6 @@ import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
@@ -906,37 +909,37 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Get dockets for select list.
      *
-     * @return list of dockets as SelectItem objects
+     * @return list of dockets
      */
-    public List<SelectItem> getDockets() {
-        return SelectItemList.getDockets(ServiceManager.getDocketService().getAllForSelectedClient());
+    public List<Docket> getDockets() {
+        return ServiceManager.getDocketService().getAllForSelectedClient();
     }
 
     /**
      * Get list of projects.
      *
-     * @return list of projects as SelectItem objects
+     * @return list of projects
      */
-    public List<SelectItem> getProjects() {
-        return SelectItemList.getProjects(ServiceManager.getProjectService().getAllForSelectedClient());
+    public List<Project> getProjects() {
+        return ServiceManager.getProjectService().getAllForSelectedClient();
     }
 
     /**
      * Get rulesets for select list.
      *
-     * @return list of rulesets as SelectItem objects
+     * @return list of rulesets
      */
-    public List<SelectItem> getRulesets() {
-        return SelectItemList.getRulesets(ServiceManager.getRulesetService().getAllForSelectedClient());
+    public List<Ruleset> getRulesets() {
+        return ServiceManager.getRulesetService().getAllForSelectedClient();
     }
 
     /**
      * Get task statuses for select list.
      *
-     * @return list of task statuses as SelectItem objects
+     * @return list of task statuses
      */
-    public List<SelectItem> getTaskStatuses() {
-        return SelectItemList.getTaskStatuses();
+    public TaskStatus[] getTaskStatuses() {
+        return TaskStatus.values();
     }
 
     /**

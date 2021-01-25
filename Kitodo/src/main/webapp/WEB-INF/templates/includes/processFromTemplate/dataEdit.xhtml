@@ -57,7 +57,10 @@
                                      value="#{CreateProcessForm.mainProcess.ruleset}"
                                      converter="#{rulesetConverter}"
                                      required="true">
-                        <f:selectItems value="#{ProcessForm.rulesets}"/>
+                        <f:selectItems value="#{ProcessForm.rulesets}"
+                                       var="ruleset"
+                                       itemValue="#{ruleset}"
+                                       itemLabel="#{ruleset.title}"/>
                         <p:ajax event="change"
                                 listener="#{CreateProcessForm.updateRulesetAndDocType(CreateProcessForm.mainProcess.ruleset)}"
                                 update="editForm:processFromTemplateTabView:docType,editForm:processFromTemplateTabView:metadataTable"/>
