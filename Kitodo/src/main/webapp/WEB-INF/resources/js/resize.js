@@ -12,6 +12,7 @@
 // jshint unused:false
 
 var SEPARATOR_WIDTH = 3;
+var COLLAPSED = 'collapsed';
 var COLLAPSED_COL_WIDTH = 42;
 var HEADING_HEIGHT = 40;
 var SEPARATOR_HEIGHT = 5;
@@ -60,6 +61,18 @@ $(document).mouseup(function(e) {
     }
 });
 
+function getStructureWidthInput() {
+    return $('#metadataEditorLayoutForm\\:structureWidth');
+}
+
+function getMetadataWidthInput() {
+    return $('#metadataEditorLayoutForm\\:metadataWidth');
+}
+
+function getGalleryWidthInput() {
+    return $('#metadataEditorLayoutForm\\:galleryWidth');
+}
+
 function handleMouseDown(e) {
     e.preventDefault();
     dragging = true;
@@ -68,13 +81,13 @@ function handleMouseDown(e) {
 
     $(document).mousemove(function(e) {
         if (target.id === 'firstResizer') {
-            if (secondColumn.hasClass('collapsed')) {
+            if (secondColumn.hasClass(COLLAPSED)) {
                 resizeFirstAndThird(e);
             } else {
                 resizeFirstAndSecond(e);
             }
         } else if (target.id === 'secondResizer') {
-            if (secondColumn.hasClass('collapsed')) {
+            if (secondColumn.hasClass(COLLAPSED)) {
                 resizeFirstAndThird(e);
             } else {
                 resizeSecondAndThird(e);
@@ -129,7 +142,7 @@ function resizeVertical(e) {
 function getElements() {
     wrapper = $('#metadataEditorWrapper');
     wrapperPositionX = wrapper.offset().left;
-    collapsedColumns = $('#metadataEditorWrapper > .collapsed').length;
+    collapsedColumns = $('#metadataEditorWrapper > COLLAPSED').length;
     var resizers = $('.resizer');
     firstResizer = resizers.first();
     secondResizer = resizers.last();
@@ -144,28 +157,49 @@ function setSizes() {
 
     wrapper.height(window.innerHeight - wrapper.offset().top - $('footer').height());
 
-    if (firstColumn.hasClass('collapsed')) {
+    let savedStructureWidth = parseFloat(getStructureWidthInput().val()) * wrapper.width();
+    let savedMetadataWidth = parseFloat(getMetadataWidthInput().val()) * wrapper.width();
+    let savedGalleryWidth = parseFloat(getGalleryWidthInput().val()) * wrapper.width();
+
+    if (!(savedStructureWidth === 0 && savedMetadataWidth === 0 && savedGalleryWidth === 0)) {
+        // TODO set widths
+        if (savedStructureWidth === 0) {
+            firstColumn.addClass(COLLAPSED);
+        }
+        if (savedMetadataWidth === 0) {
+            secondColumn.addClass(COLLAPSED);
+        }
+        if (savedGalleryWidth === 0) {
+            thirdColumn.addClass(COLLAPSED);
+        }
+    }
+
+    if (firstColumn.hasClass(COLLAPSED)) {
         firstColumn.width(COLLAPSED_COL_WIDTH);
         firstColumnWidth = firstColumn.data('min-width');
-    } else if (secondColumn.hasClass('collapsed') && thirdColumn.hasClass('collapsed')) {
+    } else if (secondColumn.hasClass(COLLAPSED) && thirdColumn.hasClass(COLLAPSED)) {
         firstColumn.width(wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH);
     } else {
-        firstColumn.width(firstColumn.data('min-width'));
+        let minWidth = firstColumn.data('min-width');
+        firstColumn.width(savedStructureWidth > minWidth ? savedStructureWidth : minWidth);
     }
 
-    if (secondColumn.hasClass('collapsed')) {
+    if (secondColumn.hasClass(COLLAPSED)) {
         secondColumn.width(COLLAPSED_COL_WIDTH);
         secondColumnWidth = secondColumn.data('min-width');
-    } else if(firstColumn.hasClass('collapsed') && thirdColumn.hasClass('collapsed')) {
+    } else if(firstColumn.hasClass(COLLAPSED) && thirdColumn.hasClass(COLLAPSED)) {
         secondColumn.width(wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH);
     } else {
-        secondColumn.width(secondColumn.data('min-width'));
+        let minWidth = secondColumn.data('min-width');
+        secondColumn.width(savedMetadataWidth > minWidth ? savedMetadataWidth : minWidth);
     }
 
-    if (thirdColumn.hasClass('collapsed')) {
+    if (thirdColumn.hasClass(COLLAPSED)) {
         thirdColumn.width(COLLAPSED_COL_WIDTH);
         thirdColumnWidth = thirdColumn.data('min-width');
-        secondColumn.width(wrapper.width() - firstColumn.width() - thirdColumn.width() - 2 * SEPARATOR_WIDTH);
+        if (!secondColumn.hasClass(COLLAPSED)) {
+            secondColumn.width(wrapper.width() - firstColumn.width() - thirdColumn.width() - 2 * SEPARATOR_WIDTH);
+        }
     } else {
         thirdColumn.width(wrapper.width() - firstColumn.width() - secondColumn.width() - 2 * SEPARATOR_WIDTH);
     }
@@ -183,10 +217,10 @@ function setHeight() {
 }
 
 function setSectionHeight() {
-    if (firstSection.hasClass('collapsed')) {
+    if (firstSection.hasClass(COLLAPSED)) {
         firstSectionHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2);
         secondSection.height(secondSection.height() + firstSectionHeight);
-    } else if (secondSection.hasClass('collapsed')) {
+    } else if (secondSection.hasClass(COLLAPSED)) {
         firstSection.height(wrapper.height() - 2 * HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top'))) - SEPARATOR_HEIGHT);
     } else {
         firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
@@ -198,10 +232,10 @@ function toggleResizers() {
     if (collapsedColumns >= 2) {
         firstResizer.addClass('disabled');
         secondResizer.addClass('disabled');
-    } else if (firstColumn.hasClass('collapsed')) {
+    } else if (firstColumn.hasClass(COLLAPSED)) {
         firstResizer.addClass('disabled');
         secondResizer.removeClass('disabled');
-    } else if (thirdColumn.hasClass('collapsed')) {
+    } else if (thirdColumn.hasClass(COLLAPSED)) {
         firstResizer.removeClass('disabled');
         secondResizer.addClass('disabled');
     } else {
@@ -216,9 +250,9 @@ function toggleCollapseButtons() {
     var thirdButton = $('#thirdColumnWrapper .columnExpandButton');
 
     if (collapsedColumns >= 2) {
-        if (!firstColumn.hasClass('collapsed')) {
+        if (!firstColumn.hasClass(COLLAPSED)) {
             firstButton.prop('disabled', true);
-        } else if (!secondColumn.hasClass('collapsed')) {
+        } else if (!secondColumn.hasClass(COLLAPSED)) {
             secondButton.prop('disabled', true);
         } else {
             thirdButton.prop('disabled', true);
@@ -231,24 +265,24 @@ function toggleCollapseButtons() {
 }
 
 function toggleFirstColumn() {
-    if (!firstColumn.hasClass('collapsed')) {
+    if (!firstColumn.hasClass(COLLAPSED)) {
         firstColumnWidth = firstColumn.width();
     }
-    firstColumn.toggleClass('collapsed');
+    firstColumn.toggleClass(COLLAPSED);
     getElements();
     toggleResizers();
     toggleCollapseButtons();
 
-    if (firstColumn.hasClass('collapsed')) {
+    if (firstColumn.hasClass(COLLAPSED)) {
         firstColumn.animate({width: COLLAPSED_COL_WIDTH});
-        if (secondColumn.hasClass('collapsed')) {
+        if (secondColumn.hasClass(COLLAPSED)) {
             thirdColumn.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH}, function() {resizeMap()});
         } else {
             secondColumn.animate({width:  wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
         }
     } else {
         var neededWidth = firstColumnWidth - COLLAPSED_COL_WIDTH - (secondColumn.width() - secondColumn.data('min-width'));
-        if (secondColumn.hasClass('collapsed')) {
+        if (secondColumn.hasClass(COLLAPSED)) {
             thirdColumn.animate({width: wrapper.width() - firstColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH}, function() {resizeMap()});
             firstColumn.animate({width: firstColumnWidth});
         } else if (neededWidth > 0) {
@@ -270,24 +304,24 @@ function toggleFirstColumn() {
 }
 
 function toggleSecondColumn() {
-    if (!secondColumn.hasClass('collapsed')) {
+    if (!secondColumn.hasClass(COLLAPSED)) {
         secondColumnWidth = secondColumn.width();
     }
-    secondColumn.toggleClass('collapsed');
+    secondColumn.toggleClass(COLLAPSED);
     getElements();
     toggleResizers();
     toggleCollapseButtons();
 
-    if (secondColumn.hasClass('collapsed')) {
+    if (secondColumn.hasClass(COLLAPSED)) {
         secondColumn.animate({width: COLLAPSED_COL_WIDTH});
-        if (thirdColumn.hasClass('collapsed')) {
+        if (thirdColumn.hasClass(COLLAPSED)) {
             firstColumn.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
         } else {
             thirdColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - firstColumn.width() - 2 * SEPARATOR_WIDTH},function() {resizeMap()});
         }
     } else {
         var neededWidth = secondColumnWidth - COLLAPSED_COL_WIDTH - (thirdColumn.width() - thirdColumn.data('min-width'));
-        if (thirdColumn.hasClass('collapsed')) {
+        if (thirdColumn.hasClass(COLLAPSED)) {
             firstColumn.animate({width: wrapper.width() - secondColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
             secondColumn.animate({width: secondColumnWidth});
         } else if (neededWidth > 0) {
@@ -309,25 +343,25 @@ function toggleSecondColumn() {
 }
 
 function toggleThirdColumn() {
-    if (!thirdColumn.hasClass('collapsed')) {
+    if (!thirdColumn.hasClass(COLLAPSED)) {
         thirdColumnWidth = thirdColumn.width();
     }
-    thirdColumn.toggleClass('collapsed');
+    thirdColumn.toggleClass(COLLAPSED);
     getElements();
     toggleResizers();
     toggleCollapseButtons();
 
 
-    if (thirdColumn.hasClass('collapsed')) {
+    if (thirdColumn.hasClass(COLLAPSED)) {
         thirdColumn.animate({width: COLLAPSED_COL_WIDTH});
-        if (secondColumn.hasClass('collapsed')) {
+        if (secondColumn.hasClass(COLLAPSED)) {
             firstColumn.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
         } else {
             secondColumn.animate({width: wrapper.width() - firstColumn.width() - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
         }
     } else {
         var neededWidth = thirdColumnWidth - COLLAPSED_COL_WIDTH - (secondColumn.width() - secondColumn.data('min-width'));
-        if (secondColumn.hasClass('collapsed')) {
+        if (secondColumn.hasClass(COLLAPSED)) {
             firstColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
             thirdColumn.animate({width: thirdColumnWidth}, function() {resizeMap()});
         } else if (neededWidth > 0) {
@@ -349,14 +383,14 @@ function toggleThirdColumn() {
 }
 
 function toggleFirstSection() {
-    if (!firstSection.hasClass('collapsed')) {
+    if (!firstSection.hasClass(COLLAPSED)) {
         firstSectionHeight = firstSection.height();
     }
-    firstSection.toggleClass('collapsed');
-    firstSectionToggler.toggleClass('collapsed');
+    firstSection.toggleClass(COLLAPSED);
+    firstSectionToggler.toggleClass(COLLAPSED);
     verticalResizer.toggleClass('disabled');
 
-    if (firstSection.hasClass('collapsed')) {
+    if (firstSection.hasClass(COLLAPSED)) {
         secondSection.height(secondSection.height() + firstSectionHeight);
         secondSectionToggler.prop('disabled', true);
     } else {
@@ -366,14 +400,14 @@ function toggleFirstSection() {
 }
 
 function toggleSecondSection() {
-    if (!secondSection.hasClass('collapsed')) {
+    if (!secondSection.hasClass(COLLAPSED)) {
         secondSectionHeight = secondSection.height();
     }
-    secondSection.toggleClass('collapsed');
-    secondSectionToggler.toggleClass('collapsed');
+    secondSection.toggleClass(COLLAPSED);
+    secondSectionToggler.toggleClass(COLLAPSED);
     verticalResizer.toggleClass('disabled');
 
-    if (secondSection.hasClass('collapsed')) {
+    if (secondSection.hasClass(COLLAPSED)) {
         firstSection.height(firstSection.height() + secondSectionHeight);
         firstSectionToggler.prop('disabled', true);
     } else {
@@ -383,19 +417,19 @@ function toggleSecondSection() {
 }
 
 function expandFirstColumn() {
-    if ($('#firstColumnWrapper .columnExpandButton').length && firstColumn.hasClass('collapsed')) {
+    if ($('#firstColumnWrapper .columnExpandButton').length && firstColumn.hasClass(COLLAPSED)) {
         toggleFirstColumn();
     }
 }
 
 function expandSecondColumn() {
-    if (firstSectionToggler.length && secondColumn.hasClass('collapsed')) {
+    if (firstSectionToggler.length && secondColumn.hasClass(COLLAPSED)) {
         toggleSecondColumn();
     }
 }
 
 function expandThirdColumn() {
-    if ($('#thirdColumnWrapper .columnExpandButton').length && thirdColumn.hasClass('collapsed')) {
+    if ($('#thirdColumnWrapper .columnExpandButton').length && thirdColumn.hasClass(COLLAPSED)) {
         toggleThirdColumn();
     }
 }
@@ -419,3 +453,8 @@ function resizeMap() {
     }
 }
 
+function saveLayout() {
+    getStructureWidthInput().val(firstColumn.hasClass(COLLAPSED) ? 0 : firstColumn.width()/wrapper.width());
+    getMetadataWidthInput().val(secondColumn.hasClass(COLLAPSED) ? 0 : secondColumn.width()/wrapper.width());
+    getGalleryWidthInput().val(thirdColumn.hasClass(COLLAPSED) ? 0 : thirdColumn.width()/wrapper.width());
+}

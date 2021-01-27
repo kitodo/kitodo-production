@@ -20,6 +20,7 @@ public enum ObjectType {
     AUTHORITY("authority", "authorities", false),
     CLIENT("client", "clients", false),
     BATCH("batch", "batches", true),
+    DATAEDITORSETTING("dataEditorSetting", "dataEditorSettings", false),
     DOCKET("docket", "dockets", true),
     FOLDER("folder", "folders", false),
     LDAP_GROUP("ldapGroup", "ldapGroups", false),

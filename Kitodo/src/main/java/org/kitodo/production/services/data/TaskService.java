@@ -915,4 +915,21 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             }
         }
     }
+
+    /**
+     * Get the id of the template task corresponding to the given task.
+     * The corresponding template task was the blueprint when creating the given task.
+     * @param task task to find the corresponding template task for
+     * @return id of the template task or -1 if no matching task could be found
+     */
+    public static int getCorrespondingTemplateTaskId(Task task) {
+        List<Task> templateTasks = task.getProcess().getTemplate().getTasks().stream()
+                .filter(t -> t.getOrdering().equals(task.getOrdering()))
+                .filter(t -> t.getTitle().equals(task.getTitle()))
+                .collect(Collectors.toList());
+        if (templateTasks.size() == 1) {
+            return templateTasks.get(0).getId();
+        }
+        return -1;
+    }
 }

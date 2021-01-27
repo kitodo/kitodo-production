@@ -87,6 +87,7 @@
                                    rendered="#{task.typeMetadata and process.blockedUser == null}"
                                    title="#{msgs.metadataEdit}">
                         <f:actionListener binding="#{CommentForm.setProcessById(task.process.id)}"/>
+                        <f:setPropertyActionListener target="#{DataEditorForm.templateTaskId}" value="#{CurrentTaskForm.getCorrespondingTemplateTaskId(task)}"/>
                         <h:outputText><i class="fa fa-list-alt"/> #{msgs.metadataEdit}</h:outputText>
                     </h:commandLink>
 

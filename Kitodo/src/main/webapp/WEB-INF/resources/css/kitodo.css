@@ -1586,7 +1586,11 @@ Metadata Editor
 }
 
 #metadataEditorHeader h3 {
-    width: calc(100% - 700px);
+    width: calc(100% - 715px);
+}
+
+#metadataEditorLayoutForm {
+    margin: 0;
 }
 
 #metadataEditorHeader .ui-panel,

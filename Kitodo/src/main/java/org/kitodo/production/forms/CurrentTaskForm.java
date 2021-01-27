@@ -756,6 +756,16 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
+     * Get the id of the template task corresponding to the given task.
+     * The corresponding template task was the blueprint when creating the given task.
+     * @param task task to find the corresponding template task for
+     * @return id of the template task or -1 if no matching task could be found
+     */
+    public static int getCorrespondingTemplateTaskId(Task task) {
+        return TaskService.getCorrespondingTemplateTaskId(task);
+    }
+
+    /**
      * Calculate and return age of given tasks process as a String.
      *
      * @param task TaskDTO object whose process is used
