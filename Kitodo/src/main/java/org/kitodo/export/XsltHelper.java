@@ -23,6 +23,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.TransformerFactoryImpl;
+
 import org.apache.commons.io.FilenameUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -48,7 +50,7 @@ public class XsltHelper {
 
         String xsltPath = xslFile.getPath();
         StreamSource xsltSource = new StreamSource(xsltPath);
-        TransformerFactory factory = TransformerFactory.newInstance();
+        TransformerFactory factory = new TransformerFactoryImpl();
         Transformer transformer = factory.newTransformer(xsltSource);
         if (Objects.isNull(transformer)) {
             throw new IllegalArgumentException("Could not create XSLT transformer. Check " + xsltPath + " for errors.");
