@@ -74,12 +74,13 @@
                             <div>
                                 <p:outputLabel value="#{msgs.paginationStartValue}:"
                                                for="paginationStartValue"/>
-                                <p:inputText id="paginationStartValue"
-                                             required="true"
-                                             value="#{DataEditorForm.paginationPanel.paginationStartValue}"
-                                             label="#{msgs.paginationStartValue}"
-                                             class="input"
-                                             requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
+                                <p:inputNumber id="paginationStartValue"
+                                               padControl="false"
+                                               required="true"
+                                               value="#{DataEditorForm.paginationPanel.paginationStartValue}"
+                                               label="#{msgs.paginationStartValue}"
+                                               class="input"
+                                               requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
                             </div>
 
                             <div>
