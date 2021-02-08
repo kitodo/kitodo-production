@@ -211,6 +211,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         try {
             httpClient.close();
             httpClient = HttpClientBuilder.create().build();
+            logger.debug("Requesting: {}", queryURL);
             HttpResponse response = httpClient.execute(new HttpGet(queryURL));
             int responseStatusCode = response.getStatusLine().getStatusCode();
             if (Objects.equals(responseStatusCode, SC_OK)) {
@@ -284,6 +285,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         try {
             httpClient.close();
             httpClient = HttpClientBuilder.create().build();
+            logger.debug("Requesting: {}", fullUrl);
             HttpResponse response = httpClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
                 if (Objects.isNull(response.getEntity())) {
@@ -307,6 +309,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         requestConfigBuilder.setConnectTimeout(3000);
         request.setConfig(requestConfigBuilder.build());
         try {
+            logger.debug("Requesting: {}", queryURL);
             HttpResponse response = httpClient.execute(request);
             int responseStatusCode = response.getStatusLine().getStatusCode();
             if (Objects.equals(responseStatusCode, SC_OK)) {
