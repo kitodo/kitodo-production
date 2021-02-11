@@ -98,7 +98,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String HTTP_PROTOCOL = "http";
     private static final String HTTPS_PROTOCOL = "https";
     private static final String FTP_PROTOCOL = "ftp";
-    private static final String equalsOperand = "=";
+    private static final String equalsOperand = "%3D";
 
     private SearchInterfaceType interfaceType;
     private String protocol;
