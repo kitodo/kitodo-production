@@ -191,6 +191,7 @@ public class UserForm extends BaseForm {
 
                 if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                     loginForm.setLoggedUser(this.userObject);
+                    ServiceManager.getSecurityAccessService().updateAuthentication(this.userObject);
                 }
                 return usersPage;
             } else {

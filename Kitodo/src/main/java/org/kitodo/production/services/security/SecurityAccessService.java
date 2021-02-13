@@ -15,11 +15,14 @@ import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.security.SecurityAccess;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityAccessService extends SecurityAccess {
 
@@ -75,6 +78,20 @@ public class SecurityAccessService extends SecurityAccess {
             return currentAuthentication.isAuthenticated();
         }
         return false;
+    }
+
+    /**
+     * Update Authentication object of current threads security context
+     * after changing current parameters of authenticated user.
+     *
+     * @param updatedUser as Object of the updated authenticated user
+     */
+    public void updateAuthentication(User updatedUser) {
+        SecurityUserDetails userDetails = new SecurityUserDetails(updatedUser);
+        userDetails.setSessionClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(),
+                userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     /**
