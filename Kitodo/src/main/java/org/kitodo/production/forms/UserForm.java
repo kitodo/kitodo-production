@@ -61,6 +61,7 @@ import org.kitodo.production.security.password.KitodoPassword;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
+import org.primefaces.PrimeFaces;
 
 @Named("UserForm")
 @SessionScoped
@@ -250,16 +251,34 @@ public class UserForm extends BaseForm {
         }
     }
 
+    /**
+     * Delete user if he does not have tasks in progress.
      *
      * <p>
      * Please note that deleting a user in Production will not delete the
      * user from a connected LDAP service.
      */
-    public void delete() {
+    public void checkAndDelete() {
+        if (getTasksInProgress(userObject).isEmpty()) {
+            deleteUser(userObject);
+        } else {
+            PrimeFaces.current().executeScript("PF('confirmResetTasksDialog').show();");
+        }
+    }
+
+    /**
+     * Unassign all tasks in work from user and set their status back to open and delete the user.
+     */
+    public void resetTasksAndDeleteUser() {
+        resetTasksToOpen(userObject);
+        deleteUser(userObject);
+    }
+
+    void deleteUser(User user) {
         try {
-            userService.removeFromDatabase(userObject);
+            userService.removeFromDatabase(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.USER.getTranslationSingular()}, logger, e);
         }
     }
 
