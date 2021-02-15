@@ -73,7 +73,7 @@ public class CalendarService {
      * @return list of allowed metadata as SelectItem objects
      * @throws IOException when ruleset file could not be read
      */
-    public static List<SelectItem> getAddableMetadata(Process completeEdition) throws IOException, DataException {
+    public static List<MetadataViewInterface> getAddableMetadata(Process completeEdition) throws IOException, DataException {
         final String acquisitionStage = "create";
 
         // get an instance of the ruleset module
@@ -107,12 +107,8 @@ public class CalendarService {
         StructuralElementViewInterface issueView = ruleset.getStructuralElementView(issueType, acquisitionStage, priorityList);
 
         // From view to output, get all addable metadata
-        Collection<MetadataViewInterface> allowedMetadata = issueView.getAllowedMetadata();
-
-        List<SelectItem> selectItems = allowedMetadata.stream()
-                .map(metadataView -> new SelectItem(metadataView.getId(), metadataView.getLabel()))
-                .collect(Collectors.toList());
-        return selectItems;
+        List<MetadataViewInterface> allowedMetadata = new ArrayList<>(issueView.getAllowedMetadata());
+        return allowedMetadata;
     }
 
     /**
@@ -123,9 +119,9 @@ public class CalendarService {
      * @param metadataKey the key for the metadata type to be translated
      * @return localized metadata type as java.lang.String
      */
-    public static String getMetadataTranslation(List<SelectItem> metadataList, String metadataKey) {
-        for (SelectItem selectItem : metadataList) {
-            if (selectItem.getValue().equals(metadataKey)) {
+    public static String getMetadataTranslation(List<MetadataViewInterface> metadataList, String metadataKey) {
+        for (MetadataViewInterface selectItem : metadataList) {
+            if (selectItem.getLabel().equals(metadataKey)) {
                 return selectItem.getLabel();
             }
         }

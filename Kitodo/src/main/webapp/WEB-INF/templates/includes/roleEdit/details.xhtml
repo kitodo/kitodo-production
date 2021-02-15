@@ -32,7 +32,10 @@
                 <div>
                     <p:outputLabel for="client" value="#{msgs.client}"/>
                     <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RoleForm.role.client}">
-                        <f:selectItems value="#{RoleForm.clients}"/>
+                        <f:selectItems value="#{RoleForm.clients}"
+                                       var="client"
+                                       itemValue="#{client}"
+                                       itemLabel="#{client.name}"/>
                         <p:ajax event="change" oncomplete="toggleSave()"/>
                     </p:selectOneMenu>
                 </div>

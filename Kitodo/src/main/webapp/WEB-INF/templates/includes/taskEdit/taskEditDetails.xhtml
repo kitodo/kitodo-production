@@ -21,7 +21,10 @@
                 <p:outputLabel for="status" value="#{msgs.status}"/>
                 <p:selectOneMenu id="status" value="#{ProcessForm.task.processingStatus}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
-                    <f:selectItems value="#{ProcessForm.taskStatuses}"/>
+                    <f:selectItems value="#{ProcessForm.taskStatuses}"
+                                   var="status"
+                                   itemValue="#{status}"
+                                   itemLabel="#{msgs[status.title]}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>

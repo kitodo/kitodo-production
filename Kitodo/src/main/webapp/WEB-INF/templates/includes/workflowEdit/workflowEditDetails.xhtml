@@ -44,8 +44,10 @@
             <p:outputLabel for="status" value="#{msgs.status}"/>
             <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input" disabled="#{isViewMode}">
                 <p:ajax event="change" update="@this" />
-                <f:selectItems value="#{WorkflowForm.workflowStatuses}" var="status"
-                               itemValue = "#{status}"/>
+                <f:selectItems value="#{WorkflowForm.workflowStatuses}"
+                               var="status"
+                               itemValue="#{status}"
+                               itemLabel="#{msgs[status]}"/>
             </p:selectOneMenu>
         </p:row>
     </p:panelGrid>
