@@ -9,7 +9,7 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
--- Insert authorities for system page tabs.
+-- Insert authorities for unassign tasks.
 
 INSERT IGNORE INTO authority (title) VALUES ('unassignTasks_globalAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('unassignTasks_clientAssignable');
