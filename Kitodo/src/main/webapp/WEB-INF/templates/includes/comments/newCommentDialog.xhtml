@@ -32,6 +32,7 @@
                 <p:inputTextarea id="newCommentTextArea"
                                  value="#{CommentForm.commentMessage}"
                                  styleClass="new-comment-box">
+                    <p:ajax event="blur"/>
                 </p:inputTextarea>
 
                 <ui:fragment rendered="#{CommentForm.correctionComment}">
