@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -136,18 +134,9 @@ public class CommentForm extends BaseForm {
         newComment();
         if (comment.getType().equals(CommentType.ERROR)) {
             reportProblem(comment);
-            return redirect();
-        }
-        return null;
-    }
-
-    private String redirect() {
-        HttpServletRequest origRequest = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        if (origRequest.getRequestURI().contains("metadataEditor")) {
-            return MessageFormat.format(REDIRECT_PATH, "processes");
-        } else {
             return MessageFormat.format(REDIRECT_PATH, "tasks");
         }
+        return null;
     }
 
     /**
@@ -238,7 +227,7 @@ public class CommentForm extends BaseForm {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
         refreshProcess(this.currentTask.getProcess());
-        return redirect();
+        return MessageFormat.format(REDIRECT_PATH, "tasks");
     }
 
     /**
