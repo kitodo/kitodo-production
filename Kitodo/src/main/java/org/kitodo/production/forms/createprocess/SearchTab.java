@@ -13,15 +13,17 @@ package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
@@ -60,13 +62,14 @@ public class SearchTab {
      *
      * @return list of SelectItem objects
      */
-    public List<ProcessDTO> getProcessesForChoiceList() {
-        try {
-            return ServiceManager.getProcessService().findAll();
-        } catch (DataException e) {
-            Helper.setErrorMessage(CreateProcessForm.ERROR_READING, logger, e);
+    public List<Process> getProcessesForChoiceList() {
+        List<Process> processes = new ArrayList<>();
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        for (Project project : currentUser.getProjects()) {
+            processes.addAll(project.getProcesses());
         }
-        return Collections.EMPTY_LIST;
+        processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
+        return processes;
     }
 
     /**
