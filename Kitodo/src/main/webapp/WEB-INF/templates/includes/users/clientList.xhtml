@@ -14,6 +14,7 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:p="http://primefaces.org/ui">
+    <!--@elvariable id="item" type="org.kitodo.production.dto.ClientDTO"-->
     <p:dataTable var="item"
                  id="clientsTable"
                  styleClass="default-layout"
@@ -23,6 +24,7 @@
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
+                 sortBy="#{item.name}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"

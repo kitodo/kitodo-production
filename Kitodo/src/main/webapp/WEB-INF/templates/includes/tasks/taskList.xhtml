@@ -19,6 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
     <p:importEnum type="org.kitodo.data.database.enums.TaskStatus" allSuffix="ALL_ENUM_VALUES"/>
     <h:form id="tasksForm">
+        <!--@elvariable id="item" type="org.kitodo.production.dto.TaskDTO"-->
         <p:dataTable id="taskTable"
                      widgetVar="taskTable"
                      var="item"
@@ -29,6 +30,7 @@
                      paginator="true"
                      resizableColumns="true"
                      liveResize="true"
+                     sortBy="#{item.title.keyword}"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -45,7 +47,7 @@
             </p:column>
 
             <p:column id="titleColumn"
-                      headerText="#{msgs.task}"
+                      headerText="#{msgs.title}"
                       sortBy="#{item.title.keyword}"
                       rendered="#{CurrentTaskForm.showColumn('task.title')}">
                 <h:outputText title="#{item.title}"

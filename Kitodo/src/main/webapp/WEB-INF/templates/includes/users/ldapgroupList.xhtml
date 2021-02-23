@@ -16,6 +16,7 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:p="http://primefaces.org/ui">
+    <!--@elvariable id="item" type="org.kitodo.data.database.beans.LdapGroup"-->
     <p:dataTable var="item"
                  id="ldapGroupsTable"
                  styleClass="default-layout"
@@ -25,6 +26,7 @@
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
+                 sortBy="#{item.title}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"

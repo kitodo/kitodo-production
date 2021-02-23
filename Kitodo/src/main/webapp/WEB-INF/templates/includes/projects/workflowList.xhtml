@@ -16,6 +16,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
+    <!--@elvariable id="item" type="org.kitodo.production.dto.WorkflowDTO"-->
     <p:dataTable id="workflowTable"
                  styleClass="default-layout"
                  var="item"
@@ -25,6 +26,7 @@
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
+                 sortBy="#{item.title.keyword}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
