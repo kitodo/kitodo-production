@@ -425,7 +425,7 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to unassign all tasks in progress of a user.
      *
-     * @return true if the current user has the authority to to unassign all tasks in progress of a user
+     * @return true if the current user has the authority to unassign all tasks in progress of a user
      */
     public boolean hasAuthorityToUnassignTasks() {
         return securityAccessService.hasAuthorityToUnassignTasks();
