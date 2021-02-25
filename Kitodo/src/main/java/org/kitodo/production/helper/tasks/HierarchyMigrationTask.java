@@ -143,10 +143,9 @@ public class HierarchyMigrationTask extends EmptyTask {
                 processesList = projects.parallelStream().flatMap(project -> project.getProcesses().parallelStream())
                         .map(Process::getId).collect(Collectors.toList());
             }
-
             while (progress < processesList.size()) {
                 Process process = processService.getById(processesList.get(progress));
-                if (fileService.processOwnsAnchorXML(process) && !fileService.processOwnsYearXML(process)) {
+                if (fileService.processOwnsAnchorXML(process, true) && !fileService.processOwnsYearXML(process, true)) {
                     setWorkDetail(process.getTitle());
                     migrate(process);
                 }
@@ -196,7 +195,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      *            process to migrate
      */
     private static void migrateMetadataFiles(Process process) throws IOException {
-        URI metadataFilePath = fileService.getMetadataFilePath(process);
+        URI metadataFilePath = fileService.getMetadataFilePath(process, true, true);
         dataEditorService.readData(metadataFilePath);
         URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
         dataEditorService.readData(anchorFilePath);
