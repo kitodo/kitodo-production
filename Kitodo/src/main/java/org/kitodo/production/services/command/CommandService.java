@@ -30,6 +30,7 @@ public class CommandService {
     private static final CommandService commandService = ServiceManager.getCommandService();
     private final ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
     private final Random random = new Random(1000000);
+
     /**
      * Method executes a script string.
      *
