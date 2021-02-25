@@ -55,6 +55,7 @@ import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Folder;
@@ -205,6 +206,19 @@ public class MockDatabase {
         insertRoles();
         insertUsers();
         insertProjects();
+    }
+
+    /**
+     * Prepare database for tests.
+     * @throws Exception when preparation fails
+     */
+    public static void insertForDataEditorTesting() throws Exception {
+        insertRolesFull();
+        insertDockets();
+        insertRulesets();
+        insertProjects();
+        insertTemplates();
+        insertDataEditorSettings();
     }
 
     private static class ExtendedNode extends Node {
@@ -460,6 +474,32 @@ public class MockDatabase {
 
         Batch fourthBatch = new Batch();
         ServiceManager.getBatchService().save(fourthBatch);
+    }
+
+    private static void insertDataEditorSettings() throws DAOException {
+        DataEditorSetting firstSetting = new DataEditorSetting();
+        firstSetting.setUserId(1);
+        firstSetting.setTaskId(1);
+        firstSetting.setStructureWidth(0.2f);
+        firstSetting.setMetadataWidth(0.4f);
+        firstSetting.setGalleryWidth(0.4f);
+        ServiceManager.getDataEditorSettingService().saveToDatabase(firstSetting);
+
+        DataEditorSetting secondSetting = new DataEditorSetting();
+        secondSetting.setUserId(1);
+        secondSetting.setTaskId(2);
+        secondSetting.setStructureWidth(0f);
+        secondSetting.setMetadataWidth(0.5f);
+        secondSetting.setGalleryWidth(0.5f);
+        ServiceManager.getDataEditorSettingService().saveToDatabase(secondSetting);
+
+        DataEditorSetting thirdSetting = new DataEditorSetting();
+        thirdSetting.setUserId(1);
+        thirdSetting.setTaskId(4);
+        thirdSetting.setStructureWidth(1f);
+        thirdSetting.setMetadataWidth(0f);
+        thirdSetting.setGalleryWidth(0f);
+        ServiceManager.getDataEditorSettingService().saveToDatabase(thirdSetting);
     }
 
     public static void insertDockets() throws DAOException, DataException {

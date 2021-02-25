@@ -64,5 +64,20 @@
                          iconPos="right"
                          style="margin-left: 16px;"
                          styleClass="secondary"/>
+        <h:form id="metadataEditorLayoutForm">
+            <p:commandButton onclick="saveLayout()"
+                             action="#{DataEditorForm.saveDataEditorSetting()}"
+                             title="#{msgs['dataEditor.saveLayout']}"
+                             rendered="#{DataEditorForm.dataEditorSetting ne null}"
+                             icon="fa fa-wrench"
+                             style="margin-left: 16px;"
+                             styleClass="secondary"/>
+            <h:inputHidden id="structureWidth"
+                           value="#{DataEditorForm.dataEditorSetting.structureWidth}"/>
+            <h:inputHidden id="metadataWidth"
+                           value="#{DataEditorForm.dataEditorSetting.metadataWidth}"/>
+            <h:inputHidden id="galleryWidth"
+                           value="#{DataEditorForm.dataEditorSetting.galleryWidth}"/>
+        </h:form>
     </p:panel>
 </ui:composition>

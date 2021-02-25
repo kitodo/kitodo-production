@@ -45,12 +45,14 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
+import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
@@ -162,6 +164,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     private List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia;
 
+    /**
+     * The id of the template's task corresponding to the current task that is under edit.
+     * This is used for saving and loading the metadata editor settings.
+     * The current task, the corresponding template task id and the settings are only available
+     * if the user opened the editor from a task.
+     */
+    private int templateTaskId;
+
+    private DataEditorSetting dataEditorSetting;
+
     private static final String DESKTOP_LINK = "/pages/desktop.jsf";
 
     /**
@@ -210,6 +222,17 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
+
+            if (templateTaskId > 0) {
+                dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(), templateTaskId);
+                if (Objects.isNull(dataEditorSetting)) {
+                    dataEditorSetting = new DataEditorSetting();
+                    dataEditorSetting.setUserId(user.getId());
+                    dataEditorSetting.setTaskId(templateTaskId);
+                }
+            } else {
+                dataEditorSetting = null;
+            }
 
             User blockedUser = MetadataLock.getLockUser(process.getId());
             if (Objects.nonNull(blockedUser) && !blockedUser.equals(this.user)) {
@@ -752,6 +775,57 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "{}";
+        }
+    }
+
+    /**
+     * Get templateTaskId.
+     *
+     * @return value of templateTaskId
+     */
+    public int getTemplateTaskId() {
+        return templateTaskId;
+    }
+
+    /**
+     * Set templateTaskId.
+     *
+     * @param templateTaskId as int
+     */
+    public void setTemplateTaskId(int templateTaskId) {
+        this.templateTaskId = templateTaskId;
+    }
+
+    /**
+     * Get dataEditorSetting.
+     *
+     * @return value of dataEditorSetting
+     */
+    public DataEditorSetting getDataEditorSetting() {
+        return dataEditorSetting;
+    }
+
+    /**
+     * Set dataEditorSetting.
+     *
+     * @param dataEditorSetting as org.kitodo.data.database.beans.DataEditorSetting
+     */
+    public void setDataEditorSetting(DataEditorSetting dataEditorSetting) {
+        this.dataEditorSetting = dataEditorSetting;
+    }
+
+    /**
+     * Save current metadata editor layout.
+     */
+    public void saveDataEditorSetting() {
+        if (Objects.nonNull(dataEditorSetting) && dataEditorSetting.getTaskId() > 0) {
+            try {
+                ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+            } catch (DAOException e) {
+                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
+            }
+        } else {
+            logger.error("Could not save DataEditorSettings with userId " + user.getId() + " and templateTaskId " + templateTaskId);
         }
     }
 }

@@ -20,6 +20,9 @@
         xmlns:p="http://primefaces.org/ui">
 
     <f:metadata>
+        <!--@elvariable id="templateTaskId" type="int"-->
+        <f:viewParam name="templateTaskId"/>
+        <f:viewAction action="#{DataEditorForm.setTemplateTaskId(templateTaskId)}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
         <f:viewAction action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
     </f:metadata>

@@ -18,6 +18,7 @@ import org.kitodo.production.services.data.AuthorityService;
 import org.kitodo.production.services.data.BatchService;
 import org.kitodo.production.services.data.ClientService;
 import org.kitodo.production.services.data.CommentService;
+import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.DocketService;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.FolderService;
@@ -58,6 +59,7 @@ public class ServiceManager {
     private static CommandService commandService;
     private static CommentService commentService;
     private static DataEditorService dataEditorService;
+    private static DataEditorSettingService dataEditorSettingService;
     private static DocketService docketService;
     private static FileService fileService;
     private static FileStructureValidationService fileStructureValidationService;
@@ -308,6 +310,12 @@ public class ServiceManager {
     private static void initializeIndexingService() {
         if (Objects.isNull(indexingService)) {
             indexingService = IndexingService.getInstance();
+        }
+    }
+
+    private static void initializeDataEditorSettingService() {
+        if (Objects.isNull(dataEditorSettingService)) {
+            dataEditorSettingService = DataEditorSettingService.getInstance();
         }
     }
 
@@ -688,5 +696,15 @@ public class ServiceManager {
     public static IndexingService getIndexingService() {
         initializeIndexingService();
         return indexingService;
+    }
+
+    /**
+     * Get dataEditorSettingService.
+     *
+     * @return value of dataEditorSettingService
+     */
+    public static DataEditorSettingService getDataEditorSettingService() {
+        initializeDataEditorSettingService();
+        return dataEditorSettingService;
     }
 }
