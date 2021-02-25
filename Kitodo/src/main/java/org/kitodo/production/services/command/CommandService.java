@@ -27,9 +27,16 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class CommandService {
-    private static final CommandService commandService = ServiceManager.getCommandService();
+    private final CommandInterface commandModule;
     private final ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
     private final Random random = new Random(1000000);
+
+    /**
+     * Initialize Command Service.
+     */
+    public CommandService() {
+        commandModule = new KitodoServiceLoader<CommandInterface>(CommandInterface.class).loadModule();
+    }
 
     /**
      * Method executes a script string.
@@ -47,7 +54,7 @@ public class CommandService {
         if (Objects.isNull(script)) {
             return null;
         }
-        CommandResult commandResult = commandService.runCommand(script);
+        CommandResult commandResult = commandModule.runCommand(random.nextInt(), script);
         List<String> commandResultMessages = commandResult.getMessages();
         if (!commandResultMessages.isEmpty() && commandResultMessages.get(0).contains("IOException")) {
             throw new IOException(commandResultMessages.get(1));
