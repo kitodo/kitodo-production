@@ -163,7 +163,7 @@ public class EditingST extends BaseTestSelenium {
     @Test
     public void editUserTest() throws Exception {
         usersPage.editUser();
-        assertEquals("Header for edit user is incorrect", "Benutzer bearbeiten (Kowalski, Jan)",
+        assertEquals("Header for edit user is incorrect", "Benutzer bearbeiten (null, Removable user)",
             Pages.getUserEditPage().getHeaderText());
     }
 
