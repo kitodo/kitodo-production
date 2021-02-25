@@ -30,6 +30,7 @@ import org.kitodo.production.helper.metadata.pagination.PaginatorMode;
 import org.kitodo.production.helper.metadata.pagination.PaginatorType;
 import org.kitodo.production.helper.metadata.pagination.RomanNumeral;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 
 /**
  * Backing bean for the pagination panel.
@@ -375,6 +376,8 @@ public class PaginationPanel {
             }
         }
         dataEditor.refreshStructurePanel();
+        PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
+                + Helper.getTranslation("paginationSaved") + "','severity':'info'})");
     }
 
     /**
