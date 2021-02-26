@@ -394,6 +394,12 @@ public class AddDocStrucTypeDialog {
         }
     }
 
+    private void sortMetadataList(List<SelectItem> itemList) {
+        if (!itemList.isEmpty() && !dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
+            itemList.sort(Comparator.comparing(SelectItem::getLabel));
+        }
+    }
+
     /**
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
@@ -443,6 +449,7 @@ public class AddDocStrucTypeDialog {
         for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
             docStructAddTypeSelectionItemsForChildren.add(new SelectItem(entry.getKey(), entry.getValue()));
         }
+        sortMetadataList(docStructAddTypeSelectionItemsForChildren);
     }
 
     private void prepareDocStructAddTypeSelectionItemsForParent() {
@@ -459,6 +466,7 @@ public class AddDocStrucTypeDialog {
                     docStructAddTypeSelectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
+            sortMetadataList(docStructAddTypeSelectionItemsForParent);
         }
     }
 
@@ -470,6 +478,7 @@ public class AddDocStrucTypeDialog {
             for (Entry<String, String> entry : parentDivisionView.getAllowedSubstructuralElements().entrySet()) {
                 docStructAddTypeSelectionItemsForSiblings.add(new SelectItem(entry.getKey(), entry.getValue()));
             }
+            sortMetadataList(docStructAddTypeSelectionItemsForSiblings);
         }
     }
 
@@ -531,9 +540,7 @@ public class AddDocStrucTypeDialog {
                                         ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
                                         : "dataTable"));
             }
-            if (!dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
-                selectAddableMetadataTypesItems.sort(Comparator.comparing(SelectItem::getLabel));
-            }
+            sortMetadataList(selectAddableMetadataTypesItems);
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e);
         }
