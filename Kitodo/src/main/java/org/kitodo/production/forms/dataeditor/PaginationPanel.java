@@ -374,6 +374,7 @@ public class PaginationPanel {
                 mediaUnits.get(i).setOrderlabel(paginator.next());
             }
         }
+        preparePaginationSelectionItems();
         dataEditor.refreshStructurePanel();
     }
 
