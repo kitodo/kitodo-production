@@ -258,6 +258,51 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    public void shouldCopyDataToChildren() throws Exception {
+        MockDatabase.insertProcessesForHierarchyTests();
+        backupHierarchieFiles();
+        Process process = ServiceManager.getProcessService().getById(4);
+        String metadataKey = "DigitalCollection";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey,"Kollektion");
+
+        final List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata beforehand", 1, processByMetadata.size() );
+
+        String script = "action:copyDataToChildren " + metadataKey + "=@" + metadataKey;
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = new KitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
+                .findByMetadata(metadataSearchMap);
+        Assert.assertEquals("does not contain metadata", 3, processByMetadataAfter.size() );
+        restoreHierarchieFiles();
+    }
+
+    private void restoreHierarchieFiles() throws IOException, DataException, DAOException {
+
+        File copied = new File(
+                "src/test/resources/metadata/5/metaBackup.xml");
+        File original = new File(
+                "src/test/resources/metadata/5/meta.xml");
+        FileUtils.copyFile(copied, original);
+        FileUtils.deleteQuietly(copied);
+        Process process = ServiceManager.getProcessService().getById(5);
+        ServiceManager.getProcessService().save(process);
+
+        copied = new File(
+                "src/test/resources/metadata/6/metaBackup.xml");
+        original = new File(
+                "src/test/resources/metadata/6/meta.xml");
+        FileUtils.copyFile(copied, original);
+        FileUtils.deleteQuietly(copied);
+        process = ServiceManager.getProcessService().getById(6);
+        ServiceManager.getProcessService().save(process);
+    }
+
+    @Test
     public void shouldAddDataWithWhitespace() throws Exception {
         Process process = ServiceManager.getProcessService().getById(2);
         String metadataKey = "LegalNoteAndTermsOfUse";
@@ -529,5 +574,19 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         Assert.assertEquals("should contain new metadata value", 1, processByMetadata.size());
 
+    }
+
+    private void backupHierarchieFiles() throws IOException {
+        File copied = new File(
+                "src/test/resources/metadata/5/metaBackup.xml");
+        File original = new File(
+                "src/test/resources/metadata/5/meta.xml");
+        FileUtils.copyFile(original, copied);
+
+        copied = new File(
+                "src/test/resources/metadata/6/metaBackup.xml");
+        original = new File(
+                "src/test/resources/metadata/6/meta.xml");
+        FileUtils.copyFile(original, copied);
     }
 }

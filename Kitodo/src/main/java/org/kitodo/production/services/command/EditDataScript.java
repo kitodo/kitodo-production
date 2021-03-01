@@ -77,7 +77,12 @@ public abstract class EditDataScript {
     public abstract void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
                                        MetadataScript metadataScript);
 
-    private List<MetadataScript> parseScript(String script) {
+    /**
+     * Parses the given input to MetadataScripts.
+     * @param script the input, entered in frontend.
+     * @return the correlating MetadataScripts.
+     */
+    public List<MetadataScript> parseScript(String script) {
         String[] commands = script.split(";");
         List<MetadataScript> metadataScripts = new ArrayList<>();
         for (String command : commands) {
@@ -126,5 +131,20 @@ public abstract class EditDataScript {
         } catch (IOException | CustomResponseException | DataException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    /**
+     * Generates the value of the MetadatScript and from the parentProcess.
+     * @param metadataScript the script to generate the value for
+     * @param parentProcess the process to take the value from
+     */
+    public void generateValueFromParent(MetadataScript metadataScript, Process parentProcess) throws IOException {
+        LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(parentProcess);
+        Workpiece workpiece = metadataFile.getWorkpiece();
+        List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
+
+        Collection<Metadata> metadataCollection = getMetadataCollection(allIncludedStructuralElements);
+        generateValueForMetadataScript(metadataScript, metadataCollection, parentProcess, metadataFile);
     }
 }
