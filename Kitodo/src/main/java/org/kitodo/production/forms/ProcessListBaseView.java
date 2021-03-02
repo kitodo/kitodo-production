@@ -39,6 +39,7 @@ import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
+import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
@@ -453,4 +454,20 @@ public class ProcessListBaseView extends BaseForm {
     public DeleteProcessDialog getDeleteProcessDialog() {
         return this.deleteProcessDialog;
     }
+
+    /**
+     * Check and return whether process with given ID has an empty generator folder or not.
+     *
+     * @param processId process ID
+     * @return whether given URI points to empty directory or not
+     */
+    public boolean hasImages(int processId) {
+        try {
+            return FileService.hasImages(processId);
+        } catch (IOException | DAOException e) {
+            logger.error(e);
+            return false;
+        }
+    }
+
 }

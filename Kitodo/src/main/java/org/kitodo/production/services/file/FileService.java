@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -1280,5 +1283,26 @@ public class FileService {
             uriString = uriString.replaceFirst("/", "");
         }
         return URI.create(uriString);
+    }
+
+    /**
+     * Check and return whether process with given ID has an empty generator folder or not.
+     *
+     * @param processId process ID
+     * @return whether given URI points to empty directory or not
+     * @throws IOException thrown if listing contents of given URI is not possible
+     */
+    public static boolean hasImages(int processId) throws IOException, DAOException {
+        Process process = ServiceManager.getProcessService().getById(processId);
+        URI processUri = ServiceManager.getProcessService().getProcessDataDirectory(process);
+        String sourceDir = processUri.toString() + process.getProject().getGeneratorSource().getRelativePath();
+
+        Path directoryPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_PROCESSES) + sourceDir);
+        if (Files.isDirectory(directoryPath)) {
+            try (Stream<Path> entries = Files.list(directoryPath)) {
+                return entries.findFirst().isPresent();
+            }
+        }
+        return false;
     }
 }
