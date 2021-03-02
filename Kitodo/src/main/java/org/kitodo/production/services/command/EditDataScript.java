@@ -100,11 +100,11 @@ public abstract class EditDataScript {
      */
     public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection,
             Process process, LegacyMetsModsDigitalDocumentHelper metadataFile) {
-        if (Objects.isNull(metadataScript.getValue()) && Objects.nonNull(metadataScript.getRoot())) {
+        if (metadataScript.getValues().isEmpty() && Objects.nonNull(metadataScript.getRoot())) {
             if (metadataScript.getRoot().startsWith("@")) {
                 for (Metadata metadata : metadataCollection) {
                     if (metadata.getKey().equals(metadataScript.getRootName())) {
-                        metadataScript.setValue(((MetadataEntry) metadata).getValue());
+                        metadataScript.getValues().add(((MetadataEntry) metadata).getValue());
                     }
                 }
             } else if (metadataScript.getRoot().startsWith("$")) {
@@ -113,7 +113,7 @@ public abstract class EditDataScript {
                 VariableReplacer replacer = new VariableReplacer(metadataFile, legacyPrefsHelper, process, null);
 
                 String replaced = replacer.replace(metadataScript.getRootName());
-                metadataScript.setValue(replaced);
+                metadataScript.getValues().add(replaced);
             }
         }
     }

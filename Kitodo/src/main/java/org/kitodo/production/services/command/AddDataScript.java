@@ -39,12 +39,13 @@ public class AddDataScript extends EditDataScript {
         Collection<Metadata> metadataCollection = getMetadataCollection(allIncludedStructuralElements);
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 
-        MetadataEntry metadataEntry = new MetadataEntry();
-        metadataEntry.setKey(metadataScript.getGoal());
-        metadataEntry.setValue(metadataScript.getValue());
-        metadataEntry.setDomain(MdSec.DMD_SEC);
-        metadataCollection.add(metadataEntry);
-
+        for (String value : metadataScript.getValues()) {
+            MetadataEntry metadataEntry = new MetadataEntry();
+            metadataEntry.setKey(metadataScript.getGoal());
+            metadataEntry.setValue(value);
+            metadataEntry.setDomain(MdSec.DMD_SEC);
+            metadataCollection.add(metadataEntry);
+        }
         saveChanges(workpiece, process);
     }
 

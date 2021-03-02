@@ -258,20 +258,20 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
-    public void shouldCopyDataToChildren() throws Exception {
+    public void shouldCopyMultipleDataToChildren() throws Exception {
         MockDatabase.insertProcessesForHierarchyTests();
         backupHierarchieFiles();
-        Process process = ServiceManager.getProcessService().getById(4);
         String metadataKey = "DigitalCollection";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
-        metadataSearchMap.put(metadataKey,"Kollektion");
+        metadataSearchMap.put(metadataKey,"Kollektion1");
+        metadataSearchMap.put(metadataKey,"Kollektion2");
 
         final List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should not contain metadata beforehand", 1, processByMetadata.size() );
 
         String script = "action:copyDataToChildren " + metadataKey + "=@" + metadataKey;
         List<Process> processes = new ArrayList<>();
-        processes.add(process);
+        processes.add(ServiceManager.getProcessService().getById(4));
         KitodoScriptService kitodoScript = new KitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
