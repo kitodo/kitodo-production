@@ -92,10 +92,9 @@ public class ConfigProject {
      */
     public String getDocType() throws DoctypeMissingException {
         try {
-            String paramString = getParamString(CREATE_NEW_PROCESS + ".defaultdoctype", ConfigOpac.getAllDoctypes().get(0).getTitle());
-            return paramString;
+            return getParamString(CREATE_NEW_PROCESS + ".defaultdoctype", ConfigOpac.getAllDoctypes().get(0).getTitle());
         } catch (IndexOutOfBoundsException e) {
-            throw new DoctypeMissingException("No doctypes configured in opac.xml");
+            throw new DoctypeMissingException("No doctypes configured in kitodo_opac.xml");
         }
     }
 

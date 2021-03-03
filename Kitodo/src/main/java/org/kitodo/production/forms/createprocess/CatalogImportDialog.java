@@ -15,11 +15,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,8 +26,6 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
-import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
@@ -82,7 +78,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         this.createProcessForm.setProcesses(new LinkedList<>());
         getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
     }
-    
+
     /**
      * Get list of search fields.
      *
@@ -132,11 +128,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      * @return hits
      */
     public List<SingleHit> getHits() {
-        if (Objects.nonNull(this.hitModel)) {
-            return this.hitModel.getHits();
-        } else {
-            return new LinkedList<>();
-        }
+        return this.hitModel.getHits();
     }
 
     @Override
@@ -173,17 +165,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                         this.currentRecordId, opac, projectId, templateId, this.importDepth,
                         this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
-                this.createProcessForm.setProcesses(processes);
 
-                // Fill metadata fields in metadata tab with metadata values of first process on successful import
-                if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
-                    TempProcess firstProcess = processes.getFirst();
-                    this.createProcessForm.getProcessDataTab().setDocType(
-                            firstProcess.getWorkpiece().getRootElement().getType());
-                    Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
-                            MdSec.DMD_SEC);
-                    createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
-                }
+                fillCreateProcessForm(processes);
 
                 String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
                 String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",

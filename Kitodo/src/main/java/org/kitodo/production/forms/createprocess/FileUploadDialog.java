@@ -92,29 +92,18 @@ public class FileUploadDialog extends MetadataImportDialog {
         Collection<String> higherLevelIdentifier = this.createProcessForm.getRulesetManagement()
                 .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
 
-        ImportService importService = ServiceManager.getImportService();
-        String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString());
-        if (Objects.nonNull(parentID) && OPACConfig.isParentInRecord(selectedCatalog)) {
-            Document internalParentDocument = importService.convertDataRecordToInternal(
-                createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
-                selectedCatalog, true);
-            TempProcess tempParentProcess = importService.createTempProcessFromDocument(internalParentDocument,
-                createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
-            return tempParentProcess;
+        if (higherLevelIdentifier.size() > 0) {
+            ImportService importService = ServiceManager.getImportService();
+            String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString());
+            if (Objects.nonNull(parentID) && OPACConfig.isParentInRecord(selectedCatalog)) {
+                Document internalParentDocument = importService.convertDataRecordToInternal(
+                        createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
+                        selectedCatalog, true);
+                return importService.createTempProcessFromDocument(internalParentDocument,
+                        createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
+            }
         }
         return null;
-    }
-
-    private void fillCreateProcessForm(LinkedList<TempProcess> processes) {
-        this.createProcessForm.setProcesses(processes);
-        if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
-            TempProcess firstProcess = processes.getFirst();
-            this.createProcessForm.getProcessDataTab()
-                    .setDocType(firstProcess.getWorkpiece().getRootElement().getType());
-            Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
-                MdSec.DMD_SEC);
-            createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
-        }
     }
 
     private DataRecord createRecordFromXMLElement(String xmlContent) {
