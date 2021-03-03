@@ -71,6 +71,7 @@
                             <p:outputLabel value="#{msgs.paginationScope}:"
                                            for="selectPaginationScope"/>
                             <p:selectOneMenu id="selectPaginationScope"
+                                             autoWidth="false"
                                              value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems}"
                                                var="scope"
@@ -86,6 +87,7 @@
                                     converter="#{IllustratedSelectItemConverter}"
                                     panelStyle="width:25%;"
                                     var="mode"
+                                    autoWidth="false"
                                     id="selectPaginationMode">
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"
                                                var="modeSelection"
