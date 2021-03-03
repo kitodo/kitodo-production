@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -20,10 +21,13 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
@@ -107,6 +111,23 @@ public abstract class MetadataImportDialog {
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Fill metadata fields in metadata tab with metadata values of first process in given list "processes"
+     * on successful import.
+     * @param processes list of TempProcess instances
+     */
+    void fillCreateProcessForm(LinkedList<TempProcess> processes) {
+        this.createProcessForm.setProcesses(processes);
+        if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
+            TempProcess firstProcess = processes.getFirst();
+            this.createProcessForm.getProcessDataTab()
+                    .setDocType(firstProcess.getWorkpiece().getRootElement().getType());
+            Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
+                    MdSec.DMD_SEC);
+            createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
         }
     }
 }
