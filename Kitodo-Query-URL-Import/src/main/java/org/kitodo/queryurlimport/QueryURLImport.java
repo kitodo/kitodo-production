@@ -111,6 +111,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private String metadataFormat;
     private String ftpUsername;
     private String ftpPassword;
+    private Charset encoding = StandardCharsets.UTF_8;
 
     private LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private final HashMap<String, String> searchFieldMapping = new HashMap<>();
@@ -277,11 +278,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 fullUrl = fullUrl + interfaceType.getQueryString() + equalsOperand;
             }
         }
-        if (Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix)) {
-            fullUrl = fullUrl + idParameter + equalsOperand + idPrefix + identifier;
-        } else {
-            fullUrl = fullUrl + idParameter + equalsOperand + identifier;
-        }
+        String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
+        fullUrl += encodeQueryParameter(idParameter + equalsOperand + prefix + identifier, encoding);
         try {
             httpClient.close();
             httpClient = HttpClientBuilder.create().build();
@@ -297,6 +295,32 @@ public class QueryURLImport implements ExternalDataImportInterface {
             throw new ConfigException("Search Query Request Failed");
         } catch (IOException e) {
             throw new ConfigException(e.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Encodes a parameter value as part of the query of a URL. Characters
+     * outside of the readable ASCII range are converted into hexadecimal
+     * representations, preceded by a percent sign (so-called “percent coding”).
+     *
+     * @param value
+     *            value to encode
+     * @param charset
+     *            charset to use for encoding
+     * @return encoded value
+     */
+    /*
+     * The exception announced by {@code URLEncoder} cannot occur if a Charset
+     * object is used.
+     *
+     * TODO: This method can be replaced by URLEncoder.encode(String, Charset)
+     * in Java ≥ 10.
+     */
+    private static String encodeQueryParameter(String value, Charset charset) {
+        try {
+            return URLEncoder.encode(value, charset.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new Error("Virtual machine is missing charset " + charset + '!', e);
         }
     }
 
