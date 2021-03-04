@@ -46,7 +46,9 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
@@ -59,6 +61,7 @@ import org.kitodo.production.security.password.KitodoPassword;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
+import org.primefaces.PrimeFaces;
 
 @Named("UserForm")
 @SessionScoped
@@ -220,17 +223,62 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Deletes a user account.
+     * Retrieve and return the list of tasks that are assigned to the user and
+     * that are "INWORK" and belong to process, not template.
+     *
+     * @return list of tasks that are currently assigned to the user and that
+     *         are "INWORK" and belong to process, not template
+     */
+    public List<Task> getTasksInProgress(User user) {
+        return ServiceManager.getUserService().getTasksInProgress(user);
+    }
+
+    /**
+     * Unassign all tasks in work from user and set their status back to open.
+     *
+     * @param user user
+     */
+    public void resetTasksToOpen(User user) {
+        List<Task> tasksInProgress = getTasksInProgress(user);
+        for (Task taskInProgress : tasksInProgress) {
+            ServiceManager.getTaskService().replaceProcessingUser(taskInProgress, null);
+            taskInProgress.setProcessingStatus(TaskStatus.OPEN);
+            try {
+                ServiceManager.getTaskService().save(taskInProgress);
+            } catch (DataException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TASK.getTranslationSingular()}, logger, e);
+            }
+        }
+    }
+
+    /**
+     * Delete user if he does not have tasks in progress.
      *
      * <p>
      * Please note that deleting a user in Production will not delete the
      * user from a connected LDAP service.
      */
-    public void delete() {
+    public void checkAndDelete() {
+        if (getTasksInProgress(userObject).isEmpty()) {
+            deleteUser(userObject);
+        } else {
+            PrimeFaces.current().executeScript("PF('confirmResetTasksDialog').show();");
+        }
+    }
+
+    /**
+     * Unassign all tasks in work from user and set their status back to open and delete the user.
+     */
+    public void resetTasksAndDeleteUser() {
+        resetTasksToOpen(userObject);
+        deleteUser(userObject);
+    }
+
+    void deleteUser(User user) {
         try {
-            userService.removeFromDatabase(userObject);
+            userService.removeFromDatabase(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.USER.getTranslationSingular()}, logger, e);
         }
     }
 

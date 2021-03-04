@@ -16,6 +16,48 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
+    
+    <p:dialog widgetVar="confirmResetTasksDialog"
+              id="confirmResetTasksDialog"
+              global="true"
+              showEffect="fade"
+              hideEffect="fade"
+              styleClass="confirm-delete"
+              modal="true"
+              width="600px"
+              appendTo="@(body)"
+              resizable="false">
+        <h:panelGroup>
+            <h3>#{msgs.confirmDelete}</h3>
+            <div class="select-note ui-messages-error">
+                #{msgs.confirmDeleteUserWithTasks}
+            </div>
+        </h:panelGroup>
+        <h:panelGroup>
+            <h:form>
+                <p:commandButton
+                        id="yesButton"
+                        value="#{msgs.yes}"
+                        action="#{UserForm.resetTasksAndDeleteUser}"
+                        oncomplete="PF('confirmResetTasksDialog').hide();"
+                        styleClass="ui-confirmdialog-yes primary right"
+                        style="margin-right: 10px"
+                        icon="fa fa-check fa-lg"
+                        iconPos="right"
+                        update="usersTabView:usersTable"/>
+                <p:commandButton
+                        id="cancelButton"
+                        value="#{msgs.cancel}"
+                        onclick="PF('confirmResetTasksDialog').hide();"
+                        type="button"
+                        styleClass="ui-confirmdialog-no secondary right"
+                        style="margin-right: 10px"
+                        iconPos="right"
+                        icon="fa fa-times fa-lg"/>
+            </h:form>
+        </h:panelGroup>
+    </p:dialog>
+
     <!--@elvariable id="item" type="org.kitodo.production.dto.UserDTO"-->
     <p:dataTable var="item"
                  id="usersTable"
@@ -93,8 +135,20 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 
+                <h:panelGroup styleClass="action"
+                              title="#{empty UserForm.getTasksInProgress(item) ? msgs.userWithoutTasks : msgs.unassignTasks}">
+                    <p:commandLink id="unassignTasks"
+                                   action="#{UserForm.resetTasksToOpen(item)}"
+                                   styleClass="#{empty UserForm.getTasksInProgress(item) ? 'action ui-state-disabled' : 'action'}"
+                                   disabled="#{empty UserForm.getTasksInProgress(item)}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToUnassignTasks()}">
+                        <h:outputText><i class="fa fa-user-times"></i></h:outputText>
+                        <p:confirm message=" #{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
+                    </p:commandLink>
+                </h:panelGroup>
+
                 <p:commandLink id="deleteUser"
-                               action="#{UserForm.delete}"
+                               action="#{UserForm.checkAndDelete}"
                                styleClass="action"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteUser()}"
                                update="usersTabView:usersTable">
