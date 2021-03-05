@@ -51,7 +51,6 @@
                                 <p:outputLabel for="createFolder" value="#{msgs['editFolderDialog.createFolder']}"/>
                                 <p:selectBooleanCheckbox id="createFolder" styleClass="switch input"
                                                          value="#{ProjectForm.myFolder.createFolder}">
-                                    <p:ajax event="change" oncomplete="toggleSave()"/>
                                 </p:selectBooleanCheckbox>
                             </p:column>
                         </p:row>
@@ -124,14 +123,12 @@
                                 <p:outputLabel for="validateFolder" value="#{msgs['editFolderDialog.validateFolder']}"/>
                                 <p:selectBooleanCheckbox id="validateFolder" styleClass="switch input"
                                                          value="#{ProjectForm.myFolder.validateFolder}">
-                                    <p:ajax event="change" oncomplete="toggleSave()"/>
                                 </p:selectBooleanCheckbox>
                             </p:column>
                             <p:column>
                                 <p:outputLabel for="copyFolder" value="#{msgs['editFolderDialog.copyFolder']}"/>
                                 <p:selectBooleanCheckbox id="copyFolder" styleClass="switch input"
                                                          value="#{ProjectForm.myFolder.copyFolder}">
-                                    <p:ajax event="change" oncomplete="toggleSave()"/>
                                 </p:selectBooleanCheckbox>
                             </p:column>
                         </p:row>
@@ -143,7 +140,9 @@
                                      update="editForm"
                                      oncomplete="PF('editFolderDialog').hide();"
                                      value="#{msgs.apply}"
-                                     styleClass="primary right"/>
+                                     styleClass="primary right">
+                        <p:ajax event="click" oncomplete="toggleSave()"/>
+                    </p:commandButton>
                     <p:commandButton value="#{msgs.cancel}"
                                      styleClass="secondary right"
                                      onclick="PF('editFolderDialog').hide()"/>
