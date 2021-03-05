@@ -642,6 +642,7 @@ public class AddDocStrucTypeDialog {
         elementsToAddSpinnerValue = 1;
         selectFirstPageOnAddNodeSelectedItem = null;
         selectLastPageOnAddNodeSelectedItem = null;
+        docStructPositionSelectionSelectedItem = LAST_CHILD_OF_CURRENT_ELEMENT;
     }
 
     /**
