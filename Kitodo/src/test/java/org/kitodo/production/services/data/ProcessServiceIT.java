@@ -47,6 +47,7 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -215,6 +216,22 @@ public class ProcessServiceIT {
     @Test
     public void shouldFindByMetadataContent() throws DataException {
         assertEquals(processNotFound, 1, processService.findByAnything("SecondMetaShort").size());
+    }
+
+    @Test
+    public void shouldFindProcessWithUnderscore() throws DataException, DAOException {
+        Project projectDTO = ServiceManager.getProjectService().getById(1);
+        Process process = new Process();
+        process.setProject(projectDTO);
+        String processTitle = "Title-with-hyphen_and_underscore";
+        process.setTitle(processTitle);
+        ServiceManager.getProcessService().save(process);
+
+        List<ProcessDTO> byAnything = processService.findByAnything("ith-hyphen_an");
+        assertFalse("nothing found", byAnything.isEmpty());
+        assertEquals("wrong process found", processTitle, byAnything.get(0).getTitle());
+
+        ServiceManager.getProcessService().remove(process.getId());
     }
 
     @Test
