@@ -568,7 +568,8 @@ public class UserForm extends BaseForm {
      */
     public List<Role> getRoles() {
         try {
-            return ServiceManager.getRoleService().getAllAvailableForAssignToUser(this.userObject);
+            return ServiceManager.getRoleService().getAllAvailableForAssignToUser(this.userObject)
+                    .stream().sorted(Comparator.comparing(Role::getTitle)).collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() }, logger,
                 e);
@@ -583,7 +584,8 @@ public class UserForm extends BaseForm {
      */
     public List<Client> getClients() {
         try {
-            return ServiceManager.getClientService().getAllAvailableForAssignToUser(this.userObject);
+            return ServiceManager.getClientService().getAllAvailableForAssignToUser(this.userObject)
+                    .stream().sorted(Comparator.comparing(Client::getName)).collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.CLIENT.getTranslationPlural() }, logger,
                     e);
