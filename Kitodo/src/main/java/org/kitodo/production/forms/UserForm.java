@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -550,7 +552,8 @@ public class UserForm extends BaseForm {
      */
     public List<ProjectDTO> getProjects() {
         try {
-            return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject);
+            return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject)
+                    .stream().sorted(Comparator.comparing(ProjectDTO::getTitle)).collect(Collectors.toList());
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
@@ -565,7 +568,8 @@ public class UserForm extends BaseForm {
      */
     public List<Role> getRoles() {
         try {
-            return ServiceManager.getRoleService().getAllAvailableForAssignToUser(this.userObject);
+            return ServiceManager.getRoleService().getAllAvailableForAssignToUser(this.userObject)
+                    .stream().sorted(Comparator.comparing(Role::getTitle)).collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() }, logger,
                 e);
@@ -580,7 +584,8 @@ public class UserForm extends BaseForm {
      */
     public List<Client> getClients() {
         try {
-            return ServiceManager.getClientService().getAllAvailableForAssignToUser(this.userObject);
+            return ServiceManager.getClientService().getAllAvailableForAssignToUser(this.userObject)
+                    .stream().sorted(Comparator.comparing(Client::getName)).collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.CLIENT.getTranslationPlural() }, logger,
                     e);

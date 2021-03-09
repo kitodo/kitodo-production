@@ -18,11 +18,15 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <p:dataTable id="roleDatatable" var="item" value="#{UserForm.userObject.roles}">
-        <p:column headerText="#{msgs.role}">
+    <!--@elvariable id="item" type="org.kitodo.data.database.beans.Role"-->
+    <p:dataTable id="roleDatatable"
+                 var="item"
+                 sortBy="#{item.title}"
+                 value="#{UserForm.userObject.roles}">
+        <p:column headerText="#{msgs.role}" sortBy="#{item.title}">
             <h:outputText value="#{item.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.client}">
+        <p:column headerText="#{msgs.client}" sortBy="#{item.client.name}">
             <h:outputText value="#{item.client.name}"/>
         </p:column>
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
