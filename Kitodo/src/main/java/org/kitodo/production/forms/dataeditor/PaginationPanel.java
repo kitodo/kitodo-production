@@ -375,6 +375,8 @@ public class PaginationPanel {
                 mediaUnits.get(i).setOrderlabel(paginator.next());
             }
         }
+        paginationSelectionSelectedItems = new ArrayList<>();
+        preparePaginationSelectionItems();
         dataEditor.refreshStructurePanel();
         PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                 + Helper.getTranslation("paginationSaved") + "','severity':'info'})");
