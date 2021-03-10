@@ -12,177 +12,149 @@
 -->
 
 <ui:composition
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
 
-    <p:dialog id="paginationDialog"
-              widgetVar="paginationDialog"
-              modal="true"
-              resizable="false"
-              draggable="true"
-              dynamic="true"
-              appendTo="@(body)"
-              width="640"
-              height="480">
-        <h3>#{msgs.paginationEdit}</h3>
+    <p:panel id="paginationBox" styleClass="wrapperPanel">
         <h:form id="paginationForm">
-            <h:panelGroup layout="block"
-                          styleClass="dialogFieldWrapper">
-                <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
-                    <p:panelGrid columns="1" layout="grid">
-                        <p:row>
-                            <div>
-                                <p:commandButton id="createPaginationButton"
-                                                 action="#{DataEditorForm.paginationPanel.createPagination()}"
-                                                 value="#{msgs.paginationRead}"
-                                                 icon="fa fa-magic fa-lg"
-                                                 iconPos="right"
-                                                 styleClass="secondary"
-                                                 style="margin: 0;"
-                                                 update="paginationForm:paginationSelection,structureTreeForm,paginationForm:paginationWrapperPanel,galleryWrapperPanel"
-                                                 immediate="true"/>
-                            </div>
-
-                            <div>
-                                <p:selectManyMenu id="paginationSelection" styleClass="pagination-select-items"
-                                                  value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
-                                                  style="width: 100%;"
-                                                  required="true"
-                                                  requiredMessage="#{msgs.paginationNoPagesSelected}"
-                                                  filter="true"
-                                                  filterMatchMode="contains"
-                                                  showCheckbox="true">
-                                    <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
-                                </p:selectManyMenu>
-                            </div>
-
-                            <div>
-                                <p:outputLabel for="paginationTypeSelect"
-                                               value="#{msgs.pagination}"/>
-                                <p:selectOneMenu id="paginationTypeSelect"
-                                                 value="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem}">
-                                    <f:selectItems value="#{DataEditorForm.paginationPanel.paginationTypeSelectItems}"
-                                                   var="type"
-                                                   itemValue="#{type}"
-                                                   itemLabel="#{type.label}"/>
-                                </p:selectOneMenu>
-                            </div>
-
-                            <div>
-                                <p:outputLabel value="#{msgs.paginationStartValue}:"
-                                               for="paginationStartValue"/>
-                                <p:inputNumber id="paginationStartValue"
-                                               padControl="false"
-                                               required="true"
-                                               value="#{DataEditorForm.paginationPanel.paginationStartValue}"
-                                               label="#{msgs.paginationStartValue}"
-                                               class="input"
-                                               requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
-                            </div>
-
-                            <div>
-                                <p:outputLabel value="#{msgs.paginationScope}:"
-                                               for="selectPaginationScope"/>
-                                <p:selectOneMenu id="selectPaginationScope"
-                                                 value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
-                                    <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems}"
-                                                   var="scope"
-                                                   itemValue="#{scope}"
-                                                   itemLabel="#{scope.label}"/>
-                                </p:selectOneMenu>
-                            </div>
-
-                            <div>
-                                <p:outputLabel value="#{msgs.counting}:"
-                                               for="selectPaginationMode"/>
-                                <p:selectOneMenu
-                                        value="#{DataEditorForm.paginationPanel.selectPaginationModeSelectedItem}"
-                                        converter="#{IllustratedSelectItemConverter}"
-                                        panelStyle="width:25%;"
-                                        var="mode"
-                                        id="selectPaginationMode">
-                                    <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"
-                                                   var="modeSelection"
-                                                   itemValue="#{modeSelection}"
-                                                   itemLabel="#{modeSelection.label}"/>
-                                    <p:column style="width:10%;">
-                                        <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputText value="#{mode.label}"/>
-                                    </p:column>
-                                    <f:attribute name="illustratedSelectItems"
-                                                 value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"/>
-                                </p:selectOneMenu>
-                            </div>
-
-                            <div>
-                                <p:outputLabel
-                                        value="#{msgs.insertNewImages}"
-                                        for="newPagesCount"/>
-                                <p:inputText id="newPagesCount"
-                                             value="#{DataEditorForm.paginationPanel.newPagesCountValue}"
-                                             class="input"
-                                             style="width: 80%;"
-                                             label="#{msgs.paginationStartValue}">
-                                    <p:ajax event="blur"/>
-                                    <f:convertNumber integerOnly="true"/>
-                                </p:inputText>
-
-                                <p:commandButton id="generateDummyImagesButton"
-                                                 value="#{msgs.insert}"
-                                                 styleClass="secondary"
-                                                 style="margin: 0;"
-                                                 action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick()}"
-                                                 update="structureTreeForm,galleryWrapperPanel"
-                                                 immediate="true"/>
-                            </div>
-
-                            <div>
-                                <p:outputLabel for="fictitiousCheckbox"
-                                               value="#{msgs.paginationFictitious}"/>
-                                <p:selectBooleanCheckbox id="fictitiousCheckbox"
-                                                         styleClass="input switch"
-                                                         style="margin-bottom: 0;"
-                                                         value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
-                            </div>
-                        </p:row>
-                    </p:panelGrid>
-                </p:panel>
-            </h:panelGroup>
-            <h:panelGroup layout="block"
-                                      styleClass="dialogButtonWrapper">
-
-                            <p:commandButton id="applyAndExit"
-                                             action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
-                                             oncomplete="PF('paginationDialog').hide();"
-                                             styleClass="primary right"
-                                             icon="fa fa-check fa-lg"
+            <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
+                <p:panelGrid columns="1" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:commandButton id="createPaginationButton"
+                                             action="#{DataEditorForm.paginationPanel.createPagination()}"
+                                             value="#{msgs.paginationRead}"
+                                             icon="fa fa-magic fa-lg"
                                              iconPos="right"
-                                             update="paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
-                                             value="#{msgs.apply} &amp; #{msgs.exit}">
-                            </p:commandButton>
-
-                            <p:commandButton id="apply"
-                                             action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
+                                             styleClass="secondary"
+                                             style="margin: 0;"
+                                             update="paginationForm:paginationSelection,structureTreeForm,paginationForm:paginationWrapperPanel,galleryWrapperPanel"
+                                             immediate="true"/>
+                        </div>
+                        <div>
+                            <p:selectManyMenu id="paginationSelection"
+                                              value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
+                                              required="true"
+                                              requiredMessage="#{msgs.paginationNoPagesSelected}"
+                                              filter="true"
+                                              filterMatchMode="contains"
+                                              showCheckbox="true">
+                                <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
+                            </p:selectManyMenu>
+                        </div>
+                        <div>
+                            <p:outputLabel for="paginationTypeSelect"
+                                           value="#{msgs.pagination}"/>
+                            <p:selectOneMenu id="paginationTypeSelect"
+                                             value="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem}">
+                                <f:selectItems value="#{DataEditorForm.paginationPanel.paginationTypeSelectItems}"
+                                               var="type"
+                                               itemValue="#{type}"
+                                               itemLabel="#{type.label}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
+                            <p:outputLabel value="#{msgs.paginationStartValue}:"
+                                           for="paginationStartValue"/>
+                            <p:inputNumber id="paginationStartValue"
+                                           padControl="false"
+                                           required="true"
+                                           value="#{DataEditorForm.paginationPanel.paginationStartValue}"
+                                           label="#{msgs.paginationStartValue}"
+                                           class="input"
+                                           requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
+                        </div>
+                        <div>
+                            <p:outputLabel value="#{msgs.paginationScope}:"
+                                           for="selectPaginationScope"/>
+                            <p:selectOneMenu id="selectPaginationScope"
+                                             autoWidth="false"
+                                             value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
+                                <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems}"
+                                               var="scope"
+                                               itemValue="#{scope}"
+                                               itemLabel="#{scope.label}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
+                            <p:outputLabel value="#{msgs.counting}:"
+                                           for="selectPaginationMode"/>
+                            <p:selectOneMenu
+                                    value="#{DataEditorForm.paginationPanel.selectPaginationModeSelectedItem}"
+                                    converter="#{IllustratedSelectItemConverter}"
+                                    panelStyle="width:25%;"
+                                    var="mode"
+                                    autoWidth="false"
+                                    id="selectPaginationMode">
+                                <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"
+                                               var="modeSelection"
+                                               itemValue="#{modeSelection}"
+                                               itemLabel="#{modeSelection.label}"/>
+                                <p:column style="width:10%;">
+                                    <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{mode.label}"/>
+                                </p:column>
+                                <f:attribute name="illustratedSelectItems"
+                                             value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
+                            <p:outputLabel
+                                    value="#{msgs.insertNewImages}"
+                                    for="newPagesCount"/>
+                            <p:inputText id="newPagesCount"
+                                         value="#{DataEditorForm.paginationPanel.newPagesCountValue}"
+                                         styleClass="input-with-button"
+                                         style="width: calc(100% - 95px)"
+                                         label="#{msgs.paginationStartValue}">
+                                <p:ajax event="blur"/>
+                                <f:convertNumber integerOnly="true"/>
+                            </p:inputText>
+                            <p:commandButton id="generateDummyImagesButton"
+                                             value="#{msgs.insert}"
                                              styleClass="secondary right"
-                                             icon="fa fa-check fa-lg"
-                                             iconPos="right"
-                                             update="paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
-                                             value="#{msgs.apply}">
-                            </p:commandButton>
-
-                            <p:button id="cancel"
-                                      value="#{msgs.cancel}"
-                                      styleClass="secondary right"
-                                      onclick="PF('paginationDialog').hide(); return false;"
-                                      icon="fa fa-times fa-lg"
-                                      iconPos="right"
-                                      update="structureTreeForm"/>
-                        </h:panelGroup>
+                                             type="button"
+                                             style="margin: 0;"
+                                             action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick()}"
+                                             update="structureTreeForm,galleryWrapperPanel"
+                                             immediate="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="fictitiousCheckbox"
+                                           value="#{msgs.paginationFictitious}"/>
+                            <p:selectBooleanCheckbox id="fictitiousCheckbox"
+                                                     styleClass="input switch"
+                                                     style="margin-bottom: 0;"
+                                                     value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="apply"
+                                 action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
+                                 styleClass="primary right"
+                                 icon="fa fa-check fa-lg"
+                                 iconPos="right"
+                                 onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
+                                 update="notifications paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
+                                 value="#{msgs.apply}"/>
+                <p:commandButton id="cancel"
+                                 value="#{msgs.cancel}"
+                                 action="#{DataEditorForm.paginationPanel.show()}"
+                                 styleClass="secondary left"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 immediate="true"
+                                 process="@this"
+                                 update="paginationForm"/>
+            </h:panelGroup>
         </h:form>
-    </p:dialog>
+    </p:panel>
 </ui:composition>

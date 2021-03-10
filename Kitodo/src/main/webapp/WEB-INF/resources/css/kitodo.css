@@ -1648,12 +1648,14 @@ form#metadata div label,
 }
 
 #commentsBox {
-    overflow-y: scroll;
+    position: relative;
 }
 
 #commentsBox,
 #commentPanel .wrapperPanel,
-#commentWrapperPanel_content {
+#commentWrapperPanel,
+#commentWrapperPanel_content,
+#commentsBox\:commentsGrid {
     height: 100%;
 }
 
@@ -1673,6 +1675,7 @@ form#metadata div label,
 
 #commentsBox\:commentsGrid {
     margin-bottom: 50px;
+    overflow-y: scroll;
 }
 
 #commentsBox\:commentsGrid_head {
@@ -1902,17 +1905,19 @@ form#metadata div label,
     display: none;
 }
 
-#metadataEditorWrapper #verticalResizer {
+#metadataEditorWrapper #verticalResizerFirstColumn,
+#metadataEditorWrapper #verticalResizerSecondColumn{
     height: 5px;
     background: var(--pure-white);
     cursor: ns-resize;
 }
 
-#metadataEditorWrapper #verticalResizer.disabled {
+#metadataEditorWrapper #verticalResizerFirstColumn.disabled,
+#metadataEditorWrapper #verticalResizerSecondColumn.disabled{
     pointer-events: none;
 }
 
-#secondColumnPanel {
+#secondColumnPanel, #firstColumnPanel {
     height: calc(100% - 40px);
 }
 
@@ -1927,7 +1932,9 @@ form#metadata div label,
 }
 
 #metadataPanel.collapsed,
-#commentPanel.collapsed {
+#commentPanel.collapsed,
+#structurePanel.collapsed,
+#paginationPanel.collapsed {
     display: none;
 }
 
@@ -2047,12 +2054,24 @@ Column content
     margin-right: 3px;
 }
 
-#paginationPanel {
+#commentsPanel {
     margin-top: 5px;
-    height: calc(50% - 45px);
+    height: 100%;
     box-sizing: border-box;
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+#paginationPanel {
+    margin-top: 5px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#paginationBox_content {
+    height: 100%;
 }
 
 .ui-tree-draghelper.ui-draggable-dragging {
