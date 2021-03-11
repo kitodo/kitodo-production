@@ -136,6 +136,14 @@
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
+            <p:menuitem value="#{msgs.uploadFile}"
+                        action="#{DataEditorForm.uploadFileDialog.prepare}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+                        oncomplete="PF('uploadFileDialog').show();"
+                        icon="fa fa-download fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        process="@this"/>
             <p:menuitem value="#{msgs.removeElement}"
                         rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
                         icon="fa fa-trash fa-sm"

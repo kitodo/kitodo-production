@@ -1748,6 +1748,15 @@ form#metadata div label,
     height: calc(var(--default-double-size) * 3);
 }
 
+#uploadFileDialog {
+    padding: 10px;
+}
+
+#uploadFileDialogForm {
+    height: 100%;
+    overflow-y: scroll;
+}
+
 #metadataAccordion\:metadata .ui-treetable-indent,
 #metadataAccordion\:metadata .ui-treetable-toggler {
     float: left;
