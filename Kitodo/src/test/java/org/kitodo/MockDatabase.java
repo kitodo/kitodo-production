@@ -603,11 +603,15 @@ public class MockDatabase {
         fifthProcess.setTitle("HierarchChildToKeep");
         fourthProcess.getChildren().add(fifthProcess);
         fifthProcess.setParent(fourthProcess);
+        fifthProcess.setProject(ServiceManager.getProjectService().getById(1));
+        fifthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         ServiceManager.getProcessService().save(fifthProcess);
 
         Process sixthProcess = new Process();
         sixthProcess.setTitle("HierarchChildToRemove");
         fourthProcess.getChildren().add(sixthProcess);
+        sixthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
+        sixthProcess.setProject(ServiceManager.getProjectService().getById(1));
         sixthProcess.setParent(fourthProcess);
         ServiceManager.getProcessService().save(sixthProcess);
 

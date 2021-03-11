@@ -202,7 +202,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByMetadata() throws DataException {
-        assertEquals(processNotFound, 2,
+        assertEquals(processNotFound, 4,
             processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
     }
 
@@ -219,7 +219,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProjectTitleWithWildcard() throws DataException {
-        assertEquals(processNotFound, 4, processService.findByAnything("proj").size());
+        assertEquals(processNotFound, 6, processService.findByAnything("proj").size());
     }
 
     @Test

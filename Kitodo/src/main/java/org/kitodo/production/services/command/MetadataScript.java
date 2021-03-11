@@ -11,13 +11,15 @@
 
 package org.kitodo.production.services.command;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MetadataScript {
 
     private String goal;
     private String root;
-    private String value;
+    private List<String> values = new ArrayList<>();
 
     /**
      * Creates a MetadataScript with given command.
@@ -31,7 +33,7 @@ public class MetadataScript {
             if (rootOrValue.startsWith("@") || rootOrValue.startsWith("$")) {
                 root = rootOrValue;
             } else {
-                value = rootOrValue;
+                values.add(rootOrValue);
             }
         }
         else {
@@ -56,19 +58,11 @@ public class MetadataScript {
     }
 
     /**
-     * Get value.
-     * @return value.
+     * Get values.
+     * @return values.
      */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Set value.
-     * @param value the value to set.
-     */
-    public void setValue(String value) {
-        this.value = value;
+    public List<String> getValues() {
+        return values;
     }
 
     /**

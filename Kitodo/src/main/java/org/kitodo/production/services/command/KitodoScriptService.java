@@ -160,6 +160,9 @@ public class KitodoScriptService {
             case "deleteData":
                 deleteData(processes, script);
                 break;
+            case "copyDataToChildren":
+                copyDataToChildren(processes, script);
+                break;
             case "generateImages":
                 String folders = parameters.get("folders");
                 List<String> foldersList = Arrays.asList("all");
@@ -198,7 +201,37 @@ public class KitodoScriptService {
                 Helper.setMessage("deleteDataOk", currentProcessTitle);
             }
         } catch (IOException e) {
-            Helper.setErrorMessage("addDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
+            Helper.setErrorMessage("deleteDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
+        }
+    }
+
+    private void copyDataToChildren(List<Process> processes, String script) {
+        String currentProcessTitle = null;
+        try {
+            script = script.replaceFirst("\\s*action:copyDataToChildren\\s+(.*?)[\r\n\\s]*", "$1");
+            AddDataScript addDataScript = new AddDataScript();
+            for (Process parentProcess : processes) {
+                currentProcessTitle = parentProcess.getTitle();
+                List<MetadataScript> metadataScripts = addDataScript.parseScript(script);
+                generateScriptValues(addDataScript, metadataScripts, parentProcess);
+                for (Process child : parentProcess.getChildren()) {
+                    LegacyMetsModsDigitalDocumentHelper childMetadataFile = ServiceManager.getProcessService()
+                            .readMetadataFile(child);
+                    for (MetadataScript metadataScript : metadataScripts) {
+                        addDataScript.executeScript(childMetadataFile, child, metadataScript);
+                    }
+                }
+                Helper.setMessage("addDataOk", currentProcessTitle);
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("addDataOk", currentProcessTitle + ":" + e.getMessage(), logger, e);
+        }
+    }
+
+    private void generateScriptValues(AddDataScript addDataScript, List<MetadataScript> metadataScripts,
+            Process parentProcess) throws IOException {
+        for (MetadataScript metadataScript : metadataScripts) {
+            addDataScript.generateValueFromParent(metadataScript, parentProcess);
         }
     }
 
