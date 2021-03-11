@@ -56,6 +56,11 @@ class FutureDerivative {
     private static final String FORMAT_TIFF_PREFIX = "tiff:";
 
     /**
+     * ImageMagick file type prefix to request the pdf file format.
+     */
+    private static final String FORMAT_PDF_PREFIX = "pdf:";
+
+    /**
      * ImageMagick operation {@code -resample}. Resizes an image to a given
      * resolution.
      *
@@ -117,6 +122,9 @@ class FutureDerivative {
                 break;
             case TIFF:
                 this.outputFile = FORMAT_TIFF_PREFIX.concat(outputFile);
+                break;
+            case PDF:
+                this.outputFile = FORMAT_PDF_PREFIX.concat(outputFile);
                 break;
             default:
                 this.outputFile = outputFile;

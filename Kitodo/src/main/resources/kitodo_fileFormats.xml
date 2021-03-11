@@ -58,7 +58,7 @@
     <fileFormat extension="jpg" fileType="JPEG" formatName="jpg" imageFileFormat="JPEG" mimeType="image/jpeg">
         <label>JPEG File Interchange Format (image/jpeg, *.jpg)</label>
     </fileFormat>
-    <fileFormat extension="pdf" fileType="PDF" mimeType="application/pdf">
+    <fileFormat extension="pdf" fileType="PDF" imageFileFormat="PDF" mimeType="application/pdf">
         <label>Portable Document Format (application/pdf, *.pdf)</label>
     </fileFormat>
     <fileFormat extension="png" fileType="PNG" formatName="png" imageFileFormat="PNG" mimeType="image/png">
