@@ -162,8 +162,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
-    private boolean showClosedProcesses = false;
-    private boolean showInactiveProjects = false;
     private static final String JSON_TITLE = "title";
     private static final String JSON_VALUE = "value";
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_PREFIX, "orig");
@@ -232,7 +230,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return countDocuments(createUserProcessesQuery(filters));
+        return countResults(filters, false, false);
+    }
+
+    public Long countResults(Map filters, boolean showClosedProcesses, boolean showInactiveProjects)
+            throws DataException {
+        return countDocuments(createUserProcessesQuery(filters, showClosedProcesses, showInactiveProjects));
     }
 
     @Override
@@ -292,9 +295,27 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     @Override
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
+        return loadData(first, pageSize, sortField, sortOrder, filters, false, false);
+    }
+
+    /**
+     * Load processes with given parameters.
+     * @param first index of first process to load
+     * @param pageSize number of processes to load
+     * @param sortField name of field by which processes are sorted
+     * @param sortOrder SortOrder by which processes are sorted - either ascending or descending
+     * @param filters filter map
+     * @param showClosedProcesses boolean controlling whether to load closed processes or not
+     * @param showInactiveProjects boolean controlling whether to load processes of closed projects or not
+     * @return List of loaded processes
+     * @throws DataException if processes cannot be loaded from search index
+     */
+    public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
+                                     org.primefaces.model.SortOrder sortOrder, Map filters,
+                                     boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
         String filter = ServiceManager.getFilterService().parseFilterString(filters);
-        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, this.showClosedProcesses,
-                this.showInactiveProjects);
+        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, showClosedProcesses,
+                showInactiveProjects);
         return findByQuery(searchResultGeneration.getQueryForFilter(ObjectType.PROCESS),
                 getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
@@ -310,18 +331,20 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     @SuppressWarnings("unchecked")
-    private BoolQueryBuilder createUserProcessesQuery(Map filters) throws DataException {
+    private BoolQueryBuilder createUserProcessesQuery(Map filters, boolean showClosedProcesses,
+                                                      boolean showInactiveProjects)
+            throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
             query.must(readFilters(filters));
         }
 
-        if (!this.showClosedProcesses) {
+        if (!showClosedProcesses) {
             query.mustNot(getQueryForClosedProcesses());
         }
 
-        if (!this.showInactiveProjects) {
+        if (!showInactiveProjects) {
             query.mustNot(getQueryProjectActive(false));
         }
         return query;
@@ -1501,13 +1524,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param filter
      *            for generating search results
      */
-    public void generateResultAsPdf(String filter) throws DocumentException, IOException {
+    public void generateResultAsPdf(String filter, boolean showClosedProcesses, boolean showInactiveProjects)
+            throws DocumentException, IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
             try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(filter, this.showClosedProcesses,
-                        this.showInactiveProjects);
+                SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
+                        showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
                 List<List<HSSFCell>> rowList = new ArrayList<>();
                 HSSFSheet mySheet = wb.getSheetAt(0);
@@ -1546,13 +1570,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param filter
      *            for generating search results
      */
-    public void generateResult(String filter) throws IOException {
+    public void generateResult(String filter, boolean showClosedProcesses, boolean showInactiveProjects)
+            throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             ExternalContext response = prepareHeaderInformation(facesContext, "search.xls");
             try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(filter, this.showClosedProcesses,
-                        this.showInactiveProjects);
+                SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
+                        showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
                 wb.write(out);
                 out.flush();
@@ -1917,26 +1942,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         mm.write(targetFileName);
         Helper.setMessage(process.getTitle() + ": ", "exportFinished");
         return true;
-    }
-
-    /**
-     * Set showClosedProcesses.
-     *
-     * @param showClosedProcesses
-     *            as boolean
-     */
-    public void setShowClosedProcesses(boolean showClosedProcesses) {
-        this.showClosedProcesses = showClosedProcesses;
-    }
-
-    /**
-     * Set showInactiveProjects.
-     *
-     * @param showInactiveProjects
-     *            as boolean
-     */
-    public void setShowInactiveProjects(boolean showInactiveProjects) {
-        this.showInactiveProjects = showInactiveProjects;
     }
 
     /**

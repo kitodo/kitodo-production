@@ -35,6 +35,7 @@ import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
+import org.kitodo.production.model.LazyProcessDTOModel;
 import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -55,7 +56,6 @@ public class ProcessListBaseView extends BaseForm {
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
     List<Process> selectedProcesses = new ArrayList<>();
-    private boolean showClosedProcesses = false;
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
@@ -232,7 +232,7 @@ public class ProcessListBaseView extends BaseForm {
      *         not
      */
     public boolean isShowClosedProcesses() {
-        return this.showClosedProcesses;
+        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowClosedProcesses();
     }
 
     /**
@@ -243,8 +243,28 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
-        this.showClosedProcesses = showClosedProcesses;
-        ServiceManager.getProcessService().setShowClosedProcesses(showClosedProcesses);
+        ((LazyProcessDTOModel)this.lazyDTOModel).setShowClosedProcesses(showClosedProcesses);
+    }
+
+    /**
+     * Set whether inactive projects should be displayed or not.
+     *
+     * @param showInactiveProjects
+     *            boolean flag signaling whether inactive projects should be
+     *            displayed or not
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        ((LazyProcessDTOModel)this.lazyDTOModel).setShowInactiveProjects(showInactiveProjects);
+    }
+
+    /**
+     * Return whether inactive projects should be displayed or not.
+     *
+     * @return parameter controlling whether inactive projects should be displayed
+     *         or not
+     */
+    public boolean isShowInactiveProjects() {
+        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowInactiveProjects();
     }
 
     /**
@@ -259,7 +279,8 @@ public class ProcessListBaseView extends BaseForm {
      */
     public void generateResult() {
         try {
-            ServiceManager.getProcessService().generateResult(this.filter);
+            ServiceManager.getProcessService().generateResult(this.filter, this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
         }
@@ -270,7 +291,8 @@ public class ProcessListBaseView extends BaseForm {
      */
     public void generateResultAsPdf() {
         try {
-            ServiceManager.getProcessService().generateResultAsPdf(this.filter);
+            ServiceManager.getProcessService().generateResultAsPdf(this.filter, this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects());
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
         }

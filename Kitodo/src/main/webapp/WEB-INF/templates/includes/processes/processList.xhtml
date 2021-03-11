@@ -267,6 +267,7 @@
                                 icon="fa fa-file-pdf-o"/>
                     <p:menuitem id="showCompletedProcesses"
                                 value="#{msgs['showClosedProcesses']}"
+                                onstart="PF('processesTable').getPaginator().setPage(0);"
                                 rendered="#{ProcessForm.showClosedProcesses eq false}"
                                 icon="fa fa-eye"
                                 update="processesTabView:processesForm">
@@ -274,6 +275,7 @@
                     </p:menuitem>
                     <p:menuitem id="hideCompletedProcesses"
                                 value="#{msgs['hideClosedProcesses']}"
+                                onstart="PF('processesTable').getPaginator().setPage(0);"
                                 icon="fa fa-eye-slash"
                                 rendered="#{ProcessForm.showClosedProcesses eq true}"
                                 update="processesTabView:processesForm">
