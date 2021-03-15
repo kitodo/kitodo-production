@@ -45,7 +45,7 @@ public class SearchResultForm extends ProcessListBaseView {
     private static final Logger logger = LogManager.getLogger(SearchResultForm.class);
 
     private List<ProcessDTO> filteredList = new ArrayList<>();
-    private List<ProcessDTO> resultList;
+    private List<ProcessDTO> resultList = new ArrayList<>();
     private String searchQuery;
     private String currentTaskFilter;
     private Integer currentProjectFilter;
