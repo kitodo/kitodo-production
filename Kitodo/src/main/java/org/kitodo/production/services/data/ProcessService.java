@@ -1033,6 +1033,21 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Get process data directory.
+     * Don't save it to the database, if it is for indexingAll.
+     *
+     * @param processDTO
+     *            processDTO to get the dataDirectory from
+     * @return path
+     */
+    public String getProcessDataDirectory(ProcessDTO processDTO) {
+        if (Objects.isNull(processDTO.getProcessBaseUri())) {
+            processDTO.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(processDTO));
+        }
+        return processDTO.getProcessBaseUri();
+    }
+
+    /**
+     * Get process data directory.
      *
      * @param process
      *            object
@@ -1194,8 +1209,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            list of Task bean objects
      * @return string
      */
-    public String getProgress(List<Task> tasksBean) {
-        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, null);
+    public String getProgress(List<Task> tasksBean, List<TaskDTO> taskDTOS) {
+        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, taskDTOS);
 
         double closed = calculateProgressClosed(tasks);
         double inProcessing = calculateProgressInProcessing(tasks);

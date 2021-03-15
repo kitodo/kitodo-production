@@ -398,7 +398,7 @@ public class ProcessServiceIT {
     public void shouldGetProgress() throws Exception {
         Process process = processService.getById(1);
 
-        String progress = processService.getProgress(process.getTasks());
+        String progress = processService.getProgress(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", "040020020020", progress);
     }
 

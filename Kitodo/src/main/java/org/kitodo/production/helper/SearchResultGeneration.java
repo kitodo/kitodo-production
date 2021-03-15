@@ -67,15 +67,7 @@ public class SearchResultGeneration {
      */
     public HSSFWorkbook getResult() {
         List<ProcessDTO> resultsWithFilter = getResultsWithFilter();
-
-        List<Process> processes = new ArrayList<>();
-        try {
-            processes = ServiceManager.getProcessService().convertDtosToBeans(resultsWithFilter);
-        } catch (DAOException e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        return getWorkbook(processes);
+        return getWorkbook(resultsWithFilter);
     }
 
     private List<ProcessDTO> getResultsWithFilter() {
@@ -115,7 +107,7 @@ public class SearchResultGeneration {
         return query;
     }
 
-    private HSSFWorkbook getWorkbook(List<Process> processes) {
+    private HSSFWorkbook getWorkbook(List<ProcessDTO> processDTOs) {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Search results");
 
@@ -136,28 +128,25 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
 
         int rowCounter = 2;
-        for (Process process : processes) {
-            prepareRow(rowCounter, sheet, process);
+        for (ProcessDTO processDTO : processDTOs) {
+            prepareRow(rowCounter, sheet, processDTO);
             rowCounter++;
         }
         return workbook;
     }
 
-    private void prepareRow(int rowCounter, HSSFSheet sheet, Process process) {
+    private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessDTO processDTO) {
         HSSFRow row = sheet.createRow(rowCounter);
-        row.createCell(0).setCellValue(process.getTitle());
-        row.createCell(1).setCellValue(process.getId());
-        DateFormat df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z");
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String gmtCreationDate = df.format(process.getCreationDate());
-        row.createCell(2).setCellValue(gmtCreationDate);
+        row.createCell(0).setCellValue(processDTO.getTitle());
+        row.createCell(1).setCellValue(processDTO.getId());
+        row.createCell(2).setCellValue(processDTO.getCreationDate());
 
         URI metadataFilePath;
         int numberOfProcessImages = 0;
         int numberOfProcessStructuralElements = 0;
         int numberOfProcessMetadata = 0;
         try {
-            metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+            metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(processDTO);
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
             numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getMediaUnit())
                     .filter(mediaUnit -> Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)).count();
@@ -165,18 +154,20 @@ public class SearchResultGeneration {
             numberOfProcessMetadata = Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
 
         } catch (IOException e) {
-            logger.debug("Metadata file not found for process with id: " + process.getId());
+            logger.debug("Metadata file not found for process with id: " + processDTO.getId());
         }
 
         row.createCell(3).setCellValue(numberOfProcessImages);
         row.createCell(4).setCellValue(numberOfProcessStructuralElements);
         row.createCell(5).setCellValue(numberOfProcessMetadata);
-        row.createCell(6).setCellValue(process.getProject().getTitle());
+        row.createCell(6).setCellValue(processDTO.getProject().getTitle());
         String sortHelperStatus = "";
-        if (Objects.nonNull(process.getSortHelperStatus())) {
-            sortHelperStatus = process.getSortHelperStatus().substring(0, 3) + " / "
-                    + process.getSortHelperStatus().substring(3, 6) + " / "
-                    + process.getSortHelperStatus().substring(6);
+        String progress = ServiceManager.getProcessService().getProgress(null, processDTO.getTasks());
+
+        if (Objects.nonNull(progress)) {
+            sortHelperStatus = progress.substring(0, 3) + " / "
+                    + progress.substring(3, 6) + " / "
+                    + progress.substring(6);
         }
         row.createCell(7).setCellValue(sortHelperStatus);
     }
