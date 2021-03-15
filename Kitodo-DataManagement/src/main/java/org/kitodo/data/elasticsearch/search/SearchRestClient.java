@@ -174,7 +174,7 @@ public class SearchRestClient extends KitodoRestClient {
         if (Objects.nonNull(size)) {
             sourceBuilder.size(size);
         } else {
-            sourceBuilder.size(1000);
+            sourceBuilder.size(10000);
         }
 
         SearchRequest searchRequest = new SearchRequest(this.index);
