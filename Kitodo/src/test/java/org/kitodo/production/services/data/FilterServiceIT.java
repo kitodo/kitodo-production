@@ -169,7 +169,7 @@ public class FilterServiceIT {
             processService.findByQuery(firstQuery, true).size());
 
         QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.PROCESS, false, false);
-        assertEquals("Incorrect amount of processes for title containing 'Open'!", 2,
+        assertEquals("Incorrect amount of processes for title containing 'Open'!", 1,
             processService.findByQuery(secondQuery, true).size());
     }
 
@@ -351,7 +351,7 @@ public class FilterServiceIT {
         // 'Testing'!", 1, taskDTOS.size());
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.TASK, false, false);
-        assertEquals("Incorrect amount of tasks with title containing 'Open'!", 2,
+        assertEquals("Incorrect amount of tasks with title containing 'Open'!", 1,
             taskService.findByQuery(firstQuery, true).size());
 
         QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Finished\"", ObjectType.TASK, false, false);
@@ -425,7 +425,7 @@ public class FilterServiceIT {
             taskService.findByQuery(firstQuery, true).size());
 
         QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.TASK, false, false);
-        assertEquals("Incorrect amount of open tasks with title 'Open'!", 2,
+        assertEquals("Incorrect amount of open tasks with title 'Open'!", 1,
             taskService.findByQuery(secondQuery, true).size());
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-stepopen:Open\"", ObjectType.TASK, false, false);
