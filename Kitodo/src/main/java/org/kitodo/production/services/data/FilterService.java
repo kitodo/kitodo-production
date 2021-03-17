@@ -735,7 +735,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterTaskTitle(String parameters, TaskStatus taskStatus, boolean negate,
             ObjectType objectType) throws DataException {
         BoolQueryBuilder taskTitle = new BoolQueryBuilder();
-        taskTitle.must(createSimpleQuery(TaskTypeField.TITLE.getKey(), parameters, !negate));
+        taskTitle.must(createSimpleQuery(TaskTypeField.TITLE.getKey() + ".keyword", parameters, !negate));
         taskTitle.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), !negate));
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskTitle);
     }
