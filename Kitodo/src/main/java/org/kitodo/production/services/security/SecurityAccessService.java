@@ -446,6 +446,16 @@ public class SecurityAccessService extends SecurityAccess {
         return hasAuthorityGlobalOrForClient("unassignTasks");
     }
 
+
+    /**
+     * Check if the current user has the authority to upload media in metadataeditor.
+     *
+     * @return true if the current user has the authority to to upload media in metadataeditor
+     */
+    public boolean hasAuthorityToUploadMedia() {
+        return hasAuthorityGlobalOrForClient("uploadMedia");
+    }
+
     /**
      * Checks if the current user has the authority to edit the role.
      *

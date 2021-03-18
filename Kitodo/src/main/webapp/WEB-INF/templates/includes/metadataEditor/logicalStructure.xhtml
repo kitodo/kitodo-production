@@ -138,10 +138,11 @@
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.uploadFile}"
                         action="#{DataEditorForm.uploadFileDialog.prepare}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+                        rendered="#{SecurityAccessController.hasAuthorityToUploadMedia()}"
                         oncomplete="PF('uploadFileDialog').show();"
                         icon="fa fa-download fa-sm"
                         styleClass="plain"
+                        update = "uploadFileDialog"
                         disabled="#{readOnly}"
                         process="@this"/>
             <p:menuitem value="#{msgs.removeElement}"
