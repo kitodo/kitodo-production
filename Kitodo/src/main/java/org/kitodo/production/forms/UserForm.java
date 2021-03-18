@@ -640,8 +640,16 @@ public class UserForm extends BaseForm {
             if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
                 ServiceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
             }
-            userService.changeUserPassword(userObject, this.passwordToEncrypt);
-            Helper.setMessage("passwordChanged");
+            Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
+            if (passwordViolations.isEmpty()) {
+                userService.changeUserPassword(userObject, this.passwordToEncrypt);
+                Helper.setMessage("passwordChanged");
+                PrimeFaces.current().executeScript("PF('resetPasswordDialog').hide();");
+            } else {
+                for (ConstraintViolation<KitodoPassword> passwordViolation : passwordViolations) {
+                    Helper.setErrorMessage(passwordViolation.getMessage());
+                }
+            }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
         } catch (NoSuchAlgorithmException e) {
