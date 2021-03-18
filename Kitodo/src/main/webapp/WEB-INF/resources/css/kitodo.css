@@ -1749,12 +1749,33 @@ form#metadata div label,
 }
 
 #uploadFileDialog {
-    padding: 10px;
+    padding: 20px;
+    max-height: 550px;
 }
 
-#uploadFileDialogForm {
-    height: 100%;
-    overflow-y: scroll;
+#uploadFileDialog_content {
+    box-sizing: border-box;
+    overflow: visible;
+    padding: 0;
+}
+
+#uploadFileDialog .ui-fileupload-buttonbar {
+    float: none;
+    text-align: right;
+}
+
+#uploadFileDialog .dialogButtonWrapper {
+    margin-bottom: 10px;
+}
+
+#uploadFileDialogForm\:progressBar .ui-progressbar-value {
+    background: #85b2cb;
+}
+
+#uploadFileDialogForm,
+#uploadFileDialogForm\:uploadFileGrid,
+#uploadFileDialogForm\:uploadFileGrid_content{
+    height: 90%;
 }
 
 #metadataAccordion\:metadata .ui-treetable-indent,

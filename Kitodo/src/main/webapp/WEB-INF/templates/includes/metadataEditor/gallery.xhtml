@@ -388,6 +388,15 @@
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
+                <p:menuitem value="#{msgs.uploadMedia}"
+                            action="#{DataEditorForm.uploadFileDialog.prepare}"
+                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia()}"
+                            oncomplete="PF('uploadFileDialog').show();"
+                            icon="fa fa-download fa-sm"
+                            styleClass="plain"
+                            update = "uploadFileDialog"
+                            disabled="#{readOnly}"
+                            process="@this"/>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
                            widgetVar="stripeContextMenu"
@@ -408,6 +417,15 @@
                             process="@this"
                             oncomplete="PF('dialogEditDocStrucType').show()"
                             update="dialogEditDocStrucTypeDialog"/>
+                <p:menuitem value="#{msgs.uploadMedia}"
+                            action="#{DataEditorForm.uploadFileDialog.prepare}"
+                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia()}"
+                            oncomplete="PF('uploadFileDialog').show();"
+                            icon="fa fa-download fa-sm"
+                            styleClass="plain"
+                            update = "uploadFileDialog"
+                            disabled="#{readOnly}"
+                            process="@this"/>
                 <p:menuitem value="#{msgs.removeElement}"
                             icon="fa fa-trash fa-sm"
                             styleClass="plain"
