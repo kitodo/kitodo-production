@@ -35,7 +35,8 @@
                                      imagePreviewForm:mediaViewData
                                      logicalTree
                                      physicalTree
-                                     metadataAccordion:logicalMetadataWrapperPanel"/>
+                                     metadataAccordion:logicalMetadataWrapperPanel
+                                     paginationForm:paginationWrapperPanel"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
                              update="imagePreviewForm galleryHeadingWrapper"
@@ -145,7 +146,8 @@
                                                  activeStyleClass="media-stripe-index-active">
                                         <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                 update="@(.pageList)
-                                                        logicalTree"/>
+                                                        logicalTree
+                                                        paginationForm:paginationWrapperPanel"/>
                                     </p:droppable>
                                 </ui:fragment>
                                 <!-- add one last drop area after the last page in a stripe -->
@@ -157,7 +159,8 @@
                                                  activeStyleClass="media-stripe-index-active">
                                         <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                 update="@(.pageList)
-                                                        logicalTree"/>
+                                                        logicalTree
+                                                        paginationForm:paginationWrapperPanel"/>
                                     </p:droppable>
                                 </ui:fragment>
                             </p:dataList>
@@ -168,7 +171,8 @@
                                              activeStyleClass="media-stripe-active">
                                     <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                             update="@(.pageList)
-                                                    logicalTree"/>
+                                                    logicalTree
+                                                    paginationForm:paginationWrapperPanel"/>
                                 </p:droppable>
                             </ui:fragment>
                         </p:outputPanel>
@@ -227,7 +231,8 @@
                                                      activeStyleClass="media-stripe-index-active">
                                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                     update="@(.pageList)
-                                                            logicalTree"/>
+                                                            logicalTree
+                                                            paginationForm:paginationWrapperPanel"/>
                                         </p:droppable>
                                     </ui:fragment>
                                     <!-- add one last drop area after the last page in a stripe -->
@@ -239,7 +244,8 @@
                                                      activeStyleClass="media-stripe-index-active">
                                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                     update="@(.pageList)
-                                                            logicalTree"/>
+                                                            logicalTree
+                                                            paginationForm:paginationWrapperPanel"/>
                                         </p:droppable>
                                     </ui:fragment>
                                 </p:dataList>
@@ -250,7 +256,8 @@
                                                  activeStyleClass="media-stripe-active">
                                         <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
                                                 update="@(.pageList)
-                                                        logicalTree"/>
+                                                        logicalTree
+                                                        paginationForm:paginationWrapperPanel"/>
                                     </p:droppable>
                                 </ui:fragment>
                             </p:outputPanel>

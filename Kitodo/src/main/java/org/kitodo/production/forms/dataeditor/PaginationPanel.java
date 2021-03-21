@@ -74,10 +74,13 @@ public class PaginationPanel {
         Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
         for (int i = 1; i < mediaUnits.size(); i++) {
-            MediaUnit mediaUnit = mediaUnits.get(i);
+            MediaUnit mediaUnit = mediaUnits.get(i - 1);
             mediaUnit.setOrder(i);
             mediaUnit.setOrderlabel(paginator.next());
         }
+        dataEditor.refreshStructurePanel();
+        dataEditor.getGalleryPanel().show();
+        show();
     }
 
     /**
@@ -292,7 +295,10 @@ public class PaginationPanel {
         }
     }
 
-    private void preparePaginationSelectionSelectedItem() {
+    /**
+     * prepare selected items to pagination.
+     */
+    public void preparePaginationSelectionSelectedItems() {
         MediaUnit selectedMediaUnit = null;
         Optional<MediaUnit> optionalSelectedMediaUnit = dataEditor.getSelectedMediaUnit();
         if (dataEditor.getStructurePanel().isSeparateMedia() && Objects.nonNull(optionalSelectedMediaUnit)
@@ -360,6 +366,7 @@ public class PaginationPanel {
             Helper.setErrorMessage("fehlerBeimEinlesen", "No pages selected for pagination.");
             return;
         }
+        dataEditor.getMetadataPanel().preserve();
         String selectPaginationSeparatorSelectedItem = ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS)
                 .split(",")[0];
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
@@ -378,8 +385,22 @@ public class PaginationPanel {
         paginationSelectionSelectedItems = new ArrayList<>();
         preparePaginationSelectionItems();
         dataEditor.refreshStructurePanel();
+        updateMetadataPanel();
         PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                 + Helper.getTranslation("paginationSaved") + "','severity':'info'})");
+    }
+
+    private void updateMetadataPanel() {
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            dataEditor.getMetadataPanel().showLogical(dataEditor.getSelectedStructure());
+        } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())
+                && dataEditor.getStructurePanel().getSelectedLogicalNode().getData() instanceof StructureTreeNode
+                && Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
+                && ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
+                .getDataObject() instanceof View) {
+            View view = (View) ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData()).getDataObject();
+            dataEditor.getMetadataPanel().showPageInLogical(view.getMediaUnit());
+        }
     }
 
     /**
@@ -393,6 +414,6 @@ public class PaginationPanel {
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;
         preparePaginationSelectionItems();
-        preparePaginationSelectionSelectedItem();
+        preparePaginationSelectionSelectedItems();
     }
 }
