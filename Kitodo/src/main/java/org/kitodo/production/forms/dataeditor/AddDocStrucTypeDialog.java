@@ -139,6 +139,7 @@ public class AddDocStrucTypeDialog {
         try {
             dataEditor.getStructurePanel().preserve();
             dataEditor.refreshStructurePanel();
+            dataEditor.getPaginationPanel().show();
         } catch (UnknownTreeNodeDataException e) {
             Helper.setErrorMessage(e.getMessage());
         }
@@ -156,6 +157,7 @@ public class AddDocStrucTypeDialog {
                 docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
                     inputMetaDataValue);
             dataEditor.refreshStructurePanel();
+            dataEditor.getPaginationPanel().show();
         }
     }
 
@@ -187,6 +189,7 @@ public class AddDocStrucTypeDialog {
                     .collect(Collectors.toList());
             Collections.reverse(selectedMedia);
             this.dataEditor.setSelectedMedia(selectedMedia);
+            dataEditor.getPaginationPanel().show();
         }
     }
 
@@ -764,6 +767,7 @@ public class AddDocStrucTypeDialog {
         MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
             selectedProcess.getId());
         dataEditor.getStructurePanel().show(true);
+        dataEditor.getPaginationPanel().show();
         if (processNumber.trim().equals(Integer.toString(selectedProcess.getId()))) {
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.hint"));
         }

@@ -19,6 +19,9 @@ import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
@@ -74,10 +77,13 @@ public class PaginationPanel {
         Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
         for (int i = 1; i < mediaUnits.size(); i++) {
-            MediaUnit mediaUnit = mediaUnits.get(i);
+            MediaUnit mediaUnit = mediaUnits.get(i - 1);
             mediaUnit.setOrder(i);
             mediaUnit.setOrderlabel(paginator.next());
         }
+        dataEditor.refreshStructurePanel();
+        dataEditor.getGalleryPanel().show();
+        show();
     }
 
     /**
@@ -292,26 +298,17 @@ public class PaginationPanel {
         }
     }
 
-    private void preparePaginationSelectionSelectedItem() {
-        MediaUnit selectedMediaUnit = null;
-        Optional<MediaUnit> optionalSelectedMediaUnit = dataEditor.getSelectedMediaUnit();
-        if (dataEditor.getStructurePanel().isSeparateMedia() && Objects.nonNull(optionalSelectedMediaUnit)
-                && optionalSelectedMediaUnit.isPresent()
-                && Objects.equals(optionalSelectedMediaUnit.get().getType(), MediaUnit.TYPE_PAGE)) {
-            selectedMediaUnit = optionalSelectedMediaUnit.get();
-        } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData();
-            if (structureTreeNode.getDataObject() instanceof View) {
-                View view = (View) structureTreeNode.getDataObject();
-                selectedMediaUnit = view.getMediaUnit();
-            }
-        }
-        if (Objects.nonNull(selectedMediaUnit)) {
-            List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
+    /**
+     * prepare selected items to pagination.
+     */
+    public void preparePaginationSelectionSelectedItems() {
+        paginationSelectionSelectedItems = new ArrayList<>();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
+        for (Pair<MediaUnit, IncludedStructuralElement> selectedElement : dataEditor.getSelectedMedia()) {
             for (int i = 0; i < mediaUnits.size(); i++) {
                 MediaUnit mediaUnit = mediaUnits.get(i);
-                if (mediaUnit.equals(selectedMediaUnit)) {
-                    setPaginationSelectionSelectedItems(Collections.singletonList(i));
+                if (mediaUnit.equals(selectedElement.getKey())) {
+                    paginationSelectionSelectedItems.add(i);
                     break;
                 }
             }
@@ -360,6 +357,7 @@ public class PaginationPanel {
             Helper.setErrorMessage("fehlerBeimEinlesen", "No pages selected for pagination.");
             return;
         }
+        dataEditor.getMetadataPanel().preserve();
         String selectPaginationSeparatorSelectedItem = ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS)
                 .split(",")[0];
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
@@ -378,8 +376,22 @@ public class PaginationPanel {
         paginationSelectionSelectedItems = new ArrayList<>();
         preparePaginationSelectionItems();
         dataEditor.refreshStructurePanel();
+        updateMetadataPanel();
         PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                 + Helper.getTranslation("paginationSaved") + "','severity':'info'})");
+    }
+
+    private void updateMetadataPanel() {
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            dataEditor.getMetadataPanel().showLogical(dataEditor.getSelectedStructure());
+        } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())
+                && dataEditor.getStructurePanel().getSelectedLogicalNode().getData() instanceof StructureTreeNode
+                && Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
+                && ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
+                .getDataObject() instanceof View) {
+            View view = (View) ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData()).getDataObject();
+            dataEditor.getMetadataPanel().showPageInLogical(view.getMediaUnit());
+        }
     }
 
     /**
@@ -393,6 +405,6 @@ public class PaginationPanel {
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;
         preparePaginationSelectionItems();
-        preparePaginationSelectionSelectedItem();
+        preparePaginationSelectionSelectedItems();
     }
 }

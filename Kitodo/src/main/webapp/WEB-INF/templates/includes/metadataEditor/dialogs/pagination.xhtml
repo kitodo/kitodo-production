@@ -31,7 +31,7 @@
                                              iconPos="right"
                                              styleClass="secondary"
                                              style="margin: 0;"
-                                             update="paginationForm:paginationSelection,structureTreeForm,paginationForm:paginationWrapperPanel,galleryWrapperPanel"
+                                             update="paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
                                              immediate="true"/>
                         </div>
                         <div>
@@ -143,7 +143,7 @@
                                  icon="fa fa-check fa-lg"
                                  iconPos="right"
                                  onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 update="notifications paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
+                                 update="notifications,paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"

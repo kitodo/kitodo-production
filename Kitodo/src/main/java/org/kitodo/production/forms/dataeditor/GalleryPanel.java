@@ -234,6 +234,7 @@ public class GalleryPanel {
             PrimeFaces.current().executeScript("PF('corruptDataWarning').show();");
         }
         dataEditor.getStructurePanel().show();
+        dataEditor.getPaginationPanel().show();
         updateAffectedStripes(toStripe, viewsToBeMoved);
     }
 
@@ -812,6 +813,7 @@ public class GalleryPanel {
         }
 
         updateStructure(currentSelection, parentStripe.getStructure());
+        dataEditor.getPaginationPanel().preparePaginationSelectionSelectedItems();
     }
 
     private void defaultSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
