@@ -12,10 +12,12 @@
 package org.kitodo.production.helper;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -71,10 +73,38 @@ public class VariableReplacer {
      *            Task object
      */
     public VariableReplacer(LegacyMetsModsDigitalDocumentHelper inDigitalDocument, LegacyPrefsHelper inPrefs, Process p, Task s) {
+        initializeLegacyVariablesPreprocessor();
         this.dd = inDigitalDocument;
         this.prefs = inPrefs;
         this.process = p;
         this.task = s;
+    }
+
+    Map<String, String> legacyVariablesMap;
+    Pattern legacyVariablesPattern;
+
+    private void initializeLegacyVariablesPreprocessor() {
+        StringBuilder regexBuilder = null;
+        boolean useLegacyVariablesPreprocessor = false;
+        for (Iterator<String> iterator = ConfigCore.getConfig().getKeys(); iterator.hasNext();) {
+            String key = iterator.next();
+            if (key.startsWith("variable.")) {
+                String variableName = key.substring(9);
+                if (useLegacyVariablesPreprocessor) {
+                    regexBuilder.append('|');
+                } else {
+                    regexBuilder = new StringBuilder("\\((");
+                    legacyVariablesMap = new HashMap<>();
+                    useLegacyVariablesPreprocessor = true;
+                }
+                regexBuilder.append(Pattern.quote(variableName));
+                legacyVariablesMap.put(variableName, ConfigCore.getParameter(key));
+            }
+        }
+        if (useLegacyVariablesPreprocessor) {
+            regexBuilder.append(")\\)");
+            legacyVariablesPattern = Pattern.compile(regexBuilder.toString());
+        }
     }
 
     /**
@@ -89,61 +119,41 @@ public class VariableReplacer {
         if (Objects.isNull(inString)) {
             return "";
         }
+
+        inString = invokeLegacyVariableReplacer(inString);
+
         inString = replaceMetadata(inString);
 
         // replace paths and files
-        try {
+        String prefs = ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile();
+        inString = replaceString(inString, "(prefs)", prefs);
 
-            String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process.getId(),
-                    this.process.getTitle(), this.process.getProcessBaseUri()));
-            inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
-            inString = replaceString(inString, "(tifpath)", tifPath);
+        inString = replaceString(inString, "(processtitle)", this.process.getTitle());
+        inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
 
-            String origPath = replaceSlashAndSeparator(processService.getImagesOriginDirectory(false, this.process));
-            inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);
-            inString = replaceString(inString, "(origpath)", origPath);
+        inString = replaceString(inString, "(projectid)", String.valueOf(this.process.getProject().getId().intValue()));
 
-            String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
-            inString = replaceStringAccordingToOS(inString, "(imageurl)", imagePath);
-            inString = replaceString(inString, "(imagepath)", imagePath);
+        inString = replaceStringForTask(inString);
 
-            String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
-            inString = replaceString(inString, "(processpath)", processPath);
-
-            String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
-            inString = replaceString(inString, "(importpath)", importPath);
-
-            String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
-            inString = replaceString(inString, "(sourcepath)", sourcePath);
-
-            String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
-            inString = replaceString(inString, "(ocrbasispath)", ocrBasisPath);
-
-            String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
-            inString = replaceString(inString, "(ocrplaintextpath)", ocrPlaintextPath);
-
-            String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process, false, false));
-            inString = replaceString(inString, "(metaFile)", metaFile);
-
-            String prefs = ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile();
-            inString = replaceString(inString, "(prefs)", prefs);
-
-            inString = replaceString(inString, "(processtitle)", this.process.getTitle());
-            inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
-
-            inString = replaceString(inString, "(projectid)", String.valueOf(this.process.getProject().getId().intValue()));
-
-            inString = replaceStringForTask(inString);
-
-            inString = replaceForWorkpieceProperty(inString);
-            inString = replaceForTemplateProperty(inString);
-            inString = replaceForProcessProperty(inString);
-
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
+        inString = replaceForWorkpieceProperty(inString);
+        inString = replaceForTemplateProperty(inString);
+        inString = replaceForProcessProperty(inString);
 
         return inString;
+    }
+
+        private String invokeLegacyVariableReplacer(String stringToReplace) {
+            if (Objects.isNull(legacyVariablesPattern)) {
+                return stringToReplace;
+            }
+            Matcher legacyVariablesMatcher = legacyVariablesPattern.matcher(stringToReplace);
+            StringBuffer replacedLegaycVariablesBuffer = new StringBuffer();
+            while (legacyVariablesMatcher.find()) {
+                legacyVariablesMatcher.appendReplacement(replacedLegaycVariablesBuffer,
+                    legacyVariablesMap.get(legacyVariablesMatcher.group(1)));
+        }
+            legacyVariablesMatcher.appendTail(replacedLegaycVariablesBuffer);
+            return replacedLegaycVariablesBuffer.toString();
     }
 
     /**
