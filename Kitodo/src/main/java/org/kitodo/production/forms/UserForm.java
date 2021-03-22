@@ -594,12 +594,12 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Gets password.
+     * Return empty string. Returning the actual password is never required, but GUI needs a getter for form fields.
      *
-     * @return The password.
+     * @return Empty string.
      */
     public String getPasswordToEncrypt() {
-        return passwordToEncrypt;
+        return "";
     }
 
     /**
