@@ -106,7 +106,7 @@
                             <p:column style="width:50%">
                                 <p:outputLabel for="fileGroup" value="#{msgs['editFolderDialog.fileGroup']}"/>
                                 <p:selectOneMenu id="fileGroup" value="#{ProjectForm.myFolder.fileGroup}" effect="fold"
-                                                 editable="#{ProjectForm.myFolder.fileGroup == null}">
+                                                 editable="#{ProjectForm.myFolder.id == null}">
                                     <f:selectItems value="#{ProjectForm.myFolder.fileGroups}"/>
                                 </p:selectOneMenu>
                             </p:column>
