@@ -58,13 +58,6 @@ public class VariableReplacer {
     private final FileService fileService = ServiceManager.getFileService();
     private final ProcessService processService = ServiceManager.getProcessService();
 
-    protected VariableReplacer() {
-    }
-
-    VariableReplacer(Process process) {
-        this.process = process;
-    }
-
     /**
      * Constructor.
      *
