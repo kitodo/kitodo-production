@@ -129,9 +129,9 @@ public class VariableReplacer {
         inString = replaceString(inString, "(prefs)", prefs);
 
         inString = replaceString(inString, "(processtitle)", this.process.getTitle());
-        inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
+        inString = replaceString(inString, "(processid)", process.getId().toString());
 
-        inString = replaceString(inString, "(projectid)", String.valueOf(this.process.getProject().getId().intValue()));
+        inString = replaceString(inString, "(projectid)", process.getProject().getId().toString());
 
         inString = replaceStringForTask(inString);
 
