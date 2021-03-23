@@ -192,7 +192,6 @@ public class MetadataEditor {
     public static void addMultipleStructures(int number, String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, String metadataKey, String metadataValue) {
 
-        Paginator metadataValues = new Paginator(metadataValue);
         for (int i = 0; i < number; i++) {
             IncludedStructuralElement newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
             if (Objects.isNull(newStructure)) {
@@ -200,7 +199,7 @@ public class MetadataEditor {
             }
             MetadataEntry metadataEntry = new MetadataEntry();
             metadataEntry.setKey(metadataKey);
-            metadataEntry.setValue(metadataValues.next());
+            metadataEntry.setValue(metadataValue + " " + (number - i));
             newStructure.getMetadata().add(metadataEntry);
         }
     }
