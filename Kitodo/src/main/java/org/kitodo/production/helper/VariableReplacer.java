@@ -50,6 +50,9 @@ public class VariableReplacer {
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
+    private static final Pattern VARIABLE_FINDER_REGEX = Pattern
+            .compile("\\((prefs|processid|processtitle|projectid))");
+
     private LegacyMetsModsDigitalDocumentHelper dd;
     private LegacyPrefsHelper prefs;
     // $(meta.abc)
@@ -107,6 +110,7 @@ public class VariableReplacer {
         }
     }
 
+
     /**
      * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die
      * Variablen durchlaufen und aus dem Digital Document holen
@@ -123,23 +127,43 @@ public class VariableReplacer {
         inString = invokeLegacyVariableReplacer(inString);
 
         inString = replaceMetadata(inString);
-
-        // replace paths and files
-        String prefs = ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile();
-        inString = replaceString(inString, "(prefs)", prefs);
-
-        inString = replaceString(inString, "(processtitle)", this.process.getTitle());
-        inString = replaceString(inString, "(processid)", process.getId().toString());
-
-        inString = replaceString(inString, "(projectid)", process.getProject().getId().toString());
-
         inString = replaceStringForTask(inString);
-
         inString = replaceForWorkpieceProperty(inString);
         inString = replaceForTemplateProperty(inString);
         inString = replaceForProcessProperty(inString);
 
-        return inString;
+        // replace paths and files
+        Matcher variableFinder = VARIABLE_FINDER_REGEX.matcher(inString);
+        boolean stringChanged = false;
+        StringBuffer replacedStringBuffer = null;
+        while (variableFinder.find()) {
+            if (!stringChanged) {
+                replacedStringBuffer = new StringBuffer();
+                stringChanged = true;
+            }
+            variableFinder.appendReplacement(replacedStringBuffer, replacement(variableFinder));
+        }
+        if (stringChanged) {
+            variableFinder.appendTail(replacedStringBuffer);
+            return replacedStringBuffer.toString();
+        } else {
+            return inString;
+        }
+    }
+
+    private String replacement(Matcher m) {
+        switch (m.group(1)) {
+            case "prefs":
+                return ConfigCore.getParameter(ParameterCore.DIR_RULESETS).concat(process.getRuleset().getFile());
+            case "processid":
+                return process.getId().toString();
+            case "processtitle":
+                return process.getTitle();
+            case "projectid":
+                return process.getProject().getId().toString();
+            default:
+                return m.group();
+        }
     }
 
         private String invokeLegacyVariableReplacer(String stringToReplace) {
