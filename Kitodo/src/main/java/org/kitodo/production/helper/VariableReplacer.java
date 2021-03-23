@@ -51,7 +51,7 @@ public class VariableReplacer {
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern
-            .compile("\\((prefs|processid|processtitle|projectid|stepid|stepname))");
+            .compile("(\\$?)\\((prefs|processid|processtitle|projectid|stepid|stepname)\\)");
 
     private LegacyMetsModsDigitalDocumentHelper dd;
     private LegacyPrefsHelper prefs;
@@ -151,19 +151,20 @@ public class VariableReplacer {
     }
 
     private String determineReplacement(Matcher variableFinder) {
-        switch (variableFinder.group(1)) {
+        switch (variableFinder.group(2)) {
             case "prefs":
-                return ConfigCore.getParameter(ParameterCore.DIR_RULESETS).concat(process.getRuleset().getFile());
+                return variableFinder.group(1) + ConfigCore.getParameter(ParameterCore.DIR_RULESETS)
+                        + process.getRuleset().getFile();
             case "processid":
-                return process.getId().toString();
+                return variableFinder.group(1) + process.getId().toString();
             case "processtitle":
-                return process.getTitle();
+                return variableFinder.group(1) + process.getTitle();
             case "projectid":
-                return process.getProject().getId().toString();
+                return variableFinder.group(1) + process.getProject().getId().toString();
             case "stepid":
-                return String.valueOf(task.getId());
+                return variableFinder.group(1) + String.valueOf(task.getId());
             case "stepname":
-                return task.getTitle();
+                return variableFinder.group(1) + task.getTitle();
             default:
                 return variableFinder.group();
         }
