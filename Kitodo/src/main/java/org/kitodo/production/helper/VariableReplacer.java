@@ -30,21 +30,58 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.metadata.MetadataEditor;
 
+/**
+ * Replaces placeholders in a string. The variable replacer enables placeholders
+ * specified in a character string to be replaced with internal values from the
+ * process or the metadata of its workpiece. The character string is, for
+ * example, the call of an external program.
+ */
 public class VariableReplacer {
+    private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
+    /**
+     * There are three different levels of access to the workpiece's metadata.
+     */
     private enum MetadataLevel {
+        /**
+         * First, a metadata entry with the specified name is searched for in
+         * the first division of the first subordinate hierarchy level; if it is
+         * not found there, a search is then made in the top hierarchy level.
+         */
         ALL,
+
+        /**
+         * A metadata entry with the specified name is only searched for in the
+         * first division of the first subordinate hierarchy level.
+         */
         FIRSTCHILD,
+
+        /**
+         * A metadata entry with the specified name is only searched for in the
+         * top hierarchy level.
+         */
         TOPSTRUCT
     }
 
-    private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
-
+    /**
+     * This regular expression is used to search for placeholders that need to
+     * be replaced.
+     */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
                 "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)))\\)");
 
+    /**
+     * The map is filled with replacement instructions that are required for
+     * backwards compatibility with version 2.
+     */
     private static Map<String, String> legacyVariablesMap;
+
+    /**
+     * The program builds a regular expression to search for outdated
+     * replacement instructions and to replace them with the new instructions in
+     * a first step.
+     */
     private static Pattern legacyVariablesPattern;
 
     private Workpiece workpiece;
@@ -68,6 +105,11 @@ public class VariableReplacer {
         this.task = task;
     }
 
+    /**
+     * The method is called by the constructor of the class to load conversion
+     * instructions for obsolete replacement patterns from the configuration
+     * file.
+     */
     private final void initializeLegacyVariablesPreprocessor() {
         StringBuilder regexBuilder = null;
         boolean useLegacyVariablesPreprocessor = false;
@@ -125,6 +167,14 @@ public class VariableReplacer {
         }
     }
 
+    /**
+     * Replaces outdated replacement patterns with appropriate ones.
+     *
+     * @param stringToReplace
+     *            string (perhaps) containing obsolete replacement patterns
+     * @return string in which obsolete replacement patterns have been replaced
+     *         by appropriate ones
+     */
     private String invokeLegacyVariableReplacer(String stringToReplace) {
         if (Objects.isNull(legacyVariablesPattern)) {
             return stringToReplace;
@@ -139,6 +189,18 @@ public class VariableReplacer {
         return replacedLegaycVariablesBuffer.toString();
     }
 
+    /**
+     * This method is called in the replacement loop to determine the
+     * replacement value for a revealed variable.
+     *
+     * @param variableFinder
+     *            the data structure of the matcher, from which the various
+     *            match groups of the regular expression are read
+     * @return the replacement value, if determinable. If the variable is
+     *         invalid, the string found is returned and no replacement takes
+     *         place. If the variable cannot be replaced because the requested
+     *         data cannot be accessed, the empty string is returned.
+     */
     private String determineReplacement(Matcher variableFinder) {
         if (Objects.nonNull(variableFinder.group(2))) {
             return determineReplacementForInternalValue(variableFinder);
@@ -149,76 +211,99 @@ public class VariableReplacer {
         return variableFinder.group();
     }
 
+    /**
+     * If an internal value is to be determined, it is determined here.
+     */
     private String determineReplacementForInternalValue(Matcher variableFinder) {
         switch (variableFinder.group(2)) {
-
             case "prefs":
-                String rulesetsDirectory;
-                try {
-                    rulesetsDirectory = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
-                } catch (NoSuchElementException e) {
-                    logger.warn("Cannot replace \"(prefs)\": Missing configuration entry: directory.rulesets");
-                    return variableFinder.group(1);
-                }
-                if (Objects.isNull(process)) {
-                    logger.warn("Cannot replace \"(prefs)\": no process given");
-                    return variableFinder.group(1);
-                }
-                if (Objects.isNull(process.getRuleset())) {
-                    logger.warn("Cannot replace \"(prefs)\": process has no ruleset assigned");
-                    return variableFinder.group(1);
-                }
-                if (Objects.isNull(process.getRuleset().getFile())) {
-                    logger.warn("Cannot replace \"(prefs)\": process's ruleset has no file");
-                    return variableFinder.group(1);
-                }
-                return variableFinder.group(1) + rulesetsDirectory + process.getRuleset().getFile();
-
+                return determineReplacementForPrefs(variableFinder);
             case "processid":
-                if (Objects.isNull(process)) {
-                    logger.warn("Cannot replace \"(processid)\": no process given");
-                    return variableFinder.group(1);
-                }
-                return variableFinder.group(1) + process.getId().toString();
-
+                return determineReplacementForProcessid(variableFinder);
             case "processtitle":
-                if (Objects.isNull(process)) {
-                    logger.warn("Cannot replace \"(processtitle)\": no process given");
-                    return variableFinder.group(1);
-                }
-                return variableFinder.group(1) + process.getTitle();
-
+                return determineReplacementForProcesstitle(variableFinder);
             case "projectid":
-                if (Objects.isNull(process)) {
-                    logger.warn("Cannot replace \"(projectid)\": no process given");
-                    return variableFinder.group(1);
-                }
-                if (Objects.isNull(process.getProject())) {
-                    logger.warn("Cannot replace \"(projectid)\": process has no project assigned");
-                    return variableFinder.group(1);
-                }
-                return variableFinder.group(1) + String.valueOf(process.getProject().getId());
-
+                return determineReplacementForProjectid(variableFinder);
             case "stepid":
-                if (Objects.isNull(task)) {
-                    logger.warn("Cannot replace \"(stepid)\": no task given");
-                    return variableFinder.group(1);
-                }
-                return variableFinder.group(1) + String.valueOf(task.getId());
-
+                return determineReplacementForStepid(variableFinder);
             case "stepname":
-                if (Objects.isNull(task)) {
-                    logger.warn("Cannot replace \"(stepname)\": no task given");
-                    return variableFinder.group(1);
-                }
-                return variableFinder.group(1) + task.getTitle();
-
+                return determineReplacementForStepname(variableFinder);
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
         }
     }
 
+    private String determineReplacementForPrefs(Matcher variableFinder) {
+        String rulesetsDirectory;
+        try {
+            rulesetsDirectory = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
+        } catch (NoSuchElementException e) {
+            logger.warn("Cannot replace \"(prefs)\": Missing configuration entry: directory.rulesets");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(prefs)\": no process given");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getRuleset())) {
+            logger.warn("Cannot replace \"(prefs)\": process has no ruleset assigned");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getRuleset().getFile())) {
+            logger.warn("Cannot replace \"(prefs)\": process's ruleset has no file");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + rulesetsDirectory + process.getRuleset().getFile();
+    }
+
+    private String determineReplacementForProcessid(Matcher variableFinder) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(processid)\": no process given");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + process.getId().toString();
+    }
+
+    private String determineReplacementForProcesstitle(Matcher variableFinder) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(processtitle)\": no process given");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + process.getTitle();
+    }
+
+    private String determineReplacementForProjectid(Matcher variableFinder) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(projectid)\": no process given");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getProject())) {
+            logger.warn("Cannot replace \"(projectid)\": process has no project assigned");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + String.valueOf(process.getProject().getId());
+    }
+
+    private String determineReplacementForStepid(Matcher variableFinder) {
+        if (Objects.isNull(task)) {
+            logger.warn("Cannot replace \"(stepid)\": no task given");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + String.valueOf(task.getId());
+    }
+
+    private String determineReplacementForStepname(Matcher variableFinder) {
+        if (Objects.isNull(task)) {
+            logger.warn("Cannot replace \"(stepname)\": no task given");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + task.getTitle();
+    }
+
+    /**
+     * If a value is to be determined from the metadata, it is determined here.
+     */
     private String determineReplacementForMetadata(Matcher variableFinder) {
         String dollarSignIfToKeep = variableFinder.group(1);
         MetadataLevel metadataLevel;
@@ -250,33 +335,37 @@ public class VariableReplacer {
                 // else fall through
 
             case TOPSTRUCT:
-                String topstructValue = MetadataEditor.getMetadataValue(workpiece.getRootElement(),
-                    variableFinder.group(5));
-                if (Objects.isNull(topstructValue)) {
-                    logger.warn("Cannot replace \"{}\": No such metadata entry in the root element",
-                        variableFinder.group());
-                    return dollarSignIfToKeep;
-                }
-                return topstructValue;
+                return determineReplacementForTopstruct(variableFinder, dollarSignIfToKeep);
 
             case FIRSTCHILD:
-                List<IncludedStructuralElement> firstchildChildren = workpiece.getRootElement().getChildren();
-                if (firstchildChildren.isEmpty()) {
-                    logger.warn("Cannot replace \"{}\": Workpiece doesn't have subordinate logical divisions",
-                        variableFinder.group());
-                    return dollarSignIfToKeep;
-                }
-                String firstchildValue = MetadataEditor.getMetadataValue(firstchildChildren.get(0),
-                    variableFinder.group(5));
-                if (Objects.isNull(firstchildValue)) {
-                    logger.warn("Cannot replace \"{}\": No such metadata entry in the first division",
-                        variableFinder.group());
-                    return dollarSignIfToKeep;
-                }
-                return firstchildValue;
+                return determineReplacementForFirstchild(variableFinder, dollarSignIfToKeep);
 
             default:
                 throw new IllegalStateException("complete switch");
         }
+    }
+
+    private String determineReplacementForTopstruct(Matcher variableFinder, String failureResult) {
+        String value = MetadataEditor.getMetadataValue(workpiece.getRootElement(), variableFinder.group(5));
+        if (Objects.isNull(value)) {
+            logger.warn("Cannot replace \"{}\": No such metadata entry in the root element", variableFinder.group());
+            return failureResult;
+        }
+        return value;
+    }
+
+    private String determineReplacementForFirstchild(Matcher variableFinder, String failureResult) {
+        List<IncludedStructuralElement> firstchildChildren = workpiece.getRootElement().getChildren();
+        if (firstchildChildren.isEmpty()) {
+            logger.warn("Cannot replace \"{}\": Workpiece doesn't have subordinate logical divisions",
+                variableFinder.group());
+            return failureResult;
+        }
+        String value = MetadataEditor.getMetadataValue(firstchildChildren.get(0), variableFinder.group(5));
+        if (Objects.isNull(value)) {
+            logger.warn("Cannot replace \"{}\": No such metadata entry in the first division", variableFinder.group());
+            return failureResult;
+        }
+        return value;
     }
 }
