@@ -386,7 +386,7 @@ public class ExportDms extends ExportMets {
         Collection<Subfolder> processDirs = process.getProject().getFolders().parallelStream()
                 .filter(Folder::isCopyFolder).map(folder -> new Subfolder(process, folder))
                 .collect(Collectors.toList());
-        VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, process, null);
 
         String uriToDestination = destination.toString();
         if (!uriToDestination.endsWith("/")) {

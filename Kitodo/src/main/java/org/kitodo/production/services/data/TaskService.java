@@ -457,7 +457,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         } catch (IOException e2) {
             logger.error(e2);
         }
-        VariableReplacer replacer = new VariableReplacer(dd, prefs, po, task);
+        VariableReplacer replacer = new VariableReplacer(dd.getWorkpiece(), po, task);
 
         script = replacer.replace(script);
         boolean executedSuccessful = false;

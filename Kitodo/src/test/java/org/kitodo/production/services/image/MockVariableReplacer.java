@@ -16,7 +16,7 @@ import org.kitodo.production.helper.VariableReplacer;
 /**
  * A replacement for the variable replacer, which simply replaces the process
  * title.
- * 
+ *
  * <p>
  * The variable replacer fetches the process data directory from the process
  * service. If the latter does not find a process base URI in the process object
@@ -34,7 +34,7 @@ public class MockVariableReplacer extends VariableReplacer {
     private final String processtitle;
 
     MockVariableReplacer(String processtitle) {
-        super();
+        super(null, null, null);
         this.processtitle = processtitle;
     }
 
