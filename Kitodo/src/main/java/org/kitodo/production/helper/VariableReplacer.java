@@ -40,9 +40,9 @@ public class VariableReplacer {
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
-    private static final Pattern VARIABLE_FINDER_REGEX = Pattern
-            .compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)))\\)");
+    private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|"
+                + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)))\\)");
 
     private static Map<String, String> legacyVariablesMap;
     private static Pattern legacyVariablesPattern;
@@ -52,20 +52,20 @@ public class VariableReplacer {
     private Task task;
 
     /**
-     * Constructor.
+     * Creates a new Variable Replacer.
      *
      * @param workpiece
-     *            DigitalDocument object
-     * @param p
-     *            Process object
-     * @param s
-     *            Task object
+     *            Workpiece to read metadata values from
+     * @param process
+     *            Process to read values from
+     * @param task
+     *            Task to read values from
      */
-    public VariableReplacer(Workpiece workpiece, Process p, Task s) {
+    public VariableReplacer(Workpiece workpiece, Process process, Task task) {
         initializeLegacyVariablesPreprocessor();
         this.workpiece = workpiece;
-        this.process = p;
-        this.task = s;
+        this.process = process;
+        this.task = task;
     }
 
     private final void initializeLegacyVariablesPreprocessor() {
@@ -93,21 +93,21 @@ public class VariableReplacer {
     }
 
     /**
-     * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die
-     * Variablen durchlaufen und aus dem Digital Document holen
+     * Replace variables within a string. Like an ant, run through the variables
+     * and fetch them from the digital document.
      *
-     * @param inString
-     *            to replacement
-     * @return replaced String
+     * @param stringWithVariables
+     *            a string maybe holding variables
+     * @return string with variables replaced
      */
-    public String replace(String inString) {
-        if (Objects.isNull(inString)) {
+    public String replace(String stringWithVariables) {
+        if (Objects.isNull(stringWithVariables)) {
             return "";
         }
 
-        inString = invokeLegacyVariableReplacer(inString);
+        stringWithVariables = invokeLegacyVariableReplacer(stringWithVariables);
 
-        Matcher variableFinder = VARIABLE_FINDER_REGEX.matcher(inString);
+        Matcher variableFinder = VARIABLE_FINDER_REGEX.matcher(stringWithVariables);
         boolean stringChanged = false;
         StringBuffer replacedStringBuffer = null;
         while (variableFinder.find()) {
@@ -121,7 +121,7 @@ public class VariableReplacer {
             variableFinder.appendTail(replacedStringBuffer);
             return replacedStringBuffer.toString();
         } else {
-            return inString;
+            return stringWithVariables;
         }
     }
 
