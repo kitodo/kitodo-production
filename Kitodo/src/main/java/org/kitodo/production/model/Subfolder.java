@@ -92,7 +92,7 @@ public class Subfolder {
     public Subfolder(Process process, Folder folder) {
         this.process = process;
         this.folder = folder;
-        this.variableReplacer = new VariableReplacer(null, null, process, null);
+        this.variableReplacer = new VariableReplacer(null, process, null);
     }
 
     /**
