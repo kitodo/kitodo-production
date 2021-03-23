@@ -51,7 +51,7 @@ public class VariableReplacer {
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern
-            .compile("\\((prefs|processid|processtitle|projectid))");
+            .compile("\\((prefs|processid|processtitle|projectid|stepid|stepname))");
 
     private LegacyMetsModsDigitalDocumentHelper dd;
     private LegacyPrefsHelper prefs;
@@ -127,7 +127,6 @@ public class VariableReplacer {
         inString = invokeLegacyVariableReplacer(inString);
 
         inString = replaceMetadata(inString);
-        inString = replaceStringForTask(inString);
         inString = replaceForWorkpieceProperty(inString);
         inString = replaceForTemplateProperty(inString);
         inString = replaceForProcessProperty(inString);
@@ -141,7 +140,7 @@ public class VariableReplacer {
                 replacedStringBuffer = new StringBuffer();
                 stringChanged = true;
             }
-            variableFinder.appendReplacement(replacedStringBuffer, replacement(variableFinder));
+            variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder));
         }
         if (stringChanged) {
             variableFinder.appendTail(replacedStringBuffer);
@@ -151,8 +150,8 @@ public class VariableReplacer {
         }
     }
 
-    private String replacement(Matcher m) {
-        switch (m.group(1)) {
+    private String determineReplacement(Matcher variableFinder) {
+        switch (variableFinder.group(1)) {
             case "prefs":
                 return ConfigCore.getParameter(ParameterCore.DIR_RULESETS).concat(process.getRuleset().getFile());
             case "processid":
@@ -161,8 +160,12 @@ public class VariableReplacer {
                 return process.getTitle();
             case "projectid":
                 return process.getProject().getId().toString();
+            case "stepid":
+                return String.valueOf(task.getId());
+            case "stepname":
+                return task.getTitle();
             default:
-                return m.group();
+                return variableFinder.group();
         }
     }
 
@@ -232,17 +235,6 @@ public class VariableReplacer {
     private String replaceString(String input, String condition, String replacer) {
         if (input.contains(condition)) {
             input = input.replace(condition, replacer);
-        }
-        return input;
-    }
-
-    private String replaceStringForTask(String input) {
-        if (Objects.nonNull(this.task)) {
-            String taskId = String.valueOf(this.task.getId());
-            String taskName = this.task.getTitle();
-
-            input = input.replace("(stepid)", taskId);
-            input = input.replace("(stepname)", taskName);
         }
         return input;
     }
