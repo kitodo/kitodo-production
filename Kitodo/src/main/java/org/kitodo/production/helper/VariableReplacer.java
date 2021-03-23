@@ -28,11 +28,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataEditor;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.file.FileService;
 
 public class VariableReplacer {
 
@@ -48,40 +44,31 @@ public class VariableReplacer {
             .compile(
                 "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)))\\)");
 
-    private Workpiece workpiece;
-    private LegacyPrefsHelper prefs;
-    // $(meta.abc)
-    private static final String NAMESPACE_META = "\\$\\(meta\\.([\\w.-]*)\\)";
+    private static Map<String, String> legacyVariablesMap;
+    private static Pattern legacyVariablesPattern;
 
+    private Workpiece workpiece;
     private Process process;
     private Task task;
-    private final FileService fileService = ServiceManager.getFileService();
-    private final ProcessService processService = ServiceManager.getProcessService();
 
     /**
      * Constructor.
      *
-     * @param inDigitalDocument
+     * @param workpiece
      *            DigitalDocument object
-     * @param inPrefs
-     *            Prefs object
      * @param p
      *            Process object
      * @param s
      *            Task object
      */
-    public VariableReplacer(Workpiece workpiece, LegacyPrefsHelper inPrefs, Process p, Task s) {
+    public VariableReplacer(Workpiece workpiece, Process p, Task s) {
         initializeLegacyVariablesPreprocessor();
         this.workpiece = workpiece;
-        this.prefs = inPrefs;
         this.process = p;
         this.task = s;
     }
 
-    Map<String, String> legacyVariablesMap;
-    Pattern legacyVariablesPattern;
-
-    private void initializeLegacyVariablesPreprocessor() {
+    private final void initializeLegacyVariablesPreprocessor() {
         StringBuilder regexBuilder = null;
         boolean useLegacyVariablesPreprocessor = false;
         for (Iterator<String> iterator = ConfigCore.getConfig().getKeys(); iterator.hasNext();) {
@@ -104,7 +91,6 @@ public class VariableReplacer {
             legacyVariablesPattern = Pattern.compile(regexBuilder.toString());
         }
     }
-
 
     /**
      * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die
