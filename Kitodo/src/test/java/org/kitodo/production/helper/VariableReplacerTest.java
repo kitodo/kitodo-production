@@ -26,7 +26,7 @@ public class VariableReplacerTest {
 
     @Test
     public void shouldReplaceTitle() {
-        VariableReplacer variableReplacer = new VariableReplacer(null, null, prepareProcess(), null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
         String replaced = variableReplacer.replace("-title (processtitle) -hardcoded test");
         String expected = "-title Replacement -hardcoded test";
@@ -36,7 +36,7 @@ public class VariableReplacerTest {
 
     @Test
     public void shouldReplacePrefs() {
-        VariableReplacer variableReplacer = new VariableReplacer(null, null, prepareProcess(), null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
         String replaced = variableReplacer.replace("-prefs (prefs) -hardcoded test");
         String expected = "-prefs src/test/resources/rulesets/ruleset_test.xml -hardcoded test";
@@ -46,7 +46,7 @@ public class VariableReplacerTest {
 
     @Test
     public void shouldReplaceProcessPath() {
-        VariableReplacer variableReplacer = new VariableReplacer(null, null, prepareProcess(), null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
         String replaced = variableReplacer.replace("-processpath (processpath) -hardcoded test");
         String expected = "-processpath 2 -hardcoded test";
@@ -56,7 +56,7 @@ public class VariableReplacerTest {
 
     @Test
     public void shouldReplaceProjectId() {
-        VariableReplacer variableReplacer = new VariableReplacer(null, null, prepareProcess(), null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
         String replaced = variableReplacer.replace("-processpath (projectid) -hardcoded test");
         String expected = "-processpath " + projectId + " -hardcoded test";
