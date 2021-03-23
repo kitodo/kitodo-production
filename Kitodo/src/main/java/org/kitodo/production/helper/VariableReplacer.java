@@ -11,31 +11,25 @@
 
 package org.kitodo.production.helper;
 
-import java.io.File;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -51,9 +45,10 @@ public class VariableReplacer {
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern
-            .compile("(\\$?)\\((prefs|processid|processtitle|projectid|stepid|stepname)\\)");
+            .compile(
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)))\\)");
 
-    private LegacyMetsModsDigitalDocumentHelper dd;
+    private Workpiece workpiece;
     private LegacyPrefsHelper prefs;
     // $(meta.abc)
     private static final String NAMESPACE_META = "\\$\\(meta\\.([\\w.-]*)\\)";
@@ -75,9 +70,9 @@ public class VariableReplacer {
      * @param s
      *            Task object
      */
-    public VariableReplacer(LegacyMetsModsDigitalDocumentHelper inDigitalDocument, LegacyPrefsHelper inPrefs, Process p, Task s) {
+    public VariableReplacer(Workpiece workpiece, LegacyPrefsHelper inPrefs, Process p, Task s) {
         initializeLegacyVariablesPreprocessor();
-        this.dd = inDigitalDocument;
+        this.workpiece = workpiece;
         this.prefs = inPrefs;
         this.process = p;
         this.task = s;
@@ -126,12 +121,6 @@ public class VariableReplacer {
 
         inString = invokeLegacyVariableReplacer(inString);
 
-        inString = replaceMetadata(inString);
-        inString = replaceForWorkpieceProperty(inString);
-        inString = replaceForTemplateProperty(inString);
-        inString = replaceForProcessProperty(inString);
-
-        // replace paths and files
         Matcher variableFinder = VARIABLE_FINDER_REGEX.matcher(inString);
         boolean stringChanged = false;
         StringBuffer replacedStringBuffer = null;
@@ -150,246 +139,158 @@ public class VariableReplacer {
         }
     }
 
+    private String invokeLegacyVariableReplacer(String stringToReplace) {
+        if (Objects.isNull(legacyVariablesPattern)) {
+            return stringToReplace;
+        }
+        Matcher legacyVariablesMatcher = legacyVariablesPattern.matcher(stringToReplace);
+        StringBuffer replacedLegaycVariablesBuffer = new StringBuffer();
+        while (legacyVariablesMatcher.find()) {
+            legacyVariablesMatcher.appendReplacement(replacedLegaycVariablesBuffer,
+                legacyVariablesMap.get(legacyVariablesMatcher.group(1)));
+        }
+        legacyVariablesMatcher.appendTail(replacedLegaycVariablesBuffer);
+        return replacedLegaycVariablesBuffer.toString();
+    }
+
     private String determineReplacement(Matcher variableFinder) {
+        if (Objects.nonNull(variableFinder.group(2))) {
+            return determineReplacementForInternalValue(variableFinder);
+        }
+        if (Objects.nonNull(variableFinder.group(3))) {
+            return determineReplacementForMetadata(variableFinder);
+        }
+        return variableFinder.group();
+    }
+
+    private String determineReplacementForInternalValue(Matcher variableFinder) {
         switch (variableFinder.group(2)) {
+
             case "prefs":
-                return variableFinder.group(1) + ConfigCore.getParameter(ParameterCore.DIR_RULESETS)
-                        + process.getRuleset().getFile();
+                String rulesetsDirectory;
+                try {
+                    rulesetsDirectory = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
+                } catch (NoSuchElementException e) {
+                    logger.warn("Cannot replace \"(prefs)\": Missing configuration entry: directory.rulesets");
+                    return variableFinder.group(1);
+                }
+                if (Objects.isNull(process)) {
+                    logger.warn("Cannot replace \"(prefs)\": no process given");
+                    return variableFinder.group(1);
+                }
+                if (Objects.isNull(process.getRuleset())) {
+                    logger.warn("Cannot replace \"(prefs)\": process has no ruleset assigned");
+                    return variableFinder.group(1);
+                }
+                if (Objects.isNull(process.getRuleset().getFile())) {
+                    logger.warn("Cannot replace \"(prefs)\": process's ruleset has no file");
+                    return variableFinder.group(1);
+                }
+                return variableFinder.group(1) + rulesetsDirectory + process.getRuleset().getFile();
+
             case "processid":
+                if (Objects.isNull(process)) {
+                    logger.warn("Cannot replace \"(processid)\": no process given");
+                    return variableFinder.group(1);
+                }
                 return variableFinder.group(1) + process.getId().toString();
+
             case "processtitle":
+                if (Objects.isNull(process)) {
+                    logger.warn("Cannot replace \"(processtitle)\": no process given");
+                    return variableFinder.group(1);
+                }
                 return variableFinder.group(1) + process.getTitle();
+
             case "projectid":
-                return variableFinder.group(1) + process.getProject().getId().toString();
+                if (Objects.isNull(process)) {
+                    logger.warn("Cannot replace \"(projectid)\": no process given");
+                    return variableFinder.group(1);
+                }
+                if (Objects.isNull(process.getProject())) {
+                    logger.warn("Cannot replace \"(projectid)\": process has no project assigned");
+                    return variableFinder.group(1);
+                }
+                return variableFinder.group(1) + String.valueOf(process.getProject().getId());
+
             case "stepid":
+                if (Objects.isNull(task)) {
+                    logger.warn("Cannot replace \"(stepid)\": no task given");
+                    return variableFinder.group(1);
+                }
                 return variableFinder.group(1) + String.valueOf(task.getId());
+
             case "stepname":
+                if (Objects.isNull(task)) {
+                    logger.warn("Cannot replace \"(stepname)\": no task given");
+                    return variableFinder.group(1);
+                }
                 return variableFinder.group(1) + task.getTitle();
+
             default:
+                logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
         }
     }
 
-        private String invokeLegacyVariableReplacer(String stringToReplace) {
-            if (Objects.isNull(legacyVariablesPattern)) {
-                return stringToReplace;
-            }
-            Matcher legacyVariablesMatcher = legacyVariablesPattern.matcher(stringToReplace);
-            StringBuffer replacedLegaycVariablesBuffer = new StringBuffer();
-            while (legacyVariablesMatcher.find()) {
-                legacyVariablesMatcher.appendReplacement(replacedLegaycVariablesBuffer,
-                    legacyVariablesMap.get(legacyVariablesMatcher.group(1)));
-        }
-            legacyVariablesMatcher.appendTail(replacedLegaycVariablesBuffer);
-            return replacedLegaycVariablesBuffer.toString();
-    }
-
-    /**
-     * Replace metadata, usage: $(meta.firstchild.METADATANAME).
-     *
-     * @param input
-     *            String for replacement
-     * @return replaced String
-     */
-    private String replaceMetadata(String input) {
-        for (MatchResult r : findRegexMatches(NAMESPACE_META, input)) {
-            if (r.group(1).toLowerCase().startsWith("firstchild.")) {
-                input = input.replace(r.group(),
-                    getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
-            } else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
-                input = input.replace(r.group(),
-                    getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
+    private String determineReplacementForMetadata(Matcher variableFinder) {
+        String dollarSignIfToKeep = variableFinder.group(1);
+        MetadataLevel metadataLevel;
+        if (variableFinder.group(3).equals("meta")) {
+            if (dollarSignIfToKeep.isEmpty()) {
+                return variableFinder.group();
             } else {
-                input = input.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
+                dollarSignIfToKeep = "";
             }
-        }
-
-        return input;
-    }
-
-    private String replaceSlash(URI directory) {
-        return fileService.getFileName(directory).replace("\\", "/");
-    }
-
-    private String replaceSeparator(String input) {
-        if (input.endsWith(File.separator)) {
-            input = input.substring(0, input.length() - File.separator.length()).replace("\\", "/");
-        }
-        return input;
-    }
-
-    private String replaceSlashAndSeparator(URI directory) {
-        return replaceSeparator(replaceSlash(directory));
-    }
-
-    private String replaceStringAccordingToOS(String input, String condition, String replacer) {
-        if (input.contains(condition)) {
-            if (SystemUtils.IS_OS_WINDOWS) {
-                input = input.replace(condition, "file:/" + replacer);
-            } else {
-                input = input.replace(condition, "file://" + replacer);
-            }
-        }
-        return input;
-    }
-
-    private String replaceString(String input, String condition, String replacer) {
-        if (input.contains(condition)) {
-            input = input.replace(condition, replacer);
-        }
-        return input;
-    }
-
-    /**
-     * Replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE).
-     *
-     * @param input
-     *            String for replacement
-     * @return replaced String
-     */
-    private String replaceForWorkpieceProperty(String input) {
-        for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", input)) {
-            String propertyTitle = r.group(1);
-            for (Property workpieceProperty : this.process.getWorkpieces()) {
-                if (workpieceProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
-                    input = input.replace(r.group(), workpieceProperty.getValue());
-                    break;
-                }
-            }
-        }
-        return input;
-    }
-
-    /**
-     * Replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE).
-     *
-     * @param input
-     *            String for replacement
-     * @return replaced String
-     */
-    private String replaceForTemplateProperty(String input) {
-        for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", input)) {
-            String propertyTitle = r.group(1);
-            for (Property templateProperty : this.process.getTemplates()) {
-                if (templateProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
-                    input = input.replace(r.group(), templateProperty.getValue());
-                    break;
-                }
-            }
-        }
-        return input;
-    }
-
-    /**
-     * Replace Prozesseigenschaft, usage: (process.PROPERTYTITLE).
-     *
-     * @param input
-     *            String for replacement
-     * @return replaced String
-     */
-    private String replaceForProcessProperty(String input) {
-        for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", input)) {
-            String propertyTitle = r.group(1);
-            List<Property> ppList = this.process.getProperties();
-            for (Property pe : ppList) {
-                if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
-                    input = input.replace(r.group(), pe.getValue());
-                    break;
-                }
-            }
-        }
-        return input;
-    }
-
-    /**
-     * Metadatum von FirstChild oder TopStruct ermitteln (vorzugsweise vom
-     * FirstChild) und zurückgeben.
-     */
-    private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
-        if (Objects.nonNull(this.dd)) {
-            /* TopStruct und FirstChild ermitteln */
-            LegacyDocStructHelperInterface topstruct = this.dd.getLogicalDocStruct();
-            LegacyDocStructHelperInterface firstchildstruct = null;
-            if (!topstruct.getAllChildren().isEmpty()) {
-                firstchildstruct = topstruct.getAllChildren().get(0);
-            }
-
-            /* MetadataType ermitteln und ggf. Fehler melden */
-            LegacyMetadataTypeHelper mdt;
-            try {
-                mdt = LegacyPrefsHelper.getMetadataType(this.prefs, metadata);
-            } catch (IllegalArgumentException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                return "";
-            }
-
-            String resultTop = getMetadataValue(topstruct, mdt);
-            String resultFirst = null;
-            if (Objects.nonNull(firstchildstruct)) {
-                resultFirst = getMetadataValue(firstchildstruct, mdt);
-            }
-            return getResultAccordingToMetadataLevel(inLevel, metadata, resultFirst, resultTop);
+            metadataLevel = Objects.isNull(variableFinder.group(4)) ? MetadataLevel.ALL
+                    : MetadataLevel.valueOf(variableFinder.group(4).toUpperCase());
         } else {
-            return "";
+            metadataLevel = MetadataLevel.TOPSTRUCT;
         }
-    }
 
-    private String getResultAccordingToMetadataLevel(MetadataLevel metadataLevel, String metadata, String resultFirst,
-            String resultTop) {
-        String resultAccordingToMetadataLevel = "";
+        if (Objects.isNull(workpiece)) {
+            logger.warn("Cannot replace \"{}\": no workpiece given", variableFinder.group());
+            return dollarSignIfToKeep;
+        }
+
         switch (metadataLevel) {
-            case FIRSTCHILD:
-                // without existing FirstChild, this cannot be returned
-                if (Objects.isNull(resultFirst)) {
-                    logger.info("Can not replace firstChild-variable for METS: {}", metadata);
-                } else {
-                    resultAccordingToMetadataLevel = resultFirst;
-                }
-                break;
-            case TOPSTRUCT:
-                if (Objects.isNull(resultTop)) {
-                    logger.warn("Can not replace topStruct-variable for METS: {}", metadata);
-                } else {
-                    resultAccordingToMetadataLevel = resultTop;
-                }
-                break;
             case ALL:
-                if (Objects.nonNull(resultFirst)) {
-                    resultAccordingToMetadataLevel = resultFirst;
-                } else if (Objects.nonNull(resultTop)) {
-                    resultAccordingToMetadataLevel = resultTop;
-                } else {
-                    logger.warn("Can not replace variable for METS: {}", metadata);
+                List<IncludedStructuralElement> allChildren = workpiece.getRootElement().getChildren();
+                String allFirstchildValue = allChildren.isEmpty() ? null
+                        : MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+                if (Objects.nonNull(allFirstchildValue)) {
+                    return allFirstchildValue;
                 }
-                break;
+                // else fall through
+
+            case TOPSTRUCT:
+                String topstructValue = MetadataEditor.getMetadataValue(workpiece.getRootElement(),
+                    variableFinder.group(5));
+                if (Objects.isNull(topstructValue)) {
+                    logger.warn("Cannot replace \"{}\": No such metadata entry in the root element",
+                        variableFinder.group());
+                    return dollarSignIfToKeep;
+                }
+                return topstructValue;
+
+            case FIRSTCHILD:
+                List<IncludedStructuralElement> firstchildChildren = workpiece.getRootElement().getChildren();
+                if (firstchildChildren.isEmpty()) {
+                    logger.warn("Cannot replace \"{}\": Workpiece doesn't have subordinate logical divisions",
+                        variableFinder.group());
+                    return dollarSignIfToKeep;
+                }
+                String firstchildValue = MetadataEditor.getMetadataValue(firstchildChildren.get(0),
+                    variableFinder.group(5));
+                if (Objects.isNull(firstchildValue)) {
+                    logger.warn("Cannot replace \"{}\": No such metadata entry in the first division",
+                        variableFinder.group());
+                    return dollarSignIfToKeep;
+                }
+                return firstchildValue;
+
             default:
-                break;
+                throw new IllegalStateException("complete switch");
         }
-        return resultAccordingToMetadataLevel;
-    }
-
-    /**
-     * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
-     * zurückgegeben.
-     */
-    private String getMetadataValue(LegacyDocStructHelperInterface inDocstruct, LegacyMetadataTypeHelper mdt) {
-        List<? extends LegacyMetadataHelper> mds = inDocstruct.getAllMetadataByType(mdt);
-        if (!mds.isEmpty()) {
-            return mds.get(0).getValue();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Suche nach regulären Ausdrücken in einem String, liefert alle gefundenen
-     * Treffer als Liste zurück.
-     */
-    private static Iterable<MatchResult> findRegexMatches(String pattern, CharSequence s) {
-        List<MatchResult> results = new ArrayList<>();
-        for (Matcher m = Pattern.compile(pattern).matcher(s); m.find();) {
-            results.add(m.toMatchResult());
-        }
-        return results;
     }
 }
