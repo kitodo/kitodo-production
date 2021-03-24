@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -39,6 +40,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -234,12 +236,20 @@ public class HierarchyMigrationTask extends EmptyTask {
         processService.save(parentProcess);
         fileService.createProcessLocation(parentProcess);
         createParentMetsFile(childProcess);
+        checkTaskAndId(parentProcess);
         ArrayList<Integer> parentData = new ArrayList<>();
         parentData.add(parentProcess.getId());
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
         parentData.add(convertChildMetsFile(metadataFilePath));
         linkParentProcessWithChildProcess(parentProcess, childProcess);
         return parentData;
+    }
+
+    private void checkTaskAndId(Process parentProcess) throws IOException {
+        URI parentMetadataFilePath = fileService.getMetadataFilePath(parentProcess, true, true);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
+        ImportService.checkTasks(parentProcess, workpiece.getRootElement().getType());
+        workpiece.setId(parentProcess.getId().toString());
     }
 
     /**
