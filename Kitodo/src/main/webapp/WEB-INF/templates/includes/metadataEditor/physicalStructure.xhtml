@@ -74,6 +74,33 @@
                         actionListener="#{DataEditorForm.addMediaUnitDialog.prepare}"
                         oncomplete="PF('dialogAddMediaUnit').show()"
                         update="dialogAddMediaUnitForm"/>
+            <p:menuitem value="#{msgs.assignToNextElement}"
+                        icon="fa fa-link fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not
+                            DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() eq 1}"
+                        action="#{DataEditorForm.structurePanel.assign}"
+                        process="@this"
+                        oncomplete="$('#loadingScreen').hide()"
+                        update="logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                @(.structureElementDataList)
+                                imagePreviewForm:mediaContextMenu"/>
+            <p:menuitem value="#{msgs.unassign}"
+                        icon="fa fa-chain-broken fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() == 1}"
+                        action="#{DataEditorForm.structurePanel.unassign}"
+                        process="@this"
+                        oncomplete="$('#loadingScreen').hide()"
+                        update="logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                @(.structureElementDataList)
+                                imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.removeElement}"
                         rendered="#{DataEditorForm.structurePanel.selectedPhysicalNode.data.dataObject.type ne 'page'}"
                         icon="fa fa-trash fa-sm"

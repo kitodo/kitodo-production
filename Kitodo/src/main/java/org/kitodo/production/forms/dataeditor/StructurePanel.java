@@ -1537,6 +1537,7 @@ public class StructurePanel implements Serializable {
             dataEditor.assignView(includedStructuralElement, viewToAssign, 0);
             severalAssignments.add(viewToAssign.getMediaUnit());
             show();
+            dataEditor.getSelectedMedia().clear();
             dataEditor.getGalleryPanel().updateStripes();
         }
     }

@@ -408,6 +408,7 @@ public class AddDocStrucTypeDialog {
      */
     public void prepare() {
         elementsToAddSpinnerValue = 1;
+        checkSelectedLogicalNode();
         Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(),
@@ -420,6 +421,19 @@ public class AddDocStrucTypeDialog {
         }
         this.prepareDocStructTypes();
         prepareSelectPageOnAddNodeItems();
+    }
+
+    private void checkSelectedLogicalNode() {
+        //If a view is selected in logical tree then the 'selectedLogicalNode' will be set to the parent of this view
+        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                if (Objects.nonNull(selectedLogicalNode.getParent())) {
+                    dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalNode.getParent());
+                }
+            }
+        }
     }
 
     /**
