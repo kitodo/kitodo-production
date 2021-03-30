@@ -23,8 +23,10 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
@@ -249,6 +251,17 @@ public class HierarchyMigrationTask extends EmptyTask {
         URI parentMetadataFilePath = fileService.getMetadataFilePath(parentProcess, true, true);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
         ImportService.checkTasks(parentProcess, workpiece.getRootElement().getType());
+        Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
+        String title = "";
+        for (Metadata metadatum : metadata) {
+            if (metadatum.getKey().equals("CatalogIDDigital") || metadatum.getKey().equals("TSL_ATS")) {
+                title += ((MetadataEntry) metadatum).getValue() + "_";
+            }
+        }
+        if(StringUtils.isNotBlank(title)) {
+            title = title.substring(0, title.length() - 1);
+        }
+        parentProcess.setTitle(title);
         workpiece.setId(parentProcess.getId().toString());
     }
 
