@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
@@ -79,7 +80,7 @@ public class SchemaService {
                 process, null);
 
         addVirtualFileGroupsToMetsMods(workpiece.getMediaUnit(), process);
-        replaceFLocatForExport(workpiece, process);
+        replaceFLocatForExport(workpiece, process, prefs.getRuleset());
 
         // Replace rights and digiprov entries.
         set(workpiece, MdSec.RIGHTS_MD, "owner", vp.replace(process.getProject().getMetsRightsOwner()));
@@ -140,9 +141,11 @@ public class SchemaService {
         }
     }
 
-    private void replaceFLocatForExport(Workpiece workpiece, Process process) throws URISyntaxException {
+    private void replaceFLocatForExport(Workpiece workpiece, Process process, RulesetManagementInterface ruleset)
+            throws URISyntaxException {
         List<Folder> folders = process.getProject().getFolders();
-        VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
+        VariableReplacer variableReplacer = new VariableReplacer(
+                new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece), null, process, null);
         for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
