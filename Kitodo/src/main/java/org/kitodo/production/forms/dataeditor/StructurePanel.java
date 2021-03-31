@@ -1505,9 +1505,9 @@ public class StructurePanel implements Serializable {
             if (structureTreeNode.getDataObject() instanceof View) {
                 List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
                 int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
-                List<TreeNode> viewSiblbings = selectedLogicalNode.getParent().getChildren();
+                List<TreeNode> viewSiblings = selectedLogicalNode.getParent().getChildren();
                 // check for selected node's positions and siblings after selected node's parent
-                if (viewSiblbings.indexOf(selectedLogicalNode) == viewSiblbings.size() - 1
+                if (viewSiblings.indexOf(selectedLogicalNode) == viewSiblings.size() - 1
                         && logicalNodeSiblings.size() > logicalNodeIndex + 1) {
                     TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
                     if (nextSibling.getData() instanceof StructureTreeNode) {
