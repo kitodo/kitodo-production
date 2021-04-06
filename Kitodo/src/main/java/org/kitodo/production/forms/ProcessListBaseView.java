@@ -16,6 +16,7 @@ import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,7 +40,6 @@ import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
-import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
@@ -59,6 +59,8 @@ public class ProcessListBaseView extends BaseForm {
     private boolean showClosedProcesses = false;
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
+
+    private final HashMap<Integer, Boolean> exportable = new HashMap<>();
 
     /**
      * Get selectedProcesses.
@@ -456,16 +458,19 @@ public class ProcessListBaseView extends BaseForm {
     }
 
     /**
-     * Check and return whether process with given ID has an empty generator folder or not.
+     * Check and return whether process with given ID can be exported or not.
      *
      * @param processId process ID
-     * @return whether given URI points to empty directory or not
+     * @return whether process with given ID can be exported or not
      */
-    public boolean hasImages(int processId) {
+    public boolean canBeExported(int processId) {
         try {
-            return FileService.hasImages(processId);
+            if (!exportable.containsKey(processId)) {
+                exportable.put(processId, ProcessService.canBeExported(processId));
+            }
+            return exportable.get(processId);
         } catch (IOException | DAOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e);
             return false;
         }
     }

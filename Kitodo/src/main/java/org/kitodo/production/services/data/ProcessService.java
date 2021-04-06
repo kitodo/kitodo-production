@@ -98,6 +98,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Comment;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -2698,5 +2699,25 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                         .filter(userRoles::contains)
                         .collect(Collectors.toSet()).isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks and returns whether the process with the given ID 'processId' can be exported or not.
+     * @param processId process ID
+     * @return whether process can be exported or not
+     */
+    public static boolean canBeExported(int processId) throws IOException, DAOException {
+        Process process = ServiceManager.getProcessService().getById(processId);
+        // superordinate processes normally do not contain images but should always be exportable
+        if (!process.getChildren().isEmpty()) {
+            return true;
+        }
+        Folder generatorSource = process.getProject().getGeneratorSource();
+        // processes without a generator source should be exportable because they may contain multimedia files
+        // that are not used as generator sources
+        if (Objects.isNull(generatorSource)) {
+            return true;
+        }
+        return FileService.hasImages(process, generatorSource);
     }
 }
