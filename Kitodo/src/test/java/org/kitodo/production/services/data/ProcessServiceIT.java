@@ -220,9 +220,9 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindProcessWithUnderscore() throws DataException, DAOException {
-        Project projectDTO = ServiceManager.getProjectService().getById(1);
+        Project project = ServiceManager.getProjectService().getById(1);
         Process process = new Process();
-        process.setProject(projectDTO);
+        process.setProject(project);
         String processTitle = "Title-with-hyphen_and_underscore";
         process.setTitle(processTitle);
         ServiceManager.getProcessService().save(process);
