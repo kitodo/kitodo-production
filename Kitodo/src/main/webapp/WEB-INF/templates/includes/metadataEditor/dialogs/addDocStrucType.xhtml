@@ -274,9 +274,10 @@
                                          oncomplete="updateMetadataEditorView(true);"/>
                         <p:commandButton value="#{msgs.cancel}"
                                          icon="fa fa-times fa-lg"
+                                         action="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
                                          iconPos="secondary"
                                          styleClass="secondary right"
-                                         onclick="PF('dialogAddDocStrucType').hide();"/>
+                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGroup>
 
                     <!-- submit buttons for linking processes -->

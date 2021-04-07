@@ -91,6 +91,7 @@ public class AddDocStrucTypeDialog {
     private boolean linkSubDialogVisible = false;
     private static final String PREVIEW_MODE = "preview";
     private static final String LIST_MODE = "list";
+    private TreeNode previouslySelectedLogicalNode;
 
     /**
      * Backing bean for the add doc struc type dialog of the metadata editor.
@@ -430,6 +431,7 @@ public class AddDocStrucTypeDialog {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
             if (structureTreeNode.getDataObject() instanceof View) {
                 if (Objects.nonNull(selectedLogicalNode.getParent())) {
+                    previouslySelectedLogicalNode = selectedLogicalNode;
                     dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalNode.getParent());
                 }
             }
@@ -661,6 +663,10 @@ public class AddDocStrucTypeDialog {
         selectFirstPageOnAddNodeSelectedItem = null;
         selectLastPageOnAddNodeSelectedItem = null;
         docStructPositionSelectionSelectedItem = LAST_CHILD_OF_CURRENT_ELEMENT;
+        if (Objects.nonNull(previouslySelectedLogicalNode)) {
+            dataEditor.getStructurePanel().setSelectedLogicalNode(previouslySelectedLogicalNode);
+            previouslySelectedLogicalNode = null;
+        }
     }
 
     /**

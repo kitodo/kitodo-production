@@ -38,6 +38,7 @@
                             contextMenuLogicalTree
                             physicalTree
                             paginationForm:paginationWrapperPanel
+                            imagePreviewForm:stripeContextMenu
                             imagePreviewForm:mediaContextMenu
                             metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
@@ -85,7 +86,7 @@
                         process="@this"
                         oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeDialog">
-            <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
+                <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
             <p:menuitem value="#{msgs.changeDocstructType}"
                         rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
