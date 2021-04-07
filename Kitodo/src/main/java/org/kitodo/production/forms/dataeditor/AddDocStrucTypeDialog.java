@@ -404,6 +404,7 @@ public class AddDocStrucTypeDialog {
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
     public void prepare() {
+        elementsToAddSpinnerValue = 1;
         Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(),
