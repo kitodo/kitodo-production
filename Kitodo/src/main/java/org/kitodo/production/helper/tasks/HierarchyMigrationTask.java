@@ -169,7 +169,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param process
      *            process to migrate
      */
-    private void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
+   void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
         logger.info("Starting to convert process {} (ID {})...", process.getTitle(), process.getId());
         long begin = System.nanoTime();
         migrateMetadataFiles(process);
@@ -231,7 +231,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      *         current number of the child process
      */
     private List<Integer> createParentProcess(Process childProcess)
-            throws ProcessGenerationException, IOException, DataException, CommandException {
+            throws ProcessGenerationException, IOException, DataException, CommandException, DAOException {
 
         processGenerator.generateProcess(childProcess.getTemplate().getId(), childProcess.getProject().getId());
         Process parentProcess = processGenerator.getGeneratedProcess();
@@ -239,6 +239,8 @@ public class HierarchyMigrationTask extends EmptyTask {
         fileService.createProcessLocation(parentProcess);
         createParentMetsFile(childProcess);
         checkTaskAndId(parentProcess);
+        processService.save(parentProcess);
+        parentProcess = ServiceManager.getProcessService().getById(parentProcess.getId());
         ArrayList<Integer> parentData = new ArrayList<>();
         parentData.add(parentProcess.getId());
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
@@ -254,12 +256,14 @@ public class HierarchyMigrationTask extends EmptyTask {
         Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
         String title = "";
         for (Metadata metadatum : metadata) {
-            if (metadatum.getKey().equals("CatalogIDDigital") || metadatum.getKey().equals("TSL_ATS")) {
+            if (metadatum.getKey().equals("TSL_ATS")) {
                 title += ((MetadataEntry) metadatum).getValue() + "_";
             }
         }
-        if(StringUtils.isNotBlank(title)) {
-            title = title.substring(0, title.length() - 1);
+        for (Metadata metadatum : metadata) {
+            if (metadatum.getKey().equals("CatalogIDDigital")) {
+                title += ((MetadataEntry) metadatum).getValue();
+            }
         }
         parentProcess.setTitle(title);
         workpiece.setId(parentProcess.getId().toString());
