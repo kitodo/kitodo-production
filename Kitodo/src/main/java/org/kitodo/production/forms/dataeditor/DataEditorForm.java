@@ -218,7 +218,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String open(String processID, String referringView) {
         try {
-            this.referringView = referringView;
+            this.referringView = referringView + ("processes".equals(referringView) ? "?keepPagination=true" : "");
             this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
