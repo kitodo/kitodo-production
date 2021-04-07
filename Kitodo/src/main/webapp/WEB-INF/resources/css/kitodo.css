@@ -2678,6 +2678,36 @@ Workflow Editor
 }
 
 /*----------------------------------------------------------------------
+Role authority picklist
+----------------------------------------------------------------------*/
+
+.ui-picklist-buttons-cell .ui-button-icon-left.ui-icon {
+    background: none;
+    font-size: larger;
+    text-indent: 0;
+}
+
+.ui-picklist-buttons-cell .ui-button-icon-left::before {
+    font-family: FontAwesome;
+}
+
+.ui-picklist-buttons-cell .ui-picklist-button-add .ui-button-icon-left::before {
+    content: '\f105';
+}
+
+.ui-picklist-buttons-cell .ui-picklist-button-add-all .ui-button-icon-left::before {
+    content: '\f101';
+}
+
+.ui-picklist-buttons-cell .ui-picklist-button-remove .ui-button-icon-left::before {
+    content: '\f104';
+}
+
+.ui-picklist-buttons-cell .ui-picklist-button-remove-all .ui-button-icon-left::before {
+    content: '\f100';
+}
+
+/*----------------------------------------------------------------------
 System page
 ----------------------------------------------------------------------*/
 
