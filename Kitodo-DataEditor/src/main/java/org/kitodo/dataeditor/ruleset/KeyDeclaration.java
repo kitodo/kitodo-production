@@ -29,32 +29,32 @@ import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Type;
 
 /**
- * A universal key provides access to a key in the ruleset. A key in the ruleset
- * can either be nestable or simple, both are both possible and have the same
- * universal key. Distinction is only view of the nested key view or normal key
- * view for it.
+ * A key declaration provides access to a key element in the ruleset. A key in
+ * the ruleset can either be nestable or simple, both are both possible and have
+ * the same declaration. Distinction is only view of the nested key view or
+ * normal key view for it.
  */
-class UniversalKey extends Labeled {
+class KeyDeclaration extends Labeled {
     /**
      * The key, if there is one.
      */
     private final Optional<Key> optionalKey;
 
     /**
-     * This constructor produces a universal key for a known key.
+     * Creates a key declaration for a known key.
      *
      * @param ruleset
      *            the ruleset
      * @param key
      *            the key
      */
-    UniversalKey(Ruleset ruleset, Key key) {
+    KeyDeclaration(Ruleset ruleset, Key key) {
         super(ruleset, key.getId(), key.getLabels(), false);
         optionalKey = Optional.of(key);
     }
 
     /**
-     * This constructor produces a universal key for a known key.
+     * Creates a key declaration for a known key.
      *
      * @param ruleset
      *            the ruleset
@@ -63,33 +63,31 @@ class UniversalKey extends Labeled {
      * @param undefined
      *            whether he is undefined or not
      */
-    UniversalKey(Ruleset ruleset, Key key, boolean undefined) {
+    KeyDeclaration(Ruleset ruleset, Key key, boolean undefined) {
         super(ruleset, key.getId(), key.getLabels(), undefined);
         optionalKey = Optional.of(key);
     }
 
     /**
-     * This constructor produces a universal key for an unknown key. A key is
-     * unknown if it is not in the ruleset (but it is in the data!) This, one
-     * must be able to handle and not the application crashes. Here we want to
-     * be better than before when nothing went.
+     * Creates a key declaration for an unknown known key. A key is unknown if
+     * it is not in the ruleset, but it is in the data. This case must be
+     * handled.
      *
      * @param ruleset
      *            the ruleset
      * @param id
      *            the identifier of the key
      */
-    UniversalKey(Ruleset ruleset, String id) {
+    KeyDeclaration(Ruleset ruleset, String id) {
         super(ruleset, id, Collections.emptyList(), true);
         optionalKey = Optional.empty();
     }
 
     /**
-     * Create a new universal division. This constructor is called by the
-     * universal division to create a fake universal key for a division. Because
-     * basically a division is nothing more than a nested key only with extra
-     * feature. Basically, most of the data is pretty much the same anyway, just
-     * different.
+     * Create a new division declaration. This constructor is called by the
+     * subclass {@link DivisionDeclaration} to create a division declaration,
+     * which is a subclass of a key declaration, because a division is a nested
+     * key with extra features.
      *
      * @param ruleset
      *            the ruleset
@@ -100,7 +98,7 @@ class UniversalKey extends Labeled {
      * @param undefined
      *            whether the division is unknown
      */
-    protected UniversalKey(Ruleset ruleset, String id, Collection<Label> labels, boolean undefined) {
+    protected KeyDeclaration(Ruleset ruleset, String id, Collection<Label> labels, boolean undefined) {
         super(ruleset, id, labels, undefined);
         optionalKey = Optional.of(ruleset.getFictiousRulesetKey());
     }
@@ -128,31 +126,31 @@ class UniversalKey extends Labeled {
     }
 
     /**
-     * Issues a universal key for a subkey (for nested keys).
+     * Returns a key declaration for a subkey (for nested keys).
      *
      * @param keyId
-     *            identifier of the required universal key
-     * @return a universal key for the subkey
+     *            identifier of the required key declaration
+     * @return a key declaration for the sub-key
      */
-    UniversalKey getUniversalKey(String keyId) {
+    KeyDeclaration getSubkeyDeclaration(String keyId) {
         if (optionalKey.isPresent()) {
             Optional<Key> keyInKey = optionalKey.get().getKeys().parallelStream()
                     .filter(key -> keyId.equals(key.getId())).findAny();
             if (keyInKey.isPresent()) {
-                return new UniversalKey(ruleset, keyInKey.get());
+                return new KeyDeclaration(ruleset, keyInKey.get());
             }
         }
-        return new UniversalKey(ruleset, keyId);
+        return new KeyDeclaration(ruleset, keyId);
     }
 
     /**
-     * Issues universal keys for all subkeys.
+     * Returns key declarations for all sub-keys.
      *
-     * @return a universal keys for all subkeys
+     * @return key declarations for all sub-keys
      */
-    Collection<UniversalKey> getUniversalKeys() {
+    Collection<KeyDeclaration> getKeyDeclarations() {
         if (optionalKey.isPresent()) {
-            return optionalKey.get().getKeys().parallelStream().map(key -> new UniversalKey(ruleset, key))
+            return optionalKey.get().getKeys().parallelStream().map(key -> new KeyDeclaration(ruleset, key))
                     .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
@@ -160,7 +158,7 @@ class UniversalKey extends Labeled {
     }
 
     /**
-     * Returns the namespace of the key if there is one. This is needed for
+     * Returns the namespace of the key, if there is one. This is needed for
      * validation.
      *
      * @return the namespace of the key, if any
@@ -243,11 +241,11 @@ class UniversalKey extends Labeled {
     }
 
     /**
-     * Returns whether the universal key has options.
+     * Returns whether the key declaration has options.
      *
-     * @return whether the universal key has options
+     * @return whether the key declaration has options
      */
-    boolean isHavingOptions() {
+    boolean isWithOptions() {
         if (optionalKey.isPresent()) {
             return !optionalKey.get().getOptions().isEmpty();
         } else {

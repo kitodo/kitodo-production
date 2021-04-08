@@ -32,7 +32,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 /**
  * A view on a key.
  */
-class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetadataViewInterface {
+class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMetadataViewInterface {
     /**
      * The schema in which the part of the date relevant to this division is
      * stored. Apart from the dates built into Java and interpreted by the
@@ -55,19 +55,19 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
     /**
      * A new key view is created.
      *
-     * @param universalKey
-     *            the universal key
-     * @param universalRule
-     *            the universal rule
+     * @param keyDeclaration
+     *            the key declaration
+     * @param rule
+     *            the rule
      * @param settings
      *            the settings
      * @param priorityList
      *            the user’s wish list for the preferred human language
      */
-    KeyView(UniversalKey universalKey, UniversalRule universalRule, Settings settings,
+    KeyView(KeyDeclaration keyDeclaration, Rule rule, Settings settings,
             List<LanguageRange> priorityList) {
 
-        super(universalKey, universalRule, priorityList);
+        super(keyDeclaration, rule, priorityList);
         this.settings = settings;
     }
 
@@ -78,7 +78,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
      */
     @Override
     public Collection<String> getDefaultItems() {
-        return universal.getDefaultItems();
+        return declaration.getDefaultItems();
     }
 
     /**
@@ -92,7 +92,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          * If the metadata key has a type that requires a special input field,
          * return the corresponding field type.
          */
-        switch (universal.getType()) {
+        switch (declaration.getType()) {
             case ANY_URI:
                 return InputType.ONE_LINE_TEXT;
             case BOOLEAN:
@@ -109,11 +109,11 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          * If the metadata key defines options, return the corresponding
          * selection type.
          */
-        if (universal.isHavingOptions()) {
-            if (universalRule.isRepeatable()) {
+        if (declaration.isWithOptions()) {
+            if (rule.isRepeatable()) {
                 return InputType.MULTIPLE_SELECTION;
             }
-            if (settings.isMultiline(universal.getId())) {
+            if (settings.isMultiline(declaration.getId())) {
                 return InputType.MULTI_LINE_SINGLE_SELECTION;
             } else {
                 return InputType.ONE_LINE_SINGLE_SELECTION;
@@ -121,7 +121,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
         }
 
         // otherwise, check if the key is required to have an enlarged text box
-        if (settings.isMultiline(universal.getId())) {
+        if (settings.isMultiline(declaration.getId())) {
             return InputType.MULTI_LINE_TEXT;
         } else {
             return InputType.ONE_LINE_TEXT;
@@ -143,7 +143,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
      */
     @Override
     public Map<String, String> getSelectItems() {
-        return universalRule.getSelectItems(universal.getSelectItems(priorityList));
+        return rule.getSelectItems(declaration.getSelectItems(priorityList));
     }
 
     @Override
@@ -153,7 +153,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
 
     @Override
     public boolean isEditable() {
-        return settings.isEditable(universal.getId());
+        return settings.isEditable(declaration.getId());
     }
 
     /**
@@ -175,7 +175,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
      *         specified
      */
     private boolean isLocatedInTheNamespace(String uri) {
-        Optional<String> optionalNamespace = universal.getNamespace();
+        Optional<String> optionalNamespace = declaration.getNamespace();
         if (optionalNamespace.isPresent()) {
             String namespaceAsStated = optionalNamespace.get();
             boolean endsWithSlash = namespaceAsStated.endsWith("/");
@@ -206,10 +206,10 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          * This simplifies the examination considerably.
          */
         try {
-            if (Objects.isNull(universal) || Objects.isNull(value)) {
+            if (Objects.isNull(declaration) || Objects.isNull(value)) {
                 return false;
             }
-            switch (universal.getType()) {
+            switch (declaration.getType()) {
                 case ANY_URI:
                     if (!isLocatedInTheNamespace(value)) {
                         return false;
@@ -232,8 +232,8 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
         }
 
         // If the key has options, then the value must be in it.
-        if (universal.isHavingOptions()
-                && !universalRule.getSelectItems(universal.getSelectItems(priorityList)).containsKey(value)) {
+        if (declaration.isWithOptions()
+                && !rule.getSelectItems(declaration.getSelectItems(priorityList)).containsKey(value)) {
             return false;
         }
 
@@ -242,7 +242,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          * tests can be combined with each other, then all conditions must
          * apply.
          */
-        Optional<Pattern> optionalPattern = universal.getPattern();
+        Optional<Pattern> optionalPattern = declaration.getPattern();
         if (!optionalPattern.isPresent()) {
             return true;
         }
@@ -259,6 +259,6 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
 
     @Override
     public Optional<Domain> getDomain() {
-        return universal.getDomain();
+        return declaration.getDomain();
     }
 }

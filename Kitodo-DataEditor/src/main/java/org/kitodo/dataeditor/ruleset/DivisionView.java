@@ -24,25 +24,25 @@ import org.kitodo.dataeditor.ruleset.xml.Ruleset;
  * A division view gives us a sight of a division. The view qualifies according
  * to the division, acquisition stage and language(s).
  */
-class DivisionView extends NestedKeyView<UniversalDivision> implements StructuralElementViewInterface {
+class DivisionView extends NestedKeyView<DivisionDeclaration> implements StructuralElementViewInterface {
     /**
      * Creates a division view. The view qualifies according to the division,
      * acquisition stage and language(s).
      *
      * @param ruleset
      *            the ruleset
-     * @param universalDivision
-     *            the universal division
+     * @param divisionDeclaration
+     *            the division declaration
      * @param acquisitionStage
      *            the acquisition stage
      * @param priorityList
      *            the user's wish list for the best possible translation
      */
-    public DivisionView(Ruleset ruleset, UniversalDivision universalDivision, String acquisitionStage,
+    public DivisionView(Ruleset ruleset, DivisionDeclaration divisionDeclaration, String acquisitionStage,
             List<LanguageRange> priorityList) {
 
-        super(ruleset, universalDivision,
-                ruleset.getUniversalRestrictionRuleForDivision(universalDivision.getId()),
+        super(ruleset, divisionDeclaration,
+                ruleset.getRuleForDivision(divisionDeclaration.getId()),
                 ruleset.getSettings(acquisitionStage), priorityList, true);
     }
 
@@ -56,11 +56,11 @@ class DivisionView extends NestedKeyView<UniversalDivision> implements Structura
      */
     @Override
     public Map<String, String> getAllowedSubstructuralElements() {
-        boolean hasSubdivisionByDate = universal.hasSubdivisionByDate();
+        boolean hasSubdivisionByDate = declaration.hasSubdivisionByDate();
         Map<String, String> declaredDivisions = ruleset.getDivisions(priorityList, true, hasSubdivisionByDate);
-        Map<String, String> filteredDivisions = universalRule.getAllowedSubdivisions(declaredDivisions);
+        Map<String, String> filteredDivisions = rule.getAllowedSubdivisions(declaredDivisions);
         if (hasSubdivisionByDate) {
-            return universal.getAllowedSubdivisions(filteredDivisions);
+            return declaration.getAllowedSubdivisions(filteredDivisions);
         } else {
             return filteredDivisions;
         }
@@ -68,13 +68,13 @@ class DivisionView extends NestedKeyView<UniversalDivision> implements Structura
 
     @Override
     public Optional<DatesSimpleMetadataViewInterface> getDatesSimpleMetadata() {
-        Optional<UniversalKey> optionalUniversalKey = universal.getDatesUniversalKey();
-        if (optionalUniversalKey.isPresent()) {
-            KeyView datesKeyView = new KeyView(optionalUniversalKey.get(),
-                    universalRule.getUniversalPermitRuleForKey(optionalUniversalKey.get().getId(), division), settings,
+        Optional<KeyDeclaration> optionalDatesKey = declaration.getDatesKey();
+        if (optionalDatesKey.isPresent()) {
+            KeyView datesKeyView = new KeyView(optionalDatesKey.get(),
+                    rule.getRuleForKey(optionalDatesKey.get().getId(), division), settings,
                     priorityList);
-            datesKeyView.setScheme(universal.getScheme());
-            datesKeyView.setYearBegin(universal.getYearBegin());
+            datesKeyView.setScheme(declaration.getScheme());
+            datesKeyView.setYearBegin(declaration.getYearBegin());
             return Optional.of(datesKeyView);
         } else {
             return Optional.empty();
@@ -83,6 +83,6 @@ class DivisionView extends NestedKeyView<UniversalDivision> implements Structura
 
     @Override
     public Optional<String> getProcessTitle() {
-        return universal.getProcessTitle();
+        return declaration.getProcessTitle();
     }
 }

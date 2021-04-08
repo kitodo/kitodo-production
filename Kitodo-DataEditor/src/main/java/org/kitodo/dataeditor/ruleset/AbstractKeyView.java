@@ -19,22 +19,20 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 /**
  * The abstract type view summarizes methods needed for both the views of keys
  * and views of complex types.
- * 
- * @param <U>
- *            the universal type
+ *
+ * @param <D>
+ *            the type of declaration
  */
-abstract class AbstractKeyView<U extends Labeled> implements MetadataViewInterface {
+abstract class AbstractKeyView<D extends Labeled> implements MetadataViewInterface {
     /**
-     * The underlying universal. This can be a universal key or a universal
-     * division, so this is just a matter of the universal and it depends on the
-     * calling class what it is ultimately about.
+     * The underlying declaration. This can be a key or a division declaration.
      */
-    protected final U universal;
+    protected final D declaration;
 
     /**
-     * The universal rule.
+     * The rule.
      */
-    protected UniversalRule universalRule;
+    protected Rule rule;
 
     /**
      * The wish list of the user regarding the human languages best understood
@@ -46,67 +44,66 @@ abstract class AbstractKeyView<U extends Labeled> implements MetadataViewInterfa
     protected final List<LanguageRange> priorityList;
 
     /**
-     * Creates an abstracted key view.
+     * Creates an abstract key view.
      *
-     * @param universal
-     *            the universal, either a universal division or a universal key,
-     *            as appropriate
+     * @param declaration
+     *            the declaration, either a division or a key declaration
      * @param priorityList
      *            wish language of the user
      */
-    protected AbstractKeyView(U universal, UniversalRule universalRule, List<LanguageRange> priorityList) {
-        this.universal = universal;
-        this.universalRule = universalRule;
+    protected AbstractKeyView(D declaration, Rule rule, List<LanguageRange> priorityList) {
+        this.declaration = declaration;
+        this.rule = rule;
         this.priorityList = priorityList;
     }
 
     /**
-     * Returns the identifier of the respective universal.
+     * Returns the identifier of the declaration.
      *
      * @return the identifier
      */
     @Override
     public String getId() {
-        return universal.getId();
+        return declaration.getId();
     }
 
     /**
-     * Gives the best matching label for the universal.
+     * Gives the best matching label for declaration.
      *
      * @return the label
      */
     @Override
     public String getLabel() {
-        return universal.getLabel(priorityList);
+        return declaration.getLabel(priorityList);
     }
 
     /**
      * Returns the maximum number of occurrences for this type of metadata.
-     * 
+     *
      * @return the maximum number
      */
     @Override
     public int getMaxOccurs() {
-        return universalRule.getMaxOccurs();
+        return rule.getMaxOccurs();
     }
 
     /**
      * Returns the minimum number of occurrences for this type of metadata.
-     * 
+     *
      * @return the minimum number
      */
     @Override
     public int getMinOccurs() {
-        return universalRule.getMinOccurs();
+        return rule.getMinOccurs();
     }
 
     /**
-     * Indicates whether the universal is undefined.
+     * Indicates whether the declaration is undefined.
      *
-     * @return whether the universal is undefined
+     * @return whether the declaration is undefined
      */
     @Override
     public boolean isUndefined() {
-        return universal.isUndefined();
+        return declaration.isUndefined();
     }
 }

@@ -25,36 +25,36 @@ import org.kitodo.dataeditor.ruleset.xml.Key;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 
 /**
- * A universal division provides access to a division in the rule set.
+ * The division declaration provides access to a division in the rule set.
  */
-public class UniversalDivision extends UniversalKey {
+public class DivisionDeclaration extends KeyDeclaration {
     /**
      * A reference to the division, if there is any.
      */
     private Optional<Division> optionalDivision;
 
     /**
-     * Create a new universal division.
+     * Creates a new division declaration.
      *
      * @param ruleset
      *            the ruleset
      * @param division
      *            the division
      */
-    public UniversalDivision(Ruleset ruleset, Division division) {
+    public DivisionDeclaration(Ruleset ruleset, Division division) {
         super(ruleset, division.getId(), division.getLabels(), false);
         this.optionalDivision = Optional.of(division);
     }
 
     /**
-     * Create a new universal division for an unknown division.
+     * Creates a new division declaration for an unknown division.
      *
      * @param ruleset
      *            the ruleset
      * @param id
      *            the identifier of the division
      */
-    UniversalDivision(Ruleset ruleset, String id) {
+    DivisionDeclaration(Ruleset ruleset, String id) {
         super(ruleset, id, Collections.emptyList(), true);
         this.optionalDivision = Optional.empty();
     }
@@ -94,14 +94,14 @@ public class UniversalDivision extends UniversalKey {
         return filteredSubdivisions;
     }
 
-    Optional<UniversalKey> getDatesUniversalKey() {
+    Optional<KeyDeclaration> getDatesKey() {
         if (optionalDivision.isPresent()) {
             Division division = optionalDivision.get();
             Optional<String> optionalDatesKeyId = division.getDates();
             if (optionalDatesKeyId.isPresent()) {
                 Optional<Key> optionalKey = ruleset.getKey(optionalDatesKeyId.get());
                 if (optionalKey.isPresent()) {
-                    return Optional.of(new UniversalKey(ruleset, optionalKey.get()));
+                    return Optional.of(new KeyDeclaration(ruleset, optionalKey.get()));
                 }
             }
         }
@@ -118,14 +118,14 @@ public class UniversalDivision extends UniversalKey {
     }
 
     /**
-     * Returns universal divisions for the subdivisions by date.
+     * Returns division declarations for the subdivisions by date.
      *
-     * @return universal divisions for the subdivisions by date
+     * @return division declarations for the subdivisions by date
      */
-    public List<UniversalDivision> getUniversalDivisions() {
+    public List<DivisionDeclaration> getAllowedDivisionDeclarations() {
         if (optionalDivision.isPresent()) {
             return optionalDivision.get().getDivisions().stream()
-                    .map(division -> new UniversalDivision(ruleset, division)).collect(Collectors.toList());
+                    .map(division -> new DivisionDeclaration(ruleset, division)).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
@@ -177,7 +177,7 @@ public class UniversalDivision extends UniversalKey {
 
     /**
      * Gets the division.
-     * 
+     *
      * @return the division
      */
     public Division getDivision() {

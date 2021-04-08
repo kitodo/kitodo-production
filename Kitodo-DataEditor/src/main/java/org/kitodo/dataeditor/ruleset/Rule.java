@@ -26,11 +26,11 @@ import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Unspecified;
 
 /**
- * A universal rule is a rule that may be in place or not. If there is no
- * corresponding rule element in the rule set, the rule behaves as if there is a
- * rule that declares no restrictions.
+ * A rule that may be in place or not. If there is no corresponding rule element
+ * in the ruleset, the rule behaves as if there is a rule that declares no
+ * restrictions.
  */
-public class UniversalRule {
+public class Rule {
     /**
      * Generates a triplet of rule with triple as a key. This is due to the
      * problem because the rule is basically the key is three fields and applies
@@ -55,14 +55,15 @@ public class UniversalRule {
     private Ruleset ruleset;
 
     /**
-     * Constructor for a new universal rule. Can with rule or without.
+     * Constructor for a new rule. May come with a restrictive permit or
+     * without.
      *
      * @param ruleset
      *            the ruleset
      * @param optionalRestrictivePermit
-     *            maybe a rule, but maybe not
+     *            there may be a restrictive permit, or not
      */
-    public UniversalRule(Ruleset ruleset, Optional<RestrictivePermit> optionalRestrictivePermit) {
+    public Rule(Ruleset ruleset, Optional<RestrictivePermit> optionalRestrictivePermit) {
         this.ruleset = ruleset;
         this.optionalRestrictivePermit = optionalRestrictivePermit;
     }
@@ -119,22 +120,22 @@ public class UniversalRule {
     }
 
     /**
-     * Returns the universal keys explicitly allowed in the rule. This is done
-     * by looking into rule and making explicit universal keys for it.
+     * Returns the key declarations explicitly allowed in the rule. This is done
+     * by looking into rule and making explicit key declarations for it.
      *
-     * @return the universal keys explicitly allowed
+     * @return the key declarations explicitly allowed
      */
-    LinkedList<UniversalKey> getExplicitlyPermittedUniversalKeys(UniversalKey universalKey) {
-        LinkedList<UniversalKey> explicitlyPermittedUniversalKeys = new LinkedList<>();
+    LinkedList<KeyDeclaration> getExplicitlyPermittedKeys(KeyDeclaration keyDeclaration) {
+        LinkedList<KeyDeclaration> explicitlyPermittedKeys = new LinkedList<>();
         if (optionalRestrictivePermit.isPresent()) {
             for (RestrictivePermit permit : optionalRestrictivePermit.get().getPermits()) {
                 Optional<String> optionalKey = permit.getKey();
                 if (optionalKey.isPresent()) {
-                    explicitlyPermittedUniversalKeys.add(universalKey.getUniversalKey(optionalKey.get()));
+                    explicitlyPermittedKeys.add(keyDeclaration.getSubkeyDeclaration(optionalKey.get()));
                 }
             }
         }
-        return explicitlyPermittedUniversalKeys;
+        return explicitlyPermittedKeys;
     }
 
     /**
@@ -165,22 +166,22 @@ public class UniversalRule {
     }
 
     /**
-     * Returns a permission universal rule for a key.
+     * Returns a permit rule for a key.
      *
      * @param keyId
-     *            key for which a permission universal rule is to be returned
-     * @return permission universal rule for the key
+     *            key for which a permit rule is to be returned
+     * @return permit rule for the key
      */
-    UniversalRule getUniversalPermitRuleForKey(String keyId, boolean division) {
-        UniversalRule universalPermitRuleForKey = optionalRestrictivePermit.isPresent()
-                ? new UniversalRule(ruleset,
+    Rule getRuleForKey(String keyId, boolean division) {
+        Rule permitRuleForKey = optionalRestrictivePermit.isPresent()
+                ? new Rule(ruleset,
                         optionalRestrictivePermit.get().getPermits().parallelStream()
                                 .filter(rule -> keyId.equals(rule.getKey().orElse(null))).findAny())
-                : new UniversalRule(ruleset, Optional.empty());
+                : new Rule(ruleset, Optional.empty());
         if (division) {
-            universalPermitRuleForKey.merge(ruleset.getUniversalRestrictionRuleForKey(keyId));
+            permitRuleForKey.merge(ruleset.getRuleForKey(keyId));
         }
-        return universalPermitRuleForKey;
+        return permitRuleForKey;
     }
 
     /**
@@ -267,13 +268,13 @@ public class UniversalRule {
     }
 
     /**
-     * Connects two universal rules. The function happens in separate, this is
-     * just wrapping.
+     * Combines two rules. The function happens in separate, this is just
+     * wrapping.
      *
      * @param other
-     *            the other universal rule
+     *            the other rule
      */
-    void merge(UniversalRule other) {
+    void merge(Rule other) {
         if (optionalRestrictivePermit.isPresent()) {
             if (other.optionalRestrictivePermit.isPresent()) {
                 optionalRestrictivePermit = Optional

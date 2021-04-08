@@ -35,12 +35,12 @@ import org.kitodo.dataeditor.ruleset.xml.Ruleset;
  * A nested key view opens a view of a nested key. This is a key that breaks
  * down into subkey.
  *
- * @param <U>
- *            Type of universal key. Normally a universal key, but since the
- *            divisional view is also a nested key view, it will then be a
- *            universal division.
+ * @param <D>
+ *            Type of declaration. Normally a key declaration, but since the
+ *            division view is also a nested key view, it will then be a
+ *            division declaration.
  */
-class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implements ComplexMetadataViewInterface {
+class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> implements ComplexMetadataViewInterface {
     /**
      * Marks keys for which the user has requested an additional blank field.
      * This process can be parallelized because the auxiliary table is not
@@ -137,19 +137,19 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      *
      * @param ruleset
      *            the ruleset
-     * @param universalKey
-     *            the universal key
-     * @param universalRule
-     *            the universal rule
+     * @param declaration
+     *            the declaration
+     * @param rule
+     *            the rule
      * @param settings
      *            the settings
      * @param priorityList
      *            the user’s wish list for the best possible translation
      */
-    public NestedKeyView(Ruleset ruleset, U universalKey, UniversalRule universalRule,
-            Settings settings, List<LanguageRange> priorityList) {
+    public NestedKeyView(Ruleset ruleset, D declaration, Rule rule, Settings settings,
+            List<LanguageRange> priorityList) {
 
-        super(universalKey, universalRule, priorityList);
+        super(declaration, rule, priorityList);
         this.ruleset = ruleset;
         this.settings = settings;
         this.division = false;
@@ -162,10 +162,10 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      *
      * @param ruleset
      *            the ruleset
-     * @param universalDivision
-     *            the universal division
-     * @param universalRule
-     *            the universal rule
+     * @param divisionDeclaration
+     *            the division declaration
+     * @param rule
+     *            the rule
      * @param settings
      *            the settings
      * @param priorityList
@@ -176,9 +176,9 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      *            differ in their parameters and otherwise they would be the
      *            same.
      */
-    protected NestedKeyView(Ruleset ruleset, U universalDivision, UniversalRule universalRule,
-            Settings settings, List<LanguageRange> priorityList, boolean division) {
-        super(universalDivision, universalRule, priorityList);
+    protected NestedKeyView(Ruleset ruleset, D divisionDeclaration, Rule rule, Settings settings,
+            List<LanguageRange> priorityList, boolean division) {
+        super(divisionDeclaration, rule, priorityList);
 
         this.ruleset = ruleset;
         this.settings = settings;
@@ -193,21 +193,21 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * @param auxiliaryTable
      *            auxiliary table
      */
-    private final <V> void addAnyUniversalRules(LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable) {
+    private final <V> void addAnyRules(LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable) {
 
         auxiliaryTable.entrySet().parallelStream().forEach(entry -> entry.getValue()
-                .setUniversalPermitRule(universalRule.getUniversalPermitRuleForKey(entry.getKey(), division)));
+                .setRule(rule.getRuleForKey(entry.getKey(), division)));
     }
 
     /**
      * Adds the keys selected by the user to be added to the list of keys to
      * add. This procedure is a part of the function to
-     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, UniversalRule, Collection, Collection)}.
+     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, Rule, Collection, Collection)}.
      *
      * @param auxiliaryTable
      *            the target table. If the key is already here, it will not be
      *            added a second time.
-     * @param universalRule
+     * @param rule
      *            the rule provides the key
      * @param additionalKeys
      *            list of the key marked as being added by the user
@@ -215,15 +215,15 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      *            write access to the list of keys to be sorted
      */
     private final <V> void addAdditionalKeys(LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable,
-            UniversalRule universalRule, Collection<String> additionalKeys,
+            Rule rule, Collection<String> additionalKeys,
             HashMap<String, AuxiliaryTableRow<V>> toBeSorted) {
         for (String additionalKey : additionalKeys) {
             if (!auxiliaryTable.containsKey(additionalKey) && !toBeSorted.containsKey(additionalKey)) {
-                Optional<Key> optionalKey = universalRule.isUnspecifiedUnrestricted() ? Optional.empty()
+                Optional<Key> optionalKey = rule.isUnspecifiedUnrestricted() ? Optional.empty()
                         : ruleset.getKey(additionalKey);
-                UniversalKey universalKey = optionalKey.isPresent() ? new UniversalKey(ruleset, optionalKey.get())
-                        : new UniversalKey(ruleset, additionalKey);
-                toBeSorted.put(additionalKey, new AuxiliaryTableRow<>(universalKey, settings));
+                KeyDeclaration keyDeclaration = optionalKey.isPresent() ? new KeyDeclaration(ruleset, optionalKey.get())
+                        : new KeyDeclaration(ruleset, additionalKey);
+                toBeSorted.put(additionalKey, new AuxiliaryTableRow<>(keyDeclaration, settings));
             }
         }
     }
@@ -231,21 +231,21 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     /**
      * If the rule is unspecified unrestricted, the remaining keys are added to
      * the keys to be sorted. This procedure is a part of the function to
-     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, UniversalRule, Collection, Collection)}.
+     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, Rule, Collection, Collection)}.
      *
      * @param auxiliaryTable
      *            the target table. If the key is already here, it will not be
      *            added a second time.
-     * @param universalKeys
+     * @param keyDeclarations
      *            the keys to be checked
      * @param toBeSorted
      *            write access to the list of keys to be sorted
      */
     private final <V> void addRemainingKeys(LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable,
-            Collection<UniversalKey> universalKeys, HashMap<String, AuxiliaryTableRow<V>> toBeSorted) {
-        for (UniversalKey universalKey : universalKeys) {
-            if (!auxiliaryTable.containsKey(universalKey.getId())) {
-                toBeSorted.put(universalKey.getId(), new AuxiliaryTableRow<>(universalKey, settings));
+            Collection<KeyDeclaration> keyDeclarations, HashMap<String, AuxiliaryTableRow<V>> toBeSorted) {
+        for (KeyDeclaration keyDeclaration : keyDeclarations) {
+            if (!auxiliaryTable.containsKey(keyDeclaration.getId())) {
+                toBeSorted.put(keyDeclaration.getId(), new AuxiliaryTableRow<>(keyDeclaration, settings));
             }
         }
     }
@@ -263,24 +263,24 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * @param auxiliaryTable
      *            table with already pre-sorted keys. Keys that are in this
      *            table are not included in the table of keys yet to be sorted.
-     * @param universalRule
-     *            optionally a universal rule
-     * @param universalKeys
-     *            all universal keys
+     * @param rule
+     *            optionally a rule
+     * @param keyDeclarations
+     *            all key declarations
      * @param additionalKeys
      *            which keys the user has additionally selected
      * @return an auxiliary table for additional keys yet to be sorted
      */
     private final <V> HashMap<String, AuxiliaryTableRow<V>> cerateAuxiliaryTableWithKeysToBeSorted(
-            LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable, UniversalRule universalRule,
-            Collection<UniversalKey> universalKeys, Collection<String> additionalKeys) {
+            LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable, Rule rule,
+            Collection<KeyDeclaration> keyDeclarations, Collection<String> additionalKeys) {
 
         HashMap<String, AuxiliaryTableRow<V>> toBeSorted = new HashMap<>();
 
-        if (universalRule.isUnspecifiedUnrestricted()) {
-            addRemainingKeys(auxiliaryTable, universalKeys, toBeSorted);
+        if (rule.isUnspecifiedUnrestricted()) {
+            addRemainingKeys(auxiliaryTable, keyDeclarations, toBeSorted);
         }
-        addAdditionalKeys(auxiliaryTable, universalRule, additionalKeys, toBeSorted);
+        addAdditionalKeys(auxiliaryTable, rule, additionalKeys, toBeSorted);
         return toBeSorted;
     }
 
@@ -299,12 +299,12 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
             Collection<String> additionalKeys) {
 
         LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable = createAuxiliaryTableWithPreSortedKeys(
-            universalRule.getExplicitlyPermittedUniversalKeys(universal));
+            rule.getExplicitlyPermittedKeys(declaration));
         HashMap<String, AuxiliaryTableRow<V>> auxiliaryTableToBeSorted = cerateAuxiliaryTableWithKeysToBeSorted(
-            auxiliaryTable, universalRule, universal.getUniversalKeys(), additionalKeys);
+            auxiliaryTable, rule, declaration.getKeyDeclarations(), additionalKeys);
         storeValues(currentEntries, auxiliaryTable, auxiliaryTableToBeSorted);
         appendRowsToAuxiliaryTable(sort(auxiliaryTableToBeSorted, priorityList), auxiliaryTable);
-        addAnyUniversalRules(auxiliaryTable);
+        addAnyRules(auxiliaryTable);
         addFieldsForAdditionallySelectedKeys(additionalKeys, auxiliaryTable);
         return auxiliaryTable.values();
     }
@@ -319,11 +319,11 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      * @return the auxiliary table
      */
     private final <V> LinkedHashMap<String, AuxiliaryTableRow<V>> createAuxiliaryTableWithPreSortedKeys(
-            List<UniversalKey> explicitlyPermittedKeys) {
+            List<KeyDeclaration> explicitlyPermittedKeys) {
 
         LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable = new LinkedHashMap<>();
-        for (UniversalKey universalKey : explicitlyPermittedKeys) {
-            auxiliaryTable.put(universalKey.getId(), new AuxiliaryTableRow<V>(universalKey, settings));
+        for (KeyDeclaration keyDeclaration : explicitlyPermittedKeys) {
+            auxiliaryTable.put(keyDeclaration.getId(), new AuxiliaryTableRow<V>(keyDeclaration, settings));
         }
         return auxiliaryTable;
     }
@@ -354,10 +354,10 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
         for (AuxiliaryTableRow<?> auxiliaryTableRow : createAuxiliaryTable(currentEntries, additionalKeys)) {
             if (all || auxiliaryTableRow.isPossibleToExpandAnotherField()) {
                 MetadataViewInterface keyView = auxiliaryTableRow
-                        .isRequiringAComplexUniversalKey()
+                        .isComplexKey()
                                 ? getNestedKeyView(auxiliaryTableRow.getId())
-                                : new KeyView(auxiliaryTableRow.getUniversalKey(),
-                                        universalRule.getUniversalPermitRuleForKey(auxiliaryTableRow.getId(), division),
+                                : new KeyView(auxiliaryTableRow.getKey(),
+                                        rule.getRuleForKey(auxiliaryTableRow.getId(), division),
                                         settings, priorityList);
                 addableMetadata.add(keyView);
             }
@@ -385,12 +385,12 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      *            identifier for key in the nest
      * @return a view on the child of the group
      */
-    private NestedKeyView<UniversalKey> getNestedKeyView(String keyId) {
-        UniversalRule universalRuleForKey = universalRule.getUniversalPermitRuleForKey(keyId, division);
+    private NestedKeyView<KeyDeclaration> getNestedKeyView(String keyId) {
+        Rule ruleForKey = rule.getRuleForKey(keyId, division);
         if (division) {
-            universalRuleForKey.merge(ruleset.getUniversalRestrictionRuleForKey(keyId));
+            ruleForKey.merge(ruleset.getRuleForKey(keyId));
         }
-        return new NestedKeyView<>(ruleset, universal.getUniversalKey(keyId), universalRuleForKey,
+        return new NestedKeyView<>(ruleset, declaration.getSubkeyDeclaration(keyId), ruleForKey,
                 settings.getSettingsForKey(keyId), priorityList);
     }
 
@@ -424,10 +424,10 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
             } else {
                 for (int i = 0; i < auxiliaryTableRow.getNumberOfTypeViewsToGenerate(); i++) {
                     MetadataViewInterface typeView = auxiliaryTableRow
-                            .isRequiringAComplexUniversalKey()
+                            .isComplexKey()
                                     ? getNestedKeyView(auxiliaryTableRow.getId())
-                                    : new KeyView(auxiliaryTableRow.getUniversalKey(),
-                                            universalRule.getUniversalPermitRuleForKey(auxiliaryTableRow.getId(), division),
+                                    : new KeyView(auxiliaryTableRow.getKey(),
+                                            rule.getRuleForKey(auxiliaryTableRow.getId(), division),
                                             settings, priorityList);
                     Optional<MetadataViewInterface> definedTypeView = Optional.of(typeView);
                     sortedVisibleMetadata.add(new FormRow<>(definedTypeView, auxiliaryTableRow.getDataObjects(i)));
@@ -470,13 +470,13 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
 
     private <V> AuxiliaryTableRow<V> retrieveOrCompute(String keyId) {
         Optional<Key> possibleKey = ruleset.getKey(keyId);
-        UniversalKey universalKey = possibleKey.isPresent() ? new UniversalKey(ruleset, possibleKey.get(), true)
-                : new UniversalKey(ruleset, keyId);
-        return new AuxiliaryTableRow<>(universalKey, settings);
+        KeyDeclaration keyDeclaration = possibleKey.isPresent() ? new KeyDeclaration(ruleset, possibleKey.get(), true)
+                : new KeyDeclaration(ruleset, keyId);
+        return new AuxiliaryTableRow<>(keyDeclaration, settings);
     }
 
     @Override
     public Optional<Domain> getDomain() {
-        return universal.getDomain();
+        return declaration.getDomain();
     }
 }
