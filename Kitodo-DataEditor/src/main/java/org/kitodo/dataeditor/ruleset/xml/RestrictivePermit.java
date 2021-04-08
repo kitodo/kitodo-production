@@ -21,21 +21,23 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * A rule of the ruleset. The rules in the rule set differ in restriction and
- * permit rules, but basically it is the same object that is defined in this
- * rule class.
+ * A restrictive permit rule of the ruleset. The rules in the ruleset are
+ * written as {@code <restriction>} containing {@code <permit>} rules, but it is
+ * the same underlying object.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Rule {
+public class RestrictivePermit {
+
     /**
      * Division to which this (restriction) rule applies, or division that is
-     * allowed (permit rule).
+     * allowed (for permit rule inside restriction rule).
      */
     @XmlAttribute
     private String division;
 
     /**
-     * Key that is allowed (permit rule).
+     * Key to which this (restriction) rule applies, or key that is allowed (for
+     * permit rule inside restriction rule).
      */
     @XmlAttribute
     private String key;
@@ -69,7 +71,7 @@ public class Rule {
      * List of permit rules. Recursion is possible.
      */
     @XmlElement(name = "permit", namespace = "http://names.kitodo.org/ruleset/v2")
-    private List<Rule> permits = new LinkedList<>();
+    private List<RestrictivePermit> permits = new LinkedList<>();
 
     /**
      * Returns the division to which this rule applies, or which is allowed.
@@ -114,7 +116,7 @@ public class Rule {
      *
      * @return the permission rules
      */
-    public List<Rule> getPermits() {
+    public List<RestrictivePermit> getPermits() {
         return permits;
     }
 
@@ -182,7 +184,7 @@ public class Rule {
      * @param permits
      *            permits to be set
      */
-    public void setPermits(List<Rule> permits) {
+    public void setPermits(List<RestrictivePermit> permits) {
         this.permits = permits;
     }
 

@@ -57,7 +57,7 @@ public class Ruleset {
      */
     @XmlElementWrapper(name = "correlation", namespace = "http://names.kitodo.org/ruleset/v2")
     @XmlElement(name = "restriction", namespace = "http://names.kitodo.org/ruleset/v2")
-    private List<Rule> restrictions = new LinkedList<>();
+    private List<RestrictivePermit> restrictions = new LinkedList<>();
 
     /**
      * In the editing section settings for the editor concerning keys are
@@ -129,8 +129,9 @@ public class Ruleset {
      *            Division to search a restriction rule for
      * @return the restriction rule if there is one
      */
-    public Optional<Rule> getDivisionRestriction(String division) {
-        return restrictions.parallelStream().filter(rule -> division.equals(rule.getDivision().orElse(null)))
+    public Optional<RestrictivePermit> getDivisionRestriction(String division) {
+        return restrictions.parallelStream()
+                .filter(restriction -> division.equals(restriction.getDivision().orElse(null)))
                 .findFirst();
     }
 
@@ -205,8 +206,9 @@ public class Ruleset {
      *            key for which the restriction is to be given
      * @return the restriction on a key, if any
      */
-    public Optional<Rule> getKeyRestriction(String keyId) {
-        return restrictions.parallelStream().filter(rule -> keyId.equals(rule.getKey().orElse(null))).findAny();
+    public Optional<RestrictivePermit> getKeyRestriction(String keyId) {
+        return restrictions.parallelStream().filter(restriction -> keyId.equals(restriction.getKey().orElse(null)))
+                .findAny();
     }
 
     /**

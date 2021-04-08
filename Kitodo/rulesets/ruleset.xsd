@@ -129,7 +129,7 @@
                 'technical' is to store internal data that must be saved during processing, for example scanner and OCR
                     settings. The area is sometimes referred to simply as properties.
 
-                'mets:div' writes the value in an attribute of the &tl;mets:div&gt; XML element. Only the "id"s
+                'mets:div' writes the value in an attribute of the &lt;mets:div&gt; XML element. Only the "id"s
                     'LABEL', 'ORDERLABEL' (type: character string) and 'CONTENTIDS' (type: any URI) are permitted here.
             </xs:documentation>
         </xs:annotation>
@@ -240,7 +240,7 @@
         <xs:attribute use="required" type="xs:string" name="value"/>
     </xs:complexType>
 
-    <xs:complexType name="Rule">
+    <xs:complexType name="RestrictivePermit">
         <xs:annotation>
             <xs:documentation xml:lang="en">
                 With rules regarding &lt;restriction&gt;s and &lt;permit&gt;s on how divisions and metadata may be
@@ -255,7 +255,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="permit" minOccurs="0" maxOccurs="unbounded" type="ruleset:Rule"/>
+            <xs:element name="permit" minOccurs="0" maxOccurs="unbounded" type="ruleset:RestrictivePermit"/>
         </xs:sequence>
         <xs:attribute type="xs:NMTOKEN" name="division"/>
         <xs:attribute type="xs:NMTOKEN" name="key"/>
@@ -282,7 +282,7 @@
                 <xs:element name="correlation" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="restriction" minOccurs="1" maxOccurs="unbounded" type="ruleset:Rule"/>
+                            <xs:element name="restriction" minOccurs="1" maxOccurs="unbounded" type="ruleset:RestrictivePermit"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
