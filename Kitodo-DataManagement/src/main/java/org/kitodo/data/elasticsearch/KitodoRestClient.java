@@ -32,6 +32,7 @@ import org.elasticsearch.action.main.MainResponse;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.rest.RestStatus;
 import org.kitodo.config.ConfigMain;
@@ -57,7 +58,8 @@ public abstract class KitodoRestClient implements RestClientInterface {
         String host = ConfigMain.getParameter("elasticsearch.host", "localhost");
         int port = ConfigMain.getIntParameter("elasticsearch.port", 9200);
         String protocol = ConfigMain.getParameter("elasticsearch.protocol", "http");
-        initiateClient(host, port, protocol);
+        String path = ConfigMain.getParameter("elasticsearch.path", "/");
+        initiateClient(host, port, protocol, path);
     }
 
     /**
@@ -69,12 +71,20 @@ public abstract class KitodoRestClient implements RestClientInterface {
      *            default port ist 9200
      * @param protocol
      *            default protocol is http
+     * @param path
+     *            default path is /
      */
-    private void initiateClient(String host, Integer port, String protocol) {
+    private void initiateClient(String host, Integer port, String protocol, String path) {
         if (ConfigMain.getBooleanParameter("elasticsearch.useAuthentication")) {
-            initiateClientWithAuth(host, port, protocol);
+            initiateClientWithAuth(host, port, protocol, path);
         } else {
-            client = RestClient.builder(new HttpHost(host, port, protocol)).build();
+            RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, protocol));
+
+            if (!path.isEmpty() && !path.equals("/")) {
+                builder.setPathPrefix(path);
+            }
+
+            client = builder.build();
             highLevelClient = new RestHighLevelClient(client);
         }
     }
@@ -88,16 +98,23 @@ public abstract class KitodoRestClient implements RestClientInterface {
      *            default port ist 9200
      * @param protocol
      *            default protocol is http
+     * @param path
+     *           default path is /
      */
-    private void initiateClientWithAuth(String host, Integer port, String protocol) {
+    private void initiateClientWithAuth(String host, Integer port, String protocol, String path) {
         String user = ConfigMain.getParameter("elasticsearch.user", "elastic");
         String password = ConfigMain.getParameter("elasticsearch.password", "changeme");
 
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
 
-        client = RestClient.builder(new HttpHost(host, port, protocol)).setHttpClientConfigCallback(
-            httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)).build();
+        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, protocol)).setHttpClientConfigCallback(
+            httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
+
+        if (!path.isEmpty() && !path.equals("/")) {
+            builder.setPathPrefix(path);
+        }
+        client = builder.build();
         highLevelClient = new RestHighLevelClient(client);
     }
 
