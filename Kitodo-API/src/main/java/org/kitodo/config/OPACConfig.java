@@ -32,6 +32,8 @@ import org.kitodo.exceptions.ParameterNotFoundException;
 public class OPACConfig {
     private static final Logger logger = LogManager.getLogger(OPACConfig.class);
     private static XMLConfiguration config;
+    private static final String TRUE = "true";
+    private static final String DEFAULT = "[@default]";
 
     /**
      * Private constructor.
@@ -95,6 +97,38 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve the default "searchField" of the catalog identified by its title 'catalogName'. If multiple fields are
+     * configured as "default", the first is returned.
+     * @param catalogName String identifying the catalog by title
+     * @return String name of catalogs default "searchField" if it exists; empty String otherwise
+     */
+    public static String getDefaultSearchField(String catalogName) {
+        for (HierarchicalConfiguration searchField : getSearchFields(catalogName).configurationsAt("searchField")) {
+            if (TRUE.equals(searchField.getString(DEFAULT))) {
+                String defaultSearchField = searchField.getString("[@label]");
+                if (StringUtils.isNotBlank(defaultSearchField)) {
+                    return defaultSearchField;
+                }
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Retrieve the name of the default "catalog" configured in "kitodo_opac.xml". If no catalog is configured as
+     * default catalog, return an empty String.
+     * @return String name of default catalog or empty String if no default catalog is configured.
+     */
+    public static String getDefaultCatalog() {
+        for (String catalog : getCatalogs()) {
+            if (TRUE.equals(getCatalog(catalog).getString(DEFAULT))) {
+                return catalog;
+            }
+        }
+        return "";
+    }
+
+    /**
      * Retrieve the "urlParameters" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
      * @return HierarchicalConfiguration for catalog's "urlParameters"
@@ -148,7 +182,7 @@ public class OPACConfig {
      */
     public static String getParentIDElement(String catalogName) {
         for (HierarchicalConfiguration field : getSearchFields(catalogName).configurationsAt("searchField")) {
-            if ("true".equals(field.getString("[@parentElement]"))) {
+            if (TRUE.equals(field.getString("[@parentElement]"))) {
                 String parentIDElement = field.getString("[@label]");
                 if (StringUtils.isNotBlank(parentIDElement)) {
                     return parentIDElement;

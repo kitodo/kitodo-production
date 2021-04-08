@@ -31,6 +31,13 @@ public class LazyHitModel extends LazyDataModel<Object> {
 
     private SearchResult searchResult = null;
 
+    /**
+     * Empty default constructor. Sets default catalog and search field, if configured.
+     */
+    public LazyHitModel() {
+        this.setSelectedCatalog(ServiceManager.getImportService().getDefaultCatalog());
+    }
+
     @Override
     public Object getRowData(String rowKey) {
         return null;
@@ -85,12 +92,13 @@ public class LazyHitModel extends LazyDataModel<Object> {
     }
 
     /**
-     * Setter for selectedCatalog.
+     * Setter for selectedCatalog. This also sets the catalogs default search field, if configured.
      *
      * @param catalog as java.lang.String
      */
     public void setSelectedCatalog(String catalog) {
         this.selectedCatalog = catalog;
+        this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(catalog));
     }
 
     /**

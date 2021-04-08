@@ -16,7 +16,7 @@
         <type isPeriodical="false" isMultiVolume="false" rulesetType="" title="legacyDocType"/>
     </doctypes>
 
-    <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund">
+    <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund" default="true">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MARC</metadataFormat>
@@ -40,7 +40,7 @@
         </urlParameters>
         <searchFields>
             <searchField label="Titel" value="pica.tit"/>
-            <searchField label="PPN" value="pica.ppn"/>
+            <searchField label="PPN" value="pica.ppn" default="true"/>
             <searchField label="Author" value="pica.per"/>
             <searchField label="ISSN" value="pica.iss"/>
             <searchField label="ISBN" value="pica.isb"/>
@@ -69,7 +69,7 @@
         </urlParameters>
         <searchFields>
             <searchField label="Titel" value="pica.tit"/>
-            <searchField label="PPN" value="pica.ppn"/>
+            <searchField label="PPN" value="pica.ppn" default="true"/>
             <searchField label="Author" value="pica.per"/>
             <searchField label="ISSN" value="pica.iss"/>
             <searchField label="ISBN" value="pica.isb"/>
@@ -101,7 +101,7 @@
         </urlParameters>
         <searchFields>
             <searchField label="Titel" value="pica.tit"/>
-            <searchField label="PPN" value="pica.ppn"/>
+            <searchField label="PPN" value="pica.ppn" default="true"/>
             <searchField label="Author" value="pica.per"/>
             <searchField label="ISSN" value="pica.iss"/>
             <searchField label="ISBN" value="pica.isb"/>
@@ -135,7 +135,7 @@
         <searchFields>
             <searchField label="Title" value="ead.title" />
             <searchField label="Creator" value="ead.creator" />
-            <searchField label="Identifier" value="ead.id" />
+            <searchField label="Identifier" value="ead.id" default="true"/>
             <searchField label="Creation date" value="ead.creationdate.normal" />
             <searchField label="Genre" value="ead.genre" />
             <searchField label="Keyword" value="ead.keyword" />
