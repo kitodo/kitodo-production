@@ -30,7 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentHashMap.KeySetView;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -170,9 +169,9 @@ public class MetadataValidation implements MetadataValidationInterface {
         Collection<ValidationResult> results = new ArrayList<>();
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(type, null,
                 metadataLanguage);
-        results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(Metadata.mapToKey(metadata),
+        results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(metadata,
                 divisionView, elementString.concat(": "), translations));
-        results.add(checkForDetailsInTheMetadataRecursive(Metadata.mapToKey(metadata),
+        results.add(checkForDetailsInTheMetadataRecursive(metadata,
                 divisionView, elementString.concat(": "), translations));
         return results;
     }
@@ -254,7 +253,7 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return the validation result
      */
     private static ValidationResult checkForMandatoryQuantitiesOfTheMetadataRecursive(
-            Map<Metadata, String> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
+            Collection<Metadata> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations) {
         boolean error = false;
         boolean warning = false;
@@ -286,7 +285,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 for (Metadata metadata : metadataViewWithValues.getValue()) {
                     if (metadata instanceof MetadataGroup) {
                         ValidationResult validationResult = checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                            Metadata.mapToKey(((MetadataGroup) metadata).getGroup()),
+                            ((MetadataGroup) metadata).getGroup(),
                             (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                             translations);
                         if (validationResult.getState().equals(State.WARNING)) {
@@ -320,14 +319,14 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return the validation result
      */
     private static ValidationResult checkForDetailsInTheMetadataRecursive(
-            Map<Metadata, String> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
+            Collection<Metadata> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations) {
         boolean error = false;
         Collection<String> messages = new HashSet<>();
 
-        List<MetadataViewWithValuesInterface<Metadata>> metadataViewsWithValues = containingMetadataView
+        List<MetadataViewWithValuesInterface> metadataViewsWithValues = containingMetadataView
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<Metadata> metadataViewWithValues : metadataViewsWithValues) {
+        for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
             Optional<MetadataViewInterface> optionalMetadataView = metadataViewWithValues.getMetadata();
             if (!optionalMetadataView.isPresent()) {
                 continue;
@@ -345,7 +344,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 } else if (metadata instanceof MetadataGroup
                         && metadataView instanceof ComplexMetadataViewInterface) {
                     ValidationResult validationResult = checkForDetailsInTheMetadataRecursive(
-                        Metadata.mapToKey(((MetadataGroup) metadata).getGroup()),
+                        ((MetadataGroup) metadata).getGroup(),
                         (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                         translations);
                     if (validationResult.getState().equals(State.ERROR)) {
@@ -402,9 +401,9 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return merged lines of identical type
      */
     private static Map<MetadataViewInterface, Collection<Metadata>> squash(
-            List<MetadataViewWithValuesInterface<Metadata>> metadataViewsWithValues) {
+            List<MetadataViewWithValuesInterface> metadataViewsWithValues) {
         Map<MetadataViewInterface, Collection<Metadata>> squashed = new HashMap<>();
-        for (MetadataViewWithValuesInterface<Metadata> metadataViewWithValues : metadataViewsWithValues) {
+        for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
             Optional<MetadataViewInterface> optionalMetadataView = metadataViewWithValues.getMetadata();
             if (!optionalMetadataView.isPresent()) {
                 continue;
