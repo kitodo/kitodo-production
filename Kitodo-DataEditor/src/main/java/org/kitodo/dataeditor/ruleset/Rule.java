@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.kitodo.dataeditor.ruleset.xml.RestrictivePermit;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Unspecified;
@@ -31,19 +30,6 @@ import org.kitodo.dataeditor.ruleset.xml.Unspecified;
  * restrictions.
  */
 public class Rule {
-    /**
-     * Generates a triplet of rule with triple as a key. This is due to the
-     * problem because the rule is basically the key is three fields and applies
-     * everything.
-     *
-     * @param restrictivePermit
-     *            restrictive permit for which a hash key is to be formed
-     * @return key is triple
-     */
-    private static Triple<String, String, String> formAKeyForARuleInATemporaryMap(RestrictivePermit restrictivePermit) {
-        return Triple.of(restrictivePermit.getDivision().orElse(null), restrictivePermit.getKey().orElse(null), restrictivePermit.getValue().orElse(null));
-    }
-
     /**
      * Maybe a rule, but maybe not.
      */
@@ -247,16 +233,15 @@ public class Rule {
                     : Unspecified.UNRESTRICTED);
 
         // for sub-rules, apply recursively
-        HashMap<Triple<String, String, String>, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
+        HashMap<RestrictivePermit, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
         for (RestrictivePermit anotherPermit : another.getPermits()) {
-            anotherPermits.put(formAKeyForARuleInATemporaryMap(anotherPermit), anotherPermit);
+            anotherPermits.put(anotherPermit, anotherPermit);
         }
         List<RestrictivePermit> mergedPermits = new LinkedList<>();
         for (RestrictivePermit onePermit : one.getPermits()) {
-            Triple<String, String, String> key = formAKeyForARuleInATemporaryMap(onePermit);
-            if (anotherPermits.containsKey(key)) {
-                mergedPermits.add(merge(onePermit, anotherPermits.get(key)));
-                anotherPermits.remove(key);
+            if (anotherPermits.containsKey(onePermit)) {
+                mergedPermits.add(merge(onePermit, anotherPermits.get(onePermit)));
+                anotherPermits.remove(onePermit);
             } else {
                 mergedPermits.add(onePermit);
             }
