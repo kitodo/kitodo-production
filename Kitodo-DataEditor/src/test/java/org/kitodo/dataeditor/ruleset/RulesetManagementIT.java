@@ -365,17 +365,21 @@ public class RulesetManagementIT {
 
         // excluded
         Collection<Metadata> metadataForExcluded = new ArrayList<>();
-        Metadata metadataOne = new MetadataEntry();
+        MetadataEntry metadataOne = new MetadataEntry();
         metadataOne.setKey("excludedUnchangedTrue");
+        metadataOne.setValue("exclude1");
         metadataForExcluded.add(metadataOne);
-        Metadata metadataTwo = new MetadataEntry();
+        MetadataEntry metadataTwo = new MetadataEntry();
         metadataTwo.setKey("excludedTrueUnchanged");
+        metadataTwo.setValue("exclude2");
         metadataForExcluded.add(metadataTwo);
-        Metadata metadataThree = new MetadataEntry();
+        MetadataEntry metadataThree = new MetadataEntry();
         metadataThree.setKey("excludedTrueOtherchanges");
+        metadataThree.setValue("exclude3");
         metadataForExcluded.add(metadataThree);
-        Metadata metadataFour = new MetadataEntry();
+        MetadataEntry metadataFour = new MetadataEntry();
         metadataFour.setKey("excludedTrueTrue");
+        metadataFour.setValue("exclude4");
         metadataForExcluded.add(metadataFour);
         Metadata metadataFive = new MetadataEntry();
         metadataFive.setKey("excludedTrueFalse");
@@ -387,7 +391,9 @@ public class RulesetManagementIT {
                 .collect(Collectors.toList()).contains("excludedTrueFalse"));
         assertThat(
             mvwviListExcluded.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
-                    .flatMap(mvwvi -> mvwvi.getValues().stream()).collect(Collectors.toList()),
+                    .flatMap(
+                        mvwvi -> mvwvi.getValues().stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue))
+                    .collect(Collectors.toList()),
             containsInAnyOrder("exclude1", "exclude2", "exclude3", "exclude4"));
         Collection<MetadataViewInterface> mviCollExcluded = sevi.getAddableMetadata(metadataForExcluded,
             Collections.emptyList());
@@ -479,8 +485,9 @@ public class RulesetManagementIT {
         Metadata metadataTwo = new MetadataEntry();
         metadataTwo.setKey("testEditable");
         metadata.add(metadataTwo);
-        Metadata metadataThree = new MetadataEntry();
+        MetadataEntry metadataThree = new MetadataEntry();
         metadataThree.setKey("testExcluded");
+        metadataThree.setValue("exclude1");
         metadata.add(metadataThree);
         Metadata metadataFour = new MetadataEntry();
         metadataFour.setKey("testMultiline");
@@ -488,20 +495,23 @@ public class RulesetManagementIT {
         Metadata metadataFive = new MetadataEntry();
         metadataFive.setKey("testAlwaysShowingEditable");
         metadata.add(metadataFive);
-        Metadata metadataSix = new MetadataEntry();
+        MetadataEntry metadataSix = new MetadataEntry();
         metadataSix.setKey("testAlwaysShowingExcluded");
+        metadataSix.setValue("exclude2");
         metadata.add(metadataSix);
         Metadata metadataSeven = new MetadataEntry();
         metadataSeven.setKey("testAlwaysShowingMultiline");
         metadata.add(metadataSeven);
-        Metadata metadataEight = new MetadataEntry();
+        MetadataEntry metadataEight = new MetadataEntry();
         metadataEight.setKey("testEditableExcluded");
+        metadataEight.setValue("exclude3");
         metadata.add(metadataEight);
         Metadata metadataNine = new MetadataEntry();
         metadataNine.setKey("testEditableMultiline");
         metadata.add(metadataNine);
-        Metadata metadataTen = new MetadataEntry();
+        MetadataEntry metadataTen = new MetadataEntry();
         metadataTen.setKey("testExcludedMultiline");
+        metadataTen.setValue("exclude4");
         metadata.add(metadataTen);
         Metadata metadataEleven = new MetadataEntry();
         metadataEleven.setKey("testNestedSettings");
@@ -513,7 +523,9 @@ public class RulesetManagementIT {
             "testAlwaysShowingEditable", "testAlwaysShowingMultiline", "testEditableMultiline", "testNestedSettings"));
         assertThat(
             mvwviListWithMetadata.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
-                    .flatMap(mvwvi -> mvwvi.getValues().stream()).collect(Collectors.toList()),
+                    .flatMap(
+                        mvwvi -> mvwvi.getValues().stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue))
+                    .collect(Collectors.toList()),
             containsInAnyOrder("exclude1", "exclude2", "exclude3", "exclude4"));
 
         // 3a. Also with nested metadata, that should work that way.
@@ -528,7 +540,9 @@ public class RulesetManagementIT {
         assertThat(ids(nestedMvwviListWithMetadata),
             containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline"));
         assertTrue(nestedMvwviListWithMetadata.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
-                .flatMap(mvwvi -> mvwvi.getValues().stream()).collect(Collectors.toList()).contains("excluded"));
+                .flatMap(
+                    mvwvi -> mvwvi.getValues().stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue))
+                .collect(Collectors.toList()).contains("exclude1"));
 
         // 4. The property ‘multiline’ should manipulate the input type
         SimpleMetadataViewInterface testAlwaysShowing = getSmvi(mvwviListWithMetadata, "testAlwaysShowing");
