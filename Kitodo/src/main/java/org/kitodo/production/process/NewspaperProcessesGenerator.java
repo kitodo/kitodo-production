@@ -19,6 +19,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +33,6 @@ import java.util.stream.Collectors;
 
 import javax.naming.ConfigurationException;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
@@ -584,29 +584,29 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void addCustomMetadata(IndividualIssue definition, IncludedStructuralElement issue) {
-        Map<Pair<String, String>, String> entered = new HashMap<>();
+        Collection<Metadata> entered = new ArrayList<>();
         MonthDay yearBegin = yearSimpleMetadataView.getYearBegin();
-        for (Pair<String, String> metadata : definition.getMetadata(yearBegin.getMonthValue(),
+        for (Metadata metadata : definition.getMetadata(yearBegin.getMonthValue(),
             yearBegin.getDayOfMonth())) {
-            entered.put(metadata, metadata.getKey());
+            entered.add(metadata);
         }
-        List<MetadataViewWithValuesInterface<Pair<String, String>>> viewsWithValues = issueDivisionView
+        List<MetadataViewWithValuesInterface> viewsWithValues = issueDivisionView
                 .getSortedVisibleMetadata(entered, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<Pair<String, String>> viewWithValues : viewsWithValues) {
-            for (Pair<String, String> metadata : viewWithValues.getValues()) {
+        for (MetadataViewWithValuesInterface viewWithValues : viewsWithValues) {
+            for (Metadata metadata : viewWithValues.getValues()) {
                 if (viewWithValues.getMetadata().isPresent()) {
                     MetadataViewInterface view = viewWithValues.getMetadata().get();
-                    if (view instanceof SimpleMetadataViewInterface) {
+                    if (metadata instanceof MetadataEntry && view instanceof SimpleMetadataViewInterface) {
                         MetadataEditor.writeMetadataEntry(issue, (SimpleMetadataViewInterface) view,
-                            metadata.getValue());
+                            ((MetadataEntry) metadata).getValue());
                     } else {
                         logger.warn("Cannot add metadata value \"{}\" of type {} to {}: {} is a metadata group",
-                            metadata.getValue(), metadata.getKey(), issue.getType(), view.getId());
+                            ((MetadataEntry) metadata).getValue(), metadata.getKey(), issue.getType(), view.getId());
                     }
                 } else {
                     logger.warn(
                         "Cannot add metadata value \"{}\" of type {} to NewspaperIssue: type is hidden in acquisition stage \"{}\".",
-                        metadata.getValue(), metadata.getKey(), issue.getType(), acquisitionStage);
+                        ((MetadataEntry) metadata).getValue(), metadata.getKey(), issue.getType(), acquisitionStage);
                 }
             }
         }

@@ -19,22 +19,19 @@ import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Set;
 
+import org.kitodo.api.Metadata;
+
 /**
  * Class of the data row objects of the auxiliary table. You can imagine the
  * list of these objects in the metadata acquisition mask builder as a large
  * table in which all relevant information is entered, one row per metadata
  * type, in the order in which the metadata types must be displayed later.
- *
- * @param <T>
- *            the type of metadata objects
  */
-class AuxiliaryTableRow<T> {
+class AuxiliaryTableRow {
     /**
      * Returns the umpteenth set member as the only element of a list, if that
      * exists. Otherwise the empty list.
      *
-     * @param <T>
-     *            the type of the metadata objects
      * @param unnumbered
      *            unnumbered collection
      * @param fictitiousNumber
@@ -84,7 +81,7 @@ class AuxiliaryTableRow<T> {
      * which class these objects have, it still accepts them and provides for
      * possibly necessary grouping.
      */
-    private Set<T> metaDataObjects = new HashSet<>();
+    private Set<Metadata> metaDataObjects = new HashSet<>();
 
     /**
      * Creates a new data row object and enters a key into the table.
@@ -103,7 +100,7 @@ class AuxiliaryTableRow<T> {
      * @param metaDataObject
      *            valuable object added
      */
-    void add(T metaDataObject) {
+    void add(Metadata metaDataObject) {
         metaDataObjects.add(metaDataObject);
 
     }
@@ -126,7 +123,7 @@ class AuxiliaryTableRow<T> {
      *            which object should be returned
      * @return the data object(s)
      */
-    Collection<T> getDataObjects(int i) {
+    Collection<Metadata> getDataObjects(int i) {
         if (isMultipleChoice() || isContainingExcludedData()) {
             return metaDataObjects;
         } else {

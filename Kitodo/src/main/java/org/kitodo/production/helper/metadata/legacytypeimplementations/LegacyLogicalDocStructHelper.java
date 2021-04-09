@@ -19,11 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -86,9 +83,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
         Optional<MetadataViewInterface> optionalKeyView = divisionView
-                .getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).parallelStream()
+                .getAddableMetadata(includedStructuralElement.getMetadata(), Collections.emptyList()).parallelStream()
                 .filter(keyView -> keyView.getId().equals(metadata.getMetadataType().getName())).findFirst();
         Optional<Domain> optionalDomain = optionalKeyView.isPresent() ? optionalKeyView.get().getDomain()
                 : Optional.empty();
@@ -133,8 +129,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
-        Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(metadataEntriesMappedToKeyNames,
+        Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(
+            includedStructuralElement.getMetadata(),
             Collections.emptyList());
         ArrayList<LegacyMetadataTypeHelper> addableMetadataTypes = new ArrayList<>(addableKeys.size());
         for (MetadataViewInterface key : addableKeys) {
@@ -157,10 +153,9 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
         List<LegacyMetadataHelper> allMetadata = new LinkedList<>();
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
-        List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
-                .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
+        List<MetadataViewWithValuesInterface> entryViews = divisionView
+                .getSortedVisibleMetadata(includedStructuralElement.getMetadata(), Collections.emptyList());
+        for (MetadataViewWithValuesInterface entryView : entryViews) {
             Optional<MetadataViewInterface> optionalMetadata = entryView.getMetadata();
             if (optionalMetadata.isPresent()) {
                 MetadataViewInterface key = optionalMetadata.get();
@@ -179,10 +174,9 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> allMetadata = new LinkedList<>();
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = Metadata.mapToKey(includedStructuralElement.getMetadata());
-        List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
-                .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
+        List<MetadataViewWithValuesInterface> entryViews = divisionView
+                .getSortedVisibleMetadata(includedStructuralElement.getMetadata(), Collections.emptyList());
+        for (MetadataViewWithValuesInterface entryView : entryViews) {
             if (entryView.getMetadata().isPresent()) {
                 Optional<MetadataViewInterface> optionalMetadata = entryView.getMetadata();
                 MetadataViewInterface key = optionalMetadata.get();
