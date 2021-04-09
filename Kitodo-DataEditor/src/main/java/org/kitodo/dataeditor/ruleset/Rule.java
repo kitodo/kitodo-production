@@ -41,7 +41,8 @@ public class Rule {
      * @return key is triple
      */
     private static Triple<String, String, String> formAKeyForARuleInATemporaryMap(RestrictivePermit restrictivePermit) {
-        return Triple.of(restrictivePermit.getDivision().orElse(null), restrictivePermit.getKey().orElse(null), restrictivePermit.getValue().orElse(null));
+        return Triple.of(restrictivePermit.getDivision().orElse(null), restrictivePermit.getKey().orElse(null),
+            restrictivePermit.getValue().orElse(null));
     }
 
     /**
