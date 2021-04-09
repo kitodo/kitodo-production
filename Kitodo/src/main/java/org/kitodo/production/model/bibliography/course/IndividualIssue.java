@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 
@@ -228,7 +229,7 @@ public class IndividualIssue {
      * @return a list of pairs, each consisting of the metadata type name and
      *         the value
      */
-    public Iterable<Pair<String, String>> getMetadata(int monthOfYear, int dayOfMonth) {
+    public Iterable<MetadataEntry> getMetadata(int monthOfYear, int dayOfMonth) {
         return getMetadata(MonthDay.of(monthOfYear, dayOfMonth));
     }
 
@@ -241,12 +242,15 @@ public class IndividualIssue {
      * @return a list of pairs, each consisting of the metadata type name and
      *         the value
      */
-    public Iterable<Pair<String, String>> getMetadata(MonthDay yearStart) {
-        List<Pair<String, String>> result = new ArrayList<>();
+    public Iterable<MetadataEntry> getMetadata(MonthDay yearStart) {
+        List<MetadataEntry> result = new ArrayList<>();
         Pair<LocalDate, Issue> selectedIssue = Pair.of(date, issue);
         for (CountableMetadata counter : block.getMetadata(selectedIssue, null)) {
             String value = counter.getValue(selectedIssue, yearStart);
-            result.add(Pair.of(counter.getMetadataType(), value));
+            MetadataEntry entry = new MetadataEntry();
+            entry.setKey(counter.getMetadataType());
+            entry.setValue(value);
+            result.add(entry);
         }
         return result;
     }

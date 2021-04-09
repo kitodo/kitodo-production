@@ -14,6 +14,7 @@ package org.kitodo.dataeditor.ruleset;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 
@@ -21,11 +22,8 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
  * Return type for list entries consisting of a metadata key and a collection
  * of values. Instances of this class are returned by the metadata acquisition
  * mask builder and each represent a line of the metadata input mask.
- *
- * @param <T>
- *            type of metadata objects
  */
-class FormRow<T> implements MetadataViewWithValuesInterface<T> {
+class FormRow implements MetadataViewWithValuesInterface {
     /**
      * A possible view on the key. None, if it is hidden.
      */
@@ -34,9 +32,9 @@ class FormRow<T> implements MetadataViewWithValuesInterface<T> {
     /**
      * The values. This is always one at most, except for multiple selections.
      */
-    private Collection<T> values;
+    private Collection<Metadata> values;
 
-    FormRow(Optional<MetadataViewInterface> optionalKeyView, Collection<T> values) {
+    FormRow(Optional<MetadataViewInterface> optionalKeyView, Collection<Metadata> values) {
         this.optionalKeyView = optionalKeyView;
         this.values = values;
     }
@@ -58,7 +56,7 @@ class FormRow<T> implements MetadataViewWithValuesInterface<T> {
      * @return the values
      */
     @Override
-    public Collection<T> getValues() {
+    public Collection<Metadata> getValues() {
         return values;
     }
 

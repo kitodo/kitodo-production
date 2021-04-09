@@ -27,10 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Month;
 import java.time.MonthDay;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
@@ -94,7 +96,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testAvailabilityOfPresets.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Arrays.asList("defaultStringKey", "anyURIKey", "booleanKey", "dateKey", "namespaceDefaultAnyURIKey",
                 "namespaceStringKey"));
 
@@ -144,7 +146,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testAvailabilityOfSubkeyViews.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList("contributor"));
 
         MetadataViewInterface contributorMvi = mvwviList.get(0).getMetadata().get();
@@ -154,7 +156,7 @@ public class RulesetManagementIT {
         assertTrue(contributorMvi instanceof ComplexMetadataViewInterface);
         ComplexMetadataViewInterface contributorCmvi = (ComplexMetadataViewInterface) contributorMvi;
 
-        Collection<MetadataViewInterface> mvic = contributorCmvi.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> mvic = contributorCmvi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
 
         Iterator<MetadataViewInterface> mvici = mvic.iterator();
@@ -209,13 +211,13 @@ public class RulesetManagementIT {
 
         // 1. options are sorted as to their labels alphabetically
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.emptyList());
 
         StructuralElementViewInterface seviDe = underTest.getStructuralElementView(BOOK, "",
             LanguageRange.parse("de"));
-        List<MetadataViewWithValuesInterface<Void>> mvwviListDe = seviDe
-                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
+        List<MetadataViewWithValuesInterface> mvwviListDe = seviDe.getSortedVisibleMetadata(Collections.emptyList(),
+            Collections.emptyList());
 
         assertThat(((SimpleMetadataViewInterface) mvwviList.get(0).getMetadata().get()).getSelectItems().keySet(),
             contains("dan", "dut", "eng", "fre", "ger"));
@@ -228,7 +230,7 @@ public class RulesetManagementIT {
         assertThat(ids(mvwviList), contains("mandatoryMultiLineSingleSelection", "mandatoryOneLineSingleSelection",
             "mandatoryMultipleSelection"));
 
-        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
 
         assertThat(ids(mviColl), contains("optionalMultiLineSingleSelection", "optionalOneLineSingleSelection",
@@ -259,7 +261,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testCorrectValidationOfOptions.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
         SimpleMetadataViewInterface smvi = (SimpleMetadataViewInterface) mviColl.iterator().next();
         assertTrue(smvi.isValid(OPT));
@@ -275,7 +277,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testCorrectValidationOfRegularExpressions.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Arrays.asList("defaultStringKey", "anyURIKey", "booleanKey", "dateKey", "namespaceDefaultAnyURIKey",
                 "namespaceStringKey", "integerKey", "optionsKey"));
 
@@ -353,8 +355,8 @@ public class RulesetManagementIT {
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "The acquisition stage", ENGL);
 
         // always showing
-        List<MetadataViewWithValuesInterface<Void>> mvwviListAlwaysShowing = sevi
-                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
+        List<MetadataViewWithValuesInterface> mvwviListAlwaysShowing = sevi
+                .getSortedVisibleMetadata(Collections.emptyList(), Collections.emptyList());
         assertThat(
             mvwviListAlwaysShowing.stream().map(mvwvi -> mvwvi.getMetadata().get().getId())
                     .collect(Collectors.toList()),
@@ -362,13 +364,23 @@ public class RulesetManagementIT {
                 "alwaysShowingTrueOtherchanges", "alwaysShowingTrueTrue", "multilineTrueOtherchanges"));
 
         // excluded
-        Map<Object, String> metadataForExcluded = new HashMap<>();
-        metadataForExcluded.put("exclude1", "excludedUnchangedTrue");
-        metadataForExcluded.put("exclude2", "excludedTrueUnchanged");
-        metadataForExcluded.put("exclude3", "excludedTrueOtherchanges");
-        metadataForExcluded.put("exclude4", "excludedTrueTrue");
-        metadataForExcluded.put("n#*703=]", "excludedTrueFalse");
-        List<MetadataViewWithValuesInterface<Object>> mvwviListExcluded = sevi
+        Collection<Metadata> metadataForExcluded = new ArrayList<>();
+        Metadata metadataOne = new MetadataEntry();
+        metadataOne.setKey("excludedUnchangedTrue");
+        metadataForExcluded.add(metadataOne);
+        Metadata metadataTwo = new MetadataEntry();
+        metadataTwo.setKey("excludedTrueUnchanged");
+        metadataForExcluded.add(metadataTwo);
+        Metadata metadataThree = new MetadataEntry();
+        metadataThree.setKey("excludedTrueOtherchanges");
+        metadataForExcluded.add(metadataThree);
+        Metadata metadataFour = new MetadataEntry();
+        metadataFour.setKey("excludedTrueTrue");
+        metadataForExcluded.add(metadataFour);
+        Metadata metadataFive = new MetadataEntry();
+        metadataFive.setKey("excludedTrueFalse");
+        metadataForExcluded.add(metadataFive);
+        List<MetadataViewWithValuesInterface> mvwviListExcluded = sevi
                 .getSortedVisibleMetadata(metadataForExcluded, Collections.emptyList());
         assertTrue(mvwviListExcluded.stream().filter(mvwvi -> mvwvi.getMetadata().isPresent())
                 .map(mvwvi -> mvwvi.getMetadata().get().getId()).filter(keyId -> keyId.startsWith("excluded"))
@@ -383,7 +395,7 @@ public class RulesetManagementIT {
                 .collect(Collectors.toList()).contains("excludedTrueFalse"));
 
         // editable
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Arrays.asList("editableUnchangedFalse", "editableFalseUnchanged", "editableFalseOtherchanges",
                 "editableFalseFalse", "editableFalseTrue", "multilineUnchangedTrue", "multilineTrueUnchanged",
                 "multilineTrueOtherchanges", "multilineTrueTrue", "multilineTrueFalse"));
@@ -425,14 +437,14 @@ public class RulesetManagementIT {
         // 1. Without metadata, and without additional fields being selected,
         // you should see exactly the fields that are always showing, minus
         // those that are excluded (excluded overrules always showing).
-        List<MetadataViewWithValuesInterface<Void>> mvwviListNoMetadata = sevi
-                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
+        List<MetadataViewWithValuesInterface> mvwviListNoMetadata = sevi
+                .getSortedVisibleMetadata(Collections.emptyList(), Collections.emptyList());
         assertThat(ids(mvwviListNoMetadata),
             containsInAnyOrder("testAlwaysShowing", "testAlwaysShowingEditable", "testAlwaysShowingMultiline"));
 
         // 2. All fields except those that are excluded should be allowed to be
         // added.
-        Collection<MetadataViewInterface> mviCollNoMetadata = sevi.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> mviCollNoMetadata = sevi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
         assertThat(ids(mviCollNoMetadata), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline",
             "testAlwaysShowingEditable", "testAlwaysShowingMultiline", "testEditableMultiline", "testNestedSettings",
@@ -441,39 +453,61 @@ public class RulesetManagementIT {
         // 1a. In the nested metadata field, the only value that should be
         // visible is the one marked as always showing. The field has to be
         // added first:
-        List<MetadataViewWithValuesInterface<Void>> mvwviListNestedSettings = sevi
-                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.singletonList("testNestedSettings"));
+        List<MetadataViewWithValuesInterface> mvwviListNestedSettings = sevi
+                .getSortedVisibleMetadata(Collections.emptyList(), Collections.singletonList("testNestedSettings"));
         ComplexMetadataViewInterface nestedSettings = (ComplexMetadataViewInterface) mvwviListNestedSettings.stream()
                 .filter(mvwvi -> mvwvi.getMetadata().get().getId().equals("testNestedSettings")).findAny().get()
                 .getMetadata().get();
-        List<MetadataViewWithValuesInterface<Void>> nestedMvwviList = nestedSettings
-                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
+        List<MetadataViewWithValuesInterface> nestedMvwviList = nestedSettings
+                .getSortedVisibleMetadata(Collections.emptyList(), Collections.emptyList());
         assertEquals(1, nestedMvwviList.size());
         assertEquals("testAlwaysShowing", nestedMvwviList.get(0).getMetadata().get().getId());
 
         // 2a. Also with nested metadata, all fields except those that are
         // excluded should be allowed to be added.
-        Collection<MetadataViewInterface> nestedMviColl = nestedSettings.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> nestedMviColl = nestedSettings.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
         assertThat(ids(nestedMviColl), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline"));
 
         // 3. With metadata, all fields should be visible except those that are
         // excluded. There should be an entry without a key in the list
         // containing the values of the excluded keys.
-        Map<Object, String> metadata = new HashMap<>();
-        metadata.put("udv-q@bC", "testAlwaysShowing");
-        metadata.put("/F5Mu=/1", "testEditable");
-        metadata.put("exclude1", "testExcluded");
-        metadata.put("WP&~O$YV", "testMultiline");
-        metadata.put("n#*703=]", "testAlwaysShowingEditable");
-        metadata.put("exclude2", "testAlwaysShowingExcluded");
-        metadata.put("Mu{lp'n1", "testAlwaysShowingMultiline");
-        metadata.put("exclude3", "testEditableExcluded");
-        metadata.put("qP'Jc:.R", "testEditableMultiline");
-        metadata.put("exclude4", "testExcludedMultiline");
-        metadata.put("4J[~UgHp", "testNestedSettings");
+        Collection<Metadata> metadata = new ArrayList<>();
+        Metadata metadataOne = new MetadataEntry();
+        metadataOne.setKey("testAlwaysShowing");
+        metadata.add(metadataOne);
+        Metadata metadataTwo = new MetadataEntry();
+        metadataTwo.setKey("testEditable");
+        metadata.add(metadataTwo);
+        Metadata metadataThree = new MetadataEntry();
+        metadataThree.setKey("testExcluded");
+        metadata.add(metadataThree);
+        Metadata metadataFour = new MetadataEntry();
+        metadataFour.setKey("testMultiline");
+        metadata.add(metadataFour);
+        Metadata metadataFive = new MetadataEntry();
+        metadataFive.setKey("testAlwaysShowingEditable");
+        metadata.add(metadataFive);
+        Metadata metadataSix = new MetadataEntry();
+        metadataSix.setKey("testAlwaysShowingExcluded");
+        metadata.add(metadataSix);
+        Metadata metadataSeven = new MetadataEntry();
+        metadataSeven.setKey("testAlwaysShowingMultiline");
+        metadata.add(metadataSeven);
+        Metadata metadataEight = new MetadataEntry();
+        metadataEight.setKey("testEditableExcluded");
+        metadata.add(metadataEight);
+        Metadata metadataNine = new MetadataEntry();
+        metadataNine.setKey("testEditableMultiline");
+        metadata.add(metadataNine);
+        Metadata metadataTen = new MetadataEntry();
+        metadataTen.setKey("testExcludedMultiline");
+        metadata.add(metadataTen);
+        Metadata metadataEleven = new MetadataEntry();
+        metadataEleven.setKey("testNestedSettings");
+        metadata.add(metadataEleven);
 
-        List<MetadataViewWithValuesInterface<Object>> mvwviListWithMetadata = sevi.getSortedVisibleMetadata(metadata,
+        List<MetadataViewWithValuesInterface> mvwviListWithMetadata = sevi.getSortedVisibleMetadata(metadata,
             Collections.emptyList());
         assertThat(ids(mvwviListWithMetadata), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline",
             "testAlwaysShowingEditable", "testAlwaysShowingMultiline", "testEditableMultiline", "testNestedSettings"));
@@ -483,13 +517,13 @@ public class RulesetManagementIT {
             containsInAnyOrder("exclude1", "exclude2", "exclude3", "exclude4"));
 
         // 3a. Also with nested metadata, that should work that way.
-        Map<Object, String> nestedMetadata = new HashMap<>();
-        nestedMetadata.put("udv-q@bC", "testAlwaysShowing");
-        nestedMetadata.put("/F5Mu=/1", "testEditable");
-        nestedMetadata.put("excluded", "testExcluded");
-        nestedMetadata.put("WP&~O$YV", "testMultiline");
+        Collection<Metadata> nestedMetadata = new ArrayList<>();
+        nestedMetadata.add(metadataOne);
+        nestedMetadata.add(metadataTwo);
+        nestedMetadata.add(metadataThree);
+        nestedMetadata.add(metadataFour);
 
-        List<MetadataViewWithValuesInterface<Object>> nestedMvwviListWithMetadata = nestedSettings
+        List<MetadataViewWithValuesInterface> nestedMvwviListWithMetadata = nestedSettings
                 .getSortedVisibleMetadata(nestedMetadata, Collections.emptyList());
         assertThat(ids(nestedMvwviListWithMetadata),
             containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline"));
@@ -583,14 +617,14 @@ public class RulesetManagementIT {
         // Now a first view on a book
         StructuralElementViewInterface view = underTest.getStructuralElementView(BOOK, "", ENGL);
         assertEquals(1, view.getAllowedSubstructuralElements().entrySet().size());
-        assertEquals(5 + 3, view.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
+        assertEquals(5 + 3, view.getAddableMetadata(Collections.emptyList(), Collections.emptyList()).size());
         assertTrue(view.isComplex());
         assertFalse(view.isUndefined());
 
         // Now a nonsense view
         StructuralElementViewInterface nonsenseView = underTest.getStructuralElementView("bosh", "", ENGL);
         assertEquals(1, nonsenseView.getAllowedSubstructuralElements().entrySet().size());
-        assertEquals(5 + 3, nonsenseView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
+        assertEquals(5 + 3, nonsenseView.getAddableMetadata(Collections.emptyList(), Collections.emptyList()).size());
         assertTrue(nonsenseView.isUndefined());
     }
 
@@ -688,7 +722,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testFieldsWithMinOccursGreaterZeroAreAlwaysShown.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.emptyList());
 
         assertThat(ids(mvwviList), contains("test1", "test2", "test2", "test2options"));
@@ -730,9 +764,11 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testKeysReturnTheSpecifiedDomain.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        Map<Object, String> metadata = new HashMap<>();
-        metadata.put("....", "unspecifiedKey");
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(metadata, Arrays.asList(
+        Collection<Metadata> metadata = new ArrayList<>();
+        Metadata metadataOne = new MetadataEntry();
+        metadataOne.setKey("unspecifiedKey");
+        metadata.add(metadataOne);
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(metadata, Arrays.asList(
             "description", "digitalProvenance", "noDomainSpecified", "rights", "source", "technical", "metsDiv"));
 
         SimpleMetadataViewInterface description = getSmvi(mvwviList, "description");
@@ -770,11 +806,11 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testRulesAreCorrectlyMerged.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList("personContributor"));
         ComplexMetadataViewInterface personContributor = getCmvi(mvwviList, "personContributor");
-        List<MetadataViewWithValuesInterface<Object>> visible = personContributor
-                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
+        List<MetadataViewWithValuesInterface> visible = personContributor
+                .getSortedVisibleMetadata(Collections.emptyList(), Collections.emptyList());
         assertThat(ids(visible), contains("role", "gndRecord", "givenName", "surname"));
         assertThat(getSmvi(visible, "role").getSelectItems().keySet(), contains("author", "editor"));
     }
@@ -788,7 +824,7 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testRulesRemoveKeysWithZeroMaxOccurs.xml"));
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
         assertTrue(ids(mviColl).contains("keep"));
     }
@@ -802,7 +838,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testTheDisplayModeIsSetUsingTheCodomain.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Arrays.asList("defaultString", "anyURI", "boolean", "date", "integer", "namespace", "namespaceString"));
 
         assertEquals(InputType.ONE_LINE_TEXT, getSmvi(mvwviList, "defaultString").getInputType());
@@ -835,7 +871,7 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testUnspecifiedForbiddenRulesRestrictKeys.xml"));
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
         assertTrue(ids(mviColl).contains("allowed"));
     }
@@ -850,7 +886,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testUnspecifiedForbiddenRulesRestrictOptions.xml"));
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
 
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList(TEST));
         SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
         assertThat(test.getSelectItems().keySet(), contains(OPT, "opt3", "opt5", "opt7"));
@@ -868,7 +904,7 @@ public class RulesetManagementIT {
             new File("src/test/resources/testUnspecifiedForbiddenRulesRestrictOptionsAlsoInTheValidation.xml"));
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
 
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList(TEST));
         SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
         assertTrue(test.isValid(OPT));
@@ -911,7 +947,7 @@ public class RulesetManagementIT {
         underTest.load(
             new File("src/test/resources/testUnspecifiedUnrestrictedRulesSortKeysWithoutRestrictingThem.xml"));
         StructuralElementViewInterface sevi = underTest.getStructuralElementView("article", "", ENGL);
-        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
+        Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
 
         assertThat(ids(mviColl), contains("author", "year", "title", "journal", "journalAbbr", "issue", "abstract",
@@ -928,7 +964,7 @@ public class RulesetManagementIT {
         underTest.load(
             new File("src/test/resources/testUnspecifiedUnrestrictedRulesSortOptionsWithoutRestrictingThem.xml"));
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList(TEST));
         SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
         assertThat(test.getSelectItems().keySet(), contains("opt4", "opt7", OPT, "opt2", "opt3", "opt5", "opt6"));
@@ -943,7 +979,7 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testValidationByCodomain.xml"));
 
         StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
-        List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
+        List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Arrays.asList("default", "defaultOpt", "anyUri", "boolean", "date", "integer", "namespaceDefault",
                 "namespaceString", "namespaceDefaultOpt", "namespaceStringOpt", "namespaceDefaultExternal",
                 "namespaceStringExternal"));
@@ -1010,7 +1046,7 @@ public class RulesetManagementIT {
      *            ID of key to extract
      * @return metadata key
      */
-    private SimpleMetadataViewInterface getSmvi(List<MetadataViewWithValuesInterface<Object>> mvwviList, String keyId) {
+    private SimpleMetadataViewInterface getSmvi(List<MetadataViewWithValuesInterface> mvwviList, String keyId) {
         return (SimpleMetadataViewInterface) mvwviList.stream().filter(mvwvi -> mvwvi.getMetadata().isPresent())
                 .filter(mvwvi -> keyId.equals(mvwvi.getMetadata().get().getId())).findAny().get().getMetadata().get();
     }
@@ -1026,7 +1062,7 @@ public class RulesetManagementIT {
      * @return metadata key
      */
     private ComplexMetadataViewInterface getCmvi(
-            List<MetadataViewWithValuesInterface<Object>> metadataViewWithValuesInterfaceList, String keyId) {
+            List<MetadataViewWithValuesInterface> metadataViewWithValuesInterfaceList, String keyId) {
         return (ComplexMetadataViewInterface) metadataViewWithValuesInterfaceList.stream()
                 .filter(mvwvi -> mvwvi.getMetadata().isPresent())
                 .filter(metadataViewWithValuesInterface -> keyId
@@ -1056,7 +1092,7 @@ public class RulesetManagementIT {
      *            the metadata keys from
      * @return the IDs of the metadata keys
      */
-    private <T> List<String> ids(List<MetadataViewWithValuesInterface<T>> metadataViewWithValuesInterfaceList) {
+    private List<String> ids(List<MetadataViewWithValuesInterface> metadataViewWithValuesInterfaceList) {
         return metadataViewWithValuesInterfaceList.stream()
                 .filter(metadataViewWithValuesInterface -> metadataViewWithValuesInterface.getMetadata().isPresent())
                 .map(metadataViewWithValuesInterface -> metadataViewWithValuesInterface.getMetadata().get().getId())
