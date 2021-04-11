@@ -23,12 +23,6 @@ import org.kitodo.config.KitodoConfig;
 public enum KitodoConfigFile {
 
     /**
-     * Configuration file that lists the digital collections available for the
-     * different projects.
-     */
-    DIGITAL_COLLECTIONS("kitodo_digitalCollections.xml"),
-
-    /**
      * Configuration file that lists the available library catalogs along with
      * their respective DocType mappings.
      */

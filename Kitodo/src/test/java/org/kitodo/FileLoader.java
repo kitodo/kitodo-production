@@ -29,7 +29,6 @@ public class FileLoader {
     private static String diagramBasePath = ConfigCore.getKitodoDiagramDirectory() + "base.bpmn20.xml";
     private static String diagramTestPath = ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml";
     private static String diagramReaderTestPath = ConfigCore.getKitodoDiagramDirectory() + "extended-test.bpmn20.xml";
-    private static String digitalCollectionsPath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.DIGITAL_COLLECTIONS;
     private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
     private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
     private static String errorsCustomBundle = ConfigCore.getParameter(ParameterCore.DIR_LOCAL_MESSAGES) + "errors_en.properties";
@@ -255,31 +254,6 @@ public class FileLoader {
         Files.write(Paths.get(diagramTestPath), prepareDiagram());
     }
 
-    public static void createDigitalCollectionsFile() throws IOException {
-        List<String> content = new ArrayList<>();
-        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        content.add("<DigitalCollections>");
-        content.add("<default>");
-        content.add("<DigitalCollection>Collection 1</DigitalCollection>");
-        content.add("<DigitalCollection default=\"true\">Collection 2</DigitalCollection>");
-        content.add("<DigitalCollection>Collection 3</DigitalCollection>");
-        content.add("</default>");
-        content.add("<project>");
-        content.add("<name>Project A</name>");
-        content.add("<DigitalCollection>Collection 1</DigitalCollection>");
-        content.add("<DigitalCollection>Collection 2</DigitalCollection>");
-        content.add("<DigitalCollection>Collection 3</DigitalCollection>");
-        content.add("<DigitalCollection>Collection 4</DigitalCollection>");
-        content.add("<DigitalCollection>Collection 5</DigitalCollection>");
-        content.add("</project>");
-        content.add("<project>");
-        content.add("<name>Project B</name>");
-        content.add("<DigitalCollection>Collection 1</DigitalCollection>");
-        content.add("</project>");
-        content.add("</DigitalCollections>");
-        Files.write(Paths.get(digitalCollectionsPath), content);
-    }
-
     public static void createExtendedDiagramTestFile() throws IOException {
         List<String> content = new ArrayList<>();
         content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -346,10 +320,6 @@ public class FileLoader {
 
     public static void deleteExtendedDiagramTestFile() throws IOException {
         Files.deleteIfExists(Paths.get(diagramReaderTestPath));
-    }
-
-    public static void deleteDigitalCollectionsFile() throws IOException {
-        Files.deleteIfExists(Paths.get(digitalCollectionsPath));
     }
 
     public static void deleteMetadataFile() throws IOException {
