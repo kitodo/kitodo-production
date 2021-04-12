@@ -74,6 +74,12 @@ public class RestrictivePermit {
     private List<RestrictivePermit> permits = new LinkedList<>();
 
     /**
+     * List of (nested) conditions.
+     */
+    @XmlElement(name = "condition", namespace = "http://names.kitodo.org/ruleset/v2")
+    private List<Condition> conditions = new LinkedList<>();
+
+    /**
      * Returns the division to which this rule applies, or which is allowed.
      *
      * @return the division to which this rule applies, or which is allowed
