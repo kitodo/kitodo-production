@@ -348,13 +348,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
         Collection<MetadataViewInterface> addableMetadata = new LinkedList<>();
         for (AuxiliaryTableRow auxiliaryTableRow : createAuxiliaryTable(currentEntries, additionalKeys)) {
             if (all || auxiliaryTableRow.isPossibleToExpandAnotherField()) {
-                MetadataViewInterface keyView = auxiliaryTableRow
-                        .isComplexKey()
-                                ? getNestedKeyView(auxiliaryTableRow.getId())
-                                : new KeyView(auxiliaryTableRow.getKey(),
-                                        rule.getRuleForKey(auxiliaryTableRow.getId(), division),
-                                        settings, priorityList);
-                addableMetadata.add(keyView);
+                addableMetadata.add(rowToView(auxiliaryTableRow));
             }
         }
         return addableMetadata;
@@ -372,9 +366,22 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
     }
 
     /**
-     * Creates a key view in a nest. This is the case when grouped keys, in the
-     * rule set XML file when {@code <key>} element occurs within {@code <key>}
-     * element.
+     * Creates a metadata view for one line of the auxiliary table.
+     *
+     * @param row
+     *            row to make a view for
+     * @return metadata view
+     */
+    private MetadataViewInterface rowToView(AuxiliaryTableRow row) {
+        MetadataViewInterface view = row.isComplexKey() ? getNestedKeyView(row.getId())
+                : new KeyView(row.getKey(), rule.getRuleForKey(row.getId(), division), settings, priorityList);
+        return view;
+    }
+
+    /**
+     * Creates a key view for a grouped key. This is the case when when
+     * {@code <key>} elements occur within another {@code <key>} element in the
+     * ruleset.
      *
      * @param keyId
      *            identifier for key in the nest
@@ -416,13 +423,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
                 excludedDataObjects.addAll(auxiliaryTableRow.getDataObjects(0));
             } else {
                 for (int i = 0; i < auxiliaryTableRow.getNumberOfTypeViewsToGenerate(); i++) {
-                    MetadataViewInterface typeView = auxiliaryTableRow
-                            .isComplexKey()
-                                    ? getNestedKeyView(auxiliaryTableRow.getId())
-                                    : new KeyView(auxiliaryTableRow.getKey(),
-                                            rule.getRuleForKey(auxiliaryTableRow.getId(), division),
-                                            settings, priorityList);
-                    Optional<MetadataViewInterface> definedTypeView = Optional.of(typeView);
+                    Optional<MetadataViewInterface> definedTypeView = Optional.of(rowToView(auxiliaryTableRow));
                     sortedVisibleMetadata.add(new FormRow(definedTypeView, auxiliaryTableRow.getDataObjects(i)));
                 }
             }
