@@ -16,6 +16,7 @@ import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +59,8 @@ public class ProcessListBaseView extends BaseForm {
     private boolean showClosedProcesses = false;
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
+
+    private final HashMap<Integer, Boolean> exportable = new HashMap<>();
 
     /**
      * Get selectedProcesses.
@@ -453,4 +456,23 @@ public class ProcessListBaseView extends BaseForm {
     public DeleteProcessDialog getDeleteProcessDialog() {
         return this.deleteProcessDialog;
     }
+
+    /**
+     * Check and return whether process with given ID can be exported or not.
+     *
+     * @param processId process ID
+     * @return whether process with given ID can be exported or not
+     */
+    public boolean canBeExported(int processId) {
+        try {
+            if (!exportable.containsKey(processId)) {
+                exportable.put(processId, ProcessService.canBeExported(processId));
+            }
+            return exportable.get(processId);
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage(e);
+            return false;
+        }
+    }
+
 }

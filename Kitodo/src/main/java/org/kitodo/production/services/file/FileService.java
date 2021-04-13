@@ -1281,4 +1281,20 @@ public class FileService {
         }
         return URI.create(uriString);
     }
+
+    /**
+     * Check and return whether given process has an empty generator folder or not.
+     *
+     * @param process Process
+     * @param generatorSource Folder
+     * @return whether given URI points to empty directory or not
+     * @throws IOException thrown if listing contents of given URI is not possible
+     */
+    public static boolean hasImages(Process process, Folder generatorSource) throws IOException, DAOException {
+        if (Objects.nonNull(generatorSource)) {
+            Subfolder sourceFolder = new Subfolder(process, generatorSource);
+            return !sourceFolder.listContents().isEmpty();
+        }
+        return false;
+    }
 }
