@@ -646,6 +646,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 }
             }
         }
+        paginationPanel.preparePaginationSelectionSelectedItems();
     }
 
     void switchMediaUnit() throws NoSuchMetadataFieldException {
