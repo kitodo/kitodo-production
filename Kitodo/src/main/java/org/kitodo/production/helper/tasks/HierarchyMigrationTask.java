@@ -270,7 +270,9 @@ public class HierarchyMigrationTask extends EmptyTask {
         URI metadataFileUri = fileService.getMetadataFilePath(process);
         URI anchorFileUri = fileService.createAnchorFile(metadataFileUri);
         Workpiece workpiece = metsService.loadWorkpiece(anchorFileUri);
-        LinkedMetsResource link = workpiece.getRootElement().getChildren().get(0).getLink();
+        IncludedStructuralElement firstChild = workpiece.getRootElement().getChildren().get(0);
+        firstChild.setType(null);
+        LinkedMetsResource link = firstChild.getLink();
         link.setLoctype("Kitodo.Production");
         link.setUri(processService.getProcessURI(process));
         URI parentMetadataFileUri = fileService.getMetadataFilePath(processGenerator.getGeneratedProcess(), false,
