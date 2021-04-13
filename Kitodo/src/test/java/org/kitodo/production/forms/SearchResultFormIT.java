@@ -80,7 +80,7 @@ public class SearchResultFormIT {
 
         Assert.assertEquals(2, resultList.size());
 
-        searchResultForm.setSearchQuery("Proc");
+        searchResultForm.setSearchQuery("proc");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 

@@ -796,7 +796,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     protected QueryBuilder createSimpleWildcardQuery(String key, String value) {
-        return queryStringQuery(key + ": *" + value + "*");
+        return queryStringQuery(key + ".keyword: *" + value + "*");
     }
 
     protected Long findCountAggregation(QueryBuilder query, String field) throws DataException {
