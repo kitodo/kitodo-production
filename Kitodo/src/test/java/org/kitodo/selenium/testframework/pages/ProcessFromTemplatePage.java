@@ -120,6 +120,10 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":fieldSelectMenu_input");
     }
 
+    /**
+     * Select GBV catalog.
+     * @throws InterruptedException when thread is interrupted
+     */
     public void selectGBV() throws InterruptedException {
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_1")));
