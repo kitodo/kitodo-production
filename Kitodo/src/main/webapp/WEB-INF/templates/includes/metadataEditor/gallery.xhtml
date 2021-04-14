@@ -364,8 +364,8 @@
                             icon="fa fa-link fa-sm"
                             styleClass="plain"
                             disabled="#{readOnly}"
-                            rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not
-                            DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() eq 1}"
+                            rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and
+                            DataEditorForm.selectedMedia.size() eq 1}"
                             action="#{DataEditorForm.structurePanel.assign}"
                             process="@this"
                             oncomplete="$('#loadingScreen').hide()"
