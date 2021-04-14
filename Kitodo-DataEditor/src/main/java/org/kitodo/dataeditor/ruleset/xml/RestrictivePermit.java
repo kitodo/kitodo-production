@@ -13,6 +13,7 @@ package org.kitodo.dataeditor.ruleset.xml;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
  * the same underlying object.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestrictivePermit {
+public class RestrictivePermit implements ConditionsMapInterface {
 
     /**
      * Division to which this (restriction) rule applies, or division that is
@@ -74,6 +75,14 @@ public class RestrictivePermit {
     private List<RestrictivePermit> permits = new LinkedList<>();
 
     /**
+     * List of (nested) conditions.
+     */
+    @XmlElement(name = "condition", namespace = "http://names.kitodo.org/ruleset/v2")
+    private List<Condition> conditions = new LinkedList<>();
+
+    private transient ConditionsMap conditionsMap;
+
+    /**
      * Returns the division to which this rule applies, or which is allowed.
      *
      * @return the division to which this rule applies, or which is allowed
@@ -118,6 +127,19 @@ public class RestrictivePermit {
      */
     public List<RestrictivePermit> getPermits() {
         return permits;
+    }
+
+    @Override
+    public Condition getCondition(String key, String value) {
+        return conditionsMap.getCondition(key, value);
+    }
+
+    @Override
+    public Iterable<String> getConditionKeys() {
+        if (Objects.isNull(conditionsMap)) {
+            conditionsMap = new ConditionsMap(conditions);
+        }
+        return conditionsMap.keySet();
     }
 
     /**
@@ -206,5 +228,48 @@ public class RestrictivePermit {
      */
     public void setValue(Optional<String> value) {
         this.value = value.orElse(null);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((division == null) ? 0 : division.hashCode());
+        result = prime * result + ((key == null) ? 0 : key.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof RestrictivePermit)) {
+            return false;
+        }
+        RestrictivePermit other = (RestrictivePermit) obj;
+        if (division == null) {
+            if (other.division != null) {
+                return false;
+            }
+        } else if (!division.equals(other.division)) {
+            return false;
+        }
+        if (key == null) {
+            if (other.key != null) {
+                return false;
+            }
+        } else if (!key.equals(other.key)) {
+            return false;
+        }
+        if (value == null) {
+            if (other.value != null) {
+                return false;
+            }
+        } else if (!value.equals(other.value)) {
+            return false;
+        }
+        return true;
     }
 }
