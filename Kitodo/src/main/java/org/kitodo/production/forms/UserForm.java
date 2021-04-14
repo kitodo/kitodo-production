@@ -264,6 +264,7 @@ public class UserForm extends BaseForm {
         if (getTasksInProgress(userObject).isEmpty()) {
             deleteUser(userObject);
         } else {
+            PrimeFaces.current().ajax().update("usersTabView:confirmResetTasksDialog");
             PrimeFaces.current().executeScript("PF('confirmResetTasksDialog').show();");
         }
     }
