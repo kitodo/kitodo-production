@@ -30,7 +30,7 @@
         <h:panelGroup>
             <h3>#{msgs.confirmDelete}</h3>
             <div class="select-note ui-messages-error">
-                #{msgs.confirmDeleteUserWithTasks}
+                #{UserForm.formatString('confirmDeleteUserWithTasks', UserForm.userObject.fullName)}
             </div>
         </h:panelGroup>
         <h:panelGroup>
@@ -155,7 +155,7 @@
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{UserForm.userById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteUser}"
+                               message="#{UserForm.formatString('confirmDeleteUser', item.fullName)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

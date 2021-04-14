@@ -141,7 +141,7 @@
                                    disabled="#{item.hasProcesses()}">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <p:confirm header="#{msgs.confirmDelete}"
-                                   message="#{msgs.confirmDeleteProject}"
+                                   message="#{ProjectForm.formatString('confirmDeleteProject', item.title)}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
                 </h:panelGroup>

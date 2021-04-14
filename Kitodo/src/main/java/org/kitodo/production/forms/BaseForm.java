@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -405,5 +406,9 @@ public class BaseForm implements Serializable {
         if (keepPagination.isEmpty()) {
             this.setFirstRow(0);
         }
+    }
+
+    public String formatString(String messageKey, String... replacements) {
+        return Helper.getTranslation(messageKey, Arrays.asList(replacements));
     }
 }

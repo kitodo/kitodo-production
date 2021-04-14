@@ -103,7 +103,8 @@
                                    update="workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
-                        <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteWorkflow}"
+                        <p:confirm header="#{msgs.confirmDelete}"
+                                   message="#{WorkflowForm.formatString('confirmDeleteWorkflow', item.title)}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
                 </h:form>

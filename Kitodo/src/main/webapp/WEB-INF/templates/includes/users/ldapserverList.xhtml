@@ -61,7 +61,7 @@
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{LdapServerForm.ldapServerById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteLdapgroup}"
+                               message="#{LdapServerForm.formatString('confirmDeleteLdapgroup', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>
