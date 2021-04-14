@@ -60,6 +60,14 @@ public class ProcessListBaseView extends BaseForm {
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
     /**
+     * Constructor.
+     */
+    public ProcessListBaseView() {
+        super();
+        super.setLazyDTOModel(new LazyProcessDTOModel(ServiceManager.getProcessService()));
+    }
+
+    /**
      * Get selectedProcesses.
      *
      * @return value of selectedProcesses

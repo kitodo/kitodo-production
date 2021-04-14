@@ -51,7 +51,6 @@ import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyProcessDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
@@ -94,7 +93,6 @@ public class ProcessForm extends TemplateBaseForm {
     public ProcessForm() {
         super();
         ProcessService.emptyCache();
-        super.setLazyDTOModel(new LazyProcessDTOModel(ServiceManager.getProcessService()));
     }
 
     /**
