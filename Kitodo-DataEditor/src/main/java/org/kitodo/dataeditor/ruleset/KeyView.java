@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
@@ -133,17 +134,9 @@ class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMeta
         return scheme;
     }
 
-    /**
-     * Returns the possible values if the metadata key is a list of values.
-     * Depending on the operating mode, the values are either re-sorted or
-     * restricted based on the specified values in the presence of a permit
-     * rule.
-     *
-     * @return the possible values
-     */
     @Override
-    public Map<String, String> getSelectItems() {
-        return rule.getSelectItems(declaration.getSelectItems(priorityList));
+    public Map<String, String> getSelectItems(List<Map<MetadataEntry, Boolean>> metadata) {
+        return rule.getSelectItems(declaration.getSelectItems(priorityList), metadata);
     }
 
     @Override
@@ -198,7 +191,7 @@ class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMeta
      * @return whether a value is valid
      */
     @Override
-    public boolean isValid(String value) {
+    public boolean isValid(String value, List<Map<MetadataEntry, Boolean>> metadata) {
         /*
          * Some data types are easily validated by Java built-in functions. We
          * will not implement it here again but try to create a corresponding
@@ -233,7 +226,7 @@ class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMeta
 
         // If the key has options, then the value must be in it.
         if (declaration.isWithOptions()
-                && !rule.getSelectItems(declaration.getSelectItems(priorityList)).containsKey(value)) {
+                && !rule.getSelectItems(declaration.getSelectItems(priorityList), metadata).containsKey(value)) {
             return false;
         }
 

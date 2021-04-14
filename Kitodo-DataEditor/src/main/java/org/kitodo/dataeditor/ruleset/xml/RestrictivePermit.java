@@ -13,6 +13,7 @@ package org.kitodo.dataeditor.ruleset.xml;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
  * the same underlying object.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestrictivePermit {
+public class RestrictivePermit implements ConditionsMapInterface {
 
     /**
      * Division to which this (restriction) rule applies, or division that is
@@ -79,6 +80,8 @@ public class RestrictivePermit {
     @XmlElement(name = "condition", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Condition> conditions = new LinkedList<>();
 
+    private transient ConditionsMap conditionsMap;
+
     /**
      * Returns the division to which this rule applies, or which is allowed.
      *
@@ -124,6 +127,19 @@ public class RestrictivePermit {
      */
     public List<RestrictivePermit> getPermits() {
         return permits;
+    }
+
+    @Override
+    public Condition getCondition(String key, String value) {
+        return conditionsMap.getCondition(key, value);
+    }
+
+    @Override
+    public Iterable<String> getConditionKeys() {
+        if (Objects.isNull(conditionsMap)) {
+            conditionsMap = new ConditionsMap(conditions);
+        }
+        return conditionsMap.keySet();
     }
 
     /**

@@ -13,6 +13,7 @@ package org.kitodo.dataeditor.ruleset.xml;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
  * condition is met.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Condition {
+public class Condition implements ConditionsMapInterface {
     /**
      * Key to which this (restriction) rule applies, or key that is allowed (for
      * permit rule inside restriction rule).
@@ -50,4 +51,31 @@ public class Condition {
      */
     @XmlElement(name = "condition", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Condition> conditions = new LinkedList<>();
+
+    private transient ConditionsMap conditionsMap;
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getEquals() {
+        return equals;
+    }
+
+    public List<RestrictivePermit> getPermits() {
+        return permits;
+    }
+
+    @Override
+    public Condition getCondition(String key, String value) {
+        return conditionsMap.getCondition(key, value);
+    }
+
+    @Override
+    public Iterable<String> getConditionKeys() {
+        if (Objects.isNull(conditionsMap)) {
+            conditionsMap = new ConditionsMap(conditions);
+        }
+        return conditionsMap.keySet();
+    }
 }

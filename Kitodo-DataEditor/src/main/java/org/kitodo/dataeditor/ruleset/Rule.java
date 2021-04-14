@@ -11,15 +11,25 @@
 
 package org.kitodo.dataeditor.ruleset;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
+<<<<<<< issue-4229_2.2
+=======
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.dataeditor.ruleset.xml.Condition;
+import org.kitodo.dataeditor.ruleset.xml.ConditionsMapInterface;
+>>>>>>> 52839e6 Implement conditional options in ruleset management
 import org.kitodo.dataeditor.ruleset.xml.RestrictivePermit;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Unspecified;
@@ -30,6 +40,8 @@ import org.kitodo.dataeditor.ruleset.xml.Unspecified;
  * restrictions.
  */
 public class Rule {
+    private static final Logger logger = LogManager.getLogger(Rule.class);
+
     /**
      * Maybe a rule, but maybe not.
      */
@@ -55,46 +67,6 @@ public class Rule {
     }
 
     /**
-     * A filter to generate the possibilities based on a rule. This is because
-     * the rule restricts the possibilities and gives order to elements, Or does
-     * not restrict and gives order anyway for elements where mentioned and rest
-     * is just like that. We have that twice for subdivisions and options so
-     * this is summarized here and only getter is fetched from outside.
-     *
-     * @param possibilities
-     *            list of possibilities unfiltered
-     * @param getter
-     *            which field to read
-     * @return list is filtered
-     */
-    private Map<String, String> filterPossibilitiesBasedOnRule(Map<String, String> possibilities,
-            Function<RestrictivePermit, Optional<String>> getter) {
-        if (optionalRestrictivePermit.isPresent()) {
-            Map<String, String> filteredPossibilities = new LinkedHashMap<>();
-            RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
-            for (RestrictivePermit permit : restrictivePermit.getPermits()) {
-                Optional<String> getterResult = getter.apply(permit);
-                if (getterResult.isPresent()) {
-                    String entry = getterResult.get();
-                    if (possibilities.containsKey(entry)) {
-                        filteredPossibilities.put(entry, possibilities.get(entry));
-                    }
-                }
-            }
-            if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
-                for (Entry<String, String> entryPair : possibilities.entrySet()) {
-                    if (!filteredPossibilities.containsKey(entryPair.getKey())) {
-                        filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
-                    }
-                }
-            }
-            return filteredPossibilities;
-        } else {
-            return possibilities;
-        }
-    }
-
-    /**
      * Returns only the allowed sub-divisions by rule, possibly only resorted.
      *
      * @param divisions
@@ -102,7 +74,28 @@ public class Rule {
      * @return exit
      */
     Map<String, String> getAllowedSubdivisions(Map<String, String> divisions) {
-        return filterPossibilitiesBasedOnRule(divisions, RestrictivePermit::getDivision);
+        if (!optionalRestrictivePermit.isPresent()) {
+            return divisions;
+        }
+        Map<String, String> filteredPossibilities = new LinkedHashMap<>();
+        RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
+        for (RestrictivePermit permit : restrictivePermit.getPermits()) {
+            Optional<String> getterResult = permit.getDivision();
+            if (getterResult.isPresent()) {
+                String entry = getterResult.get();
+                if (divisions.containsKey(entry)) {
+                    filteredPossibilities.put(entry, divisions.get(entry));
+                }
+            }
+        }
+        if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
+            for (Entry<String, String> entryPair : divisions.entrySet()) {
+                if (!filteredPossibilities.containsKey(entryPair.getKey())) {
+                    filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
+                }
+            }
+        }
+        return filteredPossibilities;
     }
 
     /**
@@ -175,10 +168,86 @@ public class Rule {
      *
      * @param selectItems
      *            the selection items
+     * @param metadata
+     *            metadata, for conditional select items
      * @return the selection items
      */
-    Map<String, String> getSelectItems(Map<String, String> selectItems) {
-        return filterPossibilitiesBasedOnRule(selectItems, RestrictivePermit::getValue);
+    Map<String, String> getSelectItems(Map<String, String> selectItems, List<Map<MetadataEntry, Boolean>> metadata) {
+        if (!optionalRestrictivePermit.isPresent()) {
+            return selectItems;
+        }
+        Map<String, String> filteredPossibilities = new LinkedHashMap<>();
+        RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
+        for (RestrictivePermit permit : getConditionalPermits(restrictivePermit, metadata)) {
+            Optional<String> getterResult = permit.getValue();
+            if (getterResult.isPresent()) {
+                String entry = getterResult.get();
+                if (selectItems.containsKey(entry)) {
+                    filteredPossibilities.put(entry, selectItems.get(entry));
+                }
+            }
+        }
+        if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
+            for (Entry<String, String> entryPair : selectItems.entrySet()) {
+                if (!filteredPossibilities.containsKey(entryPair.getKey())) {
+                    filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
+                }
+            }
+        }
+        return filteredPossibilities;
+    }
+
+    private static Collection<RestrictivePermit> getConditionalPermits(RestrictivePermit restrictivePermit,
+            List<Map<MetadataEntry, Boolean>> metadata) {
+
+        Collection<RestrictivePermit> result = new ArrayList<>(restrictivePermit.getPermits());
+        Map<String, Optional<MetadataEntry>> metadataCache = new HashMap<>();
+        getConditionalPermitsRecursive(restrictivePermit, metadataCache, metadata, result);
+        return result;
+    }
+
+    private static void getConditionalPermitsRecursive(ConditionsMapInterface conditionsMapInterface,
+            Map<String, Optional<MetadataEntry>> metadataCache, List<Map<MetadataEntry, Boolean>> metadata,
+            Collection<RestrictivePermit> result) {
+
+        for (String conditionKey : conditionsMapInterface.getConditionKeys()) {
+            Optional<MetadataEntry> possibleMetadata = metadataCache.computeIfAbsent(conditionKey,
+                key -> getMetadataEntryForKey(key, metadata));
+            if (possibleMetadata.isPresent()) {
+                Condition condition = conditionsMapInterface.getCondition(conditionKey, possibleMetadata.get().getValue());
+                if (Objects.nonNull(condition)) {
+                    result.addAll(condition.getPermits());
+                    getConditionalPermitsRecursive(condition, metadataCache, metadata, result);
+                }
+            }
+        }
+    }
+
+    private static Optional<MetadataEntry> getMetadataEntryForKey(final String key,
+            final List<Map<MetadataEntry, Boolean>> metadata) {
+        String effectiveKey = key;
+        int metadataIndex = metadata.size() - 1;
+        while (effectiveKey.startsWith("../")) {
+            effectiveKey = effectiveKey.substring(3);
+            metadataIndex--;
+        }
+        if (metadataIndex < 0) {
+            logger.warn("<condition key=\"{}\"> can never be met because metadata has only {} layers", key,
+                metadata.size());
+            return Optional.empty();
+        }
+
+        Map<MetadataEntry, Boolean> effectiveMetadata = metadata.get(metadataIndex);
+        MetadataEntry found = null;
+        for (Entry<MetadataEntry, Boolean> mapEntry : effectiveMetadata.entrySet()) {
+            MetadataEntry metadataEntry = mapEntry.getKey();
+            if (metadataEntry.getKey().equals(effectiveKey)) {
+                found = metadataEntry;
+                mapEntry.setValue(Boolean.TRUE);
+                break;
+            }
+        }
+        return Optional.ofNullable(found);
     }
 
     /**
