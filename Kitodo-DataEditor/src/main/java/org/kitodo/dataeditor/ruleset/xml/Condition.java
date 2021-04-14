@@ -52,7 +52,7 @@ public class Condition implements ConditionsMapInterface {
     @XmlElement(name = "condition", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Condition> conditions = new LinkedList<>();
 
-    private volatile ConditionsMap conditionsMap;
+    private transient ConditionsMap conditionsMap;
 
     public String getKey() {
         return key;
