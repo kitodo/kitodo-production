@@ -12,10 +12,13 @@
 package org.kitodo.api.dataeditor.rulesetmanagement;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
+import org.kitodo.api.MetadataEntry;
 
 /**
  * Provides an interface for the metadata key view service. The metadata key
@@ -32,7 +35,7 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      */
     default Optional<String> convertBoolean(boolean value) {
         if (value) {
-            return getSelectItems().keySet().stream().filter(StringUtils::isNotEmpty).findAny();
+            return getSelectItems(Collections.emptyList()).keySet().stream().filter(StringUtils::isNotEmpty).findAny();
         } else {
             return Optional.empty();
         }
@@ -74,11 +77,21 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
     InputType getInputType();
 
     /**
-     * Returns the possible values if the metadata key is a list of values.
+     * Returns the possible values if the metadata key is a list of values. For
+     * the maps of metadata entries, the function should only read the map keys,
+     * and should set the map value to {@link Boolean#TRUE} for those metadata
+     * entries that do have an influence on the showing select items, to let the
+     * caller know that it must update the select items in case this metadata
+     * entry changes.
      *
+     * @param metadata
+     *            metadata entries. Conditional select items may depend on their
+     *            values. For nested keys, order of arguments is top-down, i.e.
+     *            first grand-grandparent, then grandparent, then parent, last
+     *            sibling.
      * @return the possible values
      */
-    Map<String, String> getSelectItems();
+    Map<String, String> getSelectItems(List<Map<MetadataEntry, Boolean>> metadata);
 
     /**
      * Returns {@code false}. A simple metadata key is not complex.
@@ -106,8 +119,12 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      *
      * @param value
      *            value to be tested
+     * @param metadata
+     *            metadata entries. The available options for conditional select
+     *            items depend on their values. For nested keys, order of
+     *            arguments is top-down, i.e. from grand-grandparent to sibling.
      * @return whether the value corresponds to the value range
      */
-    boolean isValid(String value);
+    boolean isValid(String value, List<Map<MetadataEntry, Boolean>> metadata);
 
 }
