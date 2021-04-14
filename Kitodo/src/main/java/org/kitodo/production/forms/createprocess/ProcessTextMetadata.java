@@ -92,7 +92,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
 
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-            if (!settings.isValid(value)) {
+            if (!settings.isValid(value, container.getListForLeadingMetadataFields())) {
                 throw new InvalidMetadataValueException(label, value);
             }
             return Pair.of(super.getStructureFieldSetters(settings), value);
@@ -106,7 +106,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         if (Objects.isNull(value) || value.isEmpty()) {
             return false;
         }
-        return settings.isValid(value);
+        return settings.isValid(value, container.getListForLeadingMetadataFields());
     }
 
     /**

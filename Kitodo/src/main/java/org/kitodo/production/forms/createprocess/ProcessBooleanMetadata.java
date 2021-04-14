@@ -113,7 +113,7 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
     @Override
     public boolean isValid() {
         Optional<String> value = settings.convertBoolean(active);
-        return !value.isPresent() || settings.isValid(value.get());
+        return !value.isPresent() || settings.isValid(value.get(), container.getListForLeadingMetadataFields());
     }
 
     /**

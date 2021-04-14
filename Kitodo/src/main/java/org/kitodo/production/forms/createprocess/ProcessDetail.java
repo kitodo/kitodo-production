@@ -57,6 +57,12 @@ public abstract class ProcessDetail implements Serializable {
     protected final String label;
 
     /**
+     * Whether this metadata entry is leading for options of other metadata
+     * entries.
+     */
+    protected boolean leading = false;
+
+    /**
      * Creates a new metadata panel row.
      *
      * @param label
@@ -139,6 +145,18 @@ public abstract class ProcessDetail implements Serializable {
             throws InvalidMetadataValueException, NoSuchMetadataFieldException;
 
     /**
+     * Returns whether this metadata entry is leading for options of other
+     * metadata entries. If true, the application must refresh the metadata
+     * panel after this entry was changed to reflect the option changes in other
+     * metadata entries.
+     *
+     * @return whether this metadata entry is leading
+     */
+    public boolean isLeading() {
+        return leading;
+    }
+
+    /**
      * Returns if the field is not defined by the rule set. The front-end should
      * show some kind of warning sign then.
      *
@@ -158,4 +176,14 @@ public abstract class ProcessDetail implements Serializable {
      * @return if the field is valid
      */
     public abstract boolean isValid();
+
+    /**
+     * Sets whether this metadata entry is leading for options of other metadata
+     * entries. Set to true to tell the application to refresh the metadata
+     * panel after this entry was changed, to reflect the option changes in
+     * other metadata entries.
+     */
+    public void setLeading() {
+        this.leading = true;
+    }
 }

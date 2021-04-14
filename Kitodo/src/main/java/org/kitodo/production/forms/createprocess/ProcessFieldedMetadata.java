@@ -432,6 +432,15 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         return "dataTable";
     }
 
+    List<Map<MetadataEntry, Boolean>> getListForLeadingMetadataFields() {
+        List<Map<MetadataEntry, Boolean>> result = Objects.isNull(container) ? new ArrayList<>()
+                : container.getListForLeadingMetadataFields();
+        Map<MetadataEntry, Boolean> metadataEntryMap = metadata.parallelStream().filter(MetadataEntry.class::isInstance)
+                .map(MetadataEntry.class::cast).collect(Collectors.toMap(Function.identity(), all -> Boolean.FALSE));
+        result.add(metadataEntryMap);
+        return result;
+    }
+
     /**
      * Returns the metadata of a metadata group, when used recursively.
      *
@@ -494,6 +503,19 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
         }
         return true;
+    }
+
+    void markLeadingMetadataFields(List<Map<MetadataEntry, Boolean>> leadingMetadataFields) {
+        int lastIndex = leadingMetadataFields.size() - 1;
+        if (lastIndex > 0) {
+            container.markLeadingMetadataFields(leadingMetadataFields.subList(0, lastIndex));
+        }
+        final List<String> leadingMetadataKeys = leadingMetadataFields.get(lastIndex).entrySet().parallelStream()
+                .filter(entry -> Boolean.TRUE.equals(entry.getValue())).map(entry -> entry.getKey().getKey())
+                .collect(Collectors.toList());
+        treeNode.getChildren().parallelStream().map(TreeNode::getData).map(ProcessDetail.class::cast)
+                .filter(processDetail -> leadingMetadataKeys.contains(processDetail.getMetadataID()))
+                .forEach(ProcessDetail::setLeading);
     }
 
     /**
