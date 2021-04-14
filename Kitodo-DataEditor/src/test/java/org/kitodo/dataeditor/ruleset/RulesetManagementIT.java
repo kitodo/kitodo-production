@@ -182,8 +182,8 @@ public class RulesetManagementIT {
                 case 1:
                     assertEquals("role", smvi.getId());
                     assertEquals("Role", smvi.getLabel());
-                    assertThat(smvi.getSelectItems(), hasEntry("aut", "Author"));
-                    assertThat(smvi.getSelectItems(), hasEntry("edt", "Editor"));
+                    assertThat(smvi.getSelectItems(Collections.emptyList()), hasEntry("aut", "Author"));
+                    assertThat(smvi.getSelectItems(Collections.emptyList()), hasEntry("edt", "Editor"));
                     break;
                 case 2:
                     assertEquals("surname", smvi.getId());
@@ -219,9 +219,13 @@ public class RulesetManagementIT {
         List<MetadataViewWithValuesInterface> mvwviListDe = seviDe.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.emptyList());
 
-        assertThat(((SimpleMetadataViewInterface) mvwviList.get(0).getMetadata().get()).getSelectItems().keySet(),
+        assertThat(
+            ((SimpleMetadataViewInterface) mvwviList.get(0).getMetadata().get()).getSelectItems(Collections.emptyList())
+                    .keySet(),
             contains("dan", "dut", "eng", "fre", "ger"));
-        assertThat(((SimpleMetadataViewInterface) mvwviListDe.get(0).getMetadata().get()).getSelectItems().keySet(),
+        assertThat(
+            ((SimpleMetadataViewInterface) mvwviListDe.get(0).getMetadata().get())
+                    .getSelectItems(Collections.emptyList()).keySet(),
             contains("dan", "ger", "eng", "fre", "dut"));
 
         // 2. The input elements that have a minimum occurrence greater than
@@ -264,8 +268,8 @@ public class RulesetManagementIT {
         Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyList(),
             Collections.emptyList());
         SimpleMetadataViewInterface smvi = (SimpleMetadataViewInterface) mviColl.iterator().next();
-        assertTrue(smvi.isValid(OPT));
-        assertFalse(smvi.isValid(StringUtils.capitalize(OPT)));
+        assertTrue(smvi.isValid(OPT, Collections.emptyList()));
+        assertFalse(smvi.isValid(StringUtils.capitalize(OPT), Collections.emptyList()));
     }
 
     /**
@@ -285,62 +289,67 @@ public class RulesetManagementIT {
         assertFalse(booleanMvi.isComplex());
         assertTrue(booleanMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface booleanSmvi = (SimpleMetadataViewInterface) booleanMvi;
-        assertTrue(booleanSmvi.isValid(booleanSmvi.convertBoolean(true).get()));
-        assertFalse(booleanSmvi.isValid(""));
-        assertFalse(booleanSmvi.isValid("botch"));
+        assertTrue(booleanSmvi.isValid(booleanSmvi.convertBoolean(true).get(), Collections.emptyList()));
+        assertFalse(booleanSmvi.isValid("", Collections.emptyList()));
+        assertFalse(booleanSmvi.isValid("botch", Collections.emptyList()));
 
         MetadataViewInterface dateMvi = mvwviList.get(1).getMetadata().get();
         assertFalse(dateMvi.isComplex());
         assertTrue(dateMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface dateSmvi = (SimpleMetadataViewInterface) dateMvi;
-        assertFalse(dateSmvi.isValid(""));
-        assertFalse(dateSmvi.isValid("1803-05-12"));
-        assertTrue(dateSmvi.isValid("1993-09-01"));
+        assertFalse(dateSmvi.isValid("", Collections.emptyList()));
+        assertFalse(dateSmvi.isValid("1803-05-12", Collections.emptyList()));
+        assertTrue(dateSmvi.isValid("1993-09-01", Collections.emptyList()));
 
         MetadataViewInterface defaultStringMvi = mvwviList.get(2).getMetadata().get();
         assertFalse(defaultStringMvi.isComplex());
         assertTrue(defaultStringMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface defaultStringSmvi = (SimpleMetadataViewInterface) defaultStringMvi;
-        assertFalse(defaultStringSmvi.isValid(HELLO_WORLD));
-        assertTrue(defaultStringSmvi.isValid("1234567X"));
+        assertFalse(defaultStringSmvi.isValid(HELLO_WORLD, Collections.emptyList()));
+        assertTrue(defaultStringSmvi.isValid("1234567X", Collections.emptyList()));
 
         MetadataViewInterface integerMvi = mvwviList.get(3).getMetadata().get();
         assertFalse(integerMvi.isComplex());
         assertTrue(integerMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface integerSmvi = (SimpleMetadataViewInterface) integerMvi;
-        assertFalse(integerSmvi.isValid("22"));
-        assertTrue(integerSmvi.isValid("1748"));
+        assertFalse(integerSmvi.isValid("22", Collections.emptyList()));
+        assertTrue(integerSmvi.isValid("1748", Collections.emptyList()));
 
         MetadataViewInterface namespaceDefaultAnyURIMvi = mvwviList.get(4).getMetadata().get();
         assertFalse(namespaceDefaultAnyURIMvi.isComplex());
         assertTrue(namespaceDefaultAnyURIMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface namespaceDefaultAnyURISmvi = (SimpleMetadataViewInterface) namespaceDefaultAnyURIMvi;
         assertFalse(namespaceDefaultAnyURISmvi
-                .isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program"));
+                .isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program",
+                    Collections.emptyList()));
         assertTrue(
-            namespaceDefaultAnyURISmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program"));
+            namespaceDefaultAnyURISmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program",
+                Collections.emptyList()));
 
         MetadataViewInterface namespaceStringMvi = mvwviList.get(5).getMetadata().get();
         assertFalse(namespaceStringMvi.isComplex());
         assertTrue(namespaceStringMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface namespaceStringSmvi = (SimpleMetadataViewInterface) namespaceStringMvi;
         assertFalse(
-            namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program"));
-        assertTrue(namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program"));
+            namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program",
+                Collections.emptyList()));
+        assertTrue(namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program",
+            Collections.emptyList()));
 
         MetadataViewInterface optionsMvi = mvwviList.get(6).getMetadata().get();
         assertFalse(optionsMvi.isComplex());
         assertTrue(optionsMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface optionsSmvi = (SimpleMetadataViewInterface) optionsMvi;
-        assertFalse(optionsSmvi.isValid("opt88"));
-        assertTrue(optionsSmvi.isValid("opt2"));
+        assertFalse(optionsSmvi.isValid("opt88", Collections.emptyList()));
+        assertTrue(optionsSmvi.isValid("opt2", Collections.emptyList()));
 
         MetadataViewInterface anyURIMvi = mvwviList.get(7).getMetadata().get();
         assertFalse(anyURIMvi.isComplex());
         assertTrue(anyURIMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface anyURISmvi = (SimpleMetadataViewInterface) anyURIMvi;
-        assertFalse(anyURISmvi.isValid("mailto:e-mail@example.org"));
-        assertTrue(anyURISmvi.isValid("https://en.wikipedia.org/wiki/%22Hello,_World!%22_program"));
+        assertFalse(anyURISmvi.isValid("mailto:e-mail@example.org", Collections.emptyList()));
+        assertTrue(
+            anyURISmvi.isValid("https://en.wikipedia.org/wiki/%22Hello,_World!%22_program", Collections.emptyList()));
     }
 
     /**
@@ -826,7 +835,8 @@ public class RulesetManagementIT {
         List<MetadataViewWithValuesInterface> visible = personContributor
                 .getSortedVisibleMetadata(Collections.emptyList(), Collections.emptyList());
         assertThat(ids(visible), contains("role", "gndRecord", "givenName", "surname"));
-        assertThat(getSmvi(visible, "role").getSelectItems().keySet(), contains("author", "editor"));
+        assertThat(getSmvi(visible, "role").getSelectItems(Collections.emptyList()).keySet(),
+            contains("author", "editor"));
     }
 
     /**
@@ -903,7 +913,7 @@ public class RulesetManagementIT {
         List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList(TEST));
         SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
-        assertThat(test.getSelectItems().keySet(), contains(OPT, "opt3", "opt5", "opt7"));
+        assertThat(test.getSelectItems(Collections.emptyList()).keySet(), contains(OPT, "opt3", "opt5", "opt7"));
 
     }
 
@@ -921,14 +931,14 @@ public class RulesetManagementIT {
         List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList(TEST));
         SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
-        assertTrue(test.isValid(OPT));
-        assertFalse(test.isValid("opt2"));
-        assertTrue(test.isValid("opt3"));
-        assertFalse(test.isValid("opt4"));
-        assertTrue(test.isValid("opt5"));
-        assertFalse(test.isValid("opt6"));
-        assertTrue(test.isValid("opt7"));
-        assertFalse(test.isValid("mischief"));
+        assertTrue(test.isValid(OPT, Collections.emptyList()));
+        assertFalse(test.isValid("opt2", Collections.emptyList()));
+        assertTrue(test.isValid("opt3", Collections.emptyList()));
+        assertFalse(test.isValid("opt4", Collections.emptyList()));
+        assertTrue(test.isValid("opt5", Collections.emptyList()));
+        assertFalse(test.isValid("opt6", Collections.emptyList()));
+        assertTrue(test.isValid("opt7", Collections.emptyList()));
+        assertFalse(test.isValid("mischief", Collections.emptyList()));
     }
 
     /**
@@ -981,7 +991,8 @@ public class RulesetManagementIT {
         List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList(TEST));
         SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
-        assertThat(test.getSelectItems().keySet(), contains("opt4", "opt7", OPT, "opt2", "opt3", "opt5", "opt6"));
+        assertThat(test.getSelectItems(Collections.emptyList()).keySet(),
+            contains("opt4", "opt7", OPT, "opt2", "opt3", "opt5", "opt6"));
     }
 
     /**
@@ -999,55 +1010,60 @@ public class RulesetManagementIT {
                 "namespaceStringExternal"));
 
         SimpleMetadataViewInterface defaultMv = getSmvi(mvwviList, "default");
-        assertTrue(defaultMv.isValid(HELLO_WORLD));
+        assertTrue(defaultMv.isValid(HELLO_WORLD, Collections.emptyList()));
 
         SimpleMetadataViewInterface defaultOpt = getSmvi(mvwviList, "defaultOpt");
-        assertTrue(defaultOpt.isValid("val1"));
-        assertFalse(defaultOpt.isValid("val9"));
+        assertTrue(defaultOpt.isValid("val1", Collections.emptyList()));
+        assertFalse(defaultOpt.isValid("val9", Collections.emptyList()));
 
         SimpleMetadataViewInterface anyUri = getSmvi(mvwviList, "anyUri");
-        assertTrue(anyUri.isValid("https://www.kitodo.org/software/kitodoproduction/"));
-        assertTrue(anyUri.isValid("mailto:contact@kitodo.org"));
-        assertTrue(anyUri.isValid("urn:nbn:de-9999-12345678X"));
-        assertFalse(anyUri.isValid(HELLO_WORLD));
+        assertTrue(anyUri.isValid("https://www.kitodo.org/software/kitodoproduction/", Collections.emptyList()));
+        assertTrue(anyUri.isValid("mailto:contact@kitodo.org", Collections.emptyList()));
+        assertTrue(anyUri.isValid("urn:nbn:de-9999-12345678X", Collections.emptyList()));
+        assertFalse(anyUri.isValid(HELLO_WORLD, Collections.emptyList()));
 
         SimpleMetadataViewInterface booleanMv = getSmvi(mvwviList, "boolean");
-        assertTrue(booleanMv.isValid("on"));
-        assertFalse(booleanMv.isValid(HELLO_WORLD));
+        assertTrue(booleanMv.isValid("on", Collections.emptyList()));
+        assertFalse(booleanMv.isValid(HELLO_WORLD, Collections.emptyList()));
 
         SimpleMetadataViewInterface date = getSmvi(mvwviList, "date");
-        assertTrue(date.isValid("1492-10-12"));
-        assertFalse(date.isValid("1900-02-29"));
+        assertTrue(date.isValid("1492-10-12", Collections.emptyList()));
+        assertFalse(date.isValid("1900-02-29", Collections.emptyList()));
 
         SimpleMetadataViewInterface integer = getSmvi(mvwviList, "integer");
-        assertTrue(integer.isValid("1234567"));
-        assertFalse(integer.isValid("1 + 1i"));
+        assertTrue(integer.isValid("1234567", Collections.emptyList()));
+        assertFalse(integer.isValid("1 + 1i", Collections.emptyList()));
 
         SimpleMetadataViewInterface namespaceDefault = getSmvi(mvwviList, "namespaceDefault");
-        assertTrue(namespaceDefault.isValid("http://test.example/testValidation/alice"));
-        assertFalse(namespaceDefault.isValid("http://test.example/testValidation#bob"));
-        assertFalse(namespaceDefault.isValid("https://www.wdrmaus.de/"));
+        assertTrue(namespaceDefault.isValid("http://test.example/testValidation/alice", Collections.emptyList()));
+        assertFalse(namespaceDefault.isValid("http://test.example/testValidation#bob", Collections.emptyList()));
+        assertFalse(namespaceDefault.isValid("https://www.wdrmaus.de/", Collections.emptyList()));
 
         SimpleMetadataViewInterface namespaceString = getSmvi(mvwviList, "namespaceString");
-        assertTrue(namespaceString.isValid("http://test.example/testValidation/alice"));
-        assertTrue(namespaceString.isValid("{http://test.example/testValidation/}bob"));
-        assertFalse(namespaceString.isValid("https://www.wdrmaus.de/"));
+        assertTrue(namespaceString.isValid("http://test.example/testValidation/alice", Collections.emptyList()));
+        assertTrue(namespaceString.isValid("{http://test.example/testValidation/}bob", Collections.emptyList()));
+        assertFalse(namespaceString.isValid("https://www.wdrmaus.de/", Collections.emptyList()));
 
         SimpleMetadataViewInterface namespaceOpt = getSmvi(mvwviList, "namespaceDefaultOpt");
-        assertTrue(namespaceOpt.isValid("http://test.example/testValidation/value1"));
-        assertFalse(namespaceOpt.isValid("http://test.example/testValidation/value4"));
+        assertTrue(namespaceOpt.isValid("http://test.example/testValidation/value1", Collections.emptyList()));
+        assertFalse(namespaceOpt.isValid("http://test.example/testValidation/value4, Collections.emptyList()",
+            Collections.emptyList()));
 
         SimpleMetadataViewInterface namespaceStrOpt = getSmvi(mvwviList, "namespaceStringOpt");
-        assertTrue(namespaceStrOpt.isValid("http://test.example/testValidation/value1"));
-        assertFalse(namespaceStrOpt.isValid("http://test.example/testValidation/value4"));
+        assertTrue(namespaceStrOpt.isValid("http://test.example/testValidation/value1", Collections.emptyList()));
+        assertFalse(namespaceStrOpt.isValid("http://test.example/testValidation/value4", Collections.emptyList()));
 
         SimpleMetadataViewInterface namespaceExt = getSmvi(mvwviList, "namespaceDefaultExternal");
-        assertTrue(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val1"));
-        assertFalse(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val4"));
+        assertTrue(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val1",
+            Collections.emptyList()));
+        assertFalse(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val4",
+            Collections.emptyList()));
 
         SimpleMetadataViewInterface namespaceStrExt = getSmvi(mvwviList, "namespaceStringExternal");
-        assertTrue(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val1"));
-        assertFalse(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val4"));
+        assertTrue(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val1",
+            Collections.emptyList()));
+        assertFalse(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val4",
+            Collections.emptyList()));
     }
 
     /**
