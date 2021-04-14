@@ -135,8 +135,8 @@ public class Labeled {
 
     /**
      * Constructor for a provider for translated labels. This is protected and
-     * called only by subclass as part of it. Every universal key, also nesting
-     * keys and divisions are labeled and so that summarized.
+     * called only by subclasses, as part of them. Every key declaration, also
+     * nesting keys and divisions are labeled.
      *
      * @param ruleset
      *            the ruleset

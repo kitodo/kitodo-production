@@ -82,8 +82,8 @@ public class RulesetManagement implements RulesetManagementInterface {
 
     @Override
     public Collection<String> getDivisionsWithNoWorkflow() {
-        Collection<UniversalDivision> universalDivisions = ruleset.getUniversalDivisions(true, true);
-        List<Division> divisions = universalDivisions.stream().map(UniversalDivision::getDivision)
+        Collection<DivisionDeclaration> divisionDeclarations = ruleset.getDivisionDeclarations(true, true);
+        List<Division> divisions = divisionDeclarations.stream().map(DivisionDeclaration::getDivision)
                 .collect(Collectors.toList());
         return getDivionsWithNoWorkflow(divisions);
     }
@@ -162,9 +162,9 @@ public class RulesetManagement implements RulesetManagementInterface {
             List<LanguageRange> priorityList) {
 
         Optional<Division> division = ruleset.getDivision(divisionId);
-        UniversalDivision universalDivision = division.isPresent() ? new UniversalDivision(ruleset, division.get())
-                : new UniversalDivision(ruleset, divisionId);
-        return new DivisionView(ruleset, universalDivision, acquisitionStage, priorityList);
+        DivisionDeclaration divisionDeclaration = division.isPresent() ? new DivisionDeclaration(ruleset, division.get())
+                : new DivisionDeclaration(ruleset, divisionId);
+        return new DivisionView(ruleset, divisionDeclaration, acquisitionStage, priorityList);
     }
 
     /**
@@ -179,11 +179,11 @@ public class RulesetManagement implements RulesetManagementInterface {
      * @return a view on a metadata
      */
     @Override
-    public NestedKeyView<UniversalKey> getMetadataView(String keyId, String acquisitionStage, List<LanguageRange> priorityList) {
+    public NestedKeyView<KeyDeclaration> getMetadataView(String keyId, String acquisitionStage, List<LanguageRange> priorityList) {
         Optional<Key> key = ruleset.getKey(keyId);
-        UniversalKey universalKey = key.isPresent() ? new UniversalKey(ruleset, key.get()) : new UniversalKey(ruleset, keyId);
-        UniversalRule universalRule = ruleset.getUniversalRestrictionRuleForKey(keyId);
-        return new NestedKeyView<>(ruleset, universalKey, universalRule, ruleset.getSettings(acquisitionStage), priorityList);
+        KeyDeclaration keyDeclaration = key.isPresent() ? new KeyDeclaration(ruleset, key.get()) : new KeyDeclaration(ruleset, keyId);
+        Rule rule = ruleset.getRuleForKey(keyId);
+        return new NestedKeyView<>(ruleset, keyDeclaration, rule, ruleset.getSettings(acquisitionStage), priorityList);
     }
 
     /**
@@ -200,8 +200,8 @@ public class RulesetManagement implements RulesetManagementInterface {
     public Optional<String> getTranslationForKey(String key, List<LanguageRange> priorityList) {
         Optional<Key> optionalKey = ruleset.getKey(key);
         if (optionalKey.isPresent()) {
-            UniversalKey universalKey = new UniversalKey(ruleset, optionalKey.get());
-            String label = universalKey.getLabel(priorityList);
+            KeyDeclaration keyDeclaration = new KeyDeclaration(ruleset, optionalKey.get());
+            String label = keyDeclaration.getLabel(priorityList);
             return Optional.of(label);
         } else {
             return Optional.empty();

@@ -58,16 +58,15 @@ class AuxiliaryTableRow<T> {
     }
 
     /**
-     * The universal key provides information about the key.
+     * The key declaration provides information about the key.
      */
-    private UniversalKey universalKey;
+    private KeyDeclaration key;
 
     /**
      * The rule plays a role in terms of repeatability (e.g., single versus
-     * multiple choice) and possible restrictions on list of values. If there is
-     * one.
+     * multiple choice) and possible restrictions on list of values.
      */
-    private UniversalRule universalPermitRule;
+    private Rule rule;
 
     /**
      * If there are edit settings for this metadata type.
@@ -88,13 +87,13 @@ class AuxiliaryTableRow<T> {
     private Set<T> metaDataObjects = new HashSet<>();
 
     /**
-     * Creates a new data row object and enters a universal key into the table.
+     * Creates a new data row object and enters a key into the table.
      *
-     * @param universalKey
-     *            universal key for this row
+     * @param key
+     *            key for this row
      */
-    AuxiliaryTableRow(UniversalKey universalKey, Settings settings) {
-        this.universalKey = universalKey;
+    AuxiliaryTableRow(KeyDeclaration key, Settings settings) {
+        this.key = key;
         this.settings = settings;
     }
 
@@ -143,16 +142,16 @@ class AuxiliaryTableRow<T> {
      * @return the ID
      */
     String getId() {
-        return universalKey.getId();
+        return key.getId();
     }
 
     /**
-     * Returns the universal key for the key handled in this row.
+     * Returns the key handled in this row.
      *
-     * @return the universal key
+     * @return the key
      */
-    UniversalKey getUniversalKey() {
-        return universalKey;
+    KeyDeclaration getKey() {
+        return key;
     }
 
     /**
@@ -163,7 +162,7 @@ class AuxiliaryTableRow<T> {
      * @return the best fitting language label
      */
     String getLabel(List<LanguageRange> priorityList) {
-        return universalKey.getLabel(priorityList);
+        return key.getLabel(priorityList);
     }
 
     /**
@@ -172,13 +171,13 @@ class AuxiliaryTableRow<T> {
      * @return how many type views need to be generated in the result list
      */
     int getNumberOfTypeViewsToGenerate() {
-        if (settings.isExcluded(universalKey.getId())) {
+        if (settings.isExcluded(key.getId())) {
             return 0;
         }
         int objects = metaDataObjects.size();
         int fields = Math.max(
-            Math.max(settings.isAlwaysShowing(universalKey.getId()) ? 1 : 0, universalPermitRule.getMinOccurs()),
-            objects + (oneAdditionalField && universalPermitRule.getMaxOccurs() > objects ? 1 : 0));
+            Math.max(settings.isAlwaysShowing(key.getId()) ? 1 : 0, rule.getMinOccurs()),
+            objects + (oneAdditionalField && rule.getMaxOccurs() > objects ? 1 : 0));
         return isMultipleChoice() ? Math.min(fields, 1) : fields;
     }
 
@@ -190,7 +189,7 @@ class AuxiliaryTableRow<T> {
      * @return whether there are hidden values
      */
     boolean isContainingExcludedData() {
-        return settings.isExcluded(universalKey.getId()) && !metaDataObjects.isEmpty();
+        return settings.isExcluded(key.getId()) && !metaDataObjects.isEmpty();
     }
 
     /**
@@ -199,7 +198,7 @@ class AuxiliaryTableRow<T> {
      * @return whether the metadata type is a multiple choice
      */
     private boolean isMultipleChoice() {
-        return universalKey.isHavingOptions() && universalPermitRule.isRepeatable();
+        return key.isWithOptions() && rule.isRepeatable();
     }
 
     /**
@@ -212,30 +211,29 @@ class AuxiliaryTableRow<T> {
      */
     boolean isPossibleToExpandAnotherField() {
         int previous = oneAdditionalField ? metaDataObjects.size() + 1 : metaDataObjects.size();
-        if (settings.isExcluded(universalKey.getId()) || universalPermitRule.getMinOccurs() > previous
+        if (settings.isExcluded(key.getId()) || rule.getMinOccurs() > previous
                 || isMultipleChoice() && !metaDataObjects.isEmpty()) {
             return false;
         }
-        return universalPermitRule.getMaxOccurs() > previous;
+        return rule.getMaxOccurs() > previous;
     }
 
     /**
-     * Returns whether a complex or simple universal key is to be generated
-     * for this universal key.
+     * Returns whether a complex or simple key is to be generated for this key.
      *
-     * @return whether a complex universal key is to be generated
+     * @return whether a complex key is to be generated
      */
-    boolean isRequiringAComplexUniversalKey() {
-        return universalKey.isComplex();
+    boolean isComplexKey() {
+        return key.isComplex();
     }
 
     /**
-     * Set method for setting the universal permit rule if there is one.
+     * Set method for setting the rule if there is one.
      *
-     * @param universalPermitRule
-     *            universal permit rule to be set
+     * @param rule
+     *            rule to be set
      */
-    void setUniversalPermitRule(UniversalRule universalPermitRule) {
-        this.universalPermitRule = universalPermitRule;
+    void setRule(Rule rule) {
+        this.rule = rule;
     }
 }

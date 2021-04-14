@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.dataeditor.ruleset.DivisionDeclaration;
 import org.kitodo.dataeditor.ruleset.Labeled;
+import org.kitodo.dataeditor.ruleset.Rule;
 import org.kitodo.dataeditor.ruleset.Settings;
-import org.kitodo.dataeditor.ruleset.UniversalDivision;
-import org.kitodo.dataeditor.ruleset.UniversalRule;
 
 /**
  * This class maps the XML root element of the rule set. The ruleset is the
@@ -57,7 +57,7 @@ public class Ruleset {
      */
     @XmlElementWrapper(name = "correlation", namespace = "http://names.kitodo.org/ruleset/v2")
     @XmlElement(name = "restriction", namespace = "http://names.kitodo.org/ruleset/v2")
-    private List<Rule> restrictions = new LinkedList<>();
+    private List<RestrictivePermit> restrictions = new LinkedList<>();
 
     /**
      * In the editing section settings for the editor concerning keys are
@@ -129,8 +129,9 @@ public class Ruleset {
      *            Division to search a restriction rule for
      * @return the restriction rule if there is one
      */
-    public Optional<Rule> getDivisionRestriction(String division) {
-        return restrictions.parallelStream().filter(rule -> division.equals(rule.getDivision().orElse(null)))
+    public Optional<RestrictivePermit> getDivisionRestriction(String division) {
+        return restrictions.parallelStream()
+                .filter(restriction -> division.equals(restriction.getDivision().orElse(null)))
                 .findFirst();
     }
 
@@ -157,38 +158,45 @@ public class Ruleset {
      * @return all outline elements as map from IDs to labels
      */
     public Map<String, String> getDivisions(List<LanguageRange> priorityList, boolean all, boolean subdivisionsByDate) {
-        Collection<UniversalDivision> universalDivisions = getUniversalDivisions(all, subdivisionsByDate);
-        return all || !universalDivisions.isEmpty() ? Labeled.listByTranslatedLabel(this,
-            universalDivisions, UniversalDivision::getId, UniversalDivision::getLabels, priorityList)
+        Collection<DivisionDeclaration> divisionDeclarations = getDivisionDeclarations(all, subdivisionsByDate);
+        return all || !divisionDeclarations.isEmpty() ? Labeled.listByTranslatedLabel(this,
+            divisionDeclarations, DivisionDeclaration::getId, DivisionDeclaration::getLabels, priorityList)
                 : getDivisions(priorityList, true, subdivisionsByDate);
     }
 
     /**
-     * get all universalDivisions as Collection.
-     * @param all if all divisions should be respected.
-     * @param subdivisionsByDate if subdivisionsByDate should be respected.
-     * @return a collection of universalDivisions.
+     * Returns all division declarations as a collection.
+     *
+     * @param all
+     *            if true, returns all division declarations; if false, only
+     *            returns division declarations with {@code processTitle}
+     *            attribute set, which indicates that they are candidates for
+     *            the logical root type, which typically corresponds to the
+     *            media format
+     * @param subdivisionsByDate
+     *            if subdivisions by date should be included
+     * @return a collection of division declarations
      */
-    public Collection<UniversalDivision> getUniversalDivisions(boolean all, boolean subdivisionsByDate) {
-        Collection<UniversalDivision> universalDivisions = new LinkedList<>();
+    public Collection<DivisionDeclaration> getDivisionDeclarations(boolean all, boolean subdivisionsByDate) {
+        Collection<DivisionDeclaration> divisionDeclarations = new LinkedList<>();
         for (Division division : declaration.getDivisions()) {
-            UniversalDivision universalDivision = new UniversalDivision(this, division);
-            if (all || universalDivision.getProcessTitle().isPresent()) {
-                universalDivisions.add(universalDivision);
+            DivisionDeclaration divisionDeclaration = new DivisionDeclaration(this, division);
+            if (all || divisionDeclaration.getProcessTitle().isPresent()) {
+                divisionDeclarations.add(divisionDeclaration);
             }
             if (subdivisionsByDate) {
-                for (UniversalDivision subdivision : universalDivision.getUniversalDivisions()) {
+                for (DivisionDeclaration subdivision : divisionDeclaration.getAllowedDivisionDeclarations()) {
                     if (all || subdivision.getProcessTitle().isPresent()) {
-                        universalDivisions.add(subdivision);
+                        divisionDeclarations.add(subdivision);
                     }
                 }
             }
         }
-        return universalDivisions;
+        return divisionDeclarations;
     }
 
     /**
-     * This will allow a key to come out of the ruleset.
+     * Returns a key from the ruleset, if defined.
      *
      * @param keyId
      *            Identifier of the key
@@ -199,20 +207,21 @@ public class Ruleset {
     }
 
     /**
-     * So you can get the restriction on a key, if there is one.
+     * Returns the restriction on a key, if there is one.
      *
      * @param keyId
      *            key for which the restriction is to be given
      * @return the restriction on a key, if any
      */
-    public Optional<Rule> getKeyRestriction(String keyId) {
-        return restrictions.parallelStream().filter(rule -> keyId.equals(rule.getKey().orElse(null))).findAny();
+    public Optional<RestrictivePermit> getKeyRestriction(String keyId) {
+        return restrictions.parallelStream().filter(restriction -> keyId.equals(restriction.getKey().orElse(null)))
+                .findAny();
     }
 
     /**
-     * Returns the total list of all keys returned by the ruleset.
+     * Returns the complete list of all keys in this ruleset.
      *
-     * @return all keys of the rule set
+     * @return all keys in this ruleset
      */
     public List<Key> getKeys() {
         if (Objects.isNull(keys)) {
@@ -316,31 +325,28 @@ public class Ruleset {
     }
 
     /**
-     * Returns a universal restriction rule for a key. That can be empty but it
-     * works.
+     * Returns a rule for a key. The rule may be empty.
      *
      * @param keyId
-     *            key for which a universal restriction rule is to be returned
-     * @return universal restriction rule for key
+     *            key for which a rule is to be returned
+     * @return rule for the key
      */
-    public UniversalRule getUniversalRestrictionRuleForKey(String keyId) {
-        return new UniversalRule(this, this.getKeyRestriction(keyId));
+    public Rule getRuleForKey(String keyId) {
+        return new Rule(this, this.getKeyRestriction(keyId));
     }
 
     /**
-     * Returns a universal restriction rule for a division. That can be empty but
-     * it works.
+     * Returns a rule for a division. The rule may be empty.
      *
      * @param division
-     *            division for which a universal restriction rule is to be
-     *            returned
-     * @return universal restriction rule for division
+     *            division for which a rule is to be returned
+     * @return rule for division
      */
-    public UniversalRule getUniversalRestrictionRuleForDivision(String division) {
+    public Rule getRuleForDivision(String division) {
         if (Objects.isNull(division)) {
-            return new UniversalRule(this, this.getDivisionRestriction(""));
+            return new Rule(this, this.getDivisionRestriction(""));
         } else {
-            return new UniversalRule(this, this.getDivisionRestriction(division));
+            return new Rule(this, this.getDivisionRestriction(division));
         }
     }
 }

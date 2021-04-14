@@ -21,33 +21,34 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Triple;
-import org.kitodo.dataeditor.ruleset.xml.Rule;
+import org.kitodo.dataeditor.ruleset.xml.RestrictivePermit;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Unspecified;
 
 /**
- * A universal rule is a rule that may be in place or not. If there is no
- * corresponding rule element in the rule set, the rule behaves as if there is a
- * rule that declares no restrictions.
+ * A rule that may be in place or not. If there is no corresponding rule element
+ * in the ruleset, the rule behaves as if there is a rule that declares no
+ * restrictions.
  */
-public class UniversalRule {
+public class Rule {
     /**
      * Generates a triplet of rule with triple as a key. This is due to the
      * problem because the rule is basically the key is three fields and applies
      * everything.
      *
-     * @param rule
-     *            rule for which a hashish key is to be formed
+     * @param restrictivePermit
+     *            restrictive permit for which a hash key is to be formed
      * @return key is triple
      */
-    private static Triple<String, String, String> formAKeyForARuleInATemporaryMap(Rule rule) {
-        return Triple.of(rule.getDivision().orElse(null), rule.getKey().orElse(null), rule.getValue().orElse(null));
+    private static Triple<String, String, String> formAKeyForARuleInATemporaryMap(RestrictivePermit restrictivePermit) {
+        return Triple.of(restrictivePermit.getDivision().orElse(null), restrictivePermit.getKey().orElse(null),
+            restrictivePermit.getValue().orElse(null));
     }
 
     /**
      * Maybe a rule, but maybe not.
      */
-    private Optional<Rule> optionalRule;
+    private Optional<RestrictivePermit> optionalRestrictivePermit;
 
     /**
      * The ruleset.
@@ -55,16 +56,17 @@ public class UniversalRule {
     private Ruleset ruleset;
 
     /**
-     * Constructor for a new universal rule. Can with rule or without.
+     * Constructor for a new rule. May come with a restrictive permit or
+     * without.
      *
      * @param ruleset
      *            the ruleset
-     * @param optionalRule
-     *            maybe a rule, but maybe not
+     * @param optionalRestrictivePermit
+     *            there may be a restrictive permit, or not
      */
-    public UniversalRule(Ruleset ruleset, Optional<Rule> optionalRule) {
+    public Rule(Ruleset ruleset, Optional<RestrictivePermit> optionalRestrictivePermit) {
         this.ruleset = ruleset;
-        this.optionalRule = optionalRule;
+        this.optionalRestrictivePermit = optionalRestrictivePermit;
     }
 
     /**
@@ -81,11 +83,11 @@ public class UniversalRule {
      * @return list is filtered
      */
     private Map<String, String> filterPossibilitiesBasedOnRule(Map<String, String> possibilities,
-            Function<Rule, Optional<String>> getter) {
-        if (optionalRule.isPresent()) {
+            Function<RestrictivePermit, Optional<String>> getter) {
+        if (optionalRestrictivePermit.isPresent()) {
             Map<String, String> filteredPossibilities = new LinkedHashMap<>();
-            Rule rule = optionalRule.get();
-            for (Rule permit : rule.getPermits()) {
+            RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
+            for (RestrictivePermit permit : restrictivePermit.getPermits()) {
                 Optional<String> getterResult = getter.apply(permit);
                 if (getterResult.isPresent()) {
                     String entry = getterResult.get();
@@ -94,7 +96,7 @@ public class UniversalRule {
                     }
                 }
             }
-            if (rule.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
+            if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
                 for (Entry<String, String> entryPair : possibilities.entrySet()) {
                     if (!filteredPossibilities.containsKey(entryPair.getKey())) {
                         filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
@@ -115,26 +117,26 @@ public class UniversalRule {
      * @return exit
      */
     Map<String, String> getAllowedSubdivisions(Map<String, String> divisions) {
-        return filterPossibilitiesBasedOnRule(divisions, Rule::getDivision);
+        return filterPossibilitiesBasedOnRule(divisions, RestrictivePermit::getDivision);
     }
 
     /**
-     * Returns the universal keys explicitly allowed in the rule. This is done
-     * by looking into rule and making explicit universal keys for it.
+     * Returns the key declarations explicitly allowed in the rule. This is done
+     * by looking into rule and making explicit key declarations for it.
      *
-     * @return the universal keys explicitly allowed
+     * @return the key declarations explicitly allowed
      */
-    LinkedList<UniversalKey> getExplicitlyPermittedUniversalKeys(UniversalKey universalKey) {
-        LinkedList<UniversalKey> explicitlyPermittedUniversalKeys = new LinkedList<>();
-        if (optionalRule.isPresent()) {
-            for (Rule rule : optionalRule.get().getPermits()) {
-                Optional<String> optionalKey = rule.getKey();
+    LinkedList<KeyDeclaration> getExplicitlyPermittedKeys(KeyDeclaration keyDeclaration) {
+        LinkedList<KeyDeclaration> explicitlyPermittedKeys = new LinkedList<>();
+        if (optionalRestrictivePermit.isPresent()) {
+            for (RestrictivePermit permit : optionalRestrictivePermit.get().getPermits()) {
+                Optional<String> optionalKey = permit.getKey();
                 if (optionalKey.isPresent()) {
-                    explicitlyPermittedUniversalKeys.add(universalKey.getUniversalKey(optionalKey.get()));
+                    explicitlyPermittedKeys.add(keyDeclaration.getSubkeyDeclaration(optionalKey.get()));
                 }
             }
         }
-        return explicitlyPermittedUniversalKeys;
+        return explicitlyPermittedKeys;
     }
 
     /**
@@ -144,8 +146,8 @@ public class UniversalRule {
      * @return maximum count
      */
     int getMaxOccurs() {
-        if (optionalRule.isPresent() && optionalRule.get().getMaxOccurs() != null) {
-            return optionalRule.get().getMaxOccurs();
+        if (optionalRestrictivePermit.isPresent() && optionalRestrictivePermit.get().getMaxOccurs() != null) {
+            return optionalRestrictivePermit.get().getMaxOccurs();
         } else {
             return Integer.MAX_VALUE;
         }
@@ -157,30 +159,30 @@ public class UniversalRule {
      * @return minimum count
      */
     int getMinOccurs() {
-        if (optionalRule.isPresent() && optionalRule.get().getMinOccurs() != null) {
-            return optionalRule.get().getMinOccurs();
+        if (optionalRestrictivePermit.isPresent() && optionalRestrictivePermit.get().getMinOccurs() != null) {
+            return optionalRestrictivePermit.get().getMinOccurs();
         } else {
             return 0;
         }
     }
 
     /**
-     * Returns a permission universal rule for a key.
+     * Returns a permit rule for a key.
      *
      * @param keyId
-     *            key for which a permission universal rule is to be returned
-     * @return permission universal rule for the key
+     *            key for which a permit rule is to be returned
+     * @return permit rule for the key
      */
-    UniversalRule getUniversalPermitRuleForKey(String keyId, boolean division) {
-        UniversalRule universalPermitRuleForKey = optionalRule.isPresent()
-                ? new UniversalRule(ruleset,
-                        optionalRule.get().getPermits().parallelStream()
+    Rule getRuleForKey(String keyId, boolean division) {
+        Rule permitRuleForKey = optionalRestrictivePermit.isPresent()
+                ? new Rule(ruleset,
+                        optionalRestrictivePermit.get().getPermits().parallelStream()
                                 .filter(rule -> keyId.equals(rule.getKey().orElse(null))).findAny())
-                : new UniversalRule(ruleset, Optional.empty());
+                : new Rule(ruleset, Optional.empty());
         if (division) {
-            universalPermitRuleForKey.merge(ruleset.getUniversalRestrictionRuleForKey(keyId));
+            permitRuleForKey.merge(ruleset.getRuleForKey(keyId));
         }
-        return universalPermitRuleForKey;
+        return permitRuleForKey;
     }
 
     /**
@@ -191,7 +193,7 @@ public class UniversalRule {
      * @return the selection items
      */
     Map<String, String> getSelectItems(Map<String, String> selectItems) {
-        return filterPossibilitiesBasedOnRule(selectItems, Rule::getValue);
+        return filterPossibilitiesBasedOnRule(selectItems, RestrictivePermit::getValue);
     }
 
     /**
@@ -201,8 +203,8 @@ public class UniversalRule {
      * @return whether this is repeatable
      */
     boolean isRepeatable() {
-        return !optionalRule.isPresent() || optionalRule.get().getMaxOccurs() == null
-                || optionalRule.get().getMaxOccurs() > 1;
+        return !optionalRestrictivePermit.isPresent() || optionalRestrictivePermit.get().getMaxOccurs() == null
+                || optionalRestrictivePermit.get().getMaxOccurs() > 1;
     }
 
     /**
@@ -211,7 +213,8 @@ public class UniversalRule {
      * @return whether unspecified is unrestricted
      */
     boolean isUnspecifiedUnrestricted() {
-        return !optionalRule.isPresent() || optionalRule.get().getUnspecified().equals(Unspecified.UNRESTRICTED);
+        return !optionalRestrictivePermit.isPresent()
+                || optionalRestrictivePermit.get().getUnspecified().equals(Unspecified.UNRESTRICTED);
     }
 
     /**
@@ -228,33 +231,29 @@ public class UniversalRule {
      *            the other rule
      * @return merged rule
      */
-    private Rule merge(Rule one, Rule another) {
-        Rule merged = new Rule();
+    private RestrictivePermit merge(RestrictivePermit one, RestrictivePermit another) {
+        RestrictivePermit merged = new RestrictivePermit();
 
-        /*
-         * We assume that both rules are the same only, otherwise this would be
-         * a problem. Recursively, this is not a problem, because the program
-         * pays attention.
-         */
+        // we assume that both rules to merge are rules on the same entity
         merged.setDivision(one.getDivision());
         merged.setKey(one.getKey());
         merged.setValue(one.getValue());
 
         mergeQuantities(one, another, merged);
 
-        // here too, if one is forbidden then forbidden
+        // if one of both is forbidden, then it is forbidden
         merged.setUnspecified(
             one.getUnspecified().equals(Unspecified.FORBIDDEN) || another.getUnspecified().equals(Unspecified.FORBIDDEN)
                     ? Unspecified.FORBIDDEN
                     : Unspecified.UNRESTRICTED);
 
-        // and for sub-rule is recursive
-        HashMap<Triple<String, String, String>, Rule> anotherPermits = new LinkedHashMap<>();
-        for (Rule anotherPermit : another.getPermits()) {
+        // for sub-rules, apply recursively
+        HashMap<Triple<String, String, String>, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
+        for (RestrictivePermit anotherPermit : another.getPermits()) {
             anotherPermits.put(formAKeyForARuleInATemporaryMap(anotherPermit), anotherPermit);
         }
-        List<Rule> mergedPermits = new LinkedList<>();
-        for (Rule onePermit : one.getPermits()) {
+        List<RestrictivePermit> mergedPermits = new LinkedList<>();
+        for (RestrictivePermit onePermit : one.getPermits()) {
             Triple<String, String, String> key = formAKeyForARuleInATemporaryMap(onePermit);
             if (anotherPermits.containsKey(key)) {
                 mergedPermits.add(merge(onePermit, anotherPermits.get(key)));
@@ -270,26 +269,27 @@ public class UniversalRule {
     }
 
     /**
-     * Connects two universal rules. The function happens in separate, this is
-     * just wrapping.
+     * Combines two rules. The function happens in separate, this is just
+     * wrapping.
      *
      * @param other
-     *            the other universal rule
+     *            the other rule
      */
-    void merge(UniversalRule other) {
-        if (optionalRule.isPresent()) {
-            if (other.optionalRule.isPresent()) {
-                optionalRule = Optional.of(merge(optionalRule.get(), other.optionalRule.get()));
+    void merge(Rule other) {
+        if (optionalRestrictivePermit.isPresent()) {
+            if (other.optionalRestrictivePermit.isPresent()) {
+                optionalRestrictivePermit = Optional
+                        .of(merge(optionalRestrictivePermit.get(), other.optionalRestrictivePermit.get()));
             }
         } else {
-            optionalRule = other.optionalRule;
+            optionalRestrictivePermit = other.optionalRestrictivePermit;
         }
     }
 
     /**
      * This is taken out because otherwise checkstyle is unfortunate because
      * function is length 59 and should only be 50 lines. This is part of the
-     * {@link #merge(Rule, Rule)} function and connects the quantities. Merge is
+     * {@link #merge(RestrictivePermit, RestrictivePermit)} function and connects the quantities. Merge is
      * with strictness here, that is, the stricter value of both becomes valid.
      *
      * @param one
@@ -299,7 +299,7 @@ public class UniversalRule {
      * @param merged
      *            merged rule
      */
-    private void mergeQuantities(Rule one, Rule another, Rule merged) {
+    private void mergeQuantities(RestrictivePermit one, RestrictivePermit another, RestrictivePermit merged) {
         if (one.getMinOccurs() == null) {
             merged.setMinOccurs(another.getMinOccurs());
         } else {
