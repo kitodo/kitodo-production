@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kitodoProjects>
+<project name="default">
+<createNewProcess>
+<itemlist>
+<item from="werk" multiselect="true">Artist
+<select label="CHANGEME">CHANGEME BIBLIOTHEKSLABEL</select>
+</item>
+<item from="werk" multiselect="false">Schrifttyp
+<select label="Antiqua">Antiqua</select>
+<select label="Fraktur">Fraktur</select>
+<select label="Antiqua">Antiqua</select>
+</item>
+<item from="vorlage" isnotdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMain">Titel
+</item>
+<item from="vorlage" isnotdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMainShort">Titel (Sortierung)
+</item>
+<item from="vorlage" isdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMain">Titel
+</item>
+<item from="vorlage" isdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMainShort">Titel (Sortierung)
+</item>
+<item from="vorlage" isdoctype="monograph|multivolume|periodical" ughbinding="true" docstruct="topstruct" metadata="ListOfCreators">Autoren
+</item>
+<item from="werk" isnotdoctype="periodical" ughbinding="true" metadata="TSL_ATS" docstruct="topstruct"> ATS
+</item>
+<item from="vorlage" isdoctype="monograph" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDSource">PPN analog a-Satz
+</item>
+<item from="werk" isdoctype="monograph" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDDigital">PPN digital a-Satz
+</item>
+<processtitle isdoctype="multivolume">TSL_ATS+'_'+CatalogIDDigital</processtitle>
+<processtitle isdoctype="monograph">TSL_ATS+'_'+CatalogIDDigital</processtitle>
+<processtitle isdoctype="periodical">TSL_ATS+'_'+CatalogIDDigital</processtitle>
+<processtitle isnotdoctype="periodical">TSL_ATS+'_'+CatalogIDDigital</processtitle>
+<processtitle isnotdoctype="multivolume">TSL_ATS+'_'+CatalogIDDigital)</processtitle>
+</itemlist>
+</createNewProcess>
+</project>
+</kitodoProjects>

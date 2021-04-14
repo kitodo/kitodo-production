@@ -64,7 +64,9 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     ProcessSelectMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings,
             Collection<MetadataEntry> selected) {
         super(container, settings, settings.getLabel());
-        this.items = toItems(settings.getSelectItems());
+        List<Map<MetadataEntry, Boolean>> leadingMetadataFields = container.getListForLeadingMetadataFields();
+        this.items = toItems(settings.getSelectItems(leadingMetadataFields));
+        container.markLeadingMetadataFields(leadingMetadataFields);
         if (selected.isEmpty()) {
             selectedItems.addAll(settings.getDefaultItems());
         } else {
@@ -125,7 +127,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
         selectedItems.removeAll(Collections.singletonList(""));
         selectedItems.removeAll(Collections.singletonList(null));
         for (String selectedItem : selectedItems) {
-            if (!settings.isValid(selectedItem)) {
+            if (!settings.isValid(selectedItem, container.getListForLeadingMetadataFields())) {
                 throw new InvalidMetadataValueException(label, selectedItem);
             }
             MetadataEntry entry = new MetadataEntry();
@@ -167,7 +169,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
             String value = String.join(" ", selectedItems);
-            if (!settings.isValid(value)) {
+            if (!settings.isValid(value, container.getListForLeadingMetadataFields())) {
                 throw new InvalidMetadataValueException(label, value);
             }
             return Pair.of(super.getStructureFieldSetters(settings), value);
@@ -179,7 +181,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     @Override
     public boolean isValid() {
         for (String selectedItem : selectedItems) {
-            if (!settings.isValid(selectedItem)) {
+            if (!settings.isValid(selectedItem, container.getListForLeadingMetadataFields())) {
                 return false;
             }
         }

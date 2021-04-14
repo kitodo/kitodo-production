@@ -22,14 +22,11 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
-<<<<<<< issue-4229_2.2
-=======
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.dataeditor.ruleset.xml.Condition;
 import org.kitodo.dataeditor.ruleset.xml.ConditionsMapInterface;
->>>>>>> 52839e6 Implement conditional options in ruleset management
 import org.kitodo.dataeditor.ruleset.xml.RestrictivePermit;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Unspecified;
