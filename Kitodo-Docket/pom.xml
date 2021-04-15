@@ -105,9 +105,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.snowtide</groupId>
-            <artifactId>lucene-pdf</artifactId>
-            <version>3.0.0</version>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.0-RC1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
