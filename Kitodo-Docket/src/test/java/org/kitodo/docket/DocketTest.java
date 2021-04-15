@@ -16,16 +16,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.snowtide.PDF;
-import com.snowtide.pdf.Document;
-import com.snowtide.pdf.OutputTarget;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 
+import org.apache.pdfbox.io.RandomAccessRead;
+import org.apache.pdfbox.io.RandomAccessReadMemoryMappedFile;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,11 +89,9 @@ public class DocketTest {
     }
 
     private String getPDFText(File pdfFile) throws IOException {
-        Document pdf = PDF.open(pdfFile);
-        StringWriter buffer = new StringWriter();
-        pdf.pipe(new OutputTarget(buffer));
-        pdf.close();
-        return buffer.toString();
+        try (RandomAccessRead memoryMappedFile = new RandomAccessReadMemoryMappedFile(pdfFile)) {
+            return new PDFTextStripper().getText(new PDFParser(memoryMappedFile).parse());
+        }
     }
 
     private File generateDocket(String processId, String signatur, String docType) throws IOException {
