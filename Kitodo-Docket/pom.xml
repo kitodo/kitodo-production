@@ -109,6 +109,12 @@
             <artifactId>lucene-pdf</artifactId>
             <version>3.0.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.snowtide</groupId>
+                    <artifactId>pdfxstream</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
