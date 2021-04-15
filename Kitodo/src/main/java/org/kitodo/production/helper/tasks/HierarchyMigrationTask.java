@@ -23,12 +23,10 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -169,7 +167,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param process
      *            process to migrate
      */
-   void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
+    void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
         logger.info("Starting to convert process {} (ID {})...", process.getTitle(), process.getId());
         long begin = System.nanoTime();
         migrateMetadataFiles(process);
@@ -254,16 +252,22 @@ public class HierarchyMigrationTask extends EmptyTask {
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
         ImportService.checkTasks(parentProcess, workpiece.getRootElement().getType());
         Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
-        String title = "";
+        String shortedTitle = "";
+        String catalogIdentifier = "";
         for (Metadata metadatum : metadata) {
             if (metadatum.getKey().equals("TSL_ATS")) {
-                title += ((MetadataEntry) metadatum).getValue() + "_";
+                shortedTitle = ((MetadataEntry) metadatum).getValue();
+            }
+            if (metadatum.getKey().equals("CatalogIDDigital")) {
+                catalogIdentifier = ((MetadataEntry) metadatum).getValue();
             }
         }
-        for (Metadata metadatum : metadata) {
-            if (metadatum.getKey().equals("CatalogIDDigital")) {
-                title += ((MetadataEntry) metadatum).getValue();
-            }
+        String title = "";
+        if (!shortedTitle.isEmpty()) {
+            title += shortedTitle + '_';
+        }
+        if (!catalogIdentifier.isEmpty()) {
+            title += catalogIdentifier;
         }
         parentProcess.setTitle(title);
         workpiece.setId(parentProcess.getId().toString());
