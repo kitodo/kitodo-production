@@ -74,25 +74,25 @@ public class Rule {
         if (!optionalRestrictivePermit.isPresent()) {
             return divisions;
         }
-            Map<String, String> filteredPossibilities = new LinkedHashMap<>();
-            RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
-            for (RestrictivePermit permit : restrictivePermit.getPermits()) {
+        Map<String, String> filteredPossibilities = new LinkedHashMap<>();
+        RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
+        for (RestrictivePermit permit : restrictivePermit.getPermits()) {
             Optional<String> getterResult = permit.getDivision();
-                if (getterResult.isPresent()) {
-                    String entry = getterResult.get();
+            if (getterResult.isPresent()) {
+                String entry = getterResult.get();
                 if (divisions.containsKey(entry)) {
                     filteredPossibilities.put(entry, divisions.get(entry));
-                    }
                 }
             }
-            if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
+        }
+        if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
             for (Entry<String, String> entryPair : divisions.entrySet()) {
-                    if (!filteredPossibilities.containsKey(entryPair.getKey())) {
-                        filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
-                    }
+                if (!filteredPossibilities.containsKey(entryPair.getKey())) {
+                    filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
                 }
             }
-            return filteredPossibilities;
+        }
+        return filteredPossibilities;
     }
 
     /**
