@@ -13,6 +13,9 @@ package org.kitodo.production.security;
 
 import java.util.Objects;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapGroup;
@@ -32,6 +35,8 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
  * A custom authentication provider which supports the change of authentication
  * type (database or ldap) and details (e.g. ldap server url) during runtime.
  */
+@Named("AuthenticationController")
+@RequestScoped
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     private static volatile DynamicAuthenticationProvider instance = null;
