@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -101,6 +102,9 @@ public class ChangeDocStrucTypeDialog {
             docStructTypes.clear();
             for (Entry<String, String> typeOption : possibleTypes.entrySet()) {
                 docStructTypes.add(new SelectItem(typeOption.getKey(), typeOption.getValue()));
+            }
+            if (!docStructTypes.isEmpty() && !dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
+                docStructTypes.sort(Comparator.comparing(SelectItem::getLabel));
             }
             docStructType = selectedStructure.getType();
         } catch (IllegalStateException | IOException e) {
