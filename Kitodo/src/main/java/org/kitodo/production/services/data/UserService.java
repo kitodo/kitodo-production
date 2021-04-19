@@ -439,6 +439,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @return list of filters
      */
     private List<String> getFiltersForUser(User user) {
+        refresh(user);
         List<String> userFilters = new ArrayList<>();
         List<Filter> filters = user.getFilters();
         for (Filter filter : filters) {
