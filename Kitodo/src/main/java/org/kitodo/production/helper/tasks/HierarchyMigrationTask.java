@@ -267,6 +267,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         }
         parentProcess.setTitle(title);
         workpiece.setId(parentProcess.getId().toString());
+        ServiceManager.getMetsService().saveWorkpiece(workpiece,parentMetadataFilePath);
     }
 
     /**
