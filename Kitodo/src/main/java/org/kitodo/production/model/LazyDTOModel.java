@@ -42,11 +42,11 @@ import org.primefaces.model.SortOrder;
 
 public class LazyDTOModel extends LazyDataModel<Object> {
 
-    private final transient SearchDatabaseService searchService;
-    private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
+    final transient SearchDatabaseService searchService;
+    static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
     private static final IndexRestClient indexRestClient = IndexRestClient.getInstance();
-    private transient List entities = new ArrayList<>();
-    private String filterString = "";
+    transient List entities = new ArrayList<>();
+    String filterString = "";
 
     /**
      * Creates a LazyDTOModel instance that allows fetching data from the data
@@ -132,7 +132,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      *
      * @return whether the ElasticSearch index is running or not
      */
-    private boolean indexRunning() {
+    boolean indexRunning() {
         try {
             return indexRestClient.indexExists();
         } catch (IOException | CustomResponseException e) {

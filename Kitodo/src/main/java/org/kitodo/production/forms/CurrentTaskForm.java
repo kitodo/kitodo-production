@@ -27,8 +27,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -50,7 +48,7 @@ import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyTaskDTOModel;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -68,13 +66,7 @@ public class CurrentTaskForm extends BaseForm {
     private Task currentTask = new Task();
     private List<TaskDTO> selectedTasks = new ArrayList<>();
     private final WebDav myDav = new WebDav();
-    private boolean onlyOpenTasks = false;
-    private boolean onlyOwnTasks = false;
-    private TaskStatus taskStatusRestriction = null;
-    private boolean showAutomaticTasks = false;
-    private boolean hideCorrectionTasks = false;
     private String scriptPath;
-    private final String doneDirectoryName;
     private transient BatchTaskHelper batchHelper;
     private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private List<Property> properties;
@@ -90,8 +82,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public CurrentTaskForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getTaskService()));
-        doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
+        super.setLazyDTOModel(new LazyTaskDTOModel(ServiceManager.getTaskService()));
     }
 
     /**
@@ -282,96 +273,6 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Upload from home.
-     *
-     * @return String
-     */
-    @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() {
-        List<URI> readyList = this.myDav.uploadAllFromHome(doneDirectoryName);
-        List<URI> checkedList = new ArrayList<>();
-
-        // go through the uploaded process IDs and set to complete
-        if (!readyList.isEmpty() && this.onlyOpenTasks) {
-            this.onlyOpenTasks = false;
-            return tasksPage;
-        }
-        for (URI element : readyList) {
-            String id = element.toString()
-                    .substring(element.toString().indexOf('[') + 1, element.toString().indexOf(']')).trim();
-
-            for (Task task : (List<Task>) lazyDTOModel.getEntities()) {
-                // only when the task is already in edit mode, complete it
-                if (task.getProcess().getId() == Integer.parseInt(id)
-                        && task.getProcessingStatus() == TaskStatus.INWORK) {
-                    this.currentTask = task;
-                    if (Objects.nonNull(closeTaskByUser())) {
-                        checkedList.add(element);
-                    }
-                    this.currentTask.setEditType(TaskEditType.MANUAL_MULTI);
-                }
-            }
-        }
-
-        this.myDav.removeAllFromHome(checkedList, URI.create(doneDirectoryName));
-        Helper.setMessage("removed " + checkedList.size() + " directories from user home:", doneDirectoryName);
-        return this.stayOnCurrentPage;
-    }
-
-    /**
-     * Download to home page.
-     *
-     * @return String
-     */
-    public String downloadToHomePage() {
-        download();
-        // calcHomeImages();
-        Helper.setMessage("Created directories in user home");
-        return this.stayOnCurrentPage;
-    }
-
-    /**
-     * Download to home.
-     *
-     * @return String
-     */
-    public String downloadToHomeHits() {
-        download();
-        // calcHomeImages();
-        Helper.setMessage("Created directories in user home");
-        return this.stayOnCurrentPage;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void download() {
-        for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
-            Task task = new Task();
-            try {
-                task = ServiceManager.getTaskService().getById(taskDTO.getId());
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.TASK.getTranslationSingular(), taskDTO.getId() }, logger, e);
-            }
-            if (task.getProcessingStatus() == TaskStatus.OPEN) {
-                task.setProcessingStatus(TaskStatus.INWORK);
-                task.setEditType(TaskEditType.MANUAL_MULTI);
-                task.setProcessingTime(new Date());
-                User user = getUser();
-                ServiceManager.getTaskService().replaceProcessingUser(task, user);
-                task.setProcessingBegin(new Date());
-                Process process = task.getProcess();
-                try {
-                    ServiceManager.getProcessService().save(process);
-                } catch (DataException e) {
-                    Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                        logger, e);
-                }
-                this.myDav.downloadToHome(process, false);
-            }
-        }
-    }
-
-    /**
      * Generate all images.
      */
     public void generateAllImages() {
@@ -516,12 +417,11 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     public void setTaskStatusRestriction(TaskStatus taskStatus) {
-        ServiceManager.getTaskService().setTaskStatusRestriction(taskStatus);
-        this.taskStatusRestriction = taskStatus;
+        ((LazyTaskDTOModel)this.lazyDTOModel).setTaskStatusRestriction(taskStatus);
     }
 
     public TaskStatus getTaskStatusRestriction() {
-        return this.taskStatusRestriction;
+        return ((LazyTaskDTOModel)this.lazyDTOModel).getTaskStatusRestriction();
     }
 
     /**
@@ -530,7 +430,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return boolean
      */
     public boolean isOnlyOwnTasks() {
-        return this.onlyOwnTasks;
+        return ((LazyTaskDTOModel)this.lazyDTOModel).isOnlyOwnTasks();
     }
 
     /**
@@ -540,8 +440,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setOnlyOwnTasks(boolean onlyOwnTasks) {
-        this.onlyOwnTasks = onlyOwnTasks;
-        ServiceManager.getTaskService().setOnlyOwnTasks(this.onlyOwnTasks);
+        ((LazyTaskDTOModel)this.lazyDTOModel).setOnlyOwnTasks(onlyOwnTasks);
     }
 
     /**
@@ -550,7 +449,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return boolean
      */
     public boolean isShowAutomaticTasks() {
-        return this.showAutomaticTasks;
+        return ((LazyTaskDTOModel)this.lazyDTOModel).isShowAutomaticTasks();
     }
 
     /**
@@ -578,8 +477,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        this.showAutomaticTasks = showAutomaticTasks;
-        ServiceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
+        ((LazyTaskDTOModel)this.lazyDTOModel).setShowAutomaticTasks(showAutomaticTasks);
     }
 
     /**
@@ -588,7 +486,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return boolean
      */
     public boolean isHideCorrectionTasks() {
-        return hideCorrectionTasks;
+        return ((LazyTaskDTOModel)this.lazyDTOModel).isHideCorrectionTasks();
     }
 
     /**
@@ -598,8 +496,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        this.hideCorrectionTasks = hideCorrectionTasks;
-        ServiceManager.getTaskService().setHideCorrectionTasks(this.hideCorrectionTasks);
+        ((LazyTaskDTOModel)this.lazyDTOModel).setHideCorrectionTasks(hideCorrectionTasks);
     }
 
     /**

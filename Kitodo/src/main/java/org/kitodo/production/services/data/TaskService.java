@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -78,10 +79,6 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private static volatile TaskService instance = null;
-    private boolean onlyOwnTasks = false;
-    private TaskStatus taskStatusRestriction = null;
-    private boolean showAutomaticTasks = false;
-    private boolean hideCorrectionTasks = false;
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -116,7 +113,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery(String filter) {
+    private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
+                                                 boolean showAutomaticTasks, TaskStatus taskStatusRestriction) {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
@@ -127,9 +125,9 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
         query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
 
-        if (TaskStatus.OPEN.equals(this.taskStatusRestriction)) {
+        if (TaskStatus.OPEN.equals(taskStatusRestriction)) {
             query.must(getQueryForProcessingStatus(TaskStatus.OPEN.getValue()));
-        } else if (TaskStatus.INWORK.equals(this.taskStatusRestriction)) {
+        } else if (TaskStatus.INWORK.equals(taskStatusRestriction)) {
             query.must(getQueryForProcessingStatus(TaskStatus.INWORK.getValue()));
         } else {
             Set<Integer> processingStatuses = new HashSet<>();
@@ -172,7 +170,14 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters)));
+        return countResults(new HashMap<String, String>(filters), false, false, false, null);
+    }
+
+    public Long countResults(HashMap<String, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
+                             boolean showAutomaticTasks, TaskStatus taskStatus)
+            throws DataException {
+        return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters),
+                onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus));
     }
 
     @Override
@@ -188,8 +193,33 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
+        return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false, null);
+    }
+
+    /**
+     * Load tasks with given parameters.
+     * @param first index of first task to load
+     * @param pageSize number of tasks to load
+     * @param sortField name of field by which tasks are sorted
+     * @param sortOrder SortOrder by which tasks are sorted - either ascending or descending
+     * @param filters filter map
+     * @param onlyOwnTasks boolean controlling whether to load only tasks assigned to current user or not
+     * @param hideCorrectionTasks boolean controlling whether to load correction tasks or not
+     * @param showAutomaticTasks boolean controlling whether to load automatic tasks or not
+     * @param taskStatus TaskStatus by which tasks are filtered
+     * @return List of loaded tasks
+     * @throws DataException if tasks cannot be loaded from search index
+     */
+    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters,
+                                  boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
+                                  TaskStatus taskStatus)
+            throws DataException {
+        if ("process.creationDate".equals(sortField)) {
+            sortField = "processForTask.creationDate";
+        }
         String filter = ServiceManager.getFilterService().parseFilterString(filters);
-        return findByQuery(createUserTaskQuery(filter), getSortBuilder(sortField, sortOrder), first, pageSize, false);
+        return findByQuery(createUserTaskQuery(filter, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks,
+                taskStatus), getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
     /**
@@ -562,40 +592,6 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      */
     public void executeDmsExport(Task task) throws DataException, IOException, DAOException {
         new ExportDms().startExport(task);
-    }
-
-    public void setTaskStatusRestriction(TaskStatus taskStatus) {
-        this.taskStatusRestriction = taskStatus;
-    }
-
-    /**
-     * Set shown only tasks owned by currently logged user.
-     *
-     * @param onlyOwnTasks
-     *            as boolean
-     */
-    public void setOnlyOwnTasks(boolean onlyOwnTasks) {
-        this.onlyOwnTasks = onlyOwnTasks;
-    }
-
-    /**
-     * Set hide correction tasks.
-     *
-     * @param hideCorrectionTasks
-     *            as boolean
-     */
-    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        this.hideCorrectionTasks = hideCorrectionTasks;
-    }
-
-    /**
-     * Set show automatic tasks.
-     *
-     * @param showAutomaticTasks
-     *            as boolean
-     */
-    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        this.showAutomaticTasks = showAutomaticTasks;
     }
 
     /**

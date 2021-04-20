@@ -253,36 +253,42 @@
                     at="left top">
                 <p:menuitem id="showAutomaticTasks"
                             value="#{msgs.showAutomaticTasks}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             rendered="#{CurrentTaskForm.showAutomaticTasks eq false}"
                             update="tasksTabView:tasksForm:taskTable filterMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.showAutomaticTasks}" value="#{true}"/>
                 </p:menuitem>
                 <p:menuitem id="hideAutomaticTasks"
                             value="#{msgs.hideAutomaticTasks}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             rendered="#{CurrentTaskForm.showAutomaticTasks eq true}"
                             update="tasksTabView:tasksForm:taskTable filterMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.showAutomaticTasks}" value="#{false}"/>
                 </p:menuitem>
                 <p:menuitem id="showCorrectionTasks"
                             value="#{msgs.showCorrectionTasks}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             rendered="#{CurrentTaskForm.hideCorrectionTasks eq true}"
                             update="tasksTabView:tasksForm:taskTable filterMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.hideCorrectionTasks}" value="#{false}"/>
                 </p:menuitem>
                 <p:menuitem id="hideCorrectionTasks"
                             value="#{msgs.hideCorrectionTasks}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             rendered="#{CurrentTaskForm.hideCorrectionTasks eq false}"
                             update="tasksTabView:tasksForm:taskTable filterMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.hideCorrectionTasks}" value="#{true}"/>
                 </p:menuitem>
                 <p:menuitem id="retrictToOwnTasks"
                             value="#{msgs.showOnlyOwnTasks}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             rendered="#{CurrentTaskForm.onlyOwnTasks eq false}"
                             update="tasksTabView:tasksForm:taskTable filterMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOwnTasks}" value="#{true}"/>
                 </p:menuitem>
                 <p:menuitem id="removeRestrictionToOwnTasks"
                             value="#{msgs.removeRestrictionToOwnTasks}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             rendered="#{CurrentTaskForm.onlyOwnTasks eq true}"
                             update="tasksTabView:tasksForm:taskTable filterMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.onlyOwnTasks}" value="#{false}"/>
@@ -305,6 +311,7 @@
                 <!--@elvariable id="OPEN" type="org.kitodo.data.database.enums.TaskStatus"-->
                 <p:menuitem id="restrictToOpenTasks"
                             value="#{msgs.showOnlyOpenTasks}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             disabled="#{CurrentTaskForm.taskStatusRestriction eq 'OPEN'}"
                             update="tasksTabView:tasksForm:taskTable statusMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.taskStatusRestriction}" value="OPEN"/>
@@ -312,12 +319,14 @@
                 <!--@elvariable id="INWORK" type="org.kitodo.data.database.enums.TaskStatus"-->
                 <p:menuitem id="restrictToTasksInWork"
                             value="#{msgs.showOnlyTasksInWork}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             disabled="#{CurrentTaskForm.taskStatusRestriction eq 'INWORK'}"
                             update="tasksTabView:tasksForm:taskTable statusMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.taskStatusRestriction}" value="INWORK"/>
                 </p:menuitem>
                 <p:menuitem id="removeRestriction"
                             value="#{msgs.removeTaskStatusRestriction}"
+                            onstart="PF('taskTable').getPaginator().setPage(0);"
                             disabled="#{CurrentTaskForm.taskStatusRestriction eq null}"
                             update="tasksTabView:tasksForm:taskTable statusMenu">
                     <f:setPropertyActionListener target="#{CurrentTaskForm.taskStatusRestriction}" value="#{null}"/>

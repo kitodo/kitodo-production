@@ -51,7 +51,6 @@ import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
@@ -70,7 +69,6 @@ public class ProcessForm extends TemplateBaseForm {
     private String kitodoScriptSelection;
     private String kitodoScriptAll;
     private String newProcessTitle;
-    private boolean showInactiveProjects = false;
     private List<Property> properties;
     private List<Property> templates;
     private List<Property> workpieces;
@@ -95,7 +93,6 @@ public class ProcessForm extends TemplateBaseForm {
     public ProcessForm() {
         super();
         ProcessService.emptyCache();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProcessService()));
     }
 
     /**
@@ -742,28 +739,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Set whether inactive projects should be displayed or not.
-     *
-     * @param showInactiveProjects
-     *            boolean flag signaling whether inactive projects should be
-     *            displayed or not
-     */
-    public void setShowInactiveProjects(boolean showInactiveProjects) {
-        this.showInactiveProjects = showInactiveProjects;
-        ServiceManager.getProcessService().setShowInactiveProjects(showInactiveProjects);
-    }
-
-    /**
-     * Return whether inactive projects should be displayed or not.
-     *
-     * @return parameter controlling whether inactive projects should be displayed
-     *         or not
-     */
-    public boolean isShowInactiveProjects() {
-        return this.showInactiveProjects;
-    }
-
-    /**
      * Get property for process.
      *
      * @return property for process
@@ -1196,5 +1171,4 @@ public class ProcessForm extends TemplateBaseForm {
     public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO) {
         return ServiceManager.getProcessService().getCurrentTasksForUser(processDTO, ServiceManager.getUserService().getCurrentUser());
     }
-
 }
