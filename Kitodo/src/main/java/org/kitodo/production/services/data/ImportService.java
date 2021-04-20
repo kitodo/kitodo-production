@@ -232,6 +232,20 @@ public class ImportService {
     }
 
     /**
+     * Get first default search field for catalog 'opac'.
+     *
+     * @param opac catalog name
+     * @return name of default search field
+     */
+    public String getDefaultSearchField(String opac) {
+        if (SearchInterfaceType.FTP.equals(OPACConfig.getInterfaceType(opac))) {
+            return Helper.getTranslation("filename");
+        } else {
+            return OPACConfig.getDefaultSearchField(opac);
+        }
+    }
+
+    /**
      * Load catalog names from library catalog configuration file and return them as a list of Strings.
      *
      * @return list of catalog names
@@ -243,6 +257,15 @@ public class ImportService {
             logger.error(e.getLocalizedMessage());
             throw new IllegalArgumentException("Error: no supported OPACs found in configuration file!");
         }
+    }
+
+    /**
+     * Get first default catalog configured in 'kitodo_opac.xml'.
+     *
+     * @return name of first default catalog or empty String no default catalog is configured.
+     */
+    public String getDefaultCatalog() {
+        return OPACConfig.getDefaultCatalog();
     }
 
     private LinkedList<ExemplarRecord> extractExemplarRecords(DataRecord record, String opac) throws XPathExpressionException,

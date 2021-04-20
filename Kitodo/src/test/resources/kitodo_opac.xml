@@ -66,6 +66,7 @@
             <param name="recordSchema" value="mods" />
         </urlParameters>
         <searchFields>
+            <searchField label="PPN" value="pica.ppn" default="true"/>
             <searchField label="Titel" value="pica.tit"/>
             <searchField label="Author" value="pica.per"/>
             <searchField label="ISSN" value="pica.iss"/>
@@ -105,7 +106,7 @@
             <searchField label="Keyword" value="ead.keyword" />
         </searchFields>
     </catalogue>
-    <catalogue title="K10Plus" description="K10Plus OPAC">
+    <catalogue title="K10Plus" description="K10Plus OPAC" default="true">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <fileUpload>false</fileUpload>

@@ -46,20 +46,21 @@ public class Browser {
     private static Actions actions;
     private static final String GECKO_DRIVER_VERSION = "0.19.1";
     private static boolean onTravis = false;
-    private static BrowserType browserType = BrowserType.CHROME;
+    private static final BrowserType browserType = BrowserType.CHROME;
     private static final String USER_DIR = System.getProperty("user.dir");
     public static final String DOWNLOAD_DIR = USER_DIR + "/target/downloads/";
     private static final String DRIVER_DIR = USER_DIR + "/target/extracts/";
 
-    private static int delayIndexing = 3000;
-    private static int delayAfterLogin = 2000;
-    private static int delayAfterLogout = 3000;
-    private static int delayMinAfterLinkClick = 500;
-    private static int delayMaxAfterLinkClick = 1500;
-    private static int delayAfterHoverMenu = 500;
-    private static int delayAfterNewItemClick = 500;
-    private static int delayAfterPickListClick = 1500;
-    private static int delayAfterDelete = 7000;
+    private static final int delayIndexing = 3000;
+    private static final int delayAfterLogin = 2000;
+    private static final int delayAfterLogout = 3000;
+    private static final int delayMinAfterLinkClick = 500;
+    private static final int delayMaxAfterLinkClick = 1500;
+    private static final int delayAfterHoverMenu = 500;
+    private static final int delayAfterNewItemClick = 500;
+    private static final int delayAfterPickListClick = 1500;
+    private static final int delayAfterDelete = 7000;
+    private static final int delayAfterCatalogSelection = 500;
 
     /**
      * Provides the web driver, sets timeout and window size.
@@ -319,6 +320,15 @@ public class Browser {
      */
     public static int getDelayAfterDelete() {
         return delayAfterDelete;
+    }
+
+    /**
+     * Get delayAfterCatalogSelection.
+     *
+     * @return value of delayAfterCatalogSelection
+     */
+    public static int getDelayAfterCatalogSelection() {
+        return delayAfterCatalogSelection;
     }
 
     /**

@@ -25,6 +25,7 @@ import org.openqa.selenium.support.FindBy;
 public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     private static final String TAB_VIEW = EDIT_FORM + ":processFromTemplateTabView";
+    private static final String OPAC_SEARCH_FORM = "catalogSearchForm";
     private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
@@ -64,7 +65,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement ppnDigitalInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":catalogueSelectMenu")
+    @FindBy(id = OPAC_SEARCH_FORM + ":catalogueSelectMenu")
     private WebElement catalogSelect;
 
     @SuppressWarnings("unused")
@@ -72,7 +73,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement chooseParentSelect;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":fieldSelectMenu")
+    @FindBy(id = OPAC_SEARCH_FORM + ":fieldSelectMenu")
     private WebElement fieldSelect;
 
     @SuppressWarnings("unused")
@@ -84,7 +85,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement searchParentButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":searchTerm")
+    @FindBy(id = OPAC_SEARCH_FORM + ":searchTerm")
     private WebElement searchTermInput;
 
     @SuppressWarnings("unused")
@@ -109,6 +110,24 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     @Override
     public ProcessFromTemplatePage goTo() {
         return null;
+    }
+
+    public WebElement getCatalogMenu() {
+        return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":catalogueSelectMenu_input");
+    }
+
+    public WebElement getSearchFieldMenu() {
+        return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":fieldSelectMenu_input");
+    }
+
+    /**
+     * Select GBV catalog.
+     * @throws InterruptedException when thread is interrupted
+     */
+    public void selectGBV() throws InterruptedException {
+        clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_1")));
+        Thread.sleep(Browser.getDelayAfterCatalogSelection());
     }
 
     public String createProcess() throws Exception {
