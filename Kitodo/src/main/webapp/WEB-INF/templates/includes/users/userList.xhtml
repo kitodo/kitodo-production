@@ -16,7 +16,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
-    
+
     <p:dialog widgetVar="confirmResetTasksDialog"
               id="confirmResetTasksDialog"
               global="true"
@@ -69,6 +69,7 @@
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
+                 rowStyleClass="#{item.active ? '' : 'deactivated'}"
                  sortBy="#{item.surname}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
@@ -103,8 +104,8 @@
             <h:outputText value="#{UserForm.getProjectTitles(item.projects)}"
                           title="#{UserForm.getProjectTitles(item.projects)}"/>
         </p:column>
-        <p:column headerText="#{msgs.active}"
-                  rendered="#{UserForm.showColumn('user.active')}"
+        <p:column headerText="#{msgs.loggedIn}"
+                  rendered="#{UserForm.showColumn('user.loggedIn')}"
                   styleClass="checkboxColumn">
             <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
                 <h:outputText title="#{msgs.active}">
