@@ -12,12 +12,15 @@
 package org.kitodo.production.helper.tasks;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -33,9 +36,14 @@ import java.util.List;
 public class HierarchyMigrationTaskIT {
 
     private static Project project;
+    private static final File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
 
@@ -48,6 +56,10 @@ public class HierarchyMigrationTaskIT {
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
+
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         cleanUp();
