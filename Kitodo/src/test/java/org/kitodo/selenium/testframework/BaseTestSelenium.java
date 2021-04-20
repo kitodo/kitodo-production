@@ -42,7 +42,6 @@ public class BaseTestSelenium {
 
         FileLoader.createDiagramTestFile();
         FileLoader.createConfigProjectsFile();
-        FileLoader.createDigitalCollectionsFile();
 
         if (SystemUtils.IS_OS_LINUX) {
             File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
@@ -69,7 +68,6 @@ public class BaseTestSelenium {
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
         }
 
-        FileLoader.deleteDigitalCollectionsFile();
         FileLoader.deleteConfigProjectsFile();
         FileLoader.deleteDiagramTestFile();
 

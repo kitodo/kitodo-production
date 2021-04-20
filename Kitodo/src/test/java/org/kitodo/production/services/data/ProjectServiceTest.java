@@ -25,18 +25,6 @@ import org.kitodo.production.services.ServiceManager;
 
 public class ProjectServiceTest {
 
-    private static String absolutePath = KitodoConfigFile.DIGITAL_COLLECTIONS.getAbsolutePath();
-
-    @BeforeClass
-    public static void setUp() throws Exception {
-        Files.createFile(Paths.get(absolutePath));
-    }
-
-    @AfterClass
-    public static void tearDown() throws IOException {
-        Files.deleteIfExists(Paths.get(absolutePath));
-    }
-
     @Test
     public void testProjectForCompletness() throws IOException {
         ProjectService projectService = ServiceManager.getProjectService();

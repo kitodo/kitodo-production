@@ -247,10 +247,8 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      */
     public boolean isProjectComplete(Project project) {
         boolean projectsXmlExists = KitodoConfigFile.PROJECT_CONFIGURATION.exists();
-        boolean digitalCollectionsXmlExists = KitodoConfigFile.DIGITAL_COLLECTIONS.exists();
 
-        return Objects.nonNull(project.getTitle())
-                && digitalCollectionsXmlExists && projectsXmlExists;
+        return Objects.nonNull(project.getTitle()) && projectsXmlExists;
     }
 
     /**

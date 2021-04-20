@@ -207,12 +207,4 @@ public class XMLEditor implements Serializable {
         loadXMLConfiguration(KitodoConfigFile.PROJECT_CONFIGURATION.getName());
     }
 
-    /**
-     * Load the digital collections XML configuration file and display its content
-     * in the editor.
-     */
-    public void loadDigitalCollectionsConfiguration() {
-        loadXMLConfiguration(KitodoConfigFile.DIGITAL_COLLECTIONS.getName());
-    }
-
 }
