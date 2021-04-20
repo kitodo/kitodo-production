@@ -1015,6 +1015,13 @@ tr.ui-widget-content,
     color: var(--carbon-blue);
 }
 
+.ui-paginator .ui-paginator-jtp-input {
+    background-color: white;
+    color: var(--carbon-blue);
+    text-align: center;
+    width: 65px;
+}
+
 @keyframes row-expansion-animation {
     from {
         opacity: 0;

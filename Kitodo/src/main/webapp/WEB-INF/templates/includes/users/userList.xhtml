@@ -72,7 +72,7 @@
                  rowStyleClass="#{item.active ? '' : 'deactivated'}"
                  sortBy="#{item.surname}"
                  rows="#{LoginForm.loggedUser.tableSize}"
-                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
