@@ -34,6 +34,16 @@
         <p:column headerText="#{msgs.status}">
             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
         </p:column>
+
+        <p:column styleClass="correction-column"
+                  width="85"
+                  headerText="#{msgs.correction}">
+            <h:outputText value="#{msgs.correctionK}"
+                          title="#{DesktopForm.getCorrectionMessages(process)}"
+                          styleClass="correction-marker #{DesktopForm.hasCorrectionTask(process.id) eq 1 ? 'corrected' : ''}"
+                          rendered="#{DesktopForm.hasCorrectionTask(process.id) gt 0}"/>
+        </p:column>
+
         <p:column headerText="#{msgs.project}">
             <h:outputText title="#{process.project.title}"
                           value="#{process.project.title}"/>
