@@ -582,7 +582,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      *
      * @return value of selectedMedia
      */
-    List<Pair<MediaUnit, IncludedStructuralElement>> getSelectedMedia() {
+    public List<Pair<MediaUnit, IncludedStructuralElement>> getSelectedMedia() {
         return selectedMedia;
     }
 

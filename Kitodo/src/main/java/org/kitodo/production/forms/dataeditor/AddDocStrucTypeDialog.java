@@ -91,6 +91,7 @@ public class AddDocStrucTypeDialog {
     private boolean linkSubDialogVisible = false;
     private static final String PREVIEW_MODE = "preview";
     private static final String LIST_MODE = "list";
+    private TreeNode previouslySelectedLogicalNode;
 
     /**
      * Backing bean for the add doc struc type dialog of the metadata editor.
@@ -408,6 +409,7 @@ public class AddDocStrucTypeDialog {
      */
     public void prepare() {
         elementsToAddSpinnerValue = 1;
+        checkSelectedLogicalNode();
         Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(),
@@ -420,6 +422,20 @@ public class AddDocStrucTypeDialog {
         }
         this.prepareDocStructTypes();
         prepareSelectPageOnAddNodeItems();
+    }
+
+    private void checkSelectedLogicalNode() {
+        //If a view is selected in logical tree then the 'selectedLogicalNode' will be set to the parent of this view
+        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                if (Objects.nonNull(selectedLogicalNode.getParent())) {
+                    previouslySelectedLogicalNode = selectedLogicalNode;
+                    dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalNode.getParent());
+                }
+            }
+        }
     }
 
     /**
@@ -647,6 +663,10 @@ public class AddDocStrucTypeDialog {
         selectFirstPageOnAddNodeSelectedItem = null;
         selectLastPageOnAddNodeSelectedItem = null;
         docStructPositionSelectionSelectedItem = LAST_CHILD_OF_CURRENT_ELEMENT;
+        if (Objects.nonNull(previouslySelectedLogicalNode)) {
+            dataEditor.getStructurePanel().setSelectedLogicalNode(previouslySelectedLogicalNode);
+            previouslySelectedLogicalNode = null;
+        }
     }
 
     /**

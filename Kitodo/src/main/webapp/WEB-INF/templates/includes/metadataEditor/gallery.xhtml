@@ -35,8 +35,10 @@
                                      imagePreviewForm:mediaViewData
                                      logicalTree
                                      physicalTree
-                                     metadataAccordion:logicalMetadataWrapperPanel
-                                     paginationForm:paginationWrapperPanel"/>
+                                     paginationForm:paginationWrapperPanel
+                                     imagePreviewForm:stripeContextMenu
+                                     imagePreviewForm:mediaContextMenu
+                                     metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
                              update="imagePreviewForm galleryHeadingWrapper"
@@ -357,8 +359,34 @@
                             oncomplete="PF('dialogAddDocStrucType').show()"
                             update="dialogAddDocStrucTypeDialog">
                     <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
-                    <f:actionListener binding="#{DataEditorForm.structurePanel.setSelectedLogicalNode(DataEditorForm.structurePanel.logicalTree.children.get(DataEditorForm.structurePanel.logicalTree.childCount - 1))}"/>
                 </p:menuitem>
+                <p:menuitem value="#{msgs.assignToNextElement}"
+                            icon="fa fa-link fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and
+                            DataEditorForm.selectedMedia.size() eq 1}"
+                            action="#{DataEditorForm.structurePanel.assign}"
+                            process="@this"
+                            oncomplete="$('#loadingScreen').hide()"
+                            update="logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                @(.structureElementDataList)
+                                imagePreviewForm:mediaContextMenu"/>
+                <p:menuitem value="#{msgs.unassign}"
+                            icon="fa fa-chain-broken fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() == 1}"
+                            action="#{DataEditorForm.structurePanel.unassign}"
+                            process="@this"
+                            oncomplete="$('#loadingScreen').hide()"
+                            update="logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                @(.structureElementDataList)
+                                imagePreviewForm:mediaContextMenu"/>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
                            widgetVar="stripeContextMenu"
@@ -371,6 +399,14 @@
                             actionListener="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
                             oncomplete="PF('dialogAddDocStrucType').show()"
                             update="dialogAddDocStrucTypeDialog"/>
+                <p:menuitem value="#{msgs.changeDocstructType}"
+                            icon="fa fa-pencil fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            actionListener="#{DataEditorForm.changeDocStrucTypeDialog.prepare}"
+                            process="@this"
+                            oncomplete="PF('dialogEditDocStrucType').show()"
+                            update="dialogEditDocStrucTypeDialog"/>
                 <p:menuitem value="#{msgs.removeElement}"
                             icon="fa fa-trash fa-sm"
                             styleClass="plain"

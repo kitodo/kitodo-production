@@ -13,6 +13,7 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
@@ -37,6 +38,8 @@
                             contextMenuLogicalTree
                             physicalTree
                             paginationForm:paginationWrapperPanel
+                            imagePreviewForm:stripeContextMenu
+                            imagePreviewForm:mediaContextMenu
                             metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
@@ -54,7 +57,8 @@
                     update="logicalTree
                             contextMenuLogicalTree
                             metadataAccordion:logicalMetadataWrapperPanel
-                            @(.pageList)"/>
+                            @(.pageList)
+                            imagePreviewForm:mediaContextMenu"/>
             <p:ajax event="collapse"
                     listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
             <p:ajax event="expand"
@@ -73,7 +77,7 @@
             </p:treeNode>
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
-            <p:menuitem value="#{msgs.addElement}"
+            <p:menuitem value="#{msgs.addElement} #{DataEditorForm.selectedMedia.size() ge 1 ? msgs.assignMedia : ''}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -81,7 +85,9 @@
                         actionListener="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
                         process="@this"
                         oncomplete="PF('dialogAddDocStrucType').show()"
-                        update="dialogAddDocStrucTypeDialog"/>
+                        update="dialogAddDocStrucTypeDialog">
+                <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
+            </p:menuitem>
             <p:menuitem value="#{msgs.changeDocstructType}"
                         rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
                         icon="fa fa-pencil fa-sm"
@@ -102,7 +108,8 @@
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
-                                @(.structureElementDataList)"/>
+                                @(.structureElementDataList)
+                                imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.unassign}"
                         icon="fa fa-chain-broken fa-sm"
                         styleClass="plain"
@@ -114,7 +121,8 @@
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
-                                @(.structureElementDataList)"/>
+                                @(.structureElementDataList)
+                                imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.removeElement}"
                         rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
                         icon="fa fa-trash fa-sm"
