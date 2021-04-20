@@ -18,12 +18,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.UnmodifiableList;
 import org.apache.commons.lang3.tuple.Pair;
@@ -168,13 +165,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     private void createMetadataTable() {
         // the existing metadata is passed to the rule set, which sorts it
-        Map<Metadata, String> metadataWithKeys = Metadata.mapToKey(addLabels(metadata));
-        List<MetadataViewWithValuesInterface<Metadata>> tableData = metadataView
-                .getSortedVisibleMetadata(metadataWithKeys, additionallySelectedFields);
+        List<MetadataViewWithValuesInterface> tableData = metadataView
+                .getSortedVisibleMetadata(addLabels(metadata), additionallySelectedFields);
 
         treeNode.getChildren().clear();
         hiddenMetadata = Collections.emptyList();
-        for (MetadataViewWithValuesInterface<Metadata> rowData : tableData) {
+        for (MetadataViewWithValuesInterface rowData : tableData) {
             Optional<MetadataViewInterface> optionalMetadataView = rowData.getMetadata();
             Collection<Metadata> values = rowData.getValues();
             if (optionalMetadataView.isPresent()) {

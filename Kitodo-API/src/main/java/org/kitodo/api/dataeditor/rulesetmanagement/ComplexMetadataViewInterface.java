@@ -13,7 +13,8 @@ package org.kitodo.api.dataeditor.rulesetmanagement;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
+import org.kitodo.api.Metadata;
 
 /**
  * Provides an interface for the complex-type view service. The complex-type
@@ -32,7 +33,7 @@ public interface ComplexMetadataViewInterface extends MetadataViewInterface {
      *            metadata keys that the user has already selected
      * @return the metadata keys that the user can add
      */
-    Collection<MetadataViewInterface> getAddableMetadata(Map<?, String> entered,
+    Collection<MetadataViewInterface> getAddableMetadata(Collection<Metadata> entered,
             Collection<String> additionallySelected);
 
     /**
@@ -50,8 +51,6 @@ public interface ComplexMetadataViewInterface extends MetadataViewInterface {
      * keys that the user has already manually added. The list is created and
      * then sorted according to the given sorting rules.
      *
-     * @param <T>
-     *            the type of metadata objects
      * @param entered
      *            metadata objects that have already been entered, along with
      *            their key
@@ -61,7 +60,7 @@ public interface ComplexMetadataViewInterface extends MetadataViewInterface {
      *         already filled with values, the values are returned here. If a
      *         key is a multiple-selection, values are grouped below it.
      */
-    <T> List<MetadataViewWithValuesInterface<T>> getSortedVisibleMetadata(Map<T, String> entered,
+    List<MetadataViewWithValuesInterface> getSortedVisibleMetadata(Collection<Metadata> entered,
             Collection<String> additionallySelected);
 
     /**

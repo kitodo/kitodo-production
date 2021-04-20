@@ -14,6 +14,8 @@ package org.kitodo.api.dataeditor.rulesetmanagement;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.kitodo.api.Metadata;
+
 /**
  * Return value of the function
  * {@code ComplexMetadataViewInterface.getSortedVisibleMetadatas()}. The
@@ -26,11 +28,8 @@ import java.util.Optional;
  * is {@code List<Pair<MetadataViewInterface, Collection<T>>>}. Since the key
  * must be repeatable if there is more than one value but the key is not a
  * multiple choice, a map would be an inappropriate choice at this point.
- *
- * @param <T>
- *            type of data objects
  */
-public interface MetadataViewWithValuesInterface<T> {
+public interface MetadataViewWithValuesInterface {
     /**
      * Returns the key to be displayed at this point. The interface can return
      * entries where the key is {@code null} with values if there were values
@@ -48,5 +47,5 @@ public interface MetadataViewWithValuesInterface<T> {
      *
      * @return the values for the key
      */
-    Collection<T> getValues();
+    Collection<Metadata> getValues();
 }
