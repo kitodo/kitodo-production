@@ -40,7 +40,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -250,7 +249,7 @@ public class HierarchyMigrationTask extends EmptyTask {
     private void checkTaskAndId(Process parentProcess) throws IOException {
         URI parentMetadataFilePath = fileService.getMetadataFilePath(parentProcess, true, true);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
-        ImportService.checkTasks(parentProcess, workpiece.getRootElement().getType());
+        ProcessService.checkTasks(parentProcess, workpiece.getRootElement().getType());
         Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
         String shortedTitle = "";
         String catalogIdentifier = "";

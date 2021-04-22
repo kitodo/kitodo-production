@@ -1119,23 +1119,8 @@ public class ImportService {
         createProcessTitle(tempProcess, managementInterface, acquisitionStage, priorityList, processDetails);
         Process process = tempProcess.getProcess();
         addProperties(tempProcess.getProcess(), template, processDetails, docType, tempProcess.getProcess().getTitle());
-        checkTasks(process, docType);
+        ProcessService.checkTasks(process, docType);
         updateTasks(process);
-    }
-
-    /**
-     * Checks if an imported Process should be created with Tasks and removes them if not,
-     * depending on the configuration of the doctype.
-     * @param process the process to check.
-     * @param docType the doctype to check in the ruleset.
-     */
-    public static void checkTasks(Process process, String docType) throws IOException {
-        // remove tasks from process, if doctype is configured not to use a workflow
-        Collection<String> divisionsWithNoWorkflow = ServiceManager.getRulesetService()
-                .openRuleset(process.getRuleset()).getDivisionsWithNoWorkflow();
-        if (divisionsWithNoWorkflow.contains(docType)) {
-            process.getTasks().clear();
-        }
     }
 
     /**
