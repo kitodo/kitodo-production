@@ -11,6 +11,14 @@
 
 package org.kitodo.production.helper.tasks;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
@@ -27,11 +35,8 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.services.ServiceManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class HierarchyMigrationTaskIT {
 
@@ -66,11 +71,17 @@ public class HierarchyMigrationTaskIT {
     }
 
     @Test
-    public void testHierarchyMigration() throws DAOException, ProcessGenerationException, CommandException, DataException, IOException {
+    public void testHierarchyMigration() throws DAOException, ProcessGenerationException, CommandException,
+            DataException, IOException, SAXException, ParserConfigurationException {
         HierarchyMigrationTask hierarchyMigrationTask = new HierarchyMigrationTask(Arrays.asList(project));
         hierarchyMigrationTask.migrate(ServiceManager.getProcessService().getById(2));
-        Assert.assertTrue("Tasks should have been removed", ServiceManager.getProcessService().getById(4).getTasks().isEmpty());
+        Assert.assertTrue("Tasks should have been removed",
+            ServiceManager.getProcessService().getById(4).getTasks().isEmpty());
         Assert.assertEquals("JahrdeDeG_404810993", ServiceManager.getProcessService().getById(4).getTitle());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                .parse(new File("src/test/resources/metadata/4/meta.xml"));
+        String documentId = document.getElementsByTagName("mets:metsDocumentID").item(0).getTextContent();
+        Assert.assertEquals("DocumentId not set", "4", documentId);
     }
 
     private static void createTestMetaAnchorfile() throws Exception {
