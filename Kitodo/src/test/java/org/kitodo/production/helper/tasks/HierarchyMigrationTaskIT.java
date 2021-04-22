@@ -14,6 +14,7 @@ package org.kitodo.production.helper.tasks;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -82,7 +83,7 @@ public class HierarchyMigrationTaskIT {
     @Test
     public void testHierarchyMigration() throws DAOException, ProcessGenerationException, CommandException,
             DataException, IOException, SAXException, ParserConfigurationException {
-        HierarchyMigrationTask hierarchyMigrationTask = new HierarchyMigrationTask(Arrays.asList(project));
+        HierarchyMigrationTask hierarchyMigrationTask = new HierarchyMigrationTask(Collections.singletonList(project));
         hierarchyMigrationTask.migrate(ServiceManager.getProcessService().getById(2));
         Assert.assertTrue("Tasks should have been removed",
             ServiceManager.getProcessService().getById(4).getTasks().isEmpty());
@@ -94,7 +95,7 @@ public class HierarchyMigrationTaskIT {
     }
 
     private static void createTestMetaAnchorfile() throws Exception {
-        List<String> lines = Arrays.asList("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+        List<String> lines = Collections.singletonList("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 + "<mets:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:kitodo=\"http://meta.kitodo.org/v1/\" xmlns:mets=\"http://www.loc.gov/METS/\">\n"
                 + "    <mets:metsHdr CREATEDATE=\"2019-09-11T05:02:04\">\n"
                 + "        <mets:agent ROLE=\"CREATOR\" TYPE=\"OTHER\" OTHERTYPE=\"SOFTWARE\">\n"
@@ -121,7 +122,7 @@ public class HierarchyMigrationTaskIT {
     }
 
     private static void createTestMetafile() throws Exception {
-        List<String> lines = Arrays.asList("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+        List<String> lines = Collections.singletonList("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 + "<mets:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:kitodo=\"http://meta.kitodo.org/v1/\" xmlns:mets=\"http://www.loc.gov/METS/\">\n"
                 + "    <mets:metsHdr CREATEDATE=\"2019-09-11T05:02:04\">\n"
                 + "        <mets:agent ROLE=\"CREATOR\" TYPE=\"OTHER\" OTHERTYPE=\"SOFTWARE\">\n"
