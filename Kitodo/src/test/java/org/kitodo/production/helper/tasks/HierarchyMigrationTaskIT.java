@@ -100,16 +100,7 @@ public class HierarchyMigrationTaskIT {
                 "            <mets:xmlData>\n" +
                 "                <kitodo:kitodo version=\"1.0\">\n" +
                 "                    <kitodo:metadata name=\"CatalogIDDigital\">404810993</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"CatalogIDSource\">040091791</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"PublicationRun\">1.1889/90 - 12.1900/01; mehr nicht digitalisiert</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"singleDigCollection\">LDP: SLUB</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"singleDigCollection\">Saxonica</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"singleDigCollection\">Vergriffene Werke</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"TSL_ATS\">JahrdeDeG</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"CatalogIDPeriodicalDB\">2768676-0</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">Jahresbericht der Deutschen Gerberschule zu Freiberg in Sachsen</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"TitleDocMainShort\">Jahresbericht der Deutschen Gerberschule zu Freiberg in Sachsen</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"DocLanguage\">ger</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"PlaceOfPublication\">Freiberg</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"slub_Finance\">LDP Sachsen</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"docType\">MultiVolumeWork</kitodo:metadata>\n" +
@@ -148,95 +139,9 @@ public class HierarchyMigrationTaskIT {
                 "                    <kitodo:metadata name=\"CatalogIDDigitalAnchor\">404810993</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"CurrentNo\">25.1913/14</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"CurrentNoSorting\">19130000</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"PublicationYear\">1914</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"LegalNoteAndTermsOfUse\">VW1.0</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"singleDigCollection\">LDP: SLUB</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"singleDigCollection\">Saxonica</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"singleDigCollection\">Vergriffene Werke</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"slub_Finance\">LDP Sachsen</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"shelfmarksource\">Hist.Sax.H.1076.s-25.1913/14</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"slub_script\">Antiqua</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"DocLanguage\">ger</kitodo:metadata>\n" +
                 "                    <kitodo:metadata name=\"docType\">PeriodicalVolume</kitodo:metadata>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDLOG_0002\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">Schulnachrichten</kitodo:metadata>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDLOG_0003\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">A. Geschichtliches</kitodo:metadata>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDLOG_0004\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">B. Unterricht</kitodo:metadata>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDLOG_0005\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">C. Unterstützungen</kitodo:metadata>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDLOG_0006\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">D. Statistisches</kitodo:metadata>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDLOG_0007\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">Schülerverzeichnis des Schuljahres 1913-1914</kitodo:metadata>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDLOG_0008\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"TitleDocMain\">Ergänzungen zu der anläßlich der Feier des 25jähr. Bestehens der Deutschen Gerberschule herausgegebenen Festschrift</kitodo:metadata>\n" +
-                "                    <kitodo:metadata name=\"TitleDocMainShort\">Ergänzungen zu der anläßlich der Feier des 25jähr. Bestehens der Deutschen Gerberschule herausgegebenen Festschrift</kitodo:metadata>\n" +
-                "                    <kitodo:metadataGroup name=\"Person\">\n" +
-                "                        <kitodo:metadata name=\"FirstName\">F. H.</kitodo:metadata>\n" +
-                "                        <kitodo:metadata name=\"LastName\">Haenlein</kitodo:metadata>\n" +
-                "                        <kitodo:metadata name=\"DisplayForm\">Haenlein, F. H.</kitodo:metadata>\n" +
-                "                        <kitodo:metadata name=\"RoleCode\">aut</kitodo:metadata>\n" +
-                "                    </kitodo:metadataGroup>\n" +
-                "                </kitodo:kitodo>\n" +
-                "            </mets:xmlData>\n" +
-                "        </mets:mdWrap>\n" +
-                "    </mets:dmdSec>\n" +
-                "    <mets:dmdSec ID=\"DMDPHYS_0000\">\n" +
-                "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
-                "            <mets:xmlData>\n" +
-                "                <kitodo:kitodo version=\"1.0\">\n" +
-                "                    <kitodo:metadata name=\"pathimagefiles\">file:///home/goobi/work/daten/188237/images/JahrdeDeG_404810993-19130000_tif</kitodo:metadata>\n" +
                 "                </kitodo:kitodo>\n" +
                 "            </mets:xmlData>\n" +
                 "        </mets:mdWrap>\n" +
@@ -264,16 +169,6 @@ public class HierarchyMigrationTaskIT {
                 "            </mets:div>\n" +
                 "        </mets:div>\n" +
                 "    </mets:structMap>\n" +
-                "    <mets:structMap TYPE=\"PHYSICAL\">\n" +
-                "        <mets:div ID=\"PHYS_0000\" DMDID=\"DMDPHYS_0000\" TYPE=\"BoundBook\">\n" +
-                "            <mets:div ID=\"PHYS_0001\" TYPE=\"page\" ORDER=\"1\" ORDERLABEL=\"uncounted\">\n" +
-                "                <mets:fptr FILEID=\"FILE_0001\"/>\n" +
-                "            </mets:div>\n" +
-                "        </mets:div>\n" +
-                "    </mets:structMap>\n" +
-                "    <mets:structLink>\n" +
-                "        <mets:smLink xlink:to=\"PHYS_0001\" xlink:from=\"LOG_0003\"/>\n" +
-                "    </mets:structLink>\n" +
                 "</mets:mets>\n");
         File processHome = new File(ConfigCore.getKitodoDataDirectory(), "2");
         FileUtils.writeLines(new File(processHome, "meta.xml"), "UTF-8", lines);
