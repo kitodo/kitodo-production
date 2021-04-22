@@ -142,6 +142,7 @@
                                    action="#{UserForm.resetTasksToOpen(item)}"
                                    styleClass="#{empty UserForm.getTasksInProgress(item) ? 'action ui-state-disabled' : 'action'}"
                                    disabled="#{empty UserForm.getTasksInProgress(item)}"
+                                   update="@this"
                                    rendered="#{SecurityAccessController.hasAuthorityToUnassignTasks()}">
                         <h:outputText><i class="fa fa-user-times"></i></h:outputText>
                         <p:confirm message=" #{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
