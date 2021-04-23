@@ -61,7 +61,6 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -657,7 +656,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         final long begin = System.nanoTime();
 
         metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
-        ImportService.checkTasks(yearProcess, yearWorkpiece.getRootElement().getType());
+        ProcessService.checkTasks(yearProcess, yearWorkpiece.getRootElement().getType());
         processService.save(yearProcess);
 
         this.yearProcess = null;
@@ -723,7 +722,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         String title = makeTitle(yearTitleDefinition.orElse("+'_'+#YEAR"), genericFields);
         getGeneratedProcess().setTitle(title);
-        ImportService.checkTasks(getGeneratedProcess(), yearType);
+        ProcessService.checkTasks(getGeneratedProcess(), yearType);
         processService.save(getGeneratedProcess());
         processService.refresh(getGeneratedProcess());
 
@@ -788,7 +787,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                 overallProcess.getTitle());
         }
         metsService.saveWorkpiece(overallWorkpiece, overallMetadataFileUri);
-        ImportService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
+        ProcessService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
         processService.save(overallProcess);
 
         if (logger.isTraceEnabled()) {

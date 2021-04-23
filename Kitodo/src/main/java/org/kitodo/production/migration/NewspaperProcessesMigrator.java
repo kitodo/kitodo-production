@@ -44,8 +44,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.dto.BatchDTO;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.tasks.NewspaperMigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -53,7 +51,6 @@ import org.kitodo.production.process.NewspaperProcessesGenerator;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BatchService;
-import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -550,7 +547,7 @@ public class NewspaperProcessesMigrator {
         processGenerator.generateProcess(templateId, projectId);
         overallProcess = processGenerator.getGeneratedProcess();
         overallProcess.setTitle(getTitle());
-        ImportService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
+        ProcessService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
         processService.saveToDatabase(overallProcess);
         ServiceManager.getFileService().createProcessLocation(overallProcess);
         overallWorkpiece.setId(overallProcess.getId().toString());
@@ -586,7 +583,7 @@ public class NewspaperProcessesMigrator {
         processGenerator.generateProcess(templateId, projectId);
         Process yearProcess = processGenerator.getGeneratedProcess();
         yearProcess.setTitle(yearTitle);
-        ImportService.checkTasks(yearProcess, yearToCreate.getValue().getType());
+        ProcessService.checkTasks(yearProcess, yearToCreate.getValue().getType());
         processService.saveToDatabase(yearProcess);
 
         MetadataEditor.addLink(overallWorkpiece.getRootElement(), yearProcess.getId());

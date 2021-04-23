@@ -392,7 +392,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
             this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
         }
-        ImportService.checkTasks(this.getMainProcess(), processDataTab.getDocType());
+        ProcessService.checkTasks(this.getMainProcess(), processDataTab.getDocType());
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved so they have IDs before creating their process directories

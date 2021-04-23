@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
@@ -165,7 +166,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param process
      *            process to migrate
      */
-    private void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
+    void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
         logger.info("Starting to convert process {} (ID {})...", process.getTitle(), process.getId());
         long begin = System.nanoTime();
         migrateMetadataFiles(process);
@@ -227,19 +228,49 @@ public class HierarchyMigrationTask extends EmptyTask {
      *         current number of the child process
      */
     private List<Integer> createParentProcess(Process childProcess)
-            throws ProcessGenerationException, IOException, DataException, CommandException {
+            throws ProcessGenerationException, IOException, DataException, CommandException, DAOException {
 
         processGenerator.generateProcess(childProcess.getTemplate().getId(), childProcess.getProject().getId());
         Process parentProcess = processGenerator.getGeneratedProcess();
         processService.save(parentProcess);
         fileService.createProcessLocation(parentProcess);
         createParentMetsFile(childProcess);
+        checkTaskAndId(parentProcess);
+        processService.save(parentProcess);
+        parentProcess = ServiceManager.getProcessService().getById(parentProcess.getId());
         ArrayList<Integer> parentData = new ArrayList<>();
         parentData.add(parentProcess.getId());
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
         parentData.add(convertChildMetsFile(metadataFilePath));
         linkParentProcessWithChildProcess(parentProcess, childProcess);
         return parentData;
+    }
+
+    private void checkTaskAndId(Process parentProcess) throws IOException {
+        URI parentMetadataFilePath = fileService.getMetadataFilePath(parentProcess, true, true);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
+        ProcessService.checkTasks(parentProcess, workpiece.getRootElement().getType());
+        Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
+        String shortedTitle = "";
+        String catalogIdentifier = "";
+        for (Metadata metadatum : metadata) {
+            if (metadatum.getKey().equals("TSL_ATS")) {
+                shortedTitle = ((MetadataEntry) metadatum).getValue();
+            }
+            if (metadatum.getKey().equals("CatalogIDDigital")) {
+                catalogIdentifier = ((MetadataEntry) metadatum).getValue();
+            }
+        }
+        String title = "";
+        if (!shortedTitle.isEmpty()) {
+            title += shortedTitle + '_';
+        }
+        if (!catalogIdentifier.isEmpty()) {
+            title += catalogIdentifier;
+        }
+        parentProcess.setTitle(title);
+        workpiece.setId(parentProcess.getId().toString());
+        ServiceManager.getMetsService().saveWorkpiece(workpiece,parentMetadataFilePath);
     }
 
     /**
