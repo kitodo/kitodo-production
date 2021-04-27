@@ -98,7 +98,9 @@ public class LazyHitModel extends LazyDataModel<Object> {
      */
     public void setSelectedCatalog(String catalog) {
         this.selectedCatalog = catalog;
-        this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(catalog));
+        if (!catalog.isEmpty()) {
+            this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(catalog));
+        }
     }
 
     /**
