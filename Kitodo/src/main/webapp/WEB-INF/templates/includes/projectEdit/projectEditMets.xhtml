@@ -17,17 +17,6 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
 
-    <p:panel>
-        <p:commandButton
-                value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
-                icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
-                iconPos="right"
-                styleClass="callto"
-                id="metsParamLockedButton"
-                update="editForm"
-                action="#{ProjectForm.switchLock()}">
-        </p:commandButton>
-    </p:panel>
     <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
