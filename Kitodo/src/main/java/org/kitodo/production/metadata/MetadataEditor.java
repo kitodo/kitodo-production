@@ -229,8 +229,7 @@ public class MetadataEditor {
         if (parents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFORE_CURRENT_ELEMENT)
-                    || position.equals(InsertionPosition.PARENT_OF_CURRENT_ELEMENT)
-                    || position.equals(InsertionPosition.CURRENT_POSITION)) {
+                    || position.equals(InsertionPosition.PARENT_OF_CURRENT_ELEMENT)) {
                 Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
                 return null;
             }

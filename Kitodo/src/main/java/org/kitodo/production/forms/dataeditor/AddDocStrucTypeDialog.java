@@ -205,8 +205,8 @@ public class AddDocStrucTypeDialog {
         switch (selectedDocStructPosition) {
             case AFTER_CURRENT_ELEMENT:
             case BEFORE_CURRENT_ELEMENT:
-            case CURRENT_POSITION:
                 return docStructAddTypeSelectionItemsForSiblings;
+            case CURRENT_POSITION:
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
             case LAST_CHILD_OF_CURRENT_ELEMENT:
                 return docStructAddTypeSelectionItemsForChildren;
