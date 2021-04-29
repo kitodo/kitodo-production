@@ -13,6 +13,7 @@ package org.kitodo.production.forms.dataeditor;
 
 import static org.kitodo.production.metadata.InsertionPosition.AFTER_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.BEFORE_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.CURRENT_POSITION;
 import static org.kitodo.production.metadata.InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
@@ -72,7 +73,7 @@ public class AddDocStrucTypeDialog {
     private List<SelectItem> docStructAddTypeSelectionItemsForSiblings;
     private String docStructAddTypeSelectionSelectedItem;
     private List<SelectItem> docStructPositionSelectionItems;
-    private InsertionPosition docStructPositionSelectionSelectedItem = LAST_CHILD_OF_CURRENT_ELEMENT;
+    private InsertionPosition selectedDocStructPosition = LAST_CHILD_OF_CURRENT_ELEMENT;
     private int elementsToAddSpinnerValue;
     private String inputMetaDataValue = "";
     private LinkedList<IncludedStructuralElement> parents;
@@ -152,7 +153,7 @@ public class AddDocStrucTypeDialog {
         if (selectedStructure.isPresent()) {
             MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                 dataEditor.getWorkpiece(), selectedStructure.get(),
-                docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
+                    selectedDocStructPosition, selectAddableMetadataTypesSelectedItem,
                     inputMetaDataValue);
             dataEditor.refreshStructurePanel();
             dataEditor.getPaginationPanel().show();
@@ -168,7 +169,7 @@ public class AddDocStrucTypeDialog {
         if (selectedStructure.isPresent()) {
             IncludedStructuralElement newStructure = MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), selectedStructure.get(),
-                    docStructPositionSelectionSelectedItem, getViewsToAdd());
+                    selectedDocStructPosition, getViewsToAdd());
             dataEditor.getSelectedMedia().clear();
             if (selectViews) {
                 for (View view : getViewsToAdd()) {
@@ -198,12 +199,13 @@ public class AddDocStrucTypeDialog {
      * @return the selected item of the docStructAddTypeSelection
      */
     public List<SelectItem> getDocStructAddTypeSelectionItems() {
-        if (Objects.isNull(docStructPositionSelectionSelectedItem)) {
+        if (Objects.isNull(selectedDocStructPosition)) {
             return Collections.emptyList();
         }
-        switch (docStructPositionSelectionSelectedItem) {
+        switch (selectedDocStructPosition) {
             case AFTER_CURRENT_ELEMENT:
             case BEFORE_CURRENT_ELEMENT:
+            case CURRENT_POSITION:
                 return docStructAddTypeSelectionItemsForSiblings;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
             case LAST_CHILD_OF_CURRENT_ELEMENT:
@@ -249,18 +251,18 @@ public class AddDocStrucTypeDialog {
      *
      * @return the selected item of the docStructPositionSelection
      */
-    public InsertionPosition getDocStructPositionSelectionSelectedItem() {
-        return docStructPositionSelectionSelectedItem;
+    public InsertionPosition getSelectedDocStructPosition() {
+        return selectedDocStructPosition;
     }
 
     /**
      * Sets the selected item of the docStructPositionSelection drop-down menu.
      *
-     * @param docStructPositionSelectionSelectedItem
+     * @param selectedDocStructPosition
      *            selected item to set
      */
-    public void setDocStructPositionSelectionSelectedItem(InsertionPosition docStructPositionSelectionSelectedItem) {
-        this.docStructPositionSelectionSelectedItem = docStructPositionSelectionSelectedItem;
+    public void setSelectedDocStructPosition(InsertionPosition selectedDocStructPosition) {
+        this.selectedDocStructPosition = selectedDocStructPosition;
     }
 
     /**
@@ -513,6 +515,11 @@ public class AddDocStrucTypeDialog {
                 Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
         docStructPositionSelectionItems.add(new SelectItem(PARENT_OF_CURRENT_ELEMENT,
                 Helper.getTranslation("dataEditor.position.asParentOfCurrentElement")));
+        if (!dataEditor.getSelectedMedia().isEmpty() && dataEditor.consecutivePagesSelected()) {
+            docStructPositionSelectionItems.add(new SelectItem(CURRENT_POSITION,
+                    Helper.getTranslation("dataEditor.position.currentPosition")));
+            selectedDocStructPosition = CURRENT_POSITION;
+        }
     }
 
     /**
@@ -582,9 +589,7 @@ public class AddDocStrucTypeDialog {
         for (TreeNode metadataNode : metadataTreeNodes) {
             if (metadataNode.getData() instanceof ProcessDetail) {
                 try {
-                    for (Metadata metadata : ((ProcessDetail) metadataNode.getData()).getMetadata()) {
-                        existingMetadataRows.add(metadata);
-                    }
+                    existingMetadataRows.addAll(((ProcessDetail) metadataNode.getData()).getMetadata());
                 } catch (NullPointerException e) {
                     logger.error(e);
                 }
@@ -660,7 +665,7 @@ public class AddDocStrucTypeDialog {
         elementsToAddSpinnerValue = 1;
         selectFirstPageOnAddNodeSelectedItem = null;
         selectLastPageOnAddNodeSelectedItem = null;
-        docStructPositionSelectionSelectedItem = LAST_CHILD_OF_CURRENT_ELEMENT;
+        selectedDocStructPosition = LAST_CHILD_OF_CURRENT_ELEMENT;
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
             dataEditor.getStructurePanel().setSelectedLogicalNode(previouslySelectedLogicalNode);
             previouslySelectedLogicalNode = null;
