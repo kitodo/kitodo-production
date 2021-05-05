@@ -1310,12 +1310,7 @@ public class StructurePanel implements Serializable {
      *          whether metadata structure should be displayed in separate structure trees or not
      */
     public boolean isSeparateMedia() {
-        if (!this.dataEditor.getProcess().getTasks().isEmpty()) {
-            // TODO: once the "separateMedia" flag has been moved from tasks to workflows this needs to be adapted accordingly!
-            return this.dataEditor.getProcess().getTasks().get(0).isSeparateStructure();
-        } else {
-            return false;
-        }
+        return this.dataEditor.getProcess().getTemplate().getWorkflow().isSeparateStructure();
     }
 
     private void expandNode(TreeNode node) {

@@ -78,9 +78,6 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeMetadata")
     private boolean typeMetadata = false;
 
-    @Column(name = "separateStructure")
-    private boolean separateStructure = false;
-
     @Column(name = "typeAutomatic")
     private boolean typeAutomatic = false;
 
@@ -182,7 +179,6 @@ public class Task extends BaseIndexedBean {
         this.typeImagesRead = templateTask.isTypeImagesRead();
         this.typeImagesWrite = templateTask.isTypeImagesWrite();
         this.typeMetadata = templateTask.isTypeMetadata();
-        this.separateStructure = templateTask.isSeparateStructure();
         this.typeGenerateImages = templateTask.isTypeGenerateImages();
         this.typeValidateImages = templateTask.isTypeValidateImages();
         this.repeatOnCorrection = templateTask.isRepeatOnCorrection();
@@ -500,24 +496,6 @@ public class Task extends BaseIndexedBean {
 
     public void setTypeMetadata(boolean typeMetadata) {
         this.typeMetadata = typeMetadata;
-    }
-
-    /**
-     * Get separate structure.
-     *
-     * @return value of separateStructure
-     */
-    public boolean isSeparateStructure() {
-        return separateStructure;
-    }
-
-    /**
-     * Set separate structure.
-     *
-     * @param separateStructure as boolean
-     */
-    public void setSeparateStructure(boolean separateStructure) {
-        this.separateStructure = separateStructure;
     }
 
     public boolean isTypeAcceptClose() {

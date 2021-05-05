@@ -44,6 +44,9 @@ public class Workflow extends BaseIndexedBean {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_workflow_client_id"))
     private Client client;
 
+    @Column(name = "separateStructure")
+    private boolean separateStructure = false;
+
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Template> templates;
 
@@ -118,6 +121,25 @@ public class Workflow extends BaseIndexedBean {
     public void setClient(Client client) {
         this.client = client;
     }
+
+    /**
+     * Get separate structure.
+     *
+     * @return value of separateStructure
+     */
+    public boolean isSeparateStructure() {
+        return separateStructure;
+    }
+
+    /**
+     * Set separate structure.
+     *
+     * @param separateStructure as boolean
+     */
+    public void setSeparateStructure(boolean separateStructure) {
+        this.separateStructure = separateStructure;
+    }
+
 
     /**
      * Get list of template assigned to this workflow.

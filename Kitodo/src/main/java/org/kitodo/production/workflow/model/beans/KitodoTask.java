@@ -23,7 +23,6 @@ public class KitodoTask {
     private final Integer processingStatus;
     private final boolean concurrent;
     private final boolean typeMetadata;
-    private final boolean separateStructure;
     private final boolean typeAutomatic;
     private final boolean typeExportDms;
     private final boolean typeImagesRead;
@@ -53,7 +52,6 @@ public class KitodoTask {
         this.processingStatus = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "processingStatus"));
         this.concurrent = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "concurrent"));
         this.typeMetadata = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeMetadata"));
-        this.separateStructure = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "separateStructure"));
         this.typeAutomatic = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAutomatic"));
         this.typeExportDms = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportDMS"));
         this.typeImagesRead = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesRead"));
@@ -135,15 +133,6 @@ public class KitodoTask {
      */
     public boolean isTypeMetadata() {
         return typeMetadata;
-    }
-
-    /**
-     * Get separate structure.
-     *
-     * @return value of separateStructure
-     */
-    public boolean isSeparateStructure() {
-        return separateStructure;
     }
 
     /**

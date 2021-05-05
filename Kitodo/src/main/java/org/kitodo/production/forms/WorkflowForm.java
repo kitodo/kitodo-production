@@ -141,10 +141,6 @@ public class WorkflowForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
         try {
-            if (hasMultipleSructureTreeConfiguration()) {
-                Helper.setErrorMessage(Helper.getTranslation("errorMultipleConfigurations"));
-                return this.stayOnCurrentPage;
-            }
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
@@ -182,17 +178,6 @@ public class WorkflowForm extends BaseForm {
         }
 
         return "projects?keepPagination=true";
-    }
-
-    private boolean hasMultipleSructureTreeConfiguration() throws WorkflowException, IOException {
-        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
-                .getRequestParameterMap();
-        String xml = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
-        xml = StringUtils.substringBefore(xml, "kitodo-diagram-separator");
-        Converter converter = new Converter(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-        Set<Boolean> configurations = converter.validateWorkflowTaskList()
-                .stream().map(Task::isSeparateStructure).collect(Collectors.toSet());
-        return configurations.size() > 1;
     }
 
     /**
