@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.model.SelectItem;
@@ -110,9 +111,7 @@ public class SearchForm {
             Helper.setErrorMessage("errorInitializingProjects", logger, e);
         }
 
-        for (ProjectDTO projectSortedByTitle : projectsSortedByTitle) {
-            this.projects.add(projectSortedByTitle.getTitle());
-        }
+        this.projects = projectsSortedByTitle.stream().map(ProjectDTO::getTitle).sorted().collect(Collectors.toList());
     }
 
     /**
