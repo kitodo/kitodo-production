@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
@@ -42,6 +44,7 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
@@ -537,13 +540,24 @@ public class StructurePanel implements Serializable {
         }
     }
 
+    /**
+     * Builds the display text for a MediaUnit in the StructurePanel.
+     * Using a regular expression to strip leading zeros. (?!$) lookahead ensures
+     * that not the entire string will be matched.
+     *
+     * @param view
+     *            View which holds the MediaUnit
+     * @return the display label of the MediaUnit
+     */
     private String buildViewLabel(View view) {
-        String order = view.getMediaUnit().getOrder() + " : ";
-        if (Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
-            return order + view.getMediaUnit().getOrderlabel();
-        } else {
-            return order + "uncounted";
-        }
+        MediaUnit mediaUnit = view.getMediaUnit();
+        Entry<MediaVariant, URI> mediaFileEntry = mediaUnit.getMediaFiles().entrySet().iterator().next();
+        final String use = mediaFileEntry.getKey().getUse();
+        Subfolder subfolder = new Subfolder(dataEditor.getProcess(), dataEditor.getProcess().getProject().getFolders()
+                .parallelStream().filter(folder -> folder.getFileGroup().equals(use)).findAny().get());
+        String canonical = subfolder.getCanonical(mediaFileEntry.getValue());
+        String canonicalWithoutLeadingZeros = canonical.replaceFirst("^0+(?!$)", "");
+        return Objects.nonNull(mediaUnit.getOrderlabel()) ? canonicalWithoutLeadingZeros + " : " + mediaUnit.getOrderlabel() : canonicalWithoutLeadingZeros + " : uncounted";
     }
 
     /**
