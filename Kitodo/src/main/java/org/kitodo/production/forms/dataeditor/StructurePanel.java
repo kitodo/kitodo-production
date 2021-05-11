@@ -557,7 +557,8 @@ public class StructurePanel implements Serializable {
                 .parallelStream().filter(folder -> folder.getFileGroup().equals(use)).findAny().get());
         String canonical = subfolder.getCanonical(mediaFileEntry.getValue());
         String canonicalWithoutLeadingZeros = canonical.replaceFirst("^0+(?!$)", "");
-        return Objects.nonNull(mediaUnit.getOrderlabel()) ? canonicalWithoutLeadingZeros + " : " + mediaUnit.getOrderlabel() : canonicalWithoutLeadingZeros + " : uncounted";
+        return Objects.nonNull(mediaUnit.getOrderlabel()) ? canonicalWithoutLeadingZeros + " : " + 
+            mediaUnit.getOrderlabel() : canonicalWithoutLeadingZeros + " : uncounted";
     }
 
     /**
