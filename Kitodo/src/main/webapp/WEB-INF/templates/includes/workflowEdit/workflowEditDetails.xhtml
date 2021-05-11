@@ -24,7 +24,7 @@
     <h:outputScript library="js" name="modeler_custom.js" target="body"/>
     <h:outputScript library="js" name="modeler_min.js" target="body"/>
 
-    <p:panelGrid columns="2" layout="grid" id="workflowEditorHeader">
+    <p:panelGrid columns="3" layout="grid" id="workflowEditorHeader">
         <p:row>
             <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
             <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
@@ -49,6 +49,14 @@
                                itemValue="#{status}"
                                itemLabel="#{msgs[status]}"/>
             </p:selectOneMenu>
+        </p:row>
+        <p:row>
+            <p:outputLabel for="separateStructure" value="#{msgs.separateStructure}"/>
+            <p:selectBooleanCheckbox id="separateStructure"
+                                     styleClass="switch input"
+                                     title="#{msgs.separateStructureCheckboxTooltip}"
+                                     value="#{WorkflowForm.workflow.separateStructure}">
+            </p:selectBooleanCheckbox>
         </p:row>
     </p:panelGrid>
 
