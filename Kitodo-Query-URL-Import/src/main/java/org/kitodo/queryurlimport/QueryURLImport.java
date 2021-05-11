@@ -111,7 +111,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private String metadataFormat;
     private String ftpUsername;
     private String ftpPassword;
-    private Charset encoding = StandardCharsets.UTF_8;
+    private final Charset encoding = StandardCharsets.UTF_8;
 
     private LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private final HashMap<String, String> searchFieldMapping = new HashMap<>();
@@ -157,7 +157,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
             try {
                 URI queryURL = createQueryURI(queryParameters);
-                String queryString = queryURL.toString() + "&";
+                String queryString = queryURL + "&";
                 if (Objects.nonNull(interfaceType)) {
                     if (Objects.nonNull(interfaceType.getStartRecordString())) {
                         queryString = queryString + interfaceType.getStartRecordString() + equalsOperand + "0&";
@@ -279,7 +279,12 @@ public class QueryURLImport implements ExternalDataImportInterface {
             }
         }
         String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
-        fullUrl += encodeQueryParameter(idParameter + equalsOperand + prefix + identifier, encoding);
+        String queryParameter = idParameter + equalsOperand + prefix + identifier;
+        if (Objects.nonNull(interfaceType) && SearchInterfaceType.SRU.equals(interfaceType)) {
+            fullUrl += encodeQueryParameter(queryParameter, encoding);
+        } else {
+            fullUrl += queryParameter;
+        }
         try {
             httpClient.close();
             httpClient = HttpClientBuilder.create().build();
@@ -360,7 +365,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchParameters);
         try {
             URI queryURL = createQueryURI(queryParameters);
-            String queryString = queryURL.toString() + "&";
+            String queryString = queryURL + "&";
             if (Objects.nonNull(interfaceType)) {
                 if (start > 0 && Objects.nonNull(interfaceType.getStartRecordString())) {
                     queryString += interfaceType.getStartRecordString() + equalsOperand + start + "&";
@@ -434,7 +439,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 .collect(Collectors.toList());
         String searchString = String.join(" AND ", searchOperands);
         if (Objects.nonNull(interfaceType) && SearchInterfaceType.SRU.equals(interfaceType)) {
-            return URLEncoder.encode(searchString, StandardCharsets.UTF_8.displayName());
+            return encodeQueryParameter(searchString, encoding);
         } else {
             return searchString;
         }
