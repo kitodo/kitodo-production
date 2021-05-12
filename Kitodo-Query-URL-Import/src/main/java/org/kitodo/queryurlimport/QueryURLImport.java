@@ -280,7 +280,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
         String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
         String queryParameter = idParameter + equalsOperand + prefix + identifier;
-        if (Objects.nonNull(interfaceType) && SearchInterfaceType.SRU.equals(interfaceType)) {
+        if (SearchInterfaceType.SRU.equals(interfaceType)) {
             fullUrl += encodeQueryParameter(queryParameter, encoding);
         } else {
             fullUrl += queryParameter;
@@ -378,7 +378,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 }
             }
             return performQuery(queryString + createSearchFieldString(searchFieldMap));
-        } catch (URISyntaxException | UnsupportedEncodingException | ResponseHandlerNotFoundException e) {
+        } catch (URISyntaxException | ResponseHandlerNotFoundException e) {
             throw new CatalogException(e.getLocalizedMessage());
         }
     }
@@ -433,12 +433,12 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return URLEncodedUtils.format(nameValuePairList, StandardCharsets.UTF_8);
     }
 
-    private String createSearchFieldString(LinkedHashMap<String, String> searchFields) throws UnsupportedEncodingException {
+    private String createSearchFieldString(LinkedHashMap<String, String> searchFields) {
         List<String> searchOperands = searchFields.entrySet().stream()
                 .map(entry -> entry.getKey() + equalsOperand + entry.getValue())
                 .collect(Collectors.toList());
         String searchString = String.join(" AND ", searchOperands);
-        if (Objects.nonNull(interfaceType) && SearchInterfaceType.SRU.equals(interfaceType)) {
+        if (SearchInterfaceType.SRU.equals(interfaceType)) {
             return encodeQueryParameter(searchString, encoding);
         } else {
             return searchString;
