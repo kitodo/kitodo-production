@@ -96,7 +96,7 @@
                                    update="processTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <p:confirm header="#{msgs.confirmDelete}"
-                                   message="#{msgs.confirmDeleteProcess}"
+                                   message="#{DesktopForm.formatString('confirmDeleteProcess', process.title)}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
                 </h:panelGroup>
