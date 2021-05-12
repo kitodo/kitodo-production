@@ -108,7 +108,7 @@ public class Subfolder {
                 Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
                 if (!matcher.find()) {
                     throw new IllegalStateException(
-                            "At this point may only arrive files where the pattern had already matched.");
+                            "Regular expression \"" + pattern + "\" didn't match on \"" + uri + '"');
                 }
                 return matcher.group(1);
             }
