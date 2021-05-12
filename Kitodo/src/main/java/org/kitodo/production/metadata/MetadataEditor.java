@@ -17,12 +17,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +41,6 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -238,7 +238,6 @@ public class MetadataEditor {
         }
         IncludedStructuralElement newStructure = new IncludedStructuralElement();
         newStructure.setType(type);
-        LinkedList<IncludedStructuralElement> structuresToAddViews = new LinkedList<>(parents);
         switch (position) {
             case AFTER_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure) + 1, newStructure);
@@ -246,16 +245,26 @@ public class MetadataEditor {
             case BEFORE_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure), newStructure);
                 break;
+            case CURRENT_POSITION:
+                OptionalInt minOrder = viewsToAdd.stream().mapToInt(v -> v.getMediaUnit().getOrder()).min();
+                if (minOrder.isPresent()) {
+                    int structureOrder = minOrder.getAsInt();
+                    // new structure ORDER must be set to same min ORDER value of contained media units
+                    newStructure.setOrder(structureOrder);
+                    List<Integer> siblingOrderValues = Stream.concat(structure.getChildren().stream()
+                            .map(Division::getOrder), Stream.of(structureOrder)).sorted().collect(Collectors.toList());
+
+                    // new order must be set at correction location between existing siblings
+                    structure.getChildren().add(siblingOrderValues.indexOf(structureOrder), newStructure);
+                }
+                break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
-                structuresToAddViews.add(structure);
                 structure.getChildren().add(0, newStructure);
                 break;
             case LAST_CHILD_OF_CURRENT_ELEMENT:
-                structuresToAddViews.add(structure);
                 structure.getChildren().add(newStructure);
                 break;
             case PARENT_OF_CURRENT_ELEMENT:
-                structuresToAddViews.removeLast();
                 newStructure.getChildren().add(structure);
                 if (parents.isEmpty()) {
                     workpiece.setRootElement(newStructure);
@@ -543,11 +552,10 @@ public class MetadataEditor {
                             + simpleMetadataView.getId() + "'.");
             }
         } else {
-            List<String> simpleMetadataValues = division.getMetadata().parallelStream()
+            return division.getMetadata().parallelStream()
                     .filter(metadata -> metadata.getKey().equals(simpleMetadataView.getId()))
                     .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast).map(MetadataEntry::getValue)
                     .collect(Collectors.toList());
-            return simpleMetadataValues;
         }
     }
 
@@ -561,12 +569,7 @@ public class MetadataEditor {
      *            key of metadata to remove
      */
     public static void removeAllMetadata(IncludedStructuralElement includedStructuralElement, String key) {
-        for (Iterator<Metadata> iterator = includedStructuralElement.getMetadata().iterator(); iterator.hasNext();) {
-            Metadata metadata = iterator.next();
-            if (key.equals(metadata.getKey())) {
-                iterator.remove();
-            }
-        }
+        includedStructuralElement.getMetadata().removeIf(metadata -> key.equals(metadata.getKey()));
     }
 
     /**
