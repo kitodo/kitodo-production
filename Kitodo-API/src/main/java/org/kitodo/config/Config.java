@@ -34,10 +34,10 @@ public abstract class Config {
      * @return the configuration
      */
     static PropertiesConfiguration getConfig(String configFile) {
-        if (Objects.isNull(config)) {
+        if (Objects.isNull(config) || !configFile.equals(config.getFileName())) {
             synchronized (Config.class) {
                 PropertiesConfiguration initialized = config;
-                if (Objects.isNull(initialized)) {
+                if (Objects.isNull(initialized) || !configFile.equals(initialized.getFileName())) {
                     AbstractConfiguration.setDefaultListDelimiter('&');
                     try {
                         initialized = new PropertiesConfiguration(configFile);
