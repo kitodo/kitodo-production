@@ -46,7 +46,7 @@ public class XmlGeneratorIT {
         String taskString = XmlGenerator.generateTask(task, task.getOrdering());
         String expected = "        <bpmn2:scriptTask id=\"Task_2\" name=\"Blocking\" template:editType=\"1\" "
                 + "template:processingStatus=\"3\" template:concurrent=\"false\" template:typeMetadata=\"false\" "
-                + "template:separateStructure=\"false\" template:typeAutomatic=\"false\" template:typeExportDMS=\"false\" "
+                + "template:typeAutomatic=\"false\" template:typeExportDMS=\"false\" "
                 + "template:typeImagesRead=\"false\" template:typeImagesWrite=\"false\" template:typeAcceptClose=\"false\" "
                 + "template:typeCloseVerify=\"false\" template:batchStep=\"false\" template:repeatOnCorrection=\"false\" "
                 + "template:permittedUserRole=\"1\" template:scriptName=\"scriptName\" "
@@ -66,7 +66,7 @@ public class XmlGeneratorIT {
         String taskString = XmlGenerator.generateTask(task, "StartEvent_1", task.getOrdering());
         String expected = "        <bpmn2:task id=\"Task_1\" name=\"Finished\" template:editType=\"3\" "
                 + "template:processingStatus=\"3\" template:concurrent=\"false\" template:typeMetadata=\"false\" "
-                + "template:separateStructure=\"false\" template:typeAutomatic=\"false\" template:typeExportDMS=\"false\" "
+                + "template:typeAutomatic=\"false\" template:typeExportDMS=\"false\" "
                 + "template:typeImagesRead=\"false\" template:typeImagesWrite=\"false\" template:typeAcceptClose=\"false\" "
                 + "template:typeCloseVerify=\"false\" template:batchStep=\"false\" template:repeatOnCorrection=\"false\" "
                 + "template:permittedUserRole=\"1\" >\n"
