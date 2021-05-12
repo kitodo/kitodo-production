@@ -16,17 +16,6 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:panel>
-        <p:commandButton
-                value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
-                icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
-                iconPos="right"
-                styleClass="callto"
-                id="templateLockedButton"
-                update="editForm"
-                action="#{ProjectForm.switchLock()}">
-        </p:commandButton>
-    </p:panel>
 
     <p:dataTable id="templateTable" var="template" value="#{ProjectForm.project.templates}" sortBy="#{template.title}">
         <p:column headerText="#{msgs.template}" id="taskTitle">

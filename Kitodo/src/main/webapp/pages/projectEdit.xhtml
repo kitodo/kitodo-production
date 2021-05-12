@@ -58,6 +58,15 @@
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
+        <p:commandButton
+                value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
+                icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
+                iconPos="right"
+                styleClass="callto"
+                id="detailLockedButton"
+                update="editForm"
+                action="#{ProjectForm.switchLock()}">
+        </p:commandButton>
     </ui:define>
 
     <ui:define name="pageTabView">

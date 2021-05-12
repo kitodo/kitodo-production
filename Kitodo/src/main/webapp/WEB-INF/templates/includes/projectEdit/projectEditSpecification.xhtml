@@ -17,17 +17,6 @@
         xmlns:p="http://primefaces.org/ui">
 
     <h:outputScript name="js/clipboard.js" target="body" />
-    <p:panel>
-        <p:commandButton
-                value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
-                icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
-                iconPos="right"
-                styleClass="callto"
-                id="technicalLockedButton"
-                update="editForm"
-                action="#{ProjectForm.switchLock()}">
-        </p:commandButton>
-    </p:panel>
     <p:panelGrid id="technischeDatenForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
 

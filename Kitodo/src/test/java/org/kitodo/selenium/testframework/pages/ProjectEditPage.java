@@ -41,7 +41,7 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     private WebElement projectActiveCheckbox;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:detailLockedButton")
+    @FindBy(id = "editForm:detailLockedButton")
     private WebElement detailLockedButton;
 
     public ProjectEditPage() {
