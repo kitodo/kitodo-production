@@ -67,8 +67,8 @@
         <h:form id="metadataEditorLayoutForm">
             <p:commandButton onclick="saveLayout()"
                              action="#{DataEditorForm.saveDataEditorSetting()}"
-                             title="#{msgs['dataEditor.saveLayout']}"
-                             rendered="#{DataEditorForm.dataEditorSetting ne null}"
+                             title="#{DataEditorForm.dataEditorSetting ne null ? msgs['dataEditor.saveLayout'] : msgs['dataEditor.cannotSaveLayout']}"
+                             disabled="#{DataEditorForm.dataEditorSetting eq null}"
                              icon="fa fa-wrench"
                              style="margin-left: 16px;"
                              styleClass="secondary"/>
