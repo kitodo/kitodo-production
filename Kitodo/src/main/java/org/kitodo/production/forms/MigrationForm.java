@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -38,7 +39,6 @@ import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
-import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.HierarchyMigrationTask;
@@ -79,7 +79,7 @@ public class MigrationForm extends BaseForm {
      */
     public void migrateMetadata() {
         try {
-            allProjects = ServiceManager.getProjectService().getAll();
+            loadProjects();
             projectListRendered = true;
             metadataRendered = true;
             workflowRendered = false;
@@ -94,7 +94,7 @@ public class MigrationForm extends BaseForm {
      */
     public void showPossibleProjects() {
         try {
-            allProjects = ServiceManager.getProjectService().getAll();
+            loadProjects();
             projectListRendered = true;
             workflowRendered = true;
             metadataRendered = false;
@@ -102,6 +102,11 @@ public class MigrationForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    private void loadProjects() throws DAOException {
+        allProjects = ServiceManager.getProjectService().getAll()
+                .stream().sorted(Comparator.comparing(Project::getTitle)).collect(Collectors.toList());
     }
 
     /**
