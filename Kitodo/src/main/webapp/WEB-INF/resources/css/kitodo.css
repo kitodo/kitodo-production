@@ -1136,6 +1136,10 @@ h3#headerText {
     overflow: hidden;
 }
 
+#changeShortcutsForm div {
+    margin-top: var(--default-half-size);
+}
+
 /*----------------------------------------------------------------------
 Statistics
 ----------------------------------------------------------------------*/
