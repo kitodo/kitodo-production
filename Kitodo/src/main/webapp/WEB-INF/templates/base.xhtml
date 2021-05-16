@@ -85,9 +85,9 @@
                                 target="body" />
             </ui:insert>
             <o:highlight styleClass="ui-state-error" />
-            <f:websocket id="warningChannel"
-                         channel="warningChannel"
-                         onmessage="onWarning"
+            <f:websocket id="messageChannel"
+                         channel="messageChannel"
+                         onmessage="onMessage"
                          onclose="onChannelClose"/>
         </h:body>
     </f:view>

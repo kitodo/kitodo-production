@@ -13,8 +13,8 @@ $(document).ready(function() {
     $('#loadingScreen').hide();
 });
 
-function onWarning(message) {
-    if (message === "showWarning") {
+function onMessage(message) {
+    if (message === "showMessage") {
         updateSystemMessageDialog();
     } else if (message === "updateUserTable" && typeof updateUserTable === "function") {
         updateUserTable();

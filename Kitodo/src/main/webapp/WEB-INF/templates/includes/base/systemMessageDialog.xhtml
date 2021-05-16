@@ -29,9 +29,9 @@
             <p:outputPanel id="messageWrapper">
                 <p:autoUpdate/>
                 <h:outputLabel id="systemMessageLabel"
-                               value="#{SystemWarningForm.userName}: "/>
+                               value="#{SystemMessageChannel.userName}: "/>
                 <h:outputText id="systemMessage"
-                              value="#{SystemWarningForm.warning}"/>
+                              value="#{SystemMessageChannel.message}"/>
             </p:outputPanel>
             <p:commandButton
                     id="okButton"
@@ -40,7 +40,7 @@
                     icon="fa fa-check fa-lg"
                     iconPos="right"
                     onclick="PF('systemMessageDialog').hide()"
-                    action="#{SystemWarningForm.acknowledge(LoginForm.loggedUser)}"
+                    action="#{SystemMessageChannel.acknowledge(LoginForm.loggedUser)}"
                     immediate="true"/>
         </h:form>
     </p:dialog>

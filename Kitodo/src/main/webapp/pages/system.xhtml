@@ -25,7 +25,7 @@
         <!--@elvariable id="tabIndex" type="java.lang.String"-->
         <f:viewParam name="tabIndex"/>
         <f:viewAction action="#{MigrationForm.setActiveTabIndexFromTemplate(tabIndex)}"/>
-        <f:viewAction action="#{SystemWarningForm.loadCurrentUsers}"/>
+        <f:viewAction action="#{SystemMessageChannel.loadCurrentUsers}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

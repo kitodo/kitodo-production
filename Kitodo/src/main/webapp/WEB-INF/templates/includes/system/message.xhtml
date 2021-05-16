@@ -24,14 +24,14 @@
                          widgetVar="loggedInUserTable"
                          styleClass="default-layout"
                          var="username"
-                         value="#{SystemWarningForm.currentUsers}">
+                         value="#{SystemMessageChannel.currentUsers}">
                 <p:autoUpdate/>
                 <p:column headerText="#{msgs['loggedInUsers']}">
                     <h:outputText value="#{username}"/>
                 </p:column>
                 <p:column headerText="#{msgs['acknowledged']}">
-                    <ui:fragment rendered="#{not empty SystemWarningForm.acknowledged(username)}">
-                        <i class="fa #{SystemWarningForm.acknowledged(username) ? 'fa-check green' : 'fa-times red'}"/>
+                    <ui:fragment rendered="#{not empty SystemMessageChannel.acknowledged(username)}">
+                        <i class="fa #{SystemMessageChannel.acknowledged(username) ? 'fa-check green' : 'fa-times red'}"/>
                     </ui:fragment>
                 </p:column>
             </p:dataTable>
@@ -52,8 +52,8 @@
             <p/>
             <p:commandButton id="sendWarningButton"
                              styleClass="primary"
-                             actionListener="#{SystemWarningForm.setUserName(LoginForm.loggedUser.login)}"
-                             action="#{SystemWarningForm.sendWarning}"
+                             actionListener="#{SystemMessageChannel.setUserName(LoginForm.loggedUser.login)}"
+                             action="#{SystemMessageChannel.sendMessage}"
                              update="systemMessageDialog"
                              value="#{msgs.send}">
             </p:commandButton>
