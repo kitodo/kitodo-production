@@ -31,6 +31,7 @@
             <h:panelGroup styleClass="select-selector" layout="block">
                 <p>
                     <p:selectOneMenu id="projectMenu"
+                                     autoWidth="false"
                                      required="#{not empty param['selectProjectForm:setProjectButton']}"
                                      value="#{SelectProjectDialogView.selectedProjectId}">
                         <f:selectItem itemValue="#{null}"

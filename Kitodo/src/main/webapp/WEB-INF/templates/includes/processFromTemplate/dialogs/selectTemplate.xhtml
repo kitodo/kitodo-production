@@ -31,6 +31,7 @@
             <h:panelGroup styleClass="select-selector" layout="block">
                 <p>
                     <p:selectOneMenu id="templateMenu"
+                                     autoWidth="false"
                                      required="#{not empty param['selectTemplateForm:setTemplateButton']}"
                                      value="#{SelectTemplateDialogView.selectedTemplateId}">
                         <f:selectItem itemValue="#{null}"

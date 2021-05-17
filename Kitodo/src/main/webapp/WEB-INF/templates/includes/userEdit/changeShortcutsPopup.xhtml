@@ -20,42 +20,39 @@
                   id="changeShortcutsDialog"
                   header="#{msgs.shortcuts}"
                   width="400px"
+                  height="480px"
                   modal="true"
                   resizable="false"
                   showHeader="false"
                   dynamic="true">
-            <h:form id="changeShortcutsForm">
                 <h3>#{msgs.shortcuts}</h3>
-                <p:panelGrid id="unfug"
-                             columns="1"
-                             layout="grid">
-                    <p:row>
-                        <h:panelGroup layout="block"
-                                      styleClass="dialogFieldWrapper">
-                            <ui:repeat value="#{UserForm.shortcuts}" var="item">
-                                <div>
-                                    <p:outputLabel for="shortcutInput"
-                                                   value="#{msgs['shortcuts.dataEditor.'.concat(item.key)]}"/>
-                                    <p:inputText id="shortcutInput"
-                                                 value="#{UserForm.shortcuts[item.key]}"
-                                                 onkeydown="toggleSave()"
-                                                 styleClass="shortcut-input"/>
-                                </div>
-                            </ui:repeat>
-                        </h:panelGroup>
-                    </p:row>
-                </p:panelGrid>
+                <h:panelGroup layout="block"
+                              styleClass="dialogFieldWrapper">
+                    <h:form id="changeShortcutsForm">
+                        <ui:repeat value="#{UserForm.shortcuts}" var="item">
+                            <div>
+                                <p:outputLabel for="shortcutInput"
+                                               value="#{msgs['shortcuts.dataEditor.'.concat(item.key)]}"/>
+                                <p:inputText id="shortcutInput"
+                                             value="#{UserForm.shortcuts[item.key]}"
+                                             onkeydown="toggleSave()"
+                                             styleClass="shortcut-input"/>
+                            </div>
+                        </ui:repeat>
+                    </h:form>
+                </h:panelGroup>
 
                 <h:panelGroup layout="block"
                               styleClass="dialogButtonWrapper">
-                    <p:commandButton id="close"
-                                     onclick="PF('changeShortcutsDialog').hide();"
-                                     value="#{msgs.close}"
-                                     icon="fa fa-times fa-lg"
-                                     iconPos="right"
-                                     styleClass="secondary right close"/>
+                    <h:form id="closeShortcutsDialog">
+                        <p:commandButton id="close"
+                                         onclick="PF('changeShortcutsDialog').hide();"
+                                         value="#{msgs.close}"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right close"/>
+                    </h:form>
                 </h:panelGroup>
-            </h:form>
         </p:dialog>
     </h:body>
 </ui:composition>

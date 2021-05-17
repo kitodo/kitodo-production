@@ -56,6 +56,7 @@
                         <p:outputLabel for="fieldSelectMenu"
                                        value="#{msgs.field}"/>
                         <p:selectOneMenu id="fieldSelectMenu"
+                                         autoWidth="false"
                                          disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.selectedCatalog}"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          value="#{CreateProcessForm.catalogImportDialog.hitModel.selectedField}">
