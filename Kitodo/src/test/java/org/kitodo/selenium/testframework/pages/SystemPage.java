@@ -175,7 +175,7 @@ public class SystemPage extends Page<SystemPage> {
 
     public void selectProjects() {
         Browser.getDriver().findElements(By.className("ui-chkbox")).get(0).click();
-        Browser.getDriver().findElements(By.className("ui-chkbox")).get(1).click();
+        Browser.getDriver().findElements(By.className("ui-chkbox")).get(2).click();
 
         migrateSelectedProjectsButton.click();
     }
