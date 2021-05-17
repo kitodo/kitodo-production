@@ -22,7 +22,7 @@ import javax.persistence.Table;
 import org.kitodo.data.database.enums.WorkflowConditionType;
 
 @Entity
-@Table(name = "workflowCondition")
+@Table(name = "workflowcondition")
 public class WorkflowCondition extends BaseBean {
 
     @Column(name = "type")

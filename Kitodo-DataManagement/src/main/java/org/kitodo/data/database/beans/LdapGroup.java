@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import org.kitodo.data.database.persistence.LdapGroupDAO;
 
 @Entity
-@Table(name = "ldapGroup")
+@Table(name = "ldapgroup")
 public class LdapGroup extends BaseBean {
 
     @Column(name = "title")

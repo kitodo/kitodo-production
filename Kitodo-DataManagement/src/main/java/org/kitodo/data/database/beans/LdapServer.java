@@ -27,7 +27,7 @@ import org.kitodo.data.database.enums.PasswordEncryption;
 import org.kitodo.data.database.persistence.LdapServerDAO;
 
 @Entity
-@Table(name = "ldapServer")
+@Table(name = "ldapserver")
 public class LdapServer extends BaseBean {
 
     @Column(name = "title")
