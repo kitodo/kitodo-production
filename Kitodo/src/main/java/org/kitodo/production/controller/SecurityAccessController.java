@@ -631,7 +631,8 @@ public class SecurityAccessController {
         return securityAccessService.hasAuthorityToViewIndexPage()
                 || securityAccessService.hasAuthorityToViewTaskManagerPage()
                 || securityAccessService.hasAuthorityToViewTermsPage()
-                || securityAccessService.hasAuthorityToViewMigrationPage();
+                || securityAccessService.hasAuthorityToViewMigrationPage()
+                || securityAccessService.hasAuthorityToViewMessagePage();
     }
 
     /**
@@ -668,6 +669,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToViewMigrationPage() {
         return securityAccessService.hasAuthorityToViewMigrationPage();
+    }
+
+    /**
+     * Check if current user has authority to view message tab of system page.
+     *
+     * @return true if user has authority to view message tab of system page
+     */
+    public boolean hasAuthorityToViewMessagePage() {
+        return securityAccessService.hasAuthorityToViewMessagePage();
     }
 
     /**

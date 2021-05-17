@@ -29,6 +29,7 @@
             <p:outputPanel id="messageWrapper">
                 <p:autoUpdate/>
                 <h:outputLabel id="systemMessageLabel"
+                               for="systemMessage"
                                value="#{SystemMessageChannel.userName}: "/>
                 <h:outputText id="systemMessage"
                               value="#{SystemMessageChannel.message}"/>

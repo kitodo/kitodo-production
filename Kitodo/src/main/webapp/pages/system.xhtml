@@ -51,7 +51,8 @@
                    rendered="#{SecurityAccessController.hasAuthorityToViewMigrationPage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/migration.xhtml" />
             </p:tab>
-            <p:tab id="systemWarningTab" title="#{msgs.systemMessage}">
+            <p:tab id="systemWarningTab" title="#{msgs.systemMessage}"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewMessagePage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/message.xhtml"/>
             </p:tab>
         </p:tabView>

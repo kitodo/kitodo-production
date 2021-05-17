@@ -913,6 +913,15 @@ public class SecurityAccessService extends SecurityAccess {
         return hasAnyAuthorityGlobal("viewMigration");
     }
 
+    /**
+     * Check if the current user has the authority to view the message tab of the system page.
+     *
+     * @return true if the current user has the authority to view the message tab of the system page
+     */
+    public boolean hasAuthorityToViewMessagePage() {
+        return hasAnyAuthorityGlobal("broadcastMessage");
+    }
+
 
     private boolean hasAuthorityForTask(int taskId) throws DataException {
         Integer processId = ServiceManager.getTaskService().findById(taskId).getProcess().getId();
