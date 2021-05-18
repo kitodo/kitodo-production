@@ -26,6 +26,10 @@
             </ui:insert>
         </h:head>
         <h:body lang="#{LanguageForm.locale}">
+            <p:outputPanel id="systemMessagePanel"
+                           rendered="#{SystemMessageChannel.showSystemMessage}">
+                <h2>#{SystemMessageChannel.staticSystemMessage}</h2>
+            </p:outputPanel>
             <h:form id="systemMessageDialogUpdateForm">
                 <p:remoteCommand name="updateSystemMessageDialog"
                                  oncomplete="PF('systemMessageDialog').show();"/>

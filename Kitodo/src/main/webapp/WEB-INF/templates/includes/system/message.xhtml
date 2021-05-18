@@ -16,48 +16,74 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <h:form id="systemWarningForm">
-        <p:remoteCommand name="updateUserTable"
-                         update="systemTabView:systemWarningForm:loggedInUserTable"/>
-        <h:panelGroup layout="block">
-            <p:dataTable id="loggedInUserTable"
-                         widgetVar="loggedInUserTable"
-                         styleClass="default-layout"
-                         var="username"
-                         value="#{SystemMessageChannel.currentUsers}">
-                <p:autoUpdate/>
-                <p:column headerText="#{msgs['loggedInUsers']}">
-                    <h:outputText value="#{username}"/>
-                </p:column>
-                <p:column headerText="#{msgs['acknowledged']}">
-                    <ui:fragment rendered="#{not empty SystemMessageChannel.acknowledged(username)}">
-                        <i class="fa #{SystemMessageChannel.acknowledged(username) ? 'fa-check green' : 'fa-times red'}"/>
-                    </ui:fragment>
-                </p:column>
-            </p:dataTable>
-        </h:panelGroup>
+    <p:accordionPanel id="messagePanel">
 
-        <p:separator/>
+        <p:tab id="staticSystemMessageTab"
+               title="#{msgs['systemMessage.static']}">
+            <h:form id="systemMessageForm">
+                <h:panelGroup styleClass="messageWrapper"
+                              layout="block">
+                    <p:inputTextarea id="staticSystemMessage"
+                                     value="#{SystemMessageChannel.staticSystemMessage}"
+                                     immediate="true"
+                                     style="min-height: 100px;"
+                                     styleClass="input">
+                            <p:ajax event="change"/>
+                    </p:inputTextarea>
+                    <p:selectBooleanCheckbox styleClass="switch"
+                                             value="#{SystemMessageChannel.showSystemMessage}">
+                        <p:ajax event="change"
+                                update="@all"/>
+                    </p:selectBooleanCheckbox>
+                </h:panelGroup>
+            </h:form>
+        </p:tab>
 
-        <h:panelGroup id="messageWrapper"
-                      layout="block">
-            <p:outputLabel for="warningText">#{msgs.systemMessage}</p:outputLabel>
-            <p/>
-            <p:inputTextarea id="warningText"
-                             styleClass="input"
-                             immediate="true"
-                             value="#{SystemWarningForm.warning}">
-                <p:ajax event="change"/>
-            </p:inputTextarea>
-            <p/>
-            <p:commandButton id="sendWarningButton"
-                             styleClass="primary"
-                             actionListener="#{SystemMessageChannel.setUserName(LoginForm.loggedUser.login)}"
-                             action="#{SystemMessageChannel.sendMessage}"
-                             update="systemMessageDialog"
-                             value="#{msgs.send}">
-            </p:commandButton>
-        </h:panelGroup>
-    </h:form>
+        <p:tab id="broadcastingTab"
+               title="#{msgs['systemMessage.broadcast']}">
+            <h:form id="systemWarningForm">
+                <p:remoteCommand name="updateUserTable"
+                                 update="systemTabView:messagePanel:systemWarningForm:loggedInUserTable"/>
+                <h:panelGroup layout="block">
+                    <p:dataTable id="loggedInUserTable"
+                                 widgetVar="loggedInUserTable"
+                                 styleClass="default-layout"
+                                 var="username"
+                                 value="#{SystemMessageChannel.currentUsers}">
+                        <p:autoUpdate/>
+                        <p:column headerText="#{msgs['loggedInUsers']}">
+                            <h:outputText value="#{username}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs['acknowledged']}">
+                            <ui:fragment rendered="#{not empty SystemMessageChannel.acknowledged(username)}">
+                                <i class="fa #{SystemMessageChannel.acknowledged(username) ? 'fa-check green' : 'fa-times red'}"/>
+                            </ui:fragment>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+
+                <p:separator/>
+
+                <h:panelGroup styleClass="messageWrapper"
+                              layout="block">
+                    <p:inputTextarea id="warningText"
+                                     styleClass="input"
+                                     immediate="true"
+                                     value="#{SystemWarningForm.warning}">
+                        <p:ajax event="change"/>
+                    </p:inputTextarea>
+                    <p/>
+                    <p:commandButton id="sendWarningButton"
+                                     styleClass="primary"
+                                     actionListener="#{SystemMessageChannel.setUserName(LoginForm.loggedUser.login)}"
+                                     action="#{SystemMessageChannel.sendMessage}"
+                                     update="systemMessageDialog"
+                                     value="#{msgs.send}">
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:tab>
+
+    </p:accordionPanel>
 
 </ui:composition>

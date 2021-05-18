@@ -38,6 +38,9 @@ public class SystemMessageChannel {
     private String message = "";
     private HashMap<String, Boolean> currentUsers;
 
+    private String staticSystemMessage = "";
+    private Boolean showSystemMessage = false;
+
     /**
      * Inform connected websocket clients to show message.
      */
@@ -141,4 +144,41 @@ public class SystemMessageChannel {
         this.resetCurrentUsersStatus();
         this.showMessage();
     }
+
+    /**
+     * Get staticSystemMessage.
+     *
+     * @return value of staticSystemMessage
+     */
+    public String getStaticSystemMessage() {
+        return staticSystemMessage;
+    }
+
+    /**
+     * Set staticSystemMessage.
+     *
+     * @param staticSystemMessage as java.lang.String
+     */
+    public void setStaticSystemMessage(String staticSystemMessage) {
+        this.staticSystemMessage = staticSystemMessage;
+    }
+
+    /**
+     * Get showSystemMessage.
+     *
+     * @return value of showSystemMessage
+     */
+    public boolean isShowSystemMessage() {
+        return showSystemMessage;
+    }
+
+    /**
+     * Set showSystemMessage.
+     *
+     * @param showSystemMessage as boolean
+     */
+    public void setShowSystemMessage(boolean showSystemMessage) {
+        this.showSystemMessage = showSystemMessage;
+    }
+
 }

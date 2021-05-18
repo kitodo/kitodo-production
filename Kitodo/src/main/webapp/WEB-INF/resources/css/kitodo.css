@@ -2656,7 +2656,7 @@ kbd {
 System page
 ----------------------------------------------------------------------*/
 
-#systemTabView\:systemWarningForm\:messageWrapper {
+#systemTabView .messageWrapper {
     border: 1px solid var(--carbon-blue);
     border-radius: var(--default-border-radius);
     margin: auto;
@@ -2683,6 +2683,26 @@ System page
 
 #acknowledgeSystemWarningForm\:messageWrapper {
     padding: 0 var(--default-double-size);
+}
+
+#systemMessagePanel {
+    background-color: white;
+    border: 3px solid red;
+    color: red;
+    height: 70px;
+    left: calc(50% - 320px);
+    opacity: 80%;
+    padding: var(--default-full-size);
+    pointer-events: none;
+    position: absolute;
+    text-align: center;
+    top: 10px;
+    width: 640px;
+    z-index: 9999;
+}
+
+#systemTabView\:messagePanel.ui-accordion .ui-accordion-content {
+    padding: 0;
 }
 
 /*----------------------------------------------------------------------
