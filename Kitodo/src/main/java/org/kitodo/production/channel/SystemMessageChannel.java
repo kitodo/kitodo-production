@@ -13,6 +13,7 @@ package org.kitodo.production.channel;
 
 import java.util.HashMap;
 import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.push.Push;
 import javax.faces.push.PushContext;
