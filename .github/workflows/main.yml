@@ -29,8 +29,8 @@ jobs:
 
       - name: copy files
         run: |
-            cp $GITHUB_WORKSPACE/config/database.yml.travis $GITHUB_WORKSPACE/config/database.yml
-            cp $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties.travis $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+            cp $GITHUB_WORKSPACE/config/database.yml.actions $GITHUB_WORKSPACE/config/database.yml
+            cp $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties.actions $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
 
 
       # Runs a set of commands using the runners shell
