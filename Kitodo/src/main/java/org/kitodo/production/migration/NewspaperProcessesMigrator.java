@@ -237,7 +237,7 @@ public class NewspaperProcessesMigrator {
         logger.trace("Examining batch {}...", batch.getTitle());
         boolean newspaperBatch = true;
         for (Process process : batch.getProcesses()) {
-            if (!fileService.processOwnsYearXML(process, true)) {
+            if (!fileService.processOwnsYearXML(process)) {
                 newspaperBatch = false;
                 break;
             }
