@@ -1,0 +1,58 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-18.04
+    services:
+      mysql:
+        image: mysql:8.0
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: copy files
+        run: |
+            cp $GITHUB_WORKSPACE/config/database.yml.actions $GITHUB_WORKSPACE/config/database.yml
+            cp $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties.actions $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+
+
+      # Runs a set of commands using the runners shell
+      - name: start mysql
+        run:
+            sudo service mysql start
+      - name: create database
+        run:
+            mysql -u root -proot -e 'CREATE DATABASE kitodo;'
+      - name: setup database
+        run:
+            mysql -u root -proot -e "CREATE USER 'kitodo'@'localhost' IDENTIFIED BY 'kitodo';"
+            mysql -u root -proot -e "GRANT ALL ON kitodo.* TO 'kitodo'@'localhost';"
+      - name: import schema
+        run:
+            mysql -u root -proot kitodo < $GITHUB_WORKSPACE/Kitodo/setup/schema.sql
+      - name: import default
+        run:
+            mysql -u root -proot kitodo < $GITHUB_WORKSPACE/Kitodo/setup/default.sql
+
+      - name: run build
+        run:
+            mvn clean install -B '-Pall-tests,flyway,checkstyle,spotbugs,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'
+
+
