@@ -194,6 +194,11 @@ public class NewspaperProcessesMigrator {
     private PeekingIterator<Entry<String, IncludedStructuralElement>> yearsIterator;
 
     /**
+     * The ruleset.
+     */
+    private RulesetManagementInterface rulesetManagement;
+
+    /**
      * Creates a new process migrator.
      *
      * @param batch
@@ -281,7 +286,7 @@ public class NewspaperProcessesMigrator {
         templateId = process.getTemplate().getId();
         logger.trace("Template is: {} (ID {})", process.getTemplate().getTitle(), templateId);
 
-        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
+        rulesetManagement = ServiceManager.getRulesetService()
                 .openRuleset(process.getRuleset());
         StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
             newspaperIncludedStructalElementDivision, "", NewspaperProcessesGenerator.ENGLISH);
@@ -600,7 +605,7 @@ public class NewspaperProcessesMigrator {
 
         ServiceManager.getFileService().createProcessLocation(yearProcess);
 
-        createWorkpiece(yearToCreate, yearTitle, yearProcess);
+        createYearWorkpiece(yearToCreate, yearTitle, yearProcess);
 
         Collection<Integer> childIds = yearsChildren.get(yearToCreate.getKey());
         for (Integer childId : childIds) {
@@ -619,19 +624,18 @@ public class NewspaperProcessesMigrator {
         }
     }
 
-    private void createWorkpiece(Entry<String, IncludedStructuralElement> yearToCreate, String yearTitle, Process yearProcess) throws IOException {
+    private void createYearWorkpiece(Entry<String, IncludedStructuralElement> yearToCreate, String yearTitle,
+                                     Process yearProcess) throws IOException {
         Workpiece yearWorkpiece = new Workpiece();
         yearWorkpiece.setId(yearProcess.getId().toString());
         yearWorkpiece.setRootElement(yearToCreate.getValue());
-        RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(overallProcess.getRuleset());
-        StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(yearWorkpiece.getRootElement().getType(), acquisitionStage, Locale.LanguageRange.parse("de"));
-        final Collection<String> processTitleKeys = ruleset.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
-        List<SimpleMetadataViewInterface> yearViews = newspaperView.getAllowedMetadata().parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
+        StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
+            yearWorkpiece.getRootElement().getType(), acquisitionStage, Locale.LanguageRange.parse("de"));
+        final Collection<String> processTitleKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
+        newspaperView.getAllowedMetadata().parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
                 .map(SimpleMetadataViewInterface.class::cast)
-                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList());
-        for (SimpleMetadataViewInterface yearView : yearViews) {
-            MetadataEditor.writeMetadataEntry(yearWorkpiece.getRootElement(), yearView, yearTitle);
-        }
+                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList())
+                .forEach(yearView -> MetadataEditor.writeMetadataEntry(yearWorkpiece.getRootElement(), yearView, yearTitle));
         metsService.saveWorkpiece(yearWorkpiece, fileService.getMetadataFilePath(yearProcess, false, false));
     }
 
