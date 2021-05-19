@@ -105,10 +105,6 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
             for (Process process : project.getProcesses()) {
                 ServiceManager.getProcessService().removeFromIndex(process, false);
             }
-        } else {
-            for (Process process : project.getProcesses()) {
-                ServiceManager.getProcessService().saveToIndex(process, false);
-            }
         }
     }
 
