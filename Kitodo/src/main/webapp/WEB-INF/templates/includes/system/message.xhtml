@@ -75,7 +75,7 @@
                     <p/>
                     <p:commandButton id="sendWarningButton"
                                      styleClass="primary"
-                                     actionListener="#{SystemMessageChannel.setUserName(LoginForm.loggedUser.login)}"
+                                     actionListener="#{SystemMessageChannel.setUserName(LoginForm.loggedUser.fullName)}"
                                      action="#{SystemMessageChannel.sendMessage}"
                                      update="systemMessageDialog"
                                      value="#{msgs.send}">
