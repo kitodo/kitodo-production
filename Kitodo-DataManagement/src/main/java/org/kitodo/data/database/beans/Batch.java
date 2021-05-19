@@ -19,12 +19,15 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
 
 /**
@@ -44,6 +47,13 @@ public class Batch extends BaseIndexedBean {
      */
     @Column(name = "title")
     private String title;
+
+    /**
+     * The field type holds the batch type.
+     */
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private BatchType type;
 
     /**
      * Holds the processes that belong to the batch.
@@ -113,6 +123,15 @@ public class Batch extends BaseIndexedBean {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * Returns the batch type.
+     *
+     * @return the batch type
+     */
+    public BatchType getType() {
+        return type;
     }
 
     /**
