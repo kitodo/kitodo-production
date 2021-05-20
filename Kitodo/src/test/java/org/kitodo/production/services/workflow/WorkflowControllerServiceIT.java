@@ -367,12 +367,7 @@ public class WorkflowControllerServiceIT {
         assertEquals("Task '" + thirdTaskToSkip.getTitle() + "' was not skipped!", TaskStatus.DONE,
                 thirdTaskToSkip.getProcessingStatus());
 
-        taskService.remove(taskToClose);
-        taskService.remove(skippedTask);
-        taskService.remove(secondSkippedTask);
-        taskService.remove(taskToOpen);
-        taskService.remove(secondTaskToOpen);
-        taskService.remove(thirdTaskToSkip);
+        process.getTasks().clear();
         ServiceManager.getProcessService().remove(process);
     }
 
