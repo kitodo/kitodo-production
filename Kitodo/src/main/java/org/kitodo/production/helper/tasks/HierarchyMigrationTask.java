@@ -146,7 +146,7 @@ public class HierarchyMigrationTask extends EmptyTask {
             }
             while (progress < processesList.size()) {
                 Process process = processService.getById(processesList.get(progress));
-                if (fileService.processOwnsAnchorXML(process, true) && !fileService.processOwnsYearXML(process, true)) {
+                if (fileService.processOwnsAnchorXML(process) && !fileService.processOwnsYearXML(process)) {
                     setWorkDetail(process.getTitle());
                     migrate(process);
                 }

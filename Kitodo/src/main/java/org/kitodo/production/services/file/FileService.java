@@ -562,18 +562,7 @@ public class FileService {
      *             if Io failed
      */
     public boolean processOwnsAnchorXML(Process process) throws IOException {
-        return processOwnsAnchorXML(process, false);
-    }
-
-    /**
-     * Process owns anchor XML.
-     *
-     * @param process whose metadata path to use
-     * @param forIndexingAll if method is triggerd from system/indexing page
-     * @return true if anchor file was found
-     */
-    public boolean processOwnsAnchorXML(Process process, boolean forIndexingAll) throws IOException {
-        URI yearFile = createAnchorFile(getMetadataFilePath(process, false, forIndexingAll));
+        URI yearFile = createAnchorFile(getMetadataFilePath(process, false, true));
         return fileExist(yearFile);
     }
 
@@ -587,18 +576,7 @@ public class FileService {
      *             if Io failed
      */
     public boolean processOwnsYearXML(Process process) throws IOException {
-        return processOwnsYearXML(process, false);
-    }
-
-    /**
-     * Process owns year XML.
-     *
-     * @param process whose metadata path to use
-     * @param forIndexingAll if method is triggerd from system/indexing page
-     * @return true if year file was found
-     */
-    public boolean processOwnsYearXML(Process process, boolean forIndexingAll) throws IOException {
-        URI yearFile = createYearFile(getMetadataFilePath(process, false, forIndexingAll));
+        URI yearFile = createYearFile(getMetadataFilePath(process, false, true));
         return fileExist(yearFile);
     }
 
