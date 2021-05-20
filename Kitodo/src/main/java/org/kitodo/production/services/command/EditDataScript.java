@@ -56,16 +56,7 @@ public abstract class EditDataScript {
      * @return a list of metadata of a structural element selected from the list.
      */
     public Collection<Metadata> getMetadataCollection(List<IncludedStructuralElement> allIncludedStructuralElements) {
-        Collection<Metadata> metadataCollection = Collections.emptyList();
-        if (!allIncludedStructuralElements.isEmpty()) {
-            for (IncludedStructuralElement allIncludedStructuralElement : allIncludedStructuralElements) {
-                if (!allIncludedStructuralElement.getMetadata().isEmpty()) {
-                    metadataCollection = allIncludedStructuralElement.getMetadata();
-                    break;
-                }
-            }
-        }
-        return metadataCollection;
+        return allIncludedStructuralElements.isEmpty() ? new ArrayList<>() : allIncludedStructuralElements.get(0).getMetadata();
     }
 
     /**
