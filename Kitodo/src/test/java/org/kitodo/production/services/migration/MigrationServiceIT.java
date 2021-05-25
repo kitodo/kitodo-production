@@ -179,6 +179,7 @@ public class MigrationServiceIT {
         template.setDocket(ServiceManager.getDocketService().getById(2));
         template.setRuleset(ServiceManager.getRulesetService().getById(1));
         template.setClient(ServiceManager.getClientService().getById(1));
+        template.setWorkflow(ServiceManager.getWorkflowService().getById(1));
 
         List<Template> existingTemplates = ServiceManager.getTemplateService().getAll();
 
