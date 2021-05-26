@@ -264,17 +264,13 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         duplicatedProject.setEndDate(baseProject.getEndDate());
         duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());
         duplicatedProject.setNumberOfVolumes(baseProject.getNumberOfVolumes());
-
         duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
-
         duplicatedProject.setMetsRightsOwner(baseProject.getMetsRightsOwner());
         duplicatedProject.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());
         duplicatedProject.setMetsRightsOwnerSite(baseProject.getMetsRightsOwnerSite());
         duplicatedProject.setMetsRightsOwnerMail(baseProject.getMetsRightsOwnerMail());
-
         duplicatedProject.setMetsDigiprovPresentation(baseProject.getMetsDigiprovPresentation());
         duplicatedProject.setMetsDigiprovReference(baseProject.getMetsDigiprovReference());
-
         duplicatedProject.setMetsPointerPath(baseProject.getMetsPointerPath());
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
