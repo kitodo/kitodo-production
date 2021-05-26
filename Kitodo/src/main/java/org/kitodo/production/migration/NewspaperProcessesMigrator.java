@@ -21,11 +21,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.naming.ConfigurationException;
 
@@ -33,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -191,6 +194,11 @@ public class NewspaperProcessesMigrator {
     private PeekingIterator<Entry<String, IncludedStructuralElement>> yearsIterator;
 
     /**
+     * The ruleset.
+     */
+    private RulesetManagementInterface rulesetManagement;
+
+    /**
      * Creates a new process migrator.
      *
      * @param batch
@@ -278,7 +286,7 @@ public class NewspaperProcessesMigrator {
         templateId = process.getTemplate().getId();
         logger.trace("Template is: {} (ID {})", process.getTemplate().getTitle(), templateId);
 
-        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
+        rulesetManagement = ServiceManager.getRulesetService()
                 .openRuleset(process.getRuleset());
         StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
             newspaperIncludedStructalElementDivision, "", NewspaperProcessesGenerator.ENGLISH);
@@ -597,10 +605,7 @@ public class NewspaperProcessesMigrator {
 
         ServiceManager.getFileService().createProcessLocation(yearProcess);
 
-        Workpiece yearWorkpiece = new Workpiece();
-        yearWorkpiece.setId(yearProcess.getId().toString());
-        yearWorkpiece.setRootElement(yearToCreate.getValue());
-        metsService.saveWorkpiece(yearWorkpiece, fileService.getMetadataFilePath(yearProcess, false, false));
+        createYearWorkpiece(yearToCreate, yearTitle, yearProcess);
 
         Collection<Integer> childIds = yearsChildren.get(yearToCreate.getKey());
         for (Integer childId : childIds) {
@@ -617,6 +622,21 @@ public class NewspaperProcessesMigrator {
             logger.trace("Creating {} took {} ms.", yearProcess.getTitle(),
                 TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+    }
+
+    private void createYearWorkpiece(Entry<String, IncludedStructuralElement> yearToCreate, String yearTitle,
+                                     Process yearProcess) throws IOException {
+        Workpiece yearWorkpiece = new Workpiece();
+        yearWorkpiece.setId(yearProcess.getId().toString());
+        yearWorkpiece.setRootElement(yearToCreate.getValue());
+        StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
+            yearWorkpiece.getRootElement().getType(), acquisitionStage, Locale.LanguageRange.parse("de"));
+        final Collection<String> processTitleKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
+        newspaperView.getAllowedMetadata().parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
+                .map(SimpleMetadataViewInterface.class::cast)
+                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList())
+                .forEach(yearView -> MetadataEditor.writeMetadataEntry(yearWorkpiece.getRootElement(), yearView, yearTitle));
+        metsService.saveWorkpiece(yearWorkpiece, fileService.getMetadataFilePath(yearProcess, false, false));
     }
 
     /**
