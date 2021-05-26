@@ -360,6 +360,7 @@ public class UploadFileDialog {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
             generateNewUploadedImages();
+            dataEditor.getNotSavedUploadedMedia().add(mediaUnit);
             PrimeFaces.current().executeScript("PF('growl').renderMessage({'summary':'"
                     + Helper.getTranslation("mediaUploaded", Collections.singletonList(event.getFile().getFileName()))
                     + "','severity':'info'});");

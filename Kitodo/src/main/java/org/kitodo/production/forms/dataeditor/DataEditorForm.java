@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -43,6 +44,7 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
@@ -180,6 +182,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private static final String DESKTOP_LINK = "/pages/desktop.jsf";
 
+    private List<MediaUnit> notSavedUploadedMedia = new ArrayList<>();
+
     /**
      * Public constructor.
      */
@@ -310,6 +314,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return the referring view, to return there
      */
     public String close() {
+        deleteNotSavedUploadedMedia();
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
@@ -325,6 +330,20 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             return referringView + "&faces-redirect=true";
         } else {
             return referringView + "?faces-redirect=true";
+        }
+    }
+
+    private void deleteNotSavedUploadedMedia() {
+        URI uri = Paths.get(ConfigCore.getKitodoDataDirectory(),
+                ServiceManager.getProcessService().getProcessDataDirectory(this.process).getPath()).toUri();
+        for (MediaUnit mediaUnit : this.notSavedUploadedMedia) {
+            for (URI fileURI : mediaUnit.getMediaFiles().values()) {
+                try {
+                    ServiceManager.getFileService().delete(uri.resolve(fileURI));
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
         }
     }
 
@@ -379,6 +398,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
                 ServiceManager.getProcessService().saveToIndex(process,false);
+                notSavedUploadedMedia.clear();
                 if (close) {
                     return close();
                 } else {
@@ -437,6 +457,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     @Override
     public String getAcquisitionStage() {
         return acquisitionStage;
+    }
+
+    /**
+     * Get notSavedUploadedMedia.
+     *
+     * @return value of notSavedUploadedMedia
+     */
+    public List<MediaUnit> getNotSavedUploadedMedia() {
+        return notSavedUploadedMedia;
     }
 
     /**
