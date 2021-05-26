@@ -32,7 +32,6 @@ import javax.persistence.Transient;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.enums.LinkingMode;
-import org.kitodo.forms.FolderGenerator;
 
 /**
  * Stores configuration settings regarding a type of sub-folder in the process
@@ -61,7 +60,7 @@ import org.kitodo.forms.FolderGenerator;
  */
 @Entity
 @Table(name = "folder")
-public class Folder extends BaseBean {
+public class Folder extends BaseBean implements Cloneable {
     /**
      * Default {@code fileGrp}s supported by the DFG viewer. The list is used to
      * populate a combo box in the edit dialog.
@@ -488,5 +487,10 @@ public class Folder extends BaseBean {
     @Override
     public String toString() {
         return path + (path.isEmpty() || fileGroup.isEmpty() ? "" : ", ") + fileGroup;
+    }
+
+    @Override
+    public Folder clone() throws CloneNotSupportedException {
+        return (Folder) super.clone();
     }
 }

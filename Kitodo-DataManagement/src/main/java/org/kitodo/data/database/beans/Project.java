@@ -493,4 +493,43 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     public int hashCode() {
         return this.title == null ? 0 : this.title.hashCode();
     }
+
+    @Override
+    public Project clone() throws CloneNotSupportedException {
+        // The primitive and immutable fields have already been correctly
+        // initialized by the wonderful magic of Object.clone().
+        Project clone = (Project) super.clone();
+
+        // Since date objects are mutable, they must be cloned. Otherwise
+        // changing the date on one project would also change the same date on
+        // the other project.
+        clone.startDate = (Date) startDate.clone();
+        clone.endDate = (Date) endDate.clone();
+
+        // The same goes for the list of assigned users and production templates
+        clone.users = new ArrayList<>(this.users);
+        clone.templates = new ArrayList<>(this.templates);
+
+        // The processes of the original project are not assigned to the clone
+        clone.processes = new ArrayList<>();
+
+        // The folder objects must also be cloned and the purposes must point to
+        // the cloned folders
+        clone.folders = new ArrayList<>();
+        for (Folder folder : this.folders) {
+            Folder clonedFolder = folder.clone();
+            clonedFolder.setProject(clone);
+            clone.folders.add(clonedFolder);
+            if (folder.equals(generatorSource)) {
+                clone.generatorSource = clonedFolder;
+            }
+            if (folder.equals(mediaView)) {
+                clone.mediaView = clonedFolder;
+            }
+            if (folder.equals(preview)) {
+                clone.preview = clonedFolder;
+            }
+        }
+        return clone;
+    }
 }
