@@ -248,14 +248,17 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     }
 
     /**
-     * Duplicate the project with the given ID 'itemId'.
+     * Creates a deep copy of a project, but without the title.
      *
-     * @return the duplicated Project
+     * @param baseProject
+     *            project to duplicate
+     *
+     * @return the duplicated project
      */
     public Project duplicateProject(Project baseProject) {
         Project duplicatedProject = new Project();
 
-        // Project _title_ should explicitly _not_ be duplicated!
+        // project title is intentionally not duplicated
         duplicatedProject.setClient(baseProject.getClient());
         duplicatedProject.setStartDate(baseProject.getStartDate());
         duplicatedProject.setEndDate(baseProject.getEndDate());
@@ -277,13 +280,16 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
         List<Folder> duplicatedFolders = new ArrayList<>();
+        Folder generatorSource = null;
+        Folder mediaView = null;
+        Folder preview = null;
+
         for (Folder folder : baseProject.getFolders()) {
             Folder duplicatedFolder = new Folder();
             duplicatedFolder.setMimeType(folder.getMimeType());
             duplicatedFolder.setFileGroup(folder.getFileGroup());
             duplicatedFolder.setUrlStructure(folder.getUrlStructure());
             duplicatedFolder.setPath(folder.getPath());
-
             duplicatedFolder.setProject(duplicatedProject);
             duplicatedFolder.setCopyFolder(folder.isCopyFolder());
             duplicatedFolder.setCreateFolder(folder.isCreateFolder());
@@ -293,8 +299,21 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
             duplicatedFolder.setImageSize(folder.getImageSize().orElse(null));
             duplicatedFolder.setLinkingMode(folder.getLinkingMode());
             duplicatedFolders.add(duplicatedFolder);
+
+            if (folder.equals(baseProject.getGeneratorSource())) {
+                generatorSource = duplicatedFolder;
+            }
+            if (folder.equals(baseProject.getMediaView())) {
+                mediaView = duplicatedFolder;
+            }
+            if (folder.equals(baseProject.getPreview())) {
+                preview = duplicatedFolder;
+            }
         }
         duplicatedProject.setFolders(duplicatedFolders);
+        duplicatedProject.setGeneratorSource(generatorSource);
+        duplicatedProject.setMediaView(mediaView);
+        duplicatedProject.setPreview(preview);
 
         return duplicatedProject;
     }
