@@ -30,7 +30,7 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
 @Table(name = "project")
-public class Project extends BaseIndexedBean implements Comparable<Project> {
+public class Project extends BaseIndexedBean implements Cloneable, Comparable<Project> {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
@@ -506,9 +506,17 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         clone.startDate = (Date) startDate.clone();
         clone.endDate = (Date) endDate.clone();
 
-        // The same goes for the list of assigned users and production templates
+        // The same goes for the list of assigned users and production
+        // templates. For Hibernate, these operations must be symmetric.
         clone.users = new ArrayList<>(this.users);
+        for (User user : clone.users) {
+            user.getProjects().add(clone);
+        }
+
         clone.templates = new ArrayList<>(this.templates);
+        for (Template template : clone.templates) {
+            template.getProjects().add(clone);
+        }
 
         // The processes of the original project are not assigned to the clone
         clone.processes = new ArrayList<>();

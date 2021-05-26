@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -153,28 +154,25 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
     }
 
     /**
-     * Duplicate the template with the given ID 'itemId'.
+     * Duplicate a template.
      *
-     * @return the duplicated Template
+     * @param baseTemplate
+     *            template to duplicate
+     *
+     * @return the duplicated template
      */
     public Template duplicateTemplate(Template baseTemplate) {
-        Template duplicatedTemplate = new Template();
+        try {
+            Template duplicatedTemplate = baseTemplate.clone();
 
-        // Template _title_ should explicitly _not_ be duplicated!
-        duplicatedTemplate.setCreationDate(new Date());
-        duplicatedTemplate.setClient(baseTemplate.getClient());
-        duplicatedTemplate.setDocket(baseTemplate.getDocket());
-        duplicatedTemplate.setRuleset(baseTemplate.getRuleset());
-        // tasks don't need to be duplicated - will be created out of copied workflow
-        duplicatedTemplate.setWorkflow(baseTemplate.getWorkflow());
+            // The title of the template is intentionally not copied
+            duplicatedTemplate.setTitle("");
+            duplicatedTemplate.setCreationDate(new Date());
 
-        // TODO: make sure if copy should be assigned automatically to all projects
-        for (Project project : baseTemplate.getProjects()) {
-            duplicatedTemplate.getProjects().add(project);
-            project.getTemplates().add(duplicatedTemplate);
+            return duplicatedTemplate;
+        } catch (CloneNotSupportedException e) {
+            throw new UndeclaredThrowableException(e);
         }
-
-        return duplicatedTemplate;
     }
 
     @Override
@@ -416,7 +414,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
-            Map<String, String> filterMap = (Map<String, String>) filters;
+            Map<String, String> filterMap = filters;
             query.must(readFilters(filterMap));
         }
         query.must(getQueryForSelectedClient());
