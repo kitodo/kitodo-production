@@ -279,25 +279,15 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
+        FolderService folderService = ServiceManager.getFolderService();
         List<Folder> duplicatedFolders = new ArrayList<>();
         Folder generatorSource = null;
         Folder mediaView = null;
         Folder preview = null;
 
         for (Folder folder : baseProject.getFolders()) {
-            Folder duplicatedFolder = new Folder();
-            duplicatedFolder.setMimeType(folder.getMimeType());
-            duplicatedFolder.setFileGroup(folder.getFileGroup());
-            duplicatedFolder.setUrlStructure(folder.getUrlStructure());
-            duplicatedFolder.setPath(folder.getPath());
+            Folder duplicatedFolder = folderService.cloneFolder(folder);
             duplicatedFolder.setProject(duplicatedProject);
-            duplicatedFolder.setCopyFolder(folder.isCopyFolder());
-            duplicatedFolder.setCreateFolder(folder.isCreateFolder());
-            duplicatedFolder.setDerivative(folder.getDerivative().orElse(null));
-            duplicatedFolder.setDpi(folder.getDpi().orElse(null));
-            duplicatedFolder.setImageScale(folder.getImageScale().orElse(null));
-            duplicatedFolder.setImageSize(folder.getImageSize().orElse(null));
-            duplicatedFolder.setLinkingMode(folder.getLinkingMode());
             duplicatedFolders.add(duplicatedFolder);
 
             if (folder.equals(baseProject.getGeneratorSource())) {
