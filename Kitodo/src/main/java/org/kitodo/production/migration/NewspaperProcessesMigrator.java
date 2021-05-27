@@ -384,9 +384,8 @@ public class NewspaperProcessesMigrator {
             year = MetadataEditor.getMetadataValue(yearFileYearIncludedStructuralElement, FIELD_TITLE);
         }
         IncludedStructuralElement processYearIncludedStructuralElement = years.computeIfAbsent(year, theYear -> {
-            IncludedStructuralElement yearIncludedStructuralElement = new IncludedStructuralElement();
-            MetadataEditor.writeMetadataEntry(yearIncludedStructuralElement, yearSimpleMetadataView, theYear);
-            return yearIncludedStructuralElement;
+            MetadataEditor.writeMetadataEntry(yearFileYearIncludedStructuralElement, yearSimpleMetadataView, theYear);
+            return yearFileYearIncludedStructuralElement;
         });
 
         createLinkStructureAndCopyMonths(process, metaFileYearIncludedStructuralElement,
