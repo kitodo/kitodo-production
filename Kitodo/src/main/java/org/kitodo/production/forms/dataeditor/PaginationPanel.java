@@ -12,14 +12,11 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -407,4 +404,61 @@ public class PaginationPanel {
         preparePaginationSelectionItems();
         preparePaginationSelectionSelectedItems();
     }
+
+    /**
+     * Is text.
+     */
+    public void isText() {
+        paginationStartValue = '`' + paginationStartValue + '`';
+    }
+
+    /**
+     * No increment.
+     */
+    public void noIncrement() {
+        paginationStartValue = paginationStartValue + '°';
+    }
+
+    /**
+     * Half increment.
+     */
+    public void halfIncrement() {
+        paginationStartValue = paginationStartValue + '½';
+    }
+
+    /**
+     * One increment.
+     */
+    public void oneIncrement() {
+        paginationStartValue = paginationStartValue + '¹';
+    }
+
+    /**
+     * Two increment.
+     */
+    public void twoIncrement() {
+        paginationStartValue = paginationStartValue + '²';
+    }
+
+    /**
+     * Three increment.
+     */
+    public void threeIncrement() {
+        paginationStartValue = paginationStartValue + '³';
+    }
+
+    /**
+     * On recto.
+     */
+    public void onRecto() {
+        paginationStartValue = '¡' + paginationStartValue;
+    }
+
+    /**
+     * On verso.
+     */
+    public void onVerso() {
+        paginationStartValue = '¿' + paginationStartValue;
+    }
+
 }
