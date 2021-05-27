@@ -38,6 +38,7 @@ import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.InsertionPosition;
@@ -212,26 +213,49 @@ public class UploadFileDialog {
         progress = 0;
         generateMediaTasks = new ArrayList<>();
         selectedMedia = new LinkedList<>();
-        sourceFolder = dataEditor.getProcess().getProject().getGeneratorSource();
-        sourceFolderURI = Paths.get(ConfigCore.getKitodoDataDirectory(),
-                ServiceManager.getProcessService().getProcessDataDirectory(dataEditor.getProcess()).getPath(),
-                sourceFolder.getRelativePath()).toUri();
-        if (Objects.isNull(sourceFolder) && ServiceManager.getFileService().fileExist(sourceFolderURI)) {
-            Helper.setErrorMessage("noSourceFolderConfiguredInProject");
-            return;
-        }
+        if (!setUpFolders()) { return; }
         generatorSource = new Subfolder(dataEditor.getProcess(), sourceFolder);
         mimeType = sourceFolder.getMimeType();
         use = sourceFolder.getFileGroup();
         mediaVariant = getMediaVariant();
         fileExtension = generatorSource.getFileFormat().getExtension(false);
-        contentFolders.add(dataEditor.getProcess().getProject().getMediaView());
-        contentFolders.add(dataEditor.getProcess().getProject().getPreview());
-        if (Objects.isNull(contentFolders)) {
-            Helper.setErrorMessage("noImageFolderConfiguredInProject");
-        }
         preparePossiblePositions();
         initPosition();
+        PrimeFaces.current().executeScript("PF('uploadFileDialog').show()");
+    }
+
+    private boolean setUpFolders() {
+        VariableReplacer variableReplacer = new VariableReplacer(null, null, dataEditor.getProcess(), null);
+        sourceFolder = dataEditor.getProcess().getProject().getGeneratorSource();
+        Folder mediaView = dataEditor.getProcess().getProject().getMediaView();
+        Folder preview = dataEditor.getProcess().getProject().getPreview();
+
+        sourceFolder.setPath(variableReplacer.replace(sourceFolder.getRelativePath()));
+        mediaView.setPath(variableReplacer.replace(mediaView.getRelativePath()));
+        preview.setPath(variableReplacer.replace(preview.getRelativePath()));
+
+        if ( folderExists(sourceFolder) && folderExists(mediaView) && folderExists(preview)) {
+            sourceFolderURI = getFolderURI(sourceFolder);
+            contentFolders.add(mediaView);
+            contentFolders.add(preview);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean folderExists(Folder folder) {
+        URI folderURI = getFolderURI(folder);
+        if (!ServiceManager.getFileService().fileExist(folderURI)) {
+            Helper.setErrorMessage("errorDirectoryNotFound", new Object[] {folderURI});
+            return false;
+        }
+        return true;
+    }
+
+    private URI getFolderURI(Folder folder) {
+        return Paths.get(ConfigCore.getKitodoDataDirectory(),
+                ServiceManager.getProcessService().getProcessDataDirectory(dataEditor.getProcess()).getPath(),
+                folder.getRelativePath()).toUri();
     }
 
     private void initPosition() {

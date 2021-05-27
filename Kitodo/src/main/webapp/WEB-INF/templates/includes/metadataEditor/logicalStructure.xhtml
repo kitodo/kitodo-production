@@ -139,7 +139,6 @@
             <p:menuitem value="#{msgs.uploadMedia}"
                         action="#{DataEditorForm.uploadFileDialog.prepare}"
                         rendered="#{SecurityAccessController.hasAuthorityToUploadMedia()}"
-                        oncomplete="PF('uploadFileDialog').show();"
                         icon="fa fa-download fa-sm"
                         styleClass="plain"
                         update = "uploadFileDialog"
