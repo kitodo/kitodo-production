@@ -43,6 +43,7 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
@@ -221,37 +222,11 @@ public class NewspaperProcessesMigrator {
     public static List<Batch> getNewspaperBatches() throws DAOException, IOException {
         List<Batch> newspaperBatches = new ArrayList<>();
         for (Batch batch : batchService.getAll()) {
-            if (isNewspaperBatch(batch)) {
+            if (BatchType.NEWSPAPER.equals(batch.getType())) {
                 newspaperBatches.add(batch);
             }
         }
         return newspaperBatches;
-    }
-
-    /**
-     * Returns whether the batch is a newspaper batch. A
-     * batch is a newspaper batch, if all of its processes are newspaper
-     * processes. A process is a newspaper process if it has a
-     * {@code meta_year.xml} file.
-     *
-     * @param batch
-     *            the batch to check
-     * @return whether the batch is a newspaper batch
-     * @throws IOException
-     *             if an I/O error occurs when accessing the file system
-     */
-    private static boolean isNewspaperBatch(Batch batch) throws IOException {
-
-        logger.trace("Examining batch {}...", batch.getTitle());
-        boolean newspaperBatch = true;
-        for (Process process : batch.getProcesses()) {
-            if (!fileService.processOwnsYearXML(process)) {
-                newspaperBatch = false;
-                break;
-            }
-        }
-        logger.trace("{} {} newspaper batch.", batch.getTitle(), newspaperBatch ? "is a" : "is not a");
-        return newspaperBatch;
     }
 
     /**
