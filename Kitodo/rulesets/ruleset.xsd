@@ -54,6 +54,31 @@
         <xs:attribute type="ruleset:Type" name="type"/>
         <xs:attribute type="xs:anyURI" name="namespace"/>
     </xs:complexType>
+    
+    <xs:complexType name="Condition">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A &lt;condition&gt; can be defined within a &lt;restriction&gt; and allows the elements listed therein,
+                if the &lt;condition&gt; is met. &lt;condition&gt;s can be nested, if multiple condition checks are
+                necessary.
+                
+                The attribute "key" indicates on which key’s value the additional permits depend. with nested keys, a
+                preceding '../' refers to a higher-level key. (The syntax is based on XPath, but "key" is not an XPath,
+                the '../' is the only permissible modifier.) It can be repeated.
+                
+                In addition, exactly one of the following attributes must be specified, which formulates the condition
+                for the value:
+
+                "equals": the value must be the same as the specified character string. Comparison is case-sensitive.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="permit" minOccurs="0" maxOccurs="unbounded" type="ruleset:RestrictivePermit"/>
+            <xs:element name="condition" minOccurs="0" maxOccurs="unbounded" type="ruleset:Condition"/>
+        </xs:sequence>
+        <xs:attribute use="required" type="xs:string" name="key"/>
+        <xs:attribute use="required" type="xs:string" name="equals"/>
+    </xs:complexType>
 
     <xs:complexType name="DeclarationElement">
         <xs:annotation>
@@ -247,15 +272,17 @@
                 combined, the input options of the operator can be restricted to meaningful combinations. A rule
                 describes either a &lt;restriction&gt; or &lt;permit&gt; of a "division", a metadata "key" or an option
                 "value". The attributes "minOccurs" and "maxOccurs" indicate the minimum and maximum number of
-                occurrences of a metadata key, the attribute "unspecified" inicates whether the divisions, keys or
+                occurrences of a metadata key, the attribute "unspecified" indicates whether the divisions, keys or
                 options not mentioned are 'forbidden' and may not be offered, or whether they are 'unrestricted', and
                 are to be arranged afterwards to explicitly named entries. This allows the few regularly used entries
                 of a large set of values, for example a namespace, to be placed at the top without completely
-                blocking the other entries.
+                blocking the other entries. &lt;condition&gt;s provide for conditional permits, which depend on
+                metadata values in other fields.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="permit" minOccurs="0" maxOccurs="unbounded" type="ruleset:RestrictivePermit"/>
+            <xs:element name="condition" minOccurs="0" maxOccurs="unbounded" type="ruleset:Condition"/>
         </xs:sequence>
         <xs:attribute type="xs:NMTOKEN" name="division"/>
         <xs:attribute type="xs:NMTOKEN" name="key"/>
@@ -435,7 +462,8 @@
                 A division can have the following automated uses in the application:
 
                 'createChildrenFromParent' This division is a superordinate unit to which child processes can be
-                    created directly. This makes sense for a hierarchical superordinate type, such as a serial publication (serial, multi-volume work).
+                    created directly. This makes sense for a hierarchical superordinate type, such as a serial
+                    publication (serial, multi-volume work).
 
                 'createChildrenWithCalendar' This division is a superordinate unit to which child processes with a
                     calendar structure can be created. This attribute can only be set on a division that has a
