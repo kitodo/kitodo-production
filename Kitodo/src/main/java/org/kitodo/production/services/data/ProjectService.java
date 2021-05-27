@@ -248,53 +248,58 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     }
 
     /**
-     * Duplicate the project with the given ID 'itemId'.
+     * Creates a deep copy of a project, but without the title.
      *
-     * @return the duplicated Project
+     * @param baseProject
+     *            project to duplicate
+     *
+     * @return the duplicated project
      */
     public Project duplicateProject(Project baseProject) {
         Project duplicatedProject = new Project();
 
-        // Project _title_ should explicitly _not_ be duplicated!
+        // project title is intentionally not duplicated
         duplicatedProject.setClient(baseProject.getClient());
         duplicatedProject.setStartDate(baseProject.getStartDate());
         duplicatedProject.setEndDate(baseProject.getEndDate());
         duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());
         duplicatedProject.setNumberOfVolumes(baseProject.getNumberOfVolumes());
-
         duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
-
         duplicatedProject.setMetsRightsOwner(baseProject.getMetsRightsOwner());
         duplicatedProject.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());
         duplicatedProject.setMetsRightsOwnerSite(baseProject.getMetsRightsOwnerSite());
         duplicatedProject.setMetsRightsOwnerMail(baseProject.getMetsRightsOwnerMail());
-
         duplicatedProject.setMetsDigiprovPresentation(baseProject.getMetsDigiprovPresentation());
         duplicatedProject.setMetsDigiprovReference(baseProject.getMetsDigiprovReference());
-
         duplicatedProject.setMetsPointerPath(baseProject.getMetsPointerPath());
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
+        FolderService folderService = ServiceManager.getFolderService();
         List<Folder> duplicatedFolders = new ArrayList<>();
-        for (Folder folder : baseProject.getFolders()) {
-            Folder duplicatedFolder = new Folder();
-            duplicatedFolder.setMimeType(folder.getMimeType());
-            duplicatedFolder.setFileGroup(folder.getFileGroup());
-            duplicatedFolder.setUrlStructure(folder.getUrlStructure());
-            duplicatedFolder.setPath(folder.getPath());
+        Folder generatorSource = null;
+        Folder mediaView = null;
+        Folder preview = null;
 
+        for (Folder folder : baseProject.getFolders()) {
+            Folder duplicatedFolder = folderService.cloneFolder(folder);
             duplicatedFolder.setProject(duplicatedProject);
-            duplicatedFolder.setCopyFolder(folder.isCopyFolder());
-            duplicatedFolder.setCreateFolder(folder.isCreateFolder());
-            duplicatedFolder.setDerivative(folder.getDerivative().orElse(null));
-            duplicatedFolder.setDpi(folder.getDpi().orElse(null));
-            duplicatedFolder.setImageScale(folder.getImageScale().orElse(null));
-            duplicatedFolder.setImageSize(folder.getImageSize().orElse(null));
-            duplicatedFolder.setLinkingMode(folder.getLinkingMode());
             duplicatedFolders.add(duplicatedFolder);
+
+            if (folder.equals(baseProject.getGeneratorSource())) {
+                generatorSource = duplicatedFolder;
+            }
+            if (folder.equals(baseProject.getMediaView())) {
+                mediaView = duplicatedFolder;
+            }
+            if (folder.equals(baseProject.getPreview())) {
+                preview = duplicatedFolder;
+            }
         }
         duplicatedProject.setFolders(duplicatedFolders);
+        duplicatedProject.setGeneratorSource(generatorSource);
+        duplicatedProject.setMediaView(mediaView);
+        duplicatedProject.setPreview(preview);
 
         return duplicatedProject;
     }
