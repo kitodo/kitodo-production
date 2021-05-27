@@ -51,11 +51,15 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -109,8 +113,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private String idPrefix;
     private String fileFormat;
     private String metadataFormat;
-    private String ftpUsername;
-    private String ftpPassword;
+    private String username;
+    private String password;
     private final Charset encoding = StandardCharsets.UTF_8;
 
     private LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
@@ -190,7 +194,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         loadOPACConfiguration(catalogId);
         switch (protocol) {
             case FTP_PROTOCOL:
-                return performFTPRequest(value, catalogId, start, numberOfRecords);
+                return performFtpRequest(value, catalogId, start, numberOfRecords);
             case HTTP_PROTOCOL:
             case HTTPS_PROTOCOL:
                 if (searchFieldMapping.containsKey(key)) {
@@ -208,10 +212,21 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return Collections.emptyList();
     }
 
+    private void reinitializeHttpClient() throws IOException {
+        httpClient.close();
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+            provider.setCredentials(AuthScope.ANY, credentials);
+            httpClient = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+        } else {
+            httpClient = HttpClientBuilder.create().build();
+        }
+    }
+
     private SearchResult performQuery(String queryURL) throws ResponseHandlerNotFoundException {
         try {
-            httpClient.close();
-            httpClient = HttpClientBuilder.create().build();
+            this.reinitializeHttpClient();
             logger.debug("Requesting: {}", queryURL);
             HttpResponse response = httpClient.execute(new HttpGet(queryURL));
             int responseStatusCode = response.getStatusLine().getStatusCode();
@@ -240,7 +255,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
             throw new CatalogException("Missing host or path configuration for FTP import in OPAC configuration "
                     + "for catalog '" + catalog + "'");
         }
-        if (StringUtils.isBlank(ftpUsername) || StringUtils.isBlank(ftpPassword)) {
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration "
                     + "for catalog '" + catalog + "'");
         }
@@ -286,8 +301,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
             fullUrl += queryParameter;
         }
         try {
-            httpClient.close();
-            httpClient = HttpClientBuilder.create().build();
+            this.reinitializeHttpClient();
             logger.debug("Requesting: {}", fullUrl);
             HttpResponse response = httpClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
@@ -383,13 +397,13 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private SearchResult performFTPRequest(String filenamepart, String catalog, int startIndex, int rows) {
-        if (StringUtils.isBlank(ftpUsername) || StringUtils.isBlank(ftpPassword)) {
+    private SearchResult performFtpRequest(String filenamePart, String catalog, int startIndex, int rows) {
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration for "
                     + "catalog '" + catalog + "'");
         }
         SearchResult searchResult = new SearchResult();
-        FTPFileFilter searchFilter = file -> file.isFile() && file.getName().contains(filenamepart);
+        FTPFileFilter searchFilter = file -> file.isFile() && file.getName().contains(filenamePart);
         try {
             ftpLogin();
             FTPFile[] files = ftpClient.listFiles(path, searchFilter);
@@ -455,13 +469,13 @@ public class QueryURLImport implements ExternalDataImportInterface {
             idPrefix = OPACConfig.getIdentifierPrefix(opacName);
             fileFormat = OPACConfig.getConfigValue(opacName, RETURN_FORMAT_TAG);
             metadataFormat = OPACConfig.getConfigValue(opacName, METADATA_FORMAT_TAG);
-            // ftpUserName and ftpPassword are only required for FTP servers
-            if (SearchInterfaceType.FTP.equals(interfaceType)) {
-                try {
-                    ftpUsername = OPACConfig.getFtpUsername(opacName);
-                    ftpPassword = OPACConfig.getFtpPassword(opacName);
-                } catch (ConfigException e) {
-                    throw new CatalogException("FTP credentials for OPAC '" + opacName + "' are not defined!");
+            try {
+                username = OPACConfig.getUsername(opacName);
+                password = OPACConfig.getPassword(opacName);
+            } catch (ConfigException | IllegalArgumentException e) {
+                // ftpUserName and ftpPassword are only required for FTP servers
+                if (SearchInterfaceType.FTP.equals(interfaceType)) {
+                    throw new CatalogException("Missing mandatory credential configuration for FTP OPAC '" + opacName + "'");
                 }
             }
 
@@ -538,7 +552,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         } else {
             ftpClient.connect(host);
         }
-        boolean loginSuccessful = ftpClient.login(ftpUsername, ftpPassword);
+        boolean loginSuccessful = ftpClient.login(username, password);
         if (!loginSuccessful) {
             String replyString = ftpClient.getReplyString();
             int replyCode = ftpClient.getReplyCode();
