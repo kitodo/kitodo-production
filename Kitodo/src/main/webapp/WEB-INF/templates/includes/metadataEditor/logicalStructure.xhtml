@@ -77,12 +77,24 @@
             </p:treeNode>
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
-            <p:menuitem value="#{msgs.addElement} #{DataEditorForm.selectedMedia.size() ge 1 ? msgs.assignMedia : ''}"
+            <p:menuitem value="#{msgs.addElement}"
+                        rendered="#{DataEditorForm.selectedMedia.size() lt 1}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
                         action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
                         actionListener="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
+                        process="@this"
+                        oncomplete="PF('dialogAddDocStrucType').show()"
+                        update="dialogAddDocStrucTypeDialog">
+                <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
+            </p:menuitem>
+            <p:menuitem value="#{msgs.addElement} #{msgs.assignMedia}"
+                        rendered="#{DataEditorForm.selectedMedia.size() ge 1}"
+                        icon="fa fa-plus fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
                         process="@this"
                         oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeDialog">
