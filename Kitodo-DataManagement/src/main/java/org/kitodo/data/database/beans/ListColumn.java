@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "listColumn")
+@Table(name = "listcolumn")
 public class ListColumn extends BaseBean {
 
     @Column(name = "title")
