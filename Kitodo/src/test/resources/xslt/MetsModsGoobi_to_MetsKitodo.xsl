@@ -84,6 +84,45 @@
             </xsl:for-each>
         </kitodo:metadataGroup>
     </xsl:template>
+    <!-- Transorm year-level [@name='TitleDocMain']" to mets:div[@LABEL] -->
+    <xsl:template match="mets:structMap[@TYPE='LOGICAL']/mets:div/mets:div[@TYPE='NewspaperYear']/@TYPE" mode="pass2">
+        <xsl:variable name="TitleDocMainShort" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0003']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMainShort']"/>
+        <xsl:variable name="TitleDocMainShort2" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0001']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMainShort']"/>
+        <xsl:if test=". = 'NewspaperYear'">
+            <xsl:if test="$TitleDocMainShort or $TitleDocMainShort2 !=''">
+                <xsl:attribute name="ORDERLABEL">
+                    <xsl:value-of select="concat($TitleDocMainShort, $TitleDocMainShort2)"/>
+                </xsl:attribute>
+            </xsl:if>
+        </xsl:if>
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- Transform month-level [@name='TitleDocMainShort']" to mets:div[@ORDERLABEL] -->
+    <xsl:template match="mets:structMap[@TYPE='LOGICAL']/mets:div/mets:div[@TYPE='NewspaperYear']/mets:div[@TYPE='NewspaperMonth']/@TYPE" mode="pass2">
+        <xsl:variable name="TitleDocMainShort" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0004']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMainShort']"/>
+        <xsl:if test="$TitleDocMainShort !=''">
+            <xsl:attribute name="ORDERLABEL">
+                <xsl:value-of select="($TitleDocMainShort)"/>
+            </xsl:attribute>
+        </xsl:if>
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- Transform day-level [@name='TitleDocMainShort']" to mets:div[@ORDERLABEL] -->
+    <xsl:template match="mets:structMap[@TYPE='LOGICAL']/mets:div/mets:div[@TYPE='NewspaperYear']/mets:div[@DMDID='DMDLOG_0004']/mets:div[@TYPE='NewspaperDay']/@TYPE" mode="pass2">
+        <xsl:variable name="TitleDocMainShort" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0005']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMainShort']"/>
+        <xsl:attribute name="ORDERLABEL">
+            <xsl:value-of select="($TitleDocMainShort)"/>
+        </xsl:attribute>
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
 
     <!--This replaces the metadata of type group element by metadata group element-->
     <xsl:template match="goobi:metadata[@type='group']" mode="pass2">
