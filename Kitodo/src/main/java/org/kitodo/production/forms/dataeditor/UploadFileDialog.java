@@ -33,6 +33,7 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -72,6 +73,7 @@ public class UploadFileDialog {
     private MediaUnit mediaUnit;
     private URI uploadFileUri;
     private Subfolder generatorSource;
+    private int fileLimit = ConfigCore.getIntParameter(ParameterCore.METS_EDITOR_MAX_UPLOADED_MEDIA);
     private List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = new LinkedList<>();
     private Integer progress;
     private List<EmptyTask> generateMediaTasks = new ArrayList<>();
@@ -101,6 +103,15 @@ public class UploadFileDialog {
      */
     public void setFileExtension(String fileExtension) {
         this.fileExtension = fileExtension;
+    }
+
+    /**
+     * Get fileLimit.
+     *
+     * @return value of fileLimit
+     */
+    public int getFileLimit() {
+        return fileLimit;
     }
 
     /**
