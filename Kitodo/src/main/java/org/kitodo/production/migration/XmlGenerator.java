@@ -66,7 +66,6 @@ class XmlGenerator {
                     : TaskStatus.LOCKED.getValue());
         generateTemplateTaskProperty(taskBuilder, "concurrent", task.isConcurrent());
         generateTemplateTaskProperty(taskBuilder, "typeMetadata", task.isTypeMetadata());
-        generateTemplateTaskProperty(taskBuilder, "separateStructure", task.isSeparateStructure());
         generateTemplateTaskProperty(taskBuilder, "typeAutomatic", task.isTypeAutomatic());
         generateTemplateTaskProperty(taskBuilder, "typeExportDMS", task.isTypeExportDMS());
         generateTemplateTaskProperty(taskBuilder, "typeImagesRead", task.isTypeImagesRead());

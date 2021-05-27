@@ -110,7 +110,6 @@ public class Converter {
         task.setBatchStep(kitodoTask.isBatchStep());
         task.setRepeatOnCorrection(kitodoTask.isRepeatOnCorrection());
         task.setTypeMetadata(kitodoTask.isTypeMetadata());
-        task.setSeparateStructure(kitodoTask.isSeparateStructure());
         task.setTypeAutomatic(kitodoTask.isTypeAutomatic());
         task.setTypeImagesRead(kitodoTask.isTypeImagesRead());
         task.setTypeImagesWrite(kitodoTask.isTypeImagesWrite());

@@ -21,6 +21,8 @@ import org.kitodo.DummyRulesetManagement;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -30,6 +32,9 @@ public class StructurePanelTest {
     public void testBuildStructureTreeRecursively() throws Exception {
         DataEditorForm dummyDataEditorForm = new DataEditorForm();
         Process process = new Process();
+        Template template = new Template();
+        template.setWorkflow(new Workflow());
+        process.setTemplate(template);
         dummyDataEditorForm.setProcess(process);
         Field ruleset = DataEditorForm.class.getDeclaredField("ruleset");
         ruleset.setAccessible(true);

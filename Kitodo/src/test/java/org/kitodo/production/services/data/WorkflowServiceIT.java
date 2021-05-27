@@ -31,8 +31,7 @@ public class WorkflowServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertRolesFull();
-        MockDatabase.insertWorkflows();
+        MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
