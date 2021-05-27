@@ -29,10 +29,8 @@ public class OverwriteDataScript extends EditDataScript {
     public void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
             MetadataScript metadataScript) {
         Workpiece workpiece = metadataFile.getWorkpiece();
-        List<IncludedStructuralElement> allIncludedStructuralElements = workpiece
-                .getAllIncludedStructuralElements();
 
-        Collection<Metadata> metadataCollection = getMetadataCollection(allIncludedStructuralElements);
+        Collection<Metadata> metadataCollection = workpiece.getRootElement().getMetadata();
 
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 

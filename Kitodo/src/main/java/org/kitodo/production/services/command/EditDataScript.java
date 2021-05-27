@@ -51,15 +51,6 @@ public abstract class EditDataScript {
     }
 
     /**
-     * gets the corresponding metadata as collection.
-     * @param allIncludedStructuralElements the structural Elements to check.
-     * @return a list of metadata of a structural element selected from the list.
-     */
-    public Collection<Metadata> getMetadataCollection(List<IncludedStructuralElement> allIncludedStructuralElements) {
-        return allIncludedStructuralElements.isEmpty() ? new ArrayList<>() : allIncludedStructuralElements.get(0).getMetadata();
-    }
-
-    /**
      * Executes the given script on the given file for the given process.
      * @param metadataFile the file to edit
      * @param process the related process
@@ -133,9 +124,8 @@ public abstract class EditDataScript {
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(parentProcess);
         Workpiece workpiece = metadataFile.getWorkpiece();
-        List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
 
-        Collection<Metadata> metadataCollection = getMetadataCollection(allIncludedStructuralElements);
+        Collection<Metadata> metadataCollection = workpiece.getRootElement().getMetadata();;
         generateValueForMetadataScript(metadataScript, metadataCollection, parentProcess, metadataFile);
     }
 }
