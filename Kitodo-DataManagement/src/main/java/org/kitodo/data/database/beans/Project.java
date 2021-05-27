@@ -32,15 +32,6 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 @Table(name = "project")
 public class Project extends BaseIndexedBean implements Comparable<Project> {
 
-    /**
-     * The constant ANCHOR_SEPARATOR holds the character U+00A6
-     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
-     * if several of them are needed in one project. The anchors must then be
-     * listed the hierarchical order they have to be applied, that is the
-     * topmost anchor in first place, followed by the second one and so on.
-     */
-    public static final String ANCHOR_SEPARATOR = "\u00A6";
-
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
