@@ -133,15 +133,15 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedStructure() {
-        Optional<IncludedStructuralElement> selectedStructure = getSelectedStructure();
-        if (!selectedStructure.isPresent()) {
+        if (!getSelectedStructure().isPresent()) {
             /*
              * No element is selected or the selected element is not a structure
              * but, for example, a media unit.
              */
             return;
         }
-        LinkedList<IncludedStructuralElement> ancestors = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(), structure);
+        IncludedStructuralElement selectedStructure = getSelectedStructure().get();
+        LinkedList<IncludedStructuralElement> ancestors = MetadataEditor.getAncestorsOfStructure(selectedStructure, structure);
         if (ancestors.isEmpty()) {
             // The selected element is the root node of the tree.
             return;
@@ -149,23 +149,33 @@ public class StructurePanel implements Serializable {
         IncludedStructuralElement parent = ancestors.getLast();
 
         Collection<View> subViews = new ArrayList<>();
-        subViews = getAllSubViews(selectedStructure.get(), subViews);
+        getAllSubViews(selectedStructure, subViews);
+
+        List<View> multipleViews = subViews.stream().filter(v -> v.getMediaUnit().getIncludedStructuralElements().size() > 1)
+                .collect(Collectors.toList());
+        for (View view : multipleViews) {
+            dataEditor.unassignView(selectedStructure, view, selectedStructure.getViews().getLast().equals(view));
+            if (view.getMediaUnit().getIncludedStructuralElements().size() <= 1) {
+                severalAssignments.remove(view.getMediaUnit());
+            }
+        }
+        subViews.removeAll(multipleViews);
+
         parent.getViews().addAll(subViews);
         parent.getViews().sort(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()));
 
-        parent.getChildren().remove(selectedStructure.get());
+        parent.getChildren().remove(selectedStructure);
         show();
         dataEditor.getGalleryPanel().updateStripes();
     }
 
-    private Collection<View> getAllSubViews(IncludedStructuralElement selectedStructure, Collection<View> views) {
+    private void getAllSubViews(IncludedStructuralElement selectedStructure, Collection<View> views) {
         if (Objects.nonNull(selectedStructure.getViews())) {
             views.addAll(selectedStructure.getViews());
         }
         for (IncludedStructuralElement child : selectedStructure.getChildren()) {
             getAllSubViews(child, views);
         }
-        return views;
     }
 
     void deleteSelectedMediaUnit() {
