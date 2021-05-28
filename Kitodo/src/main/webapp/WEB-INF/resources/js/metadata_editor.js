@@ -81,8 +81,9 @@ var metadataEditor = {
 
 metadataEditor.contextMenu = {
     listen() {
-        document.oncontextmenu = function() {
-            return false;
+        document.oncontextmenu = function(event) {
+            return event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA";
+
         };
         $(document).on("mousedown.thumbnail", ".thumbnail-parent", function(event) {
             if (event.originalEvent.button === 2) {
