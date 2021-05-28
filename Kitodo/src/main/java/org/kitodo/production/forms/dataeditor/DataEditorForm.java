@@ -589,7 +589,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     /**
      * Checks and returns if consecutive media units in one structure element are selected or not.
      */
-    boolean consecutivePagesSelected() {
+    public boolean consecutivePagesSelected() {
+        if (selectedMedia.isEmpty()) {
+            return false;
+        }
         int maxOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).max().orElseThrow(NoSuchElementException::new);
         int minOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).min().orElseThrow(NoSuchElementException::new);
         return selectedMedia.size() - 1 == maxOrder - minOrder

@@ -2490,6 +2490,10 @@ Column content
     border-style: dashed;
 }
 
+.thumbnail.discontinuous.selected + .thumbnail-container img {
+    border-color: grey;
+}
+
 .thumbnail.selected.last-selection + .thumbnail-container img {
     border-style: solid;
 }
