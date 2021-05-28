@@ -92,7 +92,6 @@ public class StructurePanel implements Serializable {
      */
     private HashMap<LogicalDivision, Boolean> previousExpansionStatesLogicalTree;
 
-
     /**
      * HashMap containing the current expansion states of all TreeNodes in the physical structure tree.
      */
@@ -573,7 +572,6 @@ public class StructurePanel implements Serializable {
         PhysicalDivision mediaUnit = view.getPhysicalDivision();
         Iterator<Entry<MediaVariant, URI>> mediaFileIterator = mediaUnit.getMediaFiles().entrySet().iterator();
         String canonical = "-";
-        String order = view.getPhysicalDivision().getOrder() + " : ";
         if (mediaFileIterator.hasNext()) {
             Entry<MediaVariant, URI> mediaFileEntry = mediaFileIterator.next();
             Subfolder subfolder = this.subfoldersCache.computeIfAbsent(mediaFileEntry.getKey().getUse(),
