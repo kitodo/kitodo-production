@@ -575,14 +575,14 @@ public class StructurePanel implements Serializable {
         if (mediaFileIterator.hasNext()) {
             Entry<MediaVariant, URI> mediaFileEntry = mediaFileIterator.next();
             Subfolder subfolder = this.subfoldersCache.computeIfAbsent(mediaFileEntry.getKey().getUse(),
-            use -> new Subfolder(dataEditor.getProcess(), dataEditor.getProcess().getProject().getFolders()
+                use -> new Subfolder(dataEditor.getProcess(), dataEditor.getProcess().getProject().getFolders()
                     .parallelStream().filter(folder -> folder.getFileGroup().equals(use)).findAny()
                     .orElseThrow(() ->  new IllegalStateException("Missing folder with file group \"" + use
                         + "\" in project \"" + dataEditor.getProcess().getProject().getTitle()))));
             canonical = subfolder.getCanonical(mediaFileEntry.getValue());
         }
         return canonical.replaceFirst("^0+(?!$)", "") + " : "
-        + (Objects.isNull(mediaUnit.getOrderlabel()) ? "uncounted" : mediaUnit.getOrderlabel());
+            + (Objects.isNull(mediaUnit.getOrderlabel()) ? "uncounted" : mediaUnit.getOrderlabel());
     }
 
     /**
