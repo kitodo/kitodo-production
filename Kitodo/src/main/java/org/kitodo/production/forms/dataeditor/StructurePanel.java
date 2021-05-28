@@ -571,7 +571,6 @@ public class StructurePanel implements Serializable {
         MediaUnit mediaUnit = view.getMediaUnit();
         Iterator<Entry<MediaVariant, URI>> mediaFileIterator = mediaUnit.getMediaFiles().entrySet().iterator();
         String canonical = "-";
-        String order = view.getMediaUnit().getOrder() + " : ";
         if (mediaFileIterator.hasNext()) {
             Entry<MediaVariant, URI> mediaFileEntry = mediaFileIterator.next();
             Subfolder subfolder = this.subfoldersCache.computeIfAbsent(mediaFileEntry.getKey().getUse(),
