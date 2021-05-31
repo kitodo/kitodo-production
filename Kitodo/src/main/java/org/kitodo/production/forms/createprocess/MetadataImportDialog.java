@@ -36,8 +36,6 @@ public abstract class MetadataImportDialog {
     private static final Logger logger = LogManager.getLogger(MetadataImportDialog.class);
     public final CreateProcessForm createProcessForm;
 
-    static final int ADDITIONAL_FIELDS_TAB_INDEX = 1;
-    static final int TITLE_RECORD_LINK_TAB_INDEX = 3;
     static final String FORM_CLIENTID = "editForm";
     static final String INSERTION_TREE = "editForm:processFromTemplateTabView:insertionTree";
     static final String GROWL_MESSAGE =
@@ -74,7 +72,7 @@ public abstract class MetadataImportDialog {
             if (Objects.nonNull(parentTempProcess)) {
                 this.createProcessForm.getProcesses().add(parentTempProcess);
             }
-            this.createProcessForm.setEditActiveTabIndex(ADDITIONAL_FIELDS_TAB_INDEX);
+            this.createProcessForm.setEditActiveTabIndex(CreateProcessForm.ADDITIONAL_FIELDS_TAB_INDEX);
         }
     }
 
@@ -91,7 +89,7 @@ public abstract class MetadataImportDialog {
     }
 
     private void setParentAsTitleRecord(Process parentProcess) {
-        this.createProcessForm.setEditActiveTabIndex(TITLE_RECORD_LINK_TAB_INDEX);
+        this.createProcessForm.setEditActiveTabIndex(CreateProcessForm.TITLE_RECORD_LINK_TAB_INDEX);
         ArrayList<SelectItem> parentCandidates = new ArrayList<>();
         parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
         this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
