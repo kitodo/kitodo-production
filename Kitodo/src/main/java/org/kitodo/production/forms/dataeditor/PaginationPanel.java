@@ -408,7 +408,7 @@ public class PaginationPanel {
     /**
      * Is text.
      */
-    public void isText() {
+    public void asText() {
         paginationStartValue = '`' + paginationStartValue + '`';
     }
 
