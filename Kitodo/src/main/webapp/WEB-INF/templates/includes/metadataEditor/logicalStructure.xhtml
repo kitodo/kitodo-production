@@ -89,11 +89,11 @@
                         update="dialogAddDocStrucTypeDialog">
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
-            <p:menuitem value="#{msgs.addElement} #{msgs.assignMedia}"
+            <p:menuitem value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
                         rendered="#{DataEditorForm.selectedMedia.size() ge 1}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
-                        disabled="#{readOnly}"
+                        disabled="#{readOnly or not DataEditorForm.consecutivePagesSelected()}"
                         action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
                         process="@this"
                         oncomplete="PF('dialogAddDocStrucType').show()"

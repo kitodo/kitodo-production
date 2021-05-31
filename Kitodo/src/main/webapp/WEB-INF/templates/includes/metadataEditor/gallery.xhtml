@@ -115,7 +115,7 @@
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel">
                                     <p:outputPanel styleClass="thumbnail-parent">
-                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
+                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
                                         <p:outputPanel styleClass="thumbnail-container"
                                                        a:data-order="#{media.order}"
                                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
@@ -202,7 +202,7 @@
                                              styleClass="page-drop-area"/>
                                     <p:panel id="unstructuredMediaPanel">
                                         <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
+                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
                                             <p:outputPanel styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}"
                                                            a:data-stripe="0">
@@ -277,7 +277,7 @@
                      a:ondragstart="metadataEditor.handleDragStart(event)">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
-                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
+                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
                             <p:panel a:data-order="#{media.order}">
                                 <h:panelGroup layout="block" styleClass="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
@@ -315,7 +315,7 @@
                                            var="media">
                                     <p:outputPanel>
                                         <h:panelGroup layout="block" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"/>
+                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"/>
                                             <p:outputPanel layout="block"
                                                            styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}">
@@ -351,10 +351,10 @@
             <p:contextMenu id="mediaContextMenu"
                            widgetVar="mediaContextMenu"
                            for="contextMenuHiddenTrigger">
-                <p:menuitem value="#{msgs.addElement} #{msgs.assignMedia}"
+                <p:menuitem value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
                             icon="fa fa-plus fa-sm"
                             styleClass="plain"
-                            disabled="#{readOnly}"
+                            disabled="#{readOnly or not DataEditorForm.consecutivePagesSelected()}"
                             action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
                             oncomplete="PF('dialogAddDocStrucType').show()"
                             update="dialogAddDocStrucTypeDialog">
