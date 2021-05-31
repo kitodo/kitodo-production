@@ -183,6 +183,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private static final String DESKTOP_LINK = "/pages/desktop.jsf";
 
+    private List<MediaUnit> unsavedDeletedMedia = new ArrayList<>();
+
     private List<PhysicalDivision> unsavedUploadedMedia = new ArrayList<>();
 
     private boolean folderConfigurationComplete = false;
@@ -338,6 +340,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String close() {
         deleteNotSavedUploadedMedia();
+        unsavedDeletedMedia.clear();
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
@@ -354,6 +357,28 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } else {
             return referringView + "?faces-redirect=true";
         }
+    }
+    private void deleteUnsavedDeletedMedia() {
+        URI uri = Paths.get(ConfigCore.getKitodoDataDirectory(),
+                ServiceManager.getProcessService().getProcessDataDirectory(this.process).getPath()).toUri();
+        for (MediaUnit mediaUnit : this.unsavedDeletedMedia) {
+            for (URI fileURI : mediaUnit.getMediaFiles().values()) {
+                try {
+                    ServiceManager.getFileService().delete(uri.resolve(fileURI));
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Get unsavedDeletedMedia.
+     *
+     * @return value of unsavedDeletedMedia
+     */
+    public List<MediaUnit> getUnsavedDeletedMedia() {
+        return unsavedDeletedMedia;
     }
 
     private void deleteNotSavedUploadedMedia() {
@@ -423,6 +448,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 ServiceManager.getMetsService().save(workpiece, out);
                 ServiceManager.getProcessService().saveToIndex(process,false);
                 unsavedUploadedMedia.clear();
+                deleteUnsavedDeletedMedia();
                 if (close) {
                     return close();
                 } else {

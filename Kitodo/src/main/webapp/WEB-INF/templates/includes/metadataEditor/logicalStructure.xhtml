@@ -157,6 +157,19 @@
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
+            <p:menuitem value="#{msgs.removeElement}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName eq 'View'}"
+                        icon="fa fa-trash fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        onclick="$('#loadingScreen').show()"
+                        oncomplete="$('#loadingScreen').hide()"
+                        action="#{DataEditorForm.deleteMediaUnit()}"
+                        process="@this"
+                        update="logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
         </p:contextMenu>
     </div>
     <div class="scroll-down-area"></div>

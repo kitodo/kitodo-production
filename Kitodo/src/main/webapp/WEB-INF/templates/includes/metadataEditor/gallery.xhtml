@@ -396,6 +396,19 @@
                             update = "uploadFileDialog"
                             disabled="#{readOnly}"
                             process="@this"/>
+                <p:menuitem value="#{msgs.removeElement}"
+                            icon="fa fa-trash fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            onclick="$('#loadingScreen').show()"
+                            oncomplete="$('#loadingScreen').hide()"
+                            action="#{DataEditorForm.deleteMediaUnit()}"
+                            process="@this"
+                            update="logicalTree
+                                physicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
                            widgetVar="stripeContextMenu"

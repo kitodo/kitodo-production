@@ -404,20 +404,27 @@ public class GalleryPanel {
         cachingUUID = UUID.randomUUID().toString();
 
         previewFolder = new Subfolder(process, project.getPreview());
-        for (PhysicalDivision physicalDivision : physicalDivisions) {
-            View wholePhysicalDivisionView = new View();
-            wholePhysicalDivisionView.setPhysicalDivision(physicalDivision);
-            GalleryMediaContent mediaContent = createGalleryMediaContent(wholePhysicalDivisionView);
-            medias.add(mediaContent);
-            if (mediaContent.isShowingInPreview()) {
-                previewImageResolver.put(mediaContent.getId(), mediaContent);
-            }
-        }
+        updateMedia();
 
         addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
+        }
+    }
+
+    void updateMedia() {
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        medias = new ArrayList<>(physicalDivisions.size());
+        previewImageResolver = new HashMap<>();
+        for (PhysicalDivision physicalDivision : physicalDivisions) {
+            View wholeMediaUnitView = new View();
+            wholeMediaUnitView.setPhysicalDivision(physicalDivision);
+            GalleryMediaContent mediaContent = createGalleryMediaContent(wholeMediaUnitView);
+            medias.add(mediaContent);
+            if (mediaContent.isShowingInPreview()) {
+                previewImageResolver.put(mediaContent.getId(), mediaContent);
+            }
         }
     }
 
