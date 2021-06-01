@@ -42,7 +42,7 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as String or default value for this parameter
      */
     public static String getParameterOrDefaultValue(ParameterCore key) {
-        Parameter parameter = key.getParameter();
+        Parameter<?> parameter = key.getParameter();
 
         if (parameter.getDefaultValue() instanceof String) {
             return getParameter(key.getName(), (String) parameter.getDefaultValue());
@@ -59,10 +59,10 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as boolean or default value for this parameter
      */
     public static boolean getBooleanParameterOrDefaultValue(ParameterCore key) {
-        Parameter parameter = key.getParameter();
+        Parameter<?> parameter = key.getParameter();
 
         if (parameter.getDefaultValue() instanceof Boolean) {
-            return getBooleanParameter(key, (boolean) parameter.getDefaultValue());
+            return getBooleanParameter(key, (Boolean) parameter.getDefaultValue());
         }
         throw new ConfigParameterException(parameter.getKey(), "boolean");
     }
@@ -76,10 +76,10 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as int or default value for this parameter
      */
     public static int getIntParameterOrDefaultValue(ParameterCore key) {
-        Parameter parameter = key.getParameter();
+        Parameter<?> parameter = key.getParameter();
 
         if (parameter.getDefaultValue() instanceof Integer) {
-            return getIntParameter(key, (int) parameter.getDefaultValue());
+            return getIntParameter(key, (Integer) parameter.getDefaultValue());
         }
         throw new ConfigParameterException(parameter.getKey(), "int");
     }
@@ -93,10 +93,10 @@ public class ConfigCore extends KitodoConfig {
      * @return Parameter as long or default value
      */
     public static long getLongParameterOrDefaultValue(ParameterCore key) {
-        Parameter parameter = key.getParameter();
+        Parameter<?> parameter = key.getParameter();
 
         if (parameter.getDefaultValue() instanceof Long) {
-            return getLongParameter(key, (long) parameter.getDefaultValue());
+            return getLongParameter(key, (Long) parameter.getDefaultValue());
         }
         throw new ConfigParameterException(parameter.getKey(), "long");
     }

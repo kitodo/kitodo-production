@@ -614,7 +614,7 @@ public enum ParameterCore implements ParameterInterface {
     ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500)),
     ELASTICSEARCH_INDEXLIMIT(new Parameter<>("elasticsearch.indexLimit", 5000));
 
-    private Parameter parameter;
+    private final Parameter<?> parameter;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -622,7 +622,7 @@ public enum ParameterCore implements ParameterInterface {
      * @param parameter
      *            for config
      */
-    ParameterCore(Parameter parameter) {
+    ParameterCore(Parameter<?> parameter) {
         this.parameter = parameter;
     }
 
@@ -631,7 +631,7 @@ public enum ParameterCore implements ParameterInterface {
      *
      * @return value of parameter
      */
-    public Parameter getParameter() {
+    public Parameter<?> getParameter() {
         return parameter;
     }
 

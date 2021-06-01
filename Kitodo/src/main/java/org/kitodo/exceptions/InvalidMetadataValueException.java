@@ -30,7 +30,7 @@ public class InvalidMetadataValueException extends InvalidAttributeValueExceptio
     /**
      * The wrong value.
      */
-    private String value;
+    private final String value;
 
     /**
      * Creates a new invalid metadata value exception.

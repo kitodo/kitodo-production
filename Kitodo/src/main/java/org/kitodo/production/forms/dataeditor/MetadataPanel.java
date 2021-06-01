@@ -38,7 +38,7 @@ public class MetadataPanel implements Serializable {
 
     private String addMetadataKeySelectedItem = "";
 
-    private Collection<Metadata> clipboard = new ArrayList<>();
+    private final Collection<Metadata> clipboard = new ArrayList<>();
 
     private final DataEditorForm dataEditorForm;
 

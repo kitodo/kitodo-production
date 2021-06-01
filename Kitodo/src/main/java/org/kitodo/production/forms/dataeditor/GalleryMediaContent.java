@@ -46,13 +46,13 @@ public class GalleryMediaContent {
     /**
      * URI to content for media preview.
      */
-    private URI previewUri;
+    private final URI previewUri;
 
     /**
      * URI to the content for the media view.
      */
-    private URI mediaViewUri;
-    private View view;
+    private final URI mediaViewUri;
+    private final View view;
 
     /**
      * Creates a new gallery media content.

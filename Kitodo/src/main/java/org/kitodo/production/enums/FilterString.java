@@ -28,8 +28,8 @@ public enum FilterString {
     TASKAUTOMATIC("stepautomatic:", "schrittautomatisch:"),
     PROPERTY("property:","eigenschaft:");
 
-    private String filterEnglish;
-    private String filterGerman;
+    private final String filterEnglish;
+    private final String filterGerman;
 
     /**
      * Constructor.

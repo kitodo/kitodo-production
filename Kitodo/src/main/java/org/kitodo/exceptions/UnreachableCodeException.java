@@ -13,9 +13,11 @@ package org.kitodo.exceptions;
 
 public class UnreachableCodeException extends RuntimeException {
 
-    public UnreachableCodeException() {
-    }
-
+    /**
+     * Constructor.
+     *
+     * @param exceptionMessage exception message
+     */
     public UnreachableCodeException(String exceptionMessage) {
         super(exceptionMessage);
     }
