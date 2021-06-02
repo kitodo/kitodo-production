@@ -136,6 +136,16 @@ public class KitodoScriptService {
             case "doit2":
                 exportDms(processes, String.valueOf(Boolean.FALSE));
                 break;
+            default:
+                return executeOtherScript(processes, script);
+        }
+        return true;
+    }
+
+    private boolean executeOtherScript(List<Process> processes, String script)
+            throws DataException, IOException, InvalidImagesException {
+        // call the correct method via the parameter
+        switch (this.parameters.get("action")) {
             case "runscript":
                 String taskName = this.parameters.get("stepname");
                 String scriptName = this.parameters.get(SCRIPT);
@@ -166,6 +176,16 @@ public class KitodoScriptService {
             case "copyDataToChildren":
                 copyDataToChildren(processes, script);
                 break;
+            default:
+                return executeRemainingScript(processes, script);
+        }
+        return true;
+    }
+
+    private boolean executeRemainingScript(List<Process> processes, String script)
+            throws DataException, IOException, InvalidImagesException {
+        // call the correct method via the parameter
+        switch (this.parameters.get("action")) {
             case "generateImages":
                 String folders = parameters.get("folders");
                 List<String> foldersList = Arrays.asList("all");
