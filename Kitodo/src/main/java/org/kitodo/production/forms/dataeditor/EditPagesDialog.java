@@ -29,7 +29,7 @@ import org.kitodo.production.metadata.MetadataEditor;
 
 public class EditPagesDialog {
 
-    private DataEditorForm dataEditor;
+    private final DataEditorForm dataEditor;
 
     /**
      * Views on media units that are not associated with this structure.

@@ -37,11 +37,11 @@ public enum ObjectType {
     FILTER("filter", "filters", true),
     NONE("", "", false);
 
-    private String messageKeySingular;
+    private final String messageKeySingular;
 
-    private String messageKeyPlural;
+    private final String messageKeyPlural;
 
-    private boolean indexable;
+    private final boolean indexable;
 
     /**
      * Constructor setting the message key of the object type, used to retrieve it's
@@ -85,7 +85,7 @@ public enum ObjectType {
 
     /**
      * Get list of indexable object types.
-     * 
+     *
      * @return list of indexable object types.
      */
     public static List<ObjectType> getIndexableObjectTypes() {

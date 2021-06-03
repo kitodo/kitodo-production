@@ -14,5 +14,5 @@ package org.kitodo.production.enums;
 public enum ChartMode {
     BAR,
     PIE,
-    METADATA_STATISTIC;
+    METADATA_STATISTIC
 }

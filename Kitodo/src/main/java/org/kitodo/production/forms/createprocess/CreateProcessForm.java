@@ -71,8 +71,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
 
     private RulesetManagementInterface rulesetManagement;
-    private List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
-    private String acquisitionStage = "create";
+    private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
+            .getCurrentMetadataLanguage();
+    private final String acquisitionStage = "create";
     private Project project;
     private Template template;
     private LinkedList<TempProcess> processes = new LinkedList<>();
@@ -93,7 +94,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     /**
      * Update ruleset and docType.
-     * 
+     *
      * @param ruleset
      *            as Ruleset
      * @throws IOException

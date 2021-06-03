@@ -446,7 +446,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         } catch (NoSuchMetadataFieldException e) {
             throw new IllegalStateException("never happening exception");
         }
-        result.setGroup(metadata instanceof List ? (List<Metadata>) metadata : new ArrayList<>(metadata));
+        result.setGroup(metadata instanceof List ? metadata : new ArrayList<>(metadata));
         return Collections.singletonList(result);
     }
 

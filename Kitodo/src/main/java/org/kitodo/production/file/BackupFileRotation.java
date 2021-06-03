@@ -32,7 +32,7 @@ import org.kitodo.production.services.file.FileService;
  * All backup files are named by the original file with a number appended. The
  * bigger the number, the older the backup. A specified maximum number of backup
  * files are generated:
- * 
+ *
  * <pre>
  * file.xml	// would be the original
  * file.xml.1	// the latest backup
@@ -125,7 +125,7 @@ public class BackupFileRotation {
         if (fileService.fileExist(oldest)) {
             boolean deleted = fileService.delete(oldest);
             if (!deleted) {
-                String message = "Could not delete " + oldest.toString();
+                String message = "Could not delete " + oldest;
                 logger.error(message);
                 throw new IOException(message);
             }

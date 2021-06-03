@@ -25,7 +25,7 @@ public class GalleryStripe {
     /**
      * Label of the stripe.
      */
-    private String label;
+    private final String label;
 
     /**
      * Medias in this stripe.
@@ -35,7 +35,7 @@ public class GalleryStripe {
     /**
      * Structure this gallery stripe is related to.
      */
-    private IncludedStructuralElement structure;
+    private final IncludedStructuralElement structure;
 
     /**
      * Creates a new gallery stripe.
