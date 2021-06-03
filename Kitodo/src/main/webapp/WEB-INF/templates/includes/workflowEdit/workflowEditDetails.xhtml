@@ -53,6 +53,7 @@
         <p:row>
             <p:outputLabel for="separateStructure" value="#{msgs.separateStructure}"/>
             <p:selectBooleanCheckbox id="separateStructure"
+                                     disabled="#{isViewMode}"
                                      styleClass="switch input"
                                      title="#{msgs.separateStructureCheckboxTooltip}"
                                      value="#{WorkflowForm.workflow.separateStructure}">
