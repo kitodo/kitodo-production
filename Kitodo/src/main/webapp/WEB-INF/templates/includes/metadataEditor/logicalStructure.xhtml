@@ -17,6 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+    <!--@elvariable id="readOnly" type="java.lang.Boolean"-->
     <div class="scroll-up-area"></div>
     <div class="scroll-wrapper">
         <p:tree id="logicalTree"
@@ -89,6 +90,14 @@
                         oncomplete="PF('dialogAddDocStrucType').show()"
                         update="dialogAddDocStrucTypeDialog">
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
+            </p:menuitem>
+            <p:menuitem value="#{DataEditorForm.supportsChildProcessImport() ? msgs.createProcessAsChild : msgs.createProcessAsChildNotConfigured}"
+                        icon="fa fa-plus-square fa-sm"
+                        styleClass="plain"
+                        rendered="#{SecurityAccessController.hasAuthorityToAddProcess() and DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+                        disabled="#{readOnly or not DataEditorForm.supportsChildProcessImport()}"
+                        action="#{DataEditorForm.importChildProcess()}"
+                        process="@this">
             </p:menuitem>
             <p:menuitem value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
                         rendered="#{DataEditorForm.selectedMedia.size() ge 1}"

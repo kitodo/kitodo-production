@@ -33,6 +33,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +60,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
 
@@ -67,6 +69,7 @@ import org.primefaces.PrimeFaces;
 public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
+    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
 
     /**
      * A filter on the rule set depending on the workflow step. So far this is
@@ -349,10 +352,14 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         MetadataLock.setFree(process.getId());
         process = null;
         user = null;
-        if (referringView.contains("?")) {
-            return referringView + "&faces-redirect=true";
+        if (StringUtils.isNotBlank(referringView)) {
+            if (referringView.contains("?")) {
+                return referringView + "&faces-redirect=true";
+            } else {
+                return referringView + "?faces-redirect=true";
+            }
         } else {
-            return referringView + "?faces-redirect=true";
+            return "processes.jsf?keepPagination=true&faces-redirect=true";
         }
     }
 
@@ -920,5 +927,42 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public boolean isFolderConfigurationComplete() {
         return folderConfigurationComplete;
+    }
+
+    /**
+     * Check and return whether type of currently selected structure element supports child process import.
+     *
+     * @return whether the type of the currently selected structure element supports child process import
+     */
+    public boolean supportsChildProcessImport() {
+        Optional<LogicalDivision> selectedStructure = this.structurePanel.getSelectedStructure();
+        try {
+            if (selectedStructure.isPresent() && Objects.nonNull(this.process.getRuleset())) {
+                return ProcessService.canCreateChildProcess(this.process.getRuleset(), selectedStructure.get());
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
+        }
+    }
+
+    /**
+     * Return path to process import form with properties of current process as parameters.
+     *
+     * @return path to process import form
+     */
+    public String importChildProcess() {
+        if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getRuleset())) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            return CREATE_PROCESS_PATH
+                    + "&templateId=" + process.getTemplate().getId()
+                    + "&projectId=" + process.getProject().getId()
+                    + "&parentId=" + process.getId()
+                    + "&referrer=" + context.getViewRoot().getViewId();
+        } else {
+            return "";
+        }
     }
 }

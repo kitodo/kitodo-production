@@ -28,6 +28,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -299,7 +300,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                         + Helper.getTranslation("processSaving") + "','detail':'"
                         + Helper.getTranslation( "youWillBeRedirected") + "','severity':'info'});");
             }
-            return processListPath;
+            if (StringUtils.isBlank(this.referringView)) {
+                return processListPath;
+            } else if (this.referringView.contains("metadataEditor")) {
+                return this.referringView + "?" + "processId=" + this.getTitleRecordLinkTab().getChosenParentProcess()
+                        + "&" + BaseForm.REDIRECT_PARAMETER;
+            } else {
+                return this.referringView;
+            }
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
@@ -584,5 +592,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public String getReferringView() {
         return this.referringView;
+    }
+
+    /**
+     * Set referring view.
+     *
+     * @param referrer referring view
+     */
+    public void setReferringView(String referrer) {
+        this.referringView = referrer;
     }
 }

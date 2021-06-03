@@ -2619,6 +2619,26 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
+     * Check and return whether given IncludedStructuralElement "element" is configured to allow child process import.
+     * @param ruleset Ruleset which is checked for rules about given IncludedStructuralElement "element"
+     * @param element IncludedStructuralElement that is checked
+     * @return whether given element allows child process import
+     */
+    public static boolean canCreateChildProcess(Ruleset ruleset, IncludedStructuralElement element) throws IOException {
+        Integer rulesetId = ruleset.getId();
+        Collection<String> functionalDivisions;
+        if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
+            functionalDivisions = RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.get(rulesetId);
+        } else {
+            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
+            RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.put(rulesetId, functionalDivisions);
+        }
+        return functionalDivisions.contains(element.getType());
+    }
+
+
+    /**
      * Starts generation of xml logfile for current process.
      */
     public static void createXML(Process process, User user) throws IOException {

@@ -17,11 +17,16 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:o="http://omnifaces.org/ui">
 
     <f:metadata>
         <!--@elvariable id="templateTaskId" type="int"-->
         <f:viewParam name="templateTaskId"/>
+        <!--@elvariable id="processId" type="int"-->
+        <f:viewParam name="processId"/>
+        <o:viewAction action="#{CommentForm.setProcessById(processId)}" if="#{not empty processId}"/>
+        <o:viewAction action="#{DataEditorForm.open(processId, DataEditorForm.referringView)}" if="#{not empty processId}"/>
         <f:viewAction action="#{DataEditorForm.setTemplateTaskId(templateTaskId)}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
         <f:viewAction action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
