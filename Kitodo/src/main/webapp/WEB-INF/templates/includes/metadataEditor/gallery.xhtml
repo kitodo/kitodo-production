@@ -397,6 +397,7 @@
                             disabled="#{readOnly}"
                             process="@this"/>
                 <p:menuitem value="#{msgs.removeElement}"
+                            rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia()}"
                             icon="fa fa-trash fa-sm"
                             styleClass="plain"
                             disabled="#{readOnly}"

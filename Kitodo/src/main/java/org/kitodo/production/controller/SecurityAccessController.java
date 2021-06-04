@@ -963,6 +963,15 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to delete media in metadata editor.
+     *
+     * @return true if the current user has the authority to to delete media in metadata editor
+     */
+    public boolean hasAuthorityToDeleteMedia() {
+        return securityAccessService.hasAuthorityToDeleteMedia();
+    }
+
+    /**
      * Check if the current user has the authority to view the database statistics.
      *
      * @return true if the current user has the authority to view database statistics

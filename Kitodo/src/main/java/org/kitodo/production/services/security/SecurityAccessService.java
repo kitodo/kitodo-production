@@ -958,4 +958,12 @@ public class SecurityAccessService extends SecurityAccess {
         return projects.stream().anyMatch(project -> project.getId().equals(projectId)) || projectId == 0;
     }
 
+    /**
+     * Check if the current user has the authority to delete media in metadata editor.
+     *
+     * @return true if the current user has the authority to to delete media in metadata editor
+     */
+    public boolean hasAuthorityToDeleteMedia() {
+        return hasAuthorityGlobalOrForClient("deleteMedia");
+    }
 }
