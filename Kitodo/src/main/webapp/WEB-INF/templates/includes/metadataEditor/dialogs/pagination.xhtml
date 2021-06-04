@@ -69,118 +69,86 @@
                                            requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
                         </div>
                         <div>
-                            <!-- Buttons for advanced pagination -->
+                            <!-- Advanced pagination -->
+                            <script type="text/javascript">
+                                function writeToPaginationStartValue(before, after) {
+                                    var textbox = document.getElementById("paginationForm:paginationStartValue");
+                                    var beforeSelection = textbox.value.substr(0, textbox.selectionStart);
+                                    var selectionLength = textbox.selectionEnd - textbox.selectionStart;
+                                    var selection = textbox.value.substr(textbox.selectionStart, selectionLength);
+                                    var afterSelection = textbox.value.substr(textbox.selectionEnd);
+                                    var written = beforeSelection + before + selection;
+                                    textbox.value = written + after + afterSelection;
+                                    if(before.length != after.length) written += after;
+                                    textbox.selectionStart = written.length;
+                                    textbox.selectionEnd = written.length;
+                                    textbox.focus();
+                                    return false;
+                                }
+                            </script>
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedText"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationText}"
-                                icon="fa fa-comment-alt fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationTextHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.asText()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('`','`')"
                             />
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedNoIncrement"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationNoIncrement}"
-                                icon="fa fa-sort-numeric-up-alt fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationNoIncrementnHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.noIncrement()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('','\260')"
                             />
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedHalfIncrement"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationHalfIncrement}"
-                                icon="fa fa-sort-numeric-up-alt fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationHalfIncrementHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.halfIncrement()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('','\275')"
                             />
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedOneIncrement"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationOneIncrement}"
-                                icon="fa fa-sort-numeric-up-alt fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationOneIncrementHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.oneIncrement()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('','\271')"
                             />
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedtwoIncrement"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationTwoIncrement}"
-                                icon="fa fa-sort-numeric-up-alt fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationTwoIncrementHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.twoIncrement()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('','\262')"
                             />
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedThreeIncrement"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationThreeIncrement}"
-                                icon="fa fa-sort-numeric-up-alt fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationThreeIncrementHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.threeIncrement()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('','\263')"
                             />
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedRecto"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationRectoUse}"
-                                icon="fa fa-vector-square fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationRectoUseHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.onRecto()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('\241','')"
                             />
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                id="advancedVerso"
-                                styleClass="primary"
+                                styleClass="secondary"
                                 style="margin-right: 2px; margin-bottom: 2px; "                                
                                 value="#{msgs.paginationVersoUse}"
-                                icon="fa fa-vector-square fa-lg"
-                                iconPos="right"
                                 title="#{msgs.paginationVersoUseHint}"
-                                immediate="true"
-                                action="#{DataEditorForm.paginationPanel.onVerso()}"
-                                process="@this"
-                                update="paginationForm:paginationStartValue"
+                                onclick="return writeToPaginationStartValue('\277','')"
                             />
                         </div>
                         <div>
