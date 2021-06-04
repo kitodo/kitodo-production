@@ -12,10 +12,12 @@
 package org.kitodo.dataformat.access;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
@@ -245,5 +247,12 @@ public class MetsXmlElementAccessIT {
         assertEquals(1, includedStructuralElementRoot.getMetadata().size());
 
         clean();
+    }
+
+    @Test
+    public void missingMetsHeaderCreationDateDidNotThrowNullPointerException() throws IOException {
+        Workpiece workpiece = new MetsXmlElementAccess()
+                .read(new FileInputStream(new File("src/test/resources/meta_missing_createdate.xml")));
+        assertNotNull(workpiece.getCreationDate());
     }
 }

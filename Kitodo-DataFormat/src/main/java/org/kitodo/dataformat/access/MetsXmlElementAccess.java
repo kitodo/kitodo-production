@@ -107,7 +107,13 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         this();
         MetsHdr metsHdr = mets.getMetsHdr();
         if (Objects.nonNull(metsHdr)) {
-            workpiece.setCreationDate(metsHdr.getCREATEDATE().toGregorianCalendar());
+            GregorianCalendar gregorianCalendar;
+            if (Objects.nonNull(metsHdr.getCREATEDATE())) {
+                gregorianCalendar = metsHdr.getCREATEDATE().toGregorianCalendar();
+            } else {
+                gregorianCalendar = new GregorianCalendar();
+            }
+            workpiece.setCreationDate(gregorianCalendar);
             for (Agent agent : metsHdr.getAgent()) {
                 workpiece.getEditHistory().add(new AgentXmlElementAccess(agent).getProcessingNote());
             }
