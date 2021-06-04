@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
@@ -36,15 +36,16 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.tasks.TaskManager;
-import org.kitodo.production.metadata.copier.CopierData;
-import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
@@ -68,7 +69,8 @@ public class KitodoScriptService {
      * @param script
      *            from frontend passed as String
      */
-    public void execute(List<Process> processes, String script) throws DataException {
+    public void execute(List<Process> processes, String script)
+            throws DataException, IOException, InvalidImagesException {
         this.parameters = new HashMap<>();
         // decompose and capture all script parameters
         StrTokenizer tokenizer = new StrTokenizer(script, ' ', '\"');
@@ -95,7 +97,8 @@ public class KitodoScriptService {
         }
     }
 
-    private boolean executeScript(List<Process> processes, String script) throws DataException {
+    private boolean executeScript(List<Process> processes, String script)
+            throws DataException, IOException, InvalidImagesException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "importFromFileSystem":
@@ -133,6 +136,16 @@ public class KitodoScriptService {
             case "doit2":
                 exportDms(processes, String.valueOf(Boolean.FALSE));
                 break;
+            default:
+                return executeOtherScript(processes, script);
+        }
+        return true;
+    }
+
+    private boolean executeOtherScript(List<Process> processes, String script)
+            throws DataException, IOException, InvalidImagesException {
+        // call the correct method via the parameter
+        switch (this.parameters.get("action")) {
             case "runscript":
                 String taskName = this.parameters.get("stepname");
                 String scriptName = this.parameters.get(SCRIPT);
@@ -163,6 +176,16 @@ public class KitodoScriptService {
             case "copyDataToChildren":
                 copyDataToChildren(processes, script);
                 break;
+            default:
+                return executeRemainingScript(processes, script);
+        }
+        return true;
+    }
+
+    private boolean executeRemainingScript(List<Process> processes, String script)
+            throws DataException, IOException, InvalidImagesException {
+        // call the correct method via the parameter
+        switch (this.parameters.get("action")) {
             case "generateImages":
                 String folders = parameters.get("folders");
                 List<String> foldersList = Arrays.asList("all");
@@ -175,6 +198,9 @@ public class KitodoScriptService {
                     mode = images.length() > 7 ? GenerationMode.MISSING_OR_DAMAGED : GenerationMode.MISSING;
                 }
                 generateImages(processes, mode, foldersList);
+                break;
+            case "searchForMedia":
+                searchForMedia(processes);
                 break;
             default:
                 Helper.setErrorMessage("Unknown action",
@@ -376,6 +402,19 @@ public class KitodoScriptService {
                     generationModeTranslated, process.getTitle(), generatedFolders,
                     String.join(", ", ungeneratableFolders)));
             }
+        }
+    }
+
+    private void searchForMedia(List<Process> processes) throws IOException, InvalidImagesException {
+        FileService fileService = ServiceManager.getFileService();
+        MetsService metsService = ServiceManager.getMetsService();
+        ProcessService processService = ServiceManager.getProcessService();
+
+        for (Process process : processes) {
+            URI metadataFileUri = processService.getMetadataFileUri(process);
+            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri);
+            fileService.searchForMedia(process, workpiece);
+            metsService.saveWorkpiece(workpiece, metadataFileUri);
         }
     }
 
