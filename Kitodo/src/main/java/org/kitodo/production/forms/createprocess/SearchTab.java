@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -88,6 +89,9 @@ public class SearchTab {
             IncludedStructuralElement root = workpiece.getRootElement();
             if (StringUtils.isNotBlank(root.getType())) {
                 this.createProcessForm.getProcessDataTab().setDocType(root.getType());
+            }
+            if (Objects.nonNull(originalProcess.getParent())) {
+                this.createProcessForm.getTitleRecordLinkTab().setParentAsTitleRecord(originalProcess.getParent());
             }
             this.createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(root.getMetadata());
             this.createProcessForm.setEditActiveTabIndex(CreateProcessForm.ADDITIONAL_FIELDS_TAB_INDEX);

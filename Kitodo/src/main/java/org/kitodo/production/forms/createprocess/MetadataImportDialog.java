@@ -11,19 +11,15 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.model.SelectItem;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
@@ -37,7 +33,6 @@ public abstract class MetadataImportDialog {
     public final CreateProcessForm createProcessForm;
 
     static final String FORM_CLIENTID = "editForm";
-    static final String INSERTION_TREE = "editForm:processFromTemplateTabView:insertionTree";
     static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
 
@@ -66,7 +61,7 @@ public abstract class MetadataImportDialog {
         TempProcess parentTempProcess = ServiceManager.getImportService().getParentTempProcess();
         if (numberOfProcesses == 1 && Objects.nonNull(parentTempProcess)) {
             // case 1: only one process was imported => load DB parent into "TitleRecordLinkTab"
-            setParentAsTitleRecord(parentTempProcess.getProcess());
+            this.createProcessForm.getTitleRecordLinkTab().setParentAsTitleRecord(parentTempProcess.getProcess());
         } else {
             // case 2: multiple processes imported and one ancestor found in DB => add ancestor to list
             if (Objects.nonNull(parentTempProcess)) {
@@ -86,16 +81,6 @@ public abstract class MetadataImportDialog {
         String script = GROWL_MESSAGE.replace("SUMMARY", summary).replace("DETAIL", detail)
                 .replace("SEVERITY", "info");
         PrimeFaces.current().executeScript(script);
-    }
-
-    private void setParentAsTitleRecord(Process parentProcess) {
-        this.createProcessForm.setEditActiveTabIndex(CreateProcessForm.TITLE_RECORD_LINK_TAB_INDEX);
-        ArrayList<SelectItem> parentCandidates = new ArrayList<>();
-        parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
-        this.createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
-        this.createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
-        this.createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
-        Ajax.update(INSERTION_TREE);
     }
 
     /**
