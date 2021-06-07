@@ -31,9 +31,6 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
     @Column(name = "sortHelperStatus")
     private String sortHelperStatus;
 
-    @Column(name = "inChoiceListShown")
-    Boolean inChoiceListShown;
-
     /**
      * Get title.
      *
@@ -88,23 +85,6 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
         this.creationDate = creationDate;
     }
 
-    /**
-     * Get inChoiceListShown.
-     *
-     * @return value of inChoiceListShown
-     */
-    public Boolean getInChoiceListShown() {
-        return this.inChoiceListShown;
-    }
-
-    /**
-     * Set inChoiceListShown.
-     *
-     * @param inChoiceListShown as java.lang.Boolean
-     */
-    public void setInChoiceListShown(Boolean inChoiceListShown) {
-        this.inChoiceListShown = inChoiceListShown;
-    }
 
     /**
      * Returns a string that textually represents this object.

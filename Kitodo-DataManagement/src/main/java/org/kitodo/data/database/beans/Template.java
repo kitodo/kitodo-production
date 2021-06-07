@@ -70,7 +70,6 @@ public class Template extends BaseTemplateBean {
      */
     public Template() {
         this.title = "";
-        this.inChoiceListShown = true;
         this.tasks = new ArrayList<>();
         this.creationDate = new Date();
     }

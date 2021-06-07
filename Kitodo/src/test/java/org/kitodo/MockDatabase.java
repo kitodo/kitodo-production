@@ -654,7 +654,6 @@ public class MockDatabase {
         firstTemplate.setTitle("First template");
         LocalDate localDate = LocalDate.of(2016, 10, 20);
         firstTemplate.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-        firstTemplate.setInChoiceListShown(true);
         firstTemplate.setClient(project.getClient());
         firstTemplate.setDocket(ServiceManager.getDocketService().getById(2));
         firstTemplate.getProjects().add(project);
@@ -671,7 +670,6 @@ public class MockDatabase {
         secondTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(secondTemplate);
         secondTemplate.setRuleset(ServiceManager.getRulesetService().getById(2));
-        secondTemplate.setInChoiceListShown(true);
         ServiceManager.getTemplateService().save(secondTemplate);
 
         thirdProject = ServiceManager.getProjectService().getById(3);
@@ -684,14 +682,12 @@ public class MockDatabase {
         thirdTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(thirdTemplate);
         thirdTemplate.setRuleset(ServiceManager.getRulesetService().getById(1));
-        thirdTemplate.setInChoiceListShown(true);
         ServiceManager.getTemplateService().save(thirdTemplate);
 
         Template fourthTemplate = new Template();
         fourthTemplate.setTitle("Fourth template");
         localDate = LocalDate.of(2016, 10, 20);
         fourthTemplate.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-        fourthTemplate.setInChoiceListShown(true);
         fourthTemplate.setClient(project.getClient());
         fourthTemplate.setDocket(ServiceManager.getDocketService().getById(2));
         fourthTemplate.getProjects().add(project);

@@ -23,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -75,7 +74,7 @@ public class SearchTab {
                 Helper.setErrorMessage(e);
             }
         }
-        processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
+        processes = processes.stream().filter(Process::getInChoiceListShown).collect(Collectors.toList());
         return processes;
     }
 

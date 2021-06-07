@@ -21,7 +21,6 @@ import org.kitodo.production.services.ServiceManager;
 public class TemplateDTO extends BaseTemplateDTO {
 
     private boolean active;
-    private boolean showInChoiceList;
     private WorkflowDTO workflow;
     private boolean canBeUsedForProcess;
     private List<ProjectDTO> projects = new ArrayList<>();
@@ -111,23 +110,5 @@ public class TemplateDTO extends BaseTemplateDTO {
      */
     public void setProjects(List<ProjectDTO> projects) {
         this.projects = projects;
-    }
-
-    /**
-     * Get showInChoiceList.
-     *
-     * @return value of showInChoiceList
-     */
-    public boolean isShowInChoiceList() {
-        return showInChoiceList;
-    }
-
-    /**
-     * Set showInChoiceList.
-     *
-     * @param showInChoiceList as boolean
-     */
-    public void setShowInChoiceList(boolean showInChoiceList) {
-        this.showInChoiceList = showInChoiceList;
     }
 }
