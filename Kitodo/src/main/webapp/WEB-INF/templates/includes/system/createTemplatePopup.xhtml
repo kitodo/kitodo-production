@@ -81,6 +81,7 @@
                                       title="#{existingTemplate eq null ? '' :existingTemplate.workflow.title}"/>
                     </p:panelGrid>
                         <p:commandButton process="@this existingTemplates"
+                                         rendered="#{existingTemplate ne null}"
                                          action="#{MigrationForm.useExistingTemplate(template,existingTemplate)}"
                                          value="#{msgs.useExistingTemplate}"
                                          icon="fa fa-floppy-o fa-lg"
