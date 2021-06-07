@@ -27,8 +27,10 @@
               showHeader="false"
               dynamic="true"
               appendTo="@(body)">
-        <p:growl id="growl" widgetVar="growl" showDetail="true"/>
         <h:form id="uploadFileDialogForm" enctype="multipart/form-data">
+            <p:remoteCommand name="generateMedia"
+                             action="#{DataEditorForm.uploadFileDialog.generateNewUploadedMedia}"
+                             update="uploadFileDialogForm:progressBar"/>
             <p:panelGrid id="uploadFileGrid" columns="1" layout="grid">
                 <p:row>
                     <h3>#{msgs.uploadMedia}</h3>
@@ -46,10 +48,9 @@
                                       widgetVar="uploadMedia"
                                       value="#{DataEditorForm.uploadFileDialog.file}"
                                       fileUploadListener="#{DataEditorForm.uploadFileDialog.uploadMedia}"
-                                      oncomplete="handleMultiFileUploadRequest(this);"
+                                      oncomplete="handleLastFileUploadRequest(this);"
                                       mode="advanced"
                                       multiple="true"
-                                      update="growl"
                                       dragDropSupport="false"
                                       fileLimit="#{DataEditorForm.uploadFileDialog.fileLimit}"
                                       sequential="true"
@@ -69,26 +70,25 @@
                                        value="#{DataEditorForm.uploadFileDialog.progress}"
                                        labelTemplate="{value}%" global="false">
                             <p:ajax event="complete"
-                                    listener="#{DataEditorForm.uploadFileDialog.resetProgress()}"
-                                    oncomplete="PF('uploadMedia').enableButton(PF('uploadMedia').chooseButton);PF('closeButton').enable();"/>
+                                    listener="#{DataEditorForm.uploadFileDialog.updateWorkpiece()}"
+                                    oncomplete="PF('uploadFileDialog').hide();"
+                                    update="logicalTree,metadataAccordion:logicalMetadataWrapperPanel,paginationForm:paginationWrapperPanel,galleryWrapperPanel"/>
                         </p:progressBar>
                     </div>
                     <h:panelGroup styleClass="dialogButtonWrapper right">
                         <p:commandButton value="#{msgs.close}"
                                          widgetVar="closeButton"
-                                         onclick="PF('progressBar').cancel()"
-                                         action="#{DataEditorForm.uploadFileDialog.refresh}"
+                                         onclick="PF('uploadFileDialog').hide();"
                                          icon="fa fa-times fa-lg"
                                          iconPos="right"
-                                         styleClass="secondary right"
-                                         update="logicalTree,metadataAccordion:logicalMetadataWrapperPanel,paginationForm:paginationWrapperPanel,galleryWrapperPanel"
-                                         oncomplete="PF('uploadFileDialog').hide();"/>
+                                         styleClass="secondary right"/>
                     </h:panelGroup>
                 </p:row>
             </p:panelGrid>
-            <script type="text/javascript">
-                function handleMultiFileUploadRequest(fileupload) {
+            <script>
+                function handleLastFileUploadRequest(fileupload) {
                     if (fileupload.files.length === 0) {
+                        generateMedia();
                         document.getElementById('progressDiv').style.display = 'block';
                         PF('uploadMedia').disableButton(PF('uploadMedia').chooseButton)
                         PF('progressBar').start();

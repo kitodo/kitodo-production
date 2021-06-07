@@ -1772,6 +1772,16 @@ form#metadata div label,
     background: #85b2cb;
 }
 
+#primefacesmessagedlg .ui-dialog-titlebar {
+    background: #52B415;
+    display: block;
+}
+
+#primefacesmessagedlg .ui-dialog-content {
+    text-align: center;
+    padding-left: 5px;
+}
+
 #uploadFileDialogForm,
 #uploadFileDialogForm\:uploadFileGrid,
 #uploadFileDialogForm\:uploadFileGrid_content{

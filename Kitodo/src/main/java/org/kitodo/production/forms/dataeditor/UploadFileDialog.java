@@ -17,12 +17,16 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -195,11 +199,6 @@ public class UploadFileDialog {
         }
     }
 
-    public void resetProgress() {
-        progress = 0;
-        generateMediaTasks.clear();
-    }
-
     private MediaVariant getMediaVariant() {
         MediaVariant mediaVariant = new MediaVariant();
         mediaVariant.setMimeType(mimeType);
@@ -217,26 +216,8 @@ public class UploadFileDialog {
         return MediaUnit.TYPE_OTHER;
     }
 
-    /**
-     * Prepare popup dialog.
-     */
-    public void prepare() {
-        progress = 0;
-        generateMediaTasks = new ArrayList<>();
-        selectedMedia = new LinkedList<>();
-        if (!setUpFolders()) { return; }
-        generatorSource = new Subfolder(dataEditor.getProcess(), sourceFolder);
-        mimeType = sourceFolder.getMimeType();
-        use = sourceFolder.getFileGroup();
-        mediaVariant = getMediaVariant();
-        fileExtension = generatorSource.getFileFormat().getExtension(false);
-        preparePossiblePositions();
-        initPosition();
-        PrimeFaces.current().executeScript("PF('uploadFileDialog').show()");
-    }
-
     private boolean setUpFolders() {
-        VariableReplacer variableReplacer = new VariableReplacer(null, null, dataEditor.getProcess(), null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, dataEditor.getProcess(), null);
         sourceFolder = dataEditor.getProcess().getProject().getGeneratorSource();
         Folder mediaView = dataEditor.getProcess().getProject().getMediaView();
         Folder preview = dataEditor.getProcess().getProject().getPreview();
@@ -245,7 +226,7 @@ public class UploadFileDialog {
         mediaView.setPath(variableReplacer.replace(mediaView.getRelativePath()));
         preview.setPath(variableReplacer.replace(preview.getRelativePath()));
 
-        if ( folderExists(sourceFolder) && folderExists(mediaView) && folderExists(preview)) {
+        if (folderExists(sourceFolder) && folderExists(mediaView) && folderExists(preview)) {
             sourceFolderURI = getFolderURI(sourceFolder);
             contentFolders.add(mediaView);
             contentFolders.add(preview);
@@ -254,10 +235,15 @@ public class UploadFileDialog {
         return false;
     }
 
+    private void sortViews(List<View> views) {
+        views.sort(Comparator.comparing(v -> FilenameUtils.getBaseName(
+                v.getMediaUnit().getMediaFiles().entrySet().iterator().next().getValue().getPath())));
+    }
+
     private boolean folderExists(Folder folder) {
         URI folderURI = getFolderURI(folder);
         if (!ServiceManager.getFileService().fileExist(folderURI)) {
-            Helper.setErrorMessage("errorDirectoryNotFound", new Object[] {folderURI});
+            Helper.setErrorMessage("errorDirectoryNotFound", new Object[]{folderURI});
             return false;
         }
         return true;
@@ -311,7 +297,61 @@ public class UploadFileDialog {
         }
     }
 
-    private void generateNewUploadedImages() {
+    /**
+     * Prepare popup dialog.
+     */
+    public void prepare() {
+        progress = 0;
+        generateMediaTasks = new ArrayList<>();
+        selectedMedia = new LinkedList<>();
+        if (!setUpFolders()) { return; }
+        generatorSource = new Subfolder(dataEditor.getProcess(), sourceFolder);
+        mimeType = sourceFolder.getMimeType();
+        use = sourceFolder.getFileGroup();
+        mediaVariant = getMediaVariant();
+        fileExtension = generatorSource.getFileFormat().getExtension(false);
+        preparePossiblePositions();
+        initPosition();
+        PrimeFaces.current().executeScript("PF('uploadFileDialog').show()");
+    }
+
+    /**
+     * Upload media.
+     *
+     * @param event as FileUploadEvent
+     */
+    public void uploadMedia(FileUploadEvent event) {
+        if (event.getFile() != null) {
+
+            mediaUnit = MetadataEditor.addMediaUnit(getPhysicalDivType(), dataEditor.getWorkpiece(),
+                    dataEditor.getWorkpiece().getMediaUnit(), InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
+            uploadFileUri = sourceFolderURI.resolve(event.getFile().getFileName());
+
+            //TODO: Find a better way to avoid overwriting an existing file
+            if (ServiceManager.getFileService().fileExist(uploadFileUri)) {
+                String newFileName = ServiceManager.getFileService().getFileName(uploadFileUri)
+                        + "_" + Helper.generateRandomString(3) + "." + fileExtension;
+                uploadFileUri = sourceFolderURI.resolve(newFileName);
+            }
+            mediaUnit.getMediaFiles().put(mediaVariant, uploadFileUri);
+            //upload file in sourceFolder
+            try (OutputStream outputStream = ServiceManager.getFileService().write(uploadFileUri)) {
+                IOUtils.copy(event.getFile().getInputstream(), outputStream);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+            dataEditor.getUnsavedUploadedMedia().add(mediaUnit);
+            selectedMedia.add(new ImmutablePair(mediaUnit, parent));
+            PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
+                    + Helper.getTranslation("mediaUploaded", Collections.singletonList(event.getFile().getFileName()))
+                    + "','severity':'info'});");
+        }
+    }
+
+    /**
+     * Generate newly uploaded media.
+     */
+    public void generateNewUploadedMedia() {
         List<Subfolder> outputs = SubfolderFactoryService.createAll(dataEditor.getProcess(), contentFolders);
         ImageGenerator imageGenerator;
         if (generatorSource.listContents().isEmpty()) {
@@ -325,80 +365,64 @@ public class UploadFileDialog {
     }
 
     /**
+     * Reset the progress bar after generating media is completed and update the workpiece.
+     */
+    public void updateWorkpiece() throws InvalidImagesException, NoSuchMetadataFieldException {
+        progress = 0;
+        generateMediaTasks.clear();
+        addMediaToWorkpiece();
+        refresh();
+        Helper.setMessage(Helper.getTranslation("uploadMediaCompleted"));
+    }
+
+    private void addMediaToWorkpiece() throws InvalidImagesException {
+        ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
+
+        List<View> views = selectedMedia.stream()
+                .map(v -> MetadataEditor.createUnrestrictedViewOn(v.getKey()))
+                .collect(Collectors.toList());
+        sortViews(views);
+        switch (selectedPosition) {
+            case FIRST_CHILD_OF_CURRENT_ELEMENT:
+                parent.getViews().addAll(0, views);
+                break;
+            case LAST_CHILD_OF_CURRENT_ELEMENT:
+                parent.getViews().addAll(views);
+                break;
+            case AFTER_CURRENT_ELEMENT:
+                parent.getViews().addAll(indexSelectedMedia + 1, views);
+                break;
+            case BEFORE_CURRENT_ELEMENT:
+                parent.getViews().addAll(indexSelectedMedia, views);
+                break;
+            default:
+                throw new IllegalArgumentException("Position of new div element is not supported");
+        }
+    }
+
+    /**
      * Refresh the metadataeditor after uploading media.
      */
-    public void refresh() throws InvalidImagesException, NoSuchMetadataFieldException {
+    public void refresh() throws NoSuchMetadataFieldException {
         if (uploadFileUri != null && ServiceManager.getFileService().fileExist(uploadFileUri)) {
-            ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
+            selectedMedia.sort((Comparator.comparing(v -> FilenameUtils.getBaseName(
+                    v.getKey().getMediaFiles().entrySet().iterator().next().getValue().getPath()))));
             dataEditor.getSelectedMedia().clear();
             dataEditor.getSelectedMedia().addAll(selectedMedia);
             dataEditor.getStructurePanel().show();
             dataEditor.getStructurePanel().preserve();
             dataEditor.refreshStructurePanel();
             dataEditor.getGalleryPanel().show();
-            //update selection with the last uploaded file
             dataEditor.getStructurePanel().updateLogicalNodeSelection(
-                    dataEditor.getGalleryPanel().getGalleryMediaContent(mediaUnit), parent);
-            StructureTreeNode structureTreeNode = new StructureTreeNode(mediaUnit.getLabel(), false, false,
-                    MetadataEditor.createUnrestrictedViewOn(mediaUnit));
+                    dataEditor.getGalleryPanel().getGalleryMediaContent(selectedMedia.get(selectedMedia.size() - 1).getKey()), parent);
+            StructureTreeNode structureTreeNode = new StructureTreeNode(selectedMedia.get(selectedMedia.size() - 1).getKey().getLabel(),
+                    false, false,
+                    MetadataEditor.createUnrestrictedViewOn(selectedMedia.get(selectedMedia.size() - 1).getKey()));
             dataEditor.switchStructure(structureTreeNode, false);
             dataEditor.getPaginationPanel().show();
             uploadFileUri = null;
         }
     }
 
-    /**
-     * Upload media.
-     * @param event as FileUploadEvent
-     */
-    public void uploadMedia(FileUploadEvent event) {
-        if (event.getFile() != null) {
-            //create MediaUnit and edit workpiece
-            mediaUnit = MetadataEditor.addMediaUnit(getPhysicalDivType(), dataEditor.getWorkpiece(),
-                    dataEditor.getWorkpiece().getMediaUnit(), InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
-            uploadFileUri = sourceFolderURI.resolve(event.getFile().getFileName());
-            //TODO: Find a better way to avoid overwriting an existing file
-            if (ServiceManager.getFileService().fileExist(uploadFileUri)) {
-                String newFileName = ServiceManager.getFileService().getFileName(uploadFileUri)
-                        + "_" + Helper.generateRandomString(3) + "." + fileExtension;
-                uploadFileUri = sourceFolderURI.resolve(newFileName);
-            }
-            mediaUnit.getMediaFiles().put(mediaVariant, uploadFileUri);
-            switch (selectedPosition) {
-                case FIRST_CHILD_OF_CURRENT_ELEMENT:
-                    this.dataEditor.getStructurePanel().getSelectedStructure().get().getViews().add(0,
-                            MetadataEditor.createUnrestrictedViewOn(mediaUnit));
-                    selectedMedia.add(new ImmutablePair<>(mediaUnit,this.dataEditor.getStructurePanel().getSelectedStructure().get()));
-                    break;
-                case LAST_CHILD_OF_CURRENT_ELEMENT:
-                    this.dataEditor.getStructurePanel().getSelectedStructure().get().getViews().add(
-                            MetadataEditor.createUnrestrictedViewOn(mediaUnit));
-                    selectedMedia.add(new ImmutablePair<>(mediaUnit,this.dataEditor.getStructurePanel().getSelectedStructure().get()));
-                    break;
-                case AFTER_CURRENT_ELEMENT:
-                    parent.getViews().add(indexSelectedMedia + 1,
-                            MetadataEditor.createUnrestrictedViewOn(mediaUnit));
-                    selectedMedia.add(new ImmutablePair<>(mediaUnit,parent));
-                    break;
-                case BEFORE_CURRENT_ELEMENT:
-                    parent.getViews().add(indexSelectedMedia,
-                            MetadataEditor.createUnrestrictedViewOn(mediaUnit));
-                    selectedMedia.add(new ImmutablePair<>(mediaUnit,parent));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Position of new div element is not supported");
-            }
-            //upload file in sourceFolder
-            try (OutputStream outputStream = ServiceManager.getFileService().write(uploadFileUri)) {
-                IOUtils.copy(event.getFile().getInputstream(), outputStream);
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-            generateNewUploadedImages();
-            dataEditor.getNotSavedUploadedMedia().add(mediaUnit);
-            PrimeFaces.current().executeScript("PF('growl').renderMessage({'summary':'"
-                    + Helper.getTranslation("mediaUploaded", Collections.singletonList(event.getFile().getFileName()))
-                    + "','severity':'info'});");
-        }
-    }
+
 }
