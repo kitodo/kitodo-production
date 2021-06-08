@@ -51,6 +51,7 @@ import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
 
 public class KitodoScriptService {
+    private static volatile KitodoScriptService instance = null;
     private Map<String, String> parameters;
     private static final Logger logger = LogManager.getLogger(KitodoScriptService.class);
     private final FileService fileService = ServiceManager.getFileService();
@@ -743,5 +744,19 @@ public class KitodoScriptService {
         } catch (DataException e) {
             Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
         }
+    }
+
+    public static KitodoScriptService getInstance() {
+        KitodoScriptService localReference = instance;
+        if (Objects.isNull(localReference)) {
+            synchronized (KitodoScriptService.class) {
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new KitodoScriptService();
+                    instance = localReference;
+                }
+            }
+        }
+        return localReference;
     }
 }

@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.dto.UserDTO;
@@ -64,6 +66,7 @@ import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
+import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
@@ -492,13 +495,21 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         script = replacer.replace(script);
         boolean executedSuccessful = false;
         try {
-            logger.info("Calling the shell: {}", script);
+            if (script.startsWith("action:")) {
+                logger.info("Calling KitodoScript interpreter: {}", script);
 
-            CommandService commandService = ServiceManager.getCommandService();
-            CommandResult commandResult = commandService.runCommand(script);
-            executedSuccessful = commandResult.isSuccessful();
-            finishOrReturnAutomaticTask(task, automatic, commandResult.isSuccessful());
-        } catch (IOException | DAOException e) {
+                KitodoScriptService kitodoScriptService = ServiceManager.getKitodoScriptService();
+                kitodoScriptService.execute(Arrays.asList(task.getProcess()), script);
+                executedSuccessful = true;
+            } else {
+                logger.info("Calling the shell: {}", script);
+
+                CommandService commandService = ServiceManager.getCommandService();
+                CommandResult commandResult = commandService.runCommand(script);
+                executedSuccessful = commandResult.isSuccessful();
+            }
+            finishOrReturnAutomaticTask(task, automatic, executedSuccessful);
+        } catch (IOException | DAOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return executedSuccessful;

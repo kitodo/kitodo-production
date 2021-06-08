@@ -14,6 +14,7 @@ package org.kitodo.production.services;
 import java.util.Objects;
 
 import org.kitodo.production.services.command.CommandService;
+import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.AuthorityService;
 import org.kitodo.production.services.data.BatchService;
 import org.kitodo.production.services.data.ClientService;
@@ -68,6 +69,7 @@ public class ServiceManager {
     private static ImageService imageService;
     private static ImportService importService;
     private static IndexingService indexingService;
+    private static KitodoScriptService kitodoScriptService;
     private static LdapGroupService ldapGroupService;
     private static LdapServerService ldapServerService;
     private static ListColumnService listColumnService;
@@ -130,6 +132,12 @@ public class ServiceManager {
     private static void initializeFilterService() {
         if (Objects.isNull(filterService)) {
             filterService = FilterService.getInstance();
+        }
+    }
+
+    private static void initializeKitodoScriptService() {
+        if (Objects.isNull(kitodoScriptService)) {
+            kitodoScriptService = KitodoScriptService.getInstance();
         }
     }
 
@@ -622,6 +630,17 @@ public class ServiceManager {
     public static FileStructureValidationService getFileStructureValidationService() {
         initializeFileStructureValidationService();
         return fileStructureValidationService;
+    }
+
+    /**
+     * Initialize KitodoScriptService if it is not yet initialized and next
+     * return it.
+     *
+     * @return KitodoScriptService object
+     */
+    public static KitodoScriptService getKitodoScriptService() {
+        initializeKitodoScriptService();
+        return kitodoScriptService;
     }
 
     /**
