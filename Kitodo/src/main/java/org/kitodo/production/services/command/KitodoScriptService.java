@@ -63,6 +63,30 @@ public class KitodoScriptService {
     private static final String ROLE = "role";
 
     /**
+     * Return the singleton instance of the Kitodo script service.
+     *
+     * @return singleton instance of the Kitodo script service
+     */
+    public static KitodoScriptService getInstance() {
+        KitodoScriptService localReference = instance;
+        if (Objects.isNull(localReference)) {
+            synchronized (KitodoScriptService.class) {
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new KitodoScriptService();
+                    instance = localReference;
+                }
+            }
+        }
+        return localReference;
+    }
+
+    /**
+     * Private constructor. Use {@link #getInstance()} to get the instance.
+     */
+    private KitodoScriptService() { }
+
+    /**
      * Start the script execution.
      *
      * @param processes
@@ -744,19 +768,5 @@ public class KitodoScriptService {
         } catch (DataException e) {
             Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
         }
-    }
-
-    public static KitodoScriptService getInstance() {
-        KitodoScriptService localReference = instance;
-        if (Objects.isNull(localReference)) {
-            synchronized (KitodoScriptService.class) {
-                localReference = instance;
-                if (Objects.isNull(localReference)) {
-                    localReference = new KitodoScriptService();
-                    instance = localReference;
-                }
-            }
-        }
-        return localReference;
     }
 }
