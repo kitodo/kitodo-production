@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -287,10 +288,7 @@ public class ProcessForm extends TemplateBaseForm {
             this.process.setTitle(this.newProcessTitle);
 
             // remove Tiffwriter file
-            KitodoScriptService gs = new KitodoScriptService();
-            List<Process> pro = new ArrayList<>();
-            pro.add(this.process);
-            gs.deleteTiffHeaderFile(pro);
+            ServiceManager.getKitodoScriptService().deleteTiffHeaderFile(Arrays.asList(process));
         }
         return true;
     }
@@ -664,7 +662,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private void executeKitodoScriptForProcesses(List<Process> processes, String kitodoScript) {
-        KitodoScriptService service = new KitodoScriptService();
+        KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
         } catch (DataException | IOException | InvalidImagesException e) {
