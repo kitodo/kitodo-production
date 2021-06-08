@@ -28,7 +28,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
@@ -109,7 +108,7 @@ public class KitodoScriptServiceIT {
         File max = new File(processHome, "jpgs/max");
         max.delete();
 
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:createFolders";
         List<Process> processes = new ArrayList<>();
@@ -127,7 +126,7 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldExecuteAddRoleScript() throws Exception {
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         Task task = ServiceManager.getTaskService().getById(8);
         int amountOfRoles = task.getRoles().size();
@@ -146,7 +145,7 @@ public class KitodoScriptServiceIT {
         MockDatabase.cleanDatabase();
         MockDatabase.insertProcessesFull();
 
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:setStepStatus \"tasktitle:Progress\" status:3";
         List<Process> processes = new ArrayList<>();
@@ -159,7 +158,7 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldExecuteAddShellScriptToTaskScript() throws Exception {
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:addShellScriptToStep \"tasktitle:Progress\" \"label:script\" \"script:/some/new/path\"";
         List<Process> processes = new ArrayList<>();
@@ -173,7 +172,7 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldExecuteSetPropertyTaskScript() throws Exception {
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:setTaskProperty \"tasktitle:Closed\" property:validate value:true";
         List<Process> processes = new ArrayList<>();
@@ -186,7 +185,7 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldNotExecuteSetPropertyTaskScript() throws Exception {
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:setTaskProperty \"tasktitle:Closed\" property:validate value:invalid";
         List<Process> processes = new ArrayList<>();
@@ -217,7 +216,7 @@ public class KitodoScriptServiceIT {
         processTwo.setTitle("SecondProcess");
         processes.add(processTwo);
 
-        new KitodoScriptService().execute(processes,
+        ServiceManager.getKitodoScriptService().execute(processes,
             "action:generateImages \"folders:jpgs/max,jpgs/thumbs\" images:all");
         EmptyTask taskImageGeneratorThread = TaskManager.getTaskList().get(0);
         while (taskImageGeneratorThread.isStartable() || taskImageGeneratorThread.isStoppable()) {
@@ -248,7 +247,7 @@ public class KitodoScriptServiceIT {
         String script = "action:addData " + metadataKey + "=PDM1.0";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
         final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
@@ -272,7 +271,7 @@ public class KitodoScriptServiceIT {
         String script = "action:copyDataToChildren " + metadataKey + "=@" + metadataKey;
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(4));
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
         final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
@@ -315,7 +314,7 @@ public class KitodoScriptServiceIT {
         String script = "action:addData " + metadataKey + "=legal note";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
         final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
@@ -343,7 +342,7 @@ public class KitodoScriptServiceIT {
         List<Process> processes = new ArrayList<>();
         Process process = ServiceManager.getProcessService().getById(2);
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
         List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
@@ -366,7 +365,7 @@ public class KitodoScriptServiceIT {
         String script = "action:addData " + metadataKey + "=@TSL_ATS";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -387,7 +386,7 @@ public class KitodoScriptServiceIT {
         String script = "action:addData " + metadataKey + "=$(processid)";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -408,7 +407,7 @@ public class KitodoScriptServiceIT {
         String script = "action:deleteData " + metadataKey;
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -430,7 +429,7 @@ public class KitodoScriptServiceIT {
         String script = "action:deleteData " + metadataKey + "=SecondMetaShort";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -452,7 +451,7 @@ public class KitodoScriptServiceIT {
         String script = "action:deleteData " + metadataKey + "=@TitleDocMainShort";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -474,7 +473,7 @@ public class KitodoScriptServiceIT {
         String script = "action:deleteData" + metadataKey + "=SecondMetaLong";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -502,7 +501,7 @@ public class KitodoScriptServiceIT {
         String script = "action:overwriteData " + metadataKey + "=Overwritten";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -533,7 +532,7 @@ public class KitodoScriptServiceIT {
         String script = "action:overwriteData " + metadataKey + "=@TSL_ATS";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
@@ -564,7 +563,7 @@ public class KitodoScriptServiceIT {
         String script = "action:overwriteData " + metadataKey + "=$(processid)";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
-        KitodoScriptService kitodoScript = new KitodoScriptService();
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
 
         Thread.sleep(2000);
