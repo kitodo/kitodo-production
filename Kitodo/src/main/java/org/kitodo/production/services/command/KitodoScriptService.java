@@ -84,7 +84,8 @@ public class KitodoScriptService {
     /**
      * Private constructor. Use {@link #getInstance()} to get the instance.
      */
-    private KitodoScriptService() { }
+    private KitodoScriptService() {
+    }
 
     /**
      * Start the script execution.
