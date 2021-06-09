@@ -211,6 +211,11 @@ public class StructurePanel implements Serializable {
                 dataEditor.getUnsavedDeletedMedia().add(selectedPhysicalDivision.getKey());
             }
         }
+        int i = 1;
+        for (MediaUnit mediaUnit : dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted()) {
+            mediaUnit.setOrder(i);
+            i++;
+        }
         show();
         dataEditor.getSelectedMedia().clear();
         dataEditor.getGalleryPanel().updateMedia();
