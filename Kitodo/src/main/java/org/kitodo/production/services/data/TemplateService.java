@@ -162,7 +162,6 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
 
         // Template _title_ should explicitly _not_ be duplicated!
         duplicatedTemplate.setCreationDate(new Date());
-        duplicatedTemplate.setInChoiceListShown(baseTemplate.getInChoiceListShown());
         duplicatedTemplate.setClient(baseTemplate.getClient());
         duplicatedTemplate.setDocket(baseTemplate.getDocket());
         duplicatedTemplate.setRuleset(baseTemplate.getRuleset());
@@ -184,7 +183,6 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
         templateDTO.setId(getIdFromJSONObject(jsonObject));
         templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
         templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
-        templateDTO.setShowInChoiceList(TemplateTypeField.SHOW_IN_CHOICE_LIST.getBooleanValue(jsonObject));
         templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
         templateDTO.setDocket(
             ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(jsonObject)));

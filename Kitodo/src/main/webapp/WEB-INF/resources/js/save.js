@@ -31,7 +31,7 @@ function compareForm(form) {
     });
 
     for (let i = 0; i < values.length; i++) {
-        if (values[i] != currentValues[i]) {
+        if (values[i] !== currentValues[i]) {
             jQuery('#' + form + '\\:saveButtonToggler').click();
             break;
         }

@@ -111,6 +111,9 @@ public class Process extends BaseTemplateBean {
     @Column(name = "exported")
     private boolean exported;
 
+    @Column(name = "inChoiceListShown")
+    Boolean inChoiceListShown;
+
     @Transient
     private User blockedUser;
 
@@ -535,6 +538,24 @@ public class Process extends BaseTemplateBean {
      */
     public void setBaseType(String baseType) {
         this.baseType = baseType;
+    }
+
+    /**
+     * Get inChoiceListShown.
+     *
+     * @return value of inChoiceListShown
+     */
+    public Boolean getInChoiceListShown() {
+        return this.inChoiceListShown;
+    }
+
+    /**
+     * Set inChoiceListShown.
+     *
+     * @param inChoiceListShown as java.lang.Boolean
+     */
+    public void setInChoiceListShown(Boolean inChoiceListShown) {
+        this.inChoiceListShown = inChoiceListShown;
     }
 
     /**

@@ -82,6 +82,9 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private String referringView = "";
     private int progress;
 
+    static final int ADDITIONAL_FIELDS_TAB_INDEX = 1;
+    static final int TITLE_RECORD_LINK_TAB_INDEX = 3;
+
     /**
      * Returns the ruleset management to access the ruleset.
      *

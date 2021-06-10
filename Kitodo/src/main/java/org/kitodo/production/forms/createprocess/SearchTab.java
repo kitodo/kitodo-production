@@ -15,18 +15,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.BaseTemplateBean;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 
 public class SearchTab {
 
@@ -66,50 +68,34 @@ public class SearchTab {
         List<Process> processes = new ArrayList<>();
         User currentUser = ServiceManager.getUserService().getCurrentUser();
         for (Project project : currentUser.getProjects()) {
-            processes.addAll(project.getProcesses());
+            try {
+                processes.addAll(ServiceManager.getProjectService().getById(project.getId()).getProcesses());
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e);
+            }
         }
-        processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
+        processes = processes.stream().filter(Process::getInChoiceListShown).collect(Collectors.toList());
         return processes;
     }
 
     /**
-     * Evaluate selected template.
+     * Copy metadata of selected process.
      */
-    public void evaluateTemplateSelection() {
-        fillProcessDetailsFromOriginalProcessProperties();
+    public void copyMetadata() {
         try {
-            URI uri = ServiceManager.getProcessService().getMetadataFileUri(originalProcess);
-            ServiceManager.getMetsService().loadWorkpiece(uri);
+            URI metadataUri = ServiceManager.getProcessService().getMetadataFileUri(this.originalProcess);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataUri);
+            IncludedStructuralElement root = workpiece.getRootElement();
+            if (StringUtils.isNotBlank(root.getType())) {
+                this.createProcessForm.getProcessDataTab().setDocType(root.getType());
+            }
+            if (Objects.nonNull(originalProcess.getParent())) {
+                this.createProcessForm.getTitleRecordLinkTab().setParentAsTitleRecord(originalProcess.getParent());
+            }
+            this.createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(root.getMetadata());
+            this.createProcessForm.setEditActiveTabIndex(CreateProcessForm.ADDITIONAL_FIELDS_TAB_INDEX);
         } catch (IOException e) {
             Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {"template-metadata" }, logger, e);
-        }
-    }
-
-    private void fillProcessDetailsFromOriginalProcessProperties() {
-        fillProcessDetailsFromWorkpieceProperties();
-        fillProcessDetailsFromTemplateProperties();
-    }
-
-    private void fillProcessDetailsFromWorkpieceProperties() {
-        for (Property workpieceProperty : this.originalProcess.getWorkpieces()) {
-            for (ProcessDetail detail : this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements()) {
-                if (detail.getLabel().equals(workpieceProperty.getTitle())) {
-                    ImportService.setProcessDetailValue(detail, workpieceProperty.getValue());
-                }
-                if (workpieceProperty.getTitle().equals("DocType")) {
-                    this.createProcessForm.getProcessDataTab().setDocType(workpieceProperty.getValue());
-                }
-            }
-        }
-    }
-
-    private void fillProcessDetailsFromTemplateProperties() {
-        for (Property templateProperty : this.originalProcess.getTemplates()) {
-            for (ProcessDetail processDetail : this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements()) {
-                if (processDetail.getLabel().equals(templateProperty.getTitle())) {
-                    ImportService.setProcessDetailValue(processDetail, templateProperty.getValue());
-                }
-            }
         }
     }
 }

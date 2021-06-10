@@ -94,7 +94,7 @@ public class SelectTemplateDialogView implements Serializable {
      * Display error message if no template is configured for current project.
      */
     public void checkForTemplates() {
-        List<TemplateDTO> availableTemplates = this.project.getAvailableTemplates();
+        List<TemplateDTO> availableTemplates = this.project.getTemplates();
         if (availableTemplates.size() == 1) {
             this.selectedTemplateId = availableTemplates.get(0).getId();
         }

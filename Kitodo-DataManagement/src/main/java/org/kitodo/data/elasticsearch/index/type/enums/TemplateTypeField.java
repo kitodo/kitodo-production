@@ -17,7 +17,6 @@ public enum TemplateTypeField implements TypeInterface {
     TITLE("title"),
     CREATION_DATE("creationDate"),
     ACTIVE("active"),
-    SHOW_IN_CHOICE_LIST("showInChoiceList"),
     SORT_HELPER_STATUS("sortHelperStatus"),
     CLIENT_ID("client.id"),
     CLIENT_NAME("client.name"),
@@ -27,7 +26,7 @@ public enum TemplateTypeField implements TypeInterface {
     PROJECTS("projects"),
     TASKS("tasks");
 
-    private String name;
+    private final String name;
 
     TemplateTypeField(String name) {
         this.name = name;

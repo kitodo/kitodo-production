@@ -42,6 +42,7 @@ import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
+import org.omnifaces.util.Ajax;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -51,7 +52,7 @@ import org.primefaces.model.TreeNode;
 public class TitleRecordLinkTab {
     private static final Logger logger = LogManager.getLogger(TitleRecordLinkTab.class);
 
-    private static final String ACQUISITION_STAGE = "create";
+    static final String INSERTION_TREE = "editForm:processFromTemplateTabView:insertionTree";
     private static final MetsService metsService = ServiceManager.getMetsService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
@@ -415,5 +416,19 @@ public class TitleRecordLinkTab {
      */
     public Process getTitleRecordProcess() {
         return titleRecordProcess;
+    }
+
+    /**
+     * Set given process "parentProcess" as parent title record of new process.
+     * @param parentProcess process to set as parent title record
+     */
+    public void setParentAsTitleRecord(Process parentProcess) {
+        createProcessForm.setEditActiveTabIndex(CreateProcessForm.TITLE_RECORD_LINK_TAB_INDEX);
+        ArrayList<SelectItem> parentCandidates = new ArrayList<>();
+        parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
+        createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
+        createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
+        createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
+        Ajax.update(INSERTION_TREE);
     }
 }

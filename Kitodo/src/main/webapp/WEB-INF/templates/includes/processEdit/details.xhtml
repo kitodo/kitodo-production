@@ -15,6 +15,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <!--@elvariable id="isViewMode" type="boolean"-->
     <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
@@ -78,6 +79,17 @@
                                    itemLabel="#{docket.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
+            </div>
+        </p:row>
+
+        <p:row>
+            <div>
+                <p:outputLabel for="templateSwitch" value="#{msgs.processTemplate}"/>
+                <p:selectBooleanCheckbox styleClass="switch input"
+                                         disabled="#{isViewMode}"
+                                         id="templateSwitch"
+                                         onchange="toggleSave()"
+                                         value="#{ProcessForm.process.inChoiceListShown}"/>
             </div>
         </p:row>
     </p:panelGrid>

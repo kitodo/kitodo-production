@@ -81,14 +81,6 @@
             </div>
 
             <div>
-                <p:outputLabel for="showInList" value="#{msgs.showInSelectList}"/>
-                <p:selectBooleanCheckbox id="showInList" styleClass="switch input" disabled="#{isViewMode}"
-                                         value="#{TemplateForm.template.inChoiceListShown}">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-
-            <div>
                 <p:outputLabel for="active" value="#{msgs.active}"/>
                 <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateForm.template.active}"
                                          disabled="#{isViewMode}">
