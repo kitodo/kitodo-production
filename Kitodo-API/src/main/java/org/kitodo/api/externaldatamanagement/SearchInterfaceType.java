@@ -12,29 +12,31 @@
 package org.kitodo.api.externaldatamanagement;
 
 public enum SearchInterfaceType {
-    SRU("sru", "http://www.loc.gov/zing/srw/", "record", "startRecord",
+    SRU("sru", "http://www.loc.gov/zing/srw/", "record", "startRecord", "1",
             "maximumRecords", "query", "numberOfRecords",
             ".//*[local-name()='diagnostic']/*[local-name()='message']/text()"),
-    OAI("oai", "http://www.openarchives.org/OAI/2.0/", "record", null,
+    OAI("oai", "http://www.openarchives.org/OAI/2.0/", "record", null, null,
             null, null, null, ".//*[local-name()='error']/text()"),
-    FTP("ftp", null, null, null, null, null, null,
+    FTP("ftp", null, null, null, null,null, null, null,
             null);
 
     private final String typeString;
     private final String namespace;
     private final String recordString;
     private final String startRecordString;
+    private final String defaultStartValue;
     private final String maxRecordsString;
     private final String queryString;
     private final String numberOfRecordsString;
     private final String errorMessageXpath;
 
-    SearchInterfaceType(String type, String namespace, String record, String startRecord, String maxRecords,
-                        String query, String numberOfRecords, String errorMessageXpath) {
+    SearchInterfaceType(String type, String namespace, String record, String startRecord, String defaultStartValue,
+                        String maxRecords, String query, String numberOfRecords, String errorMessageXpath) {
         this.typeString = type;
         this.namespace = namespace;
         this.recordString = record;
         this.startRecordString = startRecord;
+        this.defaultStartValue = defaultStartValue;
         this.maxRecordsString = maxRecords;
         this.queryString = query;
         this.numberOfRecordsString = numberOfRecords;
@@ -71,5 +73,14 @@ public enum SearchInterfaceType {
 
     public String getErrorMessageXpath() {
         return this.errorMessageXpath;
+    }
+
+    /**
+     * Get defaultStartIndex.
+     *
+     * @return value of defaultStartIndex
+     */
+    public String getDefaultStartValue() {
+        return defaultStartValue;
     }
 }
