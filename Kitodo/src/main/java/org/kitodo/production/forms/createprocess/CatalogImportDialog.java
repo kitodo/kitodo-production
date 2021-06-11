@@ -56,7 +56,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     private static final int NUMBER_OF_CHILDREN_WARNING_THRESHOLD = 5;
 
     private String currentRecordId = "";
-    private int importDepth = 1;
+    private int importDepth = 2;
     private boolean importChildren = false;
     private int numberOfChildren = 0;
     private String opacErrorMessage = "";
