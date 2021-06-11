@@ -771,12 +771,22 @@ public class GalleryPanel {
         String mediaUnitOrder = params.get("page");
         String stripeIndex = params.get("stripe");
         String selectionType = params.get("selectionType");
+        int pageX = Integer.parseInt(params.get("pageX"));
+        int pageY = Integer.parseInt(params.get("pageY"));
+        boolean triggerContextMenu = Boolean.parseBoolean(params.get("triggerContextMenu"));
+        String createEvent = "(function(){let e=new Event('mousedown');e.pageX=" + pageX + ";e.pageY=" + pageY + ";return e})()";
 
         if (StringUtils.isNotBlank(mediaUnitOrder)) {
             selectMedia(mediaUnitOrder, stripeIndex, selectionType);
+            if (triggerContextMenu) {
+                PrimeFaces.current().executeScript("PF('mediaContextMenu').show(" + createEvent + ")");
+            }
         } else if (StringUtils.isNotBlank(stripeIndex)) {
             try {
                 selectStructure(stripeIndex);
+                if (triggerContextMenu) {
+                    PrimeFaces.current().executeScript("PF('stripeContextMenu').show(" + createEvent + ")");
+                }
             } catch (NumberFormatException e) {
                 Helper.setErrorMessage("Could not select stripe: Stripe index \"" + stripeIndex + "\" could not be parsed.");
             }

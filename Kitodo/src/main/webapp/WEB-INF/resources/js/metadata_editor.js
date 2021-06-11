@@ -54,28 +54,39 @@ var metadataEditor = {
         },
         select(event, target) {
             if (event.metaKey || event.ctrlKey) {
-                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "multi");
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "multi", event);
             } else if (event.shiftKey) {
-                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "range");
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "range", event);
             } else {
-                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "default");
+                metadataEditor.select(target[0].dataset.order, target[0].dataset.stripe, "default", event);
             }
         }
     },
     stripes: {
         handleMouseDown(event) {
             if (!$(event.target).hasClass("selected")) {
-                metadataEditor.select(null, event.target.dataset.stripe, "default");
+                metadataEditor.select(null, event.target.dataset.stripe, "default", event);
             }
         },
     },
-    select(pageIndex, stripeIndex, selectionType) {
+    select(pageIndex, stripeIndex, selectionType, triggerEvent = null) {
         // call the remoteCommand in gallery.xhtml
-        select([
-            {name: "page", value: pageIndex},
-            {name: "stripe", value: stripeIndex},
-            {name: "selectionType", value: selectionType}
-        ]);
+        if (triggerEvent == null) {
+            select([
+                {name: "page", value: pageIndex},
+                {name: "stripe", value: stripeIndex},
+                {name: "selectionType", value: selectionType}
+            ]);
+        } else {
+            select([
+                {name: "page", value: pageIndex},
+                {name: "stripe", value: stripeIndex},
+                {name: "selectionType", value: selectionType},
+                {name: "pageX", value: triggerEvent.pageX},
+                {name: "pageY", value: triggerEvent.pageY},
+                {name: "triggerContextMenu", value: triggerEvent.button === 2}
+            ]);
+        }
     }
 };
 
@@ -83,15 +94,14 @@ metadataEditor.contextMenu = {
     listen() {
         document.oncontextmenu = function(event) {
             return event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA";
-
         };
         $(document).on("mousedown.thumbnail", ".thumbnail-parent", function(event) {
-            if (event.originalEvent.button === 2) {
+            if (event.originalEvent.button === 2 && $(event.target).closest(".thumbnail-parent").find(".selected").length === 1) {
                 PF("mediaContextMenu").show(event);
             }
         });
         $(document).on("mousedown.stripe", ".stripe", function(event) {
-            if (event.originalEvent.button === 2) {
+            if (event.originalEvent.button === 2 && $(event.target).closest(".stripe").find(".selected").length === 1) {
                 PF("stripeContextMenu").show(event);
             }
         });
