@@ -517,8 +517,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         processService.refresh(getGeneratedProcess());
         getGeneratedProcess().setParent(yearProcess);
         yearProcess.getChildren().add(getGeneratedProcess());
-        createMetadataFileForProcess(individualIssuesForProcess, title);
         processService.save(getGeneratedProcess());
+        createMetadataFileForProcess(individualIssuesForProcess, title);
 
         if (logger.isTraceEnabled()) {
             logger.trace("Creating newspaper process {} took {} ms", title,
@@ -577,6 +577,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         Workpiece workpiece = new Workpiece();
         workpiece.setRootElement(rootElement);
+        workpiece.setId(getGeneratedProcess().getId().toString());
         fileService.createProcessLocation(getGeneratedProcess());
         final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
         metsService.saveWorkpiece(workpiece, metadataFileUri);
@@ -748,6 +749,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
         Workpiece workpiece = new Workpiece();
         workpiece.setRootElement(rootElement);
+        workpiece.setId(getGeneratedProcess().getId().toString());
 
         this.yearProcess = getGeneratedProcess();
         this.yearWorkpiece = workpiece;
