@@ -31,9 +31,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
@@ -57,7 +57,7 @@ import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.production.workflow.model.Reader;
 
 @Named("WorkflowForm")
-@SessionScoped
+@ViewScoped
 public class WorkflowForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
