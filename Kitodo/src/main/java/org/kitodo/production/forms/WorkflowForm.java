@@ -299,8 +299,6 @@ public class WorkflowForm extends BaseForm {
      * @return page
      */
     public String newWorkflow() {
-        this.workflow = new Workflow();
-        this.workflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
     }
 
@@ -376,6 +374,9 @@ public class WorkflowForm extends BaseForm {
                 setWorkflow(workflow);
                 setWorkflowStatus(workflow.getStatus());
                 readXMLDiagram();
+            } else {
+                this.workflow = new Workflow();
+                this.workflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
