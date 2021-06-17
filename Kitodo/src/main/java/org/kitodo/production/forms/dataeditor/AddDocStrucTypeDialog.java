@@ -503,22 +503,21 @@ public class AddDocStrucTypeDialog {
 
     private void prepareDocStructPositionSelectionItems(boolean rootNode) {
         docStructPositionSelectionItems = new ArrayList<>();
-        if (!rootNode) {
-            docStructPositionSelectionItems.add(new SelectItem(BEFORE_CURRENT_ELEMENT,
-                    Helper.getTranslation("dataEditor.position.beforeCurrentElement")));
-            docStructPositionSelectionItems.add(new SelectItem(AFTER_CURRENT_ELEMENT,
-                    Helper.getTranslation("dataEditor.position.afterCurrentElement")));
-        }
-        docStructPositionSelectionItems.add(new SelectItem(FIRST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("dataEditor.position.asFirstChildOfCurrentElement")));
-        docStructPositionSelectionItems.add(new SelectItem(LAST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
-        docStructPositionSelectionItems.add(new SelectItem(PARENT_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("dataEditor.position.asParentOfCurrentElement")));
         if (!dataEditor.getSelectedMedia().isEmpty() && dataEditor.consecutivePagesSelected()) {
-            docStructPositionSelectionItems.add(new SelectItem(CURRENT_POSITION,
-                    Helper.getTranslation("dataEditor.position.currentPosition")));
             selectedDocStructPosition = CURRENT_POSITION;
+        } else {
+            if (!rootNode) {
+                docStructPositionSelectionItems.add(new SelectItem(BEFORE_CURRENT_ELEMENT,
+                        Helper.getTranslation("dataEditor.position.beforeCurrentElement")));
+                docStructPositionSelectionItems.add(new SelectItem(AFTER_CURRENT_ELEMENT,
+                        Helper.getTranslation("dataEditor.position.afterCurrentElement")));
+            }
+            docStructPositionSelectionItems.add(new SelectItem(FIRST_CHILD_OF_CURRENT_ELEMENT,
+                    Helper.getTranslation("dataEditor.position.asFirstChildOfCurrentElement")));
+            docStructPositionSelectionItems.add(new SelectItem(LAST_CHILD_OF_CURRENT_ELEMENT,
+                    Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
+            docStructPositionSelectionItems.add(new SelectItem(PARENT_OF_CURRENT_ELEMENT,
+                    Helper.getTranslation("dataEditor.position.asParentOfCurrentElement")));
         }
     }
 

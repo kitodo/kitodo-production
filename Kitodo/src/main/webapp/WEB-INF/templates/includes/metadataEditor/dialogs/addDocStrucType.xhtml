@@ -56,45 +56,48 @@
                 <br/>
 
                 <!-- add new structure element -->
-                <p:panelGrid columns="2"
+                <p:panelGrid columns="2" id="docStrucTypeGrid"
                              rendered="#{not DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
 
                     <h:panelGroup>
                         <!-- select type and position of new doc struct element -->
                         <p:panelGrid columns="2">
                             <p:row>
-                                <p:outputLabel value="#{msgs.position}:"
-                                               for="docStructPositionSelection"/>
-                                <p:selectOneMenu id="docStructPositionSelection"
-                                                 class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectedDocStructPosition}"
-                                                 style="width: 180px;">
-                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionItems}"
-                                                   var="positionSelection"
-                                                   itemValue="#{positionSelection}"
-                                                   itemLabel="#{HelperForm.getTranslated(positionSelection.label)}"/>
-                                    <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareDocStructTypes}"
-                                            update="docStructAddTypeSelection
+                                <p:column rendered="#{not viewsSelected}">
+                                    <p:outputLabel value="#{msgs.position}:"
+                                                   for="docStructPositionSelection"/>
+                                    <p:selectOneMenu id="docStructPositionSelection"
+                                                     class="input"
+                                                     value="#{DataEditorForm.addDocStrucTypeDialog.selectedDocStructPosition}"
+                                                     style="width: 180px;">
+                                        <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionItems}"
+                                                       var="positionSelection"
+                                                       itemValue="#{positionSelection}"
+                                                       itemLabel="#{HelperForm.getTranslated(positionSelection.label)}"/>
+                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareDocStructTypes}"
+                                                update="docStructAddTypeSelection
                                                     addDocStruc
                                                     addAndEditStruc"/>
-                                </p:selectOneMenu>
-
-                                <p:outputLabel value="#{msgs.typ}:"
-                                               for="docStructAddTypeSelection"/>
-                                <p:selectOneMenu id="docStructAddTypeSelection"
-                                                 class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
-                                                 required="#{not empty param['dialogAddDocStrucTypeForm:addDocStruc'] or not empty param['dialogAddDocStrucTypeForm:addAndEditStruc']}"
-                                                 immediate="true"
-                                                 style="width: 180px;">
-                                    <f:selectItem itemValue="#{null}"
-                                                  itemLabel="#{msgs.notSelected}"
-                                                  itemDisabled="true"
-                                                  noSelectionOption="true"/>
-                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
-                                    <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(false)}"
-                                            update="dialogAddDocStrucTypeForm"/>
-                                </p:selectOneMenu>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{msgs.typ}:"
+                                                   for="docStructAddTypeSelection"/>
+                                    <p:selectOneMenu id="docStructAddTypeSelection"
+                                                     class="input"
+                                                     value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
+                                                     required="#{not empty param['dialogAddDocStrucTypeForm:addDocStruc'] or not empty param['dialogAddDocStrucTypeForm:addAndEditStruc']}"
+                                                     immediate="true"
+                                                     style="width: 180px;">
+                                        <f:selectItem itemValue="#{null}"
+                                                      itemLabel="#{msgs.notSelected}"
+                                                      itemDisabled="true"
+                                                      noSelectionOption="true"/>
+                                        <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
+                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(false)}"
+                                                update="dialogAddDocStrucTypeForm"/>
+                                    </p:selectOneMenu>
+                                </p:column>
                             </p:row>
                         </p:panelGrid>
                     </h:panelGroup>

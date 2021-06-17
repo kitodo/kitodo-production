@@ -1335,6 +1335,10 @@ Popup dialogs
     overflow-y: hidden;
 }
 
+#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-panelgrid-cell{
+    vertical-align: top;
+}
+
 .ui-dialog.legal-dialog button.secondary.right {
     position: absolute;
     bottom: var(--default-double-size);
