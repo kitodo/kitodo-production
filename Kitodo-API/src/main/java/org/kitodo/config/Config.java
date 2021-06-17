@@ -15,7 +15,9 @@ import java.util.Objects;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.ConfigurationUtils;
 import org.apache.commons.configuration.ConversionException;
+import org.apache.commons.configuration.FileSystem;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.Level;
@@ -41,6 +43,10 @@ public abstract class Config {
                     AbstractConfiguration.setDefaultListDelimiter('&');
                     try {
                         initialized = new PropertiesConfiguration(configFile);
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Using configuration from "
+                                    + ConfigurationUtils.locate(FileSystem.getDefaultFileSystem(), null, configFile));
+                        }
                     } catch (ConfigurationException e) {
                         logger.warn("Loading of " + configFile + " failed. Trying to start with empty configuration.",
                             e);
