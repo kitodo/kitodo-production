@@ -11,8 +11,6 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import de.sub.goobi.metadaten.Separator;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
