@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * A character or string that is used to separate the two page numbers in
  * double-page pagination.
  */
-public class Separator {
+class Separator {
     /**
      * Regular expression to remove quotes from the input string.
      */
@@ -33,7 +33,7 @@ public class Separator {
      *            elements to create Separators from
      * @return a list of separator objects
      */
-    public static List<Separator> factory(String data) {
+    static List<Separator> factory(String data) {
         List<Separator> result = new LinkedList<>();
         Matcher m = UNQUOTE.matcher(data);
         while (m.find()) {
@@ -57,7 +57,7 @@ public class Separator {
      * @param separator
      *            separator String
      */
-    public Separator(String separator) {
+    private Separator(String separator) {
         this.separator = separator;
     }
 
@@ -66,7 +66,7 @@ public class Separator {
      *
      * @return the separator string
      */
-    public String getSeparatorString() {
+    String getSeparatorString() {
         return separator;
     }
 }
