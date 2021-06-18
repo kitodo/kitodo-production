@@ -41,35 +41,38 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class Browser {
     private static final Logger logger = LogManager.getLogger(Browser.class);
+
     private static final String BASE_URL = "http://localhost:8080/kitodo/";
-    private static RemoteWebDriver webDriver;
-    private static Actions actions;
-    private static final String GECKO_DRIVER_VERSION = "0.19.1";
-    private static boolean onTravis = false;
-    private static final BrowserType browserType = BrowserType.CHROME;
+    private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
+    private static final int DELAY_AFTER_CATALOG_SELECTION = 500;
+    private static final int DELAY_AFTER_DELETE = 7000;
+    private static final int DELAY_AFTER_CLICK_LINK_MIN = 500;
+    private static final int DELAY_AFTER_CLICK_LINK_MAX = 1500;
+    private static final int DELAY_AFTER_HOVER_MENU = 500;
+    private static final int DELAY_AFTER_INDEXING = 2000;
+    private static final int DELAY_AFTER_LOGOUT = 3000;
+    private static final int DELAY_AFTER_NEW_ITEM_CLICK = 500;
+    private static final int DELAY_AFTER_PICK_LIST_CLICK = 1500;
+    private static final int DELAY_INDEXING = 3000;
     private static final String USER_DIR = System.getProperty("user.dir");
     public static final String DOWNLOAD_DIR = USER_DIR + "/target/downloads/";
     private static final String DRIVER_DIR = USER_DIR + "/target/extracts/";
+    private static final String GECKO_DRIVER_VERSION = "0.19.1";
 
-    private static final int delayIndexing = 3000;
-    private static final int delayAfterLogin = 2000;
-    private static final int delayAfterLogout = 3000;
-    private static final int delayMinAfterLinkClick = 500;
-    private static final int delayMaxAfterLinkClick = 1500;
-    private static final int delayAfterHoverMenu = 500;
-    private static final int delayAfterNewItemClick = 500;
-    private static final int delayAfterPickListClick = 1500;
-    private static final int delayAfterDelete = 7000;
-    private static final int delayAfterCatalogSelection = 500;
+    private static Actions actions;
+
+    private static boolean onTravis = false;
+
+    private static RemoteWebDriver webDriver;
 
     /**
      * Provides the web driver, sets timeout and window size.
      */
     public static void Initialize() throws IOException {
-        if (browserType.equals(BrowserType.CHROME)) {
+        if (BROWSER_TYPE.equals(BrowserType.CHROME)) {
             provideChromeDriver();
         }
-        if (browserType.equals(BrowserType.FIREFOX)) {
+        if (BROWSER_TYPE.equals(BrowserType.FIREFOX)) {
             provideGeckoDriver();
         }
 
@@ -188,7 +191,7 @@ public class Browser {
         } catch (InterruptedException e) {
             logger.debug("interrupted sleeping");
         }
-        actions.moveToElement(webElement).pause(delayAfterHoverMenu).build().perform();
+        actions.moveToElement(webElement).pause(DELAY_AFTER_HOVER_MENU).build().perform();
     }
 
     /**
@@ -247,7 +250,7 @@ public class Browser {
      * @return The delayAfterLogin.
      */
     public static int getDelayAfterLogin() {
-        return delayAfterLogin;
+        return DELAY_AFTER_INDEXING;
     }
 
     /**
@@ -256,7 +259,7 @@ public class Browser {
      * @return The delayAfterLogout.
      */
     public static int getDelayAfterLogout() {
-        return delayAfterLogout;
+        return DELAY_AFTER_LOGOUT;
     }
 
     /**
@@ -265,7 +268,7 @@ public class Browser {
      * @return The delayAfterHoverMenu.
      */
     public static int getDelayAfterHoverMenu() {
-        return delayAfterHoverMenu;
+        return DELAY_AFTER_HOVER_MENU;
     }
 
     /**
@@ -274,7 +277,7 @@ public class Browser {
      * @return The delayAfterNewItemClick.
      */
     public static int getDelayAfterNewItemClick() {
-        return delayAfterNewItemClick;
+        return DELAY_AFTER_NEW_ITEM_CLICK;
     }
 
     /**
@@ -283,7 +286,7 @@ public class Browser {
      * @return The delayIndexing.
      */
     public static int getDelayIndexing() {
-        return delayIndexing;
+        return DELAY_INDEXING;
     }
 
     /**
@@ -292,7 +295,7 @@ public class Browser {
      * @return The delayAfterPickListClick.
      */
     public static int getDelayAfterPickListClick() {
-        return delayAfterPickListClick;
+        return DELAY_AFTER_PICK_LIST_CLICK;
     }
 
     /**
@@ -301,7 +304,7 @@ public class Browser {
      * @return min delay after link was clicked
      */
     public static int getDelayMinAfterLinkClick() {
-        return delayMinAfterLinkClick;
+        return DELAY_AFTER_CLICK_LINK_MIN;
     }
 
     /**
@@ -310,7 +313,7 @@ public class Browser {
      * @return max delay after link was clicked
      */
     public static int getDelayMaxAfterLinkClick() {
-        return delayMaxAfterLinkClick;
+        return DELAY_AFTER_CLICK_LINK_MAX;
     }
 
     /**
@@ -319,7 +322,7 @@ public class Browser {
      * @return The delayAfterDelete.
      */
     public static int getDelayAfterDelete() {
-        return delayAfterDelete;
+        return DELAY_AFTER_DELETE;
     }
 
     /**
@@ -328,7 +331,7 @@ public class Browser {
      * @return value of delayAfterCatalogSelection
      */
     public static int getDelayAfterCatalogSelection() {
-        return delayAfterCatalogSelection;
+        return DELAY_AFTER_CATALOG_SELECTION;
     }
 
     /**
