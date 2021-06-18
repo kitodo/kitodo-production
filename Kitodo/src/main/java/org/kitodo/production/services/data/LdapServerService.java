@@ -157,6 +157,11 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     public void createNewUser(User user, String password)
             throws NamingException, NoSuchAlgorithmException, IOException {
 
+        if (Objects.isNull(user.getLdapGroup())) {
+            Helper.setMessage(Helper.getTranslation("noLdapGroupAssignedToUser"));
+            return;
+        }
+
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
                 user.getLdapGroup().getLdapServer());
