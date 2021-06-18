@@ -54,18 +54,102 @@
                                                var="type"
                                                itemValue="#{type}"
                                                itemLabel="#{type.label}"/>
+                                <p:ajax event="itemSelect" update="paginationForm:paginationWrapperPanel"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
                             <p:outputLabel value="#{msgs.paginationStartValue}:"
                                            for="paginationStartValue"/>
-                            <p:inputNumber id="paginationStartValue"
+                            <p:inputText id="paginationStartValue"
                                            padControl="false"
                                            required="true"
                                            value="#{DataEditorForm.paginationPanel.paginationStartValue}"
                                            label="#{msgs.paginationStartValue}"
                                            class="input"
                                            requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
+                        </div>
+                        <div>
+                            <!-- Advanced pagination -->
+                            <script type="text/javascript">
+                                function writeToPaginationStartValue(before, after) {
+                                    var textbox = document.getElementById("paginationForm:paginationStartValue");
+                                    var beforeSelection = textbox.value.substr(0, textbox.selectionStart);
+                                    var selectionLength = textbox.selectionEnd - textbox.selectionStart;
+                                    var selection = textbox.value.substr(textbox.selectionStart, selectionLength);
+                                    var afterSelection = textbox.value.substr(textbox.selectionEnd);
+                                    var written = beforeSelection + before + selection;
+                                    textbox.value = written + after + afterSelection;
+                                    if(before.length != after.length) written += after;
+                                    textbox.selectionStart = written.length;
+                                    textbox.selectionEnd = written.length;
+                                    textbox.focus();
+                                    return false;
+                                }
+                            </script>
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationText}"
+                                title="#{msgs.paginationTextHint}"
+                                onclick="return writeToPaginationStartValue('`','`')"
+                            />
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationNoIncrement}"
+                                title="#{msgs.paginationNoIncrementHint}"
+                                onclick="return writeToPaginationStartValue('','\260')"
+                            />
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationHalfIncrement}"
+                                title="#{msgs.paginationHalfIncrementHint}"
+                                onclick="return writeToPaginationStartValue('','\275')"
+                            />
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationOneIncrement}"
+                                title="#{msgs.paginationOneIncrementHint}"
+                                onclick="return writeToPaginationStartValue('','\271')"
+                            />
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationTwoIncrement}"
+                                title="#{msgs.paginationTwoIncrementHint}"
+                                onclick="return writeToPaginationStartValue('','\262')"
+                            />
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationThreeIncrement}"
+                                title="#{msgs.paginationThreeIncrementHint}"
+                                onclick="return writeToPaginationStartValue('','\263')"
+                            />
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationRectoUse}"
+                                title="#{msgs.paginationRectoUseHint}"
+                                onclick="return writeToPaginationStartValue('\241','')"
+                            />
+                            <p:commandButton
+                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
+                                styleClass="secondary"
+                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                value="#{msgs.paginationVersoUse}"
+                                title="#{msgs.paginationVersoUseHint}"
+                                onclick="return writeToPaginationStartValue('\277','')"
+                            />
                         </div>
                         <div>
                             <p:outputLabel value="#{msgs.paginationScope}:"
