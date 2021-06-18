@@ -283,11 +283,11 @@ public class OPACConfig {
     }
 
     /**
-     * Get FTP username.
-     * @param catalogName OPAC for which to get FTP username.
-     * @return FTP username
+     * Get username.
+     * @param catalogName OPAC for which to get username.
+     * @return username
      */
-    public static String getFtpUsername(String catalogName) {
+    public static String getUsername(String catalogName) {
         return getCatalog(catalogName).configurationAt("credentials").getString("username");
     }
 
@@ -296,7 +296,7 @@ public class OPACConfig {
      * @param catalogName OPAC for which to get FTP password.
      * @return FTP password
      */
-    public static String getFtpPassword(String catalogName) {
+    public static String getPassword(String catalogName) {
         return getCatalog(catalogName).configurationAt("credentials").getString("password");
     }
 
