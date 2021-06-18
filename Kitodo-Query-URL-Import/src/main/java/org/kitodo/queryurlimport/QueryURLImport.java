@@ -99,6 +99,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String HTTPS_PROTOCOL = "https";
     private static final String FTP_PROTOCOL = "ftp";
     private static final String equalsOperand = "=";
+    private static final String AND = "&";
 
     private SearchInterfaceType interfaceType;
     private String protocol;
@@ -157,13 +158,15 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
             try {
                 URI queryURL = createQueryURI(queryParameters);
-                String queryString = queryURL + "&";
+                String queryString = queryURL + AND;
                 if (Objects.nonNull(interfaceType)) {
-                    if (Objects.nonNull(interfaceType.getStartRecordString())) {
-                        queryString = queryString + interfaceType.getStartRecordString() + equalsOperand + "0&";
+                    if (Objects.nonNull(interfaceType.getStartRecordString())
+                            && Objects.nonNull(interfaceType.getDefaultStartValue())) {
+                        queryString = queryString + interfaceType.getStartRecordString() + equalsOperand
+                                + interfaceType.getDefaultStartValue() + AND;
                     }
                     if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
-                        queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + rows + "&";
+                        queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + rows + AND;
                     }
                     if (Objects.nonNull(interfaceType.getQueryString())) {
                         queryString = queryString + interfaceType.getQueryString() + equalsOperand;
@@ -269,7 +272,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     }
 
     private DataRecord performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
-        String fullUrl = queryURL + "&";
+        String fullUrl = queryURL + AND;
         if (Objects.nonNull(interfaceType)) {
             if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
                 fullUrl = fullUrl + interfaceType.getMaxRecordsString() + equalsOperand + "1&";
@@ -365,13 +368,14 @@ public class QueryURLImport implements ExternalDataImportInterface {
         LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchParameters);
         try {
             URI queryURL = createQueryURI(queryParameters);
-            String queryString = queryURL + "&";
+            String queryString = queryURL + AND;
             if (Objects.nonNull(interfaceType)) {
                 if (start > 0 && Objects.nonNull(interfaceType.getStartRecordString())) {
-                    queryString += interfaceType.getStartRecordString() + equalsOperand + start + "&";
+                    queryString += interfaceType.getStartRecordString() + equalsOperand + start + AND;
                 }
                 if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
-                    queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + numberOfRecords + "&";
+                    queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + numberOfRecords
+                            + AND;
                 }
                 if (Objects.nonNull(interfaceType.getQueryString())) {
                     queryString = queryString + interfaceType.getQueryString() + equalsOperand;
