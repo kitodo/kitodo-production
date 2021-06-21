@@ -208,6 +208,14 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         if (!baseIndexedBeans.isEmpty()) {
             indexer.performMultipleRequests(baseIndexedBeans, type, true);
         }
+        setIndexColumToIndexed(baseIndexedBeans);
+    }
+
+    private void setIndexColumToIndexed(List<T> baseIndexedBeans) throws DAOException {
+        for (T baseIndexedBean : baseIndexedBeans) {
+            baseIndexedBean.setIndexAction(IndexAction.DONE);
+            saveToDatabase(baseIndexedBean);
+        }
     }
 
     /**
