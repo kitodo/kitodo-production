@@ -168,7 +168,8 @@ public class LogicalStructMapType extends StructMapType {
                 } catch (NoSuchElementException e) {
                     // this method is calling recursive its self for handling a complex structure of nested divs
                     // we need to catch the below exception internally that the for loop can run farther
-                    logger.debug("Div element with Id " + div.getID() + " does not contain div element with Id: " + childDiv.getID());
+                    logger.debug("Div element with Id {} does not contain div element with Id: {}", div.getID(),
+                        childDiv.getID());
                 }
             }
         }
