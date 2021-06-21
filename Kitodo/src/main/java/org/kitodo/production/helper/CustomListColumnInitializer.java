@@ -22,8 +22,8 @@ import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.ListColumn;
@@ -120,11 +120,11 @@ public class CustomListColumnInitializer {
         for (String ccn : customColumnList) {
             if (!ccn.trim().isEmpty()) {
                 if (availableColumnNames.contains(ccn)) {
-                    logger.info("Custom column '" + ccn + "' already saved to database as custom list column!");
+                    logger.info("Custom column '{}' already saved to database as custom list column!", ccn);
                 } else {
                     ListColumn customColumn = new ListColumn(ccn, true);
                     ServiceManager.getListColumnService().saveToDatabase(customColumn);
-                    logger.info("Custom column '" + ccn + "' successfully saved to database as custom list column!");
+                    logger.info("Custom column '{}' successfully saved to database as custom list column!", ccn);
                 }
             }
         }

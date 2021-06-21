@@ -140,7 +140,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public List<S> findAll() throws DataException {
         return findAll(false);
     }
-    
+
     /**
      * Get all DTO objects from index.
      *
@@ -301,7 +301,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
                         throw new DataException(ee);
                     }
                 } catch (DAOException daoe) {
-                    logger.debug("Index was updated but flag in database not... " + daoe.getMessage());
+                    logger.debug("Index was updated but flag in database not... {}", daoe.getMessage());
                     throw new DataException(daoe);
                 }
             }
@@ -356,7 +356,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
                         throw new DataException(ee);
                     }
                 } catch (DAOException daoe) {
-                    logger.debug("Remove from index was successful but..." + daoe.getMessage());
+                    logger.debug("Remove from index was successful but...{}", daoe.getMessage());
                     throw new DataException(daoe);
                 }
             }

@@ -380,7 +380,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         try {
             addFilterToUser(user, filter);
         } catch (DataException e) {
-            logger.error("Cannot not add filter to user with id " + user.getId(), e);
+            logger.error("Cannot not add filter to user with id {}", user.getId(), e);
         }
     }
 
@@ -399,7 +399,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         try {
             removeFilterFromUser(user, filter);
         } catch (DataException e) {
-            logger.error("Cannot not remove filter from user with id " + user.getId(), e);
+            logger.error("Cannot not remove filter from user with id {}", user.getId(), e);
         }
     }
 

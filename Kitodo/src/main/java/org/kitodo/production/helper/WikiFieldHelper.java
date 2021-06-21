@@ -306,7 +306,7 @@ public class WikiFieldHelper {
             document = documentBuilder
                     .parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            logger.error(e.getMessage() + " Could not parse XML string '" + xmlString + "'!", e);
+            logger.error("{} Could not parse XML string '{}'!", e.getMessage(), xmlString, e);
         }
         return document;
     }

@@ -839,7 +839,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             }
         } else {
-            logger.error("Could not save DataEditorSettings with userId " + user.getId() + " and templateTaskId " + templateTaskId);
+            logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", user.getId(),
+                templateTaskId);
         }
     }
 }
