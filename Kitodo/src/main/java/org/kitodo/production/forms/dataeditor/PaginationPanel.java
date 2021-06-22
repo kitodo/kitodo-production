@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -149,6 +150,20 @@ public class PaginationPanel {
      *            selected items to set
      */
     public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
+        int lastItemIndex = paginationSelectionSelectedItems.get(paginationSelectionSelectedItems.size() - 1);
+        if (!Objects.equals(this.paginationSelectionSelectedItems.get(this.paginationSelectionSelectedItems.size() - 1 ), lastItemIndex)) {
+            dataEditor.getStructurePanel().updateNodeSelection(
+                    dataEditor.getGalleryPanel().getGalleryMediaContent(mediaUnits.get(lastItemIndex)),
+                    mediaUnits.get(lastItemIndex).getIncludedStructuralElements().get(0));
+            updateMetadataPanel();
+        }
+        dataEditor.getSelectedMedia().clear();
+        for (int i : paginationSelectionSelectedItems) {
+            for (IncludedStructuralElement includedStructuralElement : mediaUnits.get(i).getIncludedStructuralElements()) {
+                dataEditor.getSelectedMedia().add(new ImmutablePair<>(mediaUnits.get(i), includedStructuralElement));
+            }
+        }
         this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
     }
 
