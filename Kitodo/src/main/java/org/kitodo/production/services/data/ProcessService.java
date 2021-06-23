@@ -1715,7 +1715,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *          cannot be found in the index)
      */
     public String getBaseType(int processId) throws DataException {
-        ProcessDTO processDTO = findById(processId);
+        ProcessDTO processDTO = findById(processId, true);
         if (Objects.nonNull(processDTO)) {
             return processDTO.getBaseType();
         }
