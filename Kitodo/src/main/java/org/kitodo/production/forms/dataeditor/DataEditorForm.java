@@ -36,8 +36,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.Metadata;
-import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -729,15 +727,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String getStructureElementTitle(Object dataObject) {
         if (dataObject instanceof IncludedStructuralElement) {
-            IncludedStructuralElement element = (IncludedStructuralElement) dataObject;
-            List<Metadata> titleMetadata = element.getMetadata().stream()
-                    .filter(m -> DataEditorService.getTitleKeys().contains(m.getKey())).collect(Collectors.toList());
-            for (Metadata metadata : titleMetadata) {
-                if (metadata instanceof MetadataEntry && Objects.nonNull(((MetadataEntry) metadata).getValue())
-                        && !((MetadataEntry) metadata).getValue().isEmpty()) {
-                    return " - " + ((MetadataEntry) metadata).getValue();
-                }
-            }
+            return DataEditorService.getTitleValue((IncludedStructuralElement) dataObject);
         }
         return "";
     }
