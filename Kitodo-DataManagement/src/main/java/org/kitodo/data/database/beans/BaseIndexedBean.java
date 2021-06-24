@@ -22,7 +22,7 @@ import org.kitodo.data.database.enums.IndexAction;
  * Base bean class.
  */
 @MappedSuperclass
-public abstract class BaseIndexedBean extends BaseBean {
+public abstract class BaseIndexedBean extends BaseBean implements Cloneable {
 
     @Column(name = "indexAction")
     @Enumerated(EnumType.STRING)
@@ -46,5 +46,12 @@ public abstract class BaseIndexedBean extends BaseBean {
      */
     public void setIndexAction(IndexAction indexAction) {
         this.indexAction = indexAction;
+    }
+
+    @Override
+    public BaseIndexedBean clone() throws CloneNotSupportedException {
+        BaseIndexedBean clone = (BaseIndexedBean) super.clone();
+        clone.indexAction = null;
+        return clone;
     }
 }
