@@ -17,7 +17,6 @@ import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -370,10 +369,9 @@ public class PaginationPanel {
             return;
         }
         dataEditor.getMetadataPanel().preserve();
-        String selectPaginationSeparatorSelectedItem = ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS)
-                .split(",")[0];
+        List<Separator> pageSeparators = Separator.factory(ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS));
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
-                paginationStartValue, fictitiousCheckboxChecked, selectPaginationSeparatorSelectedItem);
+                paginationStartValue, fictitiousCheckboxChecked, pageSeparators.get(0).getSeparatorString());
         Paginator paginator = new Paginator(initializer);
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
         if (selectPaginationScopeSelectedItem) {
