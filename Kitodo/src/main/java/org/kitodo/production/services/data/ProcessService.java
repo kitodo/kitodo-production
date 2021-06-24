@@ -869,11 +869,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
         int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
-            processDTO.setProject(ServiceManager.getProjectService().findById(project));
+            processDTO.setProject(ServiceManager.getProjectService().findById(project, true));
         }
         int ruleset = ProcessTypeField.RULESET.getIntValue(jsonObject);
         if (ruleset > 0) {
-            processDTO.setRuleset(ServiceManager.getRulesetService().findById(ruleset));
+            processDTO.setRuleset(ServiceManager.getRulesetService().findById(ruleset, true));
         }
 
         processDTO.setBatchID(getBatchID(processDTO));
