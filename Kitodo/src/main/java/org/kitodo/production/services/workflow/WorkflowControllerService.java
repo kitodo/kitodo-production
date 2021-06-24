@@ -668,7 +668,7 @@ public class WorkflowControllerService {
         LegacyMetsModsDigitalDocumentHelper legacyMetsModsDigitalDocumentHelper = ServiceManager.getProcessService()
                 .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(process), legacyPrefsHelper)
                 .getDigitalDocument();
-        VariableReplacer replacer = new VariableReplacer(legacyMetsModsDigitalDocumentHelper, legacyPrefsHelper,
+        VariableReplacer replacer = new VariableReplacer(legacyMetsModsDigitalDocumentHelper.getWorkpiece(),
                 process, null);
 
         script = replacer.replace(script);

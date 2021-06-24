@@ -92,7 +92,7 @@ public abstract class EditDataScript {
             } else if (metadataScript.getRoot().startsWith("$")) {
                 LegacyPrefsHelper legacyPrefsHelper = ServiceManager.getRulesetService()
                         .getPreferences(process.getRuleset());
-                VariableReplacer replacer = new VariableReplacer(metadataFile, legacyPrefsHelper, process, null);
+                VariableReplacer replacer = new VariableReplacer(metadataFile.getWorkpiece(), process, null);
 
                 String replaced = replacer.replace(metadataScript.getRootName());
                 metadataScript.getValues().add(replaced);

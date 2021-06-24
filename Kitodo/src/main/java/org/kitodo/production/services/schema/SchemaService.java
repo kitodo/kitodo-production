@@ -34,7 +34,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.VariableReplacer;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
@@ -75,9 +74,7 @@ public class SchemaService {
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
-        VariableReplacer vp = new VariableReplacer(
-                new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset(), workpiece), prefs,
-                process, null);
+        VariableReplacer vp = new VariableReplacer(workpiece, process, null);
 
         addVirtualFileGroupsToMetsMods(workpiece.getMediaUnit(), process);
         replaceFLocatForExport(workpiece, process, prefs.getRuleset());
@@ -144,8 +141,7 @@ public class SchemaService {
     private void replaceFLocatForExport(Workpiece workpiece, Process process, RulesetManagementInterface ruleset)
             throws URISyntaxException {
         List<Folder> folders = process.getProject().getFolders();
-        VariableReplacer variableReplacer = new VariableReplacer(
-                new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece), null, process, null);
+        VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
         for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
@@ -290,8 +286,7 @@ public class SchemaService {
         LinkedMetsResource link = structure.getLink();
         link.setLoctype("URL");
         String uriWithVariables = process.getProject().getMetsPointerPath();
-        VariableReplacer variableReplacer = new VariableReplacer(
-                new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset(), workpiece), prefs, process, null);
+        VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
         String linkUri = variableReplacer.replace(uriWithVariables);
         link.setUri(URI.create(linkUri));
         structure.setType(ServiceManager.getProcessService().getBaseType(process));
