@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -140,7 +139,7 @@ public abstract class EditDataScript {
         Collection<Metadata> metadataCollection;
 
         if (Objects.nonNull(metadataScript.getTypeTarget())) {
-            IncludedStructuralElement structuralElement = getStructuralElementWithType(metadataScript.getTypeTarget(),
+            LogicalDivision structuralElement = getLogicalDivisionWithType(metadataScript.getTypeTarget(),
                 workpiece.getRootElement());
             metadataCollection = Objects.isNull(structuralElement) ? null : structuralElement.getMetadata();
         } else {
@@ -149,13 +148,12 @@ public abstract class EditDataScript {
         return metadataCollection;
     }
 
-    private IncludedStructuralElement getStructuralElementWithType(String typeTarget,
-            IncludedStructuralElement structuralElement) {
+    private LogicalDivision getLogicalDivisionWithType(String typeTarget, LogicalDivision structuralElement) {
         if (typeTarget.equals(structuralElement.getType())) {
             return structuralElement;
         } else {
-            for (IncludedStructuralElement structuralElementChild : structuralElement.getChildren()) {
-                IncludedStructuralElement structuralElementWithType = getStructuralElementWithType(typeTarget,
+            for (LogicalDivision structuralElementChild : structuralElement.getChildren()) {
+                LogicalDivision structuralElementWithType = getLogicalDivisionWithType(typeTarget,
                     structuralElementChild);
                 if (Objects.nonNull(structuralElementWithType)) {
                     return structuralElementWithType;

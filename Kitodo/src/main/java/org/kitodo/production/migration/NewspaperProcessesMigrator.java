@@ -43,7 +43,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -188,7 +188,7 @@ public class NewspaperProcessesMigrator {
      * The years of the course of appearance of the newspaper with their logical
      * root elements.
      */
-    private Map<String, IncludedStructuralElement> years = new TreeMap<>();
+    private Map<String, LogicalDivision> years = new TreeMap<>();
 
     /**
      * Process IDs of children (issue processes) to be added to the years in
@@ -199,7 +199,7 @@ public class NewspaperProcessesMigrator {
     /**
      * Years iterator during creation of year processes.
      */
-    private PeekingIterator<Entry<String, IncludedStructuralElement>> yearsIterator;
+    private PeekingIterator<Entry<String, LogicalDivision>> yearsIterator;
 
     /**
      * The ruleset.
@@ -320,18 +320,17 @@ public class NewspaperProcessesMigrator {
 
         Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath);
         workpiece.setId(process.getId().toString());
-        IncludedStructuralElement newspaperIncludedStructuralElement = workpiece.getRootElement();
+        LogicalDivision newspaperLogicalDivision = workpiece.getRootElement();
 
         if (Objects.isNull(title)) {
-            initializeMigrator(process, newspaperIncludedStructuralElement.getType());
+            initializeMigrator(process, newspaperLogicalDivision.getType());
         }
 
-        IncludedStructuralElement yearIncludedStructuralElement = cutOffTopLevel(newspaperIncludedStructuralElement);
-        final String year = createLinkStructureAndCopyDates(process, yearFilePath, yearIncludedStructuralElement);
+        LogicalDivision yearLogicalDivision = cutOffTopLevel(newspaperLogicalDivision);
+        final String year = createLinkStructureAndCopyDates(process, yearFilePath, yearLogicalDivision);
 
-        workpiece.setRootElement(cutOffTopLevel(yearIncludedStructuralElement));
+        workpiece.setRootElement(cutOffTopLevel(yearLogicalDivision));
         moveMetadataFromYearToIssue(process, processTitle, yearFilePath, workpiece);
-
         metsService.saveWorkpiece(workpiece, metadataFilePath);
 
         for (Metadata metadata : overallWorkpiece.getRootElement().getMetadata()) {
@@ -358,7 +357,7 @@ public class NewspaperProcessesMigrator {
         // Copy metadata from year to issue
         Collection<Metadata> processMetadataFromYear = new ArrayList<>(
                 yearWorkpiece.getRootElement().getChildren().get(0).getMetadata());
-        List<IncludedStructuralElement> issuesIncludedStructuralElements = workpiece.getRootElement().getChildren()
+        List<LogicalDivision> issuesIncludedStructuralElements = workpiece.getRootElement().getChildren()
                 .get(0).getChildren();
         issuesIncludedStructuralElements.get(0).getMetadata().addAll(processMetadataFromYear);
 
@@ -380,22 +379,22 @@ public class NewspaperProcessesMigrator {
     }
 
     /**
-     * Cuts the top level of a tree included structural element.
+     * Cuts the top level of a tree logical division.
      *
-     * @param includedStructuralElement
-     *            tree included structural element to be cut
+     * @param logicalDivision
+     *            tree logical division to be cut
      * @return the new top level
      */
-    private static IncludedStructuralElement cutOffTopLevel(IncludedStructuralElement includedStructuralElement) {
-        List<IncludedStructuralElement> children = includedStructuralElement.getChildren();
+    private static LogicalDivision cutOffTopLevel(LogicalDivision logicalDivision) {
+        List<LogicalDivision> children = logicalDivision.getChildren();
         int numberOfChildren = children.size();
         if (numberOfChildren == 0) {
             return null;
         }
-        IncludedStructuralElement firstChild = children.get(0);
+        LogicalDivision firstChild = children.get(0);
         if (numberOfChildren > 1) {
             children.subList(1, numberOfChildren).stream()
-                    .flatMap(theIncludedStructuralElement -> theIncludedStructuralElement.getChildren().stream())
+                    .flatMap(theLogicalDivision -> theLogicalDivision.getChildren().stream())
                     .forEachOrdered(firstChild.getChildren()::add);
             String firstOrderlabel = firstChild.getOrderlabel();
             String lastOrderlabel = children.get(children.size() - 1).getOrderlabel();
@@ -413,39 +412,37 @@ public class NewspaperProcessesMigrator {
      *            process ID of the current process (on issue level)
      * @param yearMetadata
      *            Production v. 2 year metadata file
-     * @param metaFileYearIncludedStructuralElement
-     *            year included structural element of the processes’ metadata
-     *            file
+     * @param metaFileYearLogicalDivision
+     *            year logical division of the processes’ metadata file
      * @throws IOException
      *             if an error occurs in the disk drive
      */
     private String createLinkStructureAndCopyDates(Process process, URI yearMetadata,
-            IncludedStructuralElement metaFileYearIncludedStructuralElement)
+            LogicalDivision metaFileYearLogicalDivision)
             throws IOException, ConfigurationException {
 
-        IncludedStructuralElement yearFileYearIncludedStructuralElement = metsService.loadWorkpiece(yearMetadata)
+        LogicalDivision yearFileYearLogicalDivision = metsService.loadWorkpiece(yearMetadata)
                 .getRootElement().getChildren().get(0);
-        String year = MetadataEditor.getMetadataValue(yearFileYearIncludedStructuralElement, FIELD_TITLE_SORT);
+        String year = MetadataEditor.getMetadataValue(yearFileYearLogicalDivision, FIELD_TITLE_SORT);
         if (Objects.isNull(year) || !year.matches(YEAR_OR_DOUBLE_YEAR)) {
             logger.debug("\"{}\" is not a year number. Falling back to {}.", year, FIELD_TITLE);
-            year = MetadataEditor.getMetadataValue(yearFileYearIncludedStructuralElement, FIELD_TITLE);
+            year = MetadataEditor.getMetadataValue(yearFileYearLogicalDivision, FIELD_TITLE);
         }
-        IncludedStructuralElement processYearIncludedStructuralElement = years.computeIfAbsent(year, theYear -> {
+        LogicalDivision processYearLogicalDivision = years.computeIfAbsent(year, theYear -> {
             // remove existing layers in the year
-            yearFileYearIncludedStructuralElement.getChildren().get(0).getChildren().get(0).getChildren().clear();
-            MetadataEditor.writeMetadataEntry(yearFileYearIncludedStructuralElement, yearSimpleMetadataView, theYear);
-            return yearFileYearIncludedStructuralElement;
+            yearFileYearLogicalDivision.getChildren().get(0).getChildren().get(0).getChildren().clear();
+            MetadataEditor.writeMetadataEntry(yearFileYearLogicalDivision, yearSimpleMetadataView, theYear);
+            return yearFileYearLogicalDivision;
         });
 
-        createLinkStructureAndCopyMonths(process, metaFileYearIncludedStructuralElement,
-            yearFileYearIncludedStructuralElement, year, processYearIncludedStructuralElement);
+        createLinkStructureAndCopyMonths(process, metaFileYearLogicalDivision, yearFileYearLogicalDivision, year,
+            processYearLogicalDivision);
         return year;
     }
 
     private void createLinkStructureAndCopyMonths(Process process,
-            IncludedStructuralElement metaFileYearIncludedStructuralElement,
-            IncludedStructuralElement yearFileYearIncludedStructuralElement, String year,
-            IncludedStructuralElement processYearIncludedStructuralElement) throws ConfigurationException {
+            LogicalDivision metaFileYearLogicalDivision, LogicalDivision yearFileYearLogicalDivision, String year,
+            LogicalDivision processYearLogicalDivision) throws ConfigurationException {
 
         // Add types to month and day
         StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
@@ -462,22 +459,22 @@ public class NewspaperProcessesMigrator {
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         String dayType = dayDivisionView.getId();
 
-        for (Iterator<IncludedStructuralElement> yearFileMonthIncludedStructuralElementsIterator = yearFileYearIncludedStructuralElement
+        for (Iterator<LogicalDivision> yearFileMonthLogicalDivisionsIterator = yearFileYearLogicalDivision
                 .getChildren()
-                .iterator(), metaFileMonthIncludedStructuralElementsIterator = metaFileYearIncludedStructuralElement
-                        .getChildren().iterator(); yearFileMonthIncludedStructuralElementsIterator.hasNext()
-                                && metaFileMonthIncludedStructuralElementsIterator.hasNext();) {
-            IncludedStructuralElement yearFileMonthIncludedStructuralElement = yearFileMonthIncludedStructuralElementsIterator
+                .iterator(), metaFileMonthLogicalDivisionsIterator = metaFileYearLogicalDivision
+                        .getChildren().iterator(); yearFileMonthLogicalDivisionsIterator.hasNext()
+                                && metaFileMonthLogicalDivisionsIterator.hasNext();) {
+            LogicalDivision yearFileMonthLogicalDivision = yearFileMonthLogicalDivisionsIterator
                     .next();
-            IncludedStructuralElement metaFileMonthIncludedStructuralElement = metaFileMonthIncludedStructuralElementsIterator
+            LogicalDivision metaFileMonthLogicalDivision = metaFileMonthLogicalDivisionsIterator
                     .next();
-            String month = getCompletedDate(yearFileMonthIncludedStructuralElement, year);
-            IncludedStructuralElement processMonthIncludedStructuralElement = computeIfAbsent(
-                processYearIncludedStructuralElement, monthSimpleMetadataView, month, monthType);
-            MetadataEditor.writeMetadataEntry(metaFileMonthIncludedStructuralElement, monthSimpleMetadataView, month);
+            String month = getCompletedDate(yearFileMonthLogicalDivision, year);
+            LogicalDivision processMonthLogicalDivision = computeIfAbsent(
+                processYearLogicalDivision, monthSimpleMetadataView, month, monthType);
+            MetadataEditor.writeMetadataEntry(metaFileMonthLogicalDivision, monthSimpleMetadataView, month);
 
-            createLinkStructureAndCopyDays(process, yearFileMonthIncludedStructuralElement,
-                metaFileMonthIncludedStructuralElement, month, dayType, processMonthIncludedStructuralElement);
+            createLinkStructureAndCopyDays(process, yearFileMonthLogicalDivision,
+                metaFileMonthLogicalDivision, month, dayType, processMonthLogicalDivision);
         }
     }
 
@@ -490,53 +487,52 @@ public class NewspaperProcessesMigrator {
     }
 
     private void createLinkStructureAndCopyDays(Process process,
-            IncludedStructuralElement yearFileMonthIncludedStructuralElement,
-            IncludedStructuralElement metaFileMonthIncludedStructuralElement, String month, String dayType,
-            IncludedStructuralElement processMonthIncludedStructuralElement) {
+            LogicalDivision yearFileMonthLogicalDivision,
+            LogicalDivision metaFileMonthLogicalDivision, String month, String dayType,
+            LogicalDivision processMonthLogicalDivision) {
 
-        for (Iterator<IncludedStructuralElement> yearFileDayIncludedStructuralElementsIterator = yearFileMonthIncludedStructuralElement
+        for (Iterator<LogicalDivision> yearFileDayLogicalDivisionsIterator = yearFileMonthLogicalDivision
                 .getChildren()
-                .iterator(), metaFileDayIncludedStructuralElementsIterator = metaFileMonthIncludedStructuralElement
-                        .getChildren().iterator(); yearFileDayIncludedStructuralElementsIterator.hasNext()
-                                && metaFileDayIncludedStructuralElementsIterator.hasNext();) {
-            IncludedStructuralElement yearFileDayIncludedStructuralElement = yearFileDayIncludedStructuralElementsIterator
+                .iterator(), metaFileDayLogicalDivisionsIterator = metaFileMonthLogicalDivision
+                        .getChildren().iterator(); yearFileDayLogicalDivisionsIterator.hasNext()
+                                && metaFileDayLogicalDivisionsIterator.hasNext();) {
+            LogicalDivision yearFileDayLogicalDivision = yearFileDayLogicalDivisionsIterator
                     .next();
-            IncludedStructuralElement metaFileDayIncludedStructuralElement = metaFileDayIncludedStructuralElementsIterator
+            LogicalDivision metaFileDayLogicalDivision = metaFileDayLogicalDivisionsIterator
                     .next();
-            String day = getCompletedDate(yearFileDayIncludedStructuralElement, month);
-            IncludedStructuralElement processDayIncludedStructuralElement = computeIfAbsent(
-                processMonthIncludedStructuralElement, daySimpleMetadataView, day, dayType);
-            MetadataEditor.writeMetadataEntry(metaFileDayIncludedStructuralElement, daySimpleMetadataView, day);
-
-            createLinkStructureOfIssues(process, yearFileDayIncludedStructuralElement,
-                processDayIncludedStructuralElement);
+            String day = getCompletedDate(yearFileDayLogicalDivision, month);
+            LogicalDivision processDayLogicalDivision = computeIfAbsent(
+                processMonthLogicalDivision, daySimpleMetadataView, day, dayType);
+            MetadataEditor.writeMetadataEntry(metaFileDayLogicalDivision, daySimpleMetadataView, day);
+            createLinkStructureOfIssues(process, yearFileDayLogicalDivision,
+                processDayLogicalDivision);
         }
     }
 
     private void createLinkStructureOfIssues(Process process,
-            IncludedStructuralElement yearFileDayIncludedStructuralElement,
-            IncludedStructuralElement processDayIncludedStructuralElement) {
+            LogicalDivision yearFileDayLogicalDivision,
+            LogicalDivision processDayLogicalDivision) {
 
-        MetadataEditor.addLink(processDayIncludedStructuralElement, process.getId());
+        MetadataEditor.addLink(processDayLogicalDivision, process.getId());
     }
 
     /**
-     * Finds the included structural element with the specified label, if it
+     * Finds the logical division with the specified label, if it
      * exists, otherwise it creates.
      *
-     * @param includedStructuralElement
-     *            parent included structural element
+     * @param logicalDivision
+     *            parent logical division
      * @param simpleMetadataView
      *            indication which metadata value is used to store the value
      * @param value
      *            the value
      * @return child with value
      */
-    private static IncludedStructuralElement computeIfAbsent(IncludedStructuralElement includedStructuralElement,
+    private static LogicalDivision computeIfAbsent(LogicalDivision logicalDivision,
             SimpleMetadataViewInterface simpleMetadataView, String value, String type) {
 
         int index = 0;
-        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
+        for (LogicalDivision child : logicalDivision.getChildren()) {
             String firstSimpleMetadataValue = MetadataEditor.readSimpleMetadataValues(child, simpleMetadataView).get(0);
             int comparison = firstSimpleMetadataValue.compareTo(value);
             if (comparison <= -1) {
@@ -547,10 +543,10 @@ public class NewspaperProcessesMigrator {
                 break;
             }
         }
-        IncludedStructuralElement computed = new IncludedStructuralElement();
+        LogicalDivision computed = new LogicalDivision();
         computed.setType(type);
         MetadataEditor.writeMetadataEntry(computed, simpleMetadataView, value);
-        includedStructuralElement.getChildren().add(index, computed);
+        logicalDivision.getChildren().add(index, computed);
         return computed;
     }
 
@@ -559,14 +555,14 @@ public class NewspaperProcessesMigrator {
      * the date is stored incompletely (as an integer). This is supplemented to
      * ISO if found. Otherwise just returns the date.
      *
-     * @param includedStructuralElement
-     *            the included structural element that contains the date
+     * @param logicalDivision
+     *            the logical division that contains the date
      * @param previousLevel
      *            previous part of date
      * @return ISO date
      */
-    private static String getCompletedDate(IncludedStructuralElement includedStructuralElement, String previousLevel) {
-        String date = MetadataEditor.getMetadataValue(includedStructuralElement, FIELD_TITLE_SORT);
+    private static String getCompletedDate(LogicalDivision logicalDivision, String previousLevel) {
+        String date = MetadataEditor.getMetadataValue(logicalDivision, FIELD_TITLE_SORT);
         if (!date.matches("\\d{1,2}")) {
             return date;
         }
@@ -629,7 +625,7 @@ public class NewspaperProcessesMigrator {
     public void createNextYearProcess() throws ProcessGenerationException, IOException, DAOException,
             CommandException {
         final long begin = System.nanoTime();
-        Entry<String, IncludedStructuralElement> yearToCreate = yearsIterator.next();
+        Entry<String, LogicalDivision> yearToCreate = yearsIterator.next();
         String yearTitle = getYearTitle(yearToCreate.getKey());
         logger.info("Creating process for year {}, {}...", yearToCreate.getKey(), yearTitle);
         ProcessGenerator processGenerator = new ProcessGenerator();
@@ -674,7 +670,7 @@ public class NewspaperProcessesMigrator {
         }
     }
 
-    private void createYearWorkpiece(Entry<String, IncludedStructuralElement> yearToCreate, String yearTitle,
+    private void createYearWorkpiece(Entry<String, LogicalDivision> yearToCreate, String yearTitle,
                                      Process yearProcess) throws IOException {
         Workpiece yearWorkpiece = new Workpiece();
         yearWorkpiece.setId(yearProcess.getId().toString());

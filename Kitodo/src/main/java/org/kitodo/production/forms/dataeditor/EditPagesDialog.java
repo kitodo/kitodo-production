@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -83,7 +83,7 @@ public class EditPagesDialog {
      * button.
      */
     public void addPage() {
-        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             for (View viewToAdd : getViewsToAdd(paginationSelectionSelectedItems)) {
                 dataEditor.assignView(selectedStructure.get(), viewToAdd, -1);
@@ -216,7 +216,7 @@ public class EditPagesDialog {
      * btn command button.
      */
     public void setPageStartAndEnd() {
-        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             for (View viewToAdd : getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem)) {
                 dataEditor.assignView(selectedStructure.get(), viewToAdd, -1);
@@ -244,7 +244,7 @@ public class EditPagesDialog {
             Integer id = i;
             SelectItem selectItem = new SelectItem(id, label);
             selectPageItems.add(selectItem);
-            Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+            Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
             boolean assigned = selectedStructure.isPresent()
                     && selectedStructure.get().getViews().contains(view);
             (assigned ? paginationSubSelectionItems : paginationSelectionItems).add(selectItem);
@@ -267,7 +267,7 @@ public class EditPagesDialog {
      * button.
      */
     public void removePage() {
-        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             for (View viewToRemove : getViewsToAdd(paginationSubSelectionSelectedItems)) {
                 dataEditor.unassignView(selectedStructure.get(), viewToRemove, false);

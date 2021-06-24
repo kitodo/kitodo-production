@@ -43,7 +43,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -119,9 +119,9 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (IncludedStructuralElement includedStructuralElement : workpiece.getAllIncludedStructuralElements()) {
-            results.addAll(checkMetadataRules(includedStructuralElement.toString(), includedStructuralElement.getType(),
-                getMetadata(includedStructuralElement), ruleset, metadataLanguage, translations));
+        for (LogicalDivision logicalDivision : workpiece.getAllLogicalDivisions()) {
+            results.addAll(checkMetadataRules(logicalDivision.toString(), logicalDivision.getType(),
+                getMetadata(logicalDivision), ruleset, metadataLanguage, translations));
         }
 
         for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
@@ -132,18 +132,18 @@ public class MetadataValidation implements MetadataValidationInterface {
         return merge(results);
     }
 
-    private static Collection<Metadata> getMetadata(IncludedStructuralElement includedStructuralElement) {
-        Collection<Metadata> metadata = new ArrayList<>(includedStructuralElement.getMetadata());
-        if (Objects.nonNull(includedStructuralElement.getLabel())) {
+    private static Collection<Metadata> getMetadata(LogicalDivision logicalDivision) {
+        Collection<Metadata> metadata = new ArrayList<>(logicalDivision.getMetadata());
+        if (Objects.nonNull(logicalDivision.getLabel())) {
             MetadataEntry labelEntry = new MetadataEntry();
             labelEntry.setKey("LABEL");
-            labelEntry.setValue(includedStructuralElement.getLabel());
+            labelEntry.setValue(logicalDivision.getLabel());
             metadata.add(labelEntry);
         }
-        if (Objects.nonNull(includedStructuralElement.getOrderlabel())) {
+        if (Objects.nonNull(logicalDivision.getOrderlabel())) {
             MetadataEntry orderlabelEntry = new MetadataEntry();
             orderlabelEntry.setKey("ORDERLABEL");
-            orderlabelEntry.setValue(includedStructuralElement.getOrderlabel());
+            orderlabelEntry.setValue(logicalDivision.getOrderlabel());
             metadata.add(orderlabelEntry);
         }
         return metadata;

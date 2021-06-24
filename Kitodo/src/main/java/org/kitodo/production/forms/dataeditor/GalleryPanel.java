@@ -36,7 +36,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
@@ -124,7 +124,7 @@ public class GalleryPanel {
      *
      * @return value of lastSelection
      */
-    public Pair<MediaUnit, IncludedStructuralElement> getLastSelection() {
+    public Pair<MediaUnit, LogicalDivision> getLastSelection() {
         if (dataEditor.getSelectedMedia().size() > 0) {
             return dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
         } else {
@@ -217,8 +217,8 @@ public class GalleryPanel {
         GalleryStripe toStripe = stripes.get(toStripeIndex);
 
         // move views
-        List<Pair<View, IncludedStructuralElement>> viewsToBeMoved = new ArrayList<>();
-        for (Pair<MediaUnit, IncludedStructuralElement> selectedElement : dataEditor.getSelectedMedia()) {
+        List<Pair<View, LogicalDivision>> viewsToBeMoved = new ArrayList<>();
+        for (Pair<MediaUnit, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
             for (View view : selectedElement.getValue().getViews()) {
                 if (Objects.equals(view.getMediaUnit(), selectedElement.getKey())) {
                     viewsToBeMoved.add(new ImmutablePair<>(view, selectedElement.getValue()));
@@ -291,15 +291,15 @@ public class GalleryPanel {
         }
     }
 
-    private void updateData(GalleryStripe toStripe, List<Pair<View, IncludedStructuralElement>> viewsToBeMoved, int toMediaIndex) {
+    private void updateData(GalleryStripe toStripe, List<Pair<View, LogicalDivision>> viewsToBeMoved, int toMediaIndex) {
         dataEditor.getStructurePanel().changeLogicalOrderFields(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().reorderMediaUnits(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
     }
 
-    private void updateAffectedStripes(GalleryStripe toStripe, List<Pair<View, IncludedStructuralElement>> viewsToBeMoved) {
-        for (Pair<View, IncludedStructuralElement> viewToBeMoved : viewsToBeMoved) {
+    private void updateAffectedStripes(GalleryStripe toStripe, List<Pair<View, LogicalDivision>> viewsToBeMoved) {
+        for (Pair<View, LogicalDivision> viewToBeMoved : viewsToBeMoved) {
             GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
             if (Objects.nonNull(fromStripe)) {
                 fromStripe.getMedias().clear();
@@ -322,7 +322,7 @@ public class GalleryPanel {
         }
     }
 
-    private GalleryStripe getGalleryStripe(IncludedStructuralElement structuralElement) {
+    private GalleryStripe getGalleryStripe(LogicalDivision structuralElement) {
         for (GalleryStripe galleryStripe : stripes) {
             if (Objects.equals(galleryStripe.getStructure(), structuralElement)) {
                 return galleryStripe;
@@ -353,11 +353,11 @@ public class GalleryPanel {
     /**
      * Update the selected TreeNode in the physical structure tree.
      */
-    private void updateStructure(GalleryMediaContent galleryMediaContent, IncludedStructuralElement structure) {
+    private void updateStructure(GalleryMediaContent galleryMediaContent, LogicalDivision structure) {
         dataEditor.getStructurePanel().updateNodeSelection(galleryMediaContent, structure);
     }
 
-    void updateSelection(MediaUnit mediaUnit, IncludedStructuralElement structuralElement) {
+    void updateSelection(MediaUnit mediaUnit, LogicalDivision structuralElement) {
         if (mediaUnit.getMediaFiles().size() > 0) {
 
             // Update structured view
@@ -441,7 +441,7 @@ public class GalleryPanel {
         }
     }
 
-    private void addStripesRecursive(IncludedStructuralElement structure) {
+    private void addStripesRecursive(LogicalDivision structure) {
         GalleryStripe galleryStripe = new GalleryStripe(this, structure);
         for (View view : structure.getViews()) {
             for (GalleryMediaContent galleryMediaContent : medias) {
@@ -455,7 +455,7 @@ public class GalleryPanel {
             }
         }
         stripes.add(galleryStripe);
-        for (IncludedStructuralElement child : structure.getChildren()) {
+        for (LogicalDivision child : structure.getChildren()) {
             if (Objects.isNull(child.getLink())) {
                 addStripesRecursive(child);
             }
@@ -528,18 +528,18 @@ public class GalleryPanel {
     }
 
     /**
-     * Get a List of all MediaUnits and the IncludedStructuralElements they are assigned to
+     * Get a List of all MediaUnits and the LogicalDivisions they are assigned to
      * which are displayed between two selected MediaUnits. This method selects the Stripes that are affected by the selection and delegates
      * the selection of the contained MediaUnits.
      * @param first
-     *          First selected MediaUnit. A Pair of the MediaUnit and the IncludedStructuralElement to which the MediaUnit is assigned.
+     *          First selected MediaUnit. A Pair of the MediaUnit and the LogicalDivision to which the MediaUnit is assigned.
      * @param last
-     *          Last selected MediaUnit. A Pair of the MediaUnit and the Included StructuralElement to which the MediaUnit is assigned.
+     *          Last selected MediaUnit. A Pair of the MediaUnit and the Logical Division to which the MediaUnit is assigned.
      * @return
      *          A List of all selected MediaUnits
      */
-    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaWithinRange(Pair<MediaUnit, IncludedStructuralElement> first,
-                                                          Pair<MediaUnit, IncludedStructuralElement> last) {
+    private List<Pair<MediaUnit, LogicalDivision>> getMediaWithinRange(Pair<MediaUnit, LogicalDivision> first,
+                                                          Pair<MediaUnit, LogicalDivision> last) {
         // Pairs of stripe index and media index
         Pair<Integer, Integer> firstIndices = getIndices(first.getKey(), first.getValue());
         Pair<Integer, Integer> lastIndices = getIndices(last.getKey(), last.getValue());
@@ -582,20 +582,20 @@ public class GalleryPanel {
     }
 
     /**
-     * Get a List of all MediaUnits and the IncludedStructuralElements they are assigned to
+     * Get a List of all MediaUnits and the LogicalDivisions they are assigned to
      * which are displayed between two selected MediaUnits. This method selected the MediaUnits between and including the two indices.
      * @param firstIndices
      *          First selected MediaUnit.
-     *          A Pair of indices of the MediaUnit and the IncludedStructuralElement to which the MediaUnit is assigned.
+     *          A Pair of indices of the MediaUnit and the LogicalDivision to which the MediaUnit is assigned.
      * @param lastIndices
      *          Last selected MediaUnit.
-     *          A Pair of indices of the MediaUnit and the Included StructuralElement to which the MediaUnit is assigned.
+     *          A Pair of indices of the MediaUnit and the Logical Division to which the MediaUnit is assigned.
      * @param galleryStripes
      *          A List of GalleryStripes which contain the two selected MediaUnits and all in between
      * @return
      *          A List of all selected MediaUnits
      */
-    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaWithinRangeFromSelectedStripes(
+    private List<Pair<MediaUnit, LogicalDivision>> getMediaWithinRangeFromSelectedStripes(
             Pair<Integer, Integer> firstIndices, Pair<Integer, Integer> lastIndices, List<GalleryStripe> galleryStripes) {
         boolean countDown = false;
 
@@ -619,9 +619,9 @@ public class GalleryPanel {
         }
     }
 
-    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaForwards(Integer firstIndex, Integer lastIndex,
+    private List<Pair<MediaUnit, LogicalDivision>> getMediaForwards(Integer firstIndex, Integer lastIndex,
                                                                               List<GalleryStripe> galleryStripes) {
-        List<Pair<MediaUnit, IncludedStructuralElement>> mediaWithinRange = new LinkedList<>();
+        List<Pair<MediaUnit, LogicalDivision>> mediaWithinRange = new LinkedList<>();
         GalleryStripe firstStripe = galleryStripes.get(0);
 
         if (galleryStripes.size() == 1) {
@@ -652,9 +652,9 @@ public class GalleryPanel {
         return mediaWithinRange;
     }
 
-    private List<Pair<MediaUnit, IncludedStructuralElement>> getMediaBackwards(Integer firstIndex, Integer lastIndex,
+    private List<Pair<MediaUnit, LogicalDivision>> getMediaBackwards(Integer firstIndex, Integer lastIndex,
                                                                                List<GalleryStripe> galleryStripes) {
-        List<Pair<MediaUnit, IncludedStructuralElement>> mediaWithinRange = new LinkedList<>();
+        List<Pair<MediaUnit, LogicalDivision>> mediaWithinRange = new LinkedList<>();
         GalleryStripe firstStripe = galleryStripes.get(0);
 
         if (galleryStripes.size() == 1) {
@@ -685,7 +685,7 @@ public class GalleryPanel {
         return mediaWithinRange;
     }
 
-    private Pair<Integer, Integer> getIndices(MediaUnit mediaUnit, IncludedStructuralElement structuralElement) {
+    private Pair<Integer, Integer> getIndices(MediaUnit mediaUnit, LogicalDivision structuralElement) {
         for (GalleryStripe galleryStripe : stripes) {
             if (Objects.equals(galleryStripe.getStructure(), structuralElement)) {
                 for (GalleryMediaContent media : galleryStripe.getMedias()) {
@@ -756,9 +756,9 @@ public class GalleryPanel {
     }
 
     private void selectStructure(String stripeIndex) {
-        IncludedStructuralElement includedStructuralElement = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
+        LogicalDivision logicalDivision = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getStructurePanel().updateLogicalNodeSelection(includedStructuralElement);
+        dataEditor.getStructurePanel().updateLogicalNodeSelection(logicalDivision);
         PrimeFaces.current().executeScript("scrollToSelectedTreeNode()");
     }
 
@@ -845,8 +845,8 @@ public class GalleryPanel {
             return;
         }
 
-        Pair<MediaUnit, IncludedStructuralElement> firstSelectedMediaPair = dataEditor.getSelectedMedia().get(0);
-        Pair<MediaUnit, IncludedStructuralElement> lastSelectedMediaPair =
+        Pair<MediaUnit, LogicalDivision> firstSelectedMediaPair = dataEditor.getSelectedMedia().get(0);
+        Pair<MediaUnit, LogicalDivision> lastSelectedMediaPair =
                 new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
 
         dataEditor.getSelectedMedia().clear();
@@ -854,7 +854,7 @@ public class GalleryPanel {
     }
 
     private void multiSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
-        Pair<MediaUnit, IncludedStructuralElement> selectedMediaPair = new ImmutablePair<>(
+        Pair<MediaUnit, LogicalDivision> selectedMediaPair = new ImmutablePair<>(
                 currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
 
         if (dataEditor.getSelectedMedia().contains(selectedMediaPair)) {
@@ -868,7 +868,7 @@ public class GalleryPanel {
 
     /**
      * Get the index of this GalleryMediaContent's MediaUnit out of all MediaUnits
-     * which are assigned to more than one IncludedStructuralElement.
+     * which are assigned to more than one LogicalDivision.
      *
      * @param galleryMediaContent object to find the index for
      * @return index of the GalleryMediaContent's MediaUnit if present in the List of several assignments, or -1 if not present in the list.

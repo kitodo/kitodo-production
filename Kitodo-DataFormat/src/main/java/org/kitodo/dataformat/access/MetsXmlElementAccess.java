@@ -69,7 +69,7 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * of a {@code MediaUnit} resides in a {@link FLocatXmlElementAccess} in the data store.
  *
  * <p>
- * The {@code IncludedStructuralElement} is a tree structure that can be finely
+ * The {@code LogicalDivision} is a tree structure that can be finely
  * subdivided, e.g. a book, in which the chapters, in it individual elements
  * such as tables or figures. Each outline level points to the
  * {@code MediaUnit}s that belong to it via {@link AreaXmlElementAccess}s.

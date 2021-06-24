@@ -19,46 +19,46 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 
 public class MetadataEditorTest {
 
     @Test
-    public void testDetermineIncludedStructuralElementPathToChildRecursive() throws Exception {
-        IncludedStructuralElement includedStructuralElement = new IncludedStructuralElement();
-        includedStructuralElement.setType("newspaperYear");
+    public void testDetermineLogicalDivisionPathToChildRecursive() throws Exception {
+        LogicalDivision logicalDivision = new LogicalDivision();
+        logicalDivision.setType("newspaperYear");
 
-        IncludedStructuralElement monthIncludedStructuralElement = new IncludedStructuralElement();
-        monthIncludedStructuralElement.setType("newspaperMonth");
+        LogicalDivision monthLogicalDivision = new LogicalDivision();
+        monthLogicalDivision.setType("newspaperMonth");
 
-        IncludedStructuralElement wrongDayIncludedStructuralElement = new IncludedStructuralElement();
-        wrongDayIncludedStructuralElement.setType("newspaperDay");
-        wrongDayIncludedStructuralElement.setLabel("wrong");
+        LogicalDivision wrongDayLogicalDivision = new LogicalDivision();
+        wrongDayLogicalDivision.setType("newspaperDay");
+        wrongDayLogicalDivision.setLabel("wrong");
         LinkedMetsResource wrongLink = new LinkedMetsResource();
         wrongLink.setUri(URI.create("database://?process.id=13"));
-        wrongDayIncludedStructuralElement.setLink(wrongLink);
-        monthIncludedStructuralElement.getChildren().add(wrongDayIncludedStructuralElement);
+        wrongDayLogicalDivision.setLink(wrongLink);
+        monthLogicalDivision.getChildren().add(wrongDayLogicalDivision);
 
-        IncludedStructuralElement correctDayIncludedStructuralElement = new IncludedStructuralElement();
-        correctDayIncludedStructuralElement.setType("newspaperDay");
-        correctDayIncludedStructuralElement.setLabel("correct");
+        LogicalDivision correctDayLogicalDivision = new LogicalDivision();
+        correctDayLogicalDivision.setType("newspaperDay");
+        correctDayLogicalDivision.setLabel("correct");
         LinkedMetsResource correctLink = new LinkedMetsResource();
         correctLink.setUri(URI.create("database://?process.id=42"));
-        correctDayIncludedStructuralElement.setLink(correctLink);
-        monthIncludedStructuralElement.getChildren().add(correctDayIncludedStructuralElement);
+        correctDayLogicalDivision.setLink(correctLink);
+        monthLogicalDivision.getChildren().add(correctDayLogicalDivision);
 
-        includedStructuralElement.getChildren().add(monthIncludedStructuralElement);
+        logicalDivision.getChildren().add(monthLogicalDivision);
         int number = 42;
 
-        Method determineIncludedStructuralElementPathToChild = MetadataEditor.class.getDeclaredMethod(
-            "determineIncludedStructuralElementPathToChild", IncludedStructuralElement.class, int.class);
-        determineIncludedStructuralElementPathToChild.setAccessible(true);
+        Method determineLogicalDivisionPathToChild = MetadataEditor.class.getDeclaredMethod(
+            "determineLogicalDivisionPathToChild", LogicalDivision.class, int.class);
+        determineLogicalDivisionPathToChild.setAccessible(true);
         @SuppressWarnings("unchecked")
-        List<IncludedStructuralElement> result = (List<IncludedStructuralElement>) determineIncludedStructuralElementPathToChild
-                .invoke(null, includedStructuralElement, number);
+        List<LogicalDivision> result = (List<LogicalDivision>) determineLogicalDivisionPathToChild
+                .invoke(null, logicalDivision, number);
 
-        Assert.assertEquals(new LinkedList<>(Arrays.asList(includedStructuralElement, monthIncludedStructuralElement,
-            correctDayIncludedStructuralElement)), result);
+        Assert.assertEquals(new LinkedList<>(Arrays.asList(logicalDivision, monthLogicalDivision,
+            correctDayLogicalDivision)), result);
     }
 }

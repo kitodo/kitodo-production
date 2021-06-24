@@ -22,7 +22,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
@@ -160,13 +160,13 @@ public class PaginationPanel {
                         this.paginationSelectionSelectedItems.size() - 1 ), lastItemIndex)) {
             dataEditor.getStructurePanel().updateNodeSelection(
                     dataEditor.getGalleryPanel().getGalleryMediaContent(mediaUnits.get(lastItemIndex)),
-                    mediaUnits.get(lastItemIndex).getIncludedStructuralElements().get(0));
+                    mediaUnits.get(lastItemIndex).getLogicalDivisions().get(0));
             updateMetadataPanel();
         }
         dataEditor.getSelectedMedia().clear();
         for (int i : paginationSelectionSelectedItems) {
-            for (IncludedStructuralElement includedStructuralElement : mediaUnits.get(i).getIncludedStructuralElements()) {
-                dataEditor.getSelectedMedia().add(new ImmutablePair<>(mediaUnits.get(i), includedStructuralElement));
+            for (LogicalDivision logicalDivision : mediaUnits.get(i).getLogicalDivisions()) {
+                dataEditor.getSelectedMedia().add(new ImmutablePair<>(mediaUnits.get(i), logicalDivision));
             }
         }
         this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
@@ -321,7 +321,7 @@ public class PaginationPanel {
     public void preparePaginationSelectionSelectedItems() {
         paginationSelectionSelectedItems = new ArrayList<>();
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
-        for (Pair<MediaUnit, IncludedStructuralElement> selectedElement : dataEditor.getSelectedMedia()) {
+        for (Pair<MediaUnit, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
             for (int i = 0; i < mediaUnits.size(); i++) {
                 MediaUnit mediaUnit = mediaUnits.get(i);
                 if (mediaUnit.equals(selectedElement.getKey())) {

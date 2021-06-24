@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
@@ -130,38 +130,38 @@ public class MetsXmlElementAccessIT {
             View view = new View();
             view.setMediaUnit(page);
             workpiece.getRootElement().getViews().add(view);
-            page.getIncludedStructuralElements().add(workpiece.getRootElement());
+            page.getLogicalDivisions().add(workpiece.getRootElement());
         }
 
-        IncludedStructuralElement frontCover = new IncludedStructuralElement();
+        LogicalDivision frontCover = new LogicalDivision();
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
         View view = new View();
         view.setMediaUnit(pages.get(0));
         frontCover.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(frontCover);
+        view.getMediaUnit().getLogicalDivisions().add(frontCover);
         workpiece.getRootElement().getChildren().add(frontCover);
 
-        IncludedStructuralElement inside = new IncludedStructuralElement();
+        LogicalDivision inside = new LogicalDivision();
         inside.setType("inside");
         inside.setLabel("Inside");
         view = new View();
         view.setMediaUnit(pages.get(1));
         inside.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(inside);
+        view.getMediaUnit().getLogicalDivisions().add(inside);
         view = new View();
         view.setMediaUnit(pages.get(2));
         inside.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(inside);
+        view.getMediaUnit().getLogicalDivisions().add(inside);
         workpiece.getRootElement().getChildren().add(inside);
 
-        IncludedStructuralElement backCover = new IncludedStructuralElement();
+        LogicalDivision backCover = new LogicalDivision();
         backCover.setType("backCover");
         backCover.setLabel("Back cover");
         view = new View();
         view.setMediaUnit(pages.get(3));
         backCover.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(backCover);
+        view.getMediaUnit().getLogicalDivisions().add(backCover);
         workpiece.getRootElement().getChildren().add(backCover);
 
         // add metadata
@@ -239,12 +239,12 @@ public class MetsXmlElementAccessIT {
             MediaUnit mediaUnit = mediaUnits.get(i);
             assertEquals(2, mediaUnit.getMediaFiles().size());
         }
-        IncludedStructuralElement includedStructuralElementRoot = reread.getRootElement();
-        assertEquals(1, includedStructuralElementRoot.getChildren().get(0).getViews().size());
-        assertEquals(2, includedStructuralElementRoot.getChildren().get(1).getViews().size());
-        assertEquals(1, includedStructuralElementRoot.getChildren().get(2).getViews().size());
-        assertEquals(3, includedStructuralElementRoot.getChildren().size());
-        assertEquals(1, includedStructuralElementRoot.getMetadata().size());
+        LogicalDivision LogicalDivisionRoot = reread.getRootElement();
+        assertEquals(1, LogicalDivisionRoot.getChildren().get(0).getViews().size());
+        assertEquals(2, LogicalDivisionRoot.getChildren().get(1).getViews().size());
+        assertEquals(1, LogicalDivisionRoot.getChildren().get(2).getViews().size());
+        assertEquals(3, LogicalDivisionRoot.getChildren().size());
+        assertEquals(1, LogicalDivisionRoot.getMetadata().size());
 
         clean();
     }

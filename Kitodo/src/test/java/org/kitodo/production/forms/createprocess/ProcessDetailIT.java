@@ -20,7 +20,7 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.TreeNode;
 
@@ -32,7 +32,7 @@ public class ProcessDetailIT {
         ruleset.load(new File("src/test/resources/rulesets/ruleset_test.xml"));
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("Monograph", "edit",
             Locale.LanguageRange.parse("en"));
-        IncludedStructuralElement division = new IncludedStructuralElement();
+        LogicalDivision division = new LogicalDivision();
         division.setType("Monograph");
         MetadataEntry titleDocMain = new MetadataEntry();
         titleDocMain.setDomain(MdSec.SOURCE_MD);

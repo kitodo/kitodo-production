@@ -41,7 +41,7 @@ import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
@@ -572,15 +572,15 @@ public class ProcessServiceIT {
     public void shouldUpdateChildrenFromRootElement() throws Exception {
         LinkedMetsResource childToKeepLink = new LinkedMetsResource();
         childToKeepLink.setUri(processService.getProcessURI(processService.getById(5)));
-        IncludedStructuralElement childToKeepIncludedStructuralElement = new IncludedStructuralElement();
-        childToKeepIncludedStructuralElement.setLink(childToKeepLink);
-        IncludedStructuralElement rootElement = new IncludedStructuralElement();
-        rootElement.getChildren().add(childToKeepIncludedStructuralElement);
+        LogicalDivision childToKeepLogicalDivision = new LogicalDivision();
+        childToKeepLogicalDivision.setLink(childToKeepLink);
+        LogicalDivision rootElement = new LogicalDivision();
+        rootElement.getChildren().add(childToKeepLogicalDivision);
         LinkedMetsResource childToAddLink = new LinkedMetsResource();
         childToAddLink.setUri(processService.getProcessURI(processService.getById(7)));
-        IncludedStructuralElement childToAddIncludedStructuralElement = new IncludedStructuralElement();
-        childToAddIncludedStructuralElement.setLink(childToAddLink);
-        rootElement.getChildren().add(childToAddIncludedStructuralElement);
+        LogicalDivision childToAddLogicalDivision = new LogicalDivision();
+        childToAddLogicalDivision.setLink(childToAddLink);
+        rootElement.getChildren().add(childToAddLogicalDivision);
 
         Process process = processService.getById(4);
 

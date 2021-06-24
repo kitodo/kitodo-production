@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -85,7 +85,7 @@ public class SearchTab {
         try {
             URI metadataUri = ServiceManager.getProcessService().getMetadataFileUri(this.originalProcess);
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataUri);
-            IncludedStructuralElement root = workpiece.getRootElement();
+            LogicalDivision root = workpiece.getRootElement();
             if (StringUtils.isNotBlank(root.getType())) {
                 this.createProcessForm.getProcessDataTab().setDocType(root.getType());
             }

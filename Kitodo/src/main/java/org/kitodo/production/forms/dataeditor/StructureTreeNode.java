@@ -14,7 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 
@@ -71,22 +71,22 @@ public class StructureTreeNode implements Serializable {
     }
 
     /**
-     * Return label of dataObject if dataObject is instance of MediaUnit or IncludedStructuralElement.
+     * Return label of dataObject if dataObject is instance of MediaUnit or LogicalDivision.
      *
      * @return label
      */
     public String getOrderLabel() {
         if (this.dataObject instanceof MediaUnit) {
             return ((MediaUnit) this.dataObject).getOrderlabel();
-        } else if (this.dataObject instanceof IncludedStructuralElement) {
-            return ((IncludedStructuralElement) this.dataObject).getOrderlabel();
+        } else if (this.dataObject instanceof LogicalDivision) {
+            return ((LogicalDivision) this.dataObject).getOrderlabel();
         } else {
             return "";
         }
     }
 
     /**
-     * Check if the StructureTreeNode's MediaUnit is assigned to several IncludedStructuralElements.
+     * Check if the StructureTreeNode's MediaUnit is assigned to several LogicalDivisions.
      *
      * @return {@code true} when the MediaUnit is assigned to more than one logical element
      */
@@ -94,9 +94,9 @@ public class StructureTreeNode implements Serializable {
         if (Objects.nonNull(this.dataObject)) {
             if (this.dataObject instanceof View) {
                 View view = (View) this.dataObject;
-                return Objects.nonNull(view.getMediaUnit()) && view.getMediaUnit().getIncludedStructuralElements().size() > 1;
+                return Objects.nonNull(view.getMediaUnit()) && view.getMediaUnit().getLogicalDivisions().size() > 1;
             } else if (this.dataObject instanceof MediaUnit) {
-                return ((MediaUnit) this.dataObject).getIncludedStructuralElements().size() > 1;
+                return ((MediaUnit) this.dataObject).getLogicalDivisions().size() > 1;
             }
         }
         return false;

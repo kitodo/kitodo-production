@@ -29,7 +29,7 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
@@ -57,7 +57,7 @@ public class ChangeDocStrucTypeDialog {
      * Edit the doc struc.
      */
     public void editDocStruc() {
-        IncludedStructuralElement selectedStructure = getSelectedIncludedStructuralElement();
+        LogicalDivision selectedStructure = getSelectedLogicalStructure();
         selectedStructure.setType(docStructType);
         dataEditor.refreshStructurePanel();
     }
@@ -97,7 +97,7 @@ public class ChangeDocStrucTypeDialog {
      */
     public void prepare() {
         try {
-            IncludedStructuralElement selectedStructure = getSelectedIncludedStructuralElement();
+            LogicalDivision selectedStructure = getSelectedLogicalStructure();
             Map<String, String> possibleTypes = findAllPossibleTypes(selectedStructure);
             docStructTypes.clear();
             for (Entry<String, String> typeOption : possibleTypes.entrySet()) {
@@ -112,7 +112,7 @@ public class ChangeDocStrucTypeDialog {
         }
     }
 
-    private IncludedStructuralElement getSelectedIncludedStructuralElement() {
+    private LogicalDivision getSelectedLogicalStructure() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             return dataEditor.getSelectedStructure().get();
         } else {
@@ -121,27 +121,27 @@ public class ChangeDocStrucTypeDialog {
     }
 
     private Map<String, String> findAllPossibleTypes(
-            IncludedStructuralElement includedStructuralElement) throws IOException {
+            LogicalDivision logicalDivision) throws IOException {
 
         Map<String, String> possibleTypes = getAllowedChildTypesFromIncludedStructuralParentElement(
-            includedStructuralElement);
-        restrictTypesToChildElements(includedStructuralElement, possibleTypes);
+            logicalDivision);
+        restrictTypesToChildElements(logicalDivision, possibleTypes);
         return possibleTypes;
     }
 
     private Map<String, String> getAllowedChildTypesFromIncludedStructuralParentElement(
-            IncludedStructuralElement includedStructuralElement) throws IOException {
+            LogicalDivision logicalDivision) throws IOException {
 
-        IncludedStructuralElement rootElement = dataEditor.getWorkpiece().getRootElement();
-        if (rootElement.equals(includedStructuralElement)) {
+        LogicalDivision rootElement = dataEditor.getWorkpiece().getRootElement();
+        if (rootElement.equals(logicalDivision)) {
             if (Objects.isNull(dataEditor.getProcess().getParent())) {
                 return dataEditor.getRulesetManagement().getStructuralElements(dataEditor.getPriorityList());
             } else {
                 return getAllowedChildTypesFromParentalProcess();
             }
         } else {
-            LinkedList<IncludedStructuralElement> ancestors = MetadataEditor
-                    .getAncestorsOfStructure(includedStructuralElement, rootElement);
+            LinkedList<LogicalDivision> ancestors = MetadataEditor
+                    .getAncestorsOfStructure(logicalDivision, rootElement);
             String parentType = ancestors.getLast().getType();
             return getAllowedSubstructuralElements(parentType);
         }
@@ -150,16 +150,16 @@ public class ChangeDocStrucTypeDialog {
     private Map<String, String> getAllowedChildTypesFromParentalProcess() throws IOException {
         URI parentMetadataUri = ServiceManager.getProcessService()
                 .getMetadataFileUri(dataEditor.getProcess().getParent());
-        IncludedStructuralElement parentRootElement = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri)
+        LogicalDivision parentRootElement = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri)
                 .getRootElement();
-        List<IncludedStructuralElement> parentHierarchyPath = MetadataEditor
-                .determineIncludedStructuralElementPathToChild(parentRootElement,
+        List<LogicalDivision> parentHierarchyPath = MetadataEditor
+                .determineLogicalDivisionPathToChild(parentRootElement,
                     dataEditor.getProcess().getId());
         if (parentHierarchyPath.isEmpty()) {
             throw new IllegalStateException("proces is not linked in parent process");
         }
         return getAllowedSubstructuralElements(
-            ((LinkedList<IncludedStructuralElement>) parentHierarchyPath).getLast().getType());
+            ((LinkedList<LogicalDivision>) parentHierarchyPath).getLast().getType());
     }
 
     private Map<String, String> getAllowedSubstructuralElements(String parentType) {
@@ -169,12 +169,12 @@ public class ChangeDocStrucTypeDialog {
     }
 
     private void restrictTypesToChildElements(
-            IncludedStructuralElement includedStructuralElement, Map<String, String> possibleTypes) {
-        if (includedStructuralElement.getChildren().isEmpty()) {
+            LogicalDivision logicalDivision, Map<String, String> possibleTypes) {
+        if (logicalDivision.getChildren().isEmpty()) {
             return;
         }
         Set<String> childTypes = new HashSet<>();
-        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
+        for (LogicalDivision child : logicalDivision.getChildren()) {
             childTypes.add(child.getType());
         }
         for (Iterator<Entry<String, String>> possibleTypesIterator = possibleTypes.entrySet()

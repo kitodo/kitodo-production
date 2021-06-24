@@ -36,7 +36,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -99,7 +99,7 @@ public class DataEditorService {
      * @param element IncludedStructuralElement for which the title value is returned.
      * @return title value of given element
      */
-    public static String getTitleValue(IncludedStructuralElement element) {
+    public static String getTitleValue(LogicalDivision element) {
         for (final String titleKey : getTitleKeys()) {
             String[] metadataPath = titleKey.split("@");
             int lastIndex = metadataPath.length - 1;
@@ -225,7 +225,7 @@ public class DataEditorService {
      * @return StructureElementViewInterface corresponding to structure element currently selected or to be added
      */
     public static StructuralElementViewInterface getStructuralElementView(DataEditorForm dataEditor) {
-        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             return dataEditor.getRulesetManagement()
                     .getStructuralElementView(

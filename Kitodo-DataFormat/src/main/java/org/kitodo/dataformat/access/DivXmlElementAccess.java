@@ -34,7 +34,7 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
@@ -52,7 +52,7 @@ import org.kitodo.dataformat.metskitodo.Mets;
  * The tree-like outline structure for digital representation. This structuring
  * structure can be subdivided into arbitrary finely granular.
  */
-public class DivXmlElementAccess extends IncludedStructuralElement {
+public class DivXmlElementAccess extends LogicalDivision {
     /**
      * The qualified name of the Kitodo metadata format, needed to assemble the
      * metadata entries in METS using JAXB.
@@ -78,10 +78,10 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
      * Creates a new DivXmlElementAccess for an existing structure.
      */
-    DivXmlElementAccess(IncludedStructuralElement includedStructuralElement) {
-        super(includedStructuralElement);
-        metsReferrerId = includedStructuralElement instanceof DivXmlElementAccess
-                ? ((DivXmlElementAccess) includedStructuralElement).metsReferrerId
+    DivXmlElementAccess(LogicalDivision logicalDivision) {
+        super(logicalDivision);
+        metsReferrerId = logicalDivision instanceof DivXmlElementAccess
+                ? ((DivXmlElementAccess) logicalDivision).metsReferrerId
                 : KitodoUUID.randomUUID();
     }
 
@@ -132,7 +132,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
                 if (Objects.nonNull(fileXmlElementAccess)
                     && !fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), mediaUnitsMap)) {
                     super.getViews().add(new AreaXmlElementAccess(fileXmlElementAccess).getView());
-                    fileXmlElementAccess.getMediaUnit().getIncludedStructuralElements().add(this);
+                    fileXmlElementAccess.getMediaUnit().getLogicalDivisions().add(this);
                 }
             }
         }
@@ -268,8 +268,8 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
         if (Objects.nonNull(super.getLink())) {
             MptrXmlElementAccess.addMptrToDiv(super.getLink(), div);
         }
-        for (IncludedStructuralElement subincludedStructuralElement : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess(subincludedStructuralElement).toDiv(mediaUnitIDs, smLinkData, mets));
+        for (LogicalDivision subLogicalDivision : super.getChildren()) {
+            div.getDiv().add(new DivXmlElementAccess(subLogicalDivision).toDiv(mediaUnitIDs, smLinkData, mets));
         }
         return div;
     }

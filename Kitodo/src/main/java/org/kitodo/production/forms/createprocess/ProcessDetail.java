@@ -27,7 +27,7 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataformat.Division;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
@@ -115,7 +115,7 @@ public abstract class ProcessDetail implements Serializable {
 
     /**
      * Returns the metadata from this row, as far as it has to be stored in the
-     * collection obtainable from {@link IncludedStructuralElement#getMetadata()}.
+     * collection obtainable from {@link LogicalDivision#getMetadata()}.
      *
      * @return the metadata from this row
      * @throws InvalidMetadataValueException
@@ -129,7 +129,7 @@ public abstract class ProcessDetail implements Serializable {
      * it to be called when saving the data.
      *
      * @return if data is to be written a pair of the setter of the
-     *         {@link IncludedStructuralElement} and the value to set, else null
+     *         {@link LogicalDivision} and the value to set, else null
      * @throws InvalidMetadataValueException
      *             if the metadata form contains syntactically wrong input
      * @throws NoSuchMetadataFieldException

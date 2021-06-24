@@ -37,7 +37,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
@@ -1095,7 +1095,7 @@ public class FileService {
             repaginateMediaUnits(workpiece);
         }
         if (Workpiece.treeStream(workpiece.getRootElement())
-                .allMatch(includedStructuralElement -> includedStructuralElement.getViews().isEmpty())) {
+                .allMatch(LogicalDivision -> LogicalDivision.getViews().isEmpty())) {
             automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getRootElement());
         }
         if (logger.isTraceEnabled()) {
@@ -1104,14 +1104,14 @@ public class FileService {
     }
 
     private void automaticallyAssignMediaUnitsToEffectiveRootRecursive(Workpiece workpiece,
-            IncludedStructuralElement includedStructuralElement) {
+            LogicalDivision logicalDivision) {
 
-        if (Objects.nonNull(includedStructuralElement.getType())) {
+        if (Objects.nonNull(logicalDivision.getType())) {
             Workpiece.treeStream(workpiece.getMediaUnit()).filter(mediaUnit -> !mediaUnit.getMediaFiles().isEmpty())
-                    .map(View::of).forEachOrdered(includedStructuralElement.getViews()::add);
-        } else if (includedStructuralElement.getChildren().size() == 1) {
+                    .map(View::of).forEachOrdered(logicalDivision.getViews()::add);
+        } else if (logicalDivision.getChildren().size() == 1) {
             automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece,
-                includedStructuralElement.getChildren().get(0));
+                logicalDivision.getChildren().get(0));
         }
     }
 
@@ -1196,7 +1196,7 @@ public class FileService {
             View view = new View();
             view.setMediaUnit(mediaUnit);
             workpiece.getRootElement().getViews().add(view);
-            view.getMediaUnit().getIncludedStructuralElements().add(workpiece.getRootElement());
+            view.getMediaUnit().getLogicalDivisions().add(workpiece.getRootElement());
             canonicals.add(insertionPoint, entry.getKey());
         }
     }

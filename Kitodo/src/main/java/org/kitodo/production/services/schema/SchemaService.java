@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.Workpiece;
@@ -101,18 +101,18 @@ public class SchemaService {
      * At all levels, assigns the views of the children to the included
      * structural elements.
      *
-     * @param includedStructuralElement
-     *            included structural element on which the recursion is
+     * @param logicalDivision
+     *            logical division on which the recursion is
      *            performed
      */
-    private void assignViewsFromChildrenRecursive(IncludedStructuralElement includedStructuralElement) {
-        List<IncludedStructuralElement> children = includedStructuralElement.getChildren();
+    private void assignViewsFromChildrenRecursive(LogicalDivision logicalDivision) {
+        List<LogicalDivision> children = logicalDivision.getChildren();
         if (!children.isEmpty()) {
-            for (IncludedStructuralElement child : children) {
+            for (LogicalDivision child : children) {
                 assignViewsFromChildrenRecursive(child);
             }
-            if (Objects.nonNull(includedStructuralElement.getType())) {
-                MetadataEditor.assignViewsFromChildren(includedStructuralElement);
+            if (Objects.nonNull(logicalDivision.getType())) {
+                MetadataEditor.assignViewsFromChildren(logicalDivision);
             }
         }
     }
@@ -228,7 +228,7 @@ public class SchemaService {
      *            legacy ruleset wrapper
      * @return whether the current structure shall be deleted
      */
-    private boolean convertChildrenLinksForExportRecursive(Workpiece workpiece, IncludedStructuralElement structure,
+    private boolean convertChildrenLinksForExportRecursive(Workpiece workpiece, LogicalDivision structure,
                                                LegacyPrefsHelper prefs) throws DAOException, IOException {
 
         LinkedMetsResource link = structure.getLink();
@@ -241,7 +241,7 @@ public class SchemaService {
             setLinkForExport(structure, process, prefs, workpiece);
             copyLabelAndOrderlabel(process, structure);
         }
-        for (Iterator<IncludedStructuralElement> iterator = structure.getChildren().iterator(); iterator.hasNext();) {
+        for (Iterator<LogicalDivision> iterator = structure.getChildren().iterator(); iterator.hasNext();) {
             if (convertChildrenLinksForExportRecursive(workpiece, iterator.next(), prefs)) {
                 iterator.remove();
             }
@@ -249,13 +249,13 @@ public class SchemaService {
         return false;
     }
 
-    private int enumerateLogicalDivisions(IncludedStructuralElement includedStructuralElement, int elementCount,
+    private int enumerateLogicalDivisions(LogicalDivision logicalDivision, int elementCount,
             int journalIssueCount, boolean journalIssue) {
 
-        boolean untyped = Objects.isNull(includedStructuralElement.getType());
-        includedStructuralElement.setOrder(untyped ? 0 : (journalIssue ? journalIssueCount++ : elementCount));
-        for (int i = 0; i < includedStructuralElement.getChildren().size(); i++) {
-            journalIssueCount = enumerateLogicalDivisions(includedStructuralElement.getChildren().get(i), i + 1,
+        boolean untyped = Objects.isNull(logicalDivision.getType());
+        logicalDivision.setOrder(untyped ? 0 : (journalIssue ? journalIssueCount++ : elementCount));
+        for (int i = 0; i < logicalDivision.getChildren().size(); i++) {
+            journalIssueCount = enumerateLogicalDivisions(logicalDivision.getChildren().get(i), i + 1,
                 journalIssueCount, untyped);
         }
         return journalIssueCount;
@@ -272,7 +272,7 @@ public class SchemaService {
     private void addParentLinkForExport(LegacyPrefsHelper prefs, Workpiece workpiece, Process parent)
             throws IOException {
 
-        IncludedStructuralElement linkHolder = new IncludedStructuralElement();
+        LogicalDivision linkHolder = new LogicalDivision();
         linkHolder.setLink(new LinkedMetsResource());
         setLinkForExport(linkHolder, parent, prefs, workpiece);
         linkHolder.getChildren().add(workpiece.getRootElement());
@@ -280,7 +280,7 @@ public class SchemaService {
         workpiece.setRootElement(linkHolder);
     }
 
-    private void setLinkForExport(IncludedStructuralElement structure, Process process, LegacyPrefsHelper prefs,
+    private void setLinkForExport(LogicalDivision structure, Process process, LegacyPrefsHelper prefs,
             Workpiece workpiece) {
 
         LinkedMetsResource link = structure.getLink();
@@ -292,9 +292,9 @@ public class SchemaService {
         structure.setType(ServiceManager.getProcessService().getBaseType(process));
     }
 
-    private void copyLabelAndOrderlabel(Process source, IncludedStructuralElement destination) throws IOException {
+    private void copyLabelAndOrderlabel(Process source, LogicalDivision destination) throws IOException {
         URI sourceMetadataUri = processService.getMetadataFileUri(source);
-        IncludedStructuralElement sourceRoot = metsService.loadWorkpiece(sourceMetadataUri).getRootElement();
+        LogicalDivision sourceRoot = metsService.loadWorkpiece(sourceMetadataUri).getRootElement();
         if (Objects.isNull(destination.getLabel())) {
             destination.setLabel(sourceRoot.getLabel());
         }

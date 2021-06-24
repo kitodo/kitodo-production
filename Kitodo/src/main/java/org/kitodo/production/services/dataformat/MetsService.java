@@ -29,7 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.production.services.ServiceManager;
@@ -78,11 +78,11 @@ public class MetsService {
      *             not found)
      */
     public String getBaseType(URI uri) throws IOException {
-        IncludedStructuralElement includedStructuralElement = loadWorkpiece(uri).getRootElement();
-        String type = includedStructuralElement.getType();
-        while (Objects.isNull(type) && !includedStructuralElement.getChildren().isEmpty()) {
-            includedStructuralElement = includedStructuralElement.getChildren().get(0);
-            type = includedStructuralElement.getType();
+        LogicalDivision logicalDivision = loadWorkpiece(uri).getRootElement();
+        String type = logicalDivision.getType();
+        while (Objects.isNull(type) && !logicalDivision.getChildren().isEmpty()) {
+            logicalDivision = logicalDivision.getChildren().get(0);
+            type = logicalDivision.getType();
         }
         return type;
     }
@@ -152,7 +152,7 @@ public class MetsService {
      */
     public static long countLogicalMetadata(Workpiece workpiece) {
         return Workpiece.treeStream(workpiece.getRootElement())
-                .flatMap(includedStructuralElement -> includedStructuralElement.getMetadata().parallelStream())
+                .flatMap(LogicalDivision -> LogicalDivision.getMetadata().parallelStream())
                 .filter(metadata -> !(metadata instanceof MetadataEntry)
                         || Objects.nonNull(((MetadataEntry) metadata).getValue())
                                 && !((MetadataEntry) metadata).getValue().isEmpty())

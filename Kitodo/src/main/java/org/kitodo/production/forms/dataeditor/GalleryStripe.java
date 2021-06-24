@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 
 /**
  * One media stripe in the structured gallery view.
@@ -35,7 +35,7 @@ public class GalleryStripe {
     /**
      * Structure this gallery stripe is related to.
      */
-    private final IncludedStructuralElement structure;
+    private final LogicalDivision structure;
 
     /**
      * Creates a new gallery stripe.
@@ -45,7 +45,7 @@ public class GalleryStripe {
      * @param structure
      *            structure this gallery stripe is related to
      */
-    GalleryStripe(GalleryPanel panel, IncludedStructuralElement structure) {
+    GalleryStripe(GalleryPanel panel, LogicalDivision structure) {
         this.structure = structure;
         this.label = getLabel(panel, structure);
     }
@@ -68,7 +68,7 @@ public class GalleryStripe {
      *            structure whose label is to return
      * @return the label
      */
-    private String getLabel(GalleryPanel panel, IncludedStructuralElement structure) {
+    private String getLabel(GalleryPanel panel, LogicalDivision structure) {
         RulesetManagementInterface ruleset = panel.getRuleset();
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structure.getType(),
             panel.getAcquisitionStage(), panel.getPriorityList());
@@ -89,7 +89,7 @@ public class GalleryStripe {
      *
      * @return structure
      */
-    public IncludedStructuralElement getStructure() {
+    public LogicalDivision getStructure() {
         return structure;
     }
 }

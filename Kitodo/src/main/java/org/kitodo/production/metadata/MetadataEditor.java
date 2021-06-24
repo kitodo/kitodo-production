@@ -34,7 +34,7 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.Division;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -61,7 +61,7 @@ public class MetadataEditor {
 
     /**
      * Connects two processes by means of a link. The link is sorted as a linked
-     * included structural element in a included structural element of the
+     * logical division in a logical division of the
      * parent process. The order is based on the order number specified by the
      * user. This method does not create a link between the two processes in the
      * database, this must and can only happen when saving.
@@ -79,13 +79,13 @@ public class MetadataEditor {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
         List<String> indices = Arrays.asList(insertionPosition.split(Pattern.quote(INSERTION_POSITION_SEPARATOR)));
-        IncludedStructuralElement includedStructuralElement = workpiece.getRootElement();
+        LogicalDivision logicalDivision = workpiece.getRootElement();
         for (int index = 0; index < indices.size(); index++) {
             if (index < indices.size() - 1) {
-                includedStructuralElement = includedStructuralElement.getChildren()
+                logicalDivision = logicalDivision.getChildren()
                         .get(Integer.parseInt(indices.get(index)));
             } else {
-                addLink(includedStructuralElement, Integer.parseInt(indices.get(index)), childProcessId);
+                addLink(logicalDivision, Integer.parseInt(indices.get(index)), childProcessId);
             }
         }
         ServiceManager.getFileService().createBackupFile(process);
@@ -94,35 +94,35 @@ public class MetadataEditor {
 
     /**
      * Connects two processes by means of a link. The link is sorted as a linked
-     * included structural element in a included structural element of the
+     * logical division in a logical division of the
      * parent process. The order is based on the order number specified by the
      * user. This method does not create a link between the two processes in the
      * database, this must and can only happen when saving.
      *
-     * @param parentIncludedStructuralElement
-     *            document included structural element of the parent process in
+     * @param parentLogicalDivision
+     *            document logical division of the parent process in
      *            which the link is to be added
      * @param childProcessId
      *            Database ID of the child process to be linked
      */
-    public static void addLink(IncludedStructuralElement parentIncludedStructuralElement, int childProcessId) {
-        addLink(parentIncludedStructuralElement, -1, childProcessId);
+    public static void addLink(LogicalDivision parentLogicalDivision, int childProcessId) {
+        addLink(parentLogicalDivision, -1, childProcessId);
     }
 
-    private static void addLink(IncludedStructuralElement parentIncludedStructuralElement, int index,
+    private static void addLink(LogicalDivision parentLogicalDivision, int index,
             int childProcessId) {
 
         LinkedMetsResource link = new LinkedMetsResource();
         link.setLoctype(INTERNAL_LOCTYPE);
         URI uri = ServiceManager.getProcessService().getProcessURI(childProcessId);
         link.setUri(uri);
-        IncludedStructuralElement includedStructuralElement = new IncludedStructuralElement();
-        includedStructuralElement.setLink(link);
-        List<IncludedStructuralElement> children = parentIncludedStructuralElement.getChildren();
+        LogicalDivision logicalDivision = new LogicalDivision();
+        logicalDivision.setLink(link);
+        List<LogicalDivision> children = parentLogicalDivision.getChildren();
         if (index < 0) {
-            children.add(includedStructuralElement);
+            children.add(logicalDivision);
         } else {
-            children.add(index, includedStructuralElement);
+            children.add(index, logicalDivision);
         }
     }
 
@@ -144,10 +144,10 @@ public class MetadataEditor {
         }
     }
 
-    private static boolean removeLinkRecursive(IncludedStructuralElement element, int childId) {
-        IncludedStructuralElement parentElement = null;
-        IncludedStructuralElement linkElement = null;
-        for (IncludedStructuralElement structuralElement : element.getChildren()) {
+    private static boolean removeLinkRecursive(LogicalDivision element, int childId) {
+        LogicalDivision parentElement = null;
+        LogicalDivision linkElement = null;
+        for (LogicalDivision structuralElement : element.getChildren()) {
             if (Objects.nonNull(structuralElement.getLink()) && Objects.nonNull(structuralElement.getLink().getUri())
                     && structuralElement.getLink().getUri().toString().endsWith("process.id=" + childId)) {
                 parentElement = element;
@@ -189,11 +189,11 @@ public class MetadataEditor {
      * @param metadataValue
      *            value of the first metadata entry
      */
-    public static void addMultipleStructures(int number, String type, Workpiece workpiece, IncludedStructuralElement structure,
+    public static void addMultipleStructures(int number, String type, Workpiece workpiece, LogicalDivision structure,
             InsertionPosition position, String metadataKey, String metadataValue) {
 
         for (int i = 0; i < number; i++) {
-            IncludedStructuralElement newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
+            LogicalDivision newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
             if (Objects.isNull(newStructure)) {
                 continue;
             }
@@ -222,10 +222,10 @@ public class MetadataEditor {
      *            views to be assigned to the structure
      * @return the newly created structure
      */
-    public static IncludedStructuralElement addStructure(String type, Workpiece workpiece, IncludedStructuralElement structure,
+    public static LogicalDivision addStructure(String type, Workpiece workpiece, LogicalDivision structure,
             InsertionPosition position, List<View> viewsToAdd) {
-        LinkedList<IncludedStructuralElement> parents = getAncestorsOfStructure(structure, workpiece.getRootElement());
-        List<IncludedStructuralElement> siblings = new LinkedList<>();
+        LinkedList<LogicalDivision> parents = getAncestorsOfStructure(structure, workpiece.getRootElement());
+        List<LogicalDivision> siblings = new LinkedList<>();
         if (parents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFORE_CURRENT_ELEMENT)
@@ -236,7 +236,7 @@ public class MetadataEditor {
         } else {
             siblings = parents.getLast().getChildren();
         }
-        IncludedStructuralElement newStructure = new IncludedStructuralElement();
+        LogicalDivision newStructure = new LogicalDivision();
         newStructure.setType(type);
         switch (position) {
             case AFTER_CURRENT_ELEMENT:
@@ -277,12 +277,12 @@ public class MetadataEditor {
         }
         if (Objects.nonNull(viewsToAdd) && !viewsToAdd.isEmpty()) {
             for (View viewToAdd : viewsToAdd) {
-                List<IncludedStructuralElement> includedStructuralElements = viewToAdd.getMediaUnit().getIncludedStructuralElements();
-                for (IncludedStructuralElement elementToUnassign : includedStructuralElements) {
+                List<LogicalDivision> logicalDivisions = viewToAdd.getMediaUnit().getLogicalDivisions();
+                for (LogicalDivision elementToUnassign : logicalDivisions) {
                     elementToUnassign.getViews().remove(viewToAdd);
                 }
-                includedStructuralElements.clear();
-                includedStructuralElements.add(newStructure);
+                logicalDivisions.clear();
+                logicalDivisions.add(newStructure);
             }
             newStructure.getViews().addAll(viewsToAdd);
         }
@@ -336,16 +336,16 @@ public class MetadataEditor {
      * @param structure
      *            structure to add all views of all children to
      */
-    public static void assignViewsFromChildren(IncludedStructuralElement structure) {
+    public static void assignViewsFromChildren(LogicalDivision structure) {
         Collection<View> viewsToAdd = getViewsFromChildrenRecursive(structure);
         Collection<View> assignedViews = structure.getViews();
         viewsToAdd.removeAll(assignedViews);
         assignedViews.addAll(viewsToAdd);
     }
 
-    private static Collection<View> getViewsFromChildrenRecursive(IncludedStructuralElement structure) {
+    private static Collection<View> getViewsFromChildrenRecursive(LogicalDivision structure) {
         List<View> viewsFromChildren = new ArrayList<>(structure.getViews());
-        for (IncludedStructuralElement child : structure.getChildren()) {
+        for (LogicalDivision child : structure.getChildren()) {
             viewsFromChildren.addAll(getViewsFromChildrenRecursive(child));
         }
         return viewsFromChildren;
@@ -366,38 +366,38 @@ public class MetadataEditor {
     }
 
     /**
-     * Determines the path to the included structural element of the child. For
+     * Determines the path to the logical division of the child. For
      * each level of the root element, the recursion is run through once, that
      * is for a newspaper year process tree times (year, month, day).
      *
-     * @param includedStructuralElement
-     *            included structural element of the level stage of recursion
+     * @param logicalDivision
+     *            logical division of the level stage of recursion
      *            (starting from the top)
      * @param number
      *            number of the record of the process of the child
      *
      */
-    public static List<IncludedStructuralElement> determineIncludedStructuralElementPathToChild(
-            IncludedStructuralElement includedStructuralElement, int number) {
+    public static List<LogicalDivision> determineLogicalDivisionPathToChild(
+            LogicalDivision logicalDivision, int number) {
 
-        if (Objects.nonNull(includedStructuralElement.getLink())) {
+        if (Objects.nonNull(logicalDivision.getLink())) {
             try {
                 if (ServiceManager.getProcessService()
-                        .processIdFromUri(includedStructuralElement.getLink().getUri()) == number) {
-                    LinkedList<IncludedStructuralElement> linkedIncludedStructuralElements = new LinkedList<>();
-                    linkedIncludedStructuralElements.add(includedStructuralElement);
-                    return linkedIncludedStructuralElements;
+                        .processIdFromUri(logicalDivision.getLink().getUri()) == number) {
+                    LinkedList<LogicalDivision> linkedLogicalDivisions = new LinkedList<>();
+                    linkedLogicalDivisions.add(logicalDivision);
+                    return linkedLogicalDivisions;
                 }
             } catch (IllegalArgumentException | ClassCastException | SecurityException e) {
                 logger.catching(Level.TRACE, e);
             }
         }
-        for (IncludedStructuralElement includedStructuralElementChild : includedStructuralElement.getChildren()) {
-            List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChild(
-                includedStructuralElementChild, number);
-            if (!includedStructuralElementList.isEmpty()) {
-                includedStructuralElementList.add(0, includedStructuralElement);
-                return includedStructuralElementList;
+        for (LogicalDivision logicalDivisionChild : logicalDivision.getChildren()) {
+            List<LogicalDivision> logicalDivisionList = determineLogicalDivisionPathToChild(
+                logicalDivisionChild, number);
+            if (!logicalDivisionList.isEmpty()) {
+                logicalDivisionList.add(0, logicalDivision);
+                return logicalDivisionList;
             }
         }
         return Collections.emptyList();
@@ -441,11 +441,11 @@ public class MetadataEditor {
      *            node to be searched recursively
      * @return the parent nodes (maybe empty)
      */
-    public static LinkedList<IncludedStructuralElement> getAncestorsOfStructure(IncludedStructuralElement searched,
-                                                                                IncludedStructuralElement position) {
+    public static LinkedList<LogicalDivision> getAncestorsOfStructure(LogicalDivision searched,
+                                                                                LogicalDivision position) {
         return getAncestorsRecursive(searched, position, null)
                 .stream()
-                .map(parent -> (IncludedStructuralElement) parent)
+                .map(parent -> (LogicalDivision) parent)
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
@@ -491,15 +491,15 @@ public class MetadataEditor {
     /**
      * Returns the value of the specified metadata entry.
      *
-     * @param includedStructuralElement
-     *            included structural element from whose metadata the value is
+     * @param logicalDivision
+     *            logical division from whose metadata the value is
      *            to be retrieved
      * @param key
      *            key of the metadata to be determined
      * @return the value of the metadata entry, otherwise {@code null}
      */
-    public static String getMetadataValue(IncludedStructuralElement includedStructuralElement, String key) {
-        for (Metadata metadata : includedStructuralElement.getMetadata()) {
+    public static String getMetadataValue(LogicalDivision logicalDivision, String key) {
+        for (Metadata metadata : logicalDivision.getMetadata()) {
             if (metadata.getKey().equals(key) && metadata instanceof MetadataEntry) {
                 return ((MetadataEntry) metadata).getValue();
             }
@@ -513,9 +513,9 @@ public class MetadataEditor {
      * @return View or null if no View was found
      */
     public static View getFirstViewForMediaUnit(MediaUnit mediaUnit) {
-        List<IncludedStructuralElement> includedStructuralElements = mediaUnit.getIncludedStructuralElements();
-        if (!includedStructuralElements.isEmpty() && Objects.nonNull(includedStructuralElements.get(0))) {
-            for (View view : includedStructuralElements.get(0).getViews()) {
+        List<LogicalDivision> logicalDivisions = mediaUnit.getLogicalDivisions();
+        if (!logicalDivisions.isEmpty() && Objects.nonNull(logicalDivisions.get(0))) {
+            for (View view : logicalDivisions.get(0).getViews()) {
                 if (Objects.nonNull(view) && Objects.equals(view.getMediaUnit(), mediaUnit)) {
                     return view;
                 }
@@ -525,18 +525,18 @@ public class MetadataEditor {
     }
 
     /**
-     * Reads the simple metadata from an included structural element defined by
+     * Reads the simple metadata from a logical division defined by
      * the simple metadata view interface, including {@code mets:div} metadata.
      *
      * @param division
-     *            included structural element from which the metadata should be
+     *            logical division from which the metadata should be
      *            read
      * @param simpleMetadataView
      *            simple metadata view interface which formally describes the
      *            methadata to be read
      * @return metadata which corresponds to the formal description
      */
-    public static List<String> readSimpleMetadataValues(IncludedStructuralElement division,
+    public static List<String> readSimpleMetadataValues(LogicalDivision division,
             SimpleMetadataViewInterface simpleMetadataView) {
         Domain domain = simpleMetadataView.getDomain().orElse(Domain.DESCRIPTION);
         if (domain.equals(Domain.METS_DIV)) {
@@ -563,13 +563,13 @@ public class MetadataEditor {
      * Removes all metadata of the given key from the given included structural
      * element.
      *
-     * @param includedStructuralElement
-     *            included structural element to remove metadata from
+     * @param logicalDivision
+     *            logical division to remove metadata from
      * @param key
      *            key of metadata to remove
      */
-    public static void removeAllMetadata(IncludedStructuralElement includedStructuralElement, String key) {
-        includedStructuralElement.getMetadata().removeIf(metadata -> key.equals(metadata.getKey()));
+    public static void removeAllMetadata(LogicalDivision logicalDivision, String key) {
+        logicalDivision.getMetadata().removeIf(metadata -> key.equals(metadata.getKey()));
     }
 
     /**
@@ -579,7 +579,7 @@ public class MetadataEditor {
      * model. Otherwise, however, a metadata entry is written in metadata area.
      *
      * @param division
-     *            included structural element at which the metadata entry is to
+     *            logical division at which the metadata entry is to
      *            be written
      * @param simpleMetadataView
      *            properties of the metadata entry as defined in the ruleset
@@ -591,7 +591,7 @@ public class MetadataEditor {
      *             and the value is different from either {@code label} or
      *             {@code orderlabel}.
      */
-    public static void writeMetadataEntry(IncludedStructuralElement division,
+    public static void writeMetadataEntry(LogicalDivision division,
             SimpleMetadataViewInterface simpleMetadataView, String value) {
 
         Domain domain = simpleMetadataView.getDomain().orElse(Domain.DESCRIPTION);

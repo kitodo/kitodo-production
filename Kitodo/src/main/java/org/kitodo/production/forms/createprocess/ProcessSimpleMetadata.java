@@ -21,13 +21,13 @@ import java.util.function.BiConsumer;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.Division;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
 
-    static final List<Class<? extends Division<?>>> PARENT_CLASSES = Arrays.asList(IncludedStructuralElement.class,
+    static final List<Class<? extends Division<?>>> PARENT_CLASSES = Arrays.asList(LogicalDivision.class,
         MediaUnit.class);
 
     /**

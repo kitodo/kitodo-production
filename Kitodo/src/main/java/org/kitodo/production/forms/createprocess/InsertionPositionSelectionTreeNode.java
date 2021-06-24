@@ -47,7 +47,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
      * @param parent
      *            parent node in the tree view
      * @param label
-     *            label for the included structural element
+     *            label for the logical division
      */
     InsertionPositionSelectionTreeNode(TreeNode parent, String label, List<String> tooltip) {
         super(null, parent);
@@ -68,7 +68,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
     }
 
     /**
-     * Returns the label for an existing included structural element.
+     * Returns the label for an existing logical division.
      *
      * @return the label
      */
@@ -77,7 +77,7 @@ public class InsertionPositionSelectionTreeNode extends DefaultTreeNode {
     }
 
     /**
-     * Returns the tooltip for an existing included structural element.
+     * Returns the tooltip for an existing logical division.
      *
      * @return the tooltip
      */
