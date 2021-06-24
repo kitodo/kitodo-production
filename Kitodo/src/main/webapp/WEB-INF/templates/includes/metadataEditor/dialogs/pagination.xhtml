@@ -91,7 +91,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationText}"
                                 title="#{msgs.paginationTextHint}"
                                 onclick="return writeToPaginationStartValue('`','`')"
@@ -99,7 +99,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationNoIncrement}"
                                 title="#{msgs.paginationNoIncrementHint}"
                                 onclick="return writeToPaginationStartValue('','\260')"
@@ -107,7 +107,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationHalfIncrement}"
                                 title="#{msgs.paginationHalfIncrementHint}"
                                 onclick="return writeToPaginationStartValue('','\275')"
@@ -115,7 +115,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationOneIncrement}"
                                 title="#{msgs.paginationOneIncrementHint}"
                                 onclick="return writeToPaginationStartValue('','\271')"
@@ -123,7 +123,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationTwoIncrement}"
                                 title="#{msgs.paginationTwoIncrementHint}"
                                 onclick="return writeToPaginationStartValue('','\262')"
@@ -131,7 +131,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationThreeIncrement}"
                                 title="#{msgs.paginationThreeIncrementHint}"
                                 onclick="return writeToPaginationStartValue('','\263')"
@@ -139,7 +139,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationRectoUse}"
                                 title="#{msgs.paginationRectoUseHint}"
                                 onclick="return writeToPaginationStartValue('\241','')"
@@ -147,7 +147,7 @@
                             <p:commandButton
                                 rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
                                 styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "                                
+                                style="margin-right: 2px; margin-bottom: 2px; "
                                 value="#{msgs.paginationVersoUse}"
                                 title="#{msgs.paginationVersoUseHint}"
                                 onclick="return writeToPaginationStartValue('\277','')"
@@ -229,7 +229,7 @@
                                  icon="fa fa-check fa-lg"
                                  iconPos="right"
                                  onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 update="notifications,paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel"
+                                 update="notifications,paginationForm:paginationSelection,@(.ui-tree),imagePreviewForm:thumbnailWrapper,metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"

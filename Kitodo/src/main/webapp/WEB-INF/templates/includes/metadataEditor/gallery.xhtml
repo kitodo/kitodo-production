@@ -45,7 +45,7 @@
                              oncomplete="metadataEditor.shortcuts.updateViews()"/>
             <p:outputLabel id="galleryViewMode"
                            value="#{DataEditorForm.galleryPanel.galleryViewMode}"
-                           style="display: none"/>
+                           style="display: none;"/>
 
             <p:panelGrid id="imageControlPanel" columns="3"
                          style="right: 47px; top: 0; position: absolute;">
@@ -271,7 +271,7 @@
 
             <!-- Pages in UNstructured view -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' and not empty DataEditorForm.galleryPanel.medias}">
-                <div class="thumbnailWrapper"
+                <div class="thumbnail-wrapper"
                      a:onmousedown="metadataEditor.handleMouseDown(event)"
                      a:onmouseup="metadataEditor.handleMouseUp(event)"
                      a:ondragstart="metadataEditor.handleDragStart(event)">
@@ -310,7 +310,8 @@
                     <div id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
-                            <div id="thumbnailWrapper">
+                            <h:panelGroup id="thumbnailWrapper"
+                                          layout="block">
                                 <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                            var="media">
                                     <p:outputPanel>
@@ -335,7 +336,7 @@
                                         </h:panelGroup>
                                     </p:outputPanel>
                                 </ui:repeat>
-                            </div>
+                            </h:panelGroup>
                         </div>
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </div>
