@@ -134,7 +134,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     @Deprecated
     public LegacyDocStructHelperInterface getLogicalDocStruct() {
-        return new LegacyLogicalDocStructHelper(workpiece.getRootElement(), null, ruleset, priorityList);
+        return new LegacyLogicalDocStructHelper(workpiece.getLogicalStructure(), null, ruleset, priorityList);
     }
 
     @Deprecated

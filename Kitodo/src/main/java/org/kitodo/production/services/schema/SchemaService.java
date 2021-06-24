@@ -91,9 +91,9 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "purlUrl", vp.replace(process.getProject().getMetsPurl()));
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
-        convertChildrenLinksForExportRecursive(workpiece, workpiece.getRootElement(), prefs);
-        assignViewsFromChildrenRecursive(workpiece.getRootElement());
-        enumerateLogicalDivisions(workpiece.getRootElement(), 0, 1, false);
+        convertChildrenLinksForExportRecursive(workpiece, workpiece.getLogicalStructure(), prefs);
+        assignViewsFromChildrenRecursive(workpiece.getLogicalStructure());
+        enumerateLogicalDivisions(workpiece.getLogicalStructure(), 0, 1, false);
         addLinksToParents(process, prefs, workpiece);
     }
 
@@ -123,7 +123,7 @@ public class SchemaService {
             entry.setKey(key);
             entry.setDomain(domain);
             entry.setValue(value);
-            workpiece.getRootElement().getMetadata().add(entry);
+            workpiece.getLogicalStructure().getMetadata().add(entry);
         }
     }
 
@@ -275,9 +275,9 @@ public class SchemaService {
         LogicalDivision linkHolder = new LogicalDivision();
         linkHolder.setLink(new LinkedMetsResource());
         setLinkForExport(linkHolder, parent, prefs, workpiece);
-        linkHolder.getChildren().add(workpiece.getRootElement());
+        linkHolder.getChildren().add(workpiece.getLogicalStructure());
         copyLabelAndOrderlabel(parent, linkHolder);
-        workpiece.setRootElement(linkHolder);
+        workpiece.setLogicalStructure(linkHolder);
     }
 
     private void setLinkForExport(LogicalDivision structure, Process process, LegacyPrefsHelper prefs,
@@ -294,7 +294,7 @@ public class SchemaService {
 
     private void copyLabelAndOrderlabel(Process source, LogicalDivision destination) throws IOException {
         URI sourceMetadataUri = processService.getMetadataFileUri(source);
-        LogicalDivision sourceRoot = metsService.loadWorkpiece(sourceMetadataUri).getRootElement();
+        LogicalDivision sourceRoot = metsService.loadWorkpiece(sourceMetadataUri).getLogicalStructure();
         if (Objects.isNull(destination.getLabel())) {
             destination.setLabel(sourceRoot.getLabel());
         }

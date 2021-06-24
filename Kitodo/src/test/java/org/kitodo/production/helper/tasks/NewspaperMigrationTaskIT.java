@@ -111,11 +111,11 @@ public class NewspaperMigrationTaskIT {
 
         Workpiece workpiece = ServiceManager.getMetsService()
                 .loadWorkpiece(processService.getMetadataFileUri(issueOne));
-        LogicalDivision rootElement = workpiece.getRootElement();
-        Assert.assertEquals("should have modified METS file", "NewspaperMonth", rootElement.getType());
-        Assert.assertEquals("should have added date for month", "1850-03", rootElement.getOrderlabel());
+        LogicalDivision logicalStructure = workpiece.getLogicalStructure();
+        Assert.assertEquals("should have modified METS file", "NewspaperMonth", logicalStructure.getType());
+        Assert.assertEquals("should have added date for month", "1850-03", logicalStructure.getOrderlabel());
         Assert.assertEquals("should have added date for day", "1850-03-12",
-            rootElement.getChildren().get(0).getOrderlabel());
+            logicalStructure.getChildren().get(0).getOrderlabel());
 
         Process newspaperProcess = processService.getById(4);
         processService.save(newspaperProcess);

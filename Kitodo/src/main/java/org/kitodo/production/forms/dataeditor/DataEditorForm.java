@@ -707,7 +707,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void updateGallery(View view) {
         MediaUnit mediaUnit = view.getMediaUnit();
         if (Objects.nonNull(mediaUnit)) {
-            galleryPanel.updateSelection(mediaUnit, structurePanel.getPageStructure(view, workpiece.getRootElement()));
+            galleryPanel.updateSelection(mediaUnit, structurePanel.getPageStructure(view, workpiece.getLogicalStructure()));
         }
     }
 

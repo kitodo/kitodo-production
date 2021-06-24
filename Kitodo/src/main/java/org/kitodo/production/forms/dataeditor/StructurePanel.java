@@ -319,7 +319,7 @@ public class StructurePanel implements Serializable {
     /**
      * Updates the live structure of the workpiece with the current members of
      * the structure tree in their given order. The live structure of the
-     * workpiece which is stored in the root element of the structure tree.
+     * workpiece which is stored in the logical structure of the structure tree.
      */
     private void preserveLogical() {
         if (!this.logicalTree.getChildren().isEmpty()) {
@@ -379,7 +379,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Loads the tree(s) into the panel and sets the selected element to the
-     * root element of the structure tree.
+     * logical structure of the structure tree.
      *
      * @param keepSelection
      *            if true, keeps the currently selected node(s)
@@ -412,10 +412,10 @@ public class StructurePanel implements Serializable {
 
     /**
      * Loads the tree(s) into the panel and sets the selected element to the
-     * root element of the structure tree.
+     * logical structure of the structure tree.
      */
     public void show() {
-        this.structure = dataEditor.getWorkpiece().getRootElement();
+        this.structure = dataEditor.getWorkpiece().getLogicalStructure();
 
         this.previousExpansionStatesLogicalTree = getLogicalTreeNodeExpansionStates(this.logicalTree);
         this.logicalTree = buildStructureTree();
@@ -634,9 +634,9 @@ public class StructurePanel implements Serializable {
         addParentLinksRecursive(parent, tree);
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
         try {
-            LogicalDivision rootElement = ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement();
+            LogicalDivision logicalStructure = ServiceManager.getMetsService().loadWorkpiece(uri).getLogicalStructure();
             List<LogicalDivision> logicalDivisionList
-                    = MetadataEditor.determineLogicalDivisionPathToChild(rootElement, child.getId());
+                    = MetadataEditor.determineLogicalDivisionPathToChild(logicalStructure, child.getId());
             DefaultTreeNode parentNode = tree;
             if (logicalDivisionList.isEmpty()) {
                 /*
@@ -1213,7 +1213,7 @@ public class StructurePanel implements Serializable {
         LinkedList<LogicalDivision> dragParents;
         if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())) {
             dragParents = MetadataEditor.getAncestorsOfStructure(dragStructure,
-                    dataEditor.getWorkpiece().getRootElement());
+                    dataEditor.getWorkpiece().getLogicalStructure());
             if (!dragParents.isEmpty()) {
                 LogicalDivision parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {

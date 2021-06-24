@@ -124,7 +124,7 @@ public abstract class EditDataScript {
                 .readMetadataFile(parentProcess);
         Workpiece workpiece = metadataFile.getWorkpiece();
 
-        Collection<Metadata> metadataCollection = workpiece.getRootElement().getMetadata();
+        Collection<Metadata> metadataCollection = workpiece.getLogicalStructure().getMetadata();
         generateValueForMetadataScript(metadataScript, metadataCollection, parentProcess, metadataFile);
     }
 
@@ -140,10 +140,10 @@ public abstract class EditDataScript {
 
         if (Objects.nonNull(metadataScript.getTypeTarget())) {
             LogicalDivision structuralElement = getLogicalDivisionWithType(metadataScript.getTypeTarget(),
-                workpiece.getRootElement());
+                workpiece.getLogicalStructure());
             metadataCollection = Objects.isNull(structuralElement) ? null : structuralElement.getMetadata();
         } else {
-            metadataCollection = workpiece.getRootElement().getMetadata();
+            metadataCollection = workpiece.getLogicalStructure().getMetadata();
         }
         return metadataCollection;
     }

@@ -50,7 +50,7 @@ public class TempProcess {
         this.process = process;
         this.metadataNodes = nodeList;
         this.workpiece = new Workpiece();
-        this.workpiece.getRootElement().setType(docType);
+        this.workpiece.getLogicalStructure().setType(docType);
     }
 
     /**

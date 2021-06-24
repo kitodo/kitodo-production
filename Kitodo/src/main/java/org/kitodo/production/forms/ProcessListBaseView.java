@@ -129,7 +129,7 @@ public class ProcessListBaseView extends BaseForm {
             int numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getMediaUnit())
                     .filter(mediaUnit -> Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)).count();
             this.numberOfGlobalImages += numberOfProcessImages;
-            int numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getRootElement()).count();
+            int numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getLogicalStructure()).count();
             this.numberOfGlobalStructuralElements += numberOfProcessStructuralElements;
             int numberOfProcessMetadata = Math
                     .toIntExact(MetsService.countLogicalMetadata(workpiece));

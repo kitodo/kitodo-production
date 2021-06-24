@@ -103,7 +103,7 @@ public class MediaUnit extends Division<MediaUnit> {
 
     /**
      * The list is available to assist to render the front-end by holding the
-     * elements of the root element that reference this media unit. It is
+     * elements of the logical structure that reference this media unit. It is
      * transient, meaning that its content is not saved and is not restored when
      * it is loaded.
      *

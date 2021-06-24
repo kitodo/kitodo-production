@@ -79,7 +79,7 @@ public class MetadataEditor {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
         List<String> indices = Arrays.asList(insertionPosition.split(Pattern.quote(INSERTION_POSITION_SEPARATOR)));
-        LogicalDivision logicalDivision = workpiece.getRootElement();
+        LogicalDivision logicalDivision = workpiece.getLogicalStructure();
         for (int index = 0; index < indices.size(); index++) {
             if (index < indices.size() - 1) {
                 logicalDivision = logicalDivision.getChildren()
@@ -136,7 +136,7 @@ public class MetadataEditor {
     public static void removeLink(Process parentProcess, int childProcessId) throws IOException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
-        if (removeLinkRecursive(workpiece.getRootElement(), childProcessId)) {
+        if (removeLinkRecursive(workpiece.getLogicalStructure(), childProcessId)) {
             ServiceManager.getFileService().createBackupFile(parentProcess);
             ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFileUri);
         } else {
@@ -224,7 +224,7 @@ public class MetadataEditor {
      */
     public static LogicalDivision addStructure(String type, Workpiece workpiece, LogicalDivision structure,
             InsertionPosition position, List<View> viewsToAdd) {
-        LinkedList<LogicalDivision> parents = getAncestorsOfStructure(structure, workpiece.getRootElement());
+        LinkedList<LogicalDivision> parents = getAncestorsOfStructure(structure, workpiece.getLogicalStructure());
         List<LogicalDivision> siblings = new LinkedList<>();
         if (parents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
@@ -267,7 +267,7 @@ public class MetadataEditor {
             case PARENT_OF_CURRENT_ELEMENT:
                 newStructure.getChildren().add(structure);
                 if (parents.isEmpty()) {
-                    workpiece.setRootElement(newStructure);
+                    workpiece.setLogicalStructure(newStructure);
                 } else {
                     siblings.set(siblings.indexOf(structure), newStructure);
                 }
@@ -366,13 +366,13 @@ public class MetadataEditor {
     }
 
     /**
-     * Determines the path to the logical division of the child. For
-     * each level of the root element, the recursion is run through once, that
-     * is for a newspaper year process tree times (year, month, day).
+     * Determines the path to the logical division of the child. For each level
+     * of the logical structure, the recursion is run through once, that is for
+     * a newspaper year process tree times (year, month, day).
      *
      * @param logicalDivision
-     *            logical division of the level stage of recursion
-     *            (starting from the top)
+     *            logical division of the level stage of recursion (starting
+     *            from the top)
      * @param number
      *            number of the record of the process of the child
      *

@@ -151,7 +151,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 mediaUnitsMap.get(smLink.getFrom()).add(divIDsToMediaUnits.get(smLink.getTo()));
             }
         }
-        workpiece.setRootElement(getStructMapsStreamByType(mets, "LOGICAL")
+        workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap, 1)).collect(Collectors.toList())
                 .iterator().next());
     }
@@ -251,7 +251,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(new DivXmlElementAccess(workpiece.getRootElement()).toDiv(mediaUnitIDs, smLinkData, mets));
+        logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(mediaUnitIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));

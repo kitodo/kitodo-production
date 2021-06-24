@@ -60,12 +60,12 @@ public class ProcessDataTab {
             Helper.setErrorMessage("docTypeNotFound", new Object[] {docType});
         }
         if (!this.createProcessForm.getProcesses().isEmpty()) {
-            this.createProcessForm.getProcesses().get(0).getWorkpiece().getRootElement().setType(this.docType);
+            this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure().setType(this.docType);
             if (this.docType.isEmpty()) {
                 this.createProcessForm.getProcessMetadataTab().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
                 ProcessFieldedMetadata metadata = this.createProcessForm.getProcessMetadataTab()
-                        .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getRootElement());
+                        .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure());
                 this.createProcessForm.getProcessMetadataTab().setProcessDetails(metadata);
             }
         }

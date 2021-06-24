@@ -85,7 +85,7 @@ public class SearchTab {
         try {
             URI metadataUri = ServiceManager.getProcessService().getMetadataFileUri(this.originalProcess);
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataUri);
-            LogicalDivision root = workpiece.getRootElement();
+            LogicalDivision root = workpiece.getLogicalStructure();
             if (StringUtils.isNotBlank(root.getType())) {
                 this.createProcessForm.getProcessDataTab().setDocType(root.getType());
             }

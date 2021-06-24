@@ -191,7 +191,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> structuresWithoutMedia = Workpiece.treeStream(workpiece.getRootElement())
+        Collection<String> structuresWithoutMedia = Workpiece.treeStream(workpiece.getLogicalStructure())
                 .filter(struc -> Objects.nonNull(struc.getType()) && struc.getViews().isEmpty() && struc.getChildren().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
@@ -200,7 +200,7 @@ public class MetadataValidation implements MetadataValidationInterface {
             warning = true;
         }
 
-        if (!Workpiece.treeStream(workpiece.getRootElement())
+        if (!Workpiece.treeStream(workpiece.getLogicalStructure())
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
                 .allMatch(workpiece.getAllMediaUnits()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
@@ -226,7 +226,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
         unassignedMediaUnits.addAll(Workpiece.treeStream(workpiece.getMediaUnit())
                 .filter(mediaUnit -> !mediaUnit.getMediaFiles().isEmpty()).collect(Collectors.toList()));
-        Workpiece.treeStream(workpiece.getRootElement()).flatMap(structure -> structure.getViews().stream())
+        Workpiece.treeStream(workpiece.getLogicalStructure()).flatMap(structure -> structure.getViews().stream())
                 .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
         if (!unassignedMediaUnits.isEmpty()) {

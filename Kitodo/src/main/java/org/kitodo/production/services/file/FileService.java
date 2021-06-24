@@ -1094,9 +1094,9 @@ public class FileService {
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
             repaginateMediaUnits(workpiece);
         }
-        if (Workpiece.treeStream(workpiece.getRootElement())
+        if (Workpiece.treeStream(workpiece.getLogicalStructure())
                 .allMatch(LogicalDivision -> LogicalDivision.getViews().isEmpty())) {
-            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getRootElement());
+            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getLogicalStructure());
         }
         if (logger.isTraceEnabled()) {
             logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
@@ -1195,8 +1195,8 @@ public class FileService {
             workpiece.getMediaUnit().getChildren().add(insertionPoint, mediaUnit);
             View view = new View();
             view.setMediaUnit(mediaUnit);
-            workpiece.getRootElement().getViews().add(view);
-            view.getMediaUnit().getLogicalDivisions().add(workpiece.getRootElement());
+            workpiece.getLogicalStructure().getViews().add(view);
+            view.getMediaUnit().getLogicalDivisions().add(workpiece.getLogicalStructure());
             canonicals.add(insertionPoint, entry.getKey());
         }
     }

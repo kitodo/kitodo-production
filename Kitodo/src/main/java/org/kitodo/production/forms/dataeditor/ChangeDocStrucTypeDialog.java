@@ -132,8 +132,8 @@ public class ChangeDocStrucTypeDialog {
     private Map<String, String> getAllowedChildTypesFromIncludedStructuralParentElement(
             LogicalDivision logicalDivision) throws IOException {
 
-        LogicalDivision rootElement = dataEditor.getWorkpiece().getRootElement();
-        if (rootElement.equals(logicalDivision)) {
+        LogicalDivision logicalStructure = dataEditor.getWorkpiece().getLogicalStructure();
+        if (logicalStructure.equals(logicalDivision)) {
             if (Objects.isNull(dataEditor.getProcess().getParent())) {
                 return dataEditor.getRulesetManagement().getStructuralElements(dataEditor.getPriorityList());
             } else {
@@ -141,7 +141,7 @@ public class ChangeDocStrucTypeDialog {
             }
         } else {
             LinkedList<LogicalDivision> ancestors = MetadataEditor
-                    .getAncestorsOfStructure(logicalDivision, rootElement);
+                    .getAncestorsOfStructure(logicalDivision, logicalStructure);
             String parentType = ancestors.getLast().getType();
             return getAllowedSubstructuralElements(parentType);
         }
@@ -150,10 +150,10 @@ public class ChangeDocStrucTypeDialog {
     private Map<String, String> getAllowedChildTypesFromParentalProcess() throws IOException {
         URI parentMetadataUri = ServiceManager.getProcessService()
                 .getMetadataFileUri(dataEditor.getProcess().getParent());
-        LogicalDivision parentRootElement = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri)
-                .getRootElement();
+        LogicalDivision parentLogicalStructure = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri)
+                .getLogicalStructure();
         List<LogicalDivision> parentHierarchyPath = MetadataEditor
-                .determineLogicalDivisionPathToChild(parentRootElement,
+                .determineLogicalDivisionPathToChild(parentLogicalStructure,
                     dataEditor.getProcess().getId());
         if (parentHierarchyPath.isEmpty()) {
             throw new IllegalStateException("proces is not linked in parent process");

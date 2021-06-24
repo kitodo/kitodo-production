@@ -567,7 +567,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             processGenerator.generateProcess(template.getId(), project.getId());
             this.processes = new LinkedList<>(Collections.singletonList(
                     new TempProcess(processGenerator.getGeneratedProcess(), new Workpiece())));
-            this.processMetadataTab.initializeProcessDetails(getProcesses().get(0).getWorkpiece().getRootElement());
+            this.processMetadataTab.initializeProcessDetails(getProcesses().get(0).getWorkpiece().getLogicalStructure());
         } catch (ProcessGenerationException e) {
             logger.error(e.getLocalizedMessage());
         }

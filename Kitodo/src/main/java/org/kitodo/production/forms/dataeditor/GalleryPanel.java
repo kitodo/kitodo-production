@@ -266,7 +266,7 @@ public class GalleryPanel {
         } else if (dropUnstructuredMediaStripeMatcher.matches()
                 || dropUnstructuredMediaLastAreaMatcher.matches()
                 || dropUnstructuredMediaAreaMatcher.matches()) {
-            // First (0) stripe represents logical root element (unstructured media)
+            // First (0) stripe represents logical structure (unstructured media)
             return 0;
         } else {
             return -1;
@@ -414,7 +414,7 @@ public class GalleryPanel {
             }
         }
 
-        addStripesRecursive(dataEditor.getWorkpiece().getRootElement());
+        addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
@@ -423,7 +423,7 @@ public class GalleryPanel {
 
     void updateStripes() {
         stripes = new ArrayList<>();
-        addStripesRecursive(dataEditor.getWorkpiece().getRootElement());
+        addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
     }
 
     private static MediaVariant getMediaVariant(Folder folderSettings, List<MediaUnit> mediaUnits) {
@@ -551,7 +551,7 @@ public class GalleryPanel {
         List<GalleryStripe> stripesWithinRange = new LinkedList<>();
 
         /* Stripe with index 0 represents "unstructured media".
-           This stripe is displayed last, but is actually the root element (first stripe). */
+           This stripe is displayed last, but is actually the logical structure (first stripe). */
         if (Objects.equals(firstIndices.getKey(), lastIndices.getKey())) {
             stripesWithinRange.add(stripes.get(firstIndices.getKey()));
         } else if (lastIndices.getKey() == 0) {

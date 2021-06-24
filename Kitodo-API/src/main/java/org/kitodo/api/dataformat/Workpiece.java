@@ -49,7 +49,7 @@ public class Workpiece {
     /**
      * The logical logical division.
      */
-    private LogicalDivision rootElement = new LogicalDivision();
+    private LogicalDivision logicalStructure = new LogicalDivision();
 
     /**
      * Returns the creation date of the workpiece.
@@ -112,8 +112,8 @@ public class Workpiece {
      *
      * @return root element of the logical division
      */
-    public LogicalDivision getRootElement() {
-        return rootElement;
+    public LogicalDivision getLogicalStructure() {
+        return logicalStructure;
     }
 
     /**
@@ -129,16 +129,16 @@ public class Workpiece {
     /**
      * Sets the logical division of the workpiece.
      *
-     * @param rootElement
+     * @param logicalStructure
      *            logical division to set
      */
-    public void setRootElement(LogicalDivision rootElement) {
-        this.rootElement = rootElement;
+    public void setLogicalStructure(LogicalDivision logicalStructure) {
+        this.logicalStructure = logicalStructure;
     }
 
     @Override
     public String toString() {
-        return id + ", " + rootElement;
+        return id + ", " + logicalStructure;
     }
 
     @Override
@@ -162,11 +162,11 @@ public class Workpiece {
                 && Objects.equals(editHistory, workpiece.editHistory)
                 && Objects.equals(id, workpiece.id)
                 && Objects.equals(mediaUnit, workpiece.mediaUnit)
-                && Objects.equals(rootElement, workpiece.rootElement);
+                && Objects.equals(logicalStructure, workpiece.logicalStructure);
     }
 
     /**
-     * Returns all logical divisions of the root element of the
+     * Returns all logical divisions of the logical structure of the
      * workpiece as a flat list. The list isn’t backed by the included
      * structural elements, which means that insertions and deletions in the
      * list would not change the logical divisions. Therefore a list
@@ -175,7 +175,7 @@ public class Workpiece {
      * @return all logical divisions as an unmodifiable list
      */
     public List<LogicalDivision> getAllLogicalDivisions() {
-        return Collections.unmodifiableList(treeStream(rootElement).collect(Collectors.toList()));
+        return Collections.unmodifiableList(treeStream(logicalStructure).collect(Collectors.toList()));
     }
 
     /**

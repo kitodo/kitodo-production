@@ -140,14 +140,14 @@ public class NewspaperProcessesGeneratorIT {
      *            In the overall process and in the annual processes (both
      *            {@code false}), the process title is saved in the root
      *            element. In the issue process ({@code true}), it is in the
-     *            issue, which is two levels below the root element.
+     *            issue, which is two levels below the logical structure.
      */
     private String readProcessTitleFromMetadata(int processId, boolean issue) throws DAOException, IOException {
-        LogicalDivision rootElement = metsService
-                .loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId))).getRootElement();
+        LogicalDivision logicalStructure = metsService
+                .loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId))).getLogicalStructure();
         LogicalDivision logicalDivision = issue
-                ? rootElement.getChildren().get(0).getChildren().get(0)
-                : rootElement;
+                ? logicalStructure.getChildren().get(0).getChildren().get(0)
+                : logicalStructure;
         return logicalDivision.getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("ProcessTitle")).map(MetadataEntry.class::cast)
                 .map(MetadataEntry::getValue).collect(Collectors.joining(" ; "));
@@ -168,7 +168,7 @@ public class NewspaperProcessesGeneratorIT {
         Process seasonProcess = ServiceManager.getProcessService().getById(10);
         URI seasonUri = processService.getMetadataFileUri(seasonProcess);
         Workpiece seasonMets = metsService.loadWorkpiece(seasonUri);
-        seasonMets.getRootElement().setType("Season");
+        seasonMets.getLogicalStructure().setType("Season");
         metsService.saveWorkpiece(seasonMets, seasonUri);
 
         Course course = NewspaperCourse.getCourse();
@@ -192,7 +192,7 @@ public class NewspaperProcessesGeneratorIT {
                  * Year identifier must be two consecutive integer years
                  * separated by '/'.
                  */
-                String twoYears = workpiece.getRootElement().getOrderlabel();
+                String twoYears = workpiece.getLogicalStructure().getOrderlabel();
                 List<String> years = Arrays.asList(twoYears.split("/", 2));
                 Assert.assertTrue("Bad season-year in " + seasonProcess + ": " + twoYears,
                     Integer.parseInt(years.get(0)) + 1 == Integer.parseInt(years.get(1)));
@@ -211,7 +211,7 @@ public class NewspaperProcessesGeneratorIT {
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {
         // all days must be inside their month
-        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getRootElement()
+        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getLogicalStructure()
                 .getChildren()) {
             String monthValue = monthLogicalDivision.getOrderlabel();
             for (LogicalDivision dayLogicalDivision : monthLogicalDivision
@@ -224,7 +224,7 @@ public class NewspaperProcessesGeneratorIT {
         }
 
         // days must be ordered ascending
-        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getRootElement()
+        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getLogicalStructure()
                 .getChildren()) {
             String previousDayValue = null;
             for (LogicalDivision dayLogicalDivision : monthLogicalDivision
@@ -243,7 +243,7 @@ public class NewspaperProcessesGeneratorIT {
     private void monthChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece,
             String twoYears, List<String> years) {
         // all months must be in the timespan
-        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getRootElement()
+        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getLogicalStructure()
                 .getChildren()) {
             String monthValue = monthLogicalDivision.getOrderlabel();
             List<String> monthValueFields = Arrays.asList(monthValue.split("-", 2));
@@ -264,7 +264,7 @@ public class NewspaperProcessesGeneratorIT {
 
         // months must be ordered ascending
         String previousMonthValue = null;
-        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getRootElement()
+        for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getLogicalStructure()
                 .getChildren()) {
             String monthValue = monthLogicalDivision.getOrderlabel();
             if (Objects.nonNull(previousMonthValue)) {

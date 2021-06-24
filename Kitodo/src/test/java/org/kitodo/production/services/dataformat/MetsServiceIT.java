@@ -37,13 +37,13 @@ public class MetsServiceIT {
         assertEquals(183, workpiece.getMediaUnit().getChildren().size());
 
         // METS file has 17 unstructured images
-        assertEquals(17, workpiece.getRootElement().getViews().size());
+        assertEquals(17, workpiece.getLogicalStructure().getViews().size());
 
         // root node has 16 children
-        assertEquals(16, workpiece.getRootElement().getChildren().size());
+        assertEquals(16, workpiece.getLogicalStructure().getChildren().size());
 
         // root node has 11 metadata entries
-        assertEquals(11, workpiece.getRootElement().getMetadata().size());
+        assertEquals(11, workpiece.getLogicalStructure().getMetadata().size());
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
