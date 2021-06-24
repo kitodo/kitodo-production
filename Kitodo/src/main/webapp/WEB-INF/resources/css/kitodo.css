@@ -2313,7 +2313,7 @@ Column content
     color: var(--blue);
 }
 
-#imagePreviewForm > .thumbnailWrapper {
+#imagePreviewForm > .thumbnail-wrapper {
     height: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -2410,17 +2410,17 @@ Column content
     width: 100%;
 }
 
-#thumbnailWrapper {
+#imagePreviewForm\:thumbnailWrapper {
     width: 100px;
     text-align: center;
     overflow: visible;
 }
 
-#thumbnailWrapper > div {
+#imagePreviewForm\:thumbnailWrapper > div {
     text-align: center;
 }
 
-#thumbnailWrapper .thumbnail-parent {
+#imagePreviewForm\:thumbnailWrapper .thumbnail-parent {
     display: inline-block;
 }
 
