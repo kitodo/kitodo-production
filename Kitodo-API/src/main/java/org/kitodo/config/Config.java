@@ -42,8 +42,7 @@ public abstract class Config {
                     try {
                         initialized = new PropertiesConfiguration(configFile);
                     } catch (ConfigurationException e) {
-                        logger.warn("Loading of " + configFile + " failed. Trying to start with empty configuration.",
-                            e);
+                        logger.warn("Loading of {} failed. Trying to start with empty configuration.", configFile, e);
                         initialized = new PropertiesConfiguration();
                     }
                     initialized.setListDelimiter('&');

@@ -95,7 +95,7 @@ public class Browser {
         File driverFile = new File(DRIVER_DIR + driverFileName);
 
         if (!driverFile.exists()) {
-            logger.debug(driverFile.getAbsolutePath() + " does not exist, providing chrome driver now");
+            logger.debug("{} does not exist, providing chrome driver now", driverFile.getAbsolutePath());
             WebDriverProvider.provideChromeDriver(DOWNLOAD_DIR, DRIVER_DIR);
         }
 

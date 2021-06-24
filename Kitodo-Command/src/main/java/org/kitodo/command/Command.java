@@ -27,7 +27,6 @@ public class Command implements CommandInterface {
 
     private static final Logger logger = LogManager.getLogger(Command.class);
     private static final String CHARSET = "UTF-8";
-    private static final String MESSAGE = "Execution of Command ";
 
     /**
      * Method executes a script.
@@ -56,16 +55,16 @@ public class Command implements CommandInterface {
 
                 commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
                 if (commandResult.isSuccessful()) {
-                    logger.info(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
-                            + " was successful!: " + commandResult.getMessages());
+                    logger.info("Execution of Command {} {} was successful!: {}", commandResult.getId(),
+                        commandResult.getCommand(), commandResult.getMessages());
                 } else {
-                    logger.error(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
-                            + " failed!: " + commandResult.getMessages());
+                    logger.error("Execution of Command {} {} failed!: {}", commandResult.getId(),
+                        commandResult.getCommand(), commandResult.getMessages());
                 }
             }
         } catch (InterruptedException e) {
             commandResult = new CommandResult(id, command, false, Collections.singletonList(e.getMessage()));
-            logger.error(MESSAGE + "Thread was interrupted!");
+            logger.error("Execution of Command Thread was interrupted!");
             Thread.currentThread().interrupt();
             return commandResult;
         } catch (IOException e) {
@@ -73,8 +72,8 @@ public class Command implements CommandInterface {
             errorMessages.add(e.getCause().toString());
             errorMessages.add(e.getMessage());
             commandResult = new CommandResult(id, command, false, errorMessages);
-            logger.error(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
-                    + " failed!: " + commandResult.getMessages());
+            logger.error("Execution of Command {} {} failed!: {}", commandResult.getId(), commandResult.getCommand(),
+                commandResult.getMessages());
             return commandResult;
         }
         return commandResult;

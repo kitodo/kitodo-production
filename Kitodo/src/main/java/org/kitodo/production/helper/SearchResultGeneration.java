@@ -13,12 +13,9 @@ package org.kitodo.production.helper;
 
 import java.io.IOException;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.TimeZone;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,8 +26,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
@@ -154,7 +149,7 @@ public class SearchResultGeneration {
             numberOfProcessMetadata = Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
 
         } catch (IOException e) {
-            logger.debug("Metadata file not found for process with id: " + processDTO.getId());
+            logger.debug("Metadata file not found for process with id: {}", processDTO.getId());
         }
 
         row.createCell(3).setCellValue(numberOfProcessImages);

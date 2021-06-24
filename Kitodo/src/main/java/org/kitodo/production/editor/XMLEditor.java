@@ -66,7 +66,7 @@ public class XMLEditor implements Serializable {
             documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            logger.error("ERROR: unable to instantiate document builder: " + e.getMessage());
+            logger.error("ERROR: unable to instantiate document builder: {}", e.getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ public class XMLEditor implements Serializable {
             this.xmlConfigurationString = stringWriter.toString();
         } catch (ConfigurationException e) {
             String errorMessage = "ERROR: Unable to load configuration file '" + configurationFile + "'.";
-            logger.error(errorMessage + " " + e.getMessage());
+            logger.error("{} {}", errorMessage, e.getMessage());
             this.xmlConfigurationString = errorMessage;
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -145,16 +145,16 @@ public class XMLEditor implements Serializable {
                 StreamResult streamResult = new StreamResult(printWriter);
                 transformer.transform(domSource, streamResult);
             } catch (TransformerException e) {
-                logger.error("ERROR: transformation failed: " + e.getMessage());
+                logger.error("ERROR: transformation failed: {}", e.getMessage());
             }
         } catch (TransformerConfigurationException e) {
-            logger.error("ERROR: transformer configuration exception: " + e.getMessage());
+            logger.error("ERROR: transformer configuration exception: {}", e.getMessage());
         } catch (FileNotFoundException e) {
             logger.error("ERROR: file not found: " + e.getMessage());
         } catch (IOException e) {
-            logger.error("ERROR: could not save XML configuration: " + e.getMessage());
+            logger.error("ERROR: could not save XML configuration: {}", e.getMessage());
         } catch (SAXException e) {
-            logger.error("ERROR: error parsing given XML string: " + e.getMessage());
+            logger.error("ERROR: error parsing given XML string: {}", e.getMessage());
         }
     }
 
@@ -186,11 +186,8 @@ public class XMLEditor implements Serializable {
                 facesContext.addMessage(uiComponent.getClientId(), errorMessage);
                 logger.error(errorString);
                 return false;
-            } catch (SAXException e) {
-                logger.error("SAXException: " + e.getMessage());
-                return false;
-            } catch (IOException e) {
-                logger.error("IOException: " + e.getMessage());
+            } catch (SAXException | IOException e) {
+                logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage());
                 return false;
             }
         } else {

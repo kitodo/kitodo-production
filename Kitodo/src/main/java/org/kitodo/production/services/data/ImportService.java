@@ -502,7 +502,7 @@ public class ImportService {
                     }
                     level++;
                 } else {
-                    logger.info("Process with ID '" + parentID + "' already in database. Stop hierarchical import.");
+                    logger.info("Process with ID '{}' already in database. Stop hierarchical import.", parentID);
                     URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
                     Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
                     this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
@@ -529,7 +529,7 @@ public class ImportService {
         parentIDMetadata.put(identifierMetadata, parentID);
         Process parentProcess = loadParentProcess(parentIDMetadata, rulesetID, projectID);
         if (Objects.nonNull(parentProcess)) {
-            logger.info("Linking last imported process to parent process with ID " + parentID + " in database!");
+            logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
             Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
             return new TempProcess(parentProcess, parentWorkpiece);
@@ -1036,7 +1036,7 @@ public class ImportService {
             ProcessGenerationException, IOException {
         for (TempProcess tempProcess : childProcesses) {
             if (Objects.isNull(tempProcess) || Objects.isNull(tempProcess.getProcess())) {
-                logger.error("Child process " + (childProcesses.indexOf(tempProcess) + 1) + " is null => Skip!");
+                logger.error("Child process {} is null => Skip!", childProcesses.indexOf(tempProcess) + 1);
                 continue;
             }
             processTempProcess(tempProcess, template, managementInterface, acquisitionStage, priorityList);
@@ -1086,8 +1086,8 @@ public class ImportService {
                                 ProcessGenerator.addPropertyForProcess(process, processDetail.getLabel(), metadataValue);
                                 break;
                             default:
-                                logger.info("Don't save metadata '" + processDetail.getMetadataID() + "' with domain '"
-                                        + metadata.getDomain() + "' to property.");
+                                logger.info("Don't save metadata '{}' with domain '{}' to property.",
+                                    processDetail.getMetadataID(), metadata.getDomain());
                                 break;
                         }
                     } else {

@@ -90,8 +90,8 @@ public class WebServiceResult {
                 ActiveMQDirector.getResultsTopic().send(report);
 
             } catch (JMSException | RuntimeException e) {
-                logger.fatal("Error sending report  for \"" + id + '@' + queueName + "\" (" + level.toLowerCase()
-                        + (Objects.nonNull(message) ? ": " + message : "") + "): Giving up.", e);
+                logger.fatal("Error sending report  for \"{}@{}\" ({}{}): Giving up.", id, queueName,
+                    level.toLowerCase(), Objects.nonNull(message) ? ": " + message : "", e);
             }
         }
     }

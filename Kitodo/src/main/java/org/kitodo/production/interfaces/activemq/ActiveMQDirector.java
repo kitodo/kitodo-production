@@ -131,7 +131,7 @@ public class ActiveMQDirector implements Runnable, ServletContextListener {
                     messageConsumer.setMessageListener(processor);
                     processor.setMessageConsumer(messageConsumer);
                 } catch (JMSException | RuntimeException e) {
-                    logger.fatal("Error setting up monitoring for \"" + processor.getQueueName() + "\": Giving up.", e);
+                    logger.fatal("Error setting up monitoring for \"{}\": Giving up.", processor.getQueueName(), e);
                 }
             }
         }
@@ -161,7 +161,7 @@ public class ActiveMQDirector implements Runnable, ServletContextListener {
             reportChannel.setTimeToLive(ConfigCore.getLongParameterOrDefaultValue(ParameterCore.ACTIVE_MQ_RESULTS_TTL));
             return reportChannel;
         } catch (JMSException | RuntimeException e) {
-            logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);
+            logger.fatal("Error setting up report channel \"{}\": Giving up.", topic, e);
         }
         return null;
     }

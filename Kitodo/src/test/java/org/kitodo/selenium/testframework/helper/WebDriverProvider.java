@@ -186,7 +186,7 @@ public class WebDriverProvider {
 
             version = content.toString();
 
-            logger.info("Latest Chrome Driver Release found: " + version);
+            logger.info("Latest Chrome Driver Release found: {}", version);
 
         } catch (MalformedURLException exception) {
             logger.error("URL for fetching Chrome Release is malformed.");

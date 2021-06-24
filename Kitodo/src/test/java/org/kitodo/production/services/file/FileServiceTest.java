@@ -89,7 +89,7 @@ public class FileServiceTest {
         try {
             fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
         } catch (IOException e) {
-            logger.error("Directory was not created what is expected behaviour. " + e.getMessage());
+            logger.error("Directory was not created what is expected behaviour. {}", e.getMessage());
         }
         File file = fileService.getFile(URI.create("fileServiceTestMissing/testMeta"));
 

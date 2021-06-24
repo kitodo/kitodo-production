@@ -198,7 +198,7 @@ public class KitodoServiceLoader<T> {
 
                         String moduleName = extractModuleName(tempDir);
                         if (moduleName.isEmpty()) {
-                            logger.info("No module found in JarFile '" + jarFile.getName() + "'.");
+                            logger.info("No module found in JarFile '{}'.", jarFile.getName());
 
                         } else {
                             FacesContext facesContext = FacesContext.getCurrentInstance();

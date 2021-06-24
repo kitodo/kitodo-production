@@ -309,7 +309,7 @@ public class IndexingService {
             try {
                 if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
                     if (Objects.equals(currentIndexState, ObjectType.NONE)) {
-                        logger.debug("Starting indexing of type " + type);
+                        logger.debug("Starting indexing of type {}", type);
                         currentIndexState = type;
                         objectIndexingStates.put(type, IndexStates.INDEXING_STARTED);
                         pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
