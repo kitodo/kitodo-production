@@ -239,12 +239,12 @@ public class MetsXmlElementAccessIT {
             MediaUnit mediaUnit = mediaUnits.get(i);
             assertEquals(2, mediaUnit.getMediaFiles().size());
         }
-        LogicalDivision LogicalDivisionRoot = reread.getLogicalStructure();
-        assertEquals(1, LogicalDivisionRoot.getChildren().get(0).getViews().size());
-        assertEquals(2, LogicalDivisionRoot.getChildren().get(1).getViews().size());
-        assertEquals(1, LogicalDivisionRoot.getChildren().get(2).getViews().size());
-        assertEquals(3, LogicalDivisionRoot.getChildren().size());
-        assertEquals(1, LogicalDivisionRoot.getMetadata().size());
+        LogicalDivision logicalStructure = reread.getLogicalStructure();
+        assertEquals(1, logicalStructure.getChildren().get(0).getViews().size());
+        assertEquals(2, logicalStructure.getChildren().get(1).getViews().size());
+        assertEquals(1, logicalStructure.getChildren().get(2).getViews().size());
+        assertEquals(3, logicalStructure.getChildren().size());
+        assertEquals(1, logicalStructure.getMetadata().size());
 
         clean();
     }

@@ -1095,7 +1095,7 @@ public class FileService {
             repaginateMediaUnits(workpiece);
         }
         if (Workpiece.treeStream(workpiece.getLogicalStructure())
-                .allMatch(LogicalDivision -> LogicalDivision.getViews().isEmpty())) {
+                .allMatch(logicalDivision -> logicalDivision.getViews().isEmpty())) {
             automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getLogicalStructure());
         }
         if (logger.isTraceEnabled()) {

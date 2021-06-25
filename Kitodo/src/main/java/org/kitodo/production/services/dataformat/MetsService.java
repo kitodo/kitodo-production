@@ -152,7 +152,7 @@ public class MetsService {
      */
     public static long countLogicalMetadata(Workpiece workpiece) {
         return Workpiece.treeStream(workpiece.getLogicalStructure())
-                .flatMap(LogicalDivision -> LogicalDivision.getMetadata().parallelStream())
+                .flatMap(logicalDivision -> logicalDivision.getMetadata().parallelStream())
                 .filter(metadata -> !(metadata instanceof MetadataEntry)
                         || Objects.nonNull(((MetadataEntry) metadata).getValue())
                                 && !((MetadataEntry) metadata).getValue().isEmpty())
