@@ -38,8 +38,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.FileManagementInterface;
@@ -1087,7 +1087,8 @@ public class FileService {
         }
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
-        addNewURIsToExistingPhysicalDivisions(mediaToAdd, workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
+        addNewURIsToExistingPhysicalDivisions(mediaToAdd,
+            workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
         mediaToAdd.keySet().removeAll(canonicals);
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
         renumberPhysicalDivisions(workpiece, true);
@@ -1161,8 +1162,8 @@ public class FileService {
     /**
      * Adds new media variants found to existing physical divisions.
      */
-    private void addNewURIsToExistingPhysicalDivisions(Map<String, Map<Subfolder, URI>> mediaToAdd, List<PhysicalDivision> physicalDivisions,
-            List<String> canonicals) {
+    private void addNewURIsToExistingPhysicalDivisions(Map<String, Map<Subfolder, URI>> mediaToAdd,
+            List<PhysicalDivision> physicalDivisions, List<String> canonicals) {
 
         for (int i = 0; i < canonicals.size(); i++) {
             String canonical = canonicals.get(i);

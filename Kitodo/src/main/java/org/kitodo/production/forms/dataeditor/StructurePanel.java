@@ -874,7 +874,8 @@ public class StructurePanel implements Serializable {
                     && ((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
                     && currentTreeNode.getData() instanceof StructureTreeNode
                     && ((StructureTreeNode) currentTreeNode.getData()).getDataObject() instanceof View
-                    && ((View) ((StructureTreeNode) currentTreeNode.getData()).getDataObject()).getPhysicalDivision().equals(selectedPhysicalDivision)) {
+                    && ((View) ((StructureTreeNode) currentTreeNode.getData()).getDataObject()).getPhysicalDivision()
+                            .equals(selectedPhysicalDivision)) {
                 currentTreeNode.setSelected(true);
                 matchingTreeNode = currentTreeNode;
             } else {
@@ -1472,11 +1473,14 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Get the index of this StructureTreeNode's PhysicalDivision out of all PhysicalDivisions
-     * which are assigned to more than one LogicalDivision.
+     * Get the index of this StructureTreeNode's PhysicalDivision out of all
+     * PhysicalDivisions which are assigned to more than one LogicalDivision.
      *
-     * @param treeNode object to find the index for
-     * @return index of the StructureTreeNode's PhysicalDivision if present in the List of several assignments, or -1 if not present in the list.
+     * @param treeNode
+     *            object to find the index for
+     * @return index of the StructureTreeNode's PhysicalDivision if present in
+     *         the List of several assignments, or -1 if not present in the
+     *         list.
      */
     public int getMultipleAssignmentsIndex(StructureTreeNode treeNode) {
         if (treeNode.getDataObject() instanceof View

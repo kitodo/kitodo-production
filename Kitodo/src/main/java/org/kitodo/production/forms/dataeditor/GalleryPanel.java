@@ -37,8 +37,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -528,15 +528,20 @@ public class GalleryPanel {
     }
 
     /**
-     * Get a List of all PhysicalDivisions and the LogicalDivisions they are assigned to
-     * which are displayed between two selected PhysicalDivisions. This method selects the Stripes that are affected by the selection and delegates
-     * the selection of the contained PhysicalDivisions.
+     * Get a List of all PhysicalDivisions and the LogicalDivisions they are
+     * assigned to which are displayed between two selected PhysicalDivisions.
+     * This method selects the Stripes that are affected by the selection and
+     * delegates the selection of the contained PhysicalDivisions.
+     *
      * @param first
-     *          First selected PhysicalDivision. A Pair of the PhysicalDivision and the LogicalDivision to which the PhysicalDivision is assigned.
+     *            First selected PhysicalDivision. A Pair of the
+     *            PhysicalDivision and the LogicalDivision to which the
+     *            PhysicalDivision is assigned.
      * @param last
-     *          Last selected PhysicalDivision. A Pair of the PhysicalDivision and the Logical Division to which the PhysicalDivision is assigned.
-     * @return
-     *          A List of all selected PhysicalDivisions
+     *            Last selected PhysicalDivision. A Pair of the PhysicalDivision
+     *            and the Logical Division to which the PhysicalDivision is
+     *            assigned.
+     * @return A List of all selected PhysicalDivisions
      */
     private List<Pair<PhysicalDivision, LogicalDivision>> getMediaWithinRange(Pair<PhysicalDivision, LogicalDivision> first,
                                                           Pair<PhysicalDivision, LogicalDivision> last) {
@@ -582,18 +587,23 @@ public class GalleryPanel {
     }
 
     /**
-     * Get a List of all PhysicalDivisions and the LogicalDivisions they are assigned to
-     * which are displayed between two selected PhysicalDivisions. This method selected the PhysicalDivisions between and including the two indices.
+     * Get a List of all PhysicalDivisions and the LogicalDivisions they are
+     * assigned to which are displayed between two selected PhysicalDivisions.
+     * This method selected the PhysicalDivisions between and including the two
+     * indices.
+     *
      * @param firstIndices
-     *          First selected PhysicalDivision.
-     *          A Pair of indices of the PhysicalDivision and the LogicalDivision to which the PhysicalDivision is assigned.
+     *            First selected PhysicalDivision. A Pair of indices of the
+     *            PhysicalDivision and the LogicalDivision to which the
+     *            PhysicalDivision is assigned.
      * @param lastIndices
-     *          Last selected PhysicalDivision.
-     *          A Pair of indices of the PhysicalDivision and the Logical Division to which the PhysicalDivision is assigned.
+     *            Last selected PhysicalDivision. A Pair of indices of the
+     *            PhysicalDivision and the Logical Division to which the
+     *            PhysicalDivision is assigned.
      * @param galleryStripes
-     *          A List of GalleryStripes which contain the two selected PhysicalDivisions and all in between
-     * @return
-     *          A List of all selected PhysicalDivisions
+     *            A List of GalleryStripes which contain the two selected
+     *            PhysicalDivisions and all in between
+     * @return A List of all selected PhysicalDivisions
      */
     private List<Pair<PhysicalDivision, LogicalDivision>> getMediaWithinRangeFromSelectedStripes(
             Pair<Integer, Integer> firstIndices, Pair<Integer, Integer> lastIndices, List<GalleryStripe> galleryStripes) {
@@ -720,7 +730,8 @@ public class GalleryPanel {
 
     private void selectMedia(String physicalDivisionOrder, String stripeIndex, String selectionType) {
         PhysicalDivision selectedPhysicalDivision = null;
-        for (PhysicalDivision physicalDivision : this.dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+        for (PhysicalDivision physicalDivision : this.dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
             if (Objects.equals(physicalDivision.getOrder(), Integer.parseInt(physicalDivisionOrder))) {
                 selectedPhysicalDivision = physicalDivision;
                 break;
@@ -832,7 +843,8 @@ public class GalleryPanel {
         }
 
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
+        dataEditor.getSelectedMedia().add(
+            new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
     }
 
     private void rangeSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
@@ -867,11 +879,14 @@ public class GalleryPanel {
     }
 
     /**
-     * Get the index of this GalleryMediaContent's PhysicalDivision out of all PhysicalDivisions
-     * which are assigned to more than one LogicalDivision.
+     * Get the index of this GalleryMediaContent's PhysicalDivision out of all
+     * PhysicalDivisions which are assigned to more than one LogicalDivision.
      *
-     * @param galleryMediaContent object to find the index for
-     * @return index of the GalleryMediaContent's PhysicalDivision if present in the List of several assignments, or -1 if not present in the list.
+     * @param galleryMediaContent
+     *            object to find the index for
+     * @return index of the GalleryMediaContent's PhysicalDivision if present in
+     *         the List of several assignments, or -1 if not present in the
+     *         list.
      */
     public int getSeveralAssignmentsIndex(GalleryMediaContent galleryMediaContent) {
         if (Objects.nonNull(galleryMediaContent.getView()) && Objects.nonNull(galleryMediaContent.getView().getPhysicalDivision())) {

@@ -298,13 +298,15 @@ public class MetadataEditor {
      * @param parent parent of the new PhysicalDivision
      * @param position position relative to the parent element
      */
-    public static PhysicalDivision addPhysicalDivision(String type, Workpiece workpiece, PhysicalDivision parent, InsertionPosition position) {
+    public static PhysicalDivision addPhysicalDivision(String type, Workpiece workpiece, PhysicalDivision parent,
+            InsertionPosition position) {
         LinkedList<PhysicalDivision> grandparents = getAncestorsOfPhysicalDivision(parent, workpiece.getPhysicalStructure());
         List<PhysicalDivision> siblings = new LinkedList<>();
         if (grandparents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFORE_CURRENT_ELEMENT)) {
-                Helper.setErrorMessage("No parent found for currently selected physical division to which new physical division can be appended!");
+                Helper.setErrorMessage("No parent found for currently selected physical "
+                        + "division to which new physical division can be appended!");
             }
         } else {
             siblings = grandparents.getLast().getChildren();
