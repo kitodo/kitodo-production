@@ -122,15 +122,15 @@ public class Workpiece {
      * @param physicalStructure
      *            physical structure to set
      */
-    public void setPhysicalStructure(PhysicalDivision physicalDivision) {
-        this.physicalStructure = physicalDivision;
+    public void setPhysicalStructure(PhysicalDivision physicalStructure) {
+        this.physicalStructure = physicalStructure;
     }
 
     /**
-     * Sets the logical division of the workpiece.
+     * Sets the logical structure of the workpiece.
      *
      * @param logicalStructure
-     *            logical division to set
+     *            logical structure to set
      */
     public void setLogicalStructure(LogicalDivision logicalStructure) {
         this.logicalStructure = logicalStructure;
