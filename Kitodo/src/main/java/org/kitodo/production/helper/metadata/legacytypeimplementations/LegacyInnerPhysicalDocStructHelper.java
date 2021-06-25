@@ -19,8 +19,8 @@ import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 
