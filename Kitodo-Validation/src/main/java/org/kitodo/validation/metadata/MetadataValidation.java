@@ -44,7 +44,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
@@ -124,8 +124,8 @@ public class MetadataValidation implements MetadataValidationInterface {
                 getMetadata(logicalDivision), ruleset, metadataLanguage, translations));
         }
 
-        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
-            results.addAll(checkMetadataRules(mediaUnit.toString(), mediaUnit.getType(), getMetadata(mediaUnit),
+        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisions()) {
+            results.addAll(checkMetadataRules(physicalDivision.toString(), physicalDivision.getType(), getMetadata(physicalDivision),
                     ruleset, metadataLanguage, translations));
         }
 
@@ -149,12 +149,12 @@ public class MetadataValidation implements MetadataValidationInterface {
         return metadata;
     }
 
-    private static Collection<Metadata> getMetadata(MediaUnit mediaUnit) {
-        Collection<Metadata> metadata = new ArrayList<>(mediaUnit.getMetadata());
-        if (Objects.nonNull(mediaUnit.getOrderlabel())) {
+    private static Collection<Metadata> getMetadata(PhysicalDivision physicalDivision) {
+        Collection<Metadata> metadata = new ArrayList<>(physicalDivision.getMetadata());
+        if (Objects.nonNull(physicalDivision.getOrderlabel())) {
             MetadataEntry orderlabelEntry = new MetadataEntry();
             orderlabelEntry.setKey("ORDERLABEL");
-            orderlabelEntry.setValue(mediaUnit.getOrderlabel());
+            orderlabelEntry.setValue(physicalDivision.getOrderlabel());
             metadata.add(orderlabelEntry);
         }
         return metadata;
@@ -177,7 +177,7 @@ public class MetadataValidation implements MetadataValidationInterface {
     }
 
     /**
-     * Reports structures that have no assigned media units. These structures
+     * Reports structures that have no assigned physical divisions. These structures
      * are undesirable because you cannot look at them. It is also checked if
      * the linked media are even referenced in the document.
      *
@@ -201,8 +201,8 @@ public class MetadataValidation implements MetadataValidationInterface {
         }
 
         if (!Workpiece.treeStream(workpiece.getLogicalStructure())
-                .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
-                .allMatch(workpiece.getAllMediaUnits()::contains)) {
+                .flatMap(structure -> structure.getViews().stream()).map(View::getPhysicalDivision)
+                .allMatch(workpiece.getAllPhysicalDivisions()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
             error = true;
         }
@@ -223,15 +223,15 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
-        unassignedMediaUnits.addAll(Workpiece.treeStream(workpiece.getMediaUnit())
-                .filter(mediaUnit -> !mediaUnit.getMediaFiles().isEmpty()).collect(Collectors.toList()));
+        KeySetView<PhysicalDivision, ?> unassignedPhysicalDivisions = ConcurrentHashMap.newKeySet();
+        unassignedPhysicalDivisions.addAll(Workpiece.treeStream(workpiece.getPhysicalStructure())
+                .filter(physicalDivision -> !physicalDivision.getMediaFiles().isEmpty()).collect(Collectors.toList()));
         Workpiece.treeStream(workpiece.getLogicalStructure()).flatMap(structure -> structure.getViews().stream())
-                .map(View::getMediaUnit)
-                .forEach(unassignedMediaUnits::remove);
-        if (!unassignedMediaUnits.isEmpty()) {
-            for (MediaUnit mediaUnit : unassignedMediaUnits) {
-                messages.add(translations.get(MESSAGE_MEDIA_UNASSIGNED) + ' ' + mediaUnit);
+                .map(View::getPhysicalDivision)
+                .forEach(unassignedPhysicalDivisions::remove);
+        if (!unassignedPhysicalDivisions.isEmpty()) {
+            for (PhysicalDivision physicalDivision : unassignedPhysicalDivisions) {
+                messages.add(translations.get(MESSAGE_MEDIA_UNASSIGNED) + ' ' + physicalDivision);
             }
             warning = true;
         }

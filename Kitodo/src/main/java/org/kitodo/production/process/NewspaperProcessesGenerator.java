@@ -411,7 +411,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         List<LogicalDivision> children = logicalStructure.getChildren();
         metadata.put("firstchild",
             children.isEmpty() ? Collections.emptyMap() : getMetadataEntries(children.get(0).getMetadata()));
-        metadata.put("physSequence", getMetadataEntries(workpiece.getMediaUnit().getMetadata()));
+        metadata.put("physSequence", getMetadataEntries(workpiece.getPhysicalStructure().getMetadata()));
 
         String docType = null;
         for (ConfigOpacDoctype configOpacDoctype : ConfigOpac.getAllDoctypes()) {

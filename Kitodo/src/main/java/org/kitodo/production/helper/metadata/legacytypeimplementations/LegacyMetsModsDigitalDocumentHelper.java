@@ -129,7 +129,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     @Deprecated
     public LegacyFileSetDocStructHelper getFileSet() {
-        return new LegacyFileSetDocStructHelper(workpiece.getMediaUnit().getChildren());
+        return new LegacyFileSetDocStructHelper(workpiece.getPhysicalStructure().getChildren());
     }
 
     @Deprecated
@@ -139,7 +139,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     @Deprecated
     public LegacyDocStructHelperInterface getPhysicalDocStruct() {
-        return new LegacyFileSetDocStructHelper(workpiece.getMediaUnit().getChildren());
+        return new LegacyFileSetDocStructHelper(workpiece.getPhysicalStructure().getChildren());
     }
 
     /**

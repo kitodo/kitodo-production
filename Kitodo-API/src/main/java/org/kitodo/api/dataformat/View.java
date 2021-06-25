@@ -14,48 +14,48 @@ package org.kitodo.api.dataformat;
 import java.util.Objects;
 
 /**
- * A view on a media unit. The individual levels of the
+ * A view on a physical division. The individual levels of the
  * {@link LogicalDivision} refer to {@code View}s on
- * {@link MediaUnit}s. At the moment, each {@code View} refers to exactly one
- * {@code MediaUnit} as a whole.
+ * {@link PhysicalDivision}s. At the moment, each {@code View} refers to exactly one
+ * {@code PhysicalDivision} as a whole.
  */
 public class View {
 
     /**
-     * Creates a new view with a media unit.
+     * Creates a new view with a physical division.
      * 
-     * @param mediaUnit
-     *            media unit to set in the view
-     * @return a new view with a media unit
+     * @param physicalDivision
+     *            physical division to set in the view
+     * @return a new view with a physical division
      */
-    public static View of(MediaUnit mediaUnit) {
+    public static View of(PhysicalDivision physicalDivision) {
         View view = new View();
-        view.setMediaUnit(mediaUnit);
+        view.setPhysicalDivision(physicalDivision);
         return view;
     }
 
     /**
      * Media unit in view.
      */
-    private MediaUnit mediaUnit;
+    private PhysicalDivision physicalDivision;
 
     /**
-     * Returns the media unit in the view.
+     * Returns the physical division in the view.
      *
-     * @return the media unit
+     * @return the physical division
      */
-    public MediaUnit getMediaUnit() {
-        return mediaUnit;
+    public PhysicalDivision getPhysicalDivision() {
+        return physicalDivision;
     }
 
     /**
-     * Inserts a media unit into the view.
+     * Inserts a physical division into the view.
      *
-     * @param mediaUnit
-     *            media unit to insert
+     * @param physicalDivision
+     *            physical division to insert
      */
-    public void setMediaUnit(MediaUnit mediaUnit) {
-        this.mediaUnit = mediaUnit;
+    public void setPhysicalDivision(PhysicalDivision physicalDivision) {
+        this.physicalDivision = physicalDivision;
     }
 
     @Override
@@ -67,14 +67,14 @@ public class View {
             return false;
         }
         View view = (View) o;
-        return Objects.equals(mediaUnit, view.mediaUnit);
+        return Objects.equals(physicalDivision, view.physicalDivision);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int hashCode = 1;
-        hashCode = prime * hashCode + ((mediaUnit == null) ? 0 : mediaUnit.hashCode());
+        hashCode = prime * hashCode + ((physicalDivision == null) ? 0 : physicalDivision.hashCode());
         return hashCode;
     }
 }

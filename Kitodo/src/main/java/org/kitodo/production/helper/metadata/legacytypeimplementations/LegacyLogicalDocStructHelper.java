@@ -33,7 +33,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.metadata.MetadataEditor;
 
@@ -120,9 +120,9 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
         View view = new View();
         LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
-        view.setMediaUnit(target.getMediaUnit());
+        view.setPhysicalDivision(target.getPhysicalDivision());
         logicalDivision.getViews().add(view);
-        view.getMediaUnit().getLogicalDivisions().add(logicalDivision);
+        view.getPhysicalDivision().getLogicalDivisions().add(logicalDivision);
         return new LegacyReferenceHelper(target);
     }
 
@@ -201,8 +201,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 Collection<View> views = logicalDivision.getViews();
                 ArrayList<LegacyReferenceHelper> allReferences = new ArrayList<>(views.size());
                 for (View view : views) {
-                    MediaUnit mediaUnit = view.getMediaUnit();
-                    allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(mediaUnit)));
+                    PhysicalDivision physicalDivision = view.getPhysicalDivision();
+                    allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(physicalDivision)));
                 }
                 return allReferences;
             default:

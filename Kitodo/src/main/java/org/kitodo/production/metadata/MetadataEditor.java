@@ -35,7 +35,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -193,7 +193,7 @@ public class MetadataEditor {
             InsertionPosition position, String metadataKey, String metadataValue) {
 
         for (int i = 0; i < number; i++) {
-            LogicalDivision newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
+            LogicalDivision newStructure = addLogicalDivision(type, workpiece, structure, position, Collections.emptyList());
             if (Objects.isNull(newStructure)) {
                 continue;
             }
@@ -213,7 +213,7 @@ public class MetadataEditor {
      *            type of new structure
      * @param workpiece
      *            workpiece to which the new structure is to be added
-     * @param structure
+     * @param logicalDivision
      *            structure relative to which the new structure is to be
      *            inserted
      * @param position
@@ -222,9 +222,10 @@ public class MetadataEditor {
      *            views to be assigned to the structure
      * @return the newly created structure
      */
-    public static LogicalDivision addStructure(String type, Workpiece workpiece, LogicalDivision structure,
+    public static LogicalDivision addLogicalDivision(String type, Workpiece workpiece, LogicalDivision logicalDivision,
             InsertionPosition position, List<View> viewsToAdd) {
-        LinkedList<LogicalDivision> parents = getAncestorsOfStructure(structure, workpiece.getLogicalStructure());
+        LinkedList<LogicalDivision> parents = getAncestorsOfLogicalDivision(logicalDivision,
+            workpiece.getLogicalStructure());
         List<LogicalDivision> siblings = new LinkedList<>();
         if (parents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
@@ -240,36 +241,36 @@ public class MetadataEditor {
         newStructure.setType(type);
         switch (position) {
             case AFTER_CURRENT_ELEMENT:
-                siblings.add(siblings.indexOf(structure) + 1, newStructure);
+                siblings.add(siblings.indexOf(logicalDivision) + 1, newStructure);
                 break;
             case BEFORE_CURRENT_ELEMENT:
-                siblings.add(siblings.indexOf(structure), newStructure);
+                siblings.add(siblings.indexOf(logicalDivision), newStructure);
                 break;
             case CURRENT_POSITION:
-                OptionalInt minOrder = viewsToAdd.stream().mapToInt(v -> v.getMediaUnit().getOrder()).min();
+                OptionalInt minOrder = viewsToAdd.stream().mapToInt(v -> v.getPhysicalDivision().getOrder()).min();
                 if (minOrder.isPresent()) {
                     int structureOrder = minOrder.getAsInt();
-                    // new structure ORDER must be set to same min ORDER value of contained media units
+                    // new structure ORDER must be set to same min ORDER value of contained physical divisions
                     newStructure.setOrder(structureOrder);
-                    List<Integer> siblingOrderValues = Stream.concat(structure.getChildren().stream()
+                    List<Integer> siblingOrderValues = Stream.concat(logicalDivision.getChildren().stream()
                             .map(Division::getOrder), Stream.of(structureOrder)).sorted().collect(Collectors.toList());
 
                     // new order must be set at correction location between existing siblings
-                    structure.getChildren().add(siblingOrderValues.indexOf(structureOrder), newStructure);
+                    logicalDivision.getChildren().add(siblingOrderValues.indexOf(structureOrder), newStructure);
                 }
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
-                structure.getChildren().add(0, newStructure);
+                logicalDivision.getChildren().add(0, newStructure);
                 break;
             case LAST_CHILD_OF_CURRENT_ELEMENT:
-                structure.getChildren().add(newStructure);
+                logicalDivision.getChildren().add(newStructure);
                 break;
             case PARENT_OF_CURRENT_ELEMENT:
-                newStructure.getChildren().add(structure);
+                newStructure.getChildren().add(logicalDivision);
                 if (parents.isEmpty()) {
                     workpiece.setLogicalStructure(newStructure);
                 } else {
-                    siblings.set(siblings.indexOf(structure), newStructure);
+                    siblings.set(siblings.indexOf(logicalDivision), newStructure);
                 }
                 break;
             default:
@@ -277,7 +278,7 @@ public class MetadataEditor {
         }
         if (Objects.nonNull(viewsToAdd) && !viewsToAdd.isEmpty()) {
             for (View viewToAdd : viewsToAdd) {
-                List<LogicalDivision> logicalDivisions = viewToAdd.getMediaUnit().getLogicalDivisions();
+                List<LogicalDivision> logicalDivisions = viewToAdd.getPhysicalDivision().getLogicalDivisions();
                 for (LogicalDivision elementToUnassign : logicalDivisions) {
                     elementToUnassign.getViews().remove(viewToAdd);
                 }
@@ -290,43 +291,43 @@ public class MetadataEditor {
     }
 
     /**
-     * Create a new MediaUnit and insert it into the passed workpiece. The position of insertion
+     * Create a new PhysicalDivision and insert it into the passed workpiece. The position of insertion
      * is determined by the passed parent and position.
-     * @param type type of new MediaUnit
-     * @param workpiece workpiece from which the root media unit is retrieved
-     * @param parent parent of the new MediaUnit
+     * @param type type of new PhysicalDivision
+     * @param workpiece workpiece from which the root physical division is retrieved
+     * @param parent parent of the new PhysicalDivision
      * @param position position relative to the parent element
      */
-    public static MediaUnit addMediaUnit(String type, Workpiece workpiece, MediaUnit parent, InsertionPosition position) {
-        LinkedList<MediaUnit> grandparents = getAncestorsOfMediaUnit(parent, workpiece.getMediaUnit());
-        List<MediaUnit> siblings = new LinkedList<>();
+    public static PhysicalDivision addPhysicalDivision(String type, Workpiece workpiece, PhysicalDivision parent, InsertionPosition position) {
+        LinkedList<PhysicalDivision> grandparents = getAncestorsOfPhysicalDivision(parent, workpiece.getPhysicalStructure());
+        List<PhysicalDivision> siblings = new LinkedList<>();
         if (grandparents.isEmpty()) {
             if (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFORE_CURRENT_ELEMENT)) {
-                Helper.setErrorMessage("No parent found for currently selected media unit to which new media unit can be appended!");
+                Helper.setErrorMessage("No parent found for currently selected physical division to which new physical division can be appended!");
             }
         } else {
             siblings = grandparents.getLast().getChildren();
         }
-        MediaUnit newMediaUnit = new MediaUnit();
-        newMediaUnit.setType(type);
+        PhysicalDivision newPhysicalDivision = new PhysicalDivision();
+        newPhysicalDivision.setType(type);
         switch (position) {
             case AFTER_CURRENT_ELEMENT:
-                siblings.add(siblings.indexOf(parent) + 1, newMediaUnit);
+                siblings.add(siblings.indexOf(parent) + 1, newPhysicalDivision);
                 break;
             case BEFORE_CURRENT_ELEMENT:
-                siblings.add(siblings.indexOf(parent), newMediaUnit);
+                siblings.add(siblings.indexOf(parent), newPhysicalDivision);
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
-                parent.getChildren().add(0, newMediaUnit);
+                parent.getChildren().add(0, newPhysicalDivision);
                 break;
             case LAST_CHILD_OF_CURRENT_ELEMENT:
-                parent.getChildren().add(newMediaUnit);
+                parent.getChildren().add(newPhysicalDivision);
                 break;
             default:
                 throw new IllegalStateException("Used InsertionPosition not allowed.");
         }
-        return newMediaUnit;
+        return newPhysicalDivision;
     }
 
     /**
@@ -352,16 +353,16 @@ public class MetadataEditor {
     }
 
     /**
-     * Creates a view on a media unit that is not further restricted; that is,
-     * the entire media unit is displayed.
+     * Creates a view on a physical division that is not further restricted; that is,
+     * the entire physical division is displayed.
      *
-     * @param mediaUnit
-     *            media unit on which a view is to be formed
-     * @return the created media unit
+     * @param physicalDivision
+     *            physical division on which a view is to be formed
+     * @return the created physical division
      */
-    public static View createUnrestrictedViewOn(MediaUnit mediaUnit) {
+    public static View createUnrestrictedViewOn(PhysicalDivision physicalDivision) {
         View unrestrictedView = new View();
-        unrestrictedView.setMediaUnit(mediaUnit);
+        unrestrictedView.setPhysicalDivision(physicalDivision);
         return unrestrictedView;
     }
 
@@ -441,7 +442,7 @@ public class MetadataEditor {
      *            node to be searched recursively
      * @return the parent nodes (maybe empty)
      */
-    public static LinkedList<LogicalDivision> getAncestorsOfStructure(LogicalDivision searched,
+    public static LinkedList<LogicalDivision> getAncestorsOfLogicalDivision(LogicalDivision searched,
                                                                                 LogicalDivision position) {
         return getAncestorsRecursive(searched, position, null)
                 .stream()
@@ -458,10 +459,10 @@ public class MetadataEditor {
      *            node to be searched recursively
      * @return the parent nodes (maybe empty)
      */
-    public static LinkedList<MediaUnit> getAncestorsOfMediaUnit(MediaUnit searched, MediaUnit position) {
+    public static LinkedList<PhysicalDivision> getAncestorsOfPhysicalDivision(PhysicalDivision searched, PhysicalDivision position) {
         return getAncestorsRecursive(searched, position, null)
                 .stream()
-                .map(parent -> (MediaUnit) parent)
+                .map(parent -> (PhysicalDivision) parent)
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
@@ -508,15 +509,15 @@ public class MetadataEditor {
     }
 
     /**
-     * Get the first view the given MediaUnit is assigned to.
-     * @param mediaUnit MediaUnit to get the view for
+     * Get the first view the given PhysicalDivision is assigned to.
+     * @param physicalDivision PhysicalDivision to get the view for
      * @return View or null if no View was found
      */
-    public static View getFirstViewForMediaUnit(MediaUnit mediaUnit) {
-        List<LogicalDivision> logicalDivisions = mediaUnit.getLogicalDivisions();
+    public static View getFirstViewForPhysicalDivision(PhysicalDivision physicalDivision) {
+        List<LogicalDivision> logicalDivisions = physicalDivision.getLogicalDivisions();
         if (!logicalDivisions.isEmpty() && Objects.nonNull(logicalDivisions.get(0))) {
             for (View view : logicalDivisions.get(0).getViews()) {
-                if (Objects.nonNull(view) && Objects.equals(view.getMediaUnit(), mediaUnit)) {
+                if (Objects.nonNull(view) && Objects.equals(view.getPhysicalDivision(), physicalDivision)) {
                     return view;
                 }
             }

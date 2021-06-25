@@ -21,7 +21,7 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
  * representation of a digital medium. The logical division can be
  * imagined as a table of contents and is used to display the table of contents
  * in the viewer. It uses {@link View}s to refer to elements of the
- * {@link MediaUnit} of the digital medium, or can {@link #link} to other
+ * {@link PhysicalDivision} of the digital medium, or can {@link #link} to other
  * processes.
  */
 public class LogicalDivision extends Division<LogicalDivision> {
@@ -31,7 +31,7 @@ public class LogicalDivision extends Division<LogicalDivision> {
     private LinkedMetsResource link;
 
     /**
-     * The views on {@link MediaUnit}s that this logical division
+     * The views on {@link PhysicalDivision}s that this logical division
      * level comprises.
      */
     private final LinkedList<View> views;

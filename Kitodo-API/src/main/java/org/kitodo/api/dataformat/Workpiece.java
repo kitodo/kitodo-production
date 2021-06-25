@@ -41,10 +41,10 @@ public class Workpiece {
     private String id;
 
     /**
-     * The media unit that belongs to this workpiece. The media unit can have
+     * The physical division that belongs to this workpiece. The physical division can have
      * children, such as a bound book that can have pages.
      */
-    private MediaUnit mediaUnit = new MediaUnit();
+    private PhysicalDivision physicalStructure = new PhysicalDivision();
 
     /**
      * The logical logical division.
@@ -99,12 +99,12 @@ public class Workpiece {
     }
 
     /**
-     * Returns the media unit of this workpiece.
+     * Returns the physical structure of this workpiece.
      *
-     * @return the media units
+     * @return the physical structure
      */
-    public MediaUnit getMediaUnit() {
-        return mediaUnit;
+    public PhysicalDivision getPhysicalStructure() {
+        return physicalStructure;
     }
 
     /**
@@ -117,13 +117,13 @@ public class Workpiece {
     }
 
     /**
-     * Sets the media unit of the workpiece.
+     * Sets the physical structure of the workpiece.
      *
-     * @param mediaUnit
-     *            media unit to set
+     * @param physicalStructure
+     *            physical structure to set
      */
-    public void setMediaUnit(MediaUnit mediaUnit) {
-        this.mediaUnit = mediaUnit;
+    public void setPhysicalStructure(PhysicalDivision physicalDivision) {
+        this.physicalStructure = physicalDivision;
     }
 
     /**
@@ -161,7 +161,7 @@ public class Workpiece {
         return Objects.equals(creationDate, workpiece.creationDate)
                 && Objects.equals(editHistory, workpiece.editHistory)
                 && Objects.equals(id, workpiece.id)
-                && Objects.equals(mediaUnit, workpiece.mediaUnit)
+                && Objects.equals(physicalStructure, workpiece.physicalStructure)
                 && Objects.equals(logicalStructure, workpiece.logicalStructure);
     }
 
@@ -179,31 +179,32 @@ public class Workpiece {
     }
 
     /**
-     * Returns all child media units of the media unit of the workpiece with
+     * Returns all child physical divisions of the physical division of the workpiece with
      * type "page" sorted by their {@code order} as a flat list. The root media
-     * unit is not contained. The list isn’t backed by the media units, which
+     * unit is not contained. The list isn’t backed by the physical divisions, which
      * means that insertions and deletions in the list would not change the
-     * media units. Therefore a list that cannot be modified is returned.
+     * physical divisions. Therefore a list that cannot be modified is returned.
      *
-     * @return all media units with type "page", sorted by their {@code order}
+     * @return all physical divisions with type "page", sorted by their {@code order}
      */
-    public List<MediaUnit> getAllMediaUnitChildrenFilteredByTypePageAndSorted() {
-        List<MediaUnit> mediaUnits = mediaUnit.getChildren().stream().flatMap(Workpiece::treeStream)
-                .filter(mediaUnitToCheck -> Objects.equals(mediaUnitToCheck.getType(), MediaUnit.TYPE_PAGE))
-                .sorted(Comparator.comparing(MediaUnit::getOrder)).collect(Collectors.toList());
-        return Collections.unmodifiableList(mediaUnits);
+    public List<PhysicalDivision> getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted() {
+        List<PhysicalDivision> physicalDivisions = physicalStructure.getChildren().stream()
+                .flatMap(Workpiece::treeStream)
+                .filter(physicalDivisionToCheck -> Objects.equals(physicalDivisionToCheck.getType(), PhysicalDivision.TYPE_PAGE))
+                .sorted(Comparator.comparing(PhysicalDivision::getOrder)).collect(Collectors.toList());
+        return Collections.unmodifiableList(physicalDivisions);
     }
 
     /**
-     * Returns all media units of the media unit of the workpiece as a flat
-     * list. The list isn’t backed by the media units, which means that
-     * insertions and deletions in the list would not change the media units.
+     * Returns all physical divisions of the physical division of the workpiece as a flat
+     * list. The list isn’t backed by the physical divisions, which means that
+     * insertions and deletions in the list would not change the physical divisions.
      * Therefore a list that cannot be modified is returned.
      *
-     * @return all media units as an unmodifiable list
+     * @return all physical divisions as an unmodifiable list
      */
-    public List<MediaUnit> getAllMediaUnits() {
-        return Collections.unmodifiableList(treeStream(mediaUnit).collect(Collectors.toList()));
+    public List<PhysicalDivision> getAllPhysicalDivisions() {
+        return Collections.unmodifiableList(treeStream(physicalStructure).collect(Collectors.toList()));
     }
 
     /**

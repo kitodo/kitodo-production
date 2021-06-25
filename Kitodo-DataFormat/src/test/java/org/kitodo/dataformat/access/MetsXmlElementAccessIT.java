@@ -33,7 +33,7 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.View;
@@ -56,7 +56,7 @@ public class MetsXmlElementAccessIT {
                 .read(new FileInputStream(new File("src/test/resources/meta.xml")));
 
         // METS file has 183 associated images
-        assertEquals(183, workpiece.getMediaUnit().getChildren().size());
+        assertEquals(183, workpiece.getPhysicalStructure().getChildren().size());
 
         // METS file has 17 unstructured images
         assertEquals(17, workpiece.getLogicalStructure().getViews().size());
@@ -69,7 +69,7 @@ public class MetsXmlElementAccessIT {
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
-            workpiece.getMediaUnit().getChildren().get(0).getMediaFiles().entrySet().iterator().next().getValue());
+            workpiece.getPhysicalStructure().getChildren().get(0).getMediaFiles().entrySet().iterator().next().getValue());
 
         // pagination can be read
         assertEquals(
@@ -88,7 +88,7 @@ public class MetsXmlElementAccessIT {
                 "uncounted", "uncounted", "113", "114", "115", "116", "117", "118", "uncounted", "uncounted", "119",
                 "120", "uncounted", "uncounted", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
                 "131", "132", "133", "134", "uncounted", "uncounted", "uncounted"),
-            workpiece.getMediaUnit().getChildren().stream().map(MediaUnit::getOrderlabel)
+            workpiece.getPhysicalStructure().getChildren().stream().map(PhysicalDivision::getOrderlabel)
                     .collect(Collectors.toList()));
     }
 
@@ -97,17 +97,17 @@ public class MetsXmlElementAccessIT {
         Workpiece workpiece = new Workpiece();
         workpiece.setId("1");
 
-        List<MediaUnit> pages = new ArrayList<>();
+        List<PhysicalDivision> pages = new ArrayList<>();
 
         // add partial orders
         for (int i = 1; i <= 4; i++) {
-            MediaUnit partialOrder = new MediaUnit();
+            PhysicalDivision partialOrder = new PhysicalDivision();
             MetadataEntry numImages = new MetadataEntry();
             numImages.setKey("numImages");
             numImages.setDomain(MdSec.TECH_MD);
             numImages.setValue("100");
             partialOrder.getMetadata().add(numImages);
-            workpiece.getMediaUnit().getChildren().add(partialOrder);
+            workpiece.getPhysicalStructure().getChildren().add(partialOrder);
         }
 
         // add files
@@ -116,19 +116,19 @@ public class MetsXmlElementAccessIT {
         local.setMimeType("image/tiff");
         for (int i = 1; i <= 4; i++) {
             URI path = new URI(String.format("images/leaflet_media/%08d.tif", i));
-            MediaUnit mediaUnit = new MediaUnit();
-            mediaUnit.setOrder(i);
-            mediaUnit.getMediaFiles().put(local, path);
-            pages.add(mediaUnit);
-            workpiece.getMediaUnit().getChildren().add(mediaUnit);
+            PhysicalDivision physicalDivision = new PhysicalDivision();
+            physicalDivision.setOrder(i);
+            physicalDivision.getMediaFiles().put(local, path);
+            pages.add(physicalDivision);
+            workpiece.getPhysicalStructure().getChildren().add(physicalDivision);
         }
 
         // create document structure
         workpiece.getLogicalStructure().setType("leaflet");
         workpiece.getLogicalStructure().setLabel("The Leaflet");
-        for (MediaUnit page : pages) {
+        for (PhysicalDivision page : pages) {
             View view = new View();
-            view.setMediaUnit(page);
+            view.setPhysicalDivision(page);
             workpiece.getLogicalStructure().getViews().add(view);
             page.getLogicalDivisions().add(workpiece.getLogicalStructure());
         }
@@ -137,31 +137,31 @@ public class MetsXmlElementAccessIT {
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
         View view = new View();
-        view.setMediaUnit(pages.get(0));
+        view.setPhysicalDivision(pages.get(0));
         frontCover.getViews().add(view);
-        view.getMediaUnit().getLogicalDivisions().add(frontCover);
+        view.getPhysicalDivision().getLogicalDivisions().add(frontCover);
         workpiece.getLogicalStructure().getChildren().add(frontCover);
 
         LogicalDivision inside = new LogicalDivision();
         inside.setType("inside");
         inside.setLabel("Inside");
         view = new View();
-        view.setMediaUnit(pages.get(1));
+        view.setPhysicalDivision(pages.get(1));
         inside.getViews().add(view);
-        view.getMediaUnit().getLogicalDivisions().add(inside);
+        view.getPhysicalDivision().getLogicalDivisions().add(inside);
         view = new View();
-        view.setMediaUnit(pages.get(2));
+        view.setPhysicalDivision(pages.get(2));
         inside.getViews().add(view);
-        view.getMediaUnit().getLogicalDivisions().add(inside);
+        view.getPhysicalDivision().getLogicalDivisions().add(inside);
         workpiece.getLogicalStructure().getChildren().add(inside);
 
         LogicalDivision backCover = new LogicalDivision();
         backCover.setType("backCover");
         backCover.setLabel("Back cover");
         view = new View();
-        view.setMediaUnit(pages.get(3));
+        view.setPhysicalDivision(pages.get(3));
         backCover.getViews().add(view);
-        view.getMediaUnit().getLogicalDivisions().add(backCover);
+        view.getPhysicalDivision().getLogicalDivisions().add(backCover);
         workpiece.getLogicalStructure().getChildren().add(backCover);
 
         // add metadata
@@ -202,12 +202,12 @@ public class MetsXmlElementAccessIT {
         MediaVariant max = new MediaVariant();
         max.setUse("MAX");
         max.setMimeType("image/jpeg");
-        for (MediaUnit mediaUnit : workpiece.getMediaUnit().getChildren()) {
-            URI tiffFile = mediaUnit.getMediaFiles().get(local);
+        for (PhysicalDivision physicalDivision : workpiece.getPhysicalStructure().getChildren()) {
+            URI tiffFile = physicalDivision.getMediaFiles().get(local);
             if (tiffFile != null) {
                 String jpgFile = tiffFile.toString().replaceFirst("^.*?(\\d+)\\.tif$", "images/max/$1.jpg");
                 URI path = new URI(jpgFile);
-                mediaUnit.getMediaFiles().put(max, path);
+                physicalDivision.getMediaFiles().put(max, path);
             }
         }
 
@@ -228,16 +228,16 @@ public class MetsXmlElementAccessIT {
         Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
 
         assertEquals(1, reread.getEditHistory().size());
-        List<MediaUnit> mediaUnits = reread.getMediaUnit().getChildren();
-        assertEquals(8, mediaUnits.size());
+        List<PhysicalDivision> physicalDivisions = reread.getPhysicalStructure().getChildren();
+        assertEquals(8, physicalDivisions.size());
         for (int i = 0; i <= 3; i++) {
-            MediaUnit mediaUnit = mediaUnits.get(i);
-            assertEquals(0, mediaUnit.getMediaFiles().size());
-            assertEquals(1, mediaUnit.getMetadata().size());
+            PhysicalDivision physicalDivision = physicalDivisions.get(i);
+            assertEquals(0, physicalDivision.getMediaFiles().size());
+            assertEquals(1, physicalDivision.getMetadata().size());
         }
         for (int i = 4; i <= 7; i++) {
-            MediaUnit mediaUnit = mediaUnits.get(i);
-            assertEquals(2, mediaUnit.getMediaFiles().size());
+            PhysicalDivision physicalDivision = physicalDivisions.get(i);
+            assertEquals(2, physicalDivision.getMediaFiles().size());
         }
         LogicalDivision logicalStructure = reread.getLogicalStructure();
         assertEquals(1, logicalStructure.getChildren().get(0).getViews().size());

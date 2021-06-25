@@ -37,7 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
@@ -124,7 +124,7 @@ public class GalleryPanel {
      *
      * @return value of lastSelection
      */
-    public Pair<MediaUnit, LogicalDivision> getLastSelection() {
+    public Pair<PhysicalDivision, LogicalDivision> getLastSelection() {
         if (dataEditor.getSelectedMedia().size() > 0) {
             return dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
         } else {
@@ -140,7 +140,7 @@ public class GalleryPanel {
     public boolean isLastSelection(GalleryMediaContent galleryMediaContent, GalleryStripe galleryStripe) {
         if (isSelected(galleryMediaContent, galleryStripe) && dataEditor.getSelectedMedia().size() > 0
                 && Objects.nonNull(galleryMediaContent)) {
-            return Objects.equals(galleryMediaContent.getView().getMediaUnit(),
+            return Objects.equals(galleryMediaContent.getView().getPhysicalDivision(),
                     dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1).getKey());
         }
         return false;
@@ -218,9 +218,9 @@ public class GalleryPanel {
 
         // move views
         List<Pair<View, LogicalDivision>> viewsToBeMoved = new ArrayList<>();
-        for (Pair<MediaUnit, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
+        for (Pair<PhysicalDivision, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
             for (View view : selectedElement.getValue().getViews()) {
-                if (Objects.equals(view.getMediaUnit(), selectedElement.getKey())) {
+                if (Objects.equals(view.getPhysicalDivision(), selectedElement.getKey())) {
                     viewsToBeMoved.add(new ImmutablePair<>(view, selectedElement.getValue()));
                 }
             }
@@ -293,7 +293,7 @@ public class GalleryPanel {
 
     private void updateData(GalleryStripe toStripe, List<Pair<View, LogicalDivision>> viewsToBeMoved, int toMediaIndex) {
         dataEditor.getStructurePanel().changeLogicalOrderFields(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
-        dataEditor.getStructurePanel().reorderMediaUnits(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
+        dataEditor.getStructurePanel().reorderPhysicalDivisions(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
     }
@@ -357,17 +357,17 @@ public class GalleryPanel {
         dataEditor.getStructurePanel().updateNodeSelection(galleryMediaContent, structure);
     }
 
-    void updateSelection(MediaUnit mediaUnit, LogicalDivision structuralElement) {
-        if (mediaUnit.getMediaFiles().size() > 0) {
+    void updateSelection(PhysicalDivision physicalDivision, LogicalDivision structuralElement) {
+        if (physicalDivision.getMediaFiles().size() > 0) {
 
             // Update structured view
             if (this.galleryViewMode.equals(GalleryViewMode.LIST)) {
                 for (GalleryStripe galleryStripe : getStripes()) {
                     if (Objects.isNull(structuralElement) || Objects.equals(structuralElement, galleryStripe.getStructure())) {
                         for (GalleryMediaContent galleryMediaContent : galleryStripe.getMedias()) {
-                            if (Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit())) {
+                            if (Objects.equals(physicalDivision, galleryMediaContent.getView().getPhysicalDivision())) {
                                 dataEditor.getSelectedMedia().clear();
-                                dataEditor.getSelectedMedia().add(new ImmutablePair<>(mediaUnit, galleryStripe.getStructure()));
+                                dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivision, galleryStripe.getStructure()));
                                 break;
                             }
                         }
@@ -377,10 +377,10 @@ public class GalleryPanel {
             // Update unstructured view
             else {
                 for (GalleryMediaContent galleryMediaContent : getMedias()) {
-                    if (Objects.equals(mediaUnit, galleryMediaContent.getView().getMediaUnit())) {
+                    if (Objects.equals(physicalDivision, galleryMediaContent.getView().getPhysicalDivision())) {
                         dataEditor.getSelectedMedia().clear();
                         dataEditor.getSelectedMedia().add(new ImmutablePair<>(
-                                mediaUnit, getLogicalStructureOfMedia(galleryMediaContent).getStructure()));
+                                physicalDivision, getLogicalStructureOfMedia(galleryMediaContent).getStructure()));
                         break;
                     }
                 }
@@ -391,23 +391,23 @@ public class GalleryPanel {
     void show() {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
 
         Folder previewSettings = project.getPreview();
-        previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, mediaUnits) : null;
+        previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, physicalDivisions) : null;
         Folder mediaViewSettings = project.getMediaView();
-        mediaViewVariant = Objects.nonNull(mediaViewSettings) ? getMediaVariant(mediaViewSettings, mediaUnits) : null;
+        mediaViewVariant = Objects.nonNull(mediaViewSettings) ? getMediaVariant(mediaViewSettings, physicalDivisions) : null;
 
-        medias = new ArrayList<>(mediaUnits.size());
+        medias = new ArrayList<>(physicalDivisions.size());
         stripes = new ArrayList<>();
         previewImageResolver = new HashMap<>();
         cachingUUID = UUID.randomUUID().toString();
 
         previewFolder = new Subfolder(process, project.getPreview());
-        for (MediaUnit mediaUnit : mediaUnits) {
-            View wholeMediaUnitView = new View();
-            wholeMediaUnitView.setMediaUnit(mediaUnit);
-            GalleryMediaContent mediaContent = createGalleryMediaContent(wholeMediaUnitView);
+        for (PhysicalDivision physicalDivision : physicalDivisions) {
+            View wholePhysicalDivisionView = new View();
+            wholePhysicalDivisionView.setPhysicalDivision(physicalDivision);
+            GalleryMediaContent mediaContent = createGalleryMediaContent(wholePhysicalDivisionView);
             medias.add(mediaContent);
             if (mediaContent.isShowingInPreview()) {
                 previewImageResolver.put(mediaContent.getId(), mediaContent);
@@ -426,9 +426,9 @@ public class GalleryPanel {
         addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
     }
 
-    private static MediaVariant getMediaVariant(Folder folderSettings, List<MediaUnit> mediaUnits) {
+    private static MediaVariant getMediaVariant(Folder folderSettings, List<PhysicalDivision> physicalDivisions) {
         String use = folderSettings.getFileGroup();
-        Optional<MediaVariant> optionalMediaVariant = mediaUnits.parallelStream().map(MediaUnit::getMediaFiles)
+        Optional<MediaVariant> optionalMediaVariant = physicalDivisions.parallelStream().map(PhysicalDivision::getMediaFiles)
                 .flatMap(mediaFiles -> mediaFiles.entrySet().parallelStream()).map(Entry::getKey)
                 .filter(mediaVariant -> use.equals(mediaVariant.getUse())).findAny();
         if (optionalMediaVariant.isPresent()) {
@@ -445,7 +445,7 @@ public class GalleryPanel {
         GalleryStripe galleryStripe = new GalleryStripe(this, structure);
         for (View view : structure.getViews()) {
             for (GalleryMediaContent galleryMediaContent : medias) {
-                if (Objects.equals(view.getMediaUnit(), galleryMediaContent.getView().getMediaUnit())) {
+                if (Objects.equals(view.getPhysicalDivision(), galleryMediaContent.getView().getPhysicalDivision())) {
                     galleryStripe.getMedias().add(galleryMediaContent);
                     if (galleryMediaContent.isShowingInPreview()) {
                         previewImageResolver.put(galleryMediaContent.getId(), galleryMediaContent);
@@ -463,14 +463,14 @@ public class GalleryPanel {
     }
 
     private GalleryMediaContent createGalleryMediaContent(View view) {
-        MediaUnit mediaUnit = view.getMediaUnit();
-        URI previewUri = mediaUnit.getMediaFiles().get(previewVariant);
+        PhysicalDivision physicalDivision = view.getPhysicalDivision();
+        URI previewUri = physicalDivision.getMediaFiles().get(previewVariant);
         URI resourcePreviewUri = null;
         if (Objects.nonNull(previewUri)) {
             resourcePreviewUri = previewUri.isAbsolute() ? previewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
         }
-        URI mediaViewUri = mediaUnit.getMediaFiles().get(mediaViewVariant);
+        URI mediaViewUri = physicalDivision.getMediaFiles().get(mediaViewVariant);
         URI resourceMediaViewUri = null;
         if (Objects.nonNull(mediaViewUri)) {
             resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
@@ -503,7 +503,7 @@ public class GalleryPanel {
     GalleryMediaContent getGalleryMediaContent(View view) {
         if (Objects.nonNull(view)) {
             for (GalleryMediaContent galleryMediaContent : this.medias) {
-                if (galleryMediaContent.getView().getMediaUnit().equals(view.getMediaUnit())) {
+                if (galleryMediaContent.getView().getPhysicalDivision().equals(view.getPhysicalDivision())) {
                     return galleryMediaContent;
                 }
             }
@@ -512,14 +512,14 @@ public class GalleryPanel {
     }
 
     /**
-     * Get the GalleryMediaContent object of the passed MediaUnit.
-     * @param mediaUnit Object to find the GalleryMediaContent for
+     * Get the GalleryMediaContent object of the passed PhysicalDivision.
+     * @param physicalDivision Object to find the GalleryMediaContent for
      * @return GalleryMediaContent
      */
-    public GalleryMediaContent getGalleryMediaContent(MediaUnit mediaUnit) {
+    public GalleryMediaContent getGalleryMediaContent(PhysicalDivision physicalDivision) {
         for (GalleryStripe galleryStripe : stripes) {
             for (GalleryMediaContent media : galleryStripe.getMedias()) {
-                if (Objects.equals(media.getView().getMediaUnit(), mediaUnit)) {
+                if (Objects.equals(media.getView().getPhysicalDivision(), physicalDivision)) {
                     return media;
                 }
             }
@@ -528,18 +528,18 @@ public class GalleryPanel {
     }
 
     /**
-     * Get a List of all MediaUnits and the LogicalDivisions they are assigned to
-     * which are displayed between two selected MediaUnits. This method selects the Stripes that are affected by the selection and delegates
-     * the selection of the contained MediaUnits.
+     * Get a List of all PhysicalDivisions and the LogicalDivisions they are assigned to
+     * which are displayed between two selected PhysicalDivisions. This method selects the Stripes that are affected by the selection and delegates
+     * the selection of the contained PhysicalDivisions.
      * @param first
-     *          First selected MediaUnit. A Pair of the MediaUnit and the LogicalDivision to which the MediaUnit is assigned.
+     *          First selected PhysicalDivision. A Pair of the PhysicalDivision and the LogicalDivision to which the PhysicalDivision is assigned.
      * @param last
-     *          Last selected MediaUnit. A Pair of the MediaUnit and the Logical Division to which the MediaUnit is assigned.
+     *          Last selected PhysicalDivision. A Pair of the PhysicalDivision and the Logical Division to which the PhysicalDivision is assigned.
      * @return
-     *          A List of all selected MediaUnits
+     *          A List of all selected PhysicalDivisions
      */
-    private List<Pair<MediaUnit, LogicalDivision>> getMediaWithinRange(Pair<MediaUnit, LogicalDivision> first,
-                                                          Pair<MediaUnit, LogicalDivision> last) {
+    private List<Pair<PhysicalDivision, LogicalDivision>> getMediaWithinRange(Pair<PhysicalDivision, LogicalDivision> first,
+                                                          Pair<PhysicalDivision, LogicalDivision> last) {
         // Pairs of stripe index and media index
         Pair<Integer, Integer> firstIndices = getIndices(first.getKey(), first.getValue());
         Pair<Integer, Integer> lastIndices = getIndices(last.getKey(), last.getValue());
@@ -582,20 +582,20 @@ public class GalleryPanel {
     }
 
     /**
-     * Get a List of all MediaUnits and the LogicalDivisions they are assigned to
-     * which are displayed between two selected MediaUnits. This method selected the MediaUnits between and including the two indices.
+     * Get a List of all PhysicalDivisions and the LogicalDivisions they are assigned to
+     * which are displayed between two selected PhysicalDivisions. This method selected the PhysicalDivisions between and including the two indices.
      * @param firstIndices
-     *          First selected MediaUnit.
-     *          A Pair of indices of the MediaUnit and the LogicalDivision to which the MediaUnit is assigned.
+     *          First selected PhysicalDivision.
+     *          A Pair of indices of the PhysicalDivision and the LogicalDivision to which the PhysicalDivision is assigned.
      * @param lastIndices
-     *          Last selected MediaUnit.
-     *          A Pair of indices of the MediaUnit and the Logical Division to which the MediaUnit is assigned.
+     *          Last selected PhysicalDivision.
+     *          A Pair of indices of the PhysicalDivision and the Logical Division to which the PhysicalDivision is assigned.
      * @param galleryStripes
-     *          A List of GalleryStripes which contain the two selected MediaUnits and all in between
+     *          A List of GalleryStripes which contain the two selected PhysicalDivisions and all in between
      * @return
-     *          A List of all selected MediaUnits
+     *          A List of all selected PhysicalDivisions
      */
-    private List<Pair<MediaUnit, LogicalDivision>> getMediaWithinRangeFromSelectedStripes(
+    private List<Pair<PhysicalDivision, LogicalDivision>> getMediaWithinRangeFromSelectedStripes(
             Pair<Integer, Integer> firstIndices, Pair<Integer, Integer> lastIndices, List<GalleryStripe> galleryStripes) {
         boolean countDown = false;
 
@@ -619,77 +619,77 @@ public class GalleryPanel {
         }
     }
 
-    private List<Pair<MediaUnit, LogicalDivision>> getMediaForwards(Integer firstIndex, Integer lastIndex,
+    private List<Pair<PhysicalDivision, LogicalDivision>> getMediaForwards(Integer firstIndex, Integer lastIndex,
                                                                               List<GalleryStripe> galleryStripes) {
-        List<Pair<MediaUnit, LogicalDivision>> mediaWithinRange = new LinkedList<>();
+        List<Pair<PhysicalDivision, LogicalDivision>> mediaWithinRange = new LinkedList<>();
         GalleryStripe firstStripe = galleryStripes.get(0);
 
         if (galleryStripes.size() == 1) {
             for (int i = firstIndex; i <= lastIndex; i++) {
                 mediaWithinRange.add(
-                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getPhysicalDivision(), firstStripe.getStructure()));
             }
         } else {
 
             for (int i = firstIndex; i <= firstStripe.getMedias().size() - 1; i++) {
                 mediaWithinRange.add(
-                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getPhysicalDivision(), firstStripe.getStructure()));
             }
 
             for (int i = 1; i <= galleryStripes.size() - 2; i++) {
                 GalleryStripe galleryStripe = galleryStripes.get(i);
                 for (GalleryMediaContent media : galleryStripe.getMedias()) {
-                    mediaWithinRange.add(new ImmutablePair<>(media.getView().getMediaUnit(), galleryStripe.getStructure()));
+                    mediaWithinRange.add(new ImmutablePair<>(media.getView().getPhysicalDivision(), galleryStripe.getStructure()));
                 }
             }
 
             GalleryStripe lastStripe = galleryStripes.get(galleryStripes.size() - 1);
             for (int i = 0; i <= lastIndex; i++) {
                 mediaWithinRange.add(
-                        new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getMediaUnit(), lastStripe.getStructure()));
+                        new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getPhysicalDivision(), lastStripe.getStructure()));
             }
         }
         return mediaWithinRange;
     }
 
-    private List<Pair<MediaUnit, LogicalDivision>> getMediaBackwards(Integer firstIndex, Integer lastIndex,
+    private List<Pair<PhysicalDivision, LogicalDivision>> getMediaBackwards(Integer firstIndex, Integer lastIndex,
                                                                                List<GalleryStripe> galleryStripes) {
-        List<Pair<MediaUnit, LogicalDivision>> mediaWithinRange = new LinkedList<>();
+        List<Pair<PhysicalDivision, LogicalDivision>> mediaWithinRange = new LinkedList<>();
         GalleryStripe firstStripe = galleryStripes.get(0);
 
         if (galleryStripes.size() == 1) {
             for (int i = firstIndex; i >= lastIndex; i--) {
                 mediaWithinRange.add(
-                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getPhysicalDivision(), firstStripe.getStructure()));
             }
         } else {
             for (int i = firstIndex; i >= 0; i--) {
                 mediaWithinRange.add(
-                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getMediaUnit(), firstStripe.getStructure()));
+                        new ImmutablePair<>(firstStripe.getMedias().get(i).getView().getPhysicalDivision(), firstStripe.getStructure()));
             }
 
             for (int i = 1; i <= galleryStripes.size() - 2; i++) {
                 GalleryStripe galleryStripe = galleryStripes.get(i);
                 for (int j = galleryStripe.getMedias().size() - 1; j >= 0; j--) {
                     mediaWithinRange.add(new ImmutablePair<>(
-                            galleryStripe.getMedias().get(j).getView().getMediaUnit(), galleryStripe.getStructure()));
+                            galleryStripe.getMedias().get(j).getView().getPhysicalDivision(), galleryStripe.getStructure()));
                 }
             }
 
             GalleryStripe lastStripe = galleryStripes.get(galleryStripes.size() - 1);
             for (int i = lastStripe.getMedias().size() - 1; i >= lastIndex; i--) {
                 mediaWithinRange.add(
-                        new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getMediaUnit(), lastStripe.getStructure()));
+                        new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getPhysicalDivision(), lastStripe.getStructure()));
             }
         }
         return mediaWithinRange;
     }
 
-    private Pair<Integer, Integer> getIndices(MediaUnit mediaUnit, LogicalDivision structuralElement) {
+    private Pair<Integer, Integer> getIndices(PhysicalDivision physicalDivision, LogicalDivision structuralElement) {
         for (GalleryStripe galleryStripe : stripes) {
             if (Objects.equals(galleryStripe.getStructure(), structuralElement)) {
                 for (GalleryMediaContent media : galleryStripe.getMedias()) {
-                    if (Objects.equals(media.getView().getMediaUnit(), mediaUnit)) {
+                    if (Objects.equals(media.getView().getPhysicalDivision(), physicalDivision)) {
                         return new ImmutablePair<>(stripes.indexOf(galleryStripe), galleryStripe.getMedias().indexOf(media));
                     }
                 }
@@ -706,23 +706,23 @@ public class GalleryPanel {
      */
     public boolean isSelected(GalleryMediaContent galleryMediaContent, GalleryStripe galleryStripe) {
         if (Objects.nonNull(galleryMediaContent) && Objects.nonNull(galleryMediaContent.getView())) {
-            MediaUnit mediaUnit = galleryMediaContent.getView().getMediaUnit();
-            if (Objects.nonNull(mediaUnit)) {
+            PhysicalDivision physicalDivision = galleryMediaContent.getView().getPhysicalDivision();
+            if (Objects.nonNull(physicalDivision)) {
                 if (Objects.nonNull(galleryStripe)) {
-                    return dataEditor.isSelected(mediaUnit, galleryStripe.getStructure());
+                    return dataEditor.isSelected(physicalDivision, galleryStripe.getStructure());
                 } else {
-                    return dataEditor.isSelected(mediaUnit, getLogicalStructureOfMedia(galleryMediaContent).getStructure());
+                    return dataEditor.isSelected(physicalDivision, getLogicalStructureOfMedia(galleryMediaContent).getStructure());
                 }
             }
         }
         return false;
     }
 
-    private void selectMedia(String mediaUnitOrder, String stripeIndex, String selectionType) {
-        MediaUnit selectedMediaUnit = null;
-        for (MediaUnit mediaUnit : this.dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted()) {
-            if (Objects.equals(mediaUnit.getOrder(), Integer.parseInt(mediaUnitOrder))) {
-                selectedMediaUnit = mediaUnit;
+    private void selectMedia(String physicalDivisionOrder, String stripeIndex, String selectionType) {
+        PhysicalDivision selectedPhysicalDivision = null;
+        for (PhysicalDivision physicalDivision : this.dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+            if (Objects.equals(physicalDivision.getOrder(), Integer.parseInt(physicalDivisionOrder))) {
+                selectedPhysicalDivision = physicalDivision;
                 break;
             }
         }
@@ -732,10 +732,10 @@ public class GalleryPanel {
         } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        if (Objects.nonNull(selectedMediaUnit)) {
-            this.dataEditor.getMetadataPanel().showPageInLogical(selectedMediaUnit);
+        if (Objects.nonNull(selectedPhysicalDivision)) {
+            this.dataEditor.getMetadataPanel().showPageInLogical(selectedPhysicalDivision);
         } else {
-            Helper.setErrorMessage("Selected MediaUnit is null!");
+            Helper.setErrorMessage("Selected PhysicalDivision is null!");
         }
 
         GalleryStripe parentStripe;
@@ -745,7 +745,7 @@ public class GalleryPanel {
             parentStripe = null;
         }
 
-        GalleryMediaContent currentSelection = getGalleryMediaContent(selectedMediaUnit);
+        GalleryMediaContent currentSelection = getGalleryMediaContent(selectedPhysicalDivision);
         select(currentSelection, parentStripe, selectionType);
 
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
@@ -768,7 +768,7 @@ public class GalleryPanel {
      */
     public void select() {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        String mediaUnitOrder = params.get("page");
+        String physicalDivisionOrder = params.get("page");
         String stripeIndex = params.get("stripe");
         String selectionType = params.get("selectionType");
         int pageX = Integer.parseInt(params.get("pageX"));
@@ -776,8 +776,8 @@ public class GalleryPanel {
         boolean triggerContextMenu = Boolean.parseBoolean(params.get("triggerContextMenu"));
         String createEvent = "(function(){let e=new Event('mousedown');e.pageX=" + pageX + ";e.pageY=" + pageY + ";return e})()";
 
-        if (StringUtils.isNotBlank(mediaUnitOrder)) {
-            selectMedia(mediaUnitOrder, stripeIndex, selectionType);
+        if (StringUtils.isNotBlank(physicalDivisionOrder)) {
+            selectMedia(physicalDivisionOrder, stripeIndex, selectionType);
             if (triggerContextMenu) {
                 PrimeFaces.current().executeScript("PF('mediaContextMenu').show(" + createEvent + ")");
             }
@@ -832,7 +832,7 @@ public class GalleryPanel {
         }
 
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure()));
+        dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
     }
 
     private void rangeSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
@@ -841,21 +841,21 @@ public class GalleryPanel {
         }
 
         if (dataEditor.getSelectedMedia().isEmpty()) {
-            dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure()));
+            dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
             return;
         }
 
-        Pair<MediaUnit, LogicalDivision> firstSelectedMediaPair = dataEditor.getSelectedMedia().get(0);
-        Pair<MediaUnit, LogicalDivision> lastSelectedMediaPair =
-                new ImmutablePair<>(currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
+        Pair<PhysicalDivision, LogicalDivision> firstSelectedMediaPair = dataEditor.getSelectedMedia().get(0);
+        Pair<PhysicalDivision, LogicalDivision> lastSelectedMediaPair =
+                new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure());
 
         dataEditor.getSelectedMedia().clear();
         dataEditor.getSelectedMedia().addAll(getMediaWithinRange(firstSelectedMediaPair, lastSelectedMediaPair));
     }
 
     private void multiSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
-        Pair<MediaUnit, LogicalDivision> selectedMediaPair = new ImmutablePair<>(
-                currentSelection.getView().getMediaUnit(), parentStripe.getStructure());
+        Pair<PhysicalDivision, LogicalDivision> selectedMediaPair = new ImmutablePair<>(
+                currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure());
 
         if (dataEditor.getSelectedMedia().contains(selectedMediaPair)) {
             if (dataEditor.getSelectedMedia().size() > 1) {
@@ -867,15 +867,15 @@ public class GalleryPanel {
     }
 
     /**
-     * Get the index of this GalleryMediaContent's MediaUnit out of all MediaUnits
+     * Get the index of this GalleryMediaContent's PhysicalDivision out of all PhysicalDivisions
      * which are assigned to more than one LogicalDivision.
      *
      * @param galleryMediaContent object to find the index for
-     * @return index of the GalleryMediaContent's MediaUnit if present in the List of several assignments, or -1 if not present in the list.
+     * @return index of the GalleryMediaContent's PhysicalDivision if present in the List of several assignments, or -1 if not present in the list.
      */
     public int getSeveralAssignmentsIndex(GalleryMediaContent galleryMediaContent) {
-        if (Objects.nonNull(galleryMediaContent.getView()) && Objects.nonNull(galleryMediaContent.getView().getMediaUnit())) {
-            return dataEditor.getStructurePanel().getSeveralAssignments().indexOf(galleryMediaContent.getView().getMediaUnit());
+        if (Objects.nonNull(galleryMediaContent.getView()) && Objects.nonNull(galleryMediaContent.getView().getPhysicalDivision())) {
+            return dataEditor.getStructurePanel().getSeveralAssignments().indexOf(galleryMediaContent.getView().getPhysicalDivision());
         }
         return -1;
     }

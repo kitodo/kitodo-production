@@ -38,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -1087,30 +1087,30 @@ public class FileService {
         }
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
-        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted(), canonicals);
+        addNewURIsToExistingPhysicalDivisions(mediaToAdd, workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
         mediaToAdd.keySet().removeAll(canonicals);
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
-        renumberMediaUnits(workpiece, true);
+        renumberPhysicalDivisions(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
-            repaginateMediaUnits(workpiece);
+            repaginatePhysicalDivisions(workpiece);
         }
         if (Workpiece.treeStream(workpiece.getLogicalStructure())
                 .allMatch(logicalDivision -> logicalDivision.getViews().isEmpty())) {
-            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getLogicalStructure());
+            automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(workpiece, workpiece.getLogicalStructure());
         }
         if (logger.isTraceEnabled()) {
             logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
     }
 
-    private void automaticallyAssignMediaUnitsToEffectiveRootRecursive(Workpiece workpiece,
+    private void automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(Workpiece workpiece,
             LogicalDivision logicalDivision) {
 
         if (Objects.nonNull(logicalDivision.getType())) {
-            Workpiece.treeStream(workpiece.getMediaUnit()).filter(mediaUnit -> !mediaUnit.getMediaFiles().isEmpty())
+            Workpiece.treeStream(workpiece.getPhysicalStructure()).filter(physicalDivision -> !physicalDivision.getMediaFiles().isEmpty())
                     .map(View::of).forEachOrdered(logicalDivision.getViews()::add);
         } else if (logicalDivision.getChildren().size() == 1) {
-            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece,
+            automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(workpiece,
                 logicalDivision.getChildren().get(0));
         }
     }
@@ -1128,9 +1128,9 @@ public class FileService {
         if (!baseUriString.endsWith("/")) {
             baseUriString = baseUriString.concat("/");
         }
-        for (MediaUnit mediaUnit : workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted()) {
+        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
             String unitCanonical = "";
-            for (Entry<MediaVariant, URI> entry : mediaUnit.getMediaFiles().entrySet()) {
+            for (Entry<MediaVariant, URI> entry : physicalDivision.getMediaFiles().entrySet()) {
                 Subfolder subfolder = subfolders.get(entry.getKey().getUse());
                 if (Objects.isNull(subfolder)) {
                     logger.warn("Missing subfolder for USE {}", entry.getKey().getUse());
@@ -1140,18 +1140,18 @@ public class FileService {
                 String fileUriString = mediaFile.toString();
                 if (fileUriString.startsWith(baseUriString)) {
                     mediaFile = URI.create(fileUriString.substring(baseUriString.length()));
-                    mediaUnit.getMediaFiles().put(entry.getKey(), mediaFile);
+                    physicalDivision.getMediaFiles().put(entry.getKey(), mediaFile);
                 }
                 String fileCanonical = subfolder.getCanonical(mediaFile);
                 if ("".equals(unitCanonical)) {
                     unitCanonical = fileCanonical;
                 } else if (!unitCanonical.equals(fileCanonical)) {
-                    throw new InvalidImagesException("Ambiguous canonical file name part in the same media unit: \""
+                    throw new InvalidImagesException("Ambiguous canonical file name part in the same physical division: \""
                             + unitCanonical + "\" and \"" + fileCanonical + "\"!");
                 }
             }
-            if (mediaUnit.getMediaFiles().size() > 0 && "".equals(unitCanonical)) {
-                throw new InvalidImagesException("Missing canonical file name part in media unit " + mediaUnit);
+            if (physicalDivision.getMediaFiles().size() > 0 && "".equals(unitCanonical)) {
+                throw new InvalidImagesException("Missing canonical file name part in physical division " + physicalDivision);
             }
             canonicals.add(unitCanonical);
         }
@@ -1159,17 +1159,17 @@ public class FileService {
     }
 
     /**
-     * Adds new media variants found to existing media units.
+     * Adds new media variants found to existing physical divisions.
      */
-    private void addNewURIsToExistingMediaUnits(Map<String, Map<Subfolder, URI>> mediaToAdd, List<MediaUnit> mediaUnits,
+    private void addNewURIsToExistingPhysicalDivisions(Map<String, Map<Subfolder, URI>> mediaToAdd, List<PhysicalDivision> physicalDivisions,
             List<String> canonicals) {
 
         for (int i = 0; i < canonicals.size(); i++) {
             String canonical = canonicals.get(i);
-            MediaUnit mediaUnit = mediaUnits.get(i);
+            PhysicalDivision physicalDivision = physicalDivisions.get(i);
             if (mediaToAdd.containsKey(canonical)) {
                 for (Entry<Subfolder, URI> entry : mediaToAdd.get(canonical).entrySet()) {
-                    mediaUnit.getMediaFiles().put(createMediaVariant(entry.getKey().getFolder()), entry.getValue());
+                    physicalDivision.getMediaFiles().put(createMediaVariant(entry.getKey().getFolder()), entry.getValue());
                 }
             }
         }
@@ -1191,30 +1191,30 @@ public class FileService {
                     break;
                 }
             }
-            MediaUnit mediaUnit = createMediaUnit(entry.getValue());
-            workpiece.getMediaUnit().getChildren().add(insertionPoint, mediaUnit);
+            PhysicalDivision physicalDivision = createPhysicalDivision(entry.getValue());
+            workpiece.getPhysicalStructure().getChildren().add(insertionPoint, physicalDivision);
             View view = new View();
-            view.setMediaUnit(mediaUnit);
+            view.setPhysicalDivision(physicalDivision);
             workpiece.getLogicalStructure().getViews().add(view);
-            view.getMediaUnit().getLogicalDivisions().add(workpiece.getLogicalStructure());
+            view.getPhysicalDivision().getLogicalDivisions().add(workpiece.getLogicalStructure());
             canonicals.add(insertionPoint, entry.getKey());
         }
     }
 
     /**
-     * Creates a new media unit with the given uses and URIs.
+     * Creates a new physical division with the given uses and URIs.
      */
-    private MediaUnit createMediaUnit(Map<Subfolder, URI> data) {
-        MediaUnit mediaUnit = new MediaUnit();
+    private PhysicalDivision createPhysicalDivision(Map<Subfolder, URI> data) {
+        PhysicalDivision physicalDivision = new PhysicalDivision();
         if (!data.entrySet().isEmpty()) {
-            mediaUnit.setType(MediaUnit.TYPE_PAGE);
+            physicalDivision.setType(PhysicalDivision.TYPE_PAGE);
         }
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
-            mediaUnit.getMediaFiles().put(mediaVariant, entry.getValue());
+            physicalDivision.getMediaFiles().put(mediaVariant, entry.getValue());
         }
-        return mediaUnit;
+        return physicalDivision;
     }
 
     /**
@@ -1228,13 +1228,13 @@ public class FileService {
     }
 
     /**
-     * Renumbers the order of the media units.
+     * Renumbers the order of the physical divisions.
      */
-    public void renumberMediaUnits(Workpiece workpiece, boolean sortByOrder) {
+    public void renumberPhysicalDivisions(Workpiece workpiece, boolean sortByOrder) {
         int order = 1;
-        for (MediaUnit mediaUnit : sortByOrder ? workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted()
-                : workpiece.getMediaUnit().getAllChildren()) {
-            mediaUnit.setOrder(order++);
+        for (PhysicalDivision physicalDivision : sortByOrder ? workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()
+                : workpiece.getPhysicalStructure().getAllChildren()) {
+            physicalDivision.setOrder(order++);
         }
     }
 
@@ -1243,8 +1243,8 @@ public class FileService {
      * or if none of the media has been counted yet at all. New media found in
      * intermediate places are marked uncounted.
      */
-    private void repaginateMediaUnits(Workpiece workpiece) {
-        List<MediaUnit> mediaUnits = workpiece.getAllMediaUnitChildrenFilteredByTypePageAndSorted();
+    private void repaginatePhysicalDivisions(Workpiece workpiece) {
+        List<PhysicalDivision> physicalDivisions = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
@@ -1258,26 +1258,26 @@ public class FileService {
                 value = " - ";
                 break;
         }
-        for (int i = mediaUnits.size() - 1; i >= 0; i--) {
-            MediaUnit mediaUnit = mediaUnits.get(i);
-            String orderlabel = mediaUnit.getOrderlabel();
-            if (Objects.nonNull(orderlabel) && !mediaUnit.getMediaFiles().isEmpty()) {
+        for (int i = physicalDivisions.size() - 1; i >= 0; i--) {
+            PhysicalDivision physicalDivision = physicalDivisions.get(i);
+            String orderlabel = physicalDivision.getOrderlabel();
+            if (Objects.nonNull(orderlabel) && !physicalDivision.getMediaFiles().isEmpty()) {
                 first = i + 1;
                 value = orderlabel;
-                mediaUnits.get(i).setType(MediaUnit.TYPE_PAGE);
+                physicalDivisions.get(i).setType(PhysicalDivision.TYPE_PAGE);
                 break;
             }
         }
         Paginator paginator = new Paginator(value);
         if (first > 0) {
             paginator.next();
-            for (int i = first; i < mediaUnits.size(); i++) {
-                mediaUnits.get(i).setOrderlabel(paginator.next());
+            for (int i = first; i < physicalDivisions.size(); i++) {
+                physicalDivisions.get(i).setOrderlabel(paginator.next());
             }
         }
-        for (MediaUnit mediaUnit : mediaUnits) {
-            if (Objects.isNull(mediaUnit.getOrderlabel())) {
-                mediaUnit.setOrderlabel(" - ");
+        for (PhysicalDivision physicalDivision : physicalDivisions) {
+            if (Objects.isNull(physicalDivision.getOrderlabel())) {
+                physicalDivision.setOrderlabel(" - ");
             }
         }
     }

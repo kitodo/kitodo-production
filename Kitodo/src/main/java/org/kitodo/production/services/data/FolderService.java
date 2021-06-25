@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -53,17 +53,17 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     /**
-     * Returns the canonical part of the file name for a given media unit.
+     * Returns the canonical part of the file name for a given physical division.
      *
      * @param process
      *            the process
-     * @param mediaUnit
+     * @param physicalDivision
      *            Media unit for which the canonical part of the file name
      *            should be returned
      * @return the canonical part of the file name
      */
-    public static String getCanonical(Process process, MediaUnit mediaUnit) {
-        for (Entry<MediaVariant, URI> entry : mediaUnit.getMediaFiles().entrySet()) {
+    public static String getCanonical(Process process, PhysicalDivision physicalDivision) {
+        for (Entry<MediaVariant, URI> entry : physicalDivision.getMediaFiles().entrySet()) {
             for (Folder folder : process.getProject().getFolders()) {
                 if (Objects.equals(folder.getFileGroup(), entry.getKey().getUse())) {
                     Subfolder subfolder = new Subfolder(process, folder);

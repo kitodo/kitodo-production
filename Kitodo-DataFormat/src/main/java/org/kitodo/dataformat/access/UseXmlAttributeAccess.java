@@ -21,7 +21,7 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
 /**
- * A variant of the {@code MediaUnit}s for a particular use. By use is meant a
+ * A variant of the {@code PhysicalDivision}s for a particular use. By use is meant a
  * technical form of use. Therefore, the variant has as technical property the
  * Internet MIME type. Examples of variants include thumbnails, full resolution
  * images, file ready to print, OCR results, etc. For Production, a variant is

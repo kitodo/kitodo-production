@@ -12,14 +12,14 @@
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 /**
- * Connects a legacy reference to a media unit. This is a soldering class to
+ * Connects a legacy reference to a physical division. This is a soldering class to
  * keep legacy code operational which is about to be removed. Do not use this
  * class.
  */
 public class LegacyReferenceHelper {
 
     /**
-     * The soldering class containing the media unit accessed via this soldering
+     * The soldering class containing the physical division accessed via this soldering
      * class.
      */
     private LegacyInnerPhysicalDocStructHelper target;

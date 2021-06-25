@@ -15,13 +15,13 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 
 /**
- * A memory brick to preserve the METS IDs of the media unit div and the media
+ * A memory brick to preserve the METS IDs of the physical division div and the media
  * files.
  */
-class MediaUnitMetsReferrerStorage extends MediaUnit {
+class PhysicalDivisionMetsReferrerStorage extends PhysicalDivision {
 
     /**
      * Save the METS identifiers for the files.

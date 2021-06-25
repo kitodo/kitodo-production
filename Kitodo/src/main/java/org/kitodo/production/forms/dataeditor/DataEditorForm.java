@@ -38,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
@@ -82,9 +82,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private final AddMetadataDialog addMetadataDialog;
 
     /**
-     * Backing bean for the add MediaUnit dialog.
+     * Backing bean for the add PhysicalDivision dialog.
      */
-    private final AddMediaUnitDialog addMediaUnitDialog;
+    private final AddPhysicalDivisionDialog addPhysicalDivisionDialog;
 
     /**
      * Backing bean for the change doc struc type dialog.
@@ -165,7 +165,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * This List of Pairs stores all selected physical elements and the logical elements in which the physical element was selected.
      * It is necessary to store the logical elements as well, because a physical element can be assigned to multiple logical elements.
      */
-    private List<Pair<MediaUnit, LogicalDivision>> selectedMedia;
+    private List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia;
 
     /**
      * The id of the template's task corresponding to the current task that is under edit.
@@ -189,7 +189,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.paginationPanel = new PaginationPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.addMetadataDialog = new AddMetadataDialog(this);
-        this.addMediaUnitDialog = new AddMediaUnitDialog(this);
+        this.addPhysicalDivisionDialog = new AddPhysicalDivisionDialog(this);
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
         acquisitionStage = "edit";
@@ -282,15 +282,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void init() {
         final long begin = System.nanoTime();
 
-        List<MediaUnit> severalAssignments = new LinkedList<>();
-        initSeveralAssignments(workpiece.getMediaUnit(), severalAssignments);
+        List<PhysicalDivision> severalAssignments = new LinkedList<>();
+        initSeveralAssignments(workpiece.getPhysicalStructure(), severalAssignments);
         structurePanel.getSeveralAssignments().addAll(severalAssignments);
 
         structurePanel.show();
         structurePanel.getSelectedLogicalNode().setSelected(true);
         structurePanel.getSelectedPhysicalNode().setSelected(true);
         metadataPanel.showLogical(getSelectedStructure());
-        metadataPanel.showPhysical(getSelectedMediaUnit());
+        metadataPanel.showPhysical(getSelectedPhysicalDivision());
         galleryPanel.show();
         paginationPanel.show();
 
@@ -403,11 +403,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return save(true);
     }
 
-    private void initSeveralAssignments(MediaUnit mediaUnit, List<MediaUnit> severalAssignments) {
-        if (mediaUnit.getLogicalDivisions().size() > 1) {
-            severalAssignments.add(mediaUnit);
+    private void initSeveralAssignments(PhysicalDivision physicalDivision, List<PhysicalDivision> severalAssignments) {
+        if (physicalDivision.getLogicalDivisions().size() > 1) {
+            severalAssignments.add(physicalDivision);
         }
-        for (MediaUnit child : mediaUnit.getChildren()) {
+        for (PhysicalDivision child : physicalDivision.getChildren()) {
             initSeveralAssignments(child, severalAssignments);
         }
     }
@@ -422,14 +422,14 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Deletes the selected media unit from the media list. The associated files
+     * Deletes the selected physical division from the media list. The associated files
      * on the drive are not deleted. The next time the editor is started, files
      * that are not yet in the media list will be inserted there again. This
      * method is called by PrimeFaces to inform the application that the user
-     * clicked on the context menu entry to delete the media unit.
+     * clicked on the context menu entry to delete the physical division.
      */
-    public void deleteMediaUnit() {
-        structurePanel.deleteSelectedMediaUnit();
+    public void deletePhysicalDivision() {
+        structurePanel.deleteSelectedPhysicalDivision();
     }
 
     @Override
@@ -463,8 +463,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      *
      * @return the backing bean for the add media dialog
      */
-    public AddMediaUnitDialog getAddMediaUnitDialog() {
-        return addMediaUnitDialog;
+    public AddPhysicalDivisionDialog getAddPhysicalDivisionDialog() {
+        return addPhysicalDivisionDialog;
     }
 
     /**
@@ -554,8 +554,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return structurePanel.getSelectedStructure();
     }
 
-    Optional<MediaUnit> getSelectedMediaUnit() {
-        return structurePanel.getSelectedMediaUnit();
+    Optional<PhysicalDivision> getSelectedPhysicalDivision() {
+        return structurePanel.getSelectedPhysicalDivision();
     }
 
     /**
@@ -595,12 +595,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      *
      * @return value of selectedMedia
      */
-    public List<Pair<MediaUnit, LogicalDivision>> getSelectedMedia() {
+    public List<Pair<PhysicalDivision, LogicalDivision>> getSelectedMedia() {
         return selectedMedia;
     }
 
     /**
-     * Checks and returns if consecutive media units in one structure element are selected or not.
+     * Checks and returns if consecutive physical divisions in one structure element are selected or not.
      */
     public boolean consecutivePagesSelected() {
         if (selectedMedia.isEmpty()) {
@@ -612,21 +612,21 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 && selectedMedia.stream().map(Pair::getValue).distinct().count() == 1;
     }
 
-    void setSelectedMedia(List<Pair<MediaUnit, LogicalDivision>> media) {
+    void setSelectedMedia(List<Pair<PhysicalDivision, LogicalDivision>> media) {
         this.selectedMedia = media;
     }
 
     /**
-     * Check if the passed MediaUnit is selected.
-     * @param mediaUnit MediaUnit object to check for selection
-     * @param logicalDivision object to check whether the MediaUnit is selected as a child of this LogicalDivision.
-     *                                  A MediaUnit can be assigned to multiple logical divisionss but can be selected
+     * Check if the passed PhysicalDivision is selected.
+     * @param physicalDivision PhysicalDivision object to check for selection
+     * @param logicalDivision object to check whether the PhysicalDivision is selected as a child of this LogicalDivision.
+     *                                  A PhysicalDivision can be assigned to multiple logical divisionss but can be selected
      *                                  in one of these LogicalDivisions.
-     * @return boolean whether the MediaUnit is selected at the specified position
+     * @return boolean whether the PhysicalDivision is selected at the specified position
      */
-    public boolean isSelected(MediaUnit mediaUnit, LogicalDivision logicalDivision) {
-        if (Objects.nonNull(mediaUnit) && Objects.nonNull(logicalDivision)) {
-            return selectedMedia.contains(new ImmutablePair<>(mediaUnit, logicalDivision));
+    public boolean isSelected(PhysicalDivision physicalDivision, LogicalDivision logicalDivision) {
+        if (Objects.nonNull(physicalDivision) && Objects.nonNull(logicalDivision)) {
+            return selectedMedia.contains(new ImmutablePair<>(physicalDivision, logicalDivision));
         }
         return false;
     }
@@ -664,7 +664,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 } else if (structureTreeNode.getDataObject() instanceof View) {
                     // Page selected in logical tree
                     View view = (View) structureTreeNode.getDataObject();
-                    metadataPanel.showPageInLogical(view.getMediaUnit());
+                    metadataPanel.showPageInLogical(view.getPhysicalDivision());
                     if (updateGalleryAndPhysicalTree) {
                         updateGallery(view);
                     }
@@ -675,23 +675,23 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         paginationPanel.preparePaginationSelectionSelectedItems();
     }
 
-    void switchMediaUnit() throws NoSuchMetadataFieldException {
+    void switchPhysicalDivision() throws NoSuchMetadataFieldException {
         try {
             metadataPanel.preservePhysical();
         } catch (InvalidMetadataValueException e) {
             logger.info(e.getLocalizedMessage(), e);
         }
 
-        Optional<MediaUnit> selectedMediaUnit = structurePanel.getSelectedMediaUnit();
+        Optional<PhysicalDivision> selectedPhysicalDivision = structurePanel.getSelectedPhysicalDivision();
 
-        metadataPanel.showPhysical(selectedMediaUnit);
-        if (selectedMediaUnit.isPresent()) {
+        metadataPanel.showPhysical(selectedPhysicalDivision);
+        if (selectedPhysicalDivision.isPresent()) {
             // update gallery
-            galleryPanel.updateSelection(selectedMediaUnit.get(), null);
+            galleryPanel.updateSelection(selectedPhysicalDivision.get(), null);
             // update logical tree
             for (GalleryMediaContent galleryMediaContent : galleryPanel.getMedias()) {
                 if (Objects.nonNull(galleryMediaContent.getView())
-                        && Objects.equals(selectedMediaUnit.get(), galleryMediaContent.getView().getMediaUnit())) {
+                        && Objects.equals(selectedPhysicalDivision.get(), galleryMediaContent.getView().getPhysicalDivision())) {
                     structurePanel.updateLogicalNodeSelection(galleryMediaContent, null);
                     break;
                 }
@@ -705,9 +705,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     private void updateGallery(View view) {
-        MediaUnit mediaUnit = view.getMediaUnit();
-        if (Objects.nonNull(mediaUnit)) {
-            galleryPanel.updateSelection(mediaUnit, structurePanel.getPageStructure(view, workpiece.getLogicalStructure()));
+        PhysicalDivision physicalDivision = view.getPhysicalDivision();
+        if (Objects.nonNull(physicalDivision)) {
+            galleryPanel.updateSelection(physicalDivision, structurePanel.getPageStructure(view, workpiece.getLogicalStructure()));
         }
     }
 
@@ -717,7 +717,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } else {
             logicalDivision.getViews().add(view);
         }
-        view.getMediaUnit().getLogicalDivisions().add(logicalDivision);
+        view.getPhysicalDivision().getLogicalDivisions().add(logicalDivision);
     }
 
     void unassignView(LogicalDivision logicalDivision, View view, boolean removeLast) {
@@ -727,7 +727,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } else {
             logicalDivision.getViews().removeFirstOccurrence(view);
         }
-        view.getMediaUnit().getLogicalDivisions().remove(logicalDivision);
+        view.getPhysicalDivision().getLogicalDivisions().remove(logicalDivision);
     }
 
     /**

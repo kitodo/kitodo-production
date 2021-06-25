@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 
 /**
- * Connects a legacy file set its corresponding doc struct to a media units
+ * Connects a legacy file set its corresponding doc struct to a physical divisions
  * list. This is a soldering class to keep legacy code operational which is
  * about to be removed. Do not use this class.
  */
@@ -26,13 +26,13 @@ import org.kitodo.api.dataformat.MediaUnit;
 public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterface {
 
     /**
-     * The media units list accessed via this soldering class.
+     * The physical divisions list accessed via this soldering class.
      */
-    private List<MediaUnit> mediaUnits;
+    private List<PhysicalDivision> physicalDivisions;
 
     @Deprecated
-    public LegacyFileSetDocStructHelper(List<MediaUnit> mediaUnits) {
-        this.mediaUnits = mediaUnits;
+    public LegacyFileSetDocStructHelper(List<PhysicalDivision> physicalDivisions) {
+        this.physicalDivisions = physicalDivisions;
     }
 
     @Override
@@ -47,9 +47,9 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
-        List<LegacyDocStructHelperInterface> allChildren = new ArrayList<>(mediaUnits.size());
-        for (MediaUnit mediaUnit : mediaUnits) {
-            allChildren.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
+        List<LegacyDocStructHelperInterface> allChildren = new ArrayList<>(physicalDivisions.size());
+        for (PhysicalDivision physicalDivision : physicalDivisions) {
+            allChildren.add(new LegacyInnerPhysicalDocStructHelper(physicalDivision));
         }
         return allChildren;
     }
@@ -57,9 +57,9 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
-        List<LegacyDocStructHelperInterface> allChildren = new ArrayList<>(mediaUnits.size());
-        for (MediaUnit mediaUnit : mediaUnits) {
-            allChildren.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
+        List<LegacyDocStructHelperInterface> allChildren = new ArrayList<>(physicalDivisions.size());
+        for (PhysicalDivision physicalDivision : physicalDivisions) {
+            allChildren.add(new LegacyInnerPhysicalDocStructHelper(physicalDivision));
         }
         return allChildren;
     }

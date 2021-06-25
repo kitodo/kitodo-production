@@ -141,7 +141,7 @@ public class ChangeDocStrucTypeDialog {
             }
         } else {
             LinkedList<LogicalDivision> ancestors = MetadataEditor
-                    .getAncestorsOfStructure(logicalDivision, logicalStructure);
+                    .getAncestorsOfLogicalDivision(logicalDivision, logicalStructure);
             String parentType = ancestors.getLast().getType();
             return getAllowedSubstructuralElements(parentType);
         }

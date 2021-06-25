@@ -37,7 +37,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.Workpiece;
@@ -62,20 +62,20 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  *
  * <p>
  * A {@code Workpiece} has two essential characteristics: {@link FileXmlElementAccess}s and
- * an outline {@link DivXmlElementAccess}. {@code MediaUnit}s are the types of every
+ * an outline {@link DivXmlElementAccess}. {@code PhysicalDivision}s are the types of every
  * single digital medium on a conceptual level, such as the individual pages of
- * a book. Each {@code MediaUnit} can be in different {@link UseXmlAttributeAccess}s (for
+ * a book. Each {@code PhysicalDivision} can be in different {@link UseXmlAttributeAccess}s (for
  * example, in different resolutions or file formats). Each {@code MediaVariant}
- * of a {@code MediaUnit} resides in a {@link FLocatXmlElementAccess} in the data store.
+ * of a {@code PhysicalDivision} resides in a {@link FLocatXmlElementAccess} in the data store.
  *
  * <p>
  * The {@code LogicalDivision} is a tree structure that can be finely
  * subdivided, e.g. a book, in which the chapters, in it individual elements
  * such as tables or figures. Each outline level points to the
- * {@code MediaUnit}s that belong to it via {@link AreaXmlElementAccess}s.
- * Currently, a {@code View} always contains exactly one {@code MediaUnit} unit,
+ * {@code PhysicalDivision}s that belong to it via {@link AreaXmlElementAccess}s.
+ * Currently, a {@code View} always contains exactly one {@code PhysicalDivision} unit,
  * here a simple expandability is provided, so that in a future version excerpts
- * from {@code MediaUnit}s can be described. Each outline level can be described
+ * from {@code PhysicalDivision}s can be described. Each outline level can be described
  * with any {@link MetadataXmlElementsAccess}.
  *
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
@@ -131,40 +131,40 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                             UseXmlAttributeAccess::getMediaVariant))
                 : new HashMap<>();
         Optional<StructMapType> optionalPhysicalStructMap = getStructMapsStreamByType(mets, "PHYSICAL").findFirst();
-        Map<String, FileXmlElementAccess> divIDsToMediaUnits = new HashMap<>();
+        Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions = new HashMap<>();
         if (optionalPhysicalStructMap.isPresent()) {
             DivType div = optionalPhysicalStructMap.get().getDiv();
             FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(div, mets, useXmlAttributeAccess);
-            MediaUnit mediaUnit = fileXmlElementAccess.getMediaUnit();
-            workpiece.setMediaUnit(mediaUnit);
-            divIDsToMediaUnits.put(div.getID(), fileXmlElementAccess);
-            readMeadiaUnitsTreeRecursive(div, mets, useXmlAttributeAccess, mediaUnit, divIDsToMediaUnits);
+            PhysicalDivision physicalDivision = fileXmlElementAccess.getPhysicalDivision();
+            workpiece.setPhysicalStructure(physicalDivision);
+            divIDsToPhysicalDivisions.put(div.getID(), fileXmlElementAccess);
+            readMeadiaUnitsTreeRecursive(div, mets, useXmlAttributeAccess, physicalDivision, divIDsToPhysicalDivisions);
         }
         if (mets.getStructLink() == null) {
             mets.setStructLink(new StructLink());
         }
-        Map<String, List<FileXmlElementAccess>> mediaUnitsMap = new HashMap<>();
+        Map<String, List<FileXmlElementAccess>> physicalDivisionsMap = new HashMap<>();
         for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
             if (smLinkOrSmLinkGrp instanceof SmLink) {
                 SmLink smLink = (SmLink) smLinkOrSmLinkGrp;
-                mediaUnitsMap.computeIfAbsent(smLink.getFrom(), any -> new LinkedList<>());
-                mediaUnitsMap.get(smLink.getFrom()).add(divIDsToMediaUnits.get(smLink.getTo()));
+                physicalDivisionsMap.computeIfAbsent(smLink.getFrom(), any -> new LinkedList<>());
+                physicalDivisionsMap.get(smLink.getFrom()).add(divIDsToPhysicalDivisions.get(smLink.getTo()));
             }
         }
         workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap, 1)).collect(Collectors.toList())
+                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1)).collect(Collectors.toList())
                 .iterator().next());
     }
 
     private void readMeadiaUnitsTreeRecursive(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess,
-            MediaUnit mediaUnit, Map<String, FileXmlElementAccess> divIDsToMediaUnits) {
+            PhysicalDivision physicalDivision, Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions) {
 
         for (DivType child : div.getDiv()) {
             FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(child, mets, useXmlAttributeAccess);
-            MediaUnit childMediaUnit = fileXmlElementAccess.getMediaUnit();
-            mediaUnit.getChildren().add(childMediaUnit);
-            divIDsToMediaUnits.put(child.getID(), fileXmlElementAccess);
-            readMeadiaUnitsTreeRecursive(child, mets, useXmlAttributeAccess, childMediaUnit, divIDsToMediaUnits);
+            PhysicalDivision childPhysicalDivision = fileXmlElementAccess.getPhysicalDivision();
+            physicalDivision.getChildren().add(childPhysicalDivision);
+            divIDsToPhysicalDivisions.put(child.getID(), fileXmlElementAccess);
+            readMeadiaUnitsTreeRecursive(child, mets, useXmlAttributeAccess, childPhysicalDivision, divIDsToPhysicalDivisions);
         }
     }
 
@@ -245,13 +245,13 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         Map<URI, FileType> mediaFilesToIDFiles = new HashMap<>();
         mets.setFileSec(generateFileSec(mediaFilesToIDFiles));
 
-        Map<MediaUnit, String> mediaUnitIDs = new HashMap<>();
-        mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, mediaUnitIDs, mets));
+        Map<PhysicalDivision, String> physicalDivisionIDs = new HashMap<>();
+        mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, physicalDivisionIDs, mets));
 
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(mediaUnitIDs, smLinkData, mets));
+        logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(physicalDivisionIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));
@@ -305,22 +305,22 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * ZVDD DFG Viewer Application Profile, the files are declared in exactly
      * the opposite way as they are managed in Production. That is, there are
      * file groups, each file group accommodating the files of a media variant.
-     * Therefore, the media units are first resolved according to their media
+     * Therefore, the physical divisions are first resolved according to their media
      * variants, then the corresponding XML elements are generated.
      *
      * @param mediaFilesToIDFiles
-     *            In this map, for each media unit, the corresponding XML file
+     *            In this map, for each physical division, the corresponding XML file
      *            element is added, so that it can be used for linking later.
      * @return
      */
     private FileSec generateFileSec(Map<URI, FileType> mediaFilesToIDFiles) {
         FileSec fileSec = new FileSec();
 
-        Map<UseXmlAttributeAccess, Set<URI>> useToMediaUnits = new HashMap<>();
+        Map<UseXmlAttributeAccess, Set<URI>> useToPhysicalDivisions = new HashMap<>();
         Map<Pair<UseXmlAttributeAccess, URI>, String> fileIds = new HashMap<>();
-        generateFileSecRecursive(workpiece.getMediaUnit(), useToMediaUnits, fileIds);
+        generateFileSecRecursive(workpiece.getPhysicalStructure(), useToPhysicalDivisions, fileIds);
 
-        for (Entry<UseXmlAttributeAccess, Set<URI>> fileGrpData : useToMediaUnits.entrySet()) {
+        for (Entry<UseXmlAttributeAccess, Set<URI>> fileGrpData : useToPhysicalDivisions.entrySet()) {
             FileGrp fileGrp = new FileGrp();
             UseXmlAttributeAccess useXmlAttributeAccess = fileGrpData.getKey();
             fileGrp.setUSE(useXmlAttributeAccess.getMediaVariant().getUse());
@@ -337,20 +337,20 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         return fileSec;
     }
 
-    private void generateFileSecRecursive(MediaUnit mediaUnit, Map<UseXmlAttributeAccess, Set<URI>> useToMediaUnits,
+    private void generateFileSecRecursive(PhysicalDivision physicalDivision, Map<UseXmlAttributeAccess, Set<URI>> useToPhysicalDivisions,
             Map<Pair<UseXmlAttributeAccess, URI>, String> fileIds) {
 
-        for (Entry<MediaVariant, URI> variantEntry : mediaUnit.getMediaFiles().entrySet()) {
+        for (Entry<MediaVariant, URI> variantEntry : physicalDivision.getMediaFiles().entrySet()) {
             UseXmlAttributeAccess use = new UseXmlAttributeAccess(variantEntry.getKey());
-            useToMediaUnits.computeIfAbsent(use, any -> new HashSet<>());
+            useToPhysicalDivisions.computeIfAbsent(use, any -> new HashSet<>());
             URI uri = variantEntry.getValue();
-            useToMediaUnits.get(use).add(uri);
-            if (mediaUnit instanceof MediaUnitMetsReferrerStorage) {
-                fileIds.put(Pair.of(use, uri), ((MediaUnitMetsReferrerStorage) mediaUnit).getFileId(uri));
+            useToPhysicalDivisions.get(use).add(uri);
+            if (physicalDivision instanceof PhysicalDivisionMetsReferrerStorage) {
+                fileIds.put(Pair.of(use, uri), ((PhysicalDivisionMetsReferrerStorage) physicalDivision).getFileId(uri));
             }
         }
-        for (MediaUnit child : mediaUnit.getChildren()) {
-            generateFileSecRecursive(child, useToMediaUnits, fileIds);
+        for (PhysicalDivision child : physicalDivision.getChildren()) {
+            generateFileSecRecursive(child, useToPhysicalDivisions, fileIds);
         }
     }
 
@@ -362,28 +362,28 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            A map of the media files to the XML file elements used to
      *            declare them in the file section. To output a link to the ID,
      *            the XML element must be passed to JAXB.
-     * @param mediaUnitIDs
+     * @param physicalDivisionIDs
      *            In this map, the function returns the assigned identifier for
-     *            each media unit so that the link pairs of the struct link
+     *            each physical division so that the link pairs of the struct link
      *            section can be formed later.
      * @param mets
      *            the METS structure in which the metadata is added
      * @return the physical struct map
      */
     private StructMapType generatePhysicalStructMap(
-            Map<URI, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs, MetsType mets) {
+            Map<URI, FileType> mediaFilesToIDFiles, Map<PhysicalDivision, String> physicalDivisionIDs, MetsType mets) {
         StructMapType physical = new StructMapType();
         physical.setTYPE("PHYSICAL");
         physical.setDiv(
-            generatePhysicalStructMapRecursive(workpiece.getMediaUnit(), mediaFilesToIDFiles, mediaUnitIDs, mets));
+            generatePhysicalStructMapRecursive(workpiece.getPhysicalStructure(), mediaFilesToIDFiles, physicalDivisionIDs, mets));
         return physical;
     }
 
-    private DivType generatePhysicalStructMapRecursive(MediaUnit mediaUnit, Map<URI, FileType> mediaFilesToIDFiles,
-            Map<MediaUnit, String> mediaUnitIDs, MetsType mets) {
-        DivType div = new FileXmlElementAccess(mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs, mets);
-        for (MediaUnit child : mediaUnit.getChildren()) {
-            div.getDiv().add(generatePhysicalStructMapRecursive(child, mediaFilesToIDFiles, mediaUnitIDs, mets));
+    private DivType generatePhysicalStructMapRecursive(PhysicalDivision physicalDivision, Map<URI, FileType> mediaFilesToIDFiles,
+            Map<PhysicalDivision, String> physicalDivisionIDs, MetsType mets) {
+        DivType div = new FileXmlElementAccess(physicalDivision).toDiv(mediaFilesToIDFiles, physicalDivisionIDs, mets);
+        for (PhysicalDivision child : physicalDivision.getChildren()) {
+            div.getDiv().add(generatePhysicalStructMapRecursive(child, mediaFilesToIDFiles, physicalDivisionIDs, mets));
         }
         return div;
     }

@@ -25,7 +25,7 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -76,7 +76,7 @@ public class SchemaService {
         // group paths!
         VariableReplacer vp = new VariableReplacer(workpiece, process, null);
 
-        addVirtualFileGroupsToMetsMods(workpiece.getMediaUnit(), process);
+        addVirtualFileGroupsToMetsMods(workpiece.getPhysicalStructure(), process);
         replaceFLocatForExport(workpiece, process, prefs.getRuleset());
 
         // Replace rights and digiprov entries.
@@ -127,13 +127,13 @@ public class SchemaService {
         }
     }
 
-    private void addVirtualFileGroupsToMetsMods(MediaUnit mediaUnit, Process process) {
-        String canonical = ServiceManager.getFolderService().getCanonical(process, mediaUnit);
+    private void addVirtualFileGroupsToMetsMods(PhysicalDivision physicalDivision, Process process) {
+        String canonical = ServiceManager.getFolderService().getCanonical(process, physicalDivision);
         if (Objects.nonNull(canonical)) {
-            removeFLocatsForUnwantedUses(process, mediaUnit, canonical);
-            addMissingUses(process, mediaUnit, canonical);
+            removeFLocatsForUnwantedUses(process, physicalDivision, canonical);
+            addMissingUses(process, physicalDivision, canonical);
         }
-        for (MediaUnit child : mediaUnit.getChildren()) {
+        for (PhysicalDivision child : physicalDivision.getChildren()) {
             addVirtualFileGroupsToMetsMods(child, process);
         }
     }
@@ -142,8 +142,8 @@ public class SchemaService {
             throws URISyntaxException {
         List<Folder> folders = process.getProject().getFolders();
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
-        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
-            for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
+        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisions()) {
+            for (Entry<MediaVariant, URI> mediaFileForMediaVariant : physicalDivision.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
                     if (folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())) {
                         int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf('/');
@@ -158,14 +158,14 @@ public class SchemaService {
     }
 
     /**
-     * If the media unit contains a media variant that is unknown, has linking
+     * If the physical division contains a media variant that is unknown, has linking
      * mode NO or has linking mode EXISTING but the file does not exist, remove
      * it.
      */
     private void removeFLocatsForUnwantedUses(Process process,
-            MediaUnit mediaUnit,
+            PhysicalDivision physicalDivision,
             String canonical) {
-        for (Iterator<Entry<MediaVariant, URI>> mediaFilesForMediaVariants = mediaUnit.getMediaFiles().entrySet()
+        for (Iterator<Entry<MediaVariant, URI>> mediaFilesForMediaVariants = physicalDivision.getMediaFiles().entrySet()
                 .iterator(); mediaFilesForMediaVariants.hasNext();) {
             Entry<MediaVariant, URI> mediaFileForMediaVariant = mediaFilesForMediaVariants.next();
             String use = mediaFileForMediaVariant.getKey().getUse();
@@ -182,37 +182,37 @@ public class SchemaService {
     }
 
     /**
-     * If the media unit is missing a variant that has linking mode ALL or has
+     * If the physical division is missing a variant that has linking mode ALL or has
      * linking mode EXISTING and the file does exist, add it.
      */
-    private void addMissingUses(Process process, MediaUnit mediaUnit,
+    private void addMissingUses(Process process, PhysicalDivision physicalDivision,
             String canonical) {
         for (Folder folder : process.getProject().getFolders()) {
             Subfolder useFolder = new Subfolder(process, folder);
-            if (mediaUnit.getMediaFiles().entrySet().parallelStream().map(Entry::getKey).map(MediaVariant::getUse)
+            if (physicalDivision.getMediaFiles().entrySet().parallelStream().map(Entry::getKey).map(MediaVariant::getUse)
                     .noneMatch(use -> use.equals(folder.getFileGroup())) && (folder.getLinkingMode().equals(LinkingMode.ALL)
                         || (folder.getLinkingMode().equals(LinkingMode.EXISTING) && useFolder.getURIIfExists(canonical).isPresent()))) {
-                addUse(useFolder, canonical, mediaUnit);
+                addUse(useFolder, canonical, physicalDivision);
             }
         }
     }
 
     /**
-     * Adds a use to a media unit.
+     * Adds a use to a physical division.
      *
      * @param subfolder
      *            subfolder for the use
      * @param canonical
      *            the canonical part of the file name of the media file
-     * @param mediaUnit
-     *            media unit to add to
+     * @param physicalDivision
+     *            physical division to add to
      */
-    private void addUse(Subfolder subfolder, String canonical, MediaUnit mediaUnit) {
+    private void addUse(Subfolder subfolder, String canonical, PhysicalDivision physicalDivision) {
         MediaVariant mediaVariant = new MediaVariant();
         mediaVariant.setUse(subfolder.getFolder().getFileGroup());
         mediaVariant.setMimeType(subfolder.getFolder().getMimeType());
         URI mediaFile = subfolder.getRelativeFilePath(canonical);
-        mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
+        physicalDivision.getMediaFiles().put(mediaVariant, mediaFile);
     }
 
     /**

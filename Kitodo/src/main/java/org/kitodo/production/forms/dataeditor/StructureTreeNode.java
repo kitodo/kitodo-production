@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 
 public class StructureTreeNode implements Serializable {
@@ -71,13 +71,13 @@ public class StructureTreeNode implements Serializable {
     }
 
     /**
-     * Return label of dataObject if dataObject is instance of MediaUnit or LogicalDivision.
+     * Return label of dataObject if dataObject is instance of PhysicalDivision or LogicalDivision.
      *
      * @return label
      */
     public String getOrderLabel() {
-        if (this.dataObject instanceof MediaUnit) {
-            return ((MediaUnit) this.dataObject).getOrderlabel();
+        if (this.dataObject instanceof PhysicalDivision) {
+            return ((PhysicalDivision) this.dataObject).getOrderlabel();
         } else if (this.dataObject instanceof LogicalDivision) {
             return ((LogicalDivision) this.dataObject).getOrderlabel();
         } else {
@@ -86,17 +86,17 @@ public class StructureTreeNode implements Serializable {
     }
 
     /**
-     * Check if the StructureTreeNode's MediaUnit is assigned to several LogicalDivisions.
+     * Check if the StructureTreeNode's PhysicalDivision is assigned to several LogicalDivisions.
      *
-     * @return {@code true} when the MediaUnit is assigned to more than one logical element
+     * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
      */
     public boolean isAssignedSeveralTimes() {
         if (Objects.nonNull(this.dataObject)) {
             if (this.dataObject instanceof View) {
                 View view = (View) this.dataObject;
-                return Objects.nonNull(view.getMediaUnit()) && view.getMediaUnit().getLogicalDivisions().size() > 1;
-            } else if (this.dataObject instanceof MediaUnit) {
-                return ((MediaUnit) this.dataObject).getLogicalDivisions().size() > 1;
+                return Objects.nonNull(view.getPhysicalDivision()) && view.getPhysicalDivision().getLogicalDivisions().size() > 1;
+            } else if (this.dataObject instanceof PhysicalDivision) {
+                return ((PhysicalDivision) this.dataObject).getLogicalDivisions().size() > 1;
             }
         }
         return false;
