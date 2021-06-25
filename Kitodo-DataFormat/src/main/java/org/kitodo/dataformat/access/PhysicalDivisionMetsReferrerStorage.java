@@ -18,7 +18,7 @@ import java.util.Map;
 import org.kitodo.api.dataformat.PhysicalDivision;
 
 /**
- * A memory brick to preserve the METS IDs of the physical division div and the media
+ * A memory brick to preserve the METS IDs of the physical div and the media
  * files.
  */
 class PhysicalDivisionMetsReferrerStorage extends PhysicalDivision {
@@ -30,7 +30,7 @@ class PhysicalDivisionMetsReferrerStorage extends PhysicalDivision {
 
     /**
      * Passthrough function for reading the file identifier to the URI.
-     * 
+     *
      * @param fLocatXmlElementAccess
      *            Access object on f locat
      * @return Access object on f locat
@@ -42,7 +42,7 @@ class PhysicalDivisionMetsReferrerStorage extends PhysicalDivision {
 
     /**
      * Returns the ID of file.
-     * 
+     *
      * @param key
      *            URI whose ID to return
      * @return the ID of file

@@ -853,7 +853,8 @@ public class GalleryPanel {
         }
 
         if (dataEditor.getSelectedMedia().isEmpty()) {
-            dataEditor.getSelectedMedia().add(new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
+            dataEditor.getSelectedMedia().add(
+                new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
             return;
         }
 
