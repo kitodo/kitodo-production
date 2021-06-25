@@ -37,8 +37,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;

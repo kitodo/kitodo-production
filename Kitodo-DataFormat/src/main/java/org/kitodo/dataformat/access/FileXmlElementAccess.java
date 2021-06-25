@@ -21,8 +21,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.MdSec;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
