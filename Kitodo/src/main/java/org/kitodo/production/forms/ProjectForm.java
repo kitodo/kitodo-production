@@ -159,13 +159,16 @@ public class ProjectForm extends BaseForm {
      * this method flushes the newFolders list, thus makes them permanent and
      * deletes those marked for deleting, making the removal permanent.
      */
-    private void commitFolders() {
+    private void commitFolders() throws DAOException {
         // resetting the list of new folders
         this.newFolders = new ArrayList<>();
         // deleting the folders marked for deletion
         deleteFolders(this.deletedFolders);
         // resetting the list of folders marked for deletion
         this.deletedFolders = new ArrayList<>();
+        for (Folder folder : project.getFolders()) {
+            ServiceManager.getFolderService().saveToDatabase(folder);
+        }
     }
 
     /**
@@ -223,10 +226,10 @@ public class ProjectForm extends BaseForm {
      */
     public String save() {
         ServiceManager.getProjectService().evict(this.project);
-        // call this to make saving and deleting permanent
-        this.commitFolders();
         if (isTitleValid()) {
             try {
+                // call this to make saving and deleting permanent
+                this.commitFolders();
                 addFirstUserToNewProject();
 
                 ServiceManager.getProjectService().saveToDatabase(this.project);
@@ -246,7 +249,6 @@ public class ProjectForm extends BaseForm {
                 }
                 this.deletedTemples = new ArrayList<>();
 
-                this.project = ServiceManager.getProjectService().getById(this.project.getId());
                 ServiceManager.getProjectService().save(this.project);
 
                 return projectsPage;
