@@ -19,7 +19,7 @@
 
     <ui:define name="content">
         <h:outputScript name="desktop.js" target="body" library="js"/>
-        <p:messages id="error-messages" showIcon="false" showDetail="true" closable="true">
+        <p:messages id="error-messages" showIcon="false" closable="true">
             <p:autoUpdate/>
         </p:messages>
         <ui:fragment rendered="#{SessionClientController.currentSessionClient ne null or not SessionClientController.shouldUserChangeSessionClient()}">
