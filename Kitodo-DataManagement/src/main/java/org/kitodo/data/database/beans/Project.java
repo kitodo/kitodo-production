@@ -30,7 +30,7 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
 @Table(name = "project")
-public class Project extends BaseIndexedBean implements Cloneable, Comparable<Project> {
+public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
@@ -492,52 +492,5 @@ public class Project extends BaseIndexedBean implements Cloneable, Comparable<Pr
     @Override
     public int hashCode() {
         return this.title == null ? 0 : this.title.hashCode();
-    }
-
-    @Override
-    public Project clone() throws CloneNotSupportedException {
-        // The primitive and immutable fields have already been correctly
-        // initialized by the wonderful magic of Object.clone().
-        Project clone = (Project) super.clone();
-
-        // Since date objects are mutable, they must be cloned. Otherwise
-        // changing the date on one project would also change the same date on
-        // the other project.
-        clone.startDate = (Date) startDate.clone();
-        clone.endDate = (Date) endDate.clone();
-
-        // The same goes for the list of assigned users and production
-        // templates. For Hibernate, these operations must be symmetric.
-        clone.users = new ArrayList<>(this.users);
-        for (User user : clone.users) {
-            user.getProjects().add(clone);
-        }
-
-        clone.templates = new ArrayList<>(this.templates);
-        for (Template template : clone.templates) {
-            template.getProjects().add(clone);
-        }
-
-        // The processes of the original project are not assigned to the clone
-        clone.processes = new ArrayList<>();
-
-        // The folder objects must also be cloned and the purposes must point to
-        // the cloned folders
-        clone.folders = new ArrayList<>();
-        for (Folder folder : this.folders) {
-            Folder clonedFolder = folder.clone();
-            clonedFolder.setProject(clone);
-            clone.folders.add(clonedFolder);
-            if (folder.equals(generatorSource)) {
-                clone.generatorSource = clonedFolder;
-            }
-            if (folder.equals(mediaView)) {
-                clone.mediaView = clonedFolder;
-            }
-            if (folder.equals(preview)) {
-                clone.preview = clonedFolder;
-            }
-        }
-        return clone;
     }
 }

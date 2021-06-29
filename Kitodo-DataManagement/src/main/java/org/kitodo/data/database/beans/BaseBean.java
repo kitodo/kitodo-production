@@ -28,7 +28,7 @@ import org.kitodo.data.database.persistence.BaseDAO;
  * Base bean class.
  */
 @MappedSuperclass
-public abstract class BaseBean implements Cloneable, Serializable {
+public abstract class BaseBean implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -48,12 +48,5 @@ public abstract class BaseBean implements Cloneable, Serializable {
         if (Objects.nonNull(this.id) && !Hibernate.isInitialized(list)) {
             baseDAO.initialize(this, list);
         }
-    }
-
-    @Override
-    public BaseBean clone() throws CloneNotSupportedException {
-        BaseBean clone = (BaseBean) super.clone();
-        clone.id = null;
-        return clone;
     }
 }

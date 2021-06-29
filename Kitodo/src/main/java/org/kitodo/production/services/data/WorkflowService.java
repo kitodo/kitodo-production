@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -115,23 +114,20 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
     }
 
     /**
-     * Duplicates the given workflow.
+     * Duplicate the given workflow.
      *
      * @param baseWorkflow
-     *            workflow to copy
-     * @return the duplicated workflow
+     *            to copy
+     * @return the duplicated Workflow
      */
     public Workflow duplicateWorkflow(Workflow baseWorkflow) {
-        try {
-            Workflow duplicatedWorkflow = baseWorkflow.clone();
+        Workflow duplicatedWorkflow = new Workflow();
 
-            duplicatedWorkflow.setTitle(baseWorkflow.getTitle() + "_" + Helper.generateRandomString(3));
-            duplicatedWorkflow.setStatus(WorkflowStatus.DRAFT);
+        duplicatedWorkflow.setTitle(baseWorkflow.getTitle() + "_" + Helper.generateRandomString(3));
+        duplicatedWorkflow.setStatus(WorkflowStatus.DRAFT);
+        duplicatedWorkflow.setClient(baseWorkflow.getClient());
 
-            return duplicatedWorkflow;
-        } catch (CloneNotSupportedException e) {
-            throw new UndeclaredThrowableException(e);
-        }
+        return duplicatedWorkflow;
     }
 
     /**

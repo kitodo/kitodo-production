@@ -20,7 +20,7 @@ import javax.persistence.MappedSuperclass;
  * This bean contains properties common for Template and Process.
  */
 @MappedSuperclass
-public abstract class BaseTemplateBean extends BaseIndexedBean implements Cloneable {
+public abstract class BaseTemplateBean extends BaseIndexedBean {
 
     @Column(name = "title")
     protected String title;
@@ -92,12 +92,5 @@ public abstract class BaseTemplateBean extends BaseIndexedBean implements Clonea
     @Override
     public String toString() {
         return title + " [" + id + ']';
-    }
-
-    @Override
-    public BaseTemplateBean clone() throws CloneNotSupportedException {
-        BaseTemplateBean clone = (BaseTemplateBean) super.clone();
-        clone.creationDate = (Date) creationDate.clone();
-        return clone;
     }
 }

@@ -76,4 +76,29 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
         }
         return null;
     }
+
+    /**
+     * Creates a deep copy of a folder.
+     *
+     * @param source
+     *            folder to duplicate
+     *
+     * @return the duplicated folder
+     */
+    public Folder cloneFolder(Folder source) {
+        Folder clone = new Folder();
+        clone.setMimeType(source.getMimeType());
+        clone.setFileGroup(source.getFileGroup());
+        clone.setUrlStructure(source.getUrlStructure());
+        clone.setPath(source.getPath());
+        clone.setProject(source.getProject());
+        clone.setCopyFolder(source.isCopyFolder());
+        clone.setCreateFolder(source.isCreateFolder());
+        clone.setDerivative(source.getDerivative().orElse(null));
+        clone.setDpi(source.getDpi().orElse(null));
+        clone.setImageScale(source.getImageScale().orElse(null));
+        clone.setImageSize(source.getImageSize().orElse(null));
+        clone.setLinkingMode(source.getLinkingMode());
+        return clone;
+    }
 }

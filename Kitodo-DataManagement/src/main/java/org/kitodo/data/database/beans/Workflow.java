@@ -31,7 +31,7 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 
 @Entity
 @Table(name = "workflow")
-public class Workflow extends BaseIndexedBean implements Cloneable {
+public class Workflow extends BaseIndexedBean {
 
     @Column(name = "title")
     private String title;
@@ -181,10 +181,5 @@ public class Workflow extends BaseIndexedBean implements Cloneable {
     @Override
     public int hashCode() {
         return Objects.hash(title, status);
-    }
-
-    @Override
-    public Workflow clone() throws CloneNotSupportedException {
-        return (Workflow) super.clone();
     }
 }

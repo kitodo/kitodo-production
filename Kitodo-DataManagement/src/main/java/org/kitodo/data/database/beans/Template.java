@@ -31,7 +31,7 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 
 @Entity
 @Table(name = "template")
-public class Template extends BaseTemplateBean implements Cloneable {
+public class Template extends BaseTemplateBean {
 
     @Column(name = "active")
     private Boolean active = true;
@@ -260,23 +260,5 @@ public class Template extends BaseTemplateBean implements Cloneable {
     @Override
     public int hashCode() {
         return Objects.hash(client, docket, ruleset, workflow);
-    }
-
-    @Override
-    public Template clone() throws CloneNotSupportedException {
-        Template clone = (Template) super.clone();
-        clone.processes = new ArrayList<>();
-
-        // tasks don't need to be duplicated - will be created out of copied
-        // workflow
-        clone.tasks = new ArrayList<>();
-
-        clone.projects = new ArrayList<>(this.projects);
-        // make sure if copy should be assigned automatically to all projects
-        for (Project project : clone.projects) {
-            project.getTemplates().add(clone);
-        }
-
-        return clone;
     }
 }
