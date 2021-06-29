@@ -67,8 +67,7 @@
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({
                               'summary':'#{msgs.workflowSaving}',
                               'detail':'#{msgs.youWillBeRedirected}',
-                              'severity':'info'});
-                              saveDiagramFunctionCall();"
+                              'severity':'info'});"
                          disabled="#{WorkflowForm.saveDisabled}"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{WorkflowForm.setSaveDisabled(false)}"
