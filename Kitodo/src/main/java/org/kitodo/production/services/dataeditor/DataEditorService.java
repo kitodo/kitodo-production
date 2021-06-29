@@ -91,7 +91,8 @@ public class DataEditorService {
                         .flatMap(metadataGroup -> metadataGroup.getGroup().stream())
                         .collect(Collectors.toList());
             }
-            Optional<String> metadataTitle = metadata.stream().filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
+            Optional<String> metadataTitle = metadata.stream()
+                    .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
                     .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
                     .map(MetadataEntry::getValue)
                     .filter(value -> !value.isEmpty())
