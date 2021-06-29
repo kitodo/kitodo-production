@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +26,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
@@ -256,13 +256,52 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * @return the duplicated project
      */
     public Project duplicateProject(Project baseProject) {
-        try {
-            Project duplicatedProject = baseProject.clone();
-            duplicatedProject.setTitle("");
-            return duplicatedProject;
-        } catch (CloneNotSupportedException e) {
-            throw new UndeclaredThrowableException(e);
+        Project duplicatedProject = new Project();
+
+        // project title is intentionally not duplicated
+        duplicatedProject.setClient(baseProject.getClient());
+        duplicatedProject.setStartDate(baseProject.getStartDate());
+        duplicatedProject.setEndDate(baseProject.getEndDate());
+        duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());
+        duplicatedProject.setNumberOfVolumes(baseProject.getNumberOfVolumes());
+        duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
+        duplicatedProject.setMetsRightsOwner(baseProject.getMetsRightsOwner());
+        duplicatedProject.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());
+        duplicatedProject.setMetsRightsOwnerSite(baseProject.getMetsRightsOwnerSite());
+        duplicatedProject.setMetsRightsOwnerMail(baseProject.getMetsRightsOwnerMail());
+        duplicatedProject.setMetsDigiprovPresentation(baseProject.getMetsDigiprovPresentation());
+        duplicatedProject.setMetsDigiprovReference(baseProject.getMetsDigiprovReference());
+        duplicatedProject.setMetsPointerPath(baseProject.getMetsPointerPath());
+        duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
+        duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
+
+        FolderService folderService = ServiceManager.getFolderService();
+        List<Folder> duplicatedFolders = new ArrayList<>();
+        Folder generatorSource = null;
+        Folder mediaView = null;
+        Folder preview = null;
+
+        for (Folder folder : baseProject.getFolders()) {
+            Folder duplicatedFolder = folderService.cloneFolder(folder);
+            duplicatedFolder.setProject(duplicatedProject);
+            duplicatedFolders.add(duplicatedFolder);
+
+            if (folder.equals(baseProject.getGeneratorSource())) {
+                generatorSource = duplicatedFolder;
+            }
+            if (folder.equals(baseProject.getMediaView())) {
+                mediaView = duplicatedFolder;
+            }
+            if (folder.equals(baseProject.getPreview())) {
+                preview = duplicatedFolder;
+            }
         }
+        duplicatedProject.setFolders(duplicatedFolders);
+        duplicatedProject.setGeneratorSource(generatorSource);
+        duplicatedProject.setMediaView(mediaView);
+        duplicatedProject.setPreview(preview);
+
+        return duplicatedProject;
     }
 
     /**
