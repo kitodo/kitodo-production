@@ -145,6 +145,7 @@ public class WorkflowForm extends BaseForm {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
                 if (migration) {
+                    migration = false;
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
                 }
                 return projectsPage;
@@ -174,6 +175,7 @@ public class WorkflowForm extends BaseForm {
                     e);
                 return this.stayOnCurrentPage;
             }
+            migration = false;
             return MIGRATION_FORM_PATH;
         }
 
