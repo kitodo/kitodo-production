@@ -908,6 +908,10 @@ tbody.ui-widget-content {
     background: var(--light-blue);
 }
 
+.ui-datatable tr.ui-expanded-row-content .ui-widget-content {
+    background-color: transparent;
+}
+
 .ui-datatable tr.ui-widget-content:hover,
 .ui-treetable tr.ui-widget-content:hover {
     background: var(--trans-blue);

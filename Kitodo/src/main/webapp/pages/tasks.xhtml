@@ -26,6 +26,20 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.tasks}</h3>
 
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
+            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                  label=""
+                                  converter="#{listColumnConverter}"
+                                  title="#{msgs.configureColumns}"
+                                  style="float: right; margin-right: 0;"
+                                  value="#{CurrentTaskForm.selectedColumns}">
+                <f:selectItems value="#{CurrentTaskForm.columns}" />
+                <p:ajax listener="#{CurrentTaskForm.saveSelectedColumns()}"
+                        update="tasksTabView"/>
+            </p:selectCheckboxMenu>
+        </h:form>
+
         <!-- filters -->
         <p:button id="search" value="#{msgs.extendedSearch}"
                   icon="fa fa-search" iconPos="right"
@@ -65,19 +79,6 @@
                     </ul>
                 </p:overlayPanel>
             </div>
-        </h:form>
-        <h:form id="configureColumnsForm"
-                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
-                                  label=""
-                                  converter="#{listColumnConverter}"
-                                  title="#{msgs.configureColumns}"
-                                  style="float: right; margin-right: 0;"
-                                  value="#{CurrentTaskForm.selectedColumns}">
-                <f:selectItems value="#{CurrentTaskForm.columns}" />
-                <p:ajax listener="#{CurrentTaskForm.saveSelectedColumns()}"
-                        update="tasksTabView"/>
-            </p:selectCheckboxMenu>
         </h:form>
     </ui:define>
 

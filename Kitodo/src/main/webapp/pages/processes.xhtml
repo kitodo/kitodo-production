@@ -28,48 +28,8 @@
 
     <ui:define name="contentHeader">
         <p:panel id="titleProcess">
-        <h3 style="float: left">#{msgs.processes}</h3> <h5> #{msgs.hits}: #{ProcessForm.amount}</h5>
+            <h3>#{msgs.processes}</h3> <h5> #{msgs.hits}: #{ProcessForm.amount}</h5>
         </p:panel>
-        <!-- filters -->
-        <p:button id="search" value="#{msgs.extendedSearch}"
-                  icon="fa fa-search" iconPos="right"
-                  outcome="extendedSearch"/>
-        <h:form id="filterMenu">
-            <div class="ui-inputgroup">
-                <p:inputText forceId="true"
-                             id="filterfield"
-                             value="#{ProcessForm.filter}"
-                             placeholder="#{msgs.filter}">
-                    <p:ajax event="change"
-                            onstart="PF('processesTable').getPaginator().setPage(0);"
-                            update="processesTabView:processesForm:processesTable,titleProcess"/>
-                </p:inputText>
-                <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
-                <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
-                    <ul>
-                        <li>
-                            <p:commandButton id="addFilter"
-                                             action="#{ProcessForm.addFilterToUser}"
-                                             icon="fa fa-floppy-o fa-lg"
-                                             value="#{msgs.addFilter}" update="@form"/>
-                        </li>
-                        <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
-                            <li>
-                                <p:commandLink value="#{filter}"
-                                               action="#{ProcessForm.changeFilter(filter)}"
-                                               title="#{filter}"/>
-                                <p:commandLink title="#{msgs.removeFilter}"
-                                               action="#{ProcessForm.removeFilterFromUser(filter)}"
-                                               styleClass="filter-delete plain"
-                                               update="@form">
-                                    <i class="fa fa-trash-o fa-lg"/>
-                                </p:commandLink>
-                            </li>
-                        </ui:repeat>
-                    </ul>
-                </p:overlayPanel>
-            </div>
-        </h:form>
         <h:form id="configureColumnsForm"
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
@@ -82,13 +42,59 @@
                         update="processesTabView"/>
             </p:selectCheckboxMenu>
         </h:form>
+
+        <!-- filters -->
+        <p:button id="search" value="#{msgs.extendedSearch}"
+                  icon="fa fa-search" iconPos="right"
+                  outcome="extendedSearch"/>
+        <h:panelGroup id="filterMenuWrapper">
+            <h:form id="filterMenu"
+                    rendered="#{ProcessForm.activeTabIndex eq 0}">
+                <div class="ui-inputgroup">
+                    <p:inputText forceId="true"
+                                 id="filterfield"
+                                 value="#{ProcessForm.filter}"
+                                 placeholder="#{msgs.filter}">
+                        <p:ajax event="change"
+                                onstart="PF('processesTable').getPaginator().setPage(0);"
+                                update="processesTabView:processesForm:processesTable"/>
+                    </p:inputText>
+                    <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
+                    <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
+                        <ul>
+                            <li>
+                                <p:commandButton id="addFilter"
+                                                 action="#{ProcessForm.addFilterToUser}"
+                                                 icon="fa fa-floppy-o fa-lg"
+                                                 value="#{msgs.addFilter}" update="@form"/>
+                            </li>
+                            <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
+                                <li>
+                                    <p:commandLink value="#{filter}"
+                                                   action="#{ProcessForm.changeFilter(filter)}"
+                                                   title="#{filter}"/>
+                                    <p:commandLink title="#{msgs.removeFilter}"
+                                                   action="#{ProcessForm.removeFilterFromUser(filter)}"
+                                                   styleClass="filter-delete plain"
+                                                   update="@form">
+                                        <i class="fa fa-trash-o fa-lg"/>
+                                    </p:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </p:overlayPanel>
+                </div>
+            </h:form>
+        </h:panelGroup>
     </ui:define>
 
     <ui:define name="pageTabView">
         <p:tabView id="processesTabView"
                    dynamic="true"
                    activeIndex="#{ProcessForm.activeTabIndex}">
-            <p:ajax event="tabChange" listener="#{ProcessForm.onTabChange}"/>
+            <p:ajax event="tabChange"
+                    listener="#{ProcessForm.onTabChange}"
+                    update="filterMenuWrapper"/>
             <p:tab title="#{msgs.processList}" id="processTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}">
                 <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
