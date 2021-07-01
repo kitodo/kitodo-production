@@ -15,10 +15,17 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.DataEditorInterface;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -63,5 +70,37 @@ public class DataEditorService {
     public static List<String> getTitleKeys() {
         return Arrays.stream(ConfigCore.getParameter(ParameterCore.TITLE_KEYS, "").split(","))
                 .map(String::trim).collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieve and return title value from given IncludedStructuralElement.
+     *
+     * @param element IncludedStructuralElement for which the title value is returned.
+     * @return title value of given element
+     */
+    public static String getTitleValue(IncludedStructuralElement element) {
+        for (final String titleKey : getTitleKeys()) {
+            String[] metadataPath = titleKey.split("@");
+            int lastIndex = metadataPath.length - 1;
+            Collection<Metadata> metadata = element.getMetadata();
+            for (int i = 0; i < lastIndex; i++) {
+                final String metadataKey = metadataPath[i];
+                metadata = metadata.stream()
+                        .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataKey))
+                        .filter(MetadataGroup.class::isInstance).map(MetadataGroup.class::cast)
+                        .flatMap(metadataGroup -> metadataGroup.getGroup().stream())
+                        .collect(Collectors.toList());
+            }
+            Optional<String> metadataTitle = metadata.stream()
+                    .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
+                    .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
+                    .map(MetadataEntry::getValue)
+                    .filter(value -> !value.isEmpty())
+                    .findFirst();
+            if (metadataTitle.isPresent()) {
+                return " - ".concat(metadataTitle.get());
+            }
+        }
+        return "";
     }
 }

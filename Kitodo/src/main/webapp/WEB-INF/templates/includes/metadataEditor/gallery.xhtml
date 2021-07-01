@@ -96,7 +96,7 @@
                                 styleClass="pageList"
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
-                        <p:outputLabel value="#{stripe.label} #{DataEditorForm.getStructureElementTitle(stripe.structure)}"
+                        <p:outputLabel value="#{stripe.label}#{DataEditorForm.getStructureElementTitle(stripe.structure)}"
                                        styleClass="stripe #{DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
                                        rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
