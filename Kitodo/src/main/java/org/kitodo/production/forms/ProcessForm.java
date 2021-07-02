@@ -1170,4 +1170,17 @@ public class ProcessForm extends TemplateBaseForm {
     public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO) {
         return ServiceManager.getProcessService().getCurrentTasksForUser(processDTO, ServiceManager.getUserService().getCurrentUser());
     }
+
+    /**
+     * Gets the amount of processes for the current filter
+     * @return amount of processes
+     */
+    public String getAmount() {
+        try {
+            return ServiceManager.getProcessService().count(ServiceManager.getProcessService().getQueryForFilter(isShowClosedProcesses(),isShowInactiveProjects(),filter)).toString();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e);
+            return "";
+        }
+    }
 }

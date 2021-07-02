@@ -330,11 +330,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                                      org.primefaces.model.SortOrder sortOrder, Map filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
         String filter = ServiceManager.getFilterService().parseFilterString(filters);
-        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, showClosedProcesses,
-                showInactiveProjects);
-        return findByQuery(searchResultGeneration.getQueryForFilter(ObjectType.PROCESS),
+        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter),
                 getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
+
+    /**
+     * Gets the query for the current processfilter.
+     * @param showClosedProcesses if closed processes are shown
+     * @param showInactiveProjects if inactive projects are shown
+     * @param filter the filter to build the query for
+     * @return the query for the filter.
+     */
+    public BoolQueryBuilder getQueryForFilter(boolean showClosedProcesses, boolean showInactiveProjects, String filter) {
+        return new SearchResultGeneration(filter, showClosedProcesses,
+                showInactiveProjects).getQueryForFilter(ObjectType.PROCESS);
+    }
+
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
