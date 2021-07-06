@@ -27,7 +27,9 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <h3>#{msgs.processes}</h3> Treffer: #{ProcessForm.amount}
+        <p:panel id="titleProcess">
+        <h3 style="float: left">#{msgs.processes}</h3> <h5> #{msgs.hits}: #{ProcessForm.amount}</h5>
+        </p:panel>
         <!-- filters -->
         <p:button id="search" value="#{msgs.extendedSearch}"
                   icon="fa fa-search" iconPos="right"
@@ -40,7 +42,7 @@
                              placeholder="#{msgs.filter}">
                     <p:ajax event="change"
                             onstart="PF('processesTable').getPaginator().setPage(0);"
-                            update="processesTabView:processesForm:processesTable"/>
+                            update="processesTabView:processesForm:processesTable,titleProcess"/>
                 </p:inputText>
                 <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                 <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
