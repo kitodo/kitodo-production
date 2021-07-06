@@ -1177,7 +1177,8 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String getAmount() {
         try {
-            return ServiceManager.getProcessService().count(ServiceManager.getProcessService().getQueryForFilter(isShowClosedProcesses(),isShowInactiveProjects(),filter)).toString();
+            return ServiceManager.getProcessService().count(ServiceManager.getProcessService()
+                    .getQueryForFilter(isShowClosedProcesses(), isShowInactiveProjects(), filter)).toString();
         } catch (DataException e) {
             Helper.setErrorMessage(e);
             return "";
