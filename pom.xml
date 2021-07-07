@@ -39,8 +39,8 @@
         <maven.compiler.debug>true</maven.compiler.debug>
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
         <maxAllowedViolations>1</maxAllowedViolations>
-        <tomcat.baseversion>7</tomcat.baseversion>
-        <tomcat.version>7.0.81</tomcat.version>
+        <tomcat.baseversion>8</tomcat.baseversion>
+        <tomcat.version>8.5.69</tomcat.version>
         <awaitility.version>4.0.1</awaitility.version>
         <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
         <commons-codec.version>1.13</commons-codec.version>
@@ -209,18 +209,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>tomcat</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.tomcat.maven</groupId>
-                        <artifactId>tomcat7-maven-plugin</artifactId>
-                        <version>2.2</version>
                     </plugin>
                 </plugins>
             </build>
