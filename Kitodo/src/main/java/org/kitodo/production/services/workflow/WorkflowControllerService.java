@@ -260,7 +260,12 @@ public class WorkflowControllerService {
         activateTasksForClosedTask(task);
     }
 
-    private boolean allChildrenClosed(Process process) {
+    /**
+     * Checks if all children of a process are closed.
+     * @param process the process to check
+     * @return true if all children are closed
+     */
+    public static boolean allChildrenClosed(Process process) {
         if (!process.getChildren().isEmpty()) {
             boolean allChildrenClosed = true;
             for (Process child : process.getChildren()) {
