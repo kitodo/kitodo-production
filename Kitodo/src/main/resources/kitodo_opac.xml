@@ -48,6 +48,7 @@
             <searchField label="Erscheinungsjahr" value="pica.jah"/>
             <searchField label="Volltext" value="pica.txt"/>
         </searchFields>
+        <defaultImportDepth>1</defaultImportDepth>
     </catalogue>
 
     <catalogue title="K10Plus" description="K10Plus OPAC">

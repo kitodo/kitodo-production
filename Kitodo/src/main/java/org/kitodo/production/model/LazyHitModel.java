@@ -28,6 +28,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
     private String selectedCatalog = "";
     private String selectedField = "";
     private String searchTerm = "";
+    private int importDepth = 2;
 
     private SearchResult searchResult = null;
 
@@ -100,6 +101,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
         this.selectedCatalog = catalog;
         if (!catalog.isEmpty()) {
             this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(catalog));
+            this.setImportDepth(ServiceManager.getImportService().getDefaultImportDepth(catalog));
         }
     }
 
@@ -137,5 +139,23 @@ public class LazyHitModel extends LazyDataModel<Object> {
      */
     public void setSelectedField(String field) {
         this.selectedField = field;
+    }
+
+    /**
+     * Get import depth.
+     *
+     * @return import depth
+     */
+    public int getImportDepth() {
+        return importDepth;
+    }
+
+    /**
+     * Set import depth.
+     *
+     * @param depth import depth
+     */
+    public void setImportDepth(int depth) {
+        importDepth = depth;
     }
 }

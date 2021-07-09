@@ -14,10 +14,12 @@ package org.kitodo.config;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -34,6 +36,7 @@ public class OPACConfig {
     private static XMLConfiguration config;
     private static final String TRUE = "true";
     private static final String DEFAULT = "[@default]";
+    private static final int DEFAULT_IMPORT_DEPTH = 2;
 
     /**
      * Private constructor.
@@ -307,6 +310,19 @@ public class OPACConfig {
      */
     public static boolean isParentInRecord(String catalogName) {
         return StringUtils.isNotBlank(getXsltMappingFileForParentInRecord(catalogName));
+    }
+
+    /**
+     * Return default import depth of catalog 'catalogName' if configured. Return DEFAULT_IMPORT_DEPTH 2 otherwise.
+     * @param catalogName name of catalog
+     * @return default import depth of catalog
+     */
+    public static int getDefaultImportDepth(String catalogName) {
+        try {
+            return getCatalog(catalogName).getInt("defaultImportDepth");
+        } catch (NoSuchElementException | ConversionException e) {
+            return DEFAULT_IMPORT_DEPTH;
+        }
     }
 
     /**
