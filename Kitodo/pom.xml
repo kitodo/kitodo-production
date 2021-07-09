@@ -301,6 +301,14 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
+            <exclusions>
+                <!-- exlcude stax-api which provides javax.xml.namespace package 
+                     already included in system modules of Java 11+ -->
+            	<exclusion>
+                    <groupId>stax</groupId>
+                    <artifactId>stax-api</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -323,6 +331,12 @@
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <!-- exlcude xml-apis which provides javax.xml.transform package 
+                     already included in system modules of Java 11+ -->
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
