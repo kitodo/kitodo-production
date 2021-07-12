@@ -400,7 +400,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved so they have IDs before creating their process directories
-        ServiceManager.getProcessService().save(getMainProcess());
+        ServiceManager.getProcessService().save(getMainProcess(), true);
         if (!createProcessesLocation(this.processes)) {
             throw new IOException("Unable to create directories for process hierarchy!");
         }
@@ -435,7 +435,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
-        ServiceManager.getProcessService().save(getMainProcess());
+        ServiceManager.getProcessService().save(getMainProcess(), true);
     }
 
     /**

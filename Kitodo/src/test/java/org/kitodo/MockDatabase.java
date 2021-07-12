@@ -658,7 +658,7 @@ public class MockDatabase {
         firstTemplate.setDocket(ServiceManager.getDocketService().getById(2));
         firstTemplate.getProjects().add(project);
         firstTemplate.setRuleset(ServiceManager.getRulesetService().getById(1));
-        ServiceManager.getTemplateService().save(firstTemplate);
+        ServiceManager.getTemplateService().save(firstTemplate, true);
 
         Project thirdProject = ServiceManager.getProjectService().getById(3);
         Template secondTemplate = new Template();
@@ -670,7 +670,7 @@ public class MockDatabase {
         secondTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(secondTemplate);
         secondTemplate.setRuleset(ServiceManager.getRulesetService().getById(2));
-        ServiceManager.getTemplateService().save(secondTemplate);
+        ServiceManager.getTemplateService().save(secondTemplate, true);
 
         thirdProject = ServiceManager.getProjectService().getById(3);
         Template thirdTemplate = new Template();
@@ -682,7 +682,7 @@ public class MockDatabase {
         thirdTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(thirdTemplate);
         thirdTemplate.setRuleset(ServiceManager.getRulesetService().getById(1));
-        ServiceManager.getTemplateService().save(thirdTemplate);
+        ServiceManager.getTemplateService().save(thirdTemplate, true);
 
         Template fourthTemplate = new Template();
         fourthTemplate.setTitle("Fourth template");
@@ -693,7 +693,7 @@ public class MockDatabase {
         fourthTemplate.getProjects().add(project);
         fourthTemplate.getProjects().add(thirdProject);
         fourthTemplate.setRuleset(ServiceManager.getRulesetService().getById(2));
-        ServiceManager.getTemplateService().save(fourthTemplate);
+        ServiceManager.getTemplateService().save(fourthTemplate, true);
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {
@@ -1009,7 +1009,7 @@ public class MockDatabase {
                 task.setProcessingUser(secondUser);
                 secondUser.getProcessingTasks().add(task);
             }
-            ServiceManager.getTaskService().save(task);
+            ServiceManager.getTaskService().save(task, true);
         }
 
         ServiceManager.getUserService().saveToDatabase(firstUser);
@@ -1031,7 +1031,7 @@ public class MockDatabase {
         eleventhTask.setScriptPath("../type/automatic/script/path");
         eleventhTask.getRoles().add(role);
         role.getTasks().add(eleventhTask);
-        ServiceManager.getTaskService().save(eleventhTask);
+        ServiceManager.getTaskService().save(eleventhTask, true);
         firstUser.getProcessingTasks().add(eleventhTask);
         ServiceManager.getTaskService().saveToIndex(eleventhTask, true);
 
@@ -1046,7 +1046,7 @@ public class MockDatabase {
         twelfthTask.setProcess(secondProcess);
         twelfthTask.getRoles().add(role);
         role.getTasks().add(twelfthTask);
-        ServiceManager.getTaskService().save(twelfthTask);
+        ServiceManager.getTaskService().save(twelfthTask, true);
         firstUser.getProcessingTasks().add(twelfthTask);
         ServiceManager.getUserService().saveToDatabase(firstUser);
         ServiceManager.getTaskService().saveToIndex(twelfthTask, true);
@@ -1061,7 +1061,7 @@ public class MockDatabase {
         thirteenTask.setProcess(secondProcess);
         thirteenTask.getRoles().add(role);
         role.getTasks().add(thirteenTask);
-        ServiceManager.getTaskService().save(thirteenTask);
+        ServiceManager.getTaskService().save(thirteenTask, true);
 
         ServiceManager.getRoleService().saveToDatabase(role);
     }

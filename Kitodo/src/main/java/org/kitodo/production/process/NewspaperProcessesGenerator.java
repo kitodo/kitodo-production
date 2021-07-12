@@ -724,7 +724,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         String title = makeTitle(yearTitleDefinition.orElse("+'_'+#YEAR"), genericFields);
         getGeneratedProcess().setTitle(title);
         ProcessService.checkTasks(getGeneratedProcess(), yearType);
-        processService.save(getGeneratedProcess());
+        processService.save(getGeneratedProcess(), true);
         processService.refresh(getGeneratedProcess());
 
         getGeneratedProcess().setParent(overallProcess);
