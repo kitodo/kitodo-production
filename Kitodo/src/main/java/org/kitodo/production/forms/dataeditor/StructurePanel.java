@@ -21,9 +21,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
@@ -42,6 +45,7 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
@@ -88,11 +92,17 @@ public class StructurePanel implements Serializable {
      */
     private HashMap<IncludedStructuralElement, Boolean> previousExpansionStatesLogicalTree;
 
+
     /**
      * HashMap containing the current expansion states of all TreeNodes in the physical structure tree.
      */
     private HashMap<MediaUnit, Boolean> previousExpansionStatesPhysicalTree;
-
+    
+    /**
+     * HashMap acting as cache for faster retrieval of Subfolders.
+     */
+    Map<String, Subfolder> subfoldersCache = new HashMap<>();
+    
     /**
      * List of all mediaUnits assigned to multiple IncludedStructuralElements.
      */
@@ -129,6 +139,7 @@ public class StructurePanel implements Serializable {
         previouslySelectedLogicalNode = null;
         previouslySelectedPhysicalNode = null;
         structure = null;
+        subfoldersCache = new HashMap<>();
         severalAssignments = new LinkedList<>();
     }
 
@@ -547,13 +558,30 @@ public class StructurePanel implements Serializable {
         }
     }
 
+    /**
+     * Builds the display text for a MediaUnit in the StructurePanel.
+     * Using a regular expression to strip leading zeros. (?!$) lookahead ensures
+     * that not the entire string will be matched. Using Hashmap for subfolder caching
+     *
+     * @param view
+     *            View which holds the MediaUnit
+     * @return the display label of the MediaUnit
+     */
     private String buildViewLabel(View view) {
-        String order = view.getMediaUnit().getOrder() + " : ";
-        if (Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
-            return order + view.getMediaUnit().getOrderlabel();
-        } else {
-            return order + "uncounted";
+        MediaUnit mediaUnit = view.getMediaUnit();
+        Iterator<Entry<MediaVariant, URI>> mediaFileIterator = mediaUnit.getMediaFiles().entrySet().iterator();
+        String canonical = "-";
+        if (mediaFileIterator.hasNext()) {
+            Entry<MediaVariant, URI> mediaFileEntry = mediaFileIterator.next();
+            Subfolder subfolder = this.subfoldersCache.computeIfAbsent(mediaFileEntry.getKey().getUse(),
+                use -> new Subfolder(dataEditor.getProcess(), dataEditor.getProcess().getProject().getFolders()
+                    .parallelStream().filter(folder -> folder.getFileGroup().equals(use)).findAny()
+                    .orElseThrow(() ->  new IllegalStateException("Missing folder with file group \"" + use
+                        + "\" in project \"" + dataEditor.getProcess().getProject().getTitle()))));
+            canonical = subfolder.getCanonical(mediaFileEntry.getValue());
         }
+        return canonical.replaceFirst("^0+(?!$)", "") + " : "
+            + (Objects.isNull(mediaUnit.getOrderlabel()) ? "uncounted" : mediaUnit.getOrderlabel());
     }
 
     /**
