@@ -56,7 +56,6 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     private static final int NUMBER_OF_CHILDREN_WARNING_THRESHOLD = 5;
 
     private String currentRecordId = "";
-    private int importDepth = 2;
     private boolean importChildren = false;
     private int numberOfChildren = 0;
     private String opacErrorMessage = "";
@@ -162,7 +161,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 }
                 // import ancestors
                 LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
-                        this.currentRecordId, opac, projectId, templateId, this.importDepth,
+                        this.currentRecordId, opac, projectId, templateId, this.hitModel.getImportDepth(),
                         this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
 
@@ -214,24 +213,6 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      */
     public LazyHitModel getHitModel() {
         return this.hitModel;
-    }
-
-    /**
-     * Get import depth.
-     *
-     * @return import depth
-     */
-    public int getImportDepth() {
-        return importDepth;
-    }
-
-    /**
-     * Set import depth.
-     *
-     * @param depth import depth
-     */
-    public void setImportDepth(int depth) {
-        importDepth = depth;
     }
 
     /**
