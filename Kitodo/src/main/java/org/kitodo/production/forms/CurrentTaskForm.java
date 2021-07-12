@@ -111,7 +111,7 @@ public class CurrentTaskForm extends BaseForm {
         } else {
             this.workflowControllerService.assignTaskToUser(this.currentTask);
             try {
-                ServiceManager.getTaskService().save(this.currentTask);
+                ServiceManager.getTaskService().save(this.currentTask, false);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
