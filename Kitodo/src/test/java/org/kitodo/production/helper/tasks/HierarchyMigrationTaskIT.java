@@ -81,7 +81,7 @@ public class HierarchyMigrationTaskIT {
      */
     @Test
     public void testHierarchyMigration() throws DAOException, ProcessGenerationException, CommandException,
-            DataException, IOException, SAXException, ParserConfigurationException {
+            IOException, SAXException, ParserConfigurationException {
         HierarchyMigrationTask hierarchyMigrationTask = new HierarchyMigrationTask(Collections.singletonList(project));
         hierarchyMigrationTask.migrate(ServiceManager.getProcessService().getById(2));
         Assert.assertTrue("Tasks should have been removed",
