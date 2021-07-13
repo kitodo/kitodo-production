@@ -152,7 +152,9 @@ public class PaginationPanel {
     public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
         int lastItemIndex = paginationSelectionSelectedItems.get(paginationSelectionSelectedItems.size() - 1);
-        if (!Objects.equals(this.paginationSelectionSelectedItems.get(this.paginationSelectionSelectedItems.size() - 1 ), lastItemIndex)) {
+        if (this.paginationSelectionSelectedItems.isEmpty()
+                || !Objects.equals(this.paginationSelectionSelectedItems.get(
+                        this.paginationSelectionSelectedItems.size() - 1 ), lastItemIndex)) {
             dataEditor.getStructurePanel().updateNodeSelection(
                     dataEditor.getGalleryPanel().getGalleryMediaContent(mediaUnits.get(lastItemIndex)),
                     mediaUnits.get(lastItemIndex).getIncludedStructuralElements().get(0));
