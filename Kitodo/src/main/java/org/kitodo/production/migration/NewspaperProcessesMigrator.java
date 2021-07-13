@@ -59,6 +59,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 /**
  * Tool for converting newspaper processes from Production v. 2 format to
@@ -587,6 +588,9 @@ public class NewspaperProcessesMigrator {
             child.setParent(yearProcess);
             yearProcess.getChildren().add(child);
             processService.saveToDatabase(child);
+        }
+        if (WorkflowControllerService.allChildrenClosed(yearProcess)) {
+            yearProcess.setSortHelperStatus("100000000");
         }
         processService.saveToDatabase(yearProcess);
         addToBatch(yearProcess);

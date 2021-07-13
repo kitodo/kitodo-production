@@ -44,6 +44,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class HierarchyMigrationTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(HierarchyMigrationTask.class);
@@ -271,6 +272,9 @@ public class HierarchyMigrationTask extends EmptyTask {
         parentProcess.setTitle(title);
         workpiece.setId(parentProcess.getId().toString());
         ServiceManager.getMetsService().saveWorkpiece(workpiece,parentMetadataFilePath);
+        if (WorkflowControllerService.allChildrenClosed(parentProcess)) {
+            parentProcess.setSortHelperStatus("100000000");
+        }
     }
 
     /**
