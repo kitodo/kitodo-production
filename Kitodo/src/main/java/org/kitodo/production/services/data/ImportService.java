@@ -246,6 +246,21 @@ public class ImportService {
     }
 
     /**
+     * Get default import depth for catalog 'opac.
+     *
+     * @param opac catalog name
+     * @return default import depth of catalog 'opac'
+     */
+    public int getDefaultImportDepth(String opac) {
+        int depth = OPACConfig.getDefaultImportDepth(opac);
+        if (depth < 0 || depth > 5) {
+            return 2;
+        } else {
+            return depth;
+        }
+    }
+
+    /**
      * Load catalog names from library catalog configuration file and return them as a list of Strings.
      *
      * @return list of catalog names

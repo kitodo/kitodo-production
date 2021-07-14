@@ -33,7 +33,6 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
@@ -44,6 +43,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class HierarchyMigrationTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(HierarchyMigrationTask.class);
@@ -155,7 +155,7 @@ public class HierarchyMigrationTask extends EmptyTask {
                     return;
                 }
             }
-        } catch (IOException | DAOException | ProcessGenerationException | DataException | CommandException e) {
+        } catch (IOException | DAOException | ProcessGenerationException | CommandException e) {
             setException(e);
         }
     }
@@ -166,7 +166,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param process
      *            process to migrate
      */
-    void migrate(Process process) throws IOException, ProcessGenerationException, DataException, DAOException, CommandException {
+    void migrate(Process process) throws IOException, ProcessGenerationException, DAOException, CommandException {
         logger.info("Starting to convert process {} (ID {})...", process.getTitle(), process.getId());
         long begin = System.nanoTime();
         migrateMetadataFiles(process);
@@ -228,15 +228,15 @@ public class HierarchyMigrationTask extends EmptyTask {
      *         current number of the child process
      */
     private List<Integer> createParentProcess(Process childProcess)
-            throws ProcessGenerationException, IOException, DataException, CommandException, DAOException {
+            throws ProcessGenerationException, IOException, CommandException, DAOException {
 
         processGenerator.generateProcess(childProcess.getTemplate().getId(), childProcess.getProject().getId());
         Process parentProcess = processGenerator.getGeneratedProcess();
-        processService.save(parentProcess);
+        processService.saveToDatabase(parentProcess);
         fileService.createProcessLocation(parentProcess);
         createParentMetsFile(childProcess);
         checkTaskAndId(parentProcess);
-        processService.save(parentProcess);
+        processService.saveToDatabase(parentProcess);
         parentProcess = ServiceManager.getProcessService().getById(parentProcess.getId());
         ArrayList<Integer> parentData = new ArrayList<>();
         parentData.add(parentProcess.getId());
@@ -271,6 +271,9 @@ public class HierarchyMigrationTask extends EmptyTask {
         parentProcess.setTitle(title);
         workpiece.setId(parentProcess.getId().toString());
         ServiceManager.getMetsService().saveWorkpiece(workpiece,parentMetadataFilePath);
+        if (WorkflowControllerService.allChildrenClosed(parentProcess)) {
+            parentProcess.setSortHelperStatus("100000000");
+        }
     }
 
     /**
@@ -283,11 +286,12 @@ public class HierarchyMigrationTask extends EmptyTask {
      *            child process to link
      */
     private static void linkParentProcessWithChildProcess(Process parentProcess, Process childProcess)
-            throws DataException {
+            throws DAOException {
 
         parentProcess.getChildren().add(childProcess);
         childProcess.setParent(parentProcess);
-        processService.save(childProcess);
+        processService.saveToDatabase(childProcess);
+        processService.saveToDatabase(parentProcess);
     }
 
     /**
@@ -360,7 +364,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      *            parent
      */
     private static void linkProcessInParent(Process childProcess, List<Integer> parentData)
-            throws IOException, DAOException, DataException {
+            throws IOException, DAOException {
 
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
         Integer currentNo = convertChildMetsFile(metadataFilePath);
