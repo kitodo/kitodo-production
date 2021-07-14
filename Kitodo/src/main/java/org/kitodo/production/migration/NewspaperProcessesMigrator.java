@@ -319,6 +319,29 @@ public class NewspaperProcessesMigrator {
         final String year = createLinkStructureAndCopyDates(process, yearFilePath, yearIncludedStructuralElement);
 
         workpiece.setRootElement(cutOffTopLevel(yearIncludedStructuralElement));
+        moveMetadataFromYearToIssue(process, processTitle, yearFilePath, workpiece);
+
+        metsService.saveWorkpiece(workpiece, metadataFilePath);
+
+        for (Metadata metadata : overallWorkpiece.getRootElement().getMetadata()) {
+            if (!overallMetadata.contains(metadata)) {
+                logger.debug("Adding metadata to newspaper {}: {}", title, metadata);
+                overallMetadata.add(metadata);
+            }
+        }
+        yearsChildren.computeIfAbsent(year, each -> new ArrayList<>()).add(processId);
+
+        ServiceManager.getFileService().renameFile(anchorFilePath, "meta_anchor.migrated");
+        ServiceManager.getFileService().renameFile(yearFilePath, "meta_year.migrated");
+
+        logger.info("Process {} (ID {}) successfully converted.", processTitle, processId);
+        if (logger.isTraceEnabled()) {
+            logger.trace("Converting {} took {} ms.", processTitle,
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
+    }
+
+    private void moveMetadataFromYearToIssue(Process process, String processTitle, URI yearFilePath, Workpiece workpiece) throws IOException {
         Workpiece yearWorkpiece = metsService.loadWorkpiece(yearFilePath);
         // Copy metadata from year to issue
         Collection<Metadata> processMetadataFromYear = new ArrayList<>(yearWorkpiece.getRootElement().getChildren().get(0).getMetadata());
@@ -339,25 +362,6 @@ public class NewspaperProcessesMigrator {
         titelMetadata.setKey(titleKey);
         titelMetadata.setDomain(MdSec.DMD_SEC);
         issuesIncludedStructuralElements.get(0).getMetadata().add(titelMetadata);
-
-        metsService.saveWorkpiece(workpiece, metadataFilePath);
-
-        for (Metadata metadata : overallWorkpiece.getRootElement().getMetadata()) {
-            if (!overallMetadata.contains(metadata)) {
-                logger.debug("Adding metadata to newspaper {}: {}", title, metadata);
-                overallMetadata.add(metadata);
-            }
-        }
-        yearsChildren.computeIfAbsent(year, each -> new ArrayList<>()).add(processId);
-
-        ServiceManager.getFileService().renameFile(anchorFilePath, "meta_anchor.migrated");
-        ServiceManager.getFileService().renameFile(yearFilePath, "meta_year.migrated");
-
-        logger.info("Process {} (ID {}) successfully converted.", processTitle, processId);
-        if (logger.isTraceEnabled()) {
-            logger.trace("Converting {} took {} ms.", processTitle,
-                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
-        }
     }
 
     /**
@@ -723,7 +727,7 @@ public class NewspaperProcessesMigrator {
      * @return the title
      */
     private String getYearTitle(String year) {
-        return title + '_' + year.replace("/", "--");
+        return title + '-' + year.replace("/", "--");
     }
 
     /**
