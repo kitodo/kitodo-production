@@ -11,6 +11,9 @@
 
 package org.kitodo.production.migration;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -62,9 +65,6 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
-
-import com.google.common.collect.Iterators;
-import com.google.common.collect.PeekingIterator;
 
 /**
  * Tool for converting newspaper processes from Production v. 2 format to
@@ -341,14 +341,18 @@ public class NewspaperProcessesMigrator {
         }
     }
 
-    private void moveMetadataFromYearToIssue(Process process, String processTitle, URI yearFilePath, Workpiece workpiece) throws IOException {
+    private void moveMetadataFromYearToIssue(Process process, String processTitle, URI yearFilePath,
+            Workpiece workpiece) throws IOException {
         Workpiece yearWorkpiece = metsService.loadWorkpiece(yearFilePath);
         // Copy metadata from year to issue
-        Collection<Metadata> processMetadataFromYear = new ArrayList<>(yearWorkpiece.getRootElement().getChildren().get(0).getMetadata());
-        List<IncludedStructuralElement> issuesIncludedStructuralElements = workpiece.getRootElement().getChildren().get(0).getChildren();
+        Collection<Metadata> processMetadataFromYear = new ArrayList<>(
+                yearWorkpiece.getRootElement().getChildren().get(0).getMetadata());
+        List<IncludedStructuralElement> issuesIncludedStructuralElements = workpiece.getRootElement().getChildren()
+                .get(0).getChildren();
         issuesIncludedStructuralElements.get(0).getMetadata().addAll(processMetadataFromYear);
 
-        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
+                .getRulesetManagement();
 
         // find and load the ruleset file
         String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
@@ -433,13 +437,17 @@ public class NewspaperProcessesMigrator {
             IncludedStructuralElement processYearIncludedStructuralElement) throws ConfigurationException {
 
         // Add types to month and day
-        StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(overallWorkpiece.getRootElement().getType(), acquisitionStage, Locale.LanguageRange.parse("en"));
-        StructuralElementViewInterface yearDivisionView = nextSubView(rulesetManagement, newspaperView, acquisitionStage);
+        StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
+            overallWorkpiece.getRootElement().getType(), acquisitionStage, Locale.LanguageRange.parse("en"));
+        StructuralElementViewInterface yearDivisionView = nextSubView(rulesetManagement, newspaperView,
+            acquisitionStage);
         yearSimpleMetadataView = yearDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
-        StructuralElementViewInterface monthDivisionView = nextSubView(rulesetManagement, yearDivisionView, acquisitionStage);
+        StructuralElementViewInterface monthDivisionView = nextSubView(rulesetManagement, yearDivisionView,
+            acquisitionStage);
         monthSimpleMetadataView = monthDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         String monthType = monthDivisionView.getId();
-        StructuralElementViewInterface dayDivisionView = nextSubView(rulesetManagement, monthDivisionView, acquisitionStage);
+        StructuralElementViewInterface dayDivisionView = nextSubView(rulesetManagement, monthDivisionView,
+            acquisitionStage);
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
         String dayType = dayDivisionView.getId();
 
