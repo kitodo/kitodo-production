@@ -261,7 +261,10 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             throws CustomResponseException, DAOException, DataException, IOException {
     }
 
-
+    /**
+     * calls save method with default updateRelatedObjectsInIndex=false.
+     * @param object the object to save
+     */
     public void save(T object) throws DataException {
         save(object, false);
     }
@@ -284,15 +287,17 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param baseIndexedBean
      *            object
+     *
+     * @param updateRelatedObjectsInIndex if relatedObjects need to be updated in Index
      */
-    public void save(T baseIndexedBean, boolean saveRelated) throws DataException {
+    public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.INDEX);
             saveToDatabase(baseIndexedBean);
             // TODO: find out why properties lists are save double
             T savedBean = getById(baseIndexedBean.getId());
             saveToIndex(savedBean, true);
-            if (saveRelated) {
+            if (updateRelatedObjectsInIndex) {
                 manageDependenciesForIndex(savedBean);
             }
             savedBean.setIndexAction(IndexAction.DONE);
