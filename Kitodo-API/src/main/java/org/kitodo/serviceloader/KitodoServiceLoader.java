@@ -383,23 +383,41 @@ public class KitodoServiceLoader<T> {
      * <p>If used inappropriately, this may lead to unexpected behaviour, e.g., 
      * when referring to the same singleton from multiple modules, since 
      * classes could be loaded twice.</p>
+     * 
+     * <p>If several modules depend on each other (load classes from another 
+     * module), both modules have to be present at the same time when loading 
+     * happens. Otherwise, the order at which jars are loaded could break 
+     * things, since new classes will not be visible to jars loaded by an 
+     * earlier class loader created at an earlier time.</p>
      */
     private void loadModulesIntoClasspath() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
-
-
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
+            
+            // collect urls of new jars present in the module directory
+            Set<URL> jarsToBeAdded = new HashSet<URL>();
             for (Path f : stream) {
 
                 File loc = new File(f.toString());
                 URL url = loc.toURI().toURL();
-                                
+
                 if (!KitodoServiceLoader.loadedJars.contains(url.toString())) {
+                    jarsToBeAdded.add(url);
+                }
+            }
+
+            // create a single URL class loader with all jars
+            // such that plugins can load classes from each other
+            if (jarsToBeAdded.size() > 0) {
+
+                for (URL url : jarsToBeAdded) {
                     logger.info("Loading module jar file from path " + url.toString());
                     KitodoServiceLoader.loadedJars.add(url.toString());
-                    classLoaderChain = new URLClassLoader(new URL[] {url}, KitodoServiceLoader.classLoaderChain);
                 }
+                URL[] urls = new URL[jarsToBeAdded.size()];
+                jarsToBeAdded.toArray(urls);
+                classLoaderChain = new URLClassLoader(urls, KitodoServiceLoader.classLoaderChain);
             }
         } catch (IOException e) {
             logger.error(ERROR, e.getMessage());
