@@ -23,7 +23,6 @@
 
     <properties>
         <powermock.version>1.7.4</powermock.version>
-        <jaxb.version>2.3.0</jaxb.version>
     </properties>
 
     <artifactId>kitodo-api</artifactId>
@@ -159,17 +158,17 @@
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Include jaxb runtime dependencies which have been removed 
+        <!-- Include jaxb runtime dependencies which have been removed
              from system library in Java 11+ -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${jaxb.version}</version>
+            <version>${jaxb.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>${jaxb.version}</version>
+            <version>${jaxb.glassfish-runtime.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
