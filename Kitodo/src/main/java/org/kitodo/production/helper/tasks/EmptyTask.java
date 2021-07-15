@@ -286,7 +286,7 @@ public class EmptyTask extends Thread {
      *
      * @return the task state
      */
-    TaskState getTaskState() {
+   public TaskState getTaskState() {
         switch (getState()) {
             case NEW:
                 return TaskState.NEW;

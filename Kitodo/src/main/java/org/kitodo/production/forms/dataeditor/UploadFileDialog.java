@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.FilenameUtils;
@@ -46,6 +46,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
+import org.kitodo.production.helper.tasks.TaskState;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
@@ -81,6 +82,7 @@ public class UploadFileDialog {
     private List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = new LinkedList<>();
     private Integer progress;
     private List<EmptyTask> generateMediaTasks = new ArrayList<>();
+    private final List<TaskState> taskBlockedStates = Arrays.asList(TaskState.CRASHED, TaskState.STOPPED, TaskState.STOPPING);
 
     /**
      * Constructor.
@@ -177,8 +179,13 @@ public class UploadFileDialog {
      *
      * @return value of progress
      */
-    public int getProgress() {
-        progress = updateProgress();
+    public int getProgress() throws NoSuchMetadataFieldException, InvalidImagesException {
+        if (generateMediaTasks.stream().anyMatch(emptyTask -> taskBlockedStates.contains(emptyTask.getTaskState()))) {
+            PrimeFaces.current().executeScript("PF('progressBar').cancel();");
+            updateWorkpiece();
+        } else {
+            progress = updateProgress();
+        }
         return progress;
     }
 
@@ -368,11 +375,18 @@ public class UploadFileDialog {
      * Reset the progress bar after generating media is completed and update the workpiece.
      */
     public void updateWorkpiece() throws InvalidImagesException, NoSuchMetadataFieldException {
-        progress = 0;
         generateMediaTasks.clear();
         addMediaToWorkpiece();
         refresh();
-        Helper.setMessage(Helper.getTranslation("uploadMediaCompleted"));
+        if (progress != 100) {
+            Helper.setErrorMessage("generateMediaFailed");
+            PrimeFaces.current().executeScript("PF('uploadFileDialog').hide();");
+            PrimeFaces.current().ajax().update("logicalTree", "metadataAccordion:logicalMetadataWrapperPanel",
+                    "paginationForm:paginationWrapperPanel", "galleryWrapperPanel");
+        } else {
+            Helper.setMessage(Helper.getTranslation("uploadMediaCompleted"));
+        }
+        progress = 0;
     }
 
     private void addMediaToWorkpiece() throws InvalidImagesException {

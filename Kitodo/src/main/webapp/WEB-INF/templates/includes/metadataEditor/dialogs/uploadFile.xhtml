@@ -31,7 +31,7 @@
             <p:remoteCommand name="generateMedia"
                              action="#{DataEditorForm.uploadFileDialog.generateNewUploadedMedia}"
                              update="uploadFileDialogForm:progressBar"/>
-            <p:panelGrid id="uploadFileGrid" columns="1" layout="grid">
+            <p:panelGrid id="uploadFileGrid" columns="1" layout="grid" style="padding: 10px">
                 <p:row>
                     <h3>#{msgs.uploadMedia}</h3>
                     <div>
@@ -75,6 +75,8 @@
                                     update="logicalTree,metadataAccordion:logicalMetadataWrapperPanel,paginationForm:paginationWrapperPanel,galleryWrapperPanel"/>
                         </p:progressBar>
                     </div>
+                </p:row>
+                <p:row>
                     <h:panelGroup styleClass="dialogButtonWrapper right">
                         <p:commandButton value="#{msgs.close}"
                                          widgetVar="closeButton"

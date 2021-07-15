@@ -37,6 +37,6 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
  * <dd>The thread is in operation.</dd>
  * </dl>
  */
-enum TaskState {
+public enum TaskState {
     CRASHED, FINISHED, NEW, STOPPED, STOPPING, WORKING
 }
