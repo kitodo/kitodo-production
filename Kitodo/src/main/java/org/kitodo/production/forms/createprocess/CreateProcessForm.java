@@ -412,7 +412,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         // TODO: do the same 'ensureNonEmptyTitles' for child processes?
         if (ImportService.ensureNonEmptyTitles(this.processes)) {
             // saving the main process automatically saves it's parent and ancestor processes as well!
-            ServiceManager.getProcessService().save(getMainProcess());
+            ServiceManager.getProcessService().save(getMainProcess(), true);
         }
 
         // add links between child processes and main process

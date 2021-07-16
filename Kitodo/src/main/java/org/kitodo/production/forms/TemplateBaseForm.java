@@ -29,7 +29,7 @@ class TemplateBaseForm extends ProcessListBaseView {
 
     void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         try {
-            ServiceManager.getTaskService().save(task);
+            ServiceManager.getTaskService().save(task, true);
             ServiceManager.getTaskService().evict(task);
             reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {

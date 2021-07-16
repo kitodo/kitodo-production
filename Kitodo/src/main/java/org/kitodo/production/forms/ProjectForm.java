@@ -249,7 +249,7 @@ public class ProjectForm extends BaseForm {
                 }
                 this.deletedTemples = new ArrayList<>();
 
-                ServiceManager.getProjectService().save(this.project);
+                ServiceManager.getProjectService().save(this.project, true);
 
                 return projectsPage;
             } catch (DAOException | DataException e) {

@@ -761,7 +761,7 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusDown(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus);
+                ServiceManager.getProcessService().save(processForStatus, true);
                 updateProcessSortHelperStatus(processForStatus);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",

@@ -513,11 +513,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         String title = makeTitle(issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"), genericFields);
         getGeneratedProcess().setTitle(title);
-        processService.save(getGeneratedProcess());
+        processService.save(getGeneratedProcess(), true);
         processService.refresh(getGeneratedProcess());
         getGeneratedProcess().setParent(yearProcess);
         yearProcess.getChildren().add(getGeneratedProcess());
-        processService.save(getGeneratedProcess());
+        processService.save(getGeneratedProcess(), true);
         createMetadataFileForProcess(individualIssuesForProcess, title);
 
         if (logger.isTraceEnabled()) {
@@ -658,7 +658,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
         ProcessService.checkTasks(yearProcess, yearWorkpiece.getRootElement().getType());
-        processService.save(yearProcess);
+        processService.save(yearProcess, true);
 
         this.yearProcess = null;
         this.yearWorkpiece = null;
@@ -729,7 +729,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         getGeneratedProcess().setParent(overallProcess);
         overallProcess.getChildren().add(getGeneratedProcess());
-        processService.save(getGeneratedProcess());
+        processService.save(getGeneratedProcess(), true);
 
         fileService.createProcessLocation(getGeneratedProcess());
         final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
@@ -790,7 +790,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
         metsService.saveWorkpiece(overallWorkpiece, overallMetadataFileUri);
         ProcessService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
-        processService.save(overallProcess);
+        processService.save(overallProcess,true);
 
         if (logger.isTraceEnabled()) {
             logger.trace("Finish took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
