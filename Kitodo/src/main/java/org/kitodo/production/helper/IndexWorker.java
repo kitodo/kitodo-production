@@ -68,7 +68,7 @@ public class IndexWorker implements Runnable {
                 if (indexAllObjects) {
                     indexObjects(searchService.getAll(this.startIndexing, amountToIndex));
                 } else {
-                    indexObjects(searchService.getAllNotIndexed());
+                    indexObjects(searchService.getAllNotIndexed(this.startIndexing, amountToIndex));
                 }
             } else {
                 if (amountToIndex > indexLimit) {
