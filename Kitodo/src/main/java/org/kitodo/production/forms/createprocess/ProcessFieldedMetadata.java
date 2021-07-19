@@ -451,6 +451,15 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     /**
+     * Return this ProcessFieldedMetadata as MetadataGroup.
+     *
+     * @return MetadataGroup representing this ProcessFieldedMetadata
+     */
+    public Collection<Metadata> getChildMetadata() {
+        return metadata;
+    }
+
+    /**
      * Returns the rows that JSF has to display.
      *
      * @return the rows that JSF has to display
@@ -567,5 +576,23 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         this.treeNode = new DefaultTreeNode();
         treeNode.setExpanded(true);
         createMetadataTable();
+    }
+
+    /**
+     * Get metadataView.
+     *
+     * @return value of metadataView
+     */
+    public ComplexMetadataViewInterface getMetadataView() {
+        return metadataView;
+    }
+
+    /**
+     * Get additionallySelectedFields.
+     *
+     * @return value of additionallySelectedFields
+     */
+    public Collection<String> getAdditionallySelectedFields() {
+        return additionallySelectedFields;
     }
 }

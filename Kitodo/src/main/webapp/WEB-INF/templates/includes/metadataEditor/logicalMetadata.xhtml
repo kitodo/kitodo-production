@@ -35,13 +35,13 @@
                          rendered="#{not readOnly}">
                 <p:row>
                     <h:panelGroup id="addMetadataButtonWrapper"
-                                  title="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems ? msgs['dataEditor.addMetadata.noMetadataAddable'] : msgs['dataEditor.addMetadata.newMetadata']}">
+                                  title="#{DataEditorForm.metadataPanel.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
                         <p:commandButton id="addMetadataButton"
                                          icon="fa fa-plus"
                                          styleClass="secondary"
-                                         disabled="#{empty DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"
                                          update="addMetadataForm"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true, DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
+                                         disabled="#{not DataEditorForm.metadataPanel.metadataAddableToStructureElement()}"
+                                         action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForStructure(DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
                                          oncomplete="PF('addMetadataDialog').show();">
                             <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{null}"/>
                         </p:commandButton>

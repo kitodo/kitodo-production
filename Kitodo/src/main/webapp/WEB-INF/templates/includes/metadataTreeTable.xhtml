@@ -26,6 +26,7 @@
     <!--@elvariable id="readOnly" type="boolean"-->
     <!--@elvariable id="root" type="org.primefaces.model.TreeNode"-->
     <!--@elvariable id="buttonUpdate" type="java.lang.String"-->
+    <!--@elvariable id="node" type="org.primefaces.model.TreeNode"-->
     <p:treeTable value="#{root}"
                  var="item"
                  nodeVar="node"
@@ -143,15 +144,17 @@
                 </h:panelGroup>
 
                 <!-- button to add metadata to group -->
-                <p:commandButton id="addMetadataToGroup"
-                                 action="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(true, node.getChildren())}"
-                                 rendered="#{request.requestURI.contains('metadataEditor') and item.input eq 'dataTable'}"
-                                 icon="fa fa-plus"
-                                 styleClass="secondary"
-                                 update="addMetadataForm"
-                                 oncomplete="PF('addMetadataDialog').show()">
-                    <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{node}"/>
-                </p:commandButton>
+                <h:panelGroup title="#{DataEditorForm.metadataPanel.metadataAddableToGroup(node) ? msgs['dataEditor.addMetadata.toGroup'] : msgs['dataEditor.addMetadata.noMetadataAddableToGroup']}"
+                              rendered="#{request.requestURI.contains('metadataEditor') and item.input eq 'dataTable'}"
+                              styleClass="ui-button">
+                    <p:commandButton id="addMetadataToGroup"
+                                     action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForGroup(node)}"
+                                     disabled="#{not DataEditorForm.metadataPanel.metadataAddableToGroup(node)}"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     update="addMetadataForm"
+                                     oncomplete="PF('addMetadataDialog').show()"/>
+                </h:panelGroup>
 
                 <!-- button to delete -->
                 <p:commandButton id="deleteMetadata"
