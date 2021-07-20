@@ -621,8 +621,8 @@ public class AddDocStrucTypeDialog {
             return;
         }
         try {
-            Set<String> allowedSubstructuralElements = DataEditorService.getStructuralElementView(this.dataEditor).getAllowedSubstructuralElements()
-                    .keySet();
+            Set<String> allowedSubstructuralElements = DataEditorService.getStructuralElementView(this.dataEditor)
+                    .getAllowedSubstructuralElements().keySet();
             List<Integer> ids = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
                 dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements)
                     .stream().map(ProcessDTO::getId).collect(Collectors.toList());

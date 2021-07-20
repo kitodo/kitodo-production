@@ -1172,7 +1172,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Gets the amount of processes for the current filter
+     * Gets the amount of processes for the current filter.
      * @return amount of processes
      */
     public String getAmount() {

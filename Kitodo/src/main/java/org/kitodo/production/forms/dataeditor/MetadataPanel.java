@@ -211,7 +211,7 @@ public class MetadataPanel implements Serializable {
      * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
      */
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
-        if (metadataNode.getData() instanceof ProcessFieldedMetadata){
+        if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
             return !(DataEditorService.getAddableMetadataForGroup(this.dataEditorForm, metadataNode).isEmpty());
         } else {
             return false;

@@ -146,7 +146,6 @@ public class StructurePanel implements Serializable {
             // The selected element is the root node of the tree.
             return;
         }
-        IncludedStructuralElement parent = ancestors.getLast();
 
         Collection<View> subViews = new ArrayList<>();
         getAllSubViews(selectedStructure, subViews);
@@ -160,6 +159,8 @@ public class StructurePanel implements Serializable {
             }
         }
         subViews.removeAll(multipleViews);
+
+        IncludedStructuralElement parent = ancestors.getLast();
 
         parent.getViews().addAll(subViews);
         parent.getViews().sort(Comparator.comparingInt(v -> v.getMediaUnit().getOrder()));
