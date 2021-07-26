@@ -13,8 +13,10 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -187,7 +189,7 @@ public class RoleForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return new DualListModel<>(availableAuthorities, assignedAuthorities);
+        return new DualListModel<>(sortAuthorityListByTitle(availableAuthorities), sortAuthorityListByTitle(assignedAuthorities));
     }
 
     /**
@@ -220,7 +222,7 @@ public class RoleForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return new DualListModel<>(availableAuthorities, assignedAuthorities);
+        return new DualListModel<>(sortAuthorityListByTitle(availableAuthorities), sortAuthorityListByTitle(assignedAuthorities));
     }
 
     /**
@@ -243,5 +245,11 @@ public class RoleForm extends BaseForm {
                 this.role.getAuthorities().add(authority);
             }
         }
+    }
+
+    private List<Authority> sortAuthorityListByTitle(List<Authority> authorityListToSort) {
+        return authorityListToSort.stream()
+                .sorted(Comparator.comparing(authority -> Helper.getTranslation(authority.getTitleWithoutSuffix())))
+                .collect(Collectors.toList());
     }
 }
