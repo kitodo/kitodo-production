@@ -12,7 +12,10 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.faces.model.SelectItem;
@@ -44,11 +47,11 @@ public class PaginationPanel {
     private List<SelectItem> paginationSelectionItems;
     private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
     private String paginationStartValue = "1";
-    private List<SelectItem> paginationTypeSelectItems;
+    private Map<PaginatorType, String> paginationTypeSelectItems;
     private PaginatorType paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
     private List<IllustratedSelectItem> selectPaginationModeItems;
     private IllustratedSelectItem selectPaginationModeSelectedItem;
-    private List<SelectItem> selectPaginationScopeItems;
+    private Map<Boolean, String> selectPaginationScopeItems;
     private Boolean selectPaginationScopeSelectedItem = Boolean.TRUE;
 
     /**
@@ -260,7 +263,7 @@ public class PaginationPanel {
      *
      * @return the items for the paginationTypeSelect
      */
-    public List<SelectItem> getPaginationTypeSelectItems() {
+    public Map<PaginatorType, String> getPaginationTypeSelectItems() {
         return paginationTypeSelectItems;
     }
 
@@ -278,7 +281,7 @@ public class PaginationPanel {
      *
      * @return the items for the paginationScope
      */
-    public List<SelectItem> getSelectPaginationScopeItems() {
+    public Map<Boolean, String> getSelectPaginationScopeItems() {
         return selectPaginationScopeItems;
     }
 
@@ -330,37 +333,34 @@ public class PaginationPanel {
     }
 
     private void preparePaginationTypeSelectItems() {
-        paginationTypeSelectItems = new ArrayList<>(5);
-        paginationTypeSelectItems.add(new SelectItem(PaginatorType.ARABIC, Helper.getTranslation("arabic")));
-        paginationTypeSelectItems.add(new SelectItem(PaginatorType.ROMAN, Helper.getTranslation("roman")));
-        paginationTypeSelectItems.add(new SelectItem(PaginatorType.UNCOUNTED, Helper.getTranslation("uncounted")));
-        paginationTypeSelectItems
-                .add(new SelectItem(PaginatorType.FREETEXT, Helper.getTranslation("paginationFreetext")));
-        paginationTypeSelectItems
-                .add(new SelectItem(PaginatorType.ADVANCED, Helper.getTranslation("paginationAdvanced")));
+        paginationTypeSelectItems = new LinkedHashMap<>(5);
+        paginationTypeSelectItems.put(PaginatorType.ARABIC, "arabic");
+        paginationTypeSelectItems.put(PaginatorType.ROMAN, "roman");
+        paginationTypeSelectItems.put(PaginatorType.UNCOUNTED, "uncounted");
+        paginationTypeSelectItems.put(PaginatorType.FREETEXT, "paginationFreetext");
+        paginationTypeSelectItems.put(PaginatorType.ADVANCED, "paginationAdvanced");
     }
 
     private void prepareSelectPaginationModeItems() {
         selectPaginationModeItems = new ArrayList<>(6);
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.PAGES, Helper.getTranslation("pageCount"),
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.PAGES, "pageCount",
                 "paginierung_seite.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES,
-                Helper.getTranslation("columnCount"), "paginierung_spalte.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION,
-                Helper.getTranslation("blattzaehlung"), "paginierung_blatt.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION,
-                Helper.getTranslation("blattzaehlungrectoverso"), "paginierung_blatt_rectoverso.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO,
-                Helper.getTranslation("pageCountRectoVerso"), "paginierung_seite_rectoverso.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES,
-                Helper.getTranslation("pageCountDouble"), "paginierung_doppelseite.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "columnCount",
+                "paginierung_spalte.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "blattzaehlung",
+                "paginierung_blatt.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "blattzaehlungrectoverso",
+                "paginierung_blatt_rectoverso.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO, "pageCountRectoVerso",
+                "paginierung_seite_rectoverso.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "pageCountDouble",
+                "paginierung_doppelseite.svg"));
     }
 
     private void prepareSelectPaginationScopeItems() {
-        selectPaginationScopeItems = new ArrayList<>(2);
-        selectPaginationScopeItems
-                .add(new SelectItem(Boolean.TRUE, Helper.getTranslation("abDerErstenMarkiertenSeite")));
-        selectPaginationScopeItems.add(new SelectItem(Boolean.FALSE, Helper.getTranslation("nurDieMarkiertenSeiten")));
+        selectPaginationScopeItems = new HashMap<>(2);
+        selectPaginationScopeItems.put(Boolean.TRUE, "abDerErstenMarkiertenSeite");
+        selectPaginationScopeItems.put(Boolean.FALSE, "nurDieMarkiertenSeiten");
     }
 
     /**
