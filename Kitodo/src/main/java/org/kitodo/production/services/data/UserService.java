@@ -428,7 +428,6 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         filter.setCreationDate(new Date());
         filter.setUser(user);
         ServiceManager.getFilterService().save(filter);
-        refresh(user);
     }
 
     /**
@@ -439,7 +438,6 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @return list of filters
      */
     private List<String> getFiltersForUser(User user) {
-        refresh(user);
         List<String> userFilters = new ArrayList<>();
         List<Filter> filters = user.getFilters();
         for (Filter filter : filters) {
@@ -463,7 +461,6 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
                 ServiceManager.getFilterService().remove(filter);
             }
         }
-        refresh(user);
     }
 
     /**

@@ -202,7 +202,6 @@ public class CommentForm extends BaseForm {
      * Correction message to previous Tasks.
      */
     public List<Task> getPreviousStepsForProblemReporting() {
-        refreshProcess(this.process);
         List<Task> currentTaskOptions = getCurrentTaskOptions();
         if (currentTaskOptions.isEmpty()) {
             return Collections.emptyList();
@@ -253,7 +252,6 @@ public class CommentForm extends BaseForm {
     private void refreshProcess(Process process) {
         try {
             if (!Objects.equals(process.getId(), 0)) {
-                ServiceManager.getProcessService().refresh(process);
                 if (Objects.nonNull(this.currentTask)) {
                     this.currentTask.setProcess(ServiceManager.getProcessService().getById(process.getId()));
                 }

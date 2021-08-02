@@ -205,9 +205,5 @@ public class BatchProcessHelper extends BatchHelper {
 
     private void loadProcessProperties() {
         this.properties = this.currentProcess.getProperties();
-
-        for (Process process : this.processes) {
-            ServiceManager.getProcessService().refresh(process);
-        }
     }
 }

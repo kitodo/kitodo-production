@@ -126,7 +126,6 @@ public class CurrentTaskForm extends BaseForm {
      * @return page
      */
     public String editTask() {
-        ServiceManager.getTaskService().refresh(this.currentTask);
         return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
@@ -538,7 +537,6 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     private void loadProcessProperties() {
-        ServiceManager.getProcessService().refresh(this.myProcess);
         setProperties(this.myProcess.getProperties());
     }
 

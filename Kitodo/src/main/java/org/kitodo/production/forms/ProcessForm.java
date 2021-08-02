@@ -196,7 +196,6 @@ public class ProcessForm extends TemplateBaseForm {
         } else {
             Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, "processTitleEmpty");
         }
-        reload();
         return this.stayOnCurrentPage;
     }
 
@@ -637,14 +636,6 @@ public class ProcessForm extends TemplateBaseForm {
 
     public void setWorkpieceProperty(Property workpieceProperty) {
         this.workpieceProperty = workpieceProperty;
-    }
-
-    /**
-     * Reload task and process.
-     */
-    private void reload() {
-        reload(this.task, ObjectType.TASK.getTranslationSingular(), ServiceManager.getTaskService());
-        reload(this.process, ObjectType.PROCESS.getTranslationSingular(), ServiceManager.getProcessService());
     }
 
     /**
