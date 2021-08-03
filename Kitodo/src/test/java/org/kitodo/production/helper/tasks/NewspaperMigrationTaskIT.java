@@ -121,8 +121,8 @@ public class NewspaperMigrationTaskIT {
         processService.save(newspaperProcess);
         Process yearProcess = processService.getById(5);
         processService.save(yearProcess);
-        Assert.assertEquals("should have created year process", 1, processService.findByTitle("NewsMiTe_1850").size());
-        Assert.assertEquals("should have created overall process", 1, processService.findByTitle("NewsMiTe").size());
+        Assert.assertEquals("should have created year process", 1, processService.findByTitle("NewsMiTe-1850").size());
+        Assert.assertEquals("should have created overall process", 1, processService.findByTitle("NewsMiTe", true, true).size());
         Assert.assertTrue("should have added link from newspaper process to year process",
             newspaperProcess.getChildren().contains(yearProcess));
         List<Process> linksInYear = yearProcess.getChildren();

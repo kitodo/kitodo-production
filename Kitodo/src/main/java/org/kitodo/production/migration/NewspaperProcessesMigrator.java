@@ -14,8 +14,10 @@ package org.kitodo.production.migration;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,7 +35,9 @@ import javax.naming.ConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -41,6 +45,8 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.BatchType;
@@ -296,6 +302,7 @@ public class NewspaperProcessesMigrator {
         URI metadataFilePath = fileService.getMetadataFilePath(process);
         URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
         URI yearFilePath = fileService.createYearFile(metadataFilePath);
+        overallWorkpiece = metsService.loadWorkpiece(anchorFilePath);
 
         dataEditorService.readData(anchorFilePath);
         dataEditorService.readData(yearFilePath);
@@ -313,9 +320,11 @@ public class NewspaperProcessesMigrator {
         final String year = createLinkStructureAndCopyDates(process, yearFilePath, yearIncludedStructuralElement);
 
         workpiece.setRootElement(cutOffTopLevel(yearIncludedStructuralElement));
+        moveMetadataFromYearToIssue(process, processTitle, yearFilePath, workpiece);
+
         metsService.saveWorkpiece(workpiece, metadataFilePath);
 
-        for (Metadata metadata : metsService.loadWorkpiece(anchorFilePath).getRootElement().getMetadata()) {
+        for (Metadata metadata : overallWorkpiece.getRootElement().getMetadata()) {
             if (!overallMetadata.contains(metadata)) {
                 logger.debug("Adding metadata to newspaper {}: {}", title, metadata);
                 overallMetadata.add(metadata);
@@ -331,6 +340,33 @@ public class NewspaperProcessesMigrator {
             logger.trace("Converting {} took {} ms.", processTitle,
                 TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+    }
+
+    private void moveMetadataFromYearToIssue(Process process, String processTitle, URI yearFilePath,
+            Workpiece workpiece) throws IOException {
+        Workpiece yearWorkpiece = metsService.loadWorkpiece(yearFilePath);
+        // Copy metadata from year to issue
+        Collection<Metadata> processMetadataFromYear = new ArrayList<>(
+                yearWorkpiece.getRootElement().getChildren().get(0).getMetadata());
+        List<IncludedStructuralElement> issuesIncludedStructuralElements = workpiece.getRootElement().getChildren()
+                .get(0).getChildren();
+        issuesIncludedStructuralElements.get(0).getMetadata().addAll(processMetadataFromYear);
+
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
+                .getRulesetManagement();
+
+        // find and load the ruleset file
+        String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
+        String rulesetFullPath = Paths.get(rulesetDir, process.getRuleset().getFile()).toString();
+        rulesetManagement.load(new File(rulesetFullPath));
+        Collection<String> functionalKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
+        String titleKey = functionalKeys.isEmpty() ? FIELD_TITLE : functionalKeys.stream().findFirst().get();
+
+        MetadataEntry titelMetadata = new MetadataEntry();
+        titelMetadata.setValue(processTitle);
+        titelMetadata.setKey(titleKey);
+        titelMetadata.setDomain(MdSec.DMD_SEC);
+        issuesIncludedStructuralElements.get(0).getMetadata().add(titelMetadata);
     }
 
     /**
@@ -375,7 +411,7 @@ public class NewspaperProcessesMigrator {
      */
     private String createLinkStructureAndCopyDates(Process process, URI yearMetadata,
             IncludedStructuralElement metaFileYearIncludedStructuralElement)
-            throws IOException {
+            throws IOException, ConfigurationException {
 
         IncludedStructuralElement yearFileYearIncludedStructuralElement = metsService.loadWorkpiece(yearMetadata)
                 .getRootElement().getChildren().get(0);
@@ -385,6 +421,8 @@ public class NewspaperProcessesMigrator {
             year = MetadataEditor.getMetadataValue(yearFileYearIncludedStructuralElement, FIELD_TITLE);
         }
         IncludedStructuralElement processYearIncludedStructuralElement = years.computeIfAbsent(year, theYear -> {
+            // remove existing layers in the year
+            yearFileYearIncludedStructuralElement.getChildren().get(0).getChildren().get(0).getChildren().clear();
             MetadataEditor.writeMetadataEntry(yearFileYearIncludedStructuralElement, yearSimpleMetadataView, theYear);
             return yearFileYearIncludedStructuralElement;
         });
@@ -397,7 +435,22 @@ public class NewspaperProcessesMigrator {
     private void createLinkStructureAndCopyMonths(Process process,
             IncludedStructuralElement metaFileYearIncludedStructuralElement,
             IncludedStructuralElement yearFileYearIncludedStructuralElement, String year,
-            IncludedStructuralElement processYearIncludedStructuralElement) {
+            IncludedStructuralElement processYearIncludedStructuralElement) throws ConfigurationException {
+
+        // Add types to month and day
+        StructuralElementViewInterface newspaperView = rulesetManagement.getStructuralElementView(
+            overallWorkpiece.getRootElement().getType(), acquisitionStage, Locale.LanguageRange.parse("en"));
+        StructuralElementViewInterface yearDivisionView = nextSubView(rulesetManagement, newspaperView,
+            acquisitionStage);
+        yearSimpleMetadataView = yearDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
+        StructuralElementViewInterface monthDivisionView = nextSubView(rulesetManagement, yearDivisionView,
+            acquisitionStage);
+        monthSimpleMetadataView = monthDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
+        String monthType = monthDivisionView.getId();
+        StructuralElementViewInterface dayDivisionView = nextSubView(rulesetManagement, monthDivisionView,
+            acquisitionStage);
+        daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(ConfigurationException::new);
+        String dayType = dayDivisionView.getId();
 
         for (Iterator<IncludedStructuralElement> yearFileMonthIncludedStructuralElementsIterator = yearFileYearIncludedStructuralElement
                 .getChildren()
@@ -410,17 +463,25 @@ public class NewspaperProcessesMigrator {
                     .next();
             String month = getCompletedDate(yearFileMonthIncludedStructuralElement, year);
             IncludedStructuralElement processMonthIncludedStructuralElement = computeIfAbsent(
-                processYearIncludedStructuralElement, monthSimpleMetadataView, month);
+                processYearIncludedStructuralElement, monthSimpleMetadataView, month, monthType);
             MetadataEditor.writeMetadataEntry(metaFileMonthIncludedStructuralElement, monthSimpleMetadataView, month);
 
             createLinkStructureAndCopyDays(process, yearFileMonthIncludedStructuralElement,
-                metaFileMonthIncludedStructuralElement, month, processMonthIncludedStructuralElement);
+                metaFileMonthIncludedStructuralElement, month, dayType, processMonthIncludedStructuralElement);
         }
+    }
+
+    private static StructuralElementViewInterface nextSubView(RulesetManagementInterface ruleset,
+                                                             StructuralElementViewInterface superiorView, String acquisitionStage) {
+
+        Map<String, String> allowedSubstructuralElements = superiorView.getAllowedSubstructuralElements();
+        String subType = allowedSubstructuralElements.entrySet().iterator().next().getKey();
+        return ruleset.getStructuralElementView(subType, acquisitionStage, Locale.LanguageRange.parse("en"));
     }
 
     private void createLinkStructureAndCopyDays(Process process,
             IncludedStructuralElement yearFileMonthIncludedStructuralElement,
-            IncludedStructuralElement metaFileMonthIncludedStructuralElement, String month,
+            IncludedStructuralElement metaFileMonthIncludedStructuralElement, String month, String dayType,
             IncludedStructuralElement processMonthIncludedStructuralElement) {
 
         for (Iterator<IncludedStructuralElement> yearFileDayIncludedStructuralElementsIterator = yearFileMonthIncludedStructuralElement
@@ -434,7 +495,7 @@ public class NewspaperProcessesMigrator {
                     .next();
             String day = getCompletedDate(yearFileDayIncludedStructuralElement, month);
             IncludedStructuralElement processDayIncludedStructuralElement = computeIfAbsent(
-                processMonthIncludedStructuralElement, daySimpleMetadataView, day);
+                processMonthIncludedStructuralElement, daySimpleMetadataView, day, dayType);
             MetadataEditor.writeMetadataEntry(metaFileDayIncludedStructuralElement, daySimpleMetadataView, day);
 
             createLinkStructureOfIssues(process, yearFileDayIncludedStructuralElement,
@@ -446,10 +507,7 @@ public class NewspaperProcessesMigrator {
             IncludedStructuralElement yearFileDayIncludedStructuralElement,
             IncludedStructuralElement processDayIncludedStructuralElement) {
 
-        int numberOfIssues = yearFileDayIncludedStructuralElement.getChildren().size();
-        for (int index = 0; index < numberOfIssues; index++) {
-            MetadataEditor.addLink(processDayIncludedStructuralElement, process.getId());
-        }
+        MetadataEditor.addLink(processDayIncludedStructuralElement, process.getId());
     }
 
     /**
@@ -465,7 +523,7 @@ public class NewspaperProcessesMigrator {
      * @return child with value
      */
     private static IncludedStructuralElement computeIfAbsent(IncludedStructuralElement includedStructuralElement,
-            SimpleMetadataViewInterface simpleMetadataView, String value) {
+            SimpleMetadataViewInterface simpleMetadataView, String value, String type) {
 
         int index = 0;
         for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
@@ -480,6 +538,7 @@ public class NewspaperProcessesMigrator {
             }
         }
         IncludedStructuralElement computed = new IncludedStructuralElement();
+        computed.setType(type);
         MetadataEditor.writeMetadataEntry(computed, simpleMetadataView, value);
         includedStructuralElement.getChildren().add(index, computed);
         return computed;
@@ -525,6 +584,7 @@ public class NewspaperProcessesMigrator {
             CommandException {
         final long begin = System.nanoTime();
         logger.info("Creating overall process {}...", title);
+        overallWorkpiece.getRootElement().getChildren().clear();
 
         ProcessGenerator processGenerator = new ProcessGenerator();
         processGenerator.generateProcess(templateId, projectId);
@@ -567,6 +627,8 @@ public class NewspaperProcessesMigrator {
         Process yearProcess = processGenerator.getGeneratedProcess();
         yearProcess.setTitle(yearTitle);
         ProcessService.checkTasks(yearProcess, yearToCreate.getValue().getType());
+        // remove metadata from year (which originally relates to issue and was copyed there)
+        yearToCreate.getValue().getMetadata().clear();
         processService.saveToDatabase(yearProcess);
 
         MetadataEditor.addLink(overallWorkpiece.getRootElement(), yearProcess.getId());
@@ -677,7 +739,7 @@ public class NewspaperProcessesMigrator {
      * @return the title
      */
     private String getYearTitle(String year) {
-        return title + '_' + year.replace("/", "--");
+        return title + '-' + year.replace("/", "--");
     }
 
     /**

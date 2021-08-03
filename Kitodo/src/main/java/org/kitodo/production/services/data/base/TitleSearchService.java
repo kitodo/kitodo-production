@@ -60,10 +60,26 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      * @param contains
      *            if true result should contain given plain text, if false it should
      *            not contain
+     * @param withKeyword
+     *             if query should be made for keyword
+     * @return list of search result
+     */
+    public List<Map<String, Object>> findByTitle(String title, boolean contains, boolean withKeyword) throws DataException {
+        return findDocuments(getQueryTitle(title, contains, withKeyword));
+    }
+
+    /**
+     * Find object matching to given title.
+     *
+     * @param title
+     *            of the searched process
+     * @param contains
+     *            if true result should contain given plain text, if false it should
+     *            not contain
      * @return list of search result
      */
     public List<Map<String, Object>> findByTitle(String title, boolean contains) throws DataException {
-        return findDocuments(getQueryTitle(title, contains));
+        return findByTitle(title, contains, false);
     }
 
     /**
@@ -77,8 +93,8 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
         return findDocuments(getWildcardQueryTitle(title));
     }
 
-    /**
-     * Get query to find object matching to given title.
+     /**
+     * Get query to find object matching to given title with keyword (exactMatch).
      *
      * @param title
      *            of the searched process
@@ -87,8 +103,9 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      *            not contain
      * @return query
      */
-    public QueryBuilder getQueryTitle(String title, boolean contains) {
-        return createSimpleQuery(TITLE, title, contains, Operator.AND);
+    public QueryBuilder getQueryTitle(String title, boolean contains, boolean withKeyword) {
+        String titleKey = withKeyword ? TITLE + ".keyword" : TITLE;
+        return createSimpleQuery(titleKey, title, contains, Operator.AND);
     }
 
     /**
