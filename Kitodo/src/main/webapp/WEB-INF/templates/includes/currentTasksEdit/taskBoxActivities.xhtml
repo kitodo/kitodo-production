@@ -85,6 +85,7 @@
                     <h:commandLink id="readXML"
                                    action="#{DataEditorForm.open(task.process.id, 'currentTasksEdit.jsf?id='.concat(task.id))}"
                                    rendered="#{task.typeMetadata and process.blockedUser == null}"
+                                   onclick="$('#loadingScreen').show()"
                                    title="#{msgs.metadataEdit}">
                         <f:actionListener binding="#{CommentForm.setProcessById(task.process.id)}"/>
                         <f:setPropertyActionListener target="#{DataEditorForm.templateTaskId}" value="#{CurrentTaskForm.getCorrespondingTemplateTaskId(task)}"/>
