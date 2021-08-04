@@ -30,6 +30,7 @@
                     <p:ajax event="change"/>
                 </p:inputText>
                 <p:commandButton id="generateTitleButton"
+                                 process="@this"
                                  actionListener="#{CreateProcessForm.processDataTab.generateProcessTitleAndTiffHeader}"
                                  icon="fa fa-cog" title="#{msgs.generate}"/>
             </div>
