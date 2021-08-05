@@ -289,7 +289,7 @@ public class WorkflowForm extends BaseForm {
 
     private void saveWorkflow() {
         try {
-            ServiceManager.getWorkflowService().save(this.workflow);
+            ServiceManager.getWorkflowService().save(this.workflow, true);
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

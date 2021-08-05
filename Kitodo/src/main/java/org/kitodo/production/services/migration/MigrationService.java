@@ -191,11 +191,11 @@ public class MigrationService {
                 process.getTitle(), 100 * currentProcess / numberOfProcesses);
             process.setTemplate(template);
             projects.put(process.getProject(),"");
-            ServiceManager.getProcessService().save(process);
+            ServiceManager.getProcessService().save(process, true);
         }
         template.getProjects().addAll(projects.keySet());
         template.getProcesses().addAll(processesToAddToTemplate);
-        ServiceManager.getTemplateService().save(template);
+        ServiceManager.getTemplateService().save(template, true);
     }
 
     /**

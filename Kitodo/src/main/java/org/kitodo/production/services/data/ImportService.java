@@ -1056,7 +1056,7 @@ public class ImportService {
             }
             processTempProcess(tempProcess, template, managementInterface, acquisitionStage, priorityList);
             Process childProcess = tempProcess.getProcess();
-            ServiceManager.getProcessService().save(childProcess);
+            ServiceManager.getProcessService().save(childProcess, true);
             ProcessService.setParentRelations(mainProcess, childProcess);
         }
     }
@@ -1182,7 +1182,7 @@ public class ImportService {
             tempProcess = processList.get(0);
             processTempProcess(tempProcess, template,
                 ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
-            ServiceManager.getProcessService().save(tempProcess.getProcess());
+            ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
             URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
             tempProcess.getProcess().setProcessBaseUri(processBaseUri);
             OutputStream out = ServiceManager.getFileService()

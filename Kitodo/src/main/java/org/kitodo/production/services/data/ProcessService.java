@@ -280,7 +280,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public void saveToIndex(Process process, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
         process.setMetadata(getMetadataForIndex(process));
-        process.setBaseType(getBaseType(process));
+        process.setBaseType(getBaseType(process.getId()));
         super.saveToIndex(process, forceRefresh);
     }
 

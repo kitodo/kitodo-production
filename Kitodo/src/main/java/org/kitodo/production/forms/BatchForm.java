@@ -301,7 +301,7 @@ public class BatchForm extends BaseForm {
         try {
             for (Batch selectedBatch : this.selectedBatches) {
                 selectedBatch.getProcesses().addAll(this.selectedProcesses);
-                ServiceManager.getBatchService().save(selectedBatch);
+                ServiceManager.getBatchService().save(selectedBatch, true);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                     addCommentsToBatchProcesses(Helper.getTranslation("addToBatch",
                             ServiceManager.getBatchService().getLabel(selectedBatch)));
@@ -326,7 +326,7 @@ public class BatchForm extends BaseForm {
 
         for (Batch selectedBatch : this.selectedBatches) {
             selectedBatch.getProcesses().removeAll(this.selectedProcesses);
-            ServiceManager.getBatchService().save(selectedBatch);
+            ServiceManager.getBatchService().save(selectedBatch, true);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 addCommentsToBatchProcesses(Helper.getTranslation("removeFromBatch",
                         ServiceManager.getBatchService().getLabel(selectedBatch)));
@@ -388,7 +388,7 @@ public class BatchForm extends BaseForm {
                 batch = new Batch(selectedProcesses);
             }
 
-            ServiceManager.getBatchService().save(batch);
+            ServiceManager.getBatchService().save(batch, true);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 addCommentsToBatchProcesses(Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(batch)));
                 ServiceManager.getProcessService().saveList(selectedProcesses);

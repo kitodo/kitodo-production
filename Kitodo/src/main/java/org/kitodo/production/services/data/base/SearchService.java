@@ -262,6 +262,14 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
+     * calls save method with default updateRelatedObjectsInIndex=false.
+     * @param object the object to save
+     */
+    public void save(T object) throws DataException {
+        save(object, false);
+    }
+
+    /**
      * Method saves object to database and document to the index of Elastic Search.
      * This method binds three other methods: save to database, save to index and
      * save dependencies to index.
@@ -279,15 +287,19 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param baseIndexedBean
      *            object
+     *
+     * @param updateRelatedObjectsInIndex if relatedObjects need to be updated in Index
      */
-    public void save(T baseIndexedBean) throws DataException {
+    public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.INDEX);
             saveToDatabase(baseIndexedBean);
             // TODO: find out why properties lists are save double
             T savedBean = getById(baseIndexedBean.getId());
             saveToIndex(savedBean, true);
-            manageDependenciesForIndex(savedBean);
+            if (updateRelatedObjectsInIndex) {
+                manageDependenciesForIndex(savedBean);
+            }
             savedBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(savedBean);
         } catch (DAOException e) {

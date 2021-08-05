@@ -142,7 +142,7 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.getProjects().addAll(assignedProjects);
 
             try {
-                ServiceManager.getTemplateService().save(this.template);
+                ServiceManager.getTemplateService().save(this.template, true);
                 template = ServiceManager.getTemplateService().getById(this.template.getId());
                 new WorkflowControllerService().activateNextTasks(template.getTasks());
             } catch (DataException | IOException | DAOException e) {
@@ -394,7 +394,7 @@ public class TemplateForm extends TemplateBaseForm {
         if (!templateTasks.isEmpty()) {
             this.template.getTasks().clear();
             TemplateService templateService = ServiceManager.getTemplateService();
-            templateService.save(template);
+            templateService.save(template, true);
         }
         Converter converter = new Converter(this.template.getWorkflow().getTitle());
         converter.convertWorkflowToTemplate(this.template);
