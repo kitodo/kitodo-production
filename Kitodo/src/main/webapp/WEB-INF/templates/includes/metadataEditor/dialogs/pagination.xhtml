@@ -53,10 +53,10 @@
                                            value="#{msgs.pagination}"/>
                             <p:selectOneMenu id="paginationTypeSelect"
                                              value="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem}">
-                                <f:selectItems value="#{DataEditorForm.paginationPanel.paginationTypeSelectItems}"
+                                <f:selectItems value="#{DataEditorForm.paginationPanel.paginationTypeSelectItems.entrySet()}"
                                                var="type"
-                                               itemValue="#{type}"
-                                               itemLabel="#{type.label}"/>
+                                               itemValue="#{type.key}"
+                                               itemLabel="#{HelperForm.getTranslated(type.value)}"/>
                                 <p:ajax event="itemSelect" update="paginationForm:paginationWrapperPanel"/>
                             </p:selectOneMenu>
                         </div>
@@ -160,10 +160,10 @@
                             <p:selectOneMenu id="selectPaginationScope"
                                              autoWidth="false"
                                              value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
-                                <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems}"
+                                <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems.entrySet()}"
                                                var="scope"
-                                               itemValue="#{scope}"
-                                               itemLabel="#{scope.label}"/>
+                                               itemValue="#{scope.key}"
+                                               itemLabel="#{HelperForm.getTranslated(scope.value)}"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
@@ -179,12 +179,12 @@
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"
                                                var="modeSelection"
                                                itemValue="#{modeSelection}"
-                                               itemLabel="#{modeSelection.label}"/>
+                                               itemLabel="#{HelperForm.getTranslated(modeSelection.label)}"/>
                                 <p:column style="width:10%;">
                                     <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
                                 </p:column>
                                 <p:column>
-                                    <h:outputText value="#{mode.label}"/>
+                                    <h:outputText value="#{HelperForm.getTranslated(mode.label)}"/>
                                 </p:column>
                                 <f:attribute name="illustratedSelectItems"
                                              value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"/>
