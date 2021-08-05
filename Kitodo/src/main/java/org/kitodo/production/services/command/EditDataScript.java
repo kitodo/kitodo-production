@@ -125,7 +125,43 @@ public abstract class EditDataScript {
                 .readMetadataFile(parentProcess);
         Workpiece workpiece = metadataFile.getWorkpiece();
 
-        Collection<Metadata> metadataCollection = workpiece.getRootElement().getMetadata();;
+        Collection<Metadata> metadataCollection = workpiece.getRootElement().getMetadata();
         generateValueForMetadataScript(metadataScript, metadataCollection, parentProcess, metadataFile);
+    }
+
+    /**
+     * Gets the metadataCollection where the metadata should be edited.
+     * May be specifyed by type in the script.
+     * @param metadataScript the metadataScript
+     * @param workpiece the workpiece to get the collection from.
+     * @return the metadataCollection.
+     */
+    public Collection<Metadata> getMetadataCollection(MetadataScript metadataScript, Workpiece workpiece) {
+        Collection<Metadata> metadataCollection;
+
+        if (Objects.nonNull(metadataScript.getTypeTarget())) {
+            IncludedStructuralElement structuralElement = getStructuralElementWithType(metadataScript.getTypeTarget(),
+                workpiece.getRootElement());
+            metadataCollection = Objects.isNull(structuralElement) ? null : structuralElement.getMetadata();
+        } else {
+            metadataCollection = workpiece.getRootElement().getMetadata();
+        }
+        return metadataCollection;
+    }
+
+    private IncludedStructuralElement getStructuralElementWithType(String typeTarget,
+            IncludedStructuralElement structuralElement) {
+        if (typeTarget.equals(structuralElement.getType())) {
+            return structuralElement;
+        } else {
+            for (IncludedStructuralElement structuralElementChild : structuralElement.getChildren()) {
+                IncludedStructuralElement structuralElementWithType = getStructuralElementWithType(typeTarget,
+                    structuralElementChild);
+                if (Objects.nonNull(structuralElementWithType)) {
+                    return structuralElementWithType;
+                }
+            }
+        }
+        return null;
     }
 }

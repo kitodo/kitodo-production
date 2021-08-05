@@ -12,13 +12,10 @@
 package org.kitodo.production.services.command;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -34,8 +31,7 @@ public class AddDataScript extends EditDataScript {
     public void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
             MetadataScript metadataScript) {
         Workpiece workpiece = metadataFile.getWorkpiece();
-
-        Collection<Metadata> metadataCollection = workpiece.getRootElement().getMetadata();;
+        Collection<Metadata> metadataCollection = getMetadataCollection(metadataScript, workpiece);
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
 
         for (String value : metadataScript.getValues()) {
