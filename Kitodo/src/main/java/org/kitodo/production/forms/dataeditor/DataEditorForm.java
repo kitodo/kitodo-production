@@ -77,6 +77,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private final AddDocStrucTypeDialog addDocStrucTypeDialog;
 
     /**
+     * Dialog for adding metadata.
+     */
+    private final AddMetadataDialog addMetadataDialog;
+
+    /**
      * Backing bean for the add MediaUnit dialog.
      */
     private final AddMediaUnitDialog addMediaUnitDialog;
@@ -183,6 +188,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.galleryPanel = new GalleryPanel(this);
         this.paginationPanel = new PaginationPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
+        this.addMetadataDialog = new AddMetadataDialog(this);
         this.addMediaUnitDialog = new AddMediaUnitDialog(this);
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
@@ -443,6 +449,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
+     * Get addMetadataDialog.
+     *
+     * @return value of addMetadataDialog
+     */
+    public AddMetadataDialog getAddMetadataDialog() {
+        return addMetadataDialog;
+    }
+
+    /**
      * Returns the backing bean for the add media dialog. This function is used
      * by PrimeFaces to access the elements of the add media dialog.
      *
@@ -535,7 +550,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return ruleset;
     }
 
-    Optional<IncludedStructuralElement> getSelectedStructure() {
+    public Optional<IncludedStructuralElement> getSelectedStructure() {
         return structurePanel.getSelectedStructure();
     }
 
@@ -749,8 +764,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return whether the given ProcessDetail can be added or not
      */
     public boolean canBeAdded(ProcessDetail processDetail) {
-        if (Objects.nonNull(this.getAddDocStrucTypeDialog().getSelectAddableMetadataTypesItems())) {
-            return this.getAddDocStrucTypeDialog().getSelectAddableMetadataTypesItems().stream()
+        if (Objects.nonNull(this.getAddDocStrucTypeDialog().getAddableMetadata())) {
+            return this.getAddDocStrucTypeDialog().getAddableMetadata().stream()
                     .map(SelectItem::getValue).collect(Collectors.toList()).contains(processDetail.getMetadataID());
         }
         else {

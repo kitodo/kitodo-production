@@ -31,17 +31,17 @@
                                   styleClass="dialogFieldWrapper">
                         <div>
                             <p:selectOneMenu id="metadataTypeSelection"
-                                             value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesSelectedItem}">
-                                <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}"/>
+                                             value="#{DataEditorForm.addMetadataDialog.selectedMetadata}">
+                                <f:selectItems value="#{DataEditorForm.addMetadataDialog.addableMetadata}"/>
                             </p:selectOneMenu>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
-                        <p:commandButton id="save"
+                        <p:commandButton id="apply"
                                          action="#{DataEditorForm.metadataPanel.addMetadataEntry}"
-                                         update="metadataAccordion:metadata:metadataTable"
+                                         update="metadataAccordion:metadata:metadataTable metadataAccordion:metadata:addMetadataButtonWrapper"
                                          oncomplete="PF('addMetadataDialog').hide();"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>

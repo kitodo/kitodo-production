@@ -19,7 +19,6 @@ import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CUR
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -38,10 +37,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.Metadata;
-import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -49,15 +44,13 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.forms.createprocess.ProcessDetail;
-import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
 
@@ -77,10 +70,10 @@ public class AddDocStrucTypeDialog {
     private int elementsToAddSpinnerValue;
     private String inputMetaDataValue = "";
     private LinkedList<IncludedStructuralElement> parents;
-    private List<SelectItem> selectAddableMetadataTypesItems;
-    private String selectAddableMetadataTypesSelectedItem = "";
-    private String selectFirstPageOnAddNodeSelectedItem;
-    private String selectLastPageOnAddNodeSelectedItem;
+    private List<SelectItem> addableMetadata;
+    private String selectedMetadata = "";
+    private String selectFirstPageOnAddNode;
+    private String selectLastPageOnAddNode;
     private List<SelectItem> selectPageOnAddNodeItems;
     private List<View> preselectedViews;
     private String processNumber = "";
@@ -128,8 +121,8 @@ public class AddDocStrucTypeDialog {
         } else {
             this.addSingleDocStruc(preview);
         }
-        if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNodeSelectedItem)
-                || StringUtils.isEmpty(this.selectLastPageOnAddNodeSelectedItem))
+        if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNode)
+                || StringUtils.isEmpty(this.selectLastPageOnAddNode))
                 || Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0)) {
             dataEditor.getGalleryPanel().setGalleryViewMode(PREVIEW_MODE);
         } else {
@@ -153,7 +146,7 @@ public class AddDocStrucTypeDialog {
         if (selectedStructure.isPresent()) {
             MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                 dataEditor.getWorkpiece(), selectedStructure.get(),
-                    selectedDocStructPosition, selectAddableMetadataTypesSelectedItem,
+                    selectedDocStructPosition, selectedMetadata,
                     inputMetaDataValue);
             dataEditor.refreshStructurePanel();
             dataEditor.getPaginationPanel().show();
@@ -308,8 +301,8 @@ public class AddDocStrucTypeDialog {
      *
      * @return the items of the selectAddableMetadataTypes
      */
-    public List<SelectItem> getSelectAddableMetadataTypesItems() {
-        return selectAddableMetadataTypesItems;
+    public List<SelectItem> getAddableMetadata() {
+        return addableMetadata;
     }
 
     /**
@@ -318,19 +311,19 @@ public class AddDocStrucTypeDialog {
      *
      * @return the selected item of the selectAddableMetadataTypes
      */
-    public String getSelectAddableMetadataTypesSelectedItem() {
-        return selectAddableMetadataTypesSelectedItem;
+    public String getSelectedMetadata() {
+        return selectedMetadata;
     }
 
     /**
      * Sets the selected item of the selectAddableMetadataTypes drop-down menu.
      *
-     * @param selectAddableMetadataTypesSelectedItem
+     * @param selectedMetadata
      *            selected item to set
      */
-    public void setSelectAddableMetadataTypesSelectedItem(String selectAddableMetadataTypesSelectedItem) {
-        this.selectAddableMetadataTypesSelectedItem = selectAddableMetadataTypesSelectedItem;
-        dataEditor.getMetadataPanel().setAddMetadataKeySelectedItem(selectAddableMetadataTypesSelectedItem);
+    public void setSelectedMetadata(String selectedMetadata) {
+        this.selectedMetadata = selectedMetadata;
+        dataEditor.getMetadataPanel().setAddMetadataKeySelectedItem(selectedMetadata);
     }
 
     /**
@@ -338,18 +331,18 @@ public class AddDocStrucTypeDialog {
      *
      * @return the selected item of the selectFirstPageOnAddNode
      */
-    public String getSelectFirstPageOnAddNodeSelectedItem() {
-        return selectFirstPageOnAddNodeSelectedItem;
+    public String getSelectFirstPageOnAddNode() {
+        return selectFirstPageOnAddNode;
     }
 
     /**
      * Sets the selected item of the selectFirstPageOnAddNode drop-down menu.
      *
-     * @param selectFirstPageOnAddNodeSelectedItem
+     * @param selectFirstPageOnAddNode
      *            selected item to set
      */
-    public void setSelectFirstPageOnAddNodeSelectedItem(String selectFirstPageOnAddNodeSelectedItem) {
-        this.selectFirstPageOnAddNodeSelectedItem = selectFirstPageOnAddNodeSelectedItem;
+    public void setSelectFirstPageOnAddNode(String selectFirstPageOnAddNode) {
+        this.selectFirstPageOnAddNode = selectFirstPageOnAddNode;
     }
 
     /**
@@ -357,18 +350,18 @@ public class AddDocStrucTypeDialog {
      *
      * @return the selected item of the selectLastPageOnAddNode
      */
-    public String getSelectLastPageOnAddNodeSelectedItem() {
-        return selectLastPageOnAddNodeSelectedItem;
+    public String getSelectLastPageOnAddNode() {
+        return selectLastPageOnAddNode;
     }
 
     /**
      * Sets the selected item of the selectLastPageOnAddNode drop-down menu.
      *
-     * @param selectLastPageOnAddNodeSelectedItem
+     * @param selectLastPageOnAddNode
      *            selected item to set
      */
-    public void setSelectLastPageOnAddNodeSelectedItem(String selectLastPageOnAddNodeSelectedItem) {
-        this.selectLastPageOnAddNodeSelectedItem = selectLastPageOnAddNodeSelectedItem;
+    public void setSelectLastPageOnAddNode(String selectLastPageOnAddNode) {
+        this.selectLastPageOnAddNode = selectLastPageOnAddNode;
     }
 
     /**
@@ -387,8 +380,8 @@ public class AddDocStrucTypeDialog {
             return preselectedViews;
         }
         try {
-            int firstPage = Integer.parseInt(selectFirstPageOnAddNodeSelectedItem);
-            int lastPage = Integer.parseInt(selectLastPageOnAddNodeSelectedItem);
+            int firstPage = Integer.parseInt(selectFirstPageOnAddNode);
+            int lastPage = Integer.parseInt(selectLastPageOnAddNode);
             return dataEditor.getEditPagesDialog().getViewsToAdd(firstPage, lastPage);
         } catch (NumberFormatException e) {
             // user didn’t select both start and end page
@@ -414,10 +407,10 @@ public class AddDocStrucTypeDialog {
             this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(),
                 dataEditor.getWorkpiece().getRootElement());
             prepareDocStructPositionSelectionItems(parents.isEmpty());
-            prepareSelectAddableMetadataTypesItems(true);
+            prepareAddableMetadataForStructure(true);
         } else {
             docStructPositionSelectionItems = Collections.emptyList();
-            selectAddableMetadataTypesItems = Collections.emptyList();
+            addableMetadata = Collections.emptyList();
         }
         this.prepareDocStructTypes();
         prepareSelectPageOnAddNodeItems();
@@ -529,44 +522,11 @@ public class AddDocStrucTypeDialog {
      *                       (currentElement = false)
      * @param metadataNodes list of TreeNodes containing the metadata that is already assigned to the structure element
      */
-    public void prepareSelectAddableMetadataTypesItems(boolean currentElement, List<TreeNode> metadataNodes) {
-        selectAddableMetadataTypesItems = new ArrayList<>();
-        setSelectAddableMetadataTypesSelectedItem("");
-        Collection<Metadata> existingMetadata = Collections.emptyList();
-        StructuralElementViewInterface structure;
-        Collection<MetadataViewInterface> addableMetadata;
-        TreeNode selectedMetadataTreeNode = dataEditor.getMetadataPanel().getSelectedMetadataTreeNode();
-        try {
-            if (Objects.nonNull(selectedMetadataTreeNode)
-                    && Objects.nonNull(selectedMetadataTreeNode.getData())) {
-                existingMetadata = ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadata();
-                ComplexMetadataViewInterface metadataView = dataEditor.getRulesetManagement().getMetadataView(
-                        ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getMetadataID(),
-                        dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                addableMetadata = metadataView.getAddableMetadata(existingMetadata, Collections.emptyList());
-            } else if (currentElement) {
-                structure = getStructuralElementView();
-                existingMetadata = getExistingMetadataRows(metadataNodes);
-                addableMetadata = structure.getAddableMetadata(existingMetadata,
-                        Collections.emptyList());
-            } else {
-                structure = dataEditor.getRulesetManagement()
-                        .getStructuralElementView(docStructAddTypeSelectionSelectedItem,
-                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                addableMetadata = structure.getAddableMetadata(existingMetadata,
-                        Collections.emptyList());
-            }
-            for (MetadataViewInterface keyView : addableMetadata) {
-                selectAddableMetadataTypesItems.add(
-                        new SelectItem(keyView.getId(), keyView.getLabel(),
-                                keyView instanceof SimpleMetadataViewInterface
-                                        ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
-                                        : "dataTable"));
-            }
-            sortMetadataList(selectAddableMetadataTypesItems);
-        } catch (InvalidMetadataValueException e) {
-            Helper.setErrorMessage(e);
-        }
+    public void prepareAddableMetadataForStructure(boolean currentElement, List<TreeNode> metadataNodes) {
+        addableMetadata = DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, currentElement,
+                metadataNodes, docStructAddTypeSelectionSelectedItem, true);
+        setSelectedMetadata("");
+        sortMetadataList(this.addableMetadata);
     }
 
     /**
@@ -576,53 +536,9 @@ public class AddDocStrucTypeDialog {
      *                       structure element (currentElement = true) or for a new element to be added to the structure
      *                       (currentElement = false)
      */
-    public void prepareSelectAddableMetadataTypesItems(boolean currentElement) {
+    public void prepareAddableMetadataForStructure(boolean currentElement) {
         dataEditor.getMetadataPanel().setSelectedMetadataTreeNode(null);
-        prepareSelectAddableMetadataTypesItems(currentElement, Collections.emptyList());
-    }
-
-    private Collection<Metadata> getExistingMetadataRows(List<TreeNode> metadataTreeNodes)
-            throws InvalidMetadataValueException {
-        Collection<Metadata> existingMetadataRows = new ArrayList<>();
-
-        for (TreeNode metadataNode : metadataTreeNodes) {
-            if (metadataNode.getData() instanceof ProcessDetail) {
-                try {
-                    existingMetadataRows.addAll(((ProcessDetail) metadataNode.getData()).getMetadata());
-                } catch (NullPointerException e) {
-                    logger.error(e);
-                }
-            }
-            if (metadataNode.getChildCount() > 0) {
-                existingMetadataRows.addAll(getExistingMetadataRows(metadataNode.getChildren()));
-            }
-        }
-
-        return existingMetadataRows;
-    }
-
-    private StructuralElementViewInterface getStructuralElementView() {
-        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
-        if (selectedStructure.isPresent()) {
-            return dataEditor.getRulesetManagement()
-                    .getStructuralElementView(
-                            selectedStructure.get().getType(),
-                            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        } else {
-            TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
-            if (Objects.nonNull(selectedLogicalNode)
-                    && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-                StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-                if (structureTreeNode.getDataObject() instanceof View) {
-                    View view = (View) structureTreeNode.getDataObject();
-                    if (Objects.nonNull(view.getMediaUnit())) {
-                        return dataEditor.getRulesetManagement().getStructuralElementView(view.getMediaUnit().getType(),
-                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                    }
-                }
-            }
-        }
-        throw new IllegalStateException();
+        prepareAddableMetadataForStructure(currentElement, Collections.emptyList());
     }
 
     private void prepareSelectPageOnAddNodeItems() {
@@ -662,8 +578,8 @@ public class AddDocStrucTypeDialog {
         linkSubDialogVisible = false;
         inputMetaDataValue = "";
         elementsToAddSpinnerValue = 1;
-        selectFirstPageOnAddNodeSelectedItem = null;
-        selectLastPageOnAddNodeSelectedItem = null;
+        selectFirstPageOnAddNode = null;
+        selectLastPageOnAddNode = null;
         selectedDocStructPosition = LAST_CHILD_OF_CURRENT_ELEMENT;
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
             dataEditor.getStructurePanel().setSelectedLogicalNode(previouslySelectedLogicalNode);
@@ -705,8 +621,8 @@ public class AddDocStrucTypeDialog {
             return;
         }
         try {
-            Set<String> allowedSubstructuralElements = getStructuralElementView().getAllowedSubstructuralElements()
-                    .keySet();
+            Set<String> allowedSubstructuralElements = DataEditorService.getStructuralElementView(this.dataEditor)
+                    .getAllowedSubstructuralElements().keySet();
             List<Integer> ids = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
                 dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements)
                     .stream().map(ProcessDTO::getId).collect(Collectors.toList());

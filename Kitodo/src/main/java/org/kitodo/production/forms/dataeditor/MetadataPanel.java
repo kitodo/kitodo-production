@@ -27,6 +27,7 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.model.TreeNode;
 
 /**
@@ -124,12 +125,30 @@ public class MetadataPanel implements Serializable {
         this.selectedMetadataTreeNode = selectedMetadataTreeNode;
     }
 
+    /**
+     * Get logicalMetadataTable.
+     *
+     * @return value of logicalMetadataTable
+     */
+    public ProcessFieldedMetadata getLogicalMetadataTable() {
+        return logicalMetadataTable;
+    }
+
+    /**
+     * Get physicalMetadataTable.
+     *
+     * @return value of physicalMetadataTable
+     */
+    public ProcessFieldedMetadata getPhysicalMetadataTable() {
+        return physicalMetadataTable;
+    }
+
     void showLogical(Optional<IncludedStructuralElement> optionalStructure) {
         if (optionalStructure.isPresent()) {
             StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
                     optionalStructure.get().getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             logicalMetadataTable = new ProcessFieldedMetadata(optionalStructure.get(), divisionView);
-            dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true,
+            dataEditorForm.getAddDocStrucTypeDialog().prepareAddableMetadataForStructure(true,
                     getLogicalMetadataRows().getChildren());
         } else {
             logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
@@ -142,7 +161,7 @@ public class MetadataPanel implements Serializable {
             StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
                     mediaUnit.getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             logicalMetadataTable = new ProcessFieldedMetadata(mediaUnit, divisionView);
-            dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true,
+            dataEditorForm.getAddDocStrucTypeDialog().prepareAddableMetadataForStructure(true,
                     getPhysicalMetadataRows().getChildren());
         } else {
             logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
@@ -155,7 +174,7 @@ public class MetadataPanel implements Serializable {
             StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
                     optionalMediaUnit.get().getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             physicalMetadataTable = new ProcessFieldedMetadata(optionalMediaUnit.get(), divisionView);
-            dataEditorForm.getAddDocStrucTypeDialog().prepareSelectAddableMetadataTypesItems(true);
+            dataEditorForm.getAddDocStrucTypeDialog().prepareAddableMetadataForStructure(true);
         } else {
             physicalMetadataTable = ProcessFieldedMetadata.EMPTY;
         }
@@ -182,5 +201,38 @@ public class MetadataPanel implements Serializable {
     void preservePhysical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         physicalMetadataTable.preserve();
         this.dataEditorForm.checkForChanges();
+    }
+
+    /**
+     * Check and return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can
+     * be added to it or not.
+     *
+     * @param metadataNode TreeNode for which the check is performed
+     * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
+     */
+    public boolean metadataAddableToGroup(TreeNode metadataNode) {
+        if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
+            return !(DataEditorService.getAddableMetadataForGroup(this.dataEditorForm, metadataNode).isEmpty());
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check and return whether any further metadata can be added to the currently selected structure element or not.
+     *
+     * @return whether any further metadata can be added to currently selected structure element.
+     */
+    public boolean metadataAddableToStructureElement() {
+        return !(DataEditorService.getAddableMetadataForStructureElement(dataEditorForm).isEmpty());
+    }
+
+    /**
+     * Check and return whether any further metadata can be added to the currently selected media unit or not.
+     *
+     * @return whether any further metadata can be added to currently selected media unit.
+     */
+    public boolean metadataAddableToMediaUnit() {
+        return !(DataEditorService.getAddableMetadataForMediaUnit(dataEditorForm).isEmpty());
     }
 }

@@ -2267,6 +2267,7 @@ Column content
 
 #metadataAccordion\:metadata\:metadataTable .ui-button:not(:last-child):not(.ui-spinner-button),
 #metadataAccordion\:physicalMetadata\:metadataTable .ui-button:not(:last-child):not(.ui-spinner-button) {
+    border-radius: var(--default-border-radius);
     margin-right: var(--default-half-size);
 }
 

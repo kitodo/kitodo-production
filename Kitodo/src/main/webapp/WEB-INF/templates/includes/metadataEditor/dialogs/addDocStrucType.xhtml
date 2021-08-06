@@ -95,7 +95,7 @@
                                                       itemDisabled="true"
                                                       noSelectionOption="true"/>
                                         <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
-                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(false)}"
+                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareAddableMetadataForStructure(false)}"
                                                 update="dialogAddDocStrucTypeForm"/>
                                     </p:selectOneMenu>
                                 </p:column>
@@ -113,7 +113,7 @@
                                                  title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
                                                  disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
                                                  class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem}"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode}"
                                                  filter="true"
                                                  filterMatchMode="contains">
                                     <f:selectItem itemLabel="#{msgs.firstPage}"
@@ -129,7 +129,7 @@
                                                  title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
                                                  disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
                                                  class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem}"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode}"
                                                  filter="true"
                                                  filterMatchMode="contains">
                                     <f:selectItem itemLabel="#{msgs.lastPage}"
@@ -172,13 +172,13 @@
                                     <p:outputLabel value="#{msgs.count} #{msgs.docstructs}:"
                                                    for="elementsToAddSpinner"/>
                                     <p:spinner value="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue}"
-                                               title="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem ? msgs['dataEditor.addElement.createMultipleDocStrucWithoutPages'] : ''}"
-                                               disabled="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem}"
+                                               title="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode ? msgs['dataEditor.addElement.createMultipleDocStrucWithoutPages'] : ''}"
+                                               disabled="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode}"
                                                id="elementsToAddSpinner"
                                                class="input"
                                                size="5"
                                                min="1">
-                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareSelectAddableMetadataTypesItems(false)}"
+                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareAddableMetadataForStructure(false)}"
                                                 update="addMetadata
                                                         selectFirstPageOnAddNode
                                                         selectLastPageOnAddNode"/>
@@ -199,9 +199,9 @@
                                                for="selectAddableMetadataTypes" />
                                 <p:selectOneMenu id="selectAddableMetadataTypes"
                                                  class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesSelectedItem}"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}"
                                                  style="width: 180px;">
-                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}" />
+                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.addableMetadata}" />
                                 </p:selectOneMenu>
 
                                 <p:outputLabel value="#{msgs.value}:"

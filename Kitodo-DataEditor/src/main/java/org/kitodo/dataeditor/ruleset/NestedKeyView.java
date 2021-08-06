@@ -62,8 +62,9 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      *             When the API caller tries to add a field that does not exist
      *             in the ruleset.
      */
-    private static final <V> void addFieldsForAdditionallySelectedKeys(Collection<String> additionallySelectedKeys,
-            LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable) {
+    private static <V> void addFieldsForAdditionallySelectedKeys(Collection<String> additionallySelectedKeys,
+                                                                 LinkedHashMap<String,
+                                                                         AuxiliaryTableRow> auxiliaryTable) {
 
         additionallySelectedKeys.parallelStream().map(auxiliaryTable::get)
                 .forEach(AuxiliaryTableRow::addOneAdditionalField);
@@ -78,8 +79,8 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      * @param auxiliaryTable
      *            auxiliary table to append to
      */
-    private static final void appendRowsToAuxiliaryTable(Collection<AuxiliaryTableRow> rows,
-            LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable) {
+    private static void appendRowsToAuxiliaryTable(Collection<AuxiliaryTableRow> rows,
+                                                   LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable) {
 
         for (AuxiliaryTableRow auxiliaryTableRow : rows) {
             auxiliaryTable.put(auxiliaryTableRow.getId(), auxiliaryTableRow);
@@ -100,7 +101,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      *            the wish list of the user’s preferred human language
      * @return sorted list of fields
      */
-    private static final <V> Collection<AuxiliaryTableRow> sort(
+    private static <V> Collection<AuxiliaryTableRow> sort(
             HashMap<String, AuxiliaryTableRow> auxiliaryTableToBeSorted, List<LanguageRange> priorityList) {
 
         TreeMap<String, AuxiliaryTableRow> sorted = new TreeMap<>();
@@ -190,7 +191,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      * @param auxiliaryTable
      *            auxiliary table
      */
-    private final <V> void addAnyRules(LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable) {
+    private void addAnyRules(LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable) {
 
         auxiliaryTable.entrySet().parallelStream().forEach(entry -> entry.getValue()
                 .setRule(rule.getRuleForKey(entry.getKey(), division)));
@@ -199,7 +200,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
     /**
      * Adds the keys selected by the user to be added to the list of keys to
      * add. This procedure is a part of the function to
-     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, Rule, Collection, Collection)}.
+     * {@link #createAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, Rule, Collection, Collection)}.
      *
      * @param auxiliaryTable
      *            the target table. If the key is already here, it will not be
@@ -211,15 +212,15 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      * @param toBeSorted
      *            write access to the list of keys to be sorted
      */
-    private final <V> void addAdditionalKeys(LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable,
-            Rule rule, Collection<String> additionalKeys,
-            HashMap<String, AuxiliaryTableRow> toBeSorted) {
+    private void addAdditionalKeys(LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable,
+                                   Rule rule, Collection<String> additionalKeys,
+                                   HashMap<String, AuxiliaryTableRow> toBeSorted) {
         for (String additionalKey : additionalKeys) {
             if (!auxiliaryTable.containsKey(additionalKey) && !toBeSorted.containsKey(additionalKey)) {
                 Optional<Key> optionalKey = rule.isUnspecifiedUnrestricted() ? Optional.empty()
                         : ruleset.getKey(additionalKey);
-                KeyDeclaration keyDeclaration = optionalKey.isPresent() ? new KeyDeclaration(ruleset, optionalKey.get())
-                        : new KeyDeclaration(ruleset, additionalKey);
+                KeyDeclaration keyDeclaration = optionalKey.map(key -> new KeyDeclaration(ruleset, key))
+                        .orElseGet(() -> new KeyDeclaration(ruleset, additionalKey));
                 toBeSorted.put(additionalKey, new AuxiliaryTableRow(keyDeclaration, settings));
             }
         }
@@ -228,7 +229,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
     /**
      * If the rule is unspecified unrestricted, the remaining keys are added to
      * the keys to be sorted. This procedure is a part of the function to
-     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, Rule, Collection, Collection)}.
+     * {@link #createAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, Rule, Collection, Collection)}.
      *
      * @param auxiliaryTable
      *            the target table. If the key is already here, it will not be
@@ -238,8 +239,9 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      * @param toBeSorted
      *            write access to the list of keys to be sorted
      */
-    private final <V> void addRemainingKeys(LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable,
-            Collection<KeyDeclaration> keyDeclarations, HashMap<String, AuxiliaryTableRow> toBeSorted) {
+    private void addRemainingKeys(LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable,
+                                  Collection<KeyDeclaration> keyDeclarations,
+                                  HashMap<String, AuxiliaryTableRow> toBeSorted) {
         for (KeyDeclaration keyDeclaration : keyDeclarations) {
             if (!auxiliaryTable.containsKey(keyDeclaration.getId())) {
                 toBeSorted.put(keyDeclaration.getId(), new AuxiliaryTableRow(keyDeclaration, settings));
@@ -268,7 +270,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      *            which keys the user has additionally selected
      * @return an auxiliary table for additional keys yet to be sorted
      */
-    private final <V> HashMap<String, AuxiliaryTableRow> cerateAuxiliaryTableWithKeysToBeSorted(
+    private HashMap<String, AuxiliaryTableRow> createAuxiliaryTableWithKeysToBeSorted(
             LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable, Rule rule,
             Collection<KeyDeclaration> keyDeclarations, Collection<String> additionalKeys) {
 
@@ -297,7 +299,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
 
         LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable = createAuxiliaryTableWithPreSortedKeys(
             rule.getExplicitlyPermittedKeys(declaration));
-        HashMap<String, AuxiliaryTableRow> auxiliaryTableToBeSorted = cerateAuxiliaryTableWithKeysToBeSorted(
+        HashMap<String, AuxiliaryTableRow> auxiliaryTableToBeSorted = createAuxiliaryTableWithKeysToBeSorted(
             auxiliaryTable, rule, declaration.getKeyDeclarations(), additionalKeys);
         storeValues(currentEntries, auxiliaryTable, auxiliaryTableToBeSorted);
         appendRowsToAuxiliaryTable(sort(auxiliaryTableToBeSorted, priorityList), auxiliaryTable);
@@ -315,7 +317,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      *            keys given in their order by the restriction rule
      * @return the auxiliary table
      */
-    private final <V> LinkedHashMap<String, AuxiliaryTableRow> createAuxiliaryTableWithPreSortedKeys(
+    private LinkedHashMap<String, AuxiliaryTableRow> createAuxiliaryTableWithPreSortedKeys(
             List<KeyDeclaration> explicitlyPermittedKeys) {
 
         LinkedHashMap<String, AuxiliaryTableRow> auxiliaryTable = new LinkedHashMap<>();
@@ -373,9 +375,8 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      * @return metadata view
      */
     private MetadataViewInterface rowToView(AuxiliaryTableRow row) {
-        MetadataViewInterface view = row.isComplexKey() ? getNestedKeyView(row.getId())
+        return row.isComplexKey() ? getNestedKeyView(row.getId())
                 : new KeyView(row.getKey(), rule.getRuleForKey(row.getId(), division), settings, priorityList);
-        return view;
     }
 
     /**
@@ -446,9 +447,9 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      * @param auxiliaryTableToBeSorted
      *            help table with rows that still have to be sorted
      */
-    private final void storeValues(Collection<Metadata> enteredMetaData,
-            LinkedHashMap<String, AuxiliaryTableRow> sortedAuxiliaryTable,
-            HashMap<String, AuxiliaryTableRow> auxiliaryTableToBeSorted) {
+    private void storeValues(Collection<Metadata> enteredMetaData,
+                             LinkedHashMap<String, AuxiliaryTableRow> sortedAuxiliaryTable,
+                             HashMap<String, AuxiliaryTableRow> auxiliaryTableToBeSorted) {
 
         for (Metadata metadata : enteredMetaData) {
             String keyId = metadata.getKey();
@@ -463,9 +464,9 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
     }
 
     private AuxiliaryTableRow retrieveOrCompute(String keyId) {
-        Optional<Key> possibleKey = ruleset.getKey(keyId);
-        KeyDeclaration keyDeclaration = possibleKey.isPresent() ? new KeyDeclaration(ruleset, possibleKey.get(), true)
-                : new KeyDeclaration(ruleset, keyId);
+        Optional<KeyDeclaration> optionalKeyDeclaration = super.declaration.getKeyDeclarations().parallelStream()
+                .filter(childKeyDeclaration -> keyId.equals(childKeyDeclaration.getId())).findAny();
+        KeyDeclaration keyDeclaration = optionalKeyDeclaration.orElseGet(() -> new KeyDeclaration(ruleset, keyId));
         return new AuxiliaryTableRow(keyDeclaration, settings);
     }
 

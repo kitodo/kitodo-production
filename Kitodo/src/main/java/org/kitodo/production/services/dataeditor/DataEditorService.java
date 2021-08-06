@@ -14,23 +14,44 @@ package org.kitodo.production.services.dataeditor;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.faces.model.SelectItem;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.DataEditorInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
+import org.kitodo.production.forms.dataeditor.DataEditorForm;
+import org.kitodo.production.forms.dataeditor.StructureTreeNode;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.primefaces.model.TreeNode;
 
 public class DataEditorService {
+
+    private static final Logger logger = LogManager.getLogger(DataEditorService.class);
 
     /**
      * Reads the data of a given file in xml format. The format of that file
@@ -102,5 +123,144 @@ public class DataEditorService {
             }
         }
         return "";
+    }
+
+    /**
+     * Determine and return which metadata can be added to a specific MetadataGroup.
+     *
+     * @param dataEditor DataEditorForm instance used to determine addable metadata types
+     * @param metadataNode TreeNode containing MetadataGroup to check
+     * @return List of select items representing addable metadata types
+     */
+    public static List<SelectItem> getAddableMetadataForGroup(DataEditorForm dataEditor, TreeNode metadataNode) {
+        ProcessFieldedMetadata fieldedMetadata = ((ProcessFieldedMetadata) metadataNode.getData());
+        ComplexMetadataViewInterface metadataView = fieldedMetadata.getMetadataView();
+        List<SelectItem> addableMetadata = new ArrayList<>();
+        for (MetadataViewInterface keyView : metadataView.getAddableMetadata(fieldedMetadata.getChildMetadata(),
+                fieldedMetadata.getAdditionallySelectedFields())) {
+            addableMetadata.add(
+                    new SelectItem(keyView.getId(), keyView.getLabel(),
+                            keyView instanceof SimpleMetadataViewInterface
+                                    ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
+                                    : "dataTable"));
+        }
+        if (!addableMetadata.isEmpty() && !dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
+            addableMetadata.sort(Comparator.comparing(SelectItem::getLabel));
+        }
+        return addableMetadata;
+    }
+
+    /**
+     * Determine and return which metadata can be added to the currently selected IncludedStructuralElement.
+     * @param dataEditor DataEditorForm instance used to determine addable metadata types
+     * @param currentElement whether addable metadata should be determined for currently selected
+     *                       IncludedStructuralElement or not (if "false", it is determined for a new
+     *                       IncludedStructuralElement added by "AddDocStrucElementDialog"!)
+     * @param metadataNodes TreeNodes containing the metadata already assigned to the current structure element
+     * @param structureType type of the new structure to be added and for which addable metadata is to be determined
+     * @return List of select items representing addable metadata types
+     */
+    public static List<SelectItem> getAddableMetadataForStructureElement(DataEditorForm dataEditor,
+                                                                         boolean currentElement,
+                                                                         List<TreeNode> metadataNodes,
+                                                                         String structureType,
+                                                                         boolean isLogicalStructure) {
+        List<SelectItem> addableMetadata = new ArrayList<>();
+        Collection<Metadata> existingMetadata = Collections.emptyList();
+        StructuralElementViewInterface structureView;
+        try {
+            if (currentElement) {
+                structureView = getStructuralElementView(dataEditor);
+                existingMetadata = getExistingMetadataRows(metadataNodes);
+            } else {
+                structureView = dataEditor.getRulesetManagement()
+                        .getStructuralElementView(structureType,
+                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+            }
+            Collection<String> additionalFields = isLogicalStructure ? dataEditor.getMetadataPanel()
+                    .getLogicalMetadataTable().getAdditionallySelectedFields() : dataEditor.getMetadataPanel()
+                    .getPhysicalMetadataTable().getAdditionallySelectedFields();
+            Collection<MetadataViewInterface> viewInterfaces = structureView
+                    .getAddableMetadata(existingMetadata, additionalFields);
+            for (MetadataViewInterface keyView : viewInterfaces) {
+                addableMetadata.add(
+                        new SelectItem(keyView.getId(), keyView.getLabel(),
+                                keyView instanceof SimpleMetadataViewInterface
+                                        ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
+                                        : "dataTable"));
+            }
+        } catch (InvalidMetadataValueException e) {
+            Helper.setErrorMessage(e);
+        }
+        return addableMetadata;
+    }
+
+    /**
+     * Determine and return list of metadata that can be added to currently selected structure element.
+     *
+     * @param dataEditor DataEditorForm instance used to determine list of addable metadata types
+     * @return List of select items representing addable metadata types
+     */
+    public static List<SelectItem> getAddableMetadataForStructureElement(DataEditorForm dataEditor) {
+        return getAddableMetadataForStructureElement(dataEditor,
+                true, dataEditor.getMetadataPanel().getLogicalMetadataRows().getChildren(), null, true);
+    }
+
+    /**
+     * Determine and return list of metadata that can be added to currently selected media unit.
+     *
+     * @param dataEditor DataEditorForm instance used to determine list of addable metadata types
+     * @return List of select items representing addable metadata types
+     */
+    public static List<SelectItem> getAddableMetadataForMediaUnit(DataEditorForm dataEditor) {
+        return getAddableMetadataForStructureElement(dataEditor,
+                true, dataEditor.getMetadataPanel().getPhysicalMetadataRows().getChildren(), null, false);
+    }
+
+    /**
+     * Determine and return StructureElementViewInterface corresponding to structure element currently selected or to be
+     * added via AddDocStructTypeDialog.
+     *
+     * @param dataEditor DataEditorForm instance used to determine StructureElementViewInterface
+     * @return StructureElementViewInterface corresponding to structure element currently selected or to be added
+     */
+    public static StructuralElementViewInterface getStructuralElementView(DataEditorForm dataEditor) {
+        Optional<IncludedStructuralElement> selectedStructure = dataEditor.getSelectedStructure();
+        if (selectedStructure.isPresent()) {
+            return dataEditor.getRulesetManagement()
+                    .getStructuralElementView(
+                            selectedStructure.get().getType(),
+                            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        } else {
+            TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+            if (Objects.nonNull(selectedLogicalNode)
+                    && selectedLogicalNode.getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+                if (structureTreeNode.getDataObject() instanceof View) {
+                    View view = (View) structureTreeNode.getDataObject();
+                    if (Objects.nonNull(view.getMediaUnit())) {
+                        return dataEditor.getRulesetManagement().getStructuralElementView(view.getMediaUnit().getType(),
+                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException();
+    }
+
+    private static Collection<Metadata> getExistingMetadataRows(List<TreeNode> metadataTreeNodes)
+            throws InvalidMetadataValueException {
+        Collection<Metadata> existingMetadataRows = new ArrayList<>();
+
+        for (TreeNode metadataNode : metadataTreeNodes) {
+            if (metadataNode.getData() instanceof ProcessDetail) {
+                try {
+                    existingMetadataRows.addAll(((ProcessDetail) metadataNode.getData()).getMetadata());
+                } catch (NullPointerException e) {
+                    logger.error(e);
+                }
+            }
+        }
+        return existingMetadataRows;
     }
 }
