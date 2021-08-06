@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.kitodo</groupId>
         <artifactId>kitodo-production</artifactId>
-        <version>3.3</version>
+        <version>3.3.1</version>
     </parent>
     <organization>
         <name>kitodo.org</name>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-data-management</artifactId>
-            <version>3.3</version>
+            <version>3.3.1</version>
         </dependency>
         <dependency>
             <groupId>jdom</groupId>
