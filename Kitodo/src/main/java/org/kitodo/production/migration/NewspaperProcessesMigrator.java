@@ -89,7 +89,7 @@ public class NewspaperProcessesMigrator {
      * Regular expression to find (and remove) the individual part of the
      * process title, to get the base process title.
      */
-    private static final String INDIVIDUAL_PART = "(?<=.)\\p{Punct}*(?:1[6-9]|20)\\d{2}\\p{Punct}?(?:0[1-9]|1[012]).*$";
+    private static final String INDIVIDUAL_PART = "(?<=.)\\p{Punct}+(?:1[6-9]|20)\\d{2}\\p{Punct}?(?:0[1-9]|1[012]).*$";
 
     /**
      * A regular expression describing a four-digit year number or a double year
