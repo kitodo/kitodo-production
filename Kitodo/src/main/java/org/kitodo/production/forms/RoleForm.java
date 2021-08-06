@@ -88,7 +88,6 @@ public class RoleForm extends BaseForm {
      */
     public void delete() {
         try {
-            ServiceManager.getRoleService().refresh(this.role);
             if (!this.role.getUsers().isEmpty()) {
                 for (User user : this.role.getUsers()) {
                     user.getRoles().remove(this.role);

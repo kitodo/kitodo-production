@@ -111,7 +111,6 @@ public class BatchTaskHelper extends BatchHelper {
 
     private void loadProcessProperties(Task task) {
         Process process = task.getProcess();
-        ServiceManager.getProcessService().refresh(process);
         this.properties = process.getProperties();
     }
 

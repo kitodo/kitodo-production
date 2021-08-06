@@ -31,20 +31,8 @@ class TemplateBaseForm extends ProcessListBaseView {
         try {
             ServiceManager.getTaskService().save(task, true);
             ServiceManager.getTaskService().evict(task);
-            reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    void reload(BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
-        if (Objects.nonNull(baseBean) && Objects.nonNull(baseBean.getId())) {
-            try {
-                searchDatabaseService.refresh(baseBean);
-            } catch (RuntimeException e) {
-                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {message }, logger, e);
-            }
         }
     }
 }
