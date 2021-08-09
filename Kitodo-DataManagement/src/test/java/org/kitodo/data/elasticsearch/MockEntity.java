@@ -43,13 +43,9 @@ public class MockEntity {
     private static final String IDENTIFIER = "id";
     private static final String TARGET = "target";
 
-    @SuppressWarnings("unchecked")
     public static Node prepareNode() throws Exception {
-        Map settingsMap = MockEntity.prepareNodeSettings();
-
+        Settings settings = MockEntity.prepareNodeSettings();
         removeOldDataDirectories("target/" + NODE_NAME);
-
-        Settings settings = Settings.builder().put(settingsMap).build();
         return new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
     }
 
@@ -60,25 +56,18 @@ public class MockEntity {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static Map prepareNodeSettings() {
+    private static Settings prepareNodeSettings() {
         String port = ConfigMain.getParameter("elasticsearch.port", "9205");
-
-        Map settingsMap = new HashMap();
-        settingsMap.put("node.name", NODE_NAME);
-        // create all data directories under Maven build directory
-        settingsMap.put("path.conf", TARGET);
-        settingsMap.put("path.data", TARGET);
-        settingsMap.put("path.logs", TARGET);
-        settingsMap.put("path.home", TARGET);
-        // set ports used by Elastic Search to something different than default
-        settingsMap.put("http.type", "netty4");
-        settingsMap.put("http.port", port);
-        settingsMap.put("transport.tcp.port", HTTP_TRANSPORT_PORT);
-        settingsMap.put("transport.type", "netty4");
-        // disable automatic index creation
-        settingsMap.put("action.auto_create_index", "false");
-        return settingsMap;
+        return Settings.builder().put("node.name", NODE_NAME)
+                .put("path.conf", TARGET)
+                .put("path.data", TARGET)
+                .put("path.logs", TARGET)
+                .put("path.home", TARGET)
+                .put("http.type", "netty4")
+                .put("http.port", port)
+                .put("transport.tcp.port", HTTP_TRANSPORT_PORT)
+                .put("transport.type", "netty4")
+                .put("action.auto_create_index", "false").build();
     }
 
     public static void setUpAwaitility() {

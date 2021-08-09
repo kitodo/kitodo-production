@@ -12,7 +12,6 @@
 package org.kitodo.data.elasticsearch;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import javax.ws.rs.HttpMethod;
 
@@ -28,12 +27,14 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.action.main.MainResponse;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.MainResponse;
 import org.elasticsearch.rest.RestStatus;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.api.RestClientInterface;
@@ -85,7 +86,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
             }
 
             client = builder.build();
-            highLevelClient = new RestHighLevelClient(client);
+            highLevelClient = new RestHighLevelClient(builder);
         }
     }
 
@@ -115,7 +116,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
             builder.setPathPrefix(path);
         }
         client = builder.build();
-        highLevelClient = new RestHighLevelClient(client);
+        highLevelClient = new RestHighLevelClient(builder);
     }
 
     /**
@@ -124,7 +125,9 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return information about the server
      */
     public String getServerInformation() throws IOException {
-        Response response = client.performRequest(HttpMethod.GET, "/", Collections.singletonMap("pretty", "true"));
+        Request request = new Request(HttpMethod.GET, "/");
+        request.addParameter("pretty", "true");
+        Response response = client.performRequest(request);
         return EntityUtils.toString(response.getEntity());
     }
 
@@ -134,7 +137,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return information about the server
      */
     public String getServerInfo() throws IOException {
-        MainResponse response = highLevelClient.info();
+        MainResponse response = highLevelClient.info(RequestOptions.DEFAULT);
         return response.toString();
     }
 
@@ -144,8 +147,9 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return mapping
      */
     public String getMapping() throws IOException {
-        Response response = client.performRequest(HttpMethod.GET, "/" + index + "/_mapping",
-            Collections.singletonMap("pretty", "true"));
+        Request request = new Request(HttpMethod.GET, "/" + index + "/_mapping");
+        request.addParameter("pretty", "true");
+        Response response = client.performRequest(request);
         return EntityUtils.toString(response.getEntity());
     }
 
@@ -169,7 +173,9 @@ public abstract class KitodoRestClient implements RestClientInterface {
             query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
         }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = client.performRequest(HttpMethod.PUT, "/" + index, Collections.emptyMap(), entity);
+        Request request = new Request(HttpMethod.PUT, "/" + index);
+        request.setEntity(entity);
+        Response indexResponse = client.performRequest(request);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
@@ -180,7 +186,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return false if doesn't exists, true if exists
      */
     public boolean indexExists() throws IOException, CustomResponseException {
-        Response indexResponse = client.performRequest(HttpMethod.GET, "/" + index, Collections.emptyMap());
+        Response indexResponse = client.performRequest(new Request(HttpMethod.GET, "/" + index));
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
@@ -189,7 +195,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * Delete the whole index. Used for cleaning after tests!
      */
     public void deleteIndex() throws IOException {
-        client.performRequest(HttpMethod.DELETE, "/" + index);
+        client.performRequest(new Request(HttpMethod.DELETE, "/" + index));
     }
 
     /**

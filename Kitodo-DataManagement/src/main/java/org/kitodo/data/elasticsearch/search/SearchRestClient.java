@@ -27,6 +27,8 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -110,7 +112,7 @@ public class SearchRestClient extends KitodoRestClient {
         searchRequest.source(sourceBuilder);
 
         try {
-            SearchResponse response = highLevelClient.search(searchRequest);
+            SearchResponse response = highLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             return response.getAggregations();
         } catch (ResponseException e) {
             handleResponseException(e);
@@ -132,7 +134,7 @@ public class SearchRestClient extends KitodoRestClient {
     Map<String, Object> getDocument(String type, Integer id) throws CustomResponseException, DataException {
         try {
             GetRequest getRequest = new GetRequest(this.index, type, String.valueOf(id));
-            GetResponse getResponse = highLevelClient.get(getRequest);
+            GetResponse getResponse = highLevelClient.get(getRequest, RequestOptions.DEFAULT);
             if (getResponse.isExists()) {
                 Map<String, Object> response = getResponse.getSourceAsMap();
                 response.put("id", getResponse.getId());
@@ -182,7 +184,7 @@ public class SearchRestClient extends KitodoRestClient {
         searchRequest.source(sourceBuilder);
 
         try {
-            SearchResponse response = highLevelClient.search(searchRequest);
+            SearchResponse response = highLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             return response.getHits();
         } catch (ResponseException e) {
             handleResponseException(e);
@@ -196,8 +198,10 @@ public class SearchRestClient extends KitodoRestClient {
             throws CustomResponseException, DataException {
         String output = "";
         try {
-            Response response = client.performRequest(httpMethod, "/" + index + "/" + type + "/" + urlRequest,
-                Collections.singletonMap("pretty", "true"), entity);
+            Request request = new Request(httpMethod, "/" + index + "/" + type + "/" + urlRequest);
+            request.addParameter("pretty", "true");
+            request.setEntity(entity);
+            Response response = client.performRequest(request);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
             handleResponseException(e);

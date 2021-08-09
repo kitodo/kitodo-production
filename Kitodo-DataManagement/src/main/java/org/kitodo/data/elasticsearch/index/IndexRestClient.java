@@ -12,7 +12,6 @@
 package org.kitodo.data.elasticsearch.index;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,6 +26,8 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
@@ -34,7 +35,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 
 /**
- * Implementation of Elastic Search REST Client for index package.
+ * Implementation of ElasticSearch REST Client for index package.
  */
 public class IndexRestClient extends KitodoRestClient {
 
@@ -88,7 +89,7 @@ public class IndexRestClient extends KitodoRestClient {
             indexRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         }
 
-        IndexResponse indexResponse = highLevelClient.index(indexRequest);
+        IndexResponse indexResponse = highLevelClient.index(indexRequest, RequestOptions.DEFAULT);
         processStatusCode(indexResponse.status());
     }
 
@@ -105,7 +106,7 @@ public class IndexRestClient extends KitodoRestClient {
         BulkRequest bulkRequest = prepareBulkRequest(type, documentsToIndex);
 
         try {
-            BulkResponse bulkResponse = highLevelClient.bulk(bulkRequest);
+            BulkResponse bulkResponse = highLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
             if (bulkResponse.hasFailures()) {
                 throw new CustomResponseException(bulkResponse.buildFailureMessage());
             }
@@ -127,7 +128,7 @@ public class IndexRestClient extends KitodoRestClient {
         BulkRequest bulkRequest = prepareBulkRequest(type, documentsToIndex);
 
         ResponseListener responseListener = new ResponseListener(type, documentsToIndex.size());
-        highLevelClient.bulkAsync(bulkRequest, responseListener);
+        highLevelClient.bulkAsync(bulkRequest, RequestOptions.DEFAULT, responseListener);
 
         synchronized (lock) {
             while (Objects.isNull(responseListener.getBulkResponse())) {
@@ -159,7 +160,7 @@ public class IndexRestClient extends KitodoRestClient {
         }
 
         try {
-            highLevelClient.delete(deleteRequest);
+            highLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
         } catch (ResponseException e) {
             handleResponseException(e);
         }  catch (IOException e) {
@@ -180,8 +181,10 @@ public class IndexRestClient extends KitodoRestClient {
                 + "      \"fielddata\": true,\n" + "      \"fields\": {\n" + "        \"raw\": {\n"
                 + "          \"type\":  \"text\",\n" + "          \"index\": false}\n" + "    }\n" + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = client.performRequest(HttpMethod.PUT,
-            "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types", Collections.emptyMap(), entity);
+        Request request = new Request(HttpMethod.PUT,
+                "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types");
+        request.setEntity(entity);
+        Response indexResponse = client.performRequest(request);
         processStatusCode(indexResponse.getStatusLine());
     }
 

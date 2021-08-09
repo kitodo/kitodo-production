@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -123,7 +122,6 @@ public class MockDatabase {
         indexRestClient.createIndex(readMapping());
     }
 
-    @SuppressWarnings("unchecked")
     public static void startNodeWithoutMapping() throws Exception {
         String nodeName = Helper.generateRandomString(6);
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
@@ -131,8 +129,7 @@ public class MockDatabase {
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         indexRestClient = initializeIndexRestClient();
 
-        Map settingsMap = prepareNodeSettings(port, nodeName);
-        Settings settings = Settings.builder().put(settingsMap).build();
+        Settings settings = prepareNodeSettings(port, nodeName);
 
         removeOldDataDirectories("target/" + nodeName);
 
@@ -223,7 +220,8 @@ public class MockDatabase {
 
     private static class ExtendedNode extends Node {
         ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
+            // TODO: parameters "properties", "configPath" and "defaultNodeName" should probably not be "null"!
+            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null, null, null), classpathPlugins, false);
         }
     }
 
@@ -259,23 +257,17 @@ public class MockDatabase {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static Map prepareNodeSettings(String httpPort, String nodeName) {
-        Map settingsMap = new HashMap();
-        settingsMap.put("node.name", nodeName);
-        // create all data directories under Maven build directory
-        settingsMap.put("path.conf", TARGET);
-        settingsMap.put("path.data", TARGET);
-        settingsMap.put("path.logs", TARGET);
-        settingsMap.put("path.home", TARGET);
-        // set ports used by Elastic Search to something different than default
-        settingsMap.put("http.type", "netty4");
-        settingsMap.put("http.port", httpPort);
-        settingsMap.put("transport.tcp.port", HTTP_TRANSPORT_PORT);
-        settingsMap.put("transport.type", "netty4");
-        // disable automatic index creation
-        settingsMap.put("action.auto_create_index", "false");
-        return settingsMap;
+    private static Settings prepareNodeSettings(String httpPort, String nodeName) {
+        return Settings.builder().put("node.name", nodeName)
+                .put("path.conf", TARGET)
+                .put("path.data", TARGET)
+                .put("path.logs", TARGET)
+                .put("path.home", TARGET)
+                .put("http.type", "netty4")
+                .put("http.port", httpPort)
+                .put("transport.tcp.port", HTTP_TRANSPORT_PORT)
+                .put("transport.type", "netty4")
+                .put("action.auto_create_index", "false").build();
     }
 
     public static void insertAuthorities() throws DAOException {

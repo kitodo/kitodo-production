@@ -36,6 +36,7 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -856,7 +857,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         List<String> distinctValues = new ArrayList<>();
         try {
             TermsAggregationBuilder termsAggregation = AggregationBuilders.terms(field).field(field)
-                    .order(Terms.Order.aggregation("_term", sort));
+                    .order(BucketOrder.aggregation("_term", sort));
             if (size > 0) {
                 termsAggregation.size(Math.toIntExact(size));
             }
