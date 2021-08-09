@@ -223,6 +223,7 @@ public class MigrationServiceIT {
 
         migrationService.addProcessesToTemplate(template, processes);
 
+        template = ServiceManager.getTemplateService().getById(template.getId());
         Assert.assertEquals(2, template.getProcesses().size());
         Assert.assertEquals(5, (long) firstProcess.getTemplate().getId());
         Assert.assertEquals(5, (long) secondProcess.getTemplate().getId());
@@ -240,6 +241,7 @@ public class MigrationServiceIT {
         migrationService.addProcessesToTemplate(secondTemplate, firstTemplateProcesses);
 
         Assert.assertEquals(2, firstTemplateProcesses.size());
+        secondTemplate = ServiceManager.getTemplateService().getById(2);
         Assert.assertEquals(2, secondTemplate.getProcesses().size());
         Assert.assertEquals(2, (long) firstTemplateProcesses.get(0).getTemplate().getId());
     }
