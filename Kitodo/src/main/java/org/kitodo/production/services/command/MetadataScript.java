@@ -19,6 +19,7 @@ public class MetadataScript {
 
     private String goal;
     private String root;
+    private String typeTarget;
     private List<String> values = new ArrayList<>();
 
     /**
@@ -26,10 +27,17 @@ public class MetadataScript {
      * @param command the given command.
      */
     public MetadataScript(String command) {
-        if (command.contains("=")) {
-            String[] commandParts = command.split("=");
-            goal = commandParts[0];
-            String rootOrValue = commandParts[1];
+        String metadataCommand = command;
+        String typeCommand = "";
+        if (command.contains("+")) {
+            String[] commandParts = command.split("\\+");
+            metadataCommand = commandParts[0];
+            typeCommand = commandParts[1];
+        }
+        if (metadataCommand.contains("=")) {
+            String[] metadataParts = metadataCommand.split("=");
+            goal = metadataParts[0];
+            String rootOrValue = metadataParts[1];
             if (rootOrValue.startsWith("@") || rootOrValue.startsWith("$")) {
                 root = rootOrValue;
             } else {
@@ -38,6 +46,9 @@ public class MetadataScript {
         }
         else {
             goal = command;
+        }
+        if (typeCommand.contains("=")) {
+            typeTarget = typeCommand.split("=")[1];
         }
     }
 
@@ -71,5 +82,13 @@ public class MetadataScript {
      */
     public String getRootName() {
         return Objects.isNull(root) ? null : root.substring(1);
+    }
+
+    /**
+     * Get typeTarget.
+     * @return typeTarget
+     */
+    public String getTypeTarget() {
+        return typeTarget;
     }
 }
