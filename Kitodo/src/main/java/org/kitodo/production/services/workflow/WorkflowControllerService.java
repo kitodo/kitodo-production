@@ -69,7 +69,7 @@ import org.xml.sax.SAXException;
 public class WorkflowControllerService {
 
     private List<Task> automaticTasks = new ArrayList<>();
-    private List<Task> tasksToFinish;
+    private List<Task> tasksToFinish = new ArrayList<>();
     private boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
