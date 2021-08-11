@@ -1,0 +1,69 @@
+{
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "creationDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "ignore_malformed": true
+      },
+      "processes": {
+        "properties": {
+          "id": {
+            "type": "long"
+          }
+        }
+      },
+      "templates": {
+        "properties": {
+          "id": {
+            "type": "long"
+          }
+        }
+      },
+      "title": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          },
+          "raw": {
+            "type": "text",
+            "index": false
+          }
+        },
+        "fielddata": true
+      },
+      "type": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "value": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          },
+          "raw": {
+            "type": "text",
+            "index": false
+          }
+        }
+      },
+      "workpieces": {
+        "properties": {
+          "id": {
+            "type": "long"
+          }
+        }
+      }
+    }
+  }
+}

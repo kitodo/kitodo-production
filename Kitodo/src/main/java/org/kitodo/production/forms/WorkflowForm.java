@@ -505,8 +505,8 @@ public class WorkflowForm extends BaseForm {
      */
     public void setLanguage(String language) {
         // We don't need to do anything. The language value is written into a hidden input field for the localization
-        // of the editor. On saving the workflow form it gets submitted again. Therfore, a setter is expected and we
-        // only need it for completeness sake. If we find a better way to get the language value into the editor's JS
+        // of the editor. On saving the workflow form it gets submitted again. Therefore, a setter is expected, and we
+        // only need it for completeness’s sake. If we find a better way to get the language value into the editor's JS
         // we should do so. :)
     }
 }

@@ -24,7 +24,6 @@ import org.elasticsearch.plugins.Plugin;
  */
 public class ExtendedNode extends Node {
     public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-        // TODO: parameters "properties", "configPath" and "defaultNodeName" should probably not be "null"!
         super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null, null, null),
                 classpathPlugins, false);
     }

@@ -61,17 +61,17 @@ public class SearcherIT {
         node = MockEntity.prepareNode();
         node.start();
 
-        indexRestClient.createIndex();
+        indexRestClient.createIndexes();
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(1), 1, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(2), 2, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(3), 3, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(4), 4, false);
-        indexRestClient.enableSortingByTextField("testsearch", TITLE);
+        indexRestClient.enableSortingByTextField(TITLE);
     }
 
     @AfterClass
     public static void cleanIndex() throws Exception {
-        indexRestClient.deleteIndex();
+        indexRestClient.deleteAllIndexes();
         node.close();
     }
 
@@ -192,7 +192,7 @@ public class SearcherIT {
 
     private static IndexRestClient initializeIndexRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(testIndexName);
+        restClient.setIndexBase(testIndexName);
         return restClient;
     }
 

@@ -107,8 +107,7 @@ public class SearchRestClient extends KitodoRestClient {
         sourceBuilder.query(query);
         sourceBuilder.aggregation(aggregation);
 
-        SearchRequest searchRequest = new SearchRequest(this.index);
-        searchRequest.types(type);
+        SearchRequest searchRequest = new SearchRequest(this.indexBase + "_" + type);
         searchRequest.source(sourceBuilder);
 
         try {
@@ -133,7 +132,8 @@ public class SearchRestClient extends KitodoRestClient {
      */
     Map<String, Object> getDocument(String type, Integer id) throws CustomResponseException, DataException {
         try {
-            GetRequest getRequest = new GetRequest(this.index, type, String.valueOf(id));
+            GetRequest getRequest = new GetRequest(this.indexBase + "_" + type);
+            getRequest.id(String.valueOf(id));
             GetResponse getResponse = highLevelClient.get(getRequest, RequestOptions.DEFAULT);
             if (getResponse.isExists()) {
                 Map<String, Object> response = getResponse.getSourceAsMap();
@@ -179,8 +179,7 @@ public class SearchRestClient extends KitodoRestClient {
             sourceBuilder.size(10000);
         }
 
-        SearchRequest searchRequest = new SearchRequest(this.index);
-        searchRequest.types(type);
+        SearchRequest searchRequest = new SearchRequest(this.indexBase + "_" + type);
         searchRequest.source(sourceBuilder);
 
         try {
@@ -198,7 +197,7 @@ public class SearchRestClient extends KitodoRestClient {
             throws CustomResponseException, DataException {
         String output = "";
         try {
-            Request request = new Request(httpMethod, "/" + index + "/" + type + "/" + urlRequest);
+            Request request = new Request(httpMethod, "/" + indexBase +"_" + type + "/" + urlRequest);
             request.addParameter("pretty", "true");
             request.setEntity(entity);
             Response response = client.performRequest(request);

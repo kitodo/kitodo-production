@@ -1,0 +1,49 @@
+{
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "processes": {
+        "properties": {
+          "id": {
+            "type": "long"
+          },
+          "title": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "template": {
+            "type": "boolean"
+          }
+        }
+      },
+      "title": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          },
+          "raw": {
+            "type": "text",
+            "index": false
+          }
+        },
+        "fielddata": true
+      },
+      "type": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      }
+    }
+  }
+}

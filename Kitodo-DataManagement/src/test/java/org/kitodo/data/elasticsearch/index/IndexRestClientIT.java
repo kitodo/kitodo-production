@@ -34,13 +34,13 @@ public class IndexRestClientIT {
     private static IndexRestClient restClient;
     private static Node node;
     private static String testIndexName;
-    private static String testTypeName = "indexer";
-    private static Searcher searcher = new Searcher(testTypeName);
+    private static final String testTypeName = "indexer";
+    private static final Searcher searcher = new Searcher(testTypeName);
     private static final String DOCUMENT_EXISTS = "Document exists!";
 
     @BeforeClass
     public static void startElasticSearch() throws Exception {
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex") + "_" + testTypeName;
         restClient = initializeRestClient();
 
         node = MockEntity.prepareNode();
@@ -54,12 +54,12 @@ public class IndexRestClientIT {
 
     @Before
     public void createIndex() throws Exception {
-        restClient.createIndex();
+        restClient.createIndexes();
     }
 
     @After
     public void deleteIndex() throws Exception {
-        restClient.deleteIndex();
+        restClient.deleteAllIndexes();
     }
 
     @Test
@@ -130,7 +130,7 @@ public class IndexRestClientIT {
 
     private static IndexRestClient initializeRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(testIndexName);
+        restClient.setIndexBase(testIndexName);
         return restClient;
     }
 

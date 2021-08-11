@@ -34,8 +34,8 @@ public class SearchRestClientIT {
     private static Node node;
     private static SearchRestClient searchRestClient;
     private static String testIndexName;
-    private static String testTypeName = "testsearchclient";
-    private static QueryBuilder query = QueryBuilders.matchAllQuery();
+    private static final String testTypeName = "testsearchclient";
+    private static final QueryBuilder query = QueryBuilders.matchAllQuery();
 
     @BeforeClass
     public static void prepareIndex() throws Exception {
@@ -47,7 +47,7 @@ public class SearchRestClientIT {
         node = MockEntity.prepareNode();
         node.start();
 
-        searchRestClient.createIndex();
+        searchRestClient.createIndexes();
 
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(testTypeName, MockEntity.createEntities().get(1), 1, false);
@@ -58,7 +58,7 @@ public class SearchRestClientIT {
 
     @AfterClass
     public static void cleanIndex() throws Exception {
-        searchRestClient.deleteIndex();
+        searchRestClient.deleteAllIndexes();
         node.close();
     }
 
@@ -74,7 +74,7 @@ public class SearchRestClientIT {
             searchRestClient.getDocument(testTypeName, 1).isEmpty()));
 
         await().untilAsserted(() -> assertEquals("Get of document has failed - id is incorrect!", 1,
-            (int) Integer.valueOf((String) searchRestClient.getDocument(testTypeName, 1).get("id"))));
+                Integer.parseInt((String) searchRestClient.getDocument(testTypeName, 1).get("id"))));
     }
 
     @Test
@@ -97,13 +97,13 @@ public class SearchRestClientIT {
 
     private static SearchRestClient initializeSearchRestClient() {
         SearchRestClient restClient = SearchRestClient.getInstance();
-        restClient.setIndex(testIndexName);
+        restClient.setIndexBase(testIndexName);
         return restClient;
     }
 
     private static IndexRestClient initializeIndexRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(testIndexName);
+        restClient.setIndexBase(testIndexName);
         return restClient;
     }
 }

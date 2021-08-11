@@ -222,7 +222,7 @@ public class IndexingForm {
     }
 
     /**
-     * Delete whole Elastic Search index.
+     * Delete whole ElasticSearch index.
      */
     public void deleteIndex() {
         pollingChannel.send(IndexingService.DELETION_STARTED_MESSAGE);

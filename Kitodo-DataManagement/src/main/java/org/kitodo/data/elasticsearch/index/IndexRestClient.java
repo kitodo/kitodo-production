@@ -84,7 +84,8 @@ public class IndexRestClient extends KitodoRestClient {
      */
     public void addDocument(String type, Map<String, Object> entity, Integer id, boolean forceRefresh)
             throws IOException, CustomResponseException {
-        IndexRequest indexRequest = new IndexRequest(this.index, type, String.valueOf(id)).source(entity);
+        IndexRequest indexRequest = new IndexRequest(this.indexBase + "_" + type).source(entity);
+        indexRequest.id(String.valueOf(id));
         if (forceRefresh) {
             indexRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         }
@@ -154,7 +155,8 @@ public class IndexRestClient extends KitodoRestClient {
      *            object is right after that available for display
      */
     void deleteDocument(String type, Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
-        DeleteRequest deleteRequest = new DeleteRequest(this.index, type, String.valueOf(id));
+        DeleteRequest deleteRequest = new DeleteRequest(this.indexBase + "_" + type);
+        deleteRequest.id(String.valueOf(id));
         if (forceRefresh) {
             deleteRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         }
@@ -171,18 +173,16 @@ public class IndexRestClient extends KitodoRestClient {
     /**
      * Enable sorting by text field.
      *
-     * @param type
-     *            as String
      * @param field
      *            as String
      */
-    public void enableSortingByTextField(String type, String field) throws IOException, CustomResponseException {
+    public void enableSortingByTextField(String field) throws IOException, CustomResponseException {
         String query = "{\n \"properties\": {\n\"" + field + "\": {\n" + "      \"type\": \"text\",\n"
                 + "      \"fielddata\": true,\n" + "      \"fields\": {\n" + "        \"raw\": {\n"
                 + "          \"type\":  \"text\",\n" + "          \"index\": false}\n" + "    }\n" + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Request request = new Request(HttpMethod.PUT,
-                "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types");
+                "/" + this.getIndexBase() + "/_mappings");
         request.setEntity(entity);
         Response indexResponse = client.performRequest(request);
         processStatusCode(indexResponse.getStatusLine());
@@ -192,7 +192,8 @@ public class IndexRestClient extends KitodoRestClient {
         BulkRequest bulkRequest = new BulkRequest();
 
         for (Map.Entry<Integer, Map<String, Object>> entry : documentsToIndex.entrySet()) {
-            IndexRequest indexRequest = new IndexRequest(this.index, type, String.valueOf(entry.getKey()));
+            IndexRequest indexRequest = new IndexRequest(this.indexBase + "_" + type);
+            indexRequest.id(String.valueOf(entry.getKey()));
             bulkRequest.add(indexRequest.source(entry.getValue()));
         }
 

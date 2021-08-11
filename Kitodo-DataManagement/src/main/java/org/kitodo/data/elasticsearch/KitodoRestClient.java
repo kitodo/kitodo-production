@@ -12,6 +12,8 @@
 package org.kitodo.data.elasticsearch;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.HttpMethod;
 
@@ -41,15 +43,17 @@ import org.kitodo.data.elasticsearch.api.RestClientInterface;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
- * Implementation of Elastic Search REST Client for Index Module.
+ * Implementation of ElasticSearch REST Client for Index Module.
  */
 public abstract class KitodoRestClient implements RestClientInterface {
 
     private static final Logger logger = LogManager.getLogger(KitodoRestClient.class);
 
-    protected String index;
+    protected String indexBase;
     protected RestClient client;
     protected RestHighLevelClient highLevelClient;
+
+    public static final List<String> MAPPING_TYPES = Arrays.asList("batch", "docket", "filter", "process", "project", "property", "ruleset", "task", "template", "workflow");
 
     /**
      * Create REST client.
@@ -146,8 +150,8 @@ public abstract class KitodoRestClient implements RestClientInterface {
      *
      * @return mapping
      */
-    public String getMapping() throws IOException {
-        Request request = new Request(HttpMethod.GET, "/" + index + "/_mapping");
+    public String getMapping(String mappingType) throws IOException {
+        Request request = new Request(HttpMethod.GET, "/" + indexBase + "_" + mappingType + "/_mapping");
         request.addParameter("pretty", "true");
         Response response = client.performRequest(request);
         return EntityUtils.toString(response.getEntity());
@@ -156,8 +160,10 @@ public abstract class KitodoRestClient implements RestClientInterface {
     /**
      * Create new index without mapping.
      */
-    public boolean createIndex() throws IOException, CustomResponseException {
-        return createIndex(null);
+    public void createIndexes() throws IOException, CustomResponseException {
+        for (String mappingType : MAPPING_TYPES) {
+            createIndex(null, mappingType);
+        }
     }
 
     /**
@@ -168,12 +174,12 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return true or false - can be used for displaying information to user if
      *         success
      */
-    public boolean createIndex(String query) throws IOException, CustomResponseException {
+    public boolean createIndex(String query, String mappingType) throws IOException, CustomResponseException {
         if (query == null) {
             query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
         }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Request request = new Request(HttpMethod.PUT, "/" + index);
+        Request request = new Request(HttpMethod.PUT, "/" + indexBase + "_" + mappingType);
         request.setEntity(entity);
         Response indexResponse = client.performRequest(request);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
@@ -183,19 +189,26 @@ public abstract class KitodoRestClient implements RestClientInterface {
     /**
      * Check if index already exists. Needed for frontend.
      *
-     * @return false if doesn't exists, true if exists
+     * @return false if index doesn't exist, true else
      */
-    public boolean indexExists() throws IOException, CustomResponseException {
-        Response indexResponse = client.performRequest(new Request(HttpMethod.GET, "/" + index));
-        int statusCode = processStatusCode(indexResponse.getStatusLine());
-        return statusCode == 200 || statusCode == 201;
+    public boolean typeIndexesExist() throws IOException, CustomResponseException {
+        for (String mappingType : MAPPING_TYPES) {
+            Response indexResponse = client.performRequest(new Request(HttpMethod.GET, "/" + indexBase + "_" + mappingType));
+            int statusCode = processStatusCode(indexResponse.getStatusLine());
+            if (statusCode != 200 && statusCode != 201) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * Delete the whole index. Used for cleaning after tests!
      */
-    public void deleteIndex() throws IOException {
-        client.performRequest(new Request(HttpMethod.DELETE, "/" + index));
+    public void deleteAllIndexes() throws IOException {
+        for (String mappingType : MAPPING_TYPES) {
+            client.performRequest(new Request(HttpMethod.DELETE, "/" + indexBase + "_" + mappingType));
+        }
     }
 
     /**
@@ -203,18 +216,18 @@ public abstract class KitodoRestClient implements RestClientInterface {
      *
      * @return index name
      */
-    public String getIndex() {
-        return index;
+    public String getIndexBase() {
+        return indexBase;
     }
 
     /**
-     * Setter for index.
+     * Setter for indexBase base. The indexBase base is the prefix of all indexBase
      *
-     * @param index
+     * @param indexBase
      *            - equal to the name of database, default kitodo
      */
-    public void setIndex(String index) {
-        this.index = index;
+    public void setIndexBase(String indexBase) {
+        this.indexBase = indexBase;
     }
 
     protected void handleResponseException(ResponseException e) throws CustomResponseException {
