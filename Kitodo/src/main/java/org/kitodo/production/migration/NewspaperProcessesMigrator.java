@@ -739,7 +739,7 @@ public class NewspaperProcessesMigrator {
      * @return the title
      */
     private String getYearTitle(String year) {
-        return title + '-' + year.replace("/", "--");
+        return title + '-' + year.split("/")[0];
     }
 
     /**
