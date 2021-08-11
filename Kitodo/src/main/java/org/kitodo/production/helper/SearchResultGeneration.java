@@ -23,9 +23,11 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
@@ -67,10 +69,25 @@ public class SearchResultGeneration {
 
     private List<ProcessDTO> getResultsWithFilter() {
         List<ProcessDTO> processDTOS = new ArrayList<>();
+        int elasticsearchLimit = 9999;
 
         try {
-            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
-                    ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+            Long numberOfProcesses = ServiceManager.getProcessService().count(getQueryForFilter(ObjectType.PROCESS));
+            if (numberOfProcesses > elasticsearchLimit) {
+                int queriedIds = 0;
+                while (processDTOS.size() < numberOfProcesses) {
+                    RangeQueryBuilder rangeQueryBuilder = new RangeQueryBuilder(ProcessTypeField.ID.toString());
+                    rangeQueryBuilder.gte(queriedIds).lt(queriedIds+elasticsearchLimit);
+                    BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
+                    queryForFilter.should(rangeQueryBuilder);
+                    processDTOS.addAll(ServiceManager.getProcessService().findByQuery(queryForFilter,
+                            ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false));
+                    queriedIds+=elasticsearchLimit;
+                }
+            } else {
+                processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
+                        ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+            }
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
