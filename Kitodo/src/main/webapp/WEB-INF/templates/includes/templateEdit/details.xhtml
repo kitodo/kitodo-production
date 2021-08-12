@@ -42,17 +42,13 @@
             </div>
 
             <div>
-                <p:outputLabel for="workflow" value="#{msgs.workflow}"/>
-                <p:selectOneMenu id="workflow" value="#{TemplateForm.template.workflow}" disabled="#{isViewMode}"
-                                 converter="#{workflowConverter}"
-                                 required="#{not empty param['editForm:save']}">
-                    <f:selectItems value="#{TemplateForm.workflows}"
-                                   var="workflow"
-                                   itemValue="#{workflow}"
-                                   itemLabel="#{workflow.title}"/>
+                <p:outputLabel for="active" value="#{msgs.active}"/>
+                <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateForm.template.active}"
+                                         disabled="#{isViewMode}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectOneMenu>
+                </p:selectBooleanCheckbox>
             </div>
+
         </p:row>
 
         <p:row>
@@ -81,12 +77,18 @@
             </div>
 
             <div>
-                <p:outputLabel for="active" value="#{msgs.active}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateForm.template.active}"
-                                         disabled="#{isViewMode}">
+                <p:outputLabel for="workflow" value="#{msgs.workflow}"/>
+                <p:selectOneMenu id="workflow" value="#{TemplateForm.template.workflow}" disabled="#{isViewMode}"
+                                 converter="#{workflowConverter}"
+                                 required="#{not empty param['editForm:save']}">
+                    <f:selectItems value="#{TemplateForm.workflows}"
+                                   var="workflow"
+                                   itemValue="#{workflow}"
+                                   itemLabel="#{workflow.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
+                </p:selectOneMenu>
             </div>
+
         </p:row>
     </p:panelGrid>
 </ui:composition>
