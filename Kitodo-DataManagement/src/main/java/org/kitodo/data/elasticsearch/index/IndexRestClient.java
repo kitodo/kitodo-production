@@ -144,7 +144,7 @@ public class IndexRestClient extends KitodoRestClient {
     }
 
     /**
-     * Delete document from the index.
+     * Delete document from type specific index.
      *
      * @param type
      *            for which request is performed

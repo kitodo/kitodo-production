@@ -197,7 +197,7 @@ public class SearchRestClient extends KitodoRestClient {
             throws CustomResponseException, DataException {
         String output = "";
         try {
-            Request request = new Request(httpMethod, "/" + indexBase +"_" + type + "/" + urlRequest);
+            Request request = new Request(httpMethod, "/" + indexBase + "_" + type + "/" + urlRequest);
             request.addParameter("pretty", "true");
             request.setEntity(entity);
             Response response = client.performRequest(request);

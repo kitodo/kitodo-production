@@ -53,7 +53,8 @@ public abstract class KitodoRestClient implements RestClientInterface {
     protected RestClient client;
     protected RestHighLevelClient highLevelClient;
 
-    public static final List<String> MAPPING_TYPES = Arrays.asList("batch", "docket", "filter", "process", "project", "property", "ruleset", "task", "template", "workflow");
+    public static final List<String> MAPPING_TYPES = Arrays.asList("batch", "docket", "filter", "process", "project",
+            "property", "ruleset", "task", "template", "workflow");
 
     /**
      * Create REST client.
@@ -148,6 +149,8 @@ public abstract class KitodoRestClient implements RestClientInterface {
     /**
      * Get mapping.
      *
+     * @param mappingType
+     *           the name of table in database as String
      * @return mapping
      */
     public String getMapping(String mappingType) throws IOException {
@@ -158,7 +161,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
-     * Create new index without mapping.
+     * Create new indexes without mappings.
      */
     public void createIndexes() throws IOException, CustomResponseException {
         for (String mappingType : MAPPING_TYPES) {
@@ -171,6 +174,8 @@ public abstract class KitodoRestClient implements RestClientInterface {
      *
      * @param query
      *            contains mapping
+     * @param mappingType
+     *            the name of table in database as String
      * @return true or false - can be used for displaying information to user if
      *         success
      */
@@ -187,9 +192,9 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
-     * Check if index already exists. Needed for frontend.
+     * Check if all indexes already exist. Needed for frontend.
      *
-     * @return false if index doesn't exist, true else
+     * @return false if any index doesn't exist, true else
      */
     public boolean typeIndexesExist() throws IOException, CustomResponseException {
         for (String mappingType : MAPPING_TYPES) {
@@ -203,7 +208,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
-     * Delete the whole index. Used for cleaning after tests!
+     * Delete all indexes. Used for cleaning after tests!
      */
     public void deleteAllIndexes() throws IOException {
         for (String mappingType : MAPPING_TYPES) {
@@ -212,16 +217,17 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
-     * Getter for index.
+     * Getter for indexBase.
+     * The indexBase is the prefix of all indexes - equal to the name of database, default kitodo.
      *
-     * @return index name
+     * @return indexBase name
      */
     public String getIndexBase() {
         return indexBase;
     }
 
     /**
-     * Setter for indexBase base. The indexBase base is the prefix of all indexBase
+     * Setter for indexBase. The indexBase is the prefix of all indexes
      *
      * @param indexBase
      *            - equal to the name of database, default kitodo
