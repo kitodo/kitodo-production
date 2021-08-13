@@ -918,7 +918,8 @@ public class ProcessForm extends TemplateBaseForm {
     public void load(int id) {
         SecurityAccessController securityAccessController = new SecurityAccessController();
         try {
-            if (!securityAccessController.hasAuthorityToEditProcess(id)) {
+            if (!securityAccessController.hasAuthorityToEditProcess(id)
+                    && !securityAccessController.hasAuthorityToViewProcess(id)) {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
