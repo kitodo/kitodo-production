@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
@@ -66,7 +67,7 @@ public class FileUploadDialog extends MetadataImportDialog {
             Document internalDocument = importService.convertDataRecordToInternal(
                 createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
                 selectedCatalog, false);
-            TempProcess tempProcess = importService.createTempProcessFromDocument(internalDocument,
+            TempProcess tempProcess = importService.createTempProcessFromDocument(selectedCatalog, internalDocument,
                 createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
 
             LinkedList<TempProcess> processes = new LinkedList<>();
@@ -79,14 +80,15 @@ public class FileUploadDialog extends MetadataImportDialog {
             fillCreateProcessForm(processes);
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
-                | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException e) {
+                | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException
+                | TransformerException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
     private TempProcess extractParentRecordFromFile(UploadedFile uploadedFile, Document internalDocument)
             throws XPathExpressionException, UnsupportedFormatException, URISyntaxException, IOException,
-            ParserConfigurationException, SAXException, ProcessGenerationException {
+            ParserConfigurationException, SAXException, ProcessGenerationException, TransformerException {
         Collection<String> higherLevelIdentifier = this.createProcessForm.getRulesetManagement()
                 .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
 
@@ -97,7 +99,7 @@ public class FileUploadDialog extends MetadataImportDialog {
                 Document internalParentDocument = importService.convertDataRecordToInternal(
                         createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
                         selectedCatalog, true);
-                return importService.createTempProcessFromDocument(internalParentDocument,
+                return importService.createTempProcessFromDocument(selectedCatalog, internalParentDocument,
                         createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
             }
         }

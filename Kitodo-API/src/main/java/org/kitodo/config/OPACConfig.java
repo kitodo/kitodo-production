@@ -67,8 +67,21 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve and return the value of the "prestructured" flag of a specific catalog,
+     * controlling whether the import of a process' structure is completely handled by the
+     * import XSLT file or not.
+     *
+     * @param catalogName String identifying the catalog by its title
+     * @return whether the "prestructured" value is set for the given catalog or not
+     */
+    public static boolean isPrestructuredImport(String catalogName) {
+        return getCatalog(catalogName).containsKey("prestructured")
+                && getCatalog(catalogName).getBoolean("prestructured");
+    }
+
+    /**
      * Retrieve the "interfaceType" of the catalog identified by it title.
-     * @param catalogName String String identifying the catalog by its title
+     * @param catalogName String identifying the catalog by its title
      * @return String name of interfaceType
      */
     public static SearchInterfaceType getInterfaceType(String catalogName) {

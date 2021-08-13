@@ -15,11 +15,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
@@ -104,13 +107,21 @@ public abstract class MetadataImportDialog {
      */
     void fillCreateProcessForm(LinkedList<TempProcess> processes) {
         this.createProcessForm.setProcesses(processes);
-        if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
+        if (!processes.isEmpty() && Objects.nonNull(processes.getFirst())) {
             TempProcess firstProcess = processes.getFirst();
-            this.createProcessForm.getProcessDataTab()
-                    .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
-            Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
-                    MdSec.DMD_SEC);
-            createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+            if (Objects.nonNull(firstProcess.getWorkpiece())
+                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure())
+                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure().getType())) {
+                firstProcess.verifyDocType();
+                this.createProcessForm.getProcessDataTab()
+                        .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
+            }
+            if (Objects.nonNull(firstProcess.getMetadataNodes())
+                    && firstProcess.getMetadataNodes().getLength() > 0) {
+                Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
+                        MdSec.DMD_SEC);
+                createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+            }
         }
     }
 }
