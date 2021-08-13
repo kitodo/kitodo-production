@@ -47,7 +47,7 @@ public class SearchRestClientIT {
         node = MockEntity.prepareNode();
         node.start();
 
-        searchRestClient.createIndexes();
+        searchRestClient.createIndex(null, testTypeName);
 
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(testTypeName, MockEntity.createEntities().get(1), 1, false);
@@ -58,7 +58,7 @@ public class SearchRestClientIT {
 
     @AfterClass
     public static void cleanIndex() throws Exception {
-        searchRestClient.deleteAllIndexes();
+        searchRestClient.deleteIndex(testTypeName);
         node.close();
     }
 

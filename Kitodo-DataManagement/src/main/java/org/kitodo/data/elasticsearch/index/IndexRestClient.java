@@ -175,14 +175,16 @@ public class IndexRestClient extends KitodoRestClient {
      *
      * @param field
      *            as String
+     * @param mappingType
+     *            as String
      */
-    public void enableSortingByTextField(String field) throws IOException, CustomResponseException {
+    public void enableSortingByTextField(String field, String mappingType) throws IOException, CustomResponseException {
         String query = "{\n \"properties\": {\n\"" + field + "\": {\n" + "      \"type\": \"text\",\n"
                 + "      \"fielddata\": true,\n" + "      \"fields\": {\n" + "        \"raw\": {\n"
                 + "          \"type\":  \"text\",\n" + "          \"index\": false}\n" + "    }\n" + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Request request = new Request(HttpMethod.PUT,
-                "/" + this.getIndexBase() + "/_mappings");
+                "/" + this.getIndexBase() + "_" + mappingType + "/_mappings");
         request.setEntity(entity);
         Response indexResponse = client.performRequest(request);
         processStatusCode(indexResponse.getStatusLine());

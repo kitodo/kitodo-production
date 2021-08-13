@@ -19,17 +19,20 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Objects;
 
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
@@ -80,8 +83,7 @@ public class FilterServiceIT {
     public void shouldGetFilterById() throws Exception {
         Filter filter = filterService.getById(1);
         String actual = filter.getValue();
-        String expected = filterValue;
-        assertEquals("Filter was not found in database!", expected, actual);
+        assertEquals("Filter was not found in database!", filterValue, actual);
     }
 
     @Test
@@ -112,7 +114,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).size());
 
         assertEquals("Incorrect id for found process!", Integer.valueOf(2),
-            processService.findByQuery(secondQuery, true).get(0).getId());
+            processService.findByQuery(secondQuery, SortBuilders.fieldSort("id").order(SortOrder.DESC), true).get(0).getId());
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"id:2 3\"", ObjectType.PROCESS, false, false);
         assertEquals("Incorrect amount of processes with id equal 2 or 3!", 2,
@@ -515,10 +517,10 @@ public class FilterServiceIT {
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
         assertEquals("Incorrect amount of closed tasks with no ordering!", 0, taskDTOS.size());
 
-        // empty condition is not allowed and returns no results
+        // empty condition is not allowed and throws Exception in ElasticSearch 7
         query = filterService.queryBuilder("\"id:\"", ObjectType.PROCESS, false, false);
-        List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
-        assertEquals("Incorrect amount of process with no id!", 0, processDTOS.size());
-
+        QueryBuilder finalQuery = query;
+        Assertions.assertThrows(ElasticsearchStatusException.class,
+                () -> processService.findByQuery(finalQuery, true));
     }
 }

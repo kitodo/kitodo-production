@@ -19,14 +19,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.services.ServiceManager;
 
 public class SearchResultFormIT {
 
-    private SearchResultForm searchResultForm = new SearchResultForm();
+    private final SearchResultForm searchResultForm = new SearchResultForm();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -37,7 +35,7 @@ public class SearchResultFormIT {
 
     /**
      * Cleanup the database and stop elasticsearch.
-     * 
+     *
      * @throws Exception
      *             if elasticsearch could not been stopped.
      */

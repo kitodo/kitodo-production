@@ -360,6 +360,11 @@ public class User extends BaseBean {
         this.configProductionDateShow = configProductionDateShow;
     }
 
+    /**
+     * Get Metadata language.
+     *
+     * @return metadata language as String
+     */
     public String getMetadataLanguage() {
         if (Objects.isNull(this.metadataLanguage)) {
             return "";

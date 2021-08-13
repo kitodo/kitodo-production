@@ -11,7 +11,10 @@
 
 package org.kitodo.data.elasticsearch;
 
+import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
 
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.InternalSettingsPreparer;
@@ -23,8 +26,9 @@ import org.elasticsearch.plugins.Plugin;
  * client in in-memory ElasticSearch server.
  */
 public class ExtendedNode extends Node {
-    public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-        super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null, null, null),
-                classpathPlugins, false);
+    public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins,
+                        Supplier<String> nodeNameSupplier) {
+        super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, Collections.emptyMap(),
+                        Paths.get("target"), nodeNameSupplier), classpathPlugins, false);
     }
 }

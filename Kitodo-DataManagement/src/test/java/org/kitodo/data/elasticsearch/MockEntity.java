@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 
 import org.awaitility.Awaitility;
@@ -46,7 +47,8 @@ public class MockEntity {
     public static Node prepareNode() throws Exception {
         Settings settings = MockEntity.prepareNodeSettings();
         removeOldDataDirectories("target/" + NODE_NAME);
-        return new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
+        Supplier<String> nodeNameSupplier = () -> NODE_NAME;
+        return new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class), nodeNameSupplier);
     }
 
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {
@@ -59,7 +61,6 @@ public class MockEntity {
     private static Settings prepareNodeSettings() {
         String port = ConfigMain.getParameter("elasticsearch.port", "9205");
         return Settings.builder().put("node.name", NODE_NAME)
-                .put("path.conf", TARGET)
                 .put("path.data", TARGET)
                 .put("path.logs", TARGET)
                 .put("path.home", TARGET)

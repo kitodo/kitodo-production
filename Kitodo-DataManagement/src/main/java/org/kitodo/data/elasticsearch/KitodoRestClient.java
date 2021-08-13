@@ -208,6 +208,14 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
+     * Delete index of given mappingType. Currently, only used in test cases.
+     * @param mappingType mapping type
+     */
+    public void deleteIndex(String mappingType) throws IOException {
+        client.performRequest(new Request(HttpMethod.DELETE, "/" + indexBase + "_" + mappingType));
+    }
+
+    /**
      * Delete all indexes. Used for cleaning after tests!
      */
     public void deleteAllIndexes() throws IOException {

@@ -42,8 +42,9 @@ public class SearcherIT {
     private static Node node;
     private static IndexRestClient indexRestClient;
     private static String testIndexName;
-    private static QueryBuilder query = QueryBuilders.matchAllQuery();
-    private static Searcher searcher = new Searcher("testsearch");
+    private static final String testSearch = "testsearch";
+    private static final QueryBuilder query = QueryBuilders.matchAllQuery();
+    private static final Searcher searcher = new Searcher(testSearch);
     private static final String TITLE = "title";
     private static final String BATCH_ONE = "Batch1";
     private static final String WRONG_AMOUNT = "Incorrect result - amount doesn't match to given number!";
@@ -61,17 +62,17 @@ public class SearcherIT {
         node = MockEntity.prepareNode();
         node.start();
 
-        indexRestClient.createIndexes();
+        indexRestClient.createIndex(null, testSearch);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(1), 1, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(2), 2, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(3), 3, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(4), 4, false);
-        indexRestClient.enableSortingByTextField(TITLE);
+        indexRestClient.enableSortingByTextField(TITLE, testSearch);
     }
 
     @AfterClass
     public static void cleanIndex() throws Exception {
-        indexRestClient.deleteAllIndexes();
+        indexRestClient.deleteIndex(testSearch);
         node.close();
     }
 

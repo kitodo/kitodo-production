@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -139,7 +141,8 @@ public class MockDatabase {
         if (node != null) {
             stopNode();
         }
-        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
+        Supplier<String> nodeNameSupplier = () -> nodeName;
+        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class), nodeNameSupplier);
         node.start();
     }
 
@@ -222,8 +225,10 @@ public class MockDatabase {
     }
 
     private static class ExtendedNode extends Node {
-        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null, null, null), classpathPlugins, false);
+        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins,
+                     Supplier<String> nodeNameSupplier) {
+            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, Collections.emptyMap(),
+                    Paths.get("target"), nodeNameSupplier), classpathPlugins, false);
         }
     }
 
@@ -261,7 +266,6 @@ public class MockDatabase {
 
     private static Settings prepareNodeSettings(String httpPort, String nodeName) {
         return Settings.builder().put("node.name", nodeName)
-                .put("path.conf", TARGET)
                 .put("path.data", TARGET)
                 .put("path.logs", TARGET)
                 .put("path.home", TARGET)

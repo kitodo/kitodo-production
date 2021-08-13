@@ -16,6 +16,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -65,7 +66,7 @@ import org.kitodo.production.services.file.FileService;
  */
 public class ProcessServiceIT {
 
-    private static FileService fileService = new FileService();
+    private static final FileService fileService = new FileService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     private static final String firstProcess = "First process";
@@ -591,7 +592,7 @@ public class ProcessServiceIT {
                 Arrays.asList("HierarchChildToKeep", "HierarchChildToAdd").contains(child.getTitle()));
             assertEquals("Child should have parent as parent", process, child.getParent());
         }
-        assertEquals("Process to remove should have no parent", null, processService.getById(6).getParent());
+        assertNull("Process to remove should have no parent", processService.getById(6).getParent());
     }
 
     @Test
@@ -602,12 +603,11 @@ public class ProcessServiceIT {
 
         allIDs = ServiceManager.getProcessService().findAllIDs(0L, 5);
         Assert.assertEquals("Wrong amount of id's in index", 5, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 2, 4, 1, 6)));
-
+        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 3, 1, 2, 6)));
 
         allIDs = ServiceManager.getProcessService().findAllIDs(5L, 10);
         Assert.assertEquals("Wrong amount of id's in index", 2, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(7, 3)));
+        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(7, 4)));
 
     }
 

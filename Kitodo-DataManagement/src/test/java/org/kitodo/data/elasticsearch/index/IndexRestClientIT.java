@@ -40,7 +40,7 @@ public class IndexRestClientIT {
 
     @BeforeClass
     public static void startElasticSearch() throws Exception {
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex") + "_" + testTypeName;
+        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         restClient = initializeRestClient();
 
         node = MockEntity.prepareNode();
@@ -54,12 +54,12 @@ public class IndexRestClientIT {
 
     @Before
     public void createIndex() throws Exception {
-        restClient.createIndexes();
+        restClient.createIndex(null, testTypeName);
     }
 
     @After
     public void deleteIndex() throws Exception {
-        restClient.deleteAllIndexes();
+        restClient.deleteIndex(testTypeName);
     }
 
     @Test
