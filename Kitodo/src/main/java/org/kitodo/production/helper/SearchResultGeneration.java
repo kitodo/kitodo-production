@@ -23,9 +23,11 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
@@ -61,16 +63,14 @@ public class SearchResultGeneration {
      * @return HSSFWorkbook
      */
     public HSSFWorkbook getResult() {
-        List<ProcessDTO> resultsWithFilter = getResultsWithFilter();
-        return getWorkbook(resultsWithFilter);
+            return getWorkbook();
     }
 
     private List<ProcessDTO> getResultsWithFilter() {
         List<ProcessDTO> processDTOS = new ArrayList<>();
-
         try {
             processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
-                    ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+                ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -102,7 +102,7 @@ public class SearchResultGeneration {
         return query;
     }
 
-    private HSSFWorkbook getWorkbook(List<ProcessDTO> processDTOs) {
+    private HSSFWorkbook getWorkbook() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Search results");
 
@@ -123,9 +123,37 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
 
         int rowCounter = 2;
-        for (ProcessDTO processDTO : processDTOs) {
-            prepareRow(rowCounter, sheet, processDTO);
-            rowCounter++;
+        int numberOfProcessedProcesses = 0;
+        int elasticsearchLimit = 9999;
+        try {
+            Long numberOfExpectedProcesses = ServiceManager.getProcessService()
+                    .count(getQueryForFilter(ObjectType.PROCESS));
+            if (numberOfExpectedProcesses > elasticsearchLimit) {
+                List<ProcessDTO> processDTOS;
+                int queriedIds = 0;
+                while (numberOfProcessedProcesses < numberOfExpectedProcesses) {
+                    RangeQueryBuilder rangeQueryBuilder = new RangeQueryBuilder(ProcessTypeField.ID.toString());
+                    rangeQueryBuilder.gte(queriedIds).lt(queriedIds + elasticsearchLimit);
+                    BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
+                    queryForFilter.should(rangeQueryBuilder);
+                    processDTOS = ServiceManager.getProcessService().findByQuery(queryForFilter,
+                        ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+                    queriedIds += elasticsearchLimit;
+                    for (ProcessDTO processDTO : processDTOS) {
+                        prepareRow(rowCounter, sheet, processDTO);
+                        rowCounter++;
+                    }
+                    numberOfProcessedProcesses += processDTOS.size();
+                }
+            } else {
+                List<ProcessDTO> resultsWithFilter = getResultsWithFilter();
+                for (ProcessDTO processDTO : resultsWithFilter) {
+                    prepareRow(rowCounter, sheet, processDTO);
+                    rowCounter++;
+                }
+            }
+        } catch (DataException e) {
+            logger.error(e.getMessage(), e);
         }
         return workbook;
     }
