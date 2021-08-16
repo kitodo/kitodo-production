@@ -63,31 +63,14 @@ public class SearchResultGeneration {
      * @return HSSFWorkbook
      */
     public HSSFWorkbook getResult() {
-        List<ProcessDTO> resultsWithFilter = getResultsWithFilter();
-        return getWorkbook(resultsWithFilter);
+            return getWorkbook();
     }
 
     private List<ProcessDTO> getResultsWithFilter() {
         List<ProcessDTO> processDTOS = new ArrayList<>();
-        int elasticsearchLimit = 9999;
-
         try {
-            Long numberOfProcesses = ServiceManager.getProcessService().count(getQueryForFilter(ObjectType.PROCESS));
-            if (numberOfProcesses > elasticsearchLimit) {
-                int queriedIds = 0;
-                while (processDTOS.size() < numberOfProcesses) {
-                    RangeQueryBuilder rangeQueryBuilder = new RangeQueryBuilder(ProcessTypeField.ID.toString());
-                    rangeQueryBuilder.gte(queriedIds).lt(queriedIds+elasticsearchLimit);
-                    BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
-                    queryForFilter.should(rangeQueryBuilder);
-                    processDTOS.addAll(ServiceManager.getProcessService().findByQuery(queryForFilter,
-                            ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false));
-                    queriedIds+=elasticsearchLimit;
-                }
-            } else {
-                processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
-                        ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
-            }
+            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
+                ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -119,7 +102,7 @@ public class SearchResultGeneration {
         return query;
     }
 
-    private HSSFWorkbook getWorkbook(List<ProcessDTO> processDTOs) {
+    private HSSFWorkbook getWorkbook() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Search results");
 
@@ -140,9 +123,37 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
 
         int rowCounter = 2;
-        for (ProcessDTO processDTO : processDTOs) {
-            prepareRow(rowCounter, sheet, processDTO);
-            rowCounter++;
+        int numberOfProcessedProcesses = 0;
+        int elasticsearchLimit = 9999;
+        try {
+            Long numberOfExpectedProcesses = ServiceManager.getProcessService()
+                    .count(getQueryForFilter(ObjectType.PROCESS));
+            if (numberOfExpectedProcesses > elasticsearchLimit) {
+                List<ProcessDTO> processDTOS;
+                int queriedIds = 0;
+                while (numberOfProcessedProcesses < numberOfExpectedProcesses) {
+                    RangeQueryBuilder rangeQueryBuilder = new RangeQueryBuilder(ProcessTypeField.ID.toString());
+                    rangeQueryBuilder.gte(queriedIds).lt(queriedIds + elasticsearchLimit);
+                    BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
+                    queryForFilter.should(rangeQueryBuilder);
+                    processDTOS = ServiceManager.getProcessService().findByQuery(queryForFilter,
+                        ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+                    queriedIds += elasticsearchLimit;
+                    for (ProcessDTO processDTO : processDTOS) {
+                        prepareRow(rowCounter, sheet, processDTO);
+                        rowCounter++;
+                    }
+                    numberOfProcessedProcesses += processDTOS.size();
+                }
+            } else {
+                List<ProcessDTO> resultsWithFilter = getResultsWithFilter();
+                for (ProcessDTO processDTO : resultsWithFilter) {
+                    prepareRow(rowCounter, sheet, processDTO);
+                    rowCounter++;
+                }
+            }
+        } catch (DataException e) {
+            logger.error(e.getMessage(), e);
         }
         return workbook;
     }
