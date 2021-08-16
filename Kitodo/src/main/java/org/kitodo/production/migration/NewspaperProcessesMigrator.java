@@ -261,7 +261,7 @@ public class NewspaperProcessesMigrator {
     private void initializeMigrator(Process process, String newspaperIncludedStructalElementDivision)
             throws IOException, ConfigurationException {
 
-        title = process.getTitle().replaceFirst(INDIVIDUAL_PART, "");
+        title = generateNewspaperShortTitle(process.getTitle());
         logger.trace("Newspaper is: {}", title);
         projectId = process.getProject().getId();
         logger.trace("Project is: {} (ID {})", process.getProject().getTitle(), projectId);
@@ -284,6 +284,16 @@ public class NewspaperProcessesMigrator {
             monthDivisionView, acquisitionStage);
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(
             () -> new ConfigurationException(dayDivisionView.getId() + " has no dates metadata configuration!"));
+    }
+
+    /**
+     * Convert a newspaper like full title into its shorted version.
+     *
+     * @param newspaperFullTitle Newspaper like full title
+     * @return Shorted newspaper like title
+     */
+    public String generateNewspaperShortTitle(String newspaperFullTitle) {
+        return newspaperFullTitle.replaceFirst(INDIVIDUAL_PART, "");
     }
 
     /**
