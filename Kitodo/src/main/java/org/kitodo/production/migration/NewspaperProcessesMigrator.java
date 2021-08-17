@@ -89,7 +89,7 @@ public class NewspaperProcessesMigrator {
      * Regular expression to find (and remove) the individual part of the
      * process title, to get the base process title.
      */
-    private static final String INDIVIDUAL_PART = "(?<=.)\\p{Punct}*(?:1[6-9]|20)\\d{2}\\p{Punct}?(?:0[1-9]|1[012]).*$";
+    private static final String INDIVIDUAL_PART = "(?<=.)\\p{Punct}+(?:1[6-9]|20)\\d{2}\\p{Punct}?(?:0[1-9]|1[012]).*$";
 
     /**
      * A regular expression describing a four-digit year number or a double year
@@ -261,7 +261,7 @@ public class NewspaperProcessesMigrator {
     private void initializeMigrator(Process process, String newspaperIncludedStructalElementDivision)
             throws IOException, ConfigurationException {
 
-        title = process.getTitle().replaceFirst(INDIVIDUAL_PART, "");
+        title = generateNewspaperShortTitle(process.getTitle());
         logger.trace("Newspaper is: {}", title);
         projectId = process.getProject().getId();
         logger.trace("Project is: {} (ID {})", process.getProject().getTitle(), projectId);
@@ -284,6 +284,16 @@ public class NewspaperProcessesMigrator {
             monthDivisionView, acquisitionStage);
         daySimpleMetadataView = dayDivisionView.getDatesSimpleMetadata().orElseThrow(
             () -> new ConfigurationException(dayDivisionView.getId() + " has no dates metadata configuration!"));
+    }
+
+    /**
+     * Convert a newspaper like full title into its shorted version.
+     *
+     * @param newspaperFullTitle Newspaper like full title
+     * @return Shorted newspaper like title
+     */
+    public String generateNewspaperShortTitle(String newspaperFullTitle) {
+        return newspaperFullTitle.replaceFirst(INDIVIDUAL_PART, "");
     }
 
     /**
