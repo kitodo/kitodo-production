@@ -86,7 +86,7 @@
                                     var afterSelection = textbox.value.substr(textbox.selectionEnd);
                                     var written = beforeSelection + before + selection;
                                     textbox.value = written + after + afterSelection;
-                                    if(before.length != after.length) written += after;
+                                    if(before.length !== after.length) written += after;
                                     textbox.selectionStart = written.length;
                                     textbox.selectionEnd = written.length;
                                     textbox.focus();
