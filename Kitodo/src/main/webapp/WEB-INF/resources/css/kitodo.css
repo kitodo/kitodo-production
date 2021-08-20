@@ -3146,6 +3146,10 @@ kbd {
     padding: 0 var(--default-half-size);
 }
 
+#removeFromProjectsForm\:clientProjects thead {
+    display: none;
+}
+
 /*----------------------------------------------------------------------
 Workflow Editor
 ----------------------------------------------------------------------*/

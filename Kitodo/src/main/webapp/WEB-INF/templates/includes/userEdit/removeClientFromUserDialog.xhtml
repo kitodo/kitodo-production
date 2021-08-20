@@ -1,0 +1,70 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog class="remove-client-dialog"
+              id="removeClientDialog"
+              widgetVar="removeClientDialog"
+              showHeader="false"
+              modal="true"
+              width="500px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <h3>#{msgs.removeClientProjectsFromUser}</h3>
+        <h:form id="removeFromProjectsForm">
+            <div class="select-note ui-messages-info">#{msgs.removeClientProjectsFromUserConfirmMessage}</div>
+            <div class="select-selector">
+                <p>
+                    <p:dataTable id="clientProjects"
+                                 style="max-height: 100px; overflow-y: scroll; border: 1px solid var(--blue); border-radius: 3px;"
+                                 value="#{UserForm.clientProjects}"
+                                 var="project">
+                        <p:column id="projectTitle">
+                            <h:outputText value="#{project}"
+                                          title="#{project}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p>
+                <p:panelGrid>
+                    <p:row>
+                        <p:commandButton id="confirm"
+                                         actionListener="#{UserForm.removeUserFromClientProjects()}"
+                                         action="#{UserForm.deleteFromClient()}"
+                                         onstart="PF('removeClientDialog').hide(); $('#loadingScreen').show();"
+                                         oncomplete="$('#loadingScreen').hide();"
+                                         update="@all"
+                                         styleClass="primary right"
+                                         value="#{msgs.confirm}"
+                                         icon="fa fa-check"
+                                         iconPos="right"/>
+                        <p:commandButton onclick="PF('removeClientDialog').hide();"
+                                  id="cancelButton"
+                                  type="button"
+                                  value="#{msgs.cancel}"
+                                  styleClass="secondary right"
+                                  icon="fa fa-close"
+                                  iconPos="right">
+                            <f:setPropertyActionListener target="#{UserForm.removeClientId}" value="#{null}"/>
+                        </p:commandButton>
+                    </p:row>
+                </p:panelGrid>
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>

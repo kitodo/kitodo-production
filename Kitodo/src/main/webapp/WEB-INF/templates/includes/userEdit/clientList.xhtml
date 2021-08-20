@@ -12,7 +12,6 @@
 -->
 
 <ui:composition
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
@@ -27,7 +26,7 @@
         </p:column>
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromClient"
-                           action="#{UserForm.deleteFromClient}"
+                           action="#{UserForm.checkClientProjects(client.id)}"
                            styleClass="action"
                            title="#{msgs.clientDeleteFrom}"
                            rendered="#{isEditMode || isCreateMode}"
@@ -35,7 +34,6 @@
                            oncomplete="toggleSave()"
                            update="@form">
                 <i class="fa fa-trash-o fa-lg"/>
-                <f:param name="ID" value="#{client.id}"/>
             </p:commandLink>
         </p:column>
     </p:dataTable>

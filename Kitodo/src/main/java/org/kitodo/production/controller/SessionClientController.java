@@ -18,8 +18,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -139,19 +137,11 @@ public class SessionClientController {
     }
 
     /**
-     * Gets all clients to which the user directly assigned and also those from user
-     * assigned projects.
+     * Gets all clients to which the user directly assigned.
      *
      * @return The list of clients.
      */
     public List<Client> getAvailableClientsOfCurrentUser()  {
-        User currentUser = ServiceManager.getUserService().getCurrentUser();
-        List<Client> clients = currentUser.getClients();
-        for (Project project : currentUser.getProjects()) {
-            if (!clients.contains(project.getClient())) {
-                clients.add(project.getClient());
-            }
-        }
-        return clients;
+        return ServiceManager.getUserService().getCurrentUser().getClients();
     }
 }
