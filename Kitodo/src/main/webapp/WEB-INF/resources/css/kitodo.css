@@ -1597,6 +1597,35 @@ body .statusColumn .ui-button {
     width: calc(100% - 48px);
 }
 
+#titleProcess {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+#titleProcess > .ui-panel-content {
+    display: flex;
+}
+
+#titleProcess h3 {
+    display: inline-block;
+    flex-grow: 0;
+}
+
+#titleProcess h5 {
+    display: inline-block;
+}
+
+.client-projects {
+    border: 1px solid var(--blue);
+    border-radius: 3px;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.client-projects thead {
+    display: none;
+}
+
 /*----------------------------------------------------------------------
 Statistics
 ----------------------------------------------------------------------*/
