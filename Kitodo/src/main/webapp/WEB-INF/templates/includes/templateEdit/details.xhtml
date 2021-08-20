@@ -29,7 +29,7 @@
             </div>
 
             <div>
-                <p:outputLabel for="project" value="#{msgs.project}"/>
+                <p:outputLabel for="project" value="#{msgs.projects}"/>
                 <p:selectManyCheckbox  id="project" value="#{TemplateForm.assignedProjects}" layout="grid" columns="1" converter="#{projectConverter}"
                                  required="#{not empty param['editForm:save']}" disabled="#{isViewMode}">
                     <f:selectItems value="#{TemplateForm.projects}"
