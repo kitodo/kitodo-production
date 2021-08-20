@@ -635,6 +635,7 @@ section#content-section {
 #editForm table.ui-selectmanycheckbox {
     border: solid var(--default-border-width) var(--blue);
     border-radius: var(--default-border-radius);
+    box-sizing: border-box;
     padding: .5em;
     width: 100%;
 }
