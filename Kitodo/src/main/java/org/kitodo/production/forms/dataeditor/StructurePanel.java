@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
@@ -549,12 +551,35 @@ public class StructurePanel implements Serializable {
     }
 
     private String buildViewLabel(View view) {
-        String order = view.getMediaUnit().getOrder() + " : ";
+        String order = determineMediaFileNumber(view.getMediaUnit().getMediaFiles()).concat(" : ");
         if (Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
             return order + view.getMediaUnit().getOrderlabel();
         } else {
             return order + "uncounted";
         }
+    }
+
+    /**
+     * Determines the simple media file number from one of the media files. For
+     * example, for URI
+     * {@code file:/usr/local/kitodo/metadata/123/images/1234567X_media/aud00000233.mp3},
+     * it will return 233.
+     *
+     * @param mediaFiles
+     *            media files to look through
+     * @return the number, or the simple name, if it no number contains
+     */
+    private String determineMediaFileNumber(Map<MediaVariant, URI> mediaFiles) {
+        for (Entry<MediaVariant, URI> entry : mediaFiles.entrySet()) {
+            String uri = entry.getValue().toString();
+            int simpleNameBegin = uri.lastIndexOf('/') + 1;
+            int sipmleNameEnd = uri.lastIndexOf('.');
+            if (sipmleNameEnd <= simpleNameBegin) {
+                sipmleNameEnd = uri.length();
+            }
+            return uri.substring(simpleNameBegin, sipmleNameEnd).replaceFirst("^.*?([1-9]\\d*)\\D*$", "$1");
+        }
+        return "-";
     }
 
     /**
