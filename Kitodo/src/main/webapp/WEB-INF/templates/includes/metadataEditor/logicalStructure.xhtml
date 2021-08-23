@@ -25,8 +25,8 @@
                 styleClass="focusable"
                 selectionMode="single"
                 selection="#{DataEditorForm.structurePanel.selectedLogicalNode}"
-                draggable="#{not readOnly}"
-                droppable="#{not readOnly}"
+                draggable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
+                droppable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
@@ -53,6 +53,7 @@
                             physicalTree
                             metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:ajax event="dragdrop"
+                    disabled="#{not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="logicalTree
                             contextMenuLogicalTree

@@ -138,6 +138,7 @@
                 <h:panelGroup rendered="#{item.input eq 'toggleSwitch'}"
                               title="#{item.active.toString()}">
                     <p:selectBooleanCheckbox id="selectBooleanCheckbox"
+                                             disabled="#{not item.editable or readOnly}"
                                              value="#{item.active}">
                         <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
                     </p:selectBooleanCheckbox>
@@ -145,7 +146,7 @@
 
                 <!-- button to add metadata to group -->
                 <h:panelGroup title="#{DataEditorForm.metadataPanel.metadataAddableToGroup(node) ? msgs['dataEditor.addMetadata.toGroup'] : msgs['dataEditor.addMetadata.noMetadataAddableToGroup']}"
-                              rendered="#{request.requestURI.contains('metadataEditor') and item.input eq 'dataTable'}"
+                              rendered="#{request.requestURI.contains('metadataEditor') and item.input eq 'dataTable' and not readOnly}"
                               styleClass="ui-button">
                     <p:commandButton id="addMetadataToGroup"
                                      action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForGroup(node)}"

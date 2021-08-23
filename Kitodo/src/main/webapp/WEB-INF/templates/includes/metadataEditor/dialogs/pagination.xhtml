@@ -27,6 +27,7 @@
                             <p:commandButton id="createPaginationButton"
                                              action="#{DataEditorForm.paginationPanel.createPagination()}"
                                              value="#{msgs.paginationRead}"
+                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                              icon="fa fa-magic fa-lg"
                                              iconPos="right"
                                              styleClass="secondary"
@@ -39,6 +40,7 @@
                                               value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
                                               required="true"
                                               requiredMessage="#{msgs.paginationNoPagesSelected}"
+                                              disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                               filter="true"
                                               filterMatchMode="contains"
                                               showCheckbox="true">
@@ -52,6 +54,7 @@
                             <p:outputLabel for="paginationTypeSelect"
                                            value="#{msgs.pagination}"/>
                             <p:selectOneMenu id="paginationTypeSelect"
+                                             disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                              value="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem}">
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.paginationTypeSelectItems.entrySet()}"
                                                var="type"
@@ -66,6 +69,7 @@
                             <p:inputText id="paginationStartValue"
                                            padControl="false"
                                            required="true"
+                                           disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                            value="#{DataEditorForm.paginationPanel.paginationStartValue}"
                                            label="#{msgs.paginationStartValue}"
                                            class="input"
@@ -158,6 +162,7 @@
                             <p:outputLabel value="#{msgs.paginationScope}:"
                                            for="selectPaginationScope"/>
                             <p:selectOneMenu id="selectPaginationScope"
+                                             disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                              autoWidth="false"
                                              value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems.entrySet()}"
@@ -171,6 +176,7 @@
                                            for="selectPaginationMode"/>
                             <p:selectOneMenu
                                     value="#{DataEditorForm.paginationPanel.selectPaginationModeSelectedItem}"
+                                    disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                     converter="#{IllustratedSelectItemConverter}"
                                     panelStyle="width:25%;"
                                     var="mode"
@@ -195,6 +201,7 @@
                                     value="#{msgs.insertNewImages}"
                                     for="newPagesCount"/>
                             <p:inputText id="newPagesCount"
+                                         disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                          value="#{DataEditorForm.paginationPanel.newPagesCountValue}"
                                          styleClass="input-with-button"
                                          style="width: calc(100% - 95px);"
@@ -205,6 +212,7 @@
                             <p:commandButton id="generateDummyImagesButton"
                                              value="#{msgs.insert}"
                                              styleClass="secondary right"
+                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                              type="button"
                                              style="margin: 0;"
                                              action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick()}"
@@ -215,6 +223,7 @@
                             <p:outputLabel for="fictitiousCheckbox"
                                            value="#{msgs.paginationFictitious}"/>
                             <p:selectBooleanCheckbox id="fictitiousCheckbox"
+                                                     disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                                      styleClass="input switch"
                                                      style="margin-bottom: 0;"
                                                      value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
@@ -223,6 +232,7 @@
                 </p:panelGrid>
             </p:panel>
             <h:panelGroup layout="block"
+                          rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                           styleClass="dialogButtonWrapper">
                 <p:commandButton id="apply"
                                  action="#{DataEditorForm.paginationPanel.startPaginationClick()}"

@@ -869,6 +869,24 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to edit the process pagination.
+     *
+     * @return true if the current user has the authority to edit the process pagination
+     */
+    public boolean hasAuthorityToEditProcessPagination() {
+        return hasAuthorityForClient("editProcessPagination");
+    }
+
+    /**
+     * Check if the current user has the authority to view the process pagination.
+     *
+     * @return true if the current user has the authority to view the process pagination
+     */
+    public boolean hasAuthorityToViewProcessPagination() {
+        return hasAuthorityForClient("viewProcessPagination");
+    }
+
+    /**
      * Check if the current user has the authority to view the database statistics.
      *
      * @return true if the current user has the authority to view database statistics

@@ -915,6 +915,24 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to edit the process pagination.
+     *
+     * @return true if the current user has the authority to edit the process pagination
+     */
+    public boolean hasAuthorityToEditProcessPagination() {
+        return securityAccessService.hasAuthorityToEditProcessPagination();
+    }
+
+    /**
+     * Check if the current user has the authority to view the process pagination.
+     *
+     * @return true if the current user has the authority to view the process pagination
+     */
+    public boolean hasAuthorityToViewProcessPagination() {
+        return securityAccessService.hasAuthorityToViewProcessPagination();
+    }
+
+    /**
      * Check if the current user has the authority to open the metadata editor.
      * Access to the metadata editor is granted if the user has the authority to
      * view or edit data in any part of the editor.
@@ -928,7 +946,9 @@ public class SecurityAccessController {
                 || securityAccessService.hasAuthorityToViewProcessStructureData()
                 || securityAccessService.hasAuthorityToEditProcessStructureData()
                 || securityAccessService.hasAuthorityToViewProcessImages()
-                || securityAccessService.hasAuthorityToEditProcessImages();
+                || securityAccessService.hasAuthorityToEditProcessImages()
+                || securityAccessService.hasAuthorityToViewProcessPagination()
+                || securityAccessService.hasAuthorityToEditProcessPagination();
 
     }
 
