@@ -79,14 +79,6 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
-
-            <div>
-                <p:outputLabel for="active" value="#{msgs.active}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateForm.template.active}"
-                                         disabled="#{isViewMode}">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
         </p:row>
     </p:panelGrid>
 </ui:composition>
