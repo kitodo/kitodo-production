@@ -63,6 +63,7 @@ public class ExportDmsTask extends EmptyTask {
     public void run() {
         try {
             exportDms.startExport(process, this);
+            setProgress(100);
         } catch (RuntimeException e) {
             setException(e);
         }
