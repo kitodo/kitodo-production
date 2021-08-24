@@ -51,6 +51,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private DefaultSpringSecurityContextSource ldapContextSource = null;
     private BindAuthenticator bindAuthenticator = null;
     private final LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
+    private SecurityPasswordEncoder securityPasswordEncoder;
 
     /**
      * The private Constructor which initially reads the local config.
@@ -90,6 +91,10 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         if (ldapAuthentication && Objects.nonNull(ldapGroup)) {
             if (Objects.isNull(ldapGroup.getLdapServer())) {
                 throw new AuthenticationServiceException("No LDAP server specified on user's LDAP group");
+            }
+            if (Objects.nonNull(user.getPassword()) && !ldapGroup.getLdapServer().isReadOnly()) {
+                securityPasswordEncoder.setUser(user);
+                return daoAuthenticationProvider.authenticate(authentication);
             }
             configureAuthenticationProvider(ldapGroup.getLdapServer().getUrl(), ldapGroup.getUserDN());
             return ldapAuthenticationProvider.authenticate(authentication);
@@ -134,7 +139,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(ServiceManager.getUserService());
-        daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
+        securityPasswordEncoder = new SecurityPasswordEncoder();
+        daoAuthenticationProvider.setPasswordEncoder(securityPasswordEncoder);
         this.daoAuthenticationProvider = daoAuthenticationProvider;
     }
 
