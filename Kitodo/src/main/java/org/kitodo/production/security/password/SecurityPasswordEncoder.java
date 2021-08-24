@@ -11,6 +11,7 @@
 
 package org.kitodo.production.security.password;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -28,10 +29,17 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import javax.naming.NamingException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class SecurityPasswordEncoder implements PasswordEncoder {
@@ -48,6 +56,7 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
 
     private Cipher encryptionCipher;
     private Cipher decryptionCipher;
+    private User user;
 
     private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
                                                (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
@@ -93,7 +102,22 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
         try {
             byte[] utfEight = messageToEncrypt.getBytes(StandardCharsets.UTF_8);
             byte[] enc = encryptionCipher.doFinal(utfEight);
-            return new String(Base64.encodeBase64(enc), StandardCharsets.UTF_8);
+            String encrypted = new String(Base64.encodeBase64(enc), StandardCharsets.UTF_8);
+            if (Objects.nonNull(user) && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE)
+                    && Objects.nonNull(user.getLdapGroup()) && Objects.nonNull(user.getLdapGroup().getLdapServer())
+                    && !user.getLdapGroup().getLdapServer().isReadOnly() && encrypted.equals(user.getPassword())) {
+                try {
+                    ServiceManager.getLdapServerService().createNewUser(user, messageToEncrypt);
+                    user.setPassword(null);
+                    ServiceManager.getUserService().saveToDatabase(user);
+                } catch (NoSuchAlgorithmException | NamingException | IOException e) {
+                    Helper.setErrorMessage("Writing user to LDAP failed", logger, e);
+                    logger.error(e);
+                } catch (DAOException e) {
+                    Helper.setErrorMessage("Couldn't delete database password", logger, e);
+                }
+            }
+            return encrypted;
         } catch (BadPaddingException | IllegalBlockSizeException e) {
             logger.warn("Caught {} with message: ", e.getClass().getSimpleName(), e.getMessage());
         }
@@ -116,5 +140,15 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
             logger.warn("Caught {} with message: {}", e.getClass().getSimpleName(), e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Sets the user.
+     *
+     * @param user
+     *            user object
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 }
