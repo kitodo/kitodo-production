@@ -31,8 +31,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -480,21 +478,6 @@ public class UserForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular(), userID },
                 logger, e);
         }
-    }
-
-    /**
-     * Writes the user at ldap server.
-     */
-    public String writeUserAtLdapServer() {
-        try {
-            ServiceManager.getLdapServerService().createNewUser(this.userObject,
-                passwordEncoder.decrypt(this.userObject.getPassword()));
-        } catch (NameAlreadyBoundException e) {
-            Helper.setErrorMessage("Ldap entry already exists", logger, e);
-        } catch (NoSuchAlgorithmException | NamingException | IOException | RuntimeException e) {
-            Helper.setErrorMessage("Could not generate ldap entry", logger, e);
-        }
-        return null;
     }
 
     public boolean isHideInactiveUsers() {
