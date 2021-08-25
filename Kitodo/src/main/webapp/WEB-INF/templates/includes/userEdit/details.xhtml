@@ -63,15 +63,6 @@
                                          value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
             </div>
             <div>
-                <p:commandButton id="writeUserToLdapButton"
-                                 action="#{UserForm.writeUserAtLdapServer}"
-                                 value="#{msgs.ldapKonfigurationSchreiben}"
-                                 icon="fa fa-user-plus fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 disabled="#{isViewMode || isConfigMode || UserForm.userObject.ldapGroup eq null}"
-                                 class="button-filled-green">
-                </p:commandButton>
                 <p:commandButton onclick="PF('changePasswordDialog').show()"
                                  id="changePasswordButton"
                                  value="#{msgs.passwordChange}"
