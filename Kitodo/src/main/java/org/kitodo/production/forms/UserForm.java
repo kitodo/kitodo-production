@@ -69,7 +69,7 @@ public class UserForm extends BaseForm {
     private User userObject = new User();
     private boolean hideInactiveUsers = true;
     private static final Logger logger = LogManager.getLogger(UserForm.class);
-    private final transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+
     private final transient UserService userService = ServiceManager.getUserService();
     private static final List<String> AVAILABLE_SHORTCUTS = Arrays.asList(
             "detailView",
@@ -189,6 +189,8 @@ public class UserForm extends BaseForm {
             if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
                 // save the password only when user is created else changePasswordForCurrentUser is used
                 if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
+                    SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+                    passwordEncoder.setUser(userObject);
                     userObject.setPassword(passwordEncoder.encode(passwordToEncrypt));
                 }
                 userService.saveToDatabase(userObject);
@@ -644,6 +646,8 @@ public class UserForm extends BaseForm {
 
     private boolean isOldPasswordInvalid() {
         if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
+            SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+            passwordEncoder.setUser(userObject);
             return !passwordEncoder.matches(oldPassword, userObject.getPassword());
         }
         return false;

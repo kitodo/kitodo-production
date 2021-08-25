@@ -62,7 +62,6 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static volatile UserService instance = null;
     private static final String CLIENT_ID = "clientId";
-    private final SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private static final int DEFAULT_CLIENT_ID =
             ConfigCore.getIntParameterOrDefaultValue(ParameterCore.DEFAULT_CLIENT_ID);
 
@@ -492,6 +491,8 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         } else {
             userWithNewPassword = user;
         }
+        SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+        passwordEncoder.setUser(userWithNewPassword);
         userWithNewPassword.setPassword(passwordEncoder.encode(newPassword));
         saveToDatabase(userWithNewPassword);
     }
