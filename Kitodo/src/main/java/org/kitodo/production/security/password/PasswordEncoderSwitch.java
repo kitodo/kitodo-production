@@ -11,30 +11,40 @@
 
 package org.kitodo.production.security.password;
 
+import java.util.Objects;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.kitodo.data.database.beans.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class PasswordEncoderSwitch implements PasswordEncoder {
+    private static final Logger logger = LogManager.getLogger(PasswordEncoderSwitch.class);
+
+    private User user;
 
     @Override
     public String encode(CharSequence rawPassword) {
-        SecurityPasswordEncoder legacyPasswordEncoder = new SecurityPasswordEncoder();
-        legacyPasswordEncoder.setUser(user);
-        return legacyPasswordEncoder.encrypt(rawPassword.toString());
+        if (Objects.isNull(user)) {
+            SecurityPasswordEncoder legacyPasswordEncoder = new SecurityPasswordEncoder();
+            legacyPasswordEncoder.setUser(user);
+            return legacyPasswordEncoder.encrypt(rawPassword.toString());
+        } else {
+            return new HashingPasswordEncoder(user).encode(rawPassword);
+        }
     }
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        SecurityPasswordEncoder legacyPasswordEncoder = new SecurityPasswordEncoder();
-        legacyPasswordEncoder.setUser(user);
-        return legacyPasswordEncoder.encrypt(rawPassword.toString()).equals(encodedPassword);
+        if (Objects.isNull(user) || Strings.isEmpty(user.getAlgorithm())) {
+            SecurityPasswordEncoder legacyPasswordEncoder = new SecurityPasswordEncoder();
+            legacyPasswordEncoder.setUser(user);
+            return legacyPasswordEncoder.encrypt(rawPassword.toString()).equals(encodedPassword);
+        } else {
+            return new HashingPasswordEncoder(user).matches(rawPassword, encodedPassword);
+        }
     }
-
-    private User user;
-
-    private static final Logger logger = LogManager.getLogger(PasswordEncoderSwitch.class);
 
     /**
      * Sets the user.

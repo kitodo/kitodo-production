@@ -102,6 +102,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
             }
             return ldapAuthenticationProvider.authenticate(authentication);
         } else {
+            passwordEncoder.setUser(user);
             return daoAuthenticationProvider.authenticate(authentication);
         }
     }

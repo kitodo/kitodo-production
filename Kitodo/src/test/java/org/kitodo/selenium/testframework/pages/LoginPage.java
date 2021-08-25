@@ -51,7 +51,10 @@ public class LoginPage extends Page<LoginPage> {
     public void performLogin(User user) throws InterruptedException {
         SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
         String password = passwordEncoder.decrypt(user.getPassword());
+        performLogin(user, password);
+    }
 
+    public void performLogin(User user, String password) throws InterruptedException {
         usernameInput.clear();
         usernameInput.sendKeys(user.getLogin());
 
