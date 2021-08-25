@@ -1166,7 +1166,7 @@ public class MockDatabase {
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
         firstUser.setLogin("kowal");
-        firstUser.setPassword(passwordEncoder.encrypt(TEST));
+        firstUser.setPassword(passwordEncoder.encode(TEST));
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);

@@ -492,7 +492,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         } else {
             userWithNewPassword = user;
         }
-        userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
+        userWithNewPassword.setPassword(passwordEncoder.encode(newPassword));
         saveToDatabase(userWithNewPassword);
     }
 

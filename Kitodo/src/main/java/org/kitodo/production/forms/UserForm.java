@@ -189,7 +189,7 @@ public class UserForm extends BaseForm {
             if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
                 // save the password only when user is created else changePasswordForCurrentUser is used
                 if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
-                    userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
+                    userObject.setPassword(passwordEncoder.encode(passwordToEncrypt));
                 }
                 userService.saveToDatabase(userObject);
 
@@ -644,7 +644,7 @@ public class UserForm extends BaseForm {
 
     private boolean isOldPasswordInvalid() {
         if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
-            return !Objects.equals(this.oldPassword, passwordEncoder.decrypt(this.userObject.getPassword()));
+            return !passwordEncoder.matches(oldPassword, userObject.getPassword());
         }
         return false;
     }

@@ -33,7 +33,7 @@ public class SecurityPasswordEncoderTest {
     @Test
     public void encryptTest() {
         for (String clearText : testData.keySet()) {
-            String encrypted = new SecurityPasswordEncoder().encrypt(clearText);
+            String encrypted = new SecurityPasswordEncoder().encode(clearText);
             assertEquals("Encrypted Password doesn't match the precomputed one!", testData.get(clearText),
                     encrypted);
         }
