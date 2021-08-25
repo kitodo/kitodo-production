@@ -191,7 +191,7 @@ public class UserForm extends BaseForm {
                 if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
                     PasswordEncoderSwitch passwordEncoder = new PasswordEncoderSwitch();
                     passwordEncoder.setUser(userObject);
-                    userObject.setPassword(passwordEncoder.encode(passwordToEncrypt));
+                    this.userObject.setPassword(passwordEncoder.encode(this.passwordToEncrypt));
                 }
                 userService.saveToDatabase(userObject);
 
