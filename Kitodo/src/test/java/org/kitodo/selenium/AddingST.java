@@ -242,7 +242,7 @@ public class AddingST extends BaseTestSelenium {
         User insertedUser = ServiceManager.getUserService().getByLogin(user.getLogin());
 
         Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLogin(insertedUser);
+        Pages.getLoginPage().performLogin(insertedUser, user.getPassword());
         Pages.getTopNavigation().selectSessionClient(1);
         assertEquals(ServiceManager.getClientService().getById(2).getName(),
             Pages.getTopNavigation().getSessionClient());

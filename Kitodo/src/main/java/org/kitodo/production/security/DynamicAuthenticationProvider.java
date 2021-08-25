@@ -99,6 +99,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
             configureAuthenticationProvider(ldapGroup.getLdapServer().getUrl(), ldapGroup.getUserDN());
             return ldapAuthenticationProvider.authenticate(authentication);
         } else {
+            passwordEncoder.setUser(user);
             return daoAuthenticationProvider.authenticate(authentication);
         }
     }
