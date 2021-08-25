@@ -1294,6 +1294,19 @@ Import form
     color: var(--medium-gray);
 }
 
+.ui-selectcheckboxmenu-panel.task-filter-panel .ui-selectcheckboxmenu-items-wrapper {
+    overflow-y: hidden;
+}
+
+#tasksTabView\:filterForm {
+    margin-right: var(--default-full-size);
+}
+
+#tasksTabView\:filterForm .ui-selectcheckboxmenu-label,
+#tasksTabView\:statusForm .ui-selectcheckboxmenu-label {
+    padding-right: var(--default-double-size);
+}
+
 /*----------------------------------------------------------------------
 Calendar
 ----------------------------------------------------------------------*/
