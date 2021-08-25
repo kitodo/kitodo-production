@@ -58,7 +58,7 @@ import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.security.password.KitodoPassword;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.security.password.PasswordEncoderSwitch;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
 import org.primefaces.PrimeFaces;
@@ -189,7 +189,7 @@ public class UserForm extends BaseForm {
             if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
                 // save the password only when user is created else changePasswordForCurrentUser is used
                 if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
-                    SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+                    PasswordEncoderSwitch passwordEncoder = new PasswordEncoderSwitch();
                     passwordEncoder.setUser(userObject);
                     userObject.setPassword(passwordEncoder.encode(passwordToEncrypt));
                 }
@@ -646,7 +646,7 @@ public class UserForm extends BaseForm {
 
     private boolean isOldPasswordInvalid() {
         if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
-            SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+            PasswordEncoderSwitch passwordEncoder = new PasswordEncoderSwitch();
             passwordEncoder.setUser(userObject);
             return !passwordEncoder.matches(oldPassword, userObject.getPassword());
         }

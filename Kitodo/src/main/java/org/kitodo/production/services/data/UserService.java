@@ -49,7 +49,7 @@ import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.security.password.PasswordEncoderSwitch;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
 import org.primefaces.model.SortOrder;
@@ -491,7 +491,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         } else {
             userWithNewPassword = user;
         }
-        SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+        PasswordEncoderSwitch passwordEncoder = new PasswordEncoderSwitch();
         passwordEncoder.setUser(userWithNewPassword);
         userWithNewPassword.setPassword(passwordEncoder.encode(newPassword));
         saveToDatabase(userWithNewPassword);
