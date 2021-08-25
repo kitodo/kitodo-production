@@ -47,6 +47,9 @@ public class User extends BaseBean {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "algorithm")
+    private String algorithm;
+
     @Column(name = "active")
     private boolean active = true;
 
@@ -194,8 +197,16 @@ public class User extends BaseBean {
         return this.password;
     }
 
-    public void setPassword(String inputPassword) {
-        this.password = inputPassword;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAlgorithm() {
+        return this.algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
 
     public boolean isActive() {
