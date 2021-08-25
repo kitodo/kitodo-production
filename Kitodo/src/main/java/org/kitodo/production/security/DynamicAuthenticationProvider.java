@@ -22,7 +22,7 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LocaleHelper;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.security.password.PasswordEncoderSwitch;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -51,7 +51,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private DefaultSpringSecurityContextSource ldapContextSource = null;
     private BindAuthenticator bindAuthenticator = null;
     private final LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
-    private SecurityPasswordEncoder securityPasswordEncoder;
+    private PasswordEncoderSwitch passwordEncoder;
 
     /**
      * The private Constructor which initially reads the local config.
@@ -93,7 +93,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
                 throw new AuthenticationServiceException("No LDAP server specified on user's LDAP group");
             }
             if (Objects.nonNull(user.getPassword()) && !ldapGroup.getLdapServer().isReadOnly()) {
-                securityPasswordEncoder.setUser(user);
+                passwordEncoder.setUser(user);
                 return daoAuthenticationProvider.authenticate(authentication);
             }
             configureAuthenticationProvider(ldapGroup.getLdapServer().getUrl(), ldapGroup.getUserDN());
@@ -142,8 +142,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(ServiceManager.getUserService());
-        securityPasswordEncoder = new SecurityPasswordEncoder();
-        daoAuthenticationProvider.setPasswordEncoder(securityPasswordEncoder);
+        passwordEncoder = new PasswordEncoderSwitch();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         this.daoAuthenticationProvider = daoAuthenticationProvider;
     }
 
