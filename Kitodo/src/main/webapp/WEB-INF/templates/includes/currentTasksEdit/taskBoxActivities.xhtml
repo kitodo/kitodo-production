@@ -93,29 +93,29 @@
                     </h:commandLink>
 
                     <!-- Re-generate all images action link -->
-                    <h:commandLink id="generateAllImages"
+                    <p:commandLink id="generateAllImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateAllImages}"
                                    disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
                                    title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.regenerateAllImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateAllImages}</h:outputText>
-                    </h:commandLink>
+                    </p:commandLink>
                     <!-- Generate missing and re-generate damaged images action link -->
-                    <h:commandLink id="regenerateMissingAndDamagedImages"
+                    <p:commandLink id="regenerateMissingAndDamagedImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateMissingAndDamagedImages}"
                                    disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
                                    title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.regenerateMissingAndDamagedImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateMissingAndDamagedImages}</h:outputText>
-                    </h:commandLink>
+                    </p:commandLink>
                     <!-- Generate missing images action link -->
-                    <h:commandLink id="generateMissingImages"
+                    <p:commandLink id="generateMissingImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateMissingImages}"
                                    disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
                                    title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.generateMissingImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.generateMissingImages}</h:outputText>
-                    </h:commandLink>
+                    </p:commandLink>
 
                     <!-- Edit Cancel-buttons -->
                     <p:commandLink id="cancel" action="#{CurrentTaskForm.releaseTask}" title="#{msgs.releaseTask}">
