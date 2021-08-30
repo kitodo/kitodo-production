@@ -25,7 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
@@ -171,8 +171,8 @@ public class SearchResultGeneration {
         try {
             metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(processDTO);
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
-            numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getMediaUnit())
-                    .filter(mediaUnit -> Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)).count();
+            numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getPhysicalStructure())
+                    .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count();
             numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getLogicalStructure()).count();
             numberOfProcessMetadata = Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
 

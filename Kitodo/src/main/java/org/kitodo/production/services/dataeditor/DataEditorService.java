@@ -238,8 +238,9 @@ public class DataEditorService {
                 StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
                 if (structureTreeNode.getDataObject() instanceof View) {
                     View view = (View) structureTreeNode.getDataObject();
-                    if (Objects.nonNull(view.getMediaUnit())) {
-                        return dataEditor.getRulesetManagement().getStructuralElementView(view.getMediaUnit().getType(),
+                    if (Objects.nonNull(view.getPhysicalDivision())) {
+                        return dataEditor.getRulesetManagement().getStructuralElementView(
+                            view.getPhysicalDivision().getType(),
                                 dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                     }
                 }

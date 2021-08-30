@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -126,8 +126,8 @@ public class ProcessListBaseView extends BaseForm {
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), selectedProcess.getId() }, logger, e);
                 return;
             }
-            int numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getMediaUnit())
-                    .filter(mediaUnit -> Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)).count();
+            int numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getPhysicalStructure())
+                    .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count();
             this.numberOfGlobalImages += numberOfProcessImages;
             int numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getLogicalStructure()).count();
             this.numberOfGlobalStructuralElements += numberOfProcessStructuralElements;

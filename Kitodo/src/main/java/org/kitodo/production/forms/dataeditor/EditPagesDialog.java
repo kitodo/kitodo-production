@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.metadata.MetadataEditor;
 
@@ -32,23 +32,23 @@ public class EditPagesDialog {
     private final DataEditorForm dataEditor;
 
     /**
-     * Views on media units that are not associated with this structure.
+     * Views on physical divisions that are not associated with this structure.
      */
     private List<SelectItem> paginationSelectionItems;
 
     /**
-     * Views on media units that are not associated with this structure selected
+     * Views on physical divisions that are not associated with this structure selected
      * by the user to add them.
      */
     private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
 
     /**
-     * Views on media units that are associated with this structure.
+     * Views on physical divisions that are associated with this structure.
      */
     private List<SelectItem> paginationSubSelectionItems;
 
     /**
-     * Views on media units that are associated with this structure selected by
+     * Views on physical divisions that are associated with this structure selected by
      * the user to remove them.
      */
     private List<Integer> paginationSubSelectionSelectedItems = new ArrayList<>();
@@ -206,8 +206,8 @@ public class EditPagesDialog {
 
     private List<View> getViewsToAdd(List<Integer> pages) {
         return pages.parallelStream()
-                .map(dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted()::get)
-                .map(MetadataEditor::getFirstViewForMediaUnit)
+                .map(dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()::get)
+                .map(MetadataEditor::getFirstViewForPhysicalDivision)
                 .collect(Collectors.toList());
     }
 
@@ -232,15 +232,15 @@ public class EditPagesDialog {
         paginationSubSelectionItems = new ArrayList<>();
         paginationSelectionItems = new ArrayList<>();
 
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted();
-        int capacity = (int) Math.ceil(mediaUnits.size() / .75);
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        int capacity = (int) Math.ceil(physicalDivisions.size() / .75);
         Set<Integer> assigneds = new HashSet<>(capacity);
         Set<Integer> unassigneds = new HashSet<>(capacity);
-        for (int i = 0; i < mediaUnits.size(); i++) {
-            MediaUnit mediaUnit = mediaUnits.get(i);
-            View view = MetadataEditor.createUnrestrictedViewOn(mediaUnit);
-            String label = Objects.isNull(mediaUnit.getOrderlabel()) ? Integer.toString(mediaUnit.getOrder())
-                    : mediaUnit.getOrder() + " : " + mediaUnit.getOrderlabel();
+        for (int i = 0; i < physicalDivisions.size(); i++) {
+            PhysicalDivision physicalDivision = physicalDivisions.get(i);
+            View view = MetadataEditor.createUnrestrictedViewOn(physicalDivision);
+            String label = Objects.isNull(physicalDivision.getOrderlabel()) ? Integer.toString(physicalDivision.getOrder())
+                    : physicalDivision.getOrder() + " : " + physicalDivision.getOrderlabel();
             Integer id = i;
             SelectItem selectItem = new SelectItem(id, label);
             selectPageItems.add(selectItem);

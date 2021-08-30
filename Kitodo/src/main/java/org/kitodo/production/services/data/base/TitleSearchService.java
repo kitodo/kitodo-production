@@ -93,7 +93,7 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
         return findDocuments(getWildcardQueryTitle(title));
     }
 
-     /**
+    /**
      * Get query to find object matching to given title with keyword (exactMatch).
      *
      * @param title

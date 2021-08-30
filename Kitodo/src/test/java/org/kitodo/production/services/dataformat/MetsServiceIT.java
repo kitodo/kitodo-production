@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.services.ServiceManager;
 
@@ -34,7 +34,7 @@ public class MetsServiceIT {
                 .loadWorkpiece(new File("../Kitodo-DataFormat/src/test/resources/meta.xml").toURI());
 
         // METS file has 183 associated images
-        assertEquals(183, workpiece.getMediaUnit().getChildren().size());
+        assertEquals(183, workpiece.getPhysicalStructure().getChildren().size());
 
         // METS file has 17 unstructured images
         assertEquals(17, workpiece.getLogicalStructure().getViews().size());
@@ -47,7 +47,7 @@ public class MetsServiceIT {
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
-            workpiece.getMediaUnit().getChildren().get(0).getMediaFiles().entrySet().iterator().next().getValue());
+            workpiece.getPhysicalStructure().getChildren().get(0).getMediaFiles().entrySet().iterator().next().getValue());
 
         // pagination can be read
         assertEquals(
@@ -66,6 +66,6 @@ public class MetsServiceIT {
                 "uncounted", "uncounted", "113", "114", "115", "116", "117", "118", "uncounted", "uncounted", "119",
                 "120", "uncounted", "uncounted", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
                 "131", "132", "133", "134", "uncounted", "uncounted", "uncounted"),
-            workpiece.getMediaUnit().getChildren().stream().map(MediaUnit::getOrderlabel).collect(Collectors.toList()));
+            workpiece.getPhysicalStructure().getChildren().stream().map(PhysicalDivision::getOrderlabel).collect(Collectors.toList()));
     }
 }

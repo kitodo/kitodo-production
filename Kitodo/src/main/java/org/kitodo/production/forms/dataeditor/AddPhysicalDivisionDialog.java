@@ -22,12 +22,12 @@ import java.util.Optional;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 
-public class AddMediaUnitDialog {
+public class AddPhysicalDivisionDialog {
     private final DataEditorForm dataEditor;
     private List<SelectItem> possiblePositions;
     private List<SelectItem> possibleTypes;
@@ -37,33 +37,33 @@ public class AddMediaUnitDialog {
 
     /**
      * Constructor.
-     * @param dataEditor Instance of DataEditorForm where this instance of AddMediaUnitDialog was created.
+     * @param dataEditor Instance of DataEditorForm where this instance of AddPhysicalDivisionDialog was created.
      */
-    AddMediaUnitDialog(DataEditorForm dataEditor) {
+    AddPhysicalDivisionDialog(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
 
     /**
-     * Add a new MediaUnit.
+     * Add a new PhysicalDivision.
      */
-    public void addMediaUnit() {
-        Optional<MediaUnit> selectedMediaUnit = dataEditor.getSelectedMediaUnit();
-        if (selectedMediaUnit.isPresent()) {
-            MediaUnit mediaUnit = MetadataEditor.addMediaUnit(selectedType, dataEditor.getWorkpiece(),
-                    selectedMediaUnit.get(),
+    public void addPhysicalDivision() {
+        Optional<PhysicalDivision> selectedPhysicalDivision = dataEditor.getSelectedPhysicalDivision();
+        if (selectedPhysicalDivision.isPresent()) {
+            PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(selectedType, dataEditor.getWorkpiece(),
+                    selectedPhysicalDivision.get(),
                     selectedPosition);
             dataEditor.refreshStructurePanel();
-            dataEditor.getStructurePanel().selectMediaUnit(mediaUnit);
+            dataEditor.getStructurePanel().selectPhysicalDivision(physicalDivision);
         } else {
-            Helper.setErrorMessage("No media unit selected!");
+            Helper.setErrorMessage("No physical division selected!");
         }
     }
 
     /**
-     * Prepare popup dialog by retrieving available insertion positions and media unit types for selected element.
+     * Prepare popup dialog by retrieving available insertion positions and physical division types for selected element.
      */
     public void prepare() {
-        if (dataEditor.getSelectedMediaUnit().isPresent()) {
+        if (dataEditor.getSelectedPhysicalDivision().isPresent()) {
             preparePossiblePositions();
             preparePossibleTypes();
         } else {
@@ -73,15 +73,15 @@ public class AddMediaUnitDialog {
     }
 
     private void preparePossiblePositions() {
-        Optional<MediaUnit> selectedMediaUnit = dataEditor.getSelectedMediaUnit();
-        if (selectedMediaUnit.isPresent()) {
+        Optional<PhysicalDivision> selectedPhysicalDivision = dataEditor.getSelectedPhysicalDivision();
+        if (selectedPhysicalDivision.isPresent()) {
             possiblePositions = new ArrayList<>();
             possiblePositions.add(new SelectItem(InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT,
                     Helper.getTranslation("dataEditor.position.asFirstChildOfCurrentElement")));
             possiblePositions.add(new SelectItem(InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT,
                     Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
-            List<MediaUnit> parents = MetadataEditor.getAncestorsOfMediaUnit(selectedMediaUnit.get(),
-                    dataEditor.getWorkpiece().getMediaUnit());
+            List<PhysicalDivision> parents = MetadataEditor.getAncestorsOfPhysicalDivision(selectedPhysicalDivision.get(),
+                    dataEditor.getWorkpiece().getPhysicalStructure());
             if (parents.size() > 0) {
                 possiblePositions.add(new SelectItem(InsertionPosition.BEFORE_CURRENT_ELEMENT,
                         Helper.getTranslation("dataEditor.position.beforeCurrentElement")));
@@ -92,29 +92,29 @@ public class AddMediaUnitDialog {
     }
 
     /**
-     * Update list of available types that can be added to the currently selected media units in the currently selected
+     * Update list of available types that can be added to the currently selected physical divisions in the currently selected
      * position.
      */
     public void preparePossibleTypes() {
         possibleTypes = new ArrayList<>();
 
-        Optional<MediaUnit> selectedMediaUnit = dataEditor.getSelectedMediaUnit();
-        if (selectedMediaUnit.isPresent()) {
+        Optional<PhysicalDivision> selectedPhysicalDivision = dataEditor.getSelectedPhysicalDivision();
+        if (selectedPhysicalDivision.isPresent()) {
             StructuralElementViewInterface divisionView = null;
 
             if (InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT.equals(selectedPosition)
                     || InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT.equals(selectedPosition)) {
                 divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                    selectedMediaUnit.orElseThrow(IllegalStateException::new).getType(),
+                    selectedPhysicalDivision.orElseThrow(IllegalStateException::new).getType(),
                         dataEditor.getAcquisitionStage(),
                         dataEditor.getPriorityList()
                 );
 
             } else if (InsertionPosition.BEFORE_CURRENT_ELEMENT.equals(selectedPosition)
                     || InsertionPosition.AFTER_CURRENT_ELEMENT.equals(selectedPosition)) {
-                LinkedList<MediaUnit> parents = MetadataEditor.getAncestorsOfMediaUnit(
-                    selectedMediaUnit.get(),
-                        dataEditor.getWorkpiece().getMediaUnit());
+                LinkedList<PhysicalDivision> parents = MetadataEditor.getAncestorsOfPhysicalDivision(
+                    selectedPhysicalDivision.get(),
+                        dataEditor.getWorkpiece().getPhysicalStructure());
                 if (!parents.isEmpty()) {
                     divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                             parents.getLast().getType(),

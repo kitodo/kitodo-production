@@ -23,10 +23,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 
 /**
- * A tree-shaped description of the media unit of the digital representation of
+ * A tree-shaped description of the physical division of the digital representation of
  * a digital medium. Each leaf of the physical structure tree represents a
  * single medium, possibly in several forms of digital representation. For
- * books, this is typically flat, meaning the {@link Workpiece#getMediaUnit()}
+ * books, this is typically flat, meaning the {@link Workpiece#getPhysicalStructure()}
  * represents the book, and its immediate children represent the individual
  * views (front cover, inside cover, first page, second page, third page, …) For
  * other media, this may well be more complex, such as an archival box
@@ -35,18 +35,18 @@ import org.kitodo.api.dataformat.mets.KitodoUUID;
  *
  * <p>
  * Media files that represent different representations of the same medium can
- * be attached to a media unit. This can be still images in different
+ * be attached to a physical division. This can be still images in different
  * resolutions with equal image content, but also the photography of the side of
  * a record along with its digitized soundtrack.
  */
-public class MediaUnit extends Division<MediaUnit> {
-    // TODO: we probably need a way to configure MediaUnit types to be considered for renumbering/pagination!
+public class PhysicalDivision extends Division<PhysicalDivision> {
+    // TODO: we probably need a way to configure PhysicalDivision types to be considered for renumbering/pagination!
     public static final String TYPE_PAGE = "page";
     public static final String TYPE_TRACK = "track";
     public static final String TYPE_OTHER = "other";
 
     /**
-     * Each media unit can be available in different variants, for each of which
+     * Each physical division can be available in different variants, for each of which
      * a media file is available. This is in this map.
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
@@ -62,9 +62,9 @@ public class MediaUnit extends Division<MediaUnit> {
     private transient List<LogicalDivision> logicalDivisions;
 
     /**
-     * Creates a new MediaUnit.
+     * Creates a new PhysicalDivision.
      */
-    public MediaUnit() {
+    public PhysicalDivision() {
         logicalDivisions = new LinkedList<>();
     }
 
@@ -103,7 +103,7 @@ public class MediaUnit extends Division<MediaUnit> {
 
     /**
      * The list is available to assist to render the front-end by holding the
-     * elements of the logical structure that reference this media unit. It is
+     * elements of the logical structure that reference this physical division. It is
      * transient, meaning that its content is not saved and is not restored when
      * it is loaded.
      *
@@ -135,11 +135,11 @@ public class MediaUnit extends Division<MediaUnit> {
         if (!super.equals(o)) {
             return false;
         }
-        if (!(o instanceof MediaUnit)) {
+        if (!(o instanceof PhysicalDivision)) {
             return false;
         }
-        MediaUnit mediaUnit = (MediaUnit) o;
-        return Objects.equals(mediaFiles, mediaUnit.mediaFiles);
+        PhysicalDivision physicalDivision = (PhysicalDivision) o;
+        return Objects.equals(mediaFiles, physicalDivision.mediaFiles);
     }
 
     @Override

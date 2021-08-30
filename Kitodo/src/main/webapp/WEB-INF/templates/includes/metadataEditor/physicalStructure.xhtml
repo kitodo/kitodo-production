@@ -71,9 +71,9 @@
                         styleClass="plain"
                         disabled="#{readOnly}"
                         process="@this"
-                        actionListener="#{DataEditorForm.addMediaUnitDialog.prepare}"
-                        oncomplete="PF('dialogAddMediaUnit').show()"
-                        update="dialogAddMediaUnitForm"/>
+                        actionListener="#{DataEditorForm.addPhysicalDivisionDialog.prepare}"
+                        oncomplete="PF('dialogAddPhysicalDivision').show()"
+                        update="dialogAddPhysicalDivisionForm"/>
             <p:menuitem value="#{msgs.assignToNextElement}"
                         icon="fa fa-link fa-sm"
                         styleClass="plain"
@@ -107,7 +107,7 @@
                         styleClass="plain"
                         disabled="#{readOnly}"
                         process="@this"
-                        action="#{DataEditorForm.deleteMediaUnit()}"
+                        action="#{DataEditorForm.deletePhysicalDivision()}"
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
                         update="physicalTree

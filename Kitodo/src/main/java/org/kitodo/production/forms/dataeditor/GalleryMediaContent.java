@@ -104,7 +104,7 @@ public class GalleryMediaContent {
      * @return the order number
      */
     public String getOrder() {
-        return Integer.toString(view.getMediaUnit().getOrder());
+        return Integer.toString(view.getPhysicalDivision().getOrder());
     }
 
     /**
@@ -113,7 +113,7 @@ public class GalleryMediaContent {
      * @return the order label
      */
     public String getOrderlabel() {
-        return view.getMediaUnit().getOrderlabel();
+        return view.getPhysicalDivision().getOrderlabel();
     }
 
     /**
@@ -193,13 +193,13 @@ public class GalleryMediaContent {
     }
 
     /**
-     * Check if the GalleryMediaContent's MediaUnit is assigned to several LogicalDivisions.
+     * Check if the GalleryMediaContent's PhysicalDivision is assigned to several LogicalDivisions.
      *
-     * @return {@code true} when the MediaUnit is assigned to more than one logical element
+     * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
      */
     public boolean isAssignedSeveralTimes() {
-        if (Objects.nonNull(view) && Objects.nonNull(view.getMediaUnit())) {
-            return view.getMediaUnit().getLogicalDivisions().size() > 1;
+        if (Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision())) {
+            return view.getPhysicalDivision().getLogicalDivisions().size() > 1;
         }
         return false;
     }

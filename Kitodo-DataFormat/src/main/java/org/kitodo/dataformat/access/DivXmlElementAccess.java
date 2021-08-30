@@ -35,7 +35,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
@@ -94,15 +94,15 @@ public class DivXmlElementAccess extends LogicalDivision {
      * @param mets
      *            METS data structure from which it is possible to determine
      *            what kind of metadata section is linked
-     * @param mediaUnitsMap
-     *            From this map, the media units are read, which must be
+     * @param physicalDivisionsMap
+     *            From this map, the physical divisions are read, which must be
      *            referenced here by their ID.
      * @param parentOrder
      *            This represents the value of the parent's {@code ORDER} attribute. It is not required for logical elements by the
      *            mets standard but is used in Kitodo internal data format. It helps to display logical and physical elements in an
      *            advanced combined tree.
      */
-    DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> mediaUnitsMap, int parentOrder) {
+    DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> physicalDivisionsMap, int parentOrder) {
         super();
         div.getCONTENTIDS().parallelStream().map(URI::create).forEachOrdered(super.getContentIds()::add);
         super.setLabel(div.getLABEL());
@@ -123,16 +123,16 @@ public class DivXmlElementAccess extends LogicalDivision {
         }
         super.setOrderlabel(div.getORDERLABEL());
         for (DivType child : div.getDiv()) {
-            getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, getOrder()));
+            getChildren().add(new DivXmlElementAccess(child, mets, physicalDivisionsMap, getOrder()));
         }
         super.setType(div.getTYPE());
-        List<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
+        List<FileXmlElementAccess> fileXmlElementAccesses = physicalDivisionsMap.get(div.getID());
         if (Objects.nonNull(fileXmlElementAccesses)) {
             for (FileXmlElementAccess fileXmlElementAccess : fileXmlElementAccesses) {
                 if (Objects.nonNull(fileXmlElementAccess)
-                    && !fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), mediaUnitsMap)) {
+                    && !fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), physicalDivisionsMap)) {
                     super.getViews().add(new AreaXmlElementAccess(fileXmlElementAccess).getView());
-                    fileXmlElementAccess.getMediaUnit().getLogicalDivisions().add(this);
+                    fileXmlElementAccess.getPhysicalDivision().getLogicalDivisions().add(this);
                 }
             }
         }
@@ -141,18 +141,18 @@ public class DivXmlElementAccess extends LogicalDivision {
 
     private boolean fileXmlElementAccessIsLinkedToChildren(FileXmlElementAccess fileXmlElementAccess,
                                                            List<DivType> divs,
-                                                           Map<String, List<FileXmlElementAccess>> mediaUnitsMap) {
+                                                           Map<String, List<FileXmlElementAccess>> physicalDivisionsMap) {
         if (divs.size() == 0) {
             return false;
         }
         boolean test = false;
         for (DivType div : divs) {
-            List<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
+            List<FileXmlElementAccess> fileXmlElementAccesses = physicalDivisionsMap.get(div.getID());
             if (Objects.nonNull(fileXmlElementAccesses) && fileXmlElementAccesses.contains(fileXmlElementAccess)) {
                 return true;
             }
             if (div.getDiv().size() > 0
-                    && fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), mediaUnitsMap)) {
+                    && fileXmlElementAccessIsLinkedToChildren(fileXmlElementAccess, div.getDiv(), physicalDivisionsMap)) {
                 test = true;
             }
         }
@@ -227,8 +227,8 @@ public class DivXmlElementAccess extends LogicalDivision {
     /**
      * Creates a METS {@code <div>} element from this structure.
      *
-     * @param mediaUnitIDs
-     *            the assigned identifier for each media unit so that the link
+     * @param physicalDivisionIDs
+     *            the assigned identifier for each physical division so that the link
      *            pairs of the struct link section can be formed later
      * @param smLinkData
      *            the link pairs of the struct link section are added to this
@@ -237,7 +237,7 @@ public class DivXmlElementAccess extends LogicalDivision {
      *            the METS structure in which the metadata is added
      * @return a METS {@code <div>} element
      */
-    DivType toDiv(Map<MediaUnit, String> mediaUnitIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
+    DivType toDiv(Map<PhysicalDivision, String> physicalDivisionIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
         div.setID(metsReferrerId);
         if (!super.getContentIds().isEmpty()) {
@@ -249,8 +249,8 @@ public class DivXmlElementAccess extends LogicalDivision {
         }
         div.setORDERLABEL(super.getOrderlabel());
         div.setTYPE(super.getType());
-        smLinkData.addAll(super.getViews().stream().map(View::getMediaUnit).map(mediaUnitIDs::get)
-                .map(mediaUnitId -> Pair.of(metsReferrerId, mediaUnitId)).collect(Collectors.toList()));
+        smLinkData.addAll(super.getViews().stream().map(View::getPhysicalDivision).map(physicalDivisionIDs::get)
+                .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId)).collect(Collectors.toList()));
 
         Optional<MdSecType> optionalDmdSec = createMdSec(super.getMetadata(), MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
@@ -269,7 +269,7 @@ public class DivXmlElementAccess extends LogicalDivision {
             MptrXmlElementAccess.addMptrToDiv(super.getLink(), div);
         }
         for (LogicalDivision subLogicalDivision : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess(subLogicalDivision).toDiv(mediaUnitIDs, smLinkData, mets));
+            div.getDiv().add(new DivXmlElementAccess(subLogicalDivision).toDiv(physicalDivisionIDs, smLinkData, mets));
         }
         return div;
     }

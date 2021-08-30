@@ -14,11 +14,11 @@ package org.kitodo.dataformat.access;
 import org.kitodo.api.dataformat.View;
 
 /**
- * A view on a media unit. The individual levels of the {@link DivXmlElementAccess} refer
+ * A view on a physical division. The individual levels of the {@link DivXmlElementAccess} refer
  * to {@code View}s on {@link FileXmlElementAccess}s. At the moment, each {@code View}
- * refers to exactly one {@code MediaUnit} as a whole. This concept level has
+ * refers to exactly one {@code PhysicalDivision} as a whole. This concept level has
  * been added here in order to be able to expand it in the future in order to be
- * able to refer to individual parts of a {@code MediaUnit}.
+ * able to refer to individual parts of a {@code PhysicalDivision}.
  */
 public class AreaXmlElementAccess {
 
@@ -39,10 +39,10 @@ public class AreaXmlElementAccess {
      * called module-internally when loading a METS file.
      * 
      * @param fileXmlElementAccess
-     *            media unit in view
+     *            physical division in view
      */
     AreaXmlElementAccess(FileXmlElementAccess fileXmlElementAccess) {
-        view.setMediaUnit(fileXmlElementAccess.getMediaUnit());
+        view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
     }
 
     View getView() {

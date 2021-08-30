@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterDataEditor;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
@@ -77,12 +77,12 @@ public class PhysicalStructMapType extends StructMapType {
 
     private String getPhysicalDivTypeByFileType(FileType file) {
         if (file.getMIMETYPE().contains("image")) {
-            return MediaUnit.TYPE_PAGE;
+            return PhysicalDivision.TYPE_PAGE;
         }
         if (file.getMIMETYPE().contains("audio")) {
-            return MediaUnit.TYPE_TRACK;
+            return PhysicalDivision.TYPE_TRACK;
         }
-        return MediaUnit.TYPE_OTHER;
+        return PhysicalDivision.TYPE_OTHER;
     }
 
     private DivType getDivById(String id) {

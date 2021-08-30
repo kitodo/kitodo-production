@@ -30,7 +30,7 @@ import org.kitodo.api.Metadata;
  *
  * @param <T>
  *            There are two versions of it, an {@link LogicalDivision}
- *            and a {@link MediaUnit}.
+ *            and a {@link PhysicalDivision}.
  */
 public abstract class Division<T extends Division<T>> {
     /**
@@ -57,7 +57,7 @@ public abstract class Division<T extends Division<T>> {
      * <i>For logical structures</i> meaningless, only used internally.
      *
      * <p>
-     * <i>For media units</i>, the display or playback order of several media
+     * <i>For physical divisions</i>, the display or playback order of several media
      * units referenced from one logical division is determined by
      * this attribute, not by the order of the references.
      */
@@ -72,8 +72,8 @@ public abstract class Division<T extends Division<T>> {
      * mapped to a machine-readable value.
      *
      * <p>
-     * <i>For media units</i>, <b>a human readable label</b> for the
-     * <i>order</i> of this media unit. This need not be directly related to the
+     * <i>For physical divisions</i>, <b>a human readable label</b> for the
+     * <i>order</i> of this physical division. This need not be directly related to the
      * order number. Examples of order labels could be “I, II, III, IV, V, - ,
      * 1, 2, 3”, meanwhile the order would be “1, 2, 3, 4, 5, 6, 7, 8, 9”.
      */
@@ -191,7 +191,7 @@ public abstract class Division<T extends Division<T>> {
     }
 
     /**
-     * Returns the order label for this media unit.
+     * Returns the order label for this physical division.
      *
      * @return the order label
      */
@@ -200,7 +200,7 @@ public abstract class Division<T extends Division<T>> {
     }
 
     /**
-     * Sets the order label for this media unit.
+     * Sets the order label for this physical division.
      *
      * @param orderlabel
      *            order label to set
