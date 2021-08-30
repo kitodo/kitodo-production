@@ -26,34 +26,34 @@ public class DivisionTest {
      */
     @Test
     public void getAllChildrenTest() {
-        IncludedStructuralElement parent = new IncludedStructuralElement();
+        LogicalDivision parent = new LogicalDivision();
         parent.setLabel("Parent");
 
-        IncludedStructuralElement childOne = new IncludedStructuralElement();
+        LogicalDivision childOne = new LogicalDivision();
         childOne.setLabel("Child 1");
         parent.getChildren().add(childOne);
 
-        IncludedStructuralElement childOneOne = new IncludedStructuralElement();
+        LogicalDivision childOneOne = new LogicalDivision();
         childOneOne.setLabel("Child 1.1");
         childOne.getChildren().add(childOneOne);
 
-        IncludedStructuralElement childOneTwo = new IncludedStructuralElement();
+        LogicalDivision childOneTwo = new LogicalDivision();
         childOneTwo.setLabel("Child 1.2");
         childOne.getChildren().add(childOneTwo);
 
-        IncludedStructuralElement childTwo = new IncludedStructuralElement();
+        LogicalDivision childTwo = new LogicalDivision();
         childTwo.setLabel("Child 2");
         parent.getChildren().add(childTwo);
 
-        IncludedStructuralElement childTwoOne = new IncludedStructuralElement();
+        LogicalDivision childTwoOne = new LogicalDivision();
         childTwoOne.setLabel("Child 2.1");
         childTwo.getChildren().add(childTwoOne);
 
-        IncludedStructuralElement childTwoTwo = new IncludedStructuralElement();
+        LogicalDivision childTwoTwo = new LogicalDivision();
         childTwoTwo.setLabel("Child 2.2");
         childTwo.getChildren().add(childTwoTwo);
 
-        List<String> allChildren = parent.getAllChildren().stream().map(IncludedStructuralElement::getLabel)
+        List<String> allChildren = parent.getAllChildren().stream().map(LogicalDivision::getLabel)
                 .collect(Collectors.toList());
 
         assertFalse(allChildren.contains("Parent"));

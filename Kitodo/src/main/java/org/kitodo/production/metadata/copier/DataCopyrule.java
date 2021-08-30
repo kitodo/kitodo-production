@@ -13,14 +13,13 @@ package org.kitodo.production.metadata.copier;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
@@ -44,9 +43,9 @@ public class DataCopyrule {
      */
     public void apply(CopierData data) {
         Workpiece workpiece = data.getDigitalDocument().getWorkpiece();
-        List<IncludedStructuralElement> allIncludedStructuralElements = workpiece.getAllIncludedStructuralElements();
+        List<LogicalDivision> allLogicalDivisions = workpiece.getAllLogicalDivisions();
 
-        for (IncludedStructuralElement child : allIncludedStructuralElements) {
+        for (LogicalDivision child : allLogicalDivisions) {
             MdSec domain = null;
             MetadataEntry metadataEntry = new MetadataEntry();
             metadataEntry.setKey(command.get(0));

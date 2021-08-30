@@ -41,7 +41,7 @@ import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
@@ -249,7 +249,7 @@ public class ProcessServiceIT {
         processService.findByTitle("Second Process");
         assertEquals(processNotFound, 1, processService.findByAnything("August").size());
     }
-    
+
     @Test
     public void shouldFindByProperty() throws DataException {
         List<ProcessDTO> processByProperty = processService.findByProperty("Process Property", "first value");
@@ -569,22 +569,22 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldUpdateChildrenFromRootElement() throws Exception {
+    public void shouldUpdateChildrenFromLogicalStructure() throws Exception {
         LinkedMetsResource childToKeepLink = new LinkedMetsResource();
         childToKeepLink.setUri(processService.getProcessURI(processService.getById(5)));
-        IncludedStructuralElement childToKeepIncludedStructuralElement = new IncludedStructuralElement();
-        childToKeepIncludedStructuralElement.setLink(childToKeepLink);
-        IncludedStructuralElement rootElement = new IncludedStructuralElement();
-        rootElement.getChildren().add(childToKeepIncludedStructuralElement);
+        LogicalDivision childToKeepLogicalDivision = new LogicalDivision();
+        childToKeepLogicalDivision.setLink(childToKeepLink);
+        LogicalDivision logicalStructure = new LogicalDivision();
+        logicalStructure.getChildren().add(childToKeepLogicalDivision);
         LinkedMetsResource childToAddLink = new LinkedMetsResource();
         childToAddLink.setUri(processService.getProcessURI(processService.getById(7)));
-        IncludedStructuralElement childToAddIncludedStructuralElement = new IncludedStructuralElement();
-        childToAddIncludedStructuralElement.setLink(childToAddLink);
-        rootElement.getChildren().add(childToAddIncludedStructuralElement);
+        LogicalDivision childToAddLogicalDivision = new LogicalDivision();
+        childToAddLogicalDivision.setLink(childToAddLink);
+        logicalStructure.getChildren().add(childToAddLogicalDivision);
 
         Process process = processService.getById(4);
 
-        processService.updateChildrenFromRootElement(process, rootElement);
+        processService.updateChildrenFromLogicalStructure(process, logicalStructure);
 
         for (Process child : process.getChildren()) {
             assertTrue("Process should have child to keep and child to add as only children",

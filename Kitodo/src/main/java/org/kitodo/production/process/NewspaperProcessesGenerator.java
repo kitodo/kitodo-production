@@ -45,7 +45,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigProject;
@@ -148,7 +148,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private DatesSimpleMetadataViewInterface daySimpleMetadataView;
 
     /**
-     * Which included structural element type are the days.
+     * Which logical division type are the days.
      */
     private String dayType;
 
@@ -168,7 +168,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private DatesSimpleMetadataViewInterface monthSimpleMetadataView;
 
     /**
-     * Which included structural element type are the months.
+     * Which logical division type are the months.
      */
     private String monthType;
 
@@ -227,7 +227,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private DatesSimpleMetadataViewInterface yearSimpleMetadataView;
 
     /**
-     * Which included structural element type are the years.
+     * Which logical division type are the years.
      */
     private String yearType;
 
@@ -314,12 +314,12 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
         overallWorkpiece = metsService.loadWorkpiece(overallMetadataFileUri);
 
-        initializeRulesetFields(overallWorkpiece.getRootElement().getType());
+        initializeRulesetFields(overallWorkpiece.getLogicalStructure().getType());
 
         ConfigProject configProject = new ConfigProject(overallProcess.getProject().getTitle());
 
         Collection<MetadataViewInterface> allowedMetadata = rulesetService.openRuleset(overallProcess.getRuleset())
-                .getStructuralElementView(overallWorkpiece.getRootElement().getType(), acquisitionStage, ENGLISH)
+                .getStructuralElementView(overallWorkpiece.getLogicalStructure().getType(), acquisitionStage, ENGLISH)
                 .getAllowedMetadata();
 
         titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece, allowedMetadata);
@@ -404,18 +404,18 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             Collection<MetadataViewInterface> allowedMetadata)
             throws DoctypeMissingException {
 
-        IncludedStructuralElement rootElement = workpiece.getRootElement();
+        LogicalDivision logicalStructure = workpiece.getLogicalStructure();
         Map<String, Map<String, String>> metadata = new HashMap<>(4);
-        Map<String, String> topstruct = getMetadataEntries(rootElement.getMetadata());
+        Map<String, String> topstruct = getMetadataEntries(logicalStructure.getMetadata());
         metadata.put("topstruct", topstruct);
-        List<IncludedStructuralElement> children = rootElement.getChildren();
+        List<LogicalDivision> children = logicalStructure.getChildren();
         metadata.put("firstchild",
             children.isEmpty() ? Collections.emptyMap() : getMetadataEntries(children.get(0).getMetadata()));
         metadata.put("physSequence", getMetadataEntries(workpiece.getMediaUnit().getMetadata()));
 
         String docType = null;
         for (ConfigOpacDoctype configOpacDoctype : ConfigOpac.getAllDoctypes()) {
-            if (configOpacDoctype.getRulesetType().equals(rootElement.getType())) {
+            if (configOpacDoctype.getRulesetType().equals(logicalStructure.getType())) {
                 docType = configOpacDoctype.getTitle();
                 break;
             }
@@ -541,24 +541,24 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     private void createMetadataFileForProcess(List<IndividualIssue> individualIssues, String title)
             throws IOException, CommandException {
 
-        IncludedStructuralElement rootElement = new IncludedStructuralElement();
+        LogicalDivision logicalStructure = new LogicalDivision();
         MetadataEntry dateMetadataEntry = new MetadataEntry();
         dateMetadataEntry.setKey(monthSimpleMetadataView.getId());
         dateMetadataEntry.setValue(dateMark(monthSimpleMetadataView.getScheme(), individualIssues.get(0).getDate()));
-        rootElement.getMetadata().add(dateMetadataEntry);
+        logicalStructure.getMetadata().add(dateMetadataEntry);
 
         for (IndividualIssue individualIssue : individualIssues) {
 
             String monthMark = dateMark(monthSimpleMetadataView.getScheme(), individualIssue.getDate());
-            IncludedStructuralElement yearMonth = getOrCreateIncludedStructuralElement(yearWorkpiece.getRootElement(),
+            LogicalDivision yearMonth = getOrCreateLogicalDivision(yearWorkpiece.getLogicalStructure(),
                 monthType, monthSimpleMetadataView, monthMark);
             String dayMark = dateMark(daySimpleMetadataView.getScheme(), individualIssue.getDate());
-            final IncludedStructuralElement processDay = getOrCreateIncludedStructuralElement(rootElement, null,
+            final LogicalDivision processDay = getOrCreateLogicalDivision(logicalStructure, null,
                 daySimpleMetadataView, dayMark);
-            final IncludedStructuralElement yearDay = getOrCreateIncludedStructuralElement(yearMonth, dayType,
+            final LogicalDivision yearDay = getOrCreateLogicalDivision(yearMonth, dayType,
                 daySimpleMetadataView, dayMark);
 
-            IncludedStructuralElement processIssue = new IncludedStructuralElement();
+            LogicalDivision processIssue = new LogicalDivision();
             processIssue.setType(issueDivisionView.getId());
             for (SimpleMetadataViewInterface issueProcessTitleView : issueProcessTitleViews) {
                 MetadataEditor.writeMetadataEntry(processIssue, issueProcessTitleView, title);
@@ -566,7 +566,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             addCustomMetadata(individualIssue, processIssue);
             processDay.getChildren().add(processIssue);
 
-            IncludedStructuralElement yearIssue = new IncludedStructuralElement();
+            LogicalDivision yearIssue = new LogicalDivision();
             LinkedMetsResource linkToProcess = new LinkedMetsResource();
             linkToProcess.setLoctype("Kitodo.Production");
             linkToProcess.setUri(processService.getProcessURI(getGeneratedProcess()));
@@ -575,14 +575,14 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
 
         Workpiece workpiece = new Workpiece();
-        workpiece.setRootElement(rootElement);
+        workpiece.setLogicalStructure(logicalStructure);
         workpiece.setId(getGeneratedProcess().getId().toString());
         fileService.createProcessLocation(getGeneratedProcess());
         final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
         metsService.saveWorkpiece(workpiece, metadataFileUri);
     }
 
-    private void addCustomMetadata(IndividualIssue definition, IncludedStructuralElement issue) {
+    private void addCustomMetadata(IndividualIssue definition, LogicalDivision issue) {
         Collection<Metadata> entered = new ArrayList<>();
         MonthDay yearBegin = yearSimpleMetadataView.getYearBegin();
         for (Metadata metadata : definition.getMetadata(yearBegin.getMonthValue(),
@@ -656,7 +656,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         final long begin = System.nanoTime();
 
         metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
-        ProcessService.checkTasks(yearProcess, yearWorkpiece.getRootElement().getType());
+        ProcessService.checkTasks(yearProcess, yearWorkpiece.getLogicalStructure().getType());
         processService.save(yearProcess, true);
 
         this.yearProcess = null;
@@ -676,7 +676,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         final long begin = System.nanoTime();
 
         boolean couldOpenExistingProcess = false;
-        for (IncludedStructuralElement firstLevelChild : overallWorkpiece.getRootElement().getChildren()) {
+        for (LogicalDivision firstLevelChild : overallWorkpiece.getLogicalStructure().getChildren()) {
             LinkedMetsResource firstLevelChildLink = firstLevelChild.getLink();
             if (Objects.isNull(firstLevelChildLink)) {
                 continue;
@@ -687,9 +687,9 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri);
             String yearMetadataEntry = null;
             if (yearSimpleMetadataView.getId().equals("ORDERLABEL")) {
-                yearMetadataEntry = workpiece.getRootElement().getOrderlabel();
+                yearMetadataEntry = workpiece.getLogicalStructure().getOrderlabel();
             }
-            for (Metadata metadata : workpiece.getRootElement().getMetadata()) {
+            for (Metadata metadata : workpiece.getLogicalStructure().getMetadata()) {
                 if (metadata.getKey().equals(yearSimpleMetadataView.getId()) && metadata instanceof MetadataEntry) {
                     yearMetadataEntry = ((MetadataEntry) metadata).getValue();
                     break;
@@ -732,21 +732,21 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         fileService.createProcessLocation(getGeneratedProcess());
         final URI metadataFileUri = processService.getMetadataFileUri(getGeneratedProcess());
 
-        IncludedStructuralElement newYearChild = new IncludedStructuralElement();
+        LogicalDivision newYearChild = new LogicalDivision();
         LinkedMetsResource link = new LinkedMetsResource();
         link.setLoctype("Kitodo.Production");
         link.setUri(processService.getProcessURI(getGeneratedProcess()));
         newYearChild.setLink(link);
-        overallWorkpiece.getRootElement().getChildren().add(newYearChild);
+        overallWorkpiece.getLogicalStructure().getChildren().add(newYearChild);
 
-        IncludedStructuralElement rootElement = new IncludedStructuralElement();
-        rootElement.setType(yearType);
-        MetadataEditor.writeMetadataEntry(rootElement, yearSimpleMetadataView, yearMark);
+        LogicalDivision logicalStructure = new LogicalDivision();
+        logicalStructure.setType(yearType);
+        MetadataEditor.writeMetadataEntry(logicalStructure, yearSimpleMetadataView, yearMark);
         for (SimpleMetadataViewInterface yearProcessTitleView : yearProcessTitleViews) {
-            MetadataEditor.writeMetadataEntry(rootElement, yearProcessTitleView, title);
+            MetadataEditor.writeMetadataEntry(logicalStructure, yearProcessTitleView, title);
         }
         Workpiece workpiece = new Workpiece();
-        workpiece.setRootElement(rootElement);
+        workpiece.setLogicalStructure(logicalStructure);
         workpiece.setId(getGeneratedProcess().getId().toString());
 
         this.yearProcess = getGeneratedProcess();
@@ -760,21 +760,21 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    private IncludedStructuralElement getOrCreateIncludedStructuralElement(
-            IncludedStructuralElement includedStructuralElement, String childType,
+    private LogicalDivision getOrCreateLogicalDivision(
+            LogicalDivision logicalDivision, String childType,
             SimpleMetadataViewInterface identifierMetadata,
             String identifierMetadataValue) {
 
-        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
+        for (LogicalDivision child : logicalDivision.getChildren()) {
             if (MetadataEditor.readSimpleMetadataValues(child, identifierMetadata).contains(identifierMetadataValue)) {
                 return child;
             }
         }
 
-        IncludedStructuralElement createdChild = new IncludedStructuralElement();
+        LogicalDivision createdChild = new LogicalDivision();
         createdChild.setType(childType);
         MetadataEditor.writeMetadataEntry(createdChild, identifierMetadata, identifierMetadataValue);
-        includedStructuralElement.getChildren().add(createdChild);
+        logicalDivision.getChildren().add(createdChild);
         return createdChild;
     }
 
@@ -783,11 +783,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         saveAndCloseCurrentYearProcess();
         for (SimpleMetadataViewInterface newspaperProcessTitleView : newspaperProcessTitleViews) {
-            MetadataEditor.writeMetadataEntry(overallWorkpiece.getRootElement(), newspaperProcessTitleView,
+            MetadataEditor.writeMetadataEntry(overallWorkpiece.getLogicalStructure(), newspaperProcessTitleView,
                 overallProcess.getTitle());
         }
         metsService.saveWorkpiece(overallWorkpiece, overallMetadataFileUri);
-        ProcessService.checkTasks(overallProcess, overallWorkpiece.getRootElement().getType());
+        ProcessService.checkTasks(overallProcess, overallWorkpiece.getLogicalStructure().getType());
         processService.save(overallProcess,true);
 
         if (logger.isTraceEnabled()) {

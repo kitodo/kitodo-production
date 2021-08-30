@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.services.data.ImportService;
@@ -37,7 +37,7 @@ public class ProcessMetadataTab {
      * @param structure
      *          which its Metadata are wanted to be shown
      */
-    public ProcessFieldedMetadata initializeProcessDetails(IncludedStructuralElement structure) {
+    public ProcessFieldedMetadata initializeProcessDetails(LogicalDivision structure) {
         return ImportService.initializeProcessDetails(structure, this.createProcessForm.getRulesetManagement(),
                 this.createProcessForm.getAcquisitionStage(), this.createProcessForm.getPriorityList());
     }

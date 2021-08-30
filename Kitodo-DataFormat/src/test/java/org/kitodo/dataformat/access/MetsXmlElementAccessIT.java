@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
@@ -59,13 +59,13 @@ public class MetsXmlElementAccessIT {
         assertEquals(183, workpiece.getMediaUnit().getChildren().size());
 
         // METS file has 17 unstructured images
-        assertEquals(17, workpiece.getRootElement().getViews().size());
+        assertEquals(17, workpiece.getLogicalStructure().getViews().size());
 
         // root node has 16 children
-        assertEquals(16, workpiece.getRootElement().getChildren().size());
+        assertEquals(16, workpiece.getLogicalStructure().getChildren().size());
 
         // root node has 11 metadata entries
-        assertEquals(11, workpiece.getRootElement().getMetadata().size());
+        assertEquals(11, workpiece.getLogicalStructure().getMetadata().size());
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
@@ -124,45 +124,45 @@ public class MetsXmlElementAccessIT {
         }
 
         // create document structure
-        workpiece.getRootElement().setType("leaflet");
-        workpiece.getRootElement().setLabel("The Leaflet");
+        workpiece.getLogicalStructure().setType("leaflet");
+        workpiece.getLogicalStructure().setLabel("The Leaflet");
         for (MediaUnit page : pages) {
             View view = new View();
             view.setMediaUnit(page);
-            workpiece.getRootElement().getViews().add(view);
-            page.getIncludedStructuralElements().add(workpiece.getRootElement());
+            workpiece.getLogicalStructure().getViews().add(view);
+            page.getLogicalDivisions().add(workpiece.getLogicalStructure());
         }
 
-        IncludedStructuralElement frontCover = new IncludedStructuralElement();
+        LogicalDivision frontCover = new LogicalDivision();
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
         View view = new View();
         view.setMediaUnit(pages.get(0));
         frontCover.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(frontCover);
-        workpiece.getRootElement().getChildren().add(frontCover);
+        view.getMediaUnit().getLogicalDivisions().add(frontCover);
+        workpiece.getLogicalStructure().getChildren().add(frontCover);
 
-        IncludedStructuralElement inside = new IncludedStructuralElement();
+        LogicalDivision inside = new LogicalDivision();
         inside.setType("inside");
         inside.setLabel("Inside");
         view = new View();
         view.setMediaUnit(pages.get(1));
         inside.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(inside);
+        view.getMediaUnit().getLogicalDivisions().add(inside);
         view = new View();
         view.setMediaUnit(pages.get(2));
         inside.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(inside);
-        workpiece.getRootElement().getChildren().add(inside);
+        view.getMediaUnit().getLogicalDivisions().add(inside);
+        workpiece.getLogicalStructure().getChildren().add(inside);
 
-        IncludedStructuralElement backCover = new IncludedStructuralElement();
+        LogicalDivision backCover = new LogicalDivision();
         backCover.setType("backCover");
         backCover.setLabel("Back cover");
         view = new View();
         view.setMediaUnit(pages.get(3));
         backCover.getViews().add(view);
-        view.getMediaUnit().getIncludedStructuralElements().add(backCover);
-        workpiece.getRootElement().getChildren().add(backCover);
+        view.getMediaUnit().getLogicalDivisions().add(backCover);
+        workpiece.getLogicalStructure().getChildren().add(backCover);
 
         // add metadata
         MetadataEntry title = new MetadataEntry();
@@ -187,7 +187,7 @@ public class MetsXmlElementAccessIT {
         imagesConverted.setKey("imageConversionHint");
         imagesConverted.setDomain(MdSec.DIGIPROV_MD);
         imagesConverted.setValue("Images have been converted from TIFF to JPEG.");
-        workpiece.getRootElement().getMetadata().add(imagesConverted);
+        workpiece.getLogicalStructure().getMetadata().add(imagesConverted);
         frontCover.getMetadata().add(imagesConverted);
         inside.getMetadata().add(imagesConverted);
         backCover.getMetadata().add(imagesConverted);
@@ -239,12 +239,12 @@ public class MetsXmlElementAccessIT {
             MediaUnit mediaUnit = mediaUnits.get(i);
             assertEquals(2, mediaUnit.getMediaFiles().size());
         }
-        IncludedStructuralElement includedStructuralElementRoot = reread.getRootElement();
-        assertEquals(1, includedStructuralElementRoot.getChildren().get(0).getViews().size());
-        assertEquals(2, includedStructuralElementRoot.getChildren().get(1).getViews().size());
-        assertEquals(1, includedStructuralElementRoot.getChildren().get(2).getViews().size());
-        assertEquals(3, includedStructuralElementRoot.getChildren().size());
-        assertEquals(1, includedStructuralElementRoot.getMetadata().size());
+        LogicalDivision logicalStructure = reread.getLogicalStructure();
+        assertEquals(1, logicalStructure.getChildren().get(0).getViews().size());
+        assertEquals(2, logicalStructure.getChildren().get(1).getViews().size());
+        assertEquals(1, logicalStructure.getChildren().get(2).getViews().size());
+        assertEquals(3, logicalStructure.getChildren().size());
+        assertEquals(1, logicalStructure.getMetadata().size());
 
         clean();
     }

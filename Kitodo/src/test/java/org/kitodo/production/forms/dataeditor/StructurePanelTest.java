@@ -18,7 +18,7 @@ import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.DummyRulesetManagement;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
@@ -41,14 +41,14 @@ public class StructurePanelTest {
         ruleset.set(dummyDataEditorForm, new DummyRulesetManagement());
         final StructurePanel underTest = new StructurePanel(dummyDataEditorForm);
 
-        IncludedStructuralElement structure = new IncludedStructuralElement();
+        LogicalDivision structure = new LogicalDivision();
         LinkedMetsResource link = new LinkedMetsResource();
         link.setUri(URI.create("database://?process.id=42"));
         structure.setLink(link);
         TreeNode result = new DefaultTreeNode();
 
         Method buildStructureTreeRecursively = StructurePanel.class.getDeclaredMethod("buildStructureTreeRecursively",
-            IncludedStructuralElement.class, TreeNode.class);
+            LogicalDivision.class, TreeNode.class);
         buildStructureTreeRecursively.setAccessible(true);
         buildStructureTreeRecursively.invoke(underTest, structure, result);
 

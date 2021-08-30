@@ -37,7 +37,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
@@ -1094,9 +1094,9 @@ public class FileService {
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
             repaginateMediaUnits(workpiece);
         }
-        if (Workpiece.treeStream(workpiece.getRootElement())
-                .allMatch(includedStructuralElement -> includedStructuralElement.getViews().isEmpty())) {
-            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getRootElement());
+        if (Workpiece.treeStream(workpiece.getLogicalStructure())
+                .allMatch(logicalDivision -> logicalDivision.getViews().isEmpty())) {
+            automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece, workpiece.getLogicalStructure());
         }
         if (logger.isTraceEnabled()) {
             logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
@@ -1104,14 +1104,14 @@ public class FileService {
     }
 
     private void automaticallyAssignMediaUnitsToEffectiveRootRecursive(Workpiece workpiece,
-            IncludedStructuralElement includedStructuralElement) {
+            LogicalDivision logicalDivision) {
 
-        if (Objects.nonNull(includedStructuralElement.getType())) {
+        if (Objects.nonNull(logicalDivision.getType())) {
             Workpiece.treeStream(workpiece.getMediaUnit()).filter(mediaUnit -> !mediaUnit.getMediaFiles().isEmpty())
-                    .map(View::of).forEachOrdered(includedStructuralElement.getViews()::add);
-        } else if (includedStructuralElement.getChildren().size() == 1) {
+                    .map(View::of).forEachOrdered(logicalDivision.getViews()::add);
+        } else if (logicalDivision.getChildren().size() == 1) {
             automaticallyAssignMediaUnitsToEffectiveRootRecursive(workpiece,
-                includedStructuralElement.getChildren().get(0));
+                logicalDivision.getChildren().get(0));
         }
     }
 
@@ -1195,8 +1195,8 @@ public class FileService {
             workpiece.getMediaUnit().getChildren().add(insertionPoint, mediaUnit);
             View view = new View();
             view.setMediaUnit(mediaUnit);
-            workpiece.getRootElement().getViews().add(view);
-            view.getMediaUnit().getIncludedStructuralElements().add(workpiece.getRootElement());
+            workpiece.getLogicalStructure().getViews().add(view);
+            view.getMediaUnit().getLogicalDivisions().add(workpiece.getLogicalStructure());
             canonicals.add(insertionPoint, entry.getKey());
         }
     }

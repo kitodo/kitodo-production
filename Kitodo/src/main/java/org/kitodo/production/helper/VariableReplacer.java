@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -326,7 +326,7 @@ public class VariableReplacer {
 
         switch (metadataLevel) {
             case ALL:
-                List<IncludedStructuralElement> allChildren = workpiece.getRootElement().getChildren();
+                List<LogicalDivision> allChildren = workpiece.getLogicalStructure().getChildren();
                 String allFirstchildValue = allChildren.isEmpty() ? null
                         : MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
                 if (Objects.nonNull(allFirstchildValue)) {
@@ -346,7 +346,7 @@ public class VariableReplacer {
     }
 
     private String determineReplacementForTopstruct(Matcher variableFinder, String failureResult) {
-        String value = MetadataEditor.getMetadataValue(workpiece.getRootElement(), variableFinder.group(5));
+        String value = MetadataEditor.getMetadataValue(workpiece.getLogicalStructure(), variableFinder.group(5));
         if (Objects.isNull(value)) {
             logger.warn("Cannot replace \"{}\": No such metadata entry in the root element", variableFinder.group());
             return failureResult;
@@ -355,7 +355,7 @@ public class VariableReplacer {
     }
 
     private String determineReplacementForFirstchild(Matcher variableFinder, String failureResult) {
-        List<IncludedStructuralElement> firstchildChildren = workpiece.getRootElement().getChildren();
+        List<LogicalDivision> firstchildChildren = workpiece.getLogicalStructure().getChildren();
         if (firstchildChildren.isEmpty()) {
             logger.warn("Cannot replace \"{}\": Workpiece doesn't have subordinate logical divisions",
                 variableFinder.group());

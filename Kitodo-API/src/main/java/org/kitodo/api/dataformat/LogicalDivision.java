@@ -17,47 +17,47 @@ import java.util.Objects;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 
 /**
- * A tree-shaped description of the included structural element of the digital
- * representation of a digital medium. The included structural element can be
+ * A tree-shaped description of the logical division of the digital
+ * representation of a digital medium. The logical division can be
  * imagined as a table of contents and is used to display the table of contents
  * in the viewer. It uses {@link View}s to refer to elements of the
  * {@link MediaUnit} of the digital medium, or can {@link #link} to other
  * processes.
  */
-public class IncludedStructuralElement extends Division<IncludedStructuralElement> {
+public class LogicalDivision extends Division<LogicalDivision> {
     /**
      * Specifies the link if there is one.
      */
     private LinkedMetsResource link;
 
     /**
-     * The views on {@link MediaUnit}s that this included structural element
+     * The views on {@link MediaUnit}s that this logical division
      * level comprises.
      */
     private final LinkedList<View> views;
 
     /**
-     * Creates a new included structural element.
+     * Creates a new logical division.
      */
-    public IncludedStructuralElement() {
+    public LogicalDivision() {
         views = new LinkedList<>();
     }
 
     /**
-     * Creates a new subclass of included structural element from an existing
-     * included structural element.
+     * Creates a new subclass of logical division from an existing
+     * logical division.
      *
      * @param source
-     *            included structural element that serves as data source
+     *            logical division that serves as data source
      */
-    protected IncludedStructuralElement(IncludedStructuralElement source) {
+    protected LogicalDivision(LogicalDivision source) {
         super(source);
         link = source.link;
         views = source.views;
     }
 
     /**
-     * Returns the link of this included structural element.
+     * Returns the link of this logical division.
      *
      * @return the link
      */
@@ -66,7 +66,7 @@ public class IncludedStructuralElement extends Division<IncludedStructuralElemen
     }
 
     /**
-     * Sets the link of this included structural element.
+     * Sets the link of this logical division.
      *
      * @param link
      *            link to set
@@ -76,7 +76,7 @@ public class IncludedStructuralElement extends Division<IncludedStructuralElemen
     }
 
     /**
-     * Returns the views associated with this included structural element.
+     * Returns the views associated with this logical division.
      *
      * @return the views
      */
@@ -97,10 +97,10 @@ public class IncludedStructuralElement extends Division<IncludedStructuralElemen
         if (!super.equals(o)) {
             return false;
         }
-        if (!(o instanceof IncludedStructuralElement)) {
+        if (!(o instanceof LogicalDivision)) {
             return false;
         }
-        IncludedStructuralElement other = (IncludedStructuralElement) o;
+        LogicalDivision other = (LogicalDivision) o;
         return Objects.equals(link, other.link)
                 && Objects.equals(views, other.views);
     }

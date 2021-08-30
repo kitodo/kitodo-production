@@ -29,7 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.production.services.ServiceManager;
@@ -67,22 +67,22 @@ public class MetsService {
     }
 
     /**
-     * Returns the type of the top element of the root element, and thus the
+     * Returns the type of the top element of the logical structure, and thus the
      * type of the workpiece.
      *
      * @param uri
      *            Address of the METS file of the workpiece
-     * @return the type of root element of the root element of the workpiece
+     * @return the type of root element of the logical structure of the workpiece
      * @throws IOException
      *             if the file cannot be read (for example, because the file was
      *             not found)
      */
     public String getBaseType(URI uri) throws IOException {
-        IncludedStructuralElement includedStructuralElement = loadWorkpiece(uri).getRootElement();
-        String type = includedStructuralElement.getType();
-        while (Objects.isNull(type) && !includedStructuralElement.getChildren().isEmpty()) {
-            includedStructuralElement = includedStructuralElement.getChildren().get(0);
-            type = includedStructuralElement.getType();
+        LogicalDivision logicalDivision = loadWorkpiece(uri).getLogicalStructure();
+        String type = logicalDivision.getType();
+        while (Objects.isNull(type) && !logicalDivision.getChildren().isEmpty()) {
+            logicalDivision = logicalDivision.getChildren().get(0);
+            type = logicalDivision.getType();
         }
         return type;
     }
@@ -151,8 +151,8 @@ public class MetsService {
      * @return the number of tags
      */
     public static long countLogicalMetadata(Workpiece workpiece) {
-        return Workpiece.treeStream(workpiece.getRootElement())
-                .flatMap(includedStructuralElement -> includedStructuralElement.getMetadata().parallelStream())
+        return Workpiece.treeStream(workpiece.getLogicalStructure())
+                .flatMap(logicalDivision -> logicalDivision.getMetadata().parallelStream())
                 .filter(metadata -> !(metadata instanceof MetadataEntry)
                         || Objects.nonNull(((MetadataEntry) metadata).getValue())
                                 && !((MetadataEntry) metadata).getValue().isEmpty())

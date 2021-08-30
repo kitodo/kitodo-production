@@ -173,7 +173,7 @@ public class SearchResultGeneration {
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
             numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getMediaUnit())
                     .filter(mediaUnit -> Objects.equals(mediaUnit.getType(), MediaUnit.TYPE_PAGE)).count();
-            numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getRootElement()).count();
+            numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getLogicalStructure()).count();
             numberOfProcessMetadata = Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
 
         } catch (IOException e) {

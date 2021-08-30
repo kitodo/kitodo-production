@@ -57,15 +57,15 @@ public class MediaUnit extends Division<MediaUnit> {
     private String metsDivReferrerId;
 
     /**
-     * List of IncludedStructuralElements this view is assigned to.
+     * List of LogicalDivisions this view is assigned to.
      */
-    private transient List<IncludedStructuralElement> includedStructuralElements;
+    private transient List<LogicalDivision> logicalDivisions;
 
     /**
      * Creates a new MediaUnit.
      */
     public MediaUnit() {
-        includedStructuralElements = new LinkedList<>();
+        logicalDivisions = new LinkedList<>();
     }
 
 
@@ -103,14 +103,14 @@ public class MediaUnit extends Division<MediaUnit> {
 
     /**
      * The list is available to assist to render the front-end by holding the
-     * elements of the root element that reference this media unit. It is
+     * elements of the logical structure that reference this media unit. It is
      * transient, meaning that its content is not saved and is not restored when
      * it is loaded.
      *
      * @return a list that you can use
      */
-    public List<IncludedStructuralElement> getIncludedStructuralElements() {
-        return includedStructuralElements;
+    public List<LogicalDivision> getLogicalDivisions() {
+        return logicalDivisions;
     }
 
     @Override

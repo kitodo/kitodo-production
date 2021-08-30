@@ -193,13 +193,13 @@ public class GalleryMediaContent {
     }
 
     /**
-     * Check if the GalleryMediaContent's MediaUnit is assigned to several IncludedStructuralElements.
+     * Check if the GalleryMediaContent's MediaUnit is assigned to several LogicalDivisions.
      *
      * @return {@code true} when the MediaUnit is assigned to more than one logical element
      */
     public boolean isAssignedSeveralTimes() {
         if (Objects.nonNull(view) && Objects.nonNull(view.getMediaUnit())) {
-            return view.getMediaUnit().getIncludedStructuralElements().size() > 1;
+            return view.getMediaUnit().getLogicalDivisions().size() > 1;
         }
         return false;
     }

@@ -66,14 +66,14 @@
                 <p:selectOneRadio id="allRadioButtons"
                                   layout="custom"
                                   value="#{CreateProcessForm.titleRecordLinkTab.selectedInsertionPosition}"
-                                  rendered="#{CreateProcessForm.titleRecordLinkTab.rootElement.childCount ne 0}">
+                                  rendered="#{CreateProcessForm.titleRecordLinkTab.logicalStructure.childCount ne 0}">
                     <f:selectItems value="#{CreateProcessForm.titleRecordLinkTab.selectableInsertionPositions}"/>
                 </p:selectOneRadio>
-                <p:outputLabel for="rootElement"
+                <p:outputLabel for="logicalStructure"
                                value="#{msgs.selectInsertionPosition} #{CreateProcessForm.titleRecordLinkTab.titleRecordProcess.title}"
-                               rendered="#{CreateProcessForm.titleRecordLinkTab.rootElement.childCount ne 0}"/>
-                <p:tree id="rootElement"
-                        value="#{CreateProcessForm.titleRecordLinkTab.rootElement}"
+                               rendered="#{CreateProcessForm.titleRecordLinkTab.logicalStructure.childCount ne 0}"/>
+                <p:tree id="logicalStructure"
+                        value="#{CreateProcessForm.titleRecordLinkTab.logicalStructure}"
                         var="node">
                     <p:treeNode>
                         <p:radioButton id="insertionPositionRadioButton"

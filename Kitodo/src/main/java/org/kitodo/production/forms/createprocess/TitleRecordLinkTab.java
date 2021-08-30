@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -79,10 +79,10 @@ public class TitleRecordLinkTab {
     private List<SelectItem> possibleParentProcesses = Collections.emptyList();
 
     /**
-     * Tree with the root element of the workpiece and elements indicating the
+     * Tree with the logical structure of the workpiece and elements indicating the
      * possible insertion positions.
      */
-    private TreeNode rootElement = new DefaultTreeNode();
+    private TreeNode logicalStructure = new DefaultTreeNode();
 
     /**
      * The user’s search for parent processes.
@@ -115,12 +115,12 @@ public class TitleRecordLinkTab {
     }
 
     /**
-     * Selects a parent process and builds the tree with the root element of the
+     * Selects a parent process and builds the tree with the logical structure of the
      * selected process and the possible insertion positions.
      */
     public void chooseParentProcess() {
         if (StringUtils.isBlank(chosenParentProcess)) {
-            rootElement = new DefaultTreeNode();
+            logicalStructure = new DefaultTreeNode();
             titleRecordProcess = null;
         } else {
             try {
@@ -155,10 +155,10 @@ public class TitleRecordLinkTab {
         List<LanguageRange> priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
 
         selectableInsertionPositions = new LinkedList<>();
-        rootElement = new DefaultTreeNode();
-        createInsertionPositionSelectionTreeRecursive("", workpiece.getRootElement(), rootElement, ruleset,
+        logicalStructure = new DefaultTreeNode();
+        createInsertionPositionSelectionTreeRecursive("", workpiece.getLogicalStructure(), logicalStructure, ruleset,
             priorityList);
-        rootElement.setExpanded(true);
+        logicalStructure.setExpanded(true);
 
         if (selectableInsertionPositions.size() > 0) {
             selectedInsertionPosition = (String) ((LinkedList<SelectItem>) selectableInsertionPositions).getLast()
@@ -175,9 +175,9 @@ public class TitleRecordLinkTab {
      * @param positionPrefix
      *            A string with comma-delimited specification of the levels that
      *            have already been traversed. Initially empty.
-     * @param currentIncludedStructuralElement
-     *            Included structural element for whom the tree is being
-     *            created. Initially the root element of the workpiece.
+     * @param currentLogicalDivision
+     *            Logical division for whom the tree is being created. Initially
+     *            the logical structure of the workpiece.
      * @param parentNode
      *            Parent node of the tree structure to add to. This is
      *            initialized with a {@link DefaultTreeNode} which is not
@@ -188,45 +188,45 @@ public class TitleRecordLinkTab {
      *            the user’s metadata language priority list
      */
     private void createInsertionPositionSelectionTreeRecursive(String positionPrefix,
-            IncludedStructuralElement currentIncludedStructuralElement, TreeNode parentNode,
+            LogicalDivision currentLogicalDivision, TreeNode parentNode,
             RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException, DataException {
 
         String type;
         List<String> tooltip = Collections.emptyList();
-        if (Objects.isNull(currentIncludedStructuralElement.getLink())) {
-            type = currentIncludedStructuralElement.getType();
+        if (Objects.isNull(currentLogicalDivision.getLink())) {
+            type = currentLogicalDivision.getType();
         } else {
             ProcessService processService = ServiceManager.getProcessService();
-            int linkedProcessUri = processService.processIdFromUri(currentIncludedStructuralElement.getLink().getUri());
+            int linkedProcessUri = processService.processIdFromUri(currentLogicalDivision.getLink().getUri());
             Process linkedProcess = processService.getById(linkedProcessUri);
             type = processService.getBaseType(linkedProcessUri);
             tooltip = getToolTip(ruleset, linkedProcess);
         }
 
-        StructuralElementViewInterface currentIncludedStructuralElementView = ruleset.getStructuralElementView(type,
+        StructuralElementViewInterface currentStructuralElementView = ruleset.getStructuralElementView(type,
             createProcessForm.getAcquisitionStage(), priorityList);
 
-        TreeNode includedStructuralElementNode = new InsertionPositionSelectionTreeNode(parentNode,
-                currentIncludedStructuralElementView.getLabel(), tooltip);
+        TreeNode logicalDivisionNode = new InsertionPositionSelectionTreeNode(parentNode,
+                currentStructuralElementView.getLabel(), tooltip);
 
-        boolean linkingAllowedHere = Objects.isNull(currentIncludedStructuralElement.getLink())
-                && currentIncludedStructuralElementView.getAllowedSubstructuralElements()
+        boolean linkingAllowedHere = Objects.isNull(currentLogicalDivision.getLink())
+                && currentStructuralElementView.getAllowedSubstructuralElements()
                         .containsKey(createProcessForm.getProcessDataTab().getDocType());
 
         if (linkingAllowedHere) {
-            new InsertionPositionSelectionTreeNode(includedStructuralElementNode, selectableInsertionPositions.size());
+            new InsertionPositionSelectionTreeNode(logicalDivisionNode, selectableInsertionPositions.size());
             selectableInsertionPositions.add(new SelectItem(positionPrefix.concat("0"), null));
         }
 
-        List<IncludedStructuralElement> children = currentIncludedStructuralElement.getChildren();
+        List<LogicalDivision> children = currentLogicalDivision.getChildren();
         for (int index = 0; index < children.size(); index++) {
 
             createInsertionPositionSelectionTreeRecursive(
                 positionPrefix + index + 1 + MetadataEditor.INSERTION_POSITION_SEPARATOR, children.get(index),
-                includedStructuralElementNode, ruleset, priorityList);
+                logicalDivisionNode, ruleset, priorityList);
 
             if (linkingAllowedHere) {
-                new InsertionPositionSelectionTreeNode(includedStructuralElementNode,
+                new InsertionPositionSelectionTreeNode(logicalDivisionNode,
                         selectableInsertionPositions.size());
                 selectableInsertionPositions.add(new SelectItem(positionPrefix + (index + 1), null));
             }
@@ -251,13 +251,13 @@ public class TitleRecordLinkTab {
         if (!summaryKeys.isEmpty()) {
 
             Workpiece workpiece = metsService.loadWorkpiece(processService.getMetadataFileUri(linkedProcess));
-            IncludedStructuralElement rootElement = workpiece.getRootElement();
+            LogicalDivision logicalStructure = workpiece.getLogicalStructure();
 
             final String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             List<LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage);
 
             for (String key : summaryKeys) {
-                String value = MetadataEditor.getMetadataValue(rootElement, key);
+                String value = MetadataEditor.getMetadataValue(logicalStructure, key);
 
                 if (Objects.nonNull(value)) {
                     Optional<String> label = ruleset.getTranslationForKey(key, priorityList);
@@ -299,7 +299,7 @@ public class TitleRecordLinkTab {
      * constant above, the corresponding message is displayed.
      */
     public void searchForParentProcesses() {
-        rootElement = new DefaultTreeNode();
+        logicalStructure = new DefaultTreeNode();
         selectableInsertionPositions = Collections.emptyList();
         selectedInsertionPosition = null;
         if (searchQuery.trim().isEmpty()) {
@@ -391,13 +391,13 @@ public class TitleRecordLinkTab {
     }
 
     /**
-     * Returns the tree containing the root element of the selected parent
+     * Returns the tree containing the logical structure of the selected parent
      * process and the possible insert positions.
      *
      * @return the tree structure for selecting the insertion position
      */
-    public TreeNode getRootElement() {
-        return rootElement;
+    public TreeNode getLogicalStructure() {
+        return logicalStructure;
     }
 
     /**

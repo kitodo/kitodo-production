@@ -47,9 +47,9 @@ public class Workpiece {
     private MediaUnit mediaUnit = new MediaUnit();
 
     /**
-     * The logical included structural element.
+     * The logical logical division.
      */
-    private IncludedStructuralElement rootElement = new IncludedStructuralElement();
+    private LogicalDivision logicalStructure = new LogicalDivision();
 
     /**
      * Returns the creation date of the workpiece.
@@ -108,12 +108,12 @@ public class Workpiece {
     }
 
     /**
-     * Returns the root element of the included structural element.
+     * Returns the root element of the logical division.
      *
-     * @return root element of the included structural element
+     * @return root element of the logical division
      */
-    public IncludedStructuralElement getRootElement() {
-        return rootElement;
+    public LogicalDivision getLogicalStructure() {
+        return logicalStructure;
     }
 
     /**
@@ -127,18 +127,18 @@ public class Workpiece {
     }
 
     /**
-     * Sets the included structural element of the workpiece.
+     * Sets the logical division of the workpiece.
      *
-     * @param rootElement
-     *            included structural element to set
+     * @param logicalStructure
+     *            logical division to set
      */
-    public void setRootElement(IncludedStructuralElement rootElement) {
-        this.rootElement = rootElement;
+    public void setLogicalStructure(LogicalDivision logicalStructure) {
+        this.logicalStructure = logicalStructure;
     }
 
     @Override
     public String toString() {
-        return id + ", " + rootElement;
+        return id + ", " + logicalStructure;
     }
 
     @Override
@@ -162,20 +162,20 @@ public class Workpiece {
                 && Objects.equals(editHistory, workpiece.editHistory)
                 && Objects.equals(id, workpiece.id)
                 && Objects.equals(mediaUnit, workpiece.mediaUnit)
-                && Objects.equals(rootElement, workpiece.rootElement);
+                && Objects.equals(logicalStructure, workpiece.logicalStructure);
     }
 
     /**
-     * Returns all included structural elements of the root element of the
+     * Returns all logical divisions of the logical structure of the
      * workpiece as a flat list. The list isn’t backed by the included
      * structural elements, which means that insertions and deletions in the
-     * list would not change the included structural elements. Therefore a list
+     * list would not change the logical divisions. Therefore a list
      * that cannot be modified is returned.
      *
-     * @return all included structural elements as an unmodifiable list
+     * @return all logical divisions as an unmodifiable list
      */
-    public List<IncludedStructuralElement> getAllIncludedStructuralElements() {
-        return Collections.unmodifiableList(treeStream(rootElement).collect(Collectors.toList()));
+    public List<LogicalDivision> getAllLogicalDivisions() {
+        return Collections.unmodifiableList(treeStream(logicalStructure).collect(Collectors.toList()));
     }
 
     /**

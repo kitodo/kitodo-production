@@ -41,8 +41,8 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement guessImagesInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":rootElement")
-    private WebElement rootElementTree;
+    @FindBy(id = TAB_VIEW + ":logicalStructure")
+    private WebElement logicalStructureTree;
 
     @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW + ":docType")
@@ -193,7 +193,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         clickElement(chooseParentSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(chooseParentSelect.getAttribute("id") + "_1")));
         await("Wait for tree shows").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isDisplayed.test(rootElementTree));
+                .ignoreExceptions().until(() -> isDisplayed.test(logicalStructureTree));
         save();
         return generatedTitle;
     }

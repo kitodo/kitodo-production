@@ -828,7 +828,7 @@
             <permit key="DateOfDeath" maxOccurs="1"/>
         </restriction>
  
-        <!-- Restrictions on structural elements -->
+        <!-- Restrictions on divisions -->
         <restriction division="Graphics" unspecified="forbidden">
             <permit key="CatalogIDDigital" minOccurs="1"/>
             <permit key="shelfmarksource" maxOccurs="1"/>

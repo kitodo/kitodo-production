@@ -29,7 +29,7 @@ import org.kitodo.api.Metadata;
  * be described with metadata.
  *
  * @param <T>
- *            There are two versions of it, an {@link IncludedStructuralElement}
+ *            There are two versions of it, an {@link LogicalDivision}
  *            and a {@link MediaUnit}.
  */
 public abstract class Division<T extends Division<T>> {
@@ -58,7 +58,7 @@ public abstract class Division<T extends Division<T>> {
      *
      * <p>
      * <i>For media units</i>, the display or playback order of several media
-     * units referenced from one included structural element is determined by
+     * units referenced from one logical division is determined by
      * this attribute, not by the order of the references.
      */
     private int order;
@@ -144,7 +144,7 @@ public abstract class Division<T extends Division<T>> {
     }
 
     /**
-     * Returns the label of this included structural element.
+     * Returns the label of this logical division.
      *
      * @return the label
      */
@@ -153,7 +153,7 @@ public abstract class Division<T extends Division<T>> {
     }
 
     /**
-     * Sets the label of this included structural element.
+     * Sets the label of this logical division.
      *
      * @param label
      *            label to set

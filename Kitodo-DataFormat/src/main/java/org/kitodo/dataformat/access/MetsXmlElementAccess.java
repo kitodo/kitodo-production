@@ -69,7 +69,7 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * of a {@code MediaUnit} resides in a {@link FLocatXmlElementAccess} in the data store.
  *
  * <p>
- * The {@code IncludedStructuralElement} is a tree structure that can be finely
+ * The {@code LogicalDivision} is a tree structure that can be finely
  * subdivided, e.g. a book, in which the chapters, in it individual elements
  * such as tables or figures. Each outline level points to the
  * {@code MediaUnit}s that belong to it via {@link AreaXmlElementAccess}s.
@@ -151,7 +151,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 mediaUnitsMap.get(smLink.getFrom()).add(divIDsToMediaUnits.get(smLink.getTo()));
             }
         }
-        workpiece.setRootElement(getStructMapsStreamByType(mets, "LOGICAL")
+        workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap, 1)).collect(Collectors.toList())
                 .iterator().next());
     }
@@ -251,7 +251,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(new DivXmlElementAccess(workpiece.getRootElement()).toDiv(mediaUnitIDs, smLinkData, mets));
+        logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(mediaUnitIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));

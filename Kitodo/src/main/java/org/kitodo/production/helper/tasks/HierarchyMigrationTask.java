@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
@@ -209,7 +209,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         URI metadataFilePath = fileService.getMetadataFilePath(process);
         URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
         Workpiece anchorWorkpiece = metsService.loadWorkpiece(anchorFilePath);
-        Optional<String> parentRecordId = anchorWorkpiece.getRootElement().getMetadata().parallelStream()
+        Optional<String> parentRecordId = anchorWorkpiece.getLogicalStructure().getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("CatalogIDDigital"))
                 .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast).map(MetadataEntry::getValue)
                 .findFirst();
@@ -249,8 +249,8 @@ public class HierarchyMigrationTask extends EmptyTask {
     private void checkTaskAndId(Process parentProcess) throws IOException {
         URI parentMetadataFilePath = fileService.getMetadataFilePath(parentProcess, true, true);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
-        ProcessService.checkTasks(parentProcess, workpiece.getRootElement().getType());
-        Collection<Metadata> metadata = workpiece.getRootElement().getMetadata();
+        ProcessService.checkTasks(parentProcess, workpiece.getLogicalStructure().getType());
+        Collection<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
         String shortedTitle = "";
         String catalogIdentifier = "";
         for (Metadata metadatum : metadata) {
@@ -305,7 +305,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         URI metadataFileUri = fileService.getMetadataFilePath(process);
         URI anchorFileUri = fileService.createAnchorFile(metadataFileUri);
         Workpiece workpiece = metsService.loadWorkpiece(anchorFileUri);
-        IncludedStructuralElement firstChild = workpiece.getRootElement().getChildren().get(0);
+        LogicalDivision firstChild = workpiece.getLogicalStructure().getChildren().get(0);
         firstChild.setType(null);
         LinkedMetsResource link = firstChild.getLink();
         link.setLoctype("Kitodo.Production");
@@ -324,8 +324,8 @@ public class HierarchyMigrationTask extends EmptyTask {
      */
     private static Integer convertChildMetsFile(URI metadataFilePath) throws IOException {
         Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath);
-        IncludedStructuralElement childStructureRoot = workpiece.getRootElement().getChildren().get(0);
-        workpiece.setRootElement(childStructureRoot);
+        LogicalDivision childStructureRoot = workpiece.getLogicalStructure().getChildren().get(0);
+        workpiece.setLogicalStructure(childStructureRoot);
         metsService.saveWorkpiece(workpiece, metadataFilePath);
         return getCurrentNo(childStructureRoot);
     }
@@ -345,7 +345,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      *            outline element with metadata
      * @return the CurrentNo, or {@code null}
      */
-    private static Integer getCurrentNo(IncludedStructuralElement includedStructualElement) {
+    private static Integer getCurrentNo(LogicalDivision includedStructualElement) {
         Integer currentNo = includedStructualElement.getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("CurrentNo")).filter(MetadataEntry.class::isInstance)
                 .map(MetadataEntry.class::cast).map(MetadataEntry::getValue).filter(value -> value.matches("\\d+"))

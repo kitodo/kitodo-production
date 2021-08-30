@@ -88,7 +88,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -1697,12 +1697,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Returns the type of the top element of the root element, and thus the
+     * Returns the type of the top element of the logical structure, and thus the
      * type of the workpiece of the process.
      *
      * @param process
      *            process whose root type is to be determined
-     * @return the type of the root element of the workpiece, "" if unreadable
+     * @return the type of the logical structure of the workpiece, "" if unreadable
      */
     public String getBaseType(Process process) {
         try {
@@ -1715,12 +1715,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Returns the type of the top element of the root element, and thus the
+     * Returns the type of the top element of the logical structure, and thus the
      * type of the workpiece of the process.
      *
      * @param processId
      *          id of the process whose root type is to be determined
-     * @return the type of root element of the root element of the workpiece
+     * @return the type of root element of the logical structure of the workpiece
      * @throws DataException
      *          if the type cannot be found in the index (e.g. because the process
      *          cannot be found in the index)
@@ -2206,30 +2206,30 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Updates the linked child processes to the level specified in the root
-     * element. Processes linked in the root element are linked in the database.
-     * For processes that are not linked in the root element, the link in the
+     * element. Processes linked in the logical structure are linked in the database.
+     * For processes that are not linked in the logical structure, the link in the
      * database is removed.
      *
      * @param process
      *            parent process
-     * @param rootElement
-     *            the current state of the root element
+     * @param logicalStructure
+     *            the current state of the logical structure
      * @throws DAOException
      *             if a process is referenced with a URI whose ID does not
      *             appear in the database
      * @throws DataException
      *             if the process cannot be saved
      */
-    public void updateChildrenFromRootElement(Process process, IncludedStructuralElement rootElement)
+    public void updateChildrenFromLogicalStructure(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
-        removeLinksFromNoLongerLinkedProcesses(process, rootElement);
-        addNewLinks(process, rootElement);
+        removeLinksFromNoLongerLinkedProcesses(process, logicalStructure);
+        addNewLinks(process, logicalStructure);
     }
 
-    private void removeLinksFromNoLongerLinkedProcesses(Process process, IncludedStructuralElement rootElement)
+    private void removeLinksFromNoLongerLinkedProcesses(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
         ArrayList<Process> childrenToRemove = new ArrayList<>(process.getChildren());
-        childrenToRemove.removeAll(getProcessesLinkedInIncludedStructuralElement(rootElement));
+        childrenToRemove.removeAll(getProcessesLinkedInLogicalDivision(logicalStructure));
         for (Process childToRemove : childrenToRemove) {
             childToRemove.setParent(null);
             process.getChildren().remove(childToRemove);
@@ -2240,9 +2240,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
     }
 
-    private void addNewLinks(Process process, IncludedStructuralElement rootElement)
+    private void addNewLinks(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
-        HashSet<Process> childrenToAdd = getProcessesLinkedInIncludedStructuralElement(rootElement);
+        HashSet<Process> childrenToAdd = getProcessesLinkedInLogicalDivision(logicalStructure);
         childrenToAdd.removeAll(process.getChildren());
         for (Process childToAdd : childrenToAdd) {
             childToAdd.setParent(process);
@@ -2254,17 +2254,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
     }
 
-    private HashSet<Process> getProcessesLinkedInIncludedStructuralElement(
-            IncludedStructuralElement includedStructuralElement) throws DAOException {
-        HashSet<Process> processesLinkedInIncludedStructuralElement = new HashSet<>();
-        if (Objects.nonNull(includedStructuralElement.getLink())) {
-            int processId = processIdFromUri(includedStructuralElement.getLink().getUri());
-            processesLinkedInIncludedStructuralElement.add(getById(processId));
+    private HashSet<Process> getProcessesLinkedInLogicalDivision(
+            LogicalDivision logicalDivision) throws DAOException {
+        HashSet<Process> processesLinkedInLogicalDivision = new HashSet<>();
+        if (Objects.nonNull(logicalDivision.getLink())) {
+            int processId = processIdFromUri(logicalDivision.getLink().getUri());
+            processesLinkedInLogicalDivision.add(getById(processId));
         }
-        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
-            processesLinkedInIncludedStructuralElement.addAll(getProcessesLinkedInIncludedStructuralElement(child));
+        for (LogicalDivision child : logicalDivision.getChildren()) {
+            processesLinkedInLogicalDivision.addAll(getProcessesLinkedInLogicalDivision(child));
         }
-        return processesLinkedInIncludedStructuralElement;
+        return processesLinkedInLogicalDivision;
     }
 
     /**
