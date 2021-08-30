@@ -396,8 +396,10 @@ public class TemplateForm extends TemplateBaseForm {
             TemplateService templateService = ServiceManager.getTemplateService();
             templateService.save(template, true);
         }
-        Converter converter = new Converter(this.template.getWorkflow().getTitle());
-        converter.convertWorkflowToTemplate(this.template);
+        if (Objects.nonNull(template.getWorkflow())) {
+            Converter converter = new Converter(this.template.getWorkflow().getTitle());
+            converter.convertWorkflowToTemplate(this.template);
+        }
     }
 
     /**
