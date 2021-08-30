@@ -306,7 +306,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 return this.referringView + "?" + "processId=" + this.getTitleRecordLinkTab().getChosenParentProcess()
                         + "&" + BaseForm.REDIRECT_PARAMETER;
             } else {
-                return this.referringView;
+                if (this.referringView.contains(BaseForm.REDIRECT_PARAMETER)) {
+                    return this.referringView;
+                } else {
+                    return this.referringView + "?" + BaseForm.REDIRECT_PARAMETER;
+                }
             }
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
