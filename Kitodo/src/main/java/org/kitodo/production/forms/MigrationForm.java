@@ -34,6 +34,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -46,7 +47,10 @@ import org.kitodo.production.helper.tasks.MigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
+import org.kitodo.production.security.password.HashingPasswordEncoder;
+import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.UserService;
 import org.kitodo.production.services.migration.MigrationService;
 import org.kitodo.production.workflow.model.Converter;
 import org.primefaces.PrimeFaces;
@@ -533,5 +537,37 @@ public class MigrationForm extends BaseForm {
      */
     public void hideNewspaperMigration() {
         newspaperMigrationRendered = false;
+    }
+
+    /**
+     * Legacy obfuscated passwords of all users are irreversibly encrypted.
+     * Success is displayed at the end.
+     */
+    public void migratePasswords() {
+        final UserService userService = ServiceManager.getUserService();
+        final SecurityPasswordEncoder obfuscator = new SecurityPasswordEncoder();
+        final HashingPasswordEncoder encoder = new HashingPasswordEncoder();
+        int modified = 0;
+        try {
+            for (User user : userService.getAll()) {
+                if (Objects.nonNull(user.getPassword())) {
+                    if (Objects.isNull(user.getAlgorithm())) {
+                        String cleartext = obfuscator.decrypt(user.getPassword());
+                        encoder.setUser(user);
+                        user.setPassword(encoder.encode(cleartext));
+                        userService.saveToDatabase(user);
+                        logger.info("Password migration: Password for {} was successfully secured", user.getLogin());
+                        modified++;
+                    } else {
+                        logger.info("Password migration: {} is already secure, nothing changed", user.getLogin());
+                    }
+                } else {
+                    logger.info("Password migration: {} has no password in the user record", user.getLogin());
+                }
+            }
+            Helper.setMessage("passwordsSafe", Integer.toString(modified));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 }

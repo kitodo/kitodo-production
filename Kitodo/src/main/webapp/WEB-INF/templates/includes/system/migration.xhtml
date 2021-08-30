@@ -37,6 +37,14 @@
                          styleClass="primary"
                          action="#{MigrationForm.showPossibleBatches()}"
                          immediate="true"/>
+        <p:commandButton value="#{msgs.migratePasswords}"
+                         id="migratePasswords"
+                         update="systemTabView:migrationForm"
+                         style="margin: 10px;"
+                         styleClass="primary"
+                         action="#{MigrationForm.migratePasswords()}"
+                         immediate="true"/>
+
         <h:panelGroup rendered="#{MigrationForm.projectListRendered}">
             <div style="margin: 0 10px;"><h:outputText value="#{msgs.projectsForMigration}:"/></div>
             <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}" style="margin: 10px;">
