@@ -35,6 +35,8 @@
         <ui:param name="viewStructure" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData()}"/>
         <!--@elvariable id="viewMetadata" type="boolean"-->
         <ui:param name="viewMetadata" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData()}"/>
+        <!--@elvariable id="viewPagination" type="boolean"-->
+        <ui:param name="viewPagination" value="#{SecurityAccessController.hasAuthorityToViewProcessPagination()}"/>
         <!--@elvariable id="viewImages" type="boolean"-->
         <ui:param name="viewImages" value="#{SecurityAccessController.hasAuthorityToViewProcessImages()}"/>
         <!--@elvariable id="commentsNumber" type="Integer"-->
@@ -119,7 +121,7 @@
                             <i class="fa fa-compress fa-lg"/>
                         </button>
                         <div class="columnHeadingWrapper">
-                            <ui:fragment rendered="#{viewMetadata}">
+                            <ui:fragment rendered="#{viewMetadata and viewPagination}">
                                 <button id="firstSectionSecondColumnToggler" onclick="toggleFirstSectionSecondColumn()">
                                     <i class="fa fa-chevron-circle-up fa-lg"/>
                                 </button>
@@ -146,16 +148,19 @@
                             <div id="verticalResizerSecondColumn"></div>
 
                             <div class="columnHeadingWrapper">
-                                <ui:fragment rendered="#{viewMetadata}">
+                                <ui:fragment rendered="#{viewMetadata and viewPagination}">
                                     <button id="secondSectionSecondColumnToggler" onclick="toggleSecondSectionSecondColumn()">
                                         <i class="fa fa-chevron-circle-up fa-lg"/>
                                     </button>
                                 </ui:fragment>
                                 <h:outputText value="#{msgs.pagination}"/>
                             </div>
-                            <div id="paginationPanel" data-min-height="100">
+                            <!-- 'collapsed' class is inverted by javascript function on page load -->
+                            <h:panelGroup id="paginationPanel"
+                                          data-min-height="100"
+                                          layout="block" styleClass="#{not viewMetadata ? 'collapsed' : ''}">
                                 <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/pagination.xhtml"/>
-                            </div>
+                            </h:panelGroup>
                         </p:panel>
                     </h:panelGroup>
 

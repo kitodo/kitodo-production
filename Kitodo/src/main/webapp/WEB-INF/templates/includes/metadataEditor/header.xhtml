@@ -20,7 +20,8 @@
     <ui:param name="mayWrite" value="#{
                                     SecurityAccessController.hasAuthorityToEditProcessMetaData() or
                                     SecurityAccessController.hasAuthorityToEditProcessImages() or
-                                    SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
+                                    SecurityAccessController.hasAuthorityToEditProcessStructureData() or
+                                    SecurityAccessController.hasAuthorityToEditProcessPagination()}"/>
     <p:panel styleClass="content-header">
         <h3 id="headerText">
             <h:outputText value="#{DataEditorForm.processTitle} (#{msgs.id}: #{DataEditorForm.process.id})"
@@ -32,8 +33,7 @@
                          value="#{msgs.saveExit}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         styleClass="#{mayWrite ? '' : 'disabled'}"
-                         disabled="#{not mayWrite}"
+                         rendered="#{mayWrite}"
                          style="margin-left: 16px;"
                          onclick="setConfirmUnload(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
@@ -43,8 +43,8 @@
                          value="#{msgs.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         styleClass="#{mayWrite ? '' : 'disabled'} secondary"
-                         disabled="#{not mayWrite}"
+                         styleClass="secondary"
+                         rendered="#{mayWrite}"
                          style="margin-left: 16px;"
                          onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
                          oncomplete="$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();setConfirmUnload(false);"
