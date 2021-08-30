@@ -18,6 +18,7 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -514,6 +515,7 @@ public class WorkflowControllerService {
                 allHigherTasks.add(tempTask);
             }
         }
+        Collections.sort(allHigherTasks, Comparator.comparing(Task::getOrdering));
         return allHigherTasks;
     }
 
