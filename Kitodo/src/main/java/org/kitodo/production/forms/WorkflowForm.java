@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -42,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -321,19 +318,15 @@ public class WorkflowForm extends BaseForm {
 
             Map<String, URI> diagramsUris = getDiagramUris(baseWorkflow.getTitle());
 
-            URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
             URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
             this.workflow = ServiceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
             setWorkflowStatus(WorkflowStatus.DRAFT);
             Map<String, URI> diagramsCopyUris = getDiagramUris();
 
-            URI svgDiagramCopyURI = diagramsCopyUris.get(SVG_DIAGRAM_URI);
             URI xmlDiagramCopyURI = diagramsCopyUris.get(XML_DIAGRAM_URI);
 
-            try (InputStream svgInputStream = ServiceManager.getFileService().read(svgDiagramURI);
-                    InputStream xmlInputStream = ServiceManager.getFileService().read(xmlDiagramURI)) {
-                saveFile(svgDiagramCopyURI, IOUtils.toString(svgInputStream, StandardCharsets.UTF_8));
+            try (InputStream xmlInputStream = ServiceManager.getFileService().read(xmlDiagramURI)) {
                 this.xmlDiagram = IOUtils.toString(xmlInputStream, StandardCharsets.UTF_8);
                 saveFile(xmlDiagramCopyURI, this.xmlDiagram);
             } catch (IOException e) {
