@@ -68,7 +68,7 @@
                                                          title="#{msgs.type}">
                                             <f:selectItems value="#{CalendarForm.allMetadataTypes}"
                                                            var="metadataType"
-                                                           itemValue="#{metadataType.label}"
+                                                           itemValue="#{metadataType.id}"
                                                            itemLabel="#{metadataType.label}"/>
                                             <p:ajax event="change"
                                                     update="editForm:calendarTabView:calendarDetailsLayout
