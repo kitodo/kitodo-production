@@ -277,6 +277,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     @Override
+    public void save(Process process, boolean updateRelatedObjectsInIndex) throws DataException {
+        WorkflowControllerService.updateProcessSortHelperStatus(process);
+        if (Objects.nonNull(process.getParent())) {
+            save(process.getParent(), updateRelatedObjectsInIndex);
+        }
+        super.save(process, updateRelatedObjectsInIndex);
+        if (Objects.nonNull(process.getParent())) {
+            save(process.getParent(), updateRelatedObjectsInIndex);
+        }
+    }
+
+    @Override
     public void saveToIndex(Process process, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
         process.setMetadata(getMetadataForIndex(process));
