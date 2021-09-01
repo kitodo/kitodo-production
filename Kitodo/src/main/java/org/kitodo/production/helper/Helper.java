@@ -41,9 +41,6 @@ import org.kitodo.production.helper.messages.Error;
 import org.kitodo.production.helper.messages.Message;
 import org.kitodo.production.interfaces.activemq.WebServiceResult;
 
-/**
- * Extends Helper from Kitodo Data Management module.
- */
 public class Helper {
 
     private static Map<String, String> activeMQReporting = null;
