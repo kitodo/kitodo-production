@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -47,7 +45,7 @@ import org.kitodo.production.interfaces.activemq.WebServiceResult;
 /**
  * Extends Helper from Kitodo Data Management module.
  */
-public class Helper implements Observer, Serializable {
+public class Helper implements Serializable {
 
     private static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
@@ -493,31 +491,6 @@ public class Helper implements Observer, Serializable {
     @Deprecated
     public static String getTranslation(String title, List<String> parameters) {
         return getTranslation(title, (String[]) parameters.toArray());
-    }
-
-    /**
-     * for easy access of the implemented Interface Observer.
-     *
-     * @return Observer -> can be added to an Observable
-     */
-    public Observer createObserver() {
-        return this;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-     */
-    @Override
-    public void update(Observable o, Object arg) {
-        if (!(arg instanceof String)) {
-            Helper.setErrorMessage("User notification failed by object: '" + arg.toString()
-                    + "' which isn't an expected String Object. This error is caused by an implementation of "
-                    + "the Observer Interface in Helper");
-        } else {
-            Helper.setErrorMessage((String) arg);
-        }
     }
 
     /**
