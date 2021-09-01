@@ -11,8 +11,6 @@
 
 package org.kitodo.exceptions;
 
-import java.util.Arrays;
-
 import org.kitodo.production.helper.Helper;
 
 public class NoSuchMetadataFieldException extends NoSuchFieldException {
@@ -42,7 +40,7 @@ public class NoSuchMetadataFieldException extends NoSuchFieldException {
 
     @Override
     public String getLocalizedMessage() {
-        return Helper.getTranslation("dataEditor.invalidStructureField", Arrays.asList(label, key));
+        return Helper.getTranslation("dataEditor.invalidStructureField", label, key);
     }
 
     @Override

@@ -11,8 +11,6 @@
 
 package org.kitodo.exceptions;
 
-import java.util.Arrays;
-
 import javax.management.InvalidAttributeValueException;
 
 import org.kitodo.production.helper.Helper;
@@ -59,7 +57,7 @@ public class InvalidMetadataValueException extends InvalidAttributeValueExceptio
 
     @Override
     public String getLocalizedMessage() {
-        return Helper.getTranslation("dataEditor.invalidMetadataValue", Arrays.asList(key, value));
+        return Helper.getTranslation("dataEditor.invalidMetadataValue", key, value);
     }
 
     @Override

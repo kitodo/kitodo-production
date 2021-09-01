@@ -14,7 +14,6 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -170,13 +169,13 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
 
                 String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
                 String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
-                        Arrays.asList(String.valueOf(processes.size()), opac));
+                    String.valueOf(processes.size()), opac);
                 showGrowlMessage(summary, detail);
 
                 if (this.importChildren) {
                     summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChilrenSuccessfulSummary");
                     detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChilrenSuccessfulDetail",
-                            Collections.singletonList(String.valueOf(this.createProcessForm.getChildProcesses().size())));
+                        String.valueOf(this.createProcessForm.getChildProcesses().size()));
                     showGrowlMessage(summary, detail);
                 }
 
@@ -254,7 +253,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                     this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
             String summary = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedDetail",
-                    Arrays.asList(selectedExemplarRecord.getOwner(), selectedExemplarRecord.getSignature()));
+                selectedExemplarRecord.getOwner(), selectedExemplarRecord.getSignature());
             showGrowlMessage(summary, detail);
             Ajax.update(FORM_CLIENTID);
         } catch (ParameterNotFoundException e) {
@@ -292,6 +291,6 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      */
     public String getNumberOfChildProcessesWarning() {
         return Helper.getTranslation("newProcess.catalogueSearch.manyChildrenWarning",
-                Collections.singletonList(String.valueOf(this.numberOfChildren)));
+            String.valueOf(this.numberOfChildren));
     }
 }

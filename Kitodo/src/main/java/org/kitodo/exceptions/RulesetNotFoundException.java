@@ -12,7 +12,6 @@
 package org.kitodo.exceptions;
 
 import java.io.FileNotFoundException;
-import java.util.Collections;
 
 import org.kitodo.production.helper.Helper;
 
@@ -24,6 +23,6 @@ public class RulesetNotFoundException extends FileNotFoundException {
      *            name of missing ruleset file
      */
     public RulesetNotFoundException(String missingFile) {
-        super(Helper.getTranslation("rulesetNotFound", Collections.singletonList(missingFile)));
+        super(Helper.getTranslation("rulesetNotFound", missingFile));
     }
 }

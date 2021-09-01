@@ -426,7 +426,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 processes.get(0).getProcess());
             String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
-                Collections.singletonList(titleRecordLinkTab.getTitleRecordProcess().getTitle()));
+                titleRecordLinkTab.getTitleRecordProcess().getTitle());
             catalogImportDialog.showGrowlMessage(summary, detail);
         } else {
             // add links between consecutive processes in list

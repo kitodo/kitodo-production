@@ -515,7 +515,7 @@ public class CalendarForm implements Serializable {
                     numbers[2] -= 100;
                 }
                 Helper.setMessage(Helper.getTranslation(BLOCK + input + ".yearCompleted",
-                    Arrays.asList(dateParser.group(3), Integer.toString(numbers[2]))));
+                    dateParser.group(3), Integer.toString(numbers[2])));
             }
             try {
                 return LocalDate.of(numbers[2], numbers[1], numbers[0]);
@@ -669,7 +669,7 @@ public class CalendarForm implements Serializable {
     }
 
     public String formatString(String messageKey, String... replacements) {
-        return Helper.getTranslation(messageKey, Arrays.asList(replacements));
+        return Helper.getTranslation(messageKey, replacements);
     }
 
     /**

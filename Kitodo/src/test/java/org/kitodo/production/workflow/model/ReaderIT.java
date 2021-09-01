@@ -16,7 +16,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -128,7 +127,7 @@ public class ReaderIT {
 
         exception.expect(WorkflowException.class);
         exception.expectMessage(Helper.getTranslation("workflowExceptionParallelBranch",
-                Collections.singletonList("Task9")));
+            "Task9"));
         reader.readWorkflowTasks();
     }
 
@@ -186,7 +185,7 @@ public class ReaderIT {
         Reader reader = new Reader("gateway-test6");
 
         exception.expect(WorkflowException.class);
-        exception.expectMessage(Helper.getTranslation("workflowExceptionLoop", Collections.singletonList("Task1")));
+        exception.expectMessage(Helper.getTranslation("workflowExceptionLoop", "Task1"));
         reader.readWorkflowTasks();
     }
 

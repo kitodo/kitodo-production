@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -98,7 +97,7 @@ public class ConverterIT {
         Template template = new Template();
         exception.expect(WorkflowException.class);
         exception.expectMessage(Helper.getTranslation("workflowExceptionParallelBranch",
-                Collections.singletonList("Task9")));
+            "Task9"));
         converter.convertWorkflowToTemplate(template);
     }
 
@@ -109,7 +108,7 @@ public class ConverterIT {
         Template template = new Template();
         exception.expect(WorkflowException.class);
         exception.expectMessage(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
-                Collections.singletonList("Task1")));
+            "Task1"));
         converter.convertWorkflowToTemplate(template);
     }
 

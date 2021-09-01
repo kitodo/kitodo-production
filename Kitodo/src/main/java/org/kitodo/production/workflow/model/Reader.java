@@ -14,7 +14,6 @@ package org.kitodo.production.workflow.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,7 @@ public class Reader {
     /**
      * Method reads workflow tasks, in case reading fails it throws
      * WorkflowException.
-     * 
+     *
      * @throws WorkflowException
      *             is thrown when reading of the tasks fail, exception message
      *             explains what caused problem
@@ -110,7 +109,7 @@ public class Reader {
 
     /**
      * Read the workflow from diagram.
-     * 
+     *
      * @param diagramXmlContent
      *            as InputStream
      */
@@ -180,7 +179,7 @@ public class Reader {
         for (FlowNode node : nodes) {
             if (isBranchInvalid(node)) {
                 throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelBranch",
-                    Collections.singletonList(node.getName())));
+                    node.getName()));
             }
 
             iterateOverNodes(node, ordering);
@@ -224,14 +223,14 @@ public class Reader {
             addTaskIfThereIsNoLoop(task, new TaskInfo(ordering, true));
         } else {
             throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingGateway",
-                Collections.singletonList(task.getName())));
+                task.getName()));
         }
     }
 
     /**
      * If there are more than one incoming node - it can mean that loop has appeared
      * (more incoming nodes than outgoing).
-     * 
+     *
      * @param task
      *            for verification if there is no loop
      * @param taskInfo
@@ -243,7 +242,7 @@ public class Reader {
             tasks.put(task, taskInfo);
         } else {
             throw new WorkflowException(
-                    Helper.getTranslation("workflowExceptionLoop", Collections.singletonList(task.getName())));
+                    Helper.getTranslation("workflowExceptionLoop", task.getName()));
         }
     }
 

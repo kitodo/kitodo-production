@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -145,7 +144,7 @@ public class ExportDms extends ExportMets {
         } catch (IOException | DAOException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
-                logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
+                logger.error(Helper.getTranslation(ERROR_EXPORT, process.getTitle()), e);
             } else {
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
@@ -200,9 +199,8 @@ public class ExportDms extends ExportMets {
 
         // delete old export folder
         if (!fileService.delete(exportFolder)) {
-            String message = Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle));
-            String description = Helper.getTranslation(EXPORT_DIR_DELETE,
-                Collections.singletonList(exportFolder.getPath()));
+            String message = Helper.getTranslation(ERROR_EXPORT, processTitle);
+            String description = Helper.getTranslation(EXPORT_DIR_DELETE, exportFolder.getPath());
             Helper.setErrorMessage(message, description);
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(new ExportException(message + ": " + description));
@@ -277,7 +275,7 @@ public class ExportDms extends ExportMets {
         } catch (RuntimeException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
-                logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
+                logger.error(Helper.getTranslation(ERROR_EXPORT, process.getTitle()), e);
             } else {
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
