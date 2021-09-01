@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -224,7 +223,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return a readable label for the batch
      */
     private String getNumericLabel(Batch batch) {
-        return Helper.getTranslation(BATCH, StringUtils.capitalize(BATCH)) + ' ' + batch.getId();
+        return Helper.getTranslation(BATCH) + ' ' + batch.getId();
     }
 
     /**
@@ -235,7 +234,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return a readable label for the batch
      */
     private String getNumericLabel(BatchDTO batch) {
-        return Helper.getTranslation(BATCH, StringUtils.capitalize(BATCH)) + ' ' + batch.getId();
+        return Helper.getTranslation(BATCH) + ' ' + batch.getId();
     }
 
     /**
@@ -266,7 +265,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
             if (Objects.nonNull(batch.getTitle())) {
                 result.append(batch.getTitle());
             } else if (Objects.nonNull(batch.getId())) {
-                result.append(Helper.getTranslation(BATCH, StringUtils.capitalize(BATCH)));
+                result.append(Helper.getTranslation(BATCH));
                 result.append(' ');
                 result.append(batch.getId());
             } else {

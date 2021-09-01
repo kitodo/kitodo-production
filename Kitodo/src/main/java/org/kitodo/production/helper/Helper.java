@@ -440,24 +440,42 @@ public class Helper implements Observer, Serializable {
      *
      * @param title
      *            String
+     * @param insertions
+     *            Strings
      * @return translated String
      */
-    public static String getTranslation(String title) {
-        // running instance of ResourceBundle doesn't respond on user language
-        // changes, workaround by instantiating it every time
+    public static String getTranslation(String title, String... insertions) {
+        String pattern = getString(desiredLanguage(), title);
+        String message = MessageFormat.format(pattern, (Object[]) insertions);
+        return appenUnusedInsertions(message, insertions);
+    }
 
+    /**
+     * Appends insertions that were not used. There are reasons why insertions
+     * are not used: if the key is not found in the messages, or if a curly
+     * bracket with the corresponding number is missing therein. Since this
+     * function is used in error messages, which could be difficult to
+     * reproduce, a loss of the additional information should be avoided.
+     */
+    private static String appenUnusedInsertions(String message, String... insertions) {
+        for (int i = 0; i < insertions.length; i++) {
+            String separator = ": ";
+            if (!message.contains(insertions[i])) {
+                message += separator + insertions[i];
+                separator = ", ";
+            }
+        }
+        return message;
+    }
+
+    private static Locale desiredLanguage() {
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
             if (Objects.nonNull(desiredLanguage)) {
-                return getString(desiredLanguage, title);
+                return desiredLanguage;
             }
         }
-        return getString(Locale.ENGLISH, title);
-    }
-
-    public static String getTranslation(String inParameter, String inDefaultIfNull) {
-        String result = getTranslation(inParameter);
-        return Objects.nonNull(result) && !result.equals(inParameter) ? result : inDefaultIfNull;
+        return Locale.ENGLISH;
     }
 
     /**
@@ -468,9 +486,13 @@ public class Helper implements Observer, Serializable {
      * @param parameters
      *            list of Strings
      * @return translated String
+     *
+     * @deprecated Use {@link #getTranslation(String, String...)} and renounce
+     *             list creation
      */
+    @Deprecated
     public static String getTranslation(String title, List<String> parameters) {
-        return MessageFormat.format(getTranslation(title), parameters.toArray());
+        return getTranslation(title, (String[]) parameters.toArray());
     }
 
     /**
