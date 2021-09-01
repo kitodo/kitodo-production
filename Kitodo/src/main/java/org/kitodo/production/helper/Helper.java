@@ -12,7 +12,6 @@
 package org.kitodo.production.helper;
 
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.security.SecureRandom;
 import java.text.DateFormat;
@@ -45,7 +44,7 @@ import org.kitodo.production.interfaces.activemq.WebServiceResult;
 /**
  * Extends Helper from Kitodo Data Management module.
  */
-public class Helper implements Serializable {
+public class Helper {
 
     private static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
