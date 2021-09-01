@@ -473,23 +473,6 @@ public class Helper {
     }
 
     /**
-     * Get translation.
-     *
-     * @param title
-     *            String
-     * @param parameters
-     *            list of Strings
-     * @return translated String
-     *
-     * @deprecated Use {@link #getTranslation(String, String...)} and renounce
-     *             list creation
-     */
-    @Deprecated
-    public static String getTranslation(String title, List<String> parameters) {
-        return getTranslation(title, (String[]) parameters.toArray());
-    }
-
-    /**
      * Set activeMQReporting.
      *
      * @param activeMQReporting
