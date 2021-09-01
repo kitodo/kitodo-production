@@ -71,14 +71,13 @@ public class UploadFileDialog {
     private List<SelectItem> possiblePositions = new ArrayList<>();
     private InsertionPosition selectedPosition;
     private Folder sourceFolder;
-    private List<Folder> contentFolders = new ArrayList<>();
+    private final List<Folder> contentFolders = new ArrayList<>();
     private MediaVariant mediaVariant;
     private int indexSelectedMedia;
     private IncludedStructuralElement parent;
-    private MediaUnit mediaUnit;
     private URI uploadFileUri;
     private Subfolder generatorSource;
-    private int fileLimit = ConfigCore.getIntParameter(ParameterCore.METS_EDITOR_MAX_UPLOADED_MEDIA);
+    private final int fileLimit = ConfigCore.getIntParameter(ParameterCore.METS_EDITOR_MAX_UPLOADED_MEDIA);
     private List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = new LinkedList<>();
     private Integer progress;
     private List<EmptyTask> generateMediaTasks = new ArrayList<>();
@@ -200,7 +199,7 @@ public class UploadFileDialog {
 
     private Integer updateProgress() {
         if (!generateMediaTasks.isEmpty() && progress != 100) {
-            return generateMediaTasks.stream().mapToInt(w -> w.getProgress()).sum() / generateMediaTasks.size();
+            return generateMediaTasks.stream().mapToInt(EmptyTask::getProgress).sum() / generateMediaTasks.size();
         } else {
             return progress;
         }
@@ -270,12 +269,14 @@ public class UploadFileDialog {
             if (structureTreeNode.getDataObject() instanceof View) {
                 if (Objects.nonNull(selectedLogicalNode.getParent())
                         && selectedLogicalNode.getParent().getData() instanceof StructureTreeNode
-                        && Objects.nonNull(((StructureTreeNode) selectedLogicalNode.getParent().getData()).getDataObject())
+                        && Objects.nonNull(((StructureTreeNode) selectedLogicalNode.getParent().getData())
+                        .getDataObject())
                         && ((StructureTreeNode) selectedLogicalNode.getParent().getData()).getDataObject()
                         instanceof IncludedStructuralElement) {
                     parent =
-                            (IncludedStructuralElement) ((StructureTreeNode) selectedLogicalNode.getParent().getData()).getDataObject();
-                    indexSelectedMedia = parent.getViews().indexOf(structureTreeNode.getDataObject());
+                            (IncludedStructuralElement) ((StructureTreeNode) selectedLogicalNode.getParent().getData())
+                                    .getDataObject();
+                    indexSelectedMedia = parent.getViews().indexOf((View)structureTreeNode.getDataObject());
 
                 }
             } else if (structureTreeNode.getDataObject() instanceof IncludedStructuralElement) {
@@ -330,7 +331,7 @@ public class UploadFileDialog {
     public void uploadMedia(FileUploadEvent event) {
         if (event.getFile() != null) {
 
-            mediaUnit = MetadataEditor.addMediaUnit(getPhysicalDivType(), dataEditor.getWorkpiece(),
+            MediaUnit mediaUnit = MetadataEditor.addMediaUnit(getPhysicalDivType(), dataEditor.getWorkpiece(),
                     dataEditor.getWorkpiece().getMediaUnit(), InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
             uploadFileUri = sourceFolderURI.resolve(event.getFile().getFileName());
 
@@ -348,7 +349,7 @@ public class UploadFileDialog {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
             dataEditor.getUnsavedUploadedMedia().add(mediaUnit);
-            selectedMedia.add(new ImmutablePair(mediaUnit, parent));
+            selectedMedia.add(new ImmutablePair<>(mediaUnit, parent));
             PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                     + Helper.getTranslation("mediaUploaded", Collections.singletonList(event.getFile().getFileName()))
                     + "','severity':'info'});");
