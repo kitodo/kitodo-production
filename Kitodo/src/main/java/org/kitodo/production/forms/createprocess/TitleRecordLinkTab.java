@@ -197,9 +197,9 @@ public class TitleRecordLinkTab {
             type = currentLogicalDivision.getType();
         } else {
             ProcessService processService = ServiceManager.getProcessService();
-            int linkedProcessUri = processService.processIdFromUri(currentLogicalDivision.getLink().getUri());
-            Process linkedProcess = processService.getById(linkedProcessUri);
-            type = processService.getBaseType(linkedProcessUri);
+            int processIdFromUri = processService.processIdFromUri(currentLogicalDivision.getLink().getUri());
+            Process linkedProcess = processService.getById(processIdFromUri);
+            type = processService.getBaseType(processIdFromUri);
             tooltip = getToolTip(ruleset, linkedProcess);
         }
 
