@@ -32,9 +32,9 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
-import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -74,11 +74,11 @@ public class UploadFileDialog {
     private final List<Folder> contentFolders = new ArrayList<>();
     private MediaVariant mediaVariant;
     private int indexSelectedMedia;
-    private IncludedStructuralElement parent;
+    private LogicalDivision parent;
     private URI uploadFileUri;
     private Subfolder generatorSource;
     private final int fileLimit = ConfigCore.getIntParameter(ParameterCore.METS_EDITOR_MAX_UPLOADED_MEDIA);
-    private List<Pair<MediaUnit, IncludedStructuralElement>> selectedMedia = new LinkedList<>();
+    private List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = new LinkedList<>();
     private Integer progress;
     private List<EmptyTask> generateMediaTasks = new ArrayList<>();
     private final List<TaskState> taskBlockedStates = Arrays.asList(TaskState.CRASHED, TaskState.STOPPED, TaskState.STOPPING);
@@ -214,12 +214,12 @@ public class UploadFileDialog {
 
     private String getPhysicalDivType() {
         if (mimeType.contains("image")) {
-            return MediaUnit.TYPE_PAGE;
+            return PhysicalDivision.TYPE_PAGE;
         }
         if (mimeType.contains("audio")) {
-            return MediaUnit.TYPE_TRACK;
+            return PhysicalDivision.TYPE_TRACK;
         }
-        return MediaUnit.TYPE_OTHER;
+        return PhysicalDivision.TYPE_OTHER;
     }
 
     private boolean setUpFolders() {
@@ -243,7 +243,7 @@ public class UploadFileDialog {
 
     private void sortViews(List<View> views) {
         views.sort(Comparator.comparing(v -> FilenameUtils.getBaseName(
-                v.getMediaUnit().getMediaFiles().entrySet().iterator().next().getValue().getPath())));
+                v.getPhysicalDivision().getMediaFiles().entrySet().iterator().next().getValue().getPath())));
     }
 
     private boolean folderExists(Folder folder) {
@@ -272,15 +272,15 @@ public class UploadFileDialog {
                         && Objects.nonNull(((StructureTreeNode) selectedLogicalNode.getParent().getData())
                         .getDataObject())
                         && ((StructureTreeNode) selectedLogicalNode.getParent().getData()).getDataObject()
-                        instanceof IncludedStructuralElement) {
+                        instanceof LogicalDivision) {
                     parent =
-                            (IncludedStructuralElement) ((StructureTreeNode) selectedLogicalNode.getParent().getData())
+                            (LogicalDivision) ((StructureTreeNode) selectedLogicalNode.getParent().getData())
                                     .getDataObject();
                     indexSelectedMedia = parent.getViews().indexOf((View)structureTreeNode.getDataObject());
 
                 }
-            } else if (structureTreeNode.getDataObject() instanceof IncludedStructuralElement) {
-                parent = (IncludedStructuralElement) structureTreeNode.getDataObject();
+            } else if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
+                parent = (LogicalDivision) structureTreeNode.getDataObject();
             }
         }
     }
@@ -331,8 +331,9 @@ public class UploadFileDialog {
     public void uploadMedia(FileUploadEvent event) {
         if (event.getFile() != null) {
 
-            MediaUnit mediaUnit = MetadataEditor.addMediaUnit(getPhysicalDivType(), dataEditor.getWorkpiece(),
-                    dataEditor.getWorkpiece().getMediaUnit(), InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
+            PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(getPhysicalDivType(),
+                    dataEditor.getWorkpiece(), dataEditor.getWorkpiece().getPhysicalStructure(),
+                    InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
             uploadFileUri = sourceFolderURI.resolve(event.getFile().getFileName());
 
             //TODO: Find a better way to avoid overwriting an existing file
@@ -341,15 +342,15 @@ public class UploadFileDialog {
                         + "_" + Helper.generateRandomString(3) + "." + fileExtension;
                 uploadFileUri = sourceFolderURI.resolve(newFileName);
             }
-            mediaUnit.getMediaFiles().put(mediaVariant, uploadFileUri);
+            physicalDivision.getMediaFiles().put(mediaVariant, uploadFileUri);
             //upload file in sourceFolder
             try (OutputStream outputStream = ServiceManager.getFileService().write(uploadFileUri)) {
                 IOUtils.copy(event.getFile().getInputstream(), outputStream);
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-            dataEditor.getUnsavedUploadedMedia().add(mediaUnit);
-            selectedMedia.add(new ImmutablePair<>(mediaUnit, parent));
+            dataEditor.getUnsavedUploadedMedia().add(physicalDivision);
+            selectedMedia.add(new ImmutablePair<>(physicalDivision, parent));
             PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                     + Helper.getTranslation("mediaUploaded", Collections.singletonList(event.getFile().getFileName()))
                     + "','severity':'info'});");
