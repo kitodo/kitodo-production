@@ -2624,7 +2624,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param element IncludedStructuralElement that is checked
      * @return whether given element allows child process import
      */
-    public static boolean canCreateChildProcess(Ruleset ruleset, IncludedStructuralElement element) throws IOException {
+    public static boolean canCreateChildProcess(Ruleset ruleset, LogicalDivision element) throws IOException {
         Integer rulesetId = ruleset.getId();
         Collection<String> functionalDivisions;
         if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
