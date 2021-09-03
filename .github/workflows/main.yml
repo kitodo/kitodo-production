@@ -50,7 +50,17 @@ jobs:
       - name: import default
         run:
             mysql -u root -proot kitodo < $GITHUB_WORKSPACE/Kitodo/setup/default.sql
-
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: check java version
+        run:
+            java --version
+      - name: check maven version
+        run: 
+            mvn --version
       - name: run build
         run:
             mvn clean install -B '-Pall-tests,flyway,checkstyle,spotbugs,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'

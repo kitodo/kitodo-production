@@ -17,8 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
@@ -26,15 +24,16 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -47,8 +46,30 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.KitodoConfig;
 
 public class KitodoServiceLoader<T> {
-    private Class clazz;
+    private Class<T> clazz;
     private String modulePath = "";
+
+    /**
+     * <p>The class loader chain keeps track of the respective newest class loader
+     * created for loading new jar files. Previously loaded jar files are
+     * found by delegating requests to each parent class loader, and finally,
+     * to the webapp and system class loader. See:</p>
+     *
+     * <p>http://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html</p>
+     *
+     * <p>Module/Plugin classes loaded from jar files can only be accessed through
+     * this class loader.</p>
+     *
+     * <p>In the future, a refresh mechanism could be implemented by throwing away
+     * this chain, starting a new one and reloading all jars.</p>
+     */
+    private static ClassLoader classLoaderChain = Thread.currentThread().getContextClassLoader();
+
+    /**
+     * Already loaded jars are remembered by their file path, and thus, not
+     * loaded multiple times during runtime.
+     */
+    private static final Set<String> loadedJars = new HashSet<String>();
 
     private static final String POM_PROPERTIES_FILE = "pom.properties";
     private static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -70,7 +91,7 @@ public class KitodoServiceLoader<T> {
      * @param clazz
      *            interface class of module to load
      */
-    public KitodoServiceLoader(Class clazz) {
+    public KitodoServiceLoader(Class<T> clazz) {
         String modulesDirectory = KitodoConfig.getKitodoModulesDirectory();
         this.clazz = clazz;
         if (new File(modulesDirectory).exists()) {
@@ -80,12 +101,13 @@ public class KitodoServiceLoader<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private ServiceLoader<T> getClassLoader() {
         loadModulesIntoClasspath();
         loadBeans();
         loadFrontendFilesIntoCore();
-        return ServiceLoader.load(clazz);
+        // services and their classes need to be loaded from the class loader
+        // chain instead of the default class loader
+        return ServiceLoader.load(clazz, KitodoServiceLoader.classLoaderChain);
     }
 
     /**
@@ -154,14 +176,15 @@ public class KitodoServiceLoader<T> {
 
                                 String className = je.getName().substring(0, je.getName().length() - 6);
                                 className = className.replace('/', '.');
-                                Class aClass = cl.loadClass(className);
+                                Class<?> aClass = cl.loadClass(className);
 
                                 String beanName = className.substring(className.lastIndexOf('.') + 1).trim();
 
                                 FacesContext facesContext = FacesContext.getCurrentInstance();
                                 HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
 
-                                session.getServletContext().setAttribute(beanName, aClass.newInstance());
+                                Object newInstance = aClass.getDeclaredConstructor().newInstance();
+                                session.getServletContext().setAttribute(beanName, newInstance);
                             }
                         }
                     }
@@ -273,7 +296,7 @@ public class KitodoServiceLoader<T> {
         }
 
         try (JarFile jar = new JarFile(jarPath)) {
-            Enumeration jarEntries = jar.entries();
+            Enumeration<JarEntry> jarEntries = jar.entries();
             while (jarEntries.hasMoreElements()) {
                 JarEntry currentJarEntry = (JarEntry) jarEntries.nextElement();
 
@@ -312,7 +335,7 @@ public class KitodoServiceLoader<T> {
      * @return boolean
      */
     private boolean hasFrontendFiles(JarFile jarFile) {
-        Enumeration enums = jarFile.entries();
+        Enumeration<JarEntry> enums = jarFile.entries();
         while (enums.hasMoreElements()) {
             JarEntry jarEntry = (JarEntry) enums.nextElement();
             if (jarEntry.getName().contains(RESOURCES_FOLDER) && jarEntry.isDirectory()) {
@@ -348,28 +371,52 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Loads jars from the pluginsFolder to the classpath, so the ServiceLoader
-     * can find them.
+     * <p>Loads jars from the modules directory by creating a separate class
+     * loader each time jars are loaded, connected in a chain of class loaders
+     * through their parent relationship.
+     * A ServiceLoader can find them when using the most recent class loader
+     * added to the chain of class loaders.</p>
+     *
+     * <p>If used inappropriately, this may lead to unexpected behaviour, e.g.,
+     * when referring to the same singleton from multiple modules, since
+     * classes could be loaded twice.</p>
+     *
+     * <p>If several modules depend on each other (load classes from another
+     * module), both modules have to be present at the same time when loading
+     * happens. Otherwise, the order at which jars are loaded could break
+     * things, since new classes will not be visible to jars loaded by an
+     * earlier class loader created at an earlier time.</p>
      */
     private void loadModulesIntoClasspath() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
-        URLClassLoader sysLoader;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
-            for (Path f : stream) {
-                File loc = new File(f.toString());
-                sysLoader = (URLClassLoader) this.getClass().getClassLoader();
-                ArrayList<URL> urls = new ArrayList<>(Arrays.asList(sysLoader.getURLs()));
-                URL udir = loc.toURI().toURL();
 
-                if (!urls.contains(udir)) {
-                    Class<URLClassLoader> sysClass = URLClassLoader.class;
-                    Method method = sysClass.getDeclaredMethod("addURL", URL.class);
-                    method.setAccessible(true);
-                    method.invoke(sysLoader, udir);
+            // collect urls of new jars present in the module directory
+            Set<URL> jarsToBeAdded = new HashSet<URL>();
+            for (Path f : stream) {
+
+                File loc = new File(f.toString());
+                URL url = loc.toURI().toURL();
+
+                if (!KitodoServiceLoader.loadedJars.contains(url.toString())) {
+                    jarsToBeAdded.add(url);
                 }
             }
-        } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+
+            // create a single URL class loader with all jars
+            // such that plugins can load classes from each other
+            if (jarsToBeAdded.size() > 0) {
+
+                for (URL url : jarsToBeAdded) {
+                    logger.info("Loading module jar file from path " + url.toString());
+                    KitodoServiceLoader.loadedJars.add(url.toString());
+                }
+                URL[] urls = new URL[jarsToBeAdded.size()];
+                jarsToBeAdded.toArray(urls);
+                classLoaderChain = new URLClassLoader(urls, KitodoServiceLoader.classLoaderChain);
+            }
+        } catch (IOException e) {
             logger.error(ERROR, e.getMessage());
         }
     }
