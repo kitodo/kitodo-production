@@ -94,10 +94,11 @@ public class KitodoServiceLoader<T> {
     public KitodoServiceLoader(Class<T> clazz) {
         String modulesDirectory = KitodoConfig.getKitodoModulesDirectory();
         this.clazz = clazz;
-        if (new File(modulesDirectory).exists()) {
+        File kitodoModules = new File(modulesDirectory).getAbsoluteFile();
+		if (kitodoModules.exists()) {
             this.modulePath = modulesDirectory;
         } else {
-            logger.error("Specified module folder does not exist: {}", modulesDirectory);
+            logger.error("Specified module folder does not exist: {}", kitodoModules);
         }
     }
 
