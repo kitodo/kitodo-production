@@ -1968,6 +1968,22 @@ form#metadata div label,
     display: none;
 }
 
+#paginationForm\:paginationSelection {
+    width: 100%;
+}
+
+#paginationForm\:apply,
+#paginationForm\:cancel {
+    max-width: calc(50% - 2px);
+}
+
+#paginationForm\:apply span.ui-button-text,
+#paginationForm\:cancel span.ui-button-text {
+    max-width: calc(75% - 8px);
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+}
 
 /*
 Column content
@@ -2096,12 +2112,24 @@ Column content
     margin-top: 5px;
     height: 100%;
     box-sizing: border-box;
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: hidden;
 }
 
-#paginationBox_content {
+#paginationBox,
+#paginationBox_content,
+#paginationForm {
     height: 100%;
+}
+
+#paginationForm\:paginationWrapperPanel,
+#paginationForm .dialogButtonWrapper {
+    padding: 10px;
+}
+
+#paginationForm\:paginationWrapperPanel {
+    height: calc(100% - 80px);
+    overflow-y: scroll;
 }
 
 .ui-tree-draghelper.ui-draggable-dragging {
