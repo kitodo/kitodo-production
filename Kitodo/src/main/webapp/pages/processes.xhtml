@@ -56,6 +56,7 @@
                                  value="#{ProcessForm.filter}"
                                  placeholder="#{msgs.filter}">
                         <p:ajax event="change"
+                                listener="#{ProcessForm.changeFilter(ProcessForm.filter)}"
                                 onstart="PF('processesTable').getPaginator().setPage(0);"
                                 update="processesTabView:processesForm:processesTable"/>
                     </p:inputText>
