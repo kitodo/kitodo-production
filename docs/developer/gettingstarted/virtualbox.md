@@ -55,6 +55,8 @@ su -c 'echo "deb http://ftp.debian.org/debian stretch-backports main contrib" > 
 
 Follow the installation instructions in <https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung-f%C3%BCr-Kitodo.Production-3.x>
 
+Make sure to install Java 11 when using Kitodo.Production v3.4 and above, see [instructions](./development-version.md#install-openjdk-11).
+
 ## Create shortcuts
 
 * Website link

@@ -3,7 +3,7 @@ How to create a developer workspace for Kitodo.Production with Eclipse on Window
 
 Prerequisites:
 --------------
-* Make sure you have [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/index.html) in at least version 8 installed
+* Make sure you have [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/index.html) in at least version 11 installed
 * Make sure you have [Git](https://git-scm.com/downloads) installed
 * Make sure you have [Maven](https://maven.apache.org/download.cgi) installed
 * Make sure you have [Eclipse IDE for Java EE Developers](https://www.eclipse.org/downloads/) installed
