@@ -32,7 +32,7 @@
         <parent.basedir>${basedir}/../</parent.basedir>
         <maxAllowedViolations>15</maxAllowedViolations>
         <selenium.version>3.141.59</selenium.version>
-        <cargo.plugin.version>1.7.7</cargo.plugin.version>
+        <cargo.plugin.version>1.9.7</cargo.plugin.version>
     </properties>
 
     <dependencies>
@@ -302,7 +302,7 @@
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
             <exclusions>
-                <!-- exlcude stax-api which provides javax.xml.namespace package 
+                <!-- exlcude stax-api which provides javax.xml.namespace package
                      already included in system modules of Java 11+ -->
             	<exclusion>
                     <groupId>stax</groupId>
@@ -332,7 +332,7 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
-                <!-- exlcude xml-apis which provides javax.xml.transform package 
+                <!-- exlcude xml-apis which provides javax.xml.transform package
                      already included in system modules of Java 11+ -->
                 <exclusion>
                     <groupId>xml-apis</groupId>
@@ -618,7 +618,7 @@
 
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
-                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <artifactId>cargo-maven3-plugin</artifactId>
                         <version>${cargo.plugin.version}</version>
 
                         <configuration>
@@ -734,7 +734,7 @@
 
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
-                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <artifactId>cargo-maven3-plugin</artifactId>
                         <version>${cargo.plugin.version}</version>
 
                         <configuration>
