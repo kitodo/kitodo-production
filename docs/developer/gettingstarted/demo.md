@@ -3,7 +3,7 @@ How to run Kitodo.Production in demo mode
 
 Prerequisites:
 --------------
-* Make sure you have [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/index.html) in at least version 8 installed
+* Make sure you have [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/index.html) in at least version 11 installed
 * Make sure you have [Git](https://git-scm.com/downloads) installed
 * Make sure you have [Maven](https://maven.apache.org/download.cgi) installed
 
