@@ -162,6 +162,11 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             return;
         }
 
+        if ( user.getLdapGroup().getLdapServer() == null) {
+            Helper.setMessage(Helper.getTranslation("noLdapServerAssignedToLdapGroup"));
+            return;
+        }
+
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
                 user.getLdapGroup().getLdapServer());
