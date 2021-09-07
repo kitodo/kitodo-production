@@ -8,6 +8,3 @@
 /javadoc
 # local build of docs with mkdocs
 /site
-# IntelliJ project files
-*.iml
-.idea
