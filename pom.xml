@@ -73,6 +73,7 @@
         <flyway-maven-plugin.version>5.1.4</flyway-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>2.4.4</mariadb-java-client.version>
+        <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
     </properties>
 
     <repositories>
@@ -262,13 +263,13 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.1.1</version>
+                        <version>${maven-javadoc-plugin.version}</version>
                         <configuration>
                             <reportOutputDirectory>${doctarget}</reportOutputDirectory>
                             <destDir>${docdir}</destDir>
                             <!-- Default configuration for all reports -->
                             <failOnError>false</failOnError>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <doclint>-html</doclint>
                         </configuration>
                         <executions>
                             <execution>
