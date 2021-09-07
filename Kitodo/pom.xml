@@ -624,7 +624,7 @@
                         <configuration>
                             <!-- Provide Tomcat -->
                             <container>
-                                <containerId>tomcat8x</containerId>
+                                <containerId>tomcat${tomcat.baseversion}x</containerId>
                                 <zipUrlInstaller>
                                     <url>
                                         https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
@@ -740,7 +740,7 @@
                         <configuration>
                             <!-- Provide Tomcat -->
                             <container>
-                                <containerId>tomcat7x</containerId>
+                                <containerId>tomcat${tomcat.baseversion}x</containerId>
                                 <zipUrlInstaller>
                                     <url>
                                         https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
