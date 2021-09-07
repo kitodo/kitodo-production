@@ -16,7 +16,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:o="http://omnifaces.org/ui">
     <f:metadata>
         <f:viewParam name="tabIndex"/>
         <!--@elvariable id="tabIndex" type="java.lang.Integer"-->
@@ -24,6 +25,9 @@
         <!--@elvariable id="keepPagination" type="java.lang.String"-->
         <f:viewParam name="keepPagination"/>
         <f:viewAction action="#{ProcessForm.resetPaginator(keepPagination)}"/>
+        <!--@elvariable id="projecttitle" type="java.lang.String"-->
+        <f:viewParam name="projecttitle"/>
+        <o:viewAction action="#{ProcessForm.setFilter('project:' += projecttitle)}" if="#{not empty projecttitle}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

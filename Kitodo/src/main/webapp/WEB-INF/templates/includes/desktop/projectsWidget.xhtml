@@ -50,6 +50,13 @@
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
                 <h:link styleClass="action"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}"
+                        outcome="processes?tabIndex=0"
+                        title="#{msgs.showProjectProcesses}">
+                    <f:param name="projecttitle" value="#{project.title}"/>
+                    <h:outputText><i class="fa fa-clipboard fa-lg"/></h:outputText>
+                </h:link>
+                <h:link styleClass="action"
                         rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
                     <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
                 </h:link>

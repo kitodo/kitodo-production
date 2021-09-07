@@ -99,6 +99,14 @@
                 </h:link>
 
                 <h:link styleClass="action"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}"
+                        outcome="processes?tabIndex=0"
+                        title="#{msgs.showProjectProcesses}">
+                    <f:param name="projecttitle" value="#{item.title}"/>
+                    <h:outputText><i class="fa fa-clipboard fa-lg"/></h:outputText>
+                </h:link>
+
+                <h:link styleClass="action"
                         id="editProject"
                         rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit"
