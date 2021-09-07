@@ -162,7 +162,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             return;
         }
 
-        if ( user.getLdapGroup().getLdapServer() == null) {
+        if (Objects.isNull(user.getLdapGroup().getLdapServer())) {
             Helper.setMessage(Helper.getTranslation("noLdapServerAssignedToLdapGroup"));
             return;
         }
@@ -547,8 +547,8 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             return new BasicAttribute(identifier, LdapUser.toHexString(hash));
             // TODO: Don't catch super class exception, make sure that
             // the password isn't logged here
-        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
-                | IllegalBlockSizeException | BadPaddingException | RuntimeException e) {
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException
+                | BadPaddingException | RuntimeException e) {
             logger.error(e.getMessage(), e);
             return null;
         }
