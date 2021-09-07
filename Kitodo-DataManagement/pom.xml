@@ -236,9 +236,11 @@
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>${flyway-maven-plugin.version}</version>
                         <configuration>
-                            <!-- local configuration file -->
-                            <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
+							<configFiles>
+                                <!-- local configuration file -->
+                                <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
+                                <configFile>src/main/resources/db/config/flyway.properties</configFile>
+                            </configFiles>
                         </configuration>
                         <dependencies>
                             <dependency>
