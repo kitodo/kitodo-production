@@ -22,17 +22,24 @@ sudo apt install -y dirmngr
 sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5 && echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-5.7" | sudo tee -a /etc/apt/sources.list.d/mysql-5.7.list
 ```
 
-### Install packages openjdk-8, maven, mysql-community-server and zip
+### Install openjdk-11
+
+```
+echo 'deb http://ftp.debian.org/debian stretch-backports main' | sudo tee /etc/apt/sources.list.d/stretch-backports.list
+sudo apt update && sudo apt install -y openjdk-11-jdk
+```
+
+### Install packages maven, mysql-community-server and zip
 
 ```
 sudo debconf-set-selections <<< "mysql-community-server mysql-community-server/root-pass password "
 sudo debconf-set-selections <<< "mysql-community-server mysql-community-server/re-root-pass password "
-sudo apt update && sudo apt install -y openjdk-8-jdk maven mysql-community-server zip
+sudo apt update && sudo apt install -y maven mysql-community-server zip
 ```
 ### Change java security config (for cloud environments)
 
 ```
-sudo sed -i 's/securerandom.source=file:\/dev\/random/securerandom.source=file:\/dev\/urandom/' /etc/java-8-openjdk/security/java.security
+sudo sed -i 's/securerandom.source=file:\/dev\/random/securerandom.source=file:\/dev\/urandom/' /etc/java-11-openjdk/security/java.security
 ```
 
 ### Build development version and modules
