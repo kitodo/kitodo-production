@@ -727,4 +727,17 @@ public class CurrentTaskForm extends BaseForm {
             return "";
         }
     }
+
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     */
+    public void downloadToHome(int processId) {
+        try {
+            ProcessService.downloadToHome(new WebDav(), processId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
+        }
+    }
 }

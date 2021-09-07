@@ -139,13 +139,32 @@
 
                 <h:panelGroup layout="block"
                               styleClass="actionsBlock">
+
+                    <h:link id="editTask"
+                            outcome="taskEdit"
+                            styleClass="action"
+                            rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
+                            title="#{msgs.taskDetails}">
+                        <f:param name="referer" value="tasks"/>
+                        <f:param name="id" value="#{item.id}"/>
+                        <i class="fa fa-pencil-square-o fa-lg"/>
+                    </h:link>
+
+                    <p:commandLink id="download"
+                                   action="#{CurrentTaskForm.downloadToHome(item.process.id)}"
+                                   styleClass="action"
+                                   title="#{msgs.linkHomeDirectory}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
+                        <h:outputText><i class="fa fa-download"/></h:outputText>
+                    </p:commandLink>
+
                     <!-- assign task -->
                     <h:commandLink id="take"
                                    action="#{CurrentTaskForm.takeOverTask}"
                                    styleClass="action"
                                    rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
                                    title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-                        <i class="fa fa-bell-o"/>
+                        <h:outputText><i class="fa fa-bell-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
                     </h:commandLink>
                     <!-- already assigned task (this user) -->
@@ -154,7 +173,7 @@
                                    styleClass="action"
                                    rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
                                    title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
-                        <i class="fa fa-bell"/>
+                        <h:outputText><i class="fa fa-bell"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
                     </h:commandLink>
                     <!-- already assigned task (different user) -->
@@ -163,7 +182,7 @@
                                    styleClass="action"
                                    rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and (!item.batchStep || !item.batchAvailable)}"
                                    title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
-                        <i class="fa fa-bell-slash"/>
+                        <h:outputText><i class="fa fa-bell-slash"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
                     </h:commandLink>
 

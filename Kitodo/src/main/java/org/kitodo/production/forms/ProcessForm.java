@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -287,7 +286,7 @@ public class ProcessForm extends TemplateBaseForm {
             this.process.setTitle(this.newProcessTitle);
 
             // remove Tiffwriter file
-            ServiceManager.getKitodoScriptService().deleteTiffHeaderFile(Arrays.asList(process));
+            ServiceManager.getKitodoScriptService().deleteTiffHeaderFile(List.of(process));
         }
         return true;
     }
@@ -971,7 +970,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            the referring view
      */
     public void setTaskEditReferer(String referer) {
-        if (referer.equals("processEdit?id=" + this.task.getProcess().getId())) {
+        if (referer.equals("tasks") || referer.equals("processEdit?id=" + this.task.getProcess().getId())) {
             this.taskEditReferer = referer;
         } else {
             this.taskEditReferer = DEFAULT_LINK;
