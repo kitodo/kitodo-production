@@ -443,6 +443,6 @@ public class ProjectsPage extends Page<ProjectsPage> {
 
     public String getWorkflowStatusForWorkflow() {
         List<String> tableDataByColumn = getTableDataByColumn(workflowsTable, 1);
-        return tableDataByColumn.get(0);
+        return tableDataByColumn.get(1);
     }
 }

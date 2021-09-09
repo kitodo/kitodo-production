@@ -58,7 +58,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      *            source
      */
     public LazyDTOModel(SearchDatabaseService searchService) {
-        indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
+        indexRestClient.setIndexBase(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         this.searchService = searchService;
 
         try {
@@ -134,7 +134,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      */
     boolean indexRunning() {
         try {
-            return indexRestClient.indexExists();
+            return indexRestClient.typeIndexesExist();
         } catch (IOException | CustomResponseException e) {
             logger.error(e.getMessage());
             return false;

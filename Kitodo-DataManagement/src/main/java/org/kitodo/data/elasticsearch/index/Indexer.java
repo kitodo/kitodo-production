@@ -24,7 +24,7 @@ import org.kitodo.data.elasticsearch.index.type.BaseType;
 import org.kitodo.data.exceptions.DataException;
 
 /**
- * Implementation of Elastic Search Indexer for index package.
+ * Implementation of ElasticSearch Indexer for index package.
  */
 public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index {
 
@@ -123,7 +123,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
 
     private IndexRestClient initiateRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(index);
+        restClient.setIndexBase(index);
         return restClient;
     }
 

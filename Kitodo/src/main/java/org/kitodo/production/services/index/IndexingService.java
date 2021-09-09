@@ -35,6 +35,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.KitodoRestClient;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
@@ -108,7 +109,7 @@ public class IndexingService {
             searchServices.put(objectType, getService(objectType));
             objectIndexingStates.put(objectType, IndexStates.NO_STATE);
         }
-        indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
+        indexRestClient.setIndexBase(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         try {
             prepareIndexWorker();
             countDatabaseObjects();
@@ -362,37 +363,38 @@ public class IndexingService {
      * Create mapping which enables sorting and other aggregation functions.
      */
     public String createMapping() throws IOException, CustomResponseException {
-        String mapping = readMapping();
-        if ("".equals(mapping)) {
-            if (indexRestClient.createIndex()) {
-                currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
-                return MAPPING_FINISHED_MESSAGE;
-            } else {
-                currentState = IndexStates.CREATING_MAPPING_FAILED;
-                return MAPPING_FAILED_MESSAGE;
-            }
-        } else {
-            if (indexRestClient.createIndex(mapping)) {
-                if (isMappingValid(mapping)) {
+        for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
+            String mapping = readMapping(mappingType);
+            if ("".equals(mapping)) {
+                if (indexRestClient.createIndex(null, mappingType)) {
                     currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
-                    return MAPPING_FINISHED_MESSAGE;
                 } else {
                     currentState = IndexStates.CREATING_MAPPING_FAILED;
                     return MAPPING_FAILED_MESSAGE;
                 }
             } else {
-                currentState = IndexStates.CREATING_MAPPING_FAILED;
-                return MAPPING_FAILED_MESSAGE;
+                if (indexRestClient.createIndex(mapping, mappingType)) {
+                    if (isMappingValid(mapping, mappingType)) {
+                        currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
+                    } else {
+                        currentState = IndexStates.CREATING_MAPPING_FAILED;
+                        return MAPPING_FAILED_MESSAGE;
+                    }
+                } else {
+                    currentState = IndexStates.CREATING_MAPPING_FAILED;
+                    return MAPPING_FAILED_MESSAGE;
+                }
             }
         }
+        return MAPPING_FINISHED_MESSAGE;
     }
 
     /**
-     * Delete whole Elastic Search index.
+     * Delete whole ElasticSearch index.
      */
     public String deleteIndex() {
         try {
-            indexRestClient.deleteIndex();
+            indexRestClient.deleteAllIndexes();
             currentState = IndexStates.DELETING_SUCCESSFUL;
             return DELETION_FINISHED_MESSAGE;
         } catch (IOException e) {
@@ -402,8 +404,8 @@ public class IndexingService {
         }
     }
 
-    private boolean isMappingValid(String mapping) {
-        return isMappingEqualTo(mapping);
+    private boolean isMappingValid(String mapping, String mappingType) {
+        return isMappingEqualTo(mapping, mappingType);
     }
 
 
@@ -418,12 +420,12 @@ public class IndexingService {
     }
 
     /**
-     * Tests and returns whether the Elastic Search index has been created or not.
+     * Tests and returns whether the ElasticSearch index has been created or not.
      *
-     * @return whether the Elastic Search index exists or not
+     * @return whether the ElasticSearch index exists or not
      */
     public boolean indexExists() throws IOException, CustomResponseException {
-        return indexRestClient.indexExists();
+        return indexRestClient.typeIndexesExist();
     }
 
     /**
@@ -490,23 +492,28 @@ public class IndexingService {
      */
     public boolean isMappingEmpty() {
         String emptyMapping = "{\n\"mappings\": {\n\n    }\n}";
-        return isMappingEqualTo(emptyMapping);
+        for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
+            if (isMappingEqualTo(emptyMapping, mappingType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private boolean isMappingEqualTo(String mapping) {
+    private boolean isMappingEqualTo(String mapping, String mappingType) {
         try (JsonReader mappingExpectedReader = Json.createReader(new StringReader(mapping));
-             JsonReader mappingCurrentReader = Json.createReader(new StringReader(indexRestClient.getMapping()))) {
+             JsonReader mappingCurrentReader = Json.createReader(new StringReader(indexRestClient.getMapping(mappingType)))) {
             JsonObject mappingExpected = mappingExpectedReader.readObject();
-            JsonObject mappingCurrent = mappingCurrentReader.readObject().getJsonObject(indexRestClient.getIndex());
+            JsonObject mappingCurrent = mappingCurrentReader.readObject().getJsonObject(indexRestClient.getIndexBase() + "_" + mappingType);
             return mappingExpected.equals(mappingCurrent);
         } catch (IOException e) {
             return false;
         }
     }
 
-    private static String readMapping() {
+    private static String readMapping(String mappingType) {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
+        try (InputStream inputStream = classloader.getResourceAsStream("elasticsearch_mappings/" + mappingType + ".json")) {
             if (Objects.nonNull(inputStream)) {
                 String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {

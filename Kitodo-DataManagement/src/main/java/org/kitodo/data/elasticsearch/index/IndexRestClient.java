@@ -12,7 +12,6 @@
 package org.kitodo.data.elasticsearch.index;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,6 +26,8 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
@@ -34,7 +35,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 
 /**
- * Implementation of Elastic Search REST Client for index package.
+ * Implementation of ElasticSearch REST Client for index package.
  */
 public class IndexRestClient extends KitodoRestClient {
 
@@ -83,12 +84,13 @@ public class IndexRestClient extends KitodoRestClient {
      */
     public void addDocument(String type, Map<String, Object> entity, Integer id, boolean forceRefresh)
             throws IOException, CustomResponseException {
-        IndexRequest indexRequest = new IndexRequest(this.index, type, String.valueOf(id)).source(entity);
+        IndexRequest indexRequest = new IndexRequest(this.indexBase + "_" + type).source(entity);
+        indexRequest.id(String.valueOf(id));
         if (forceRefresh) {
             indexRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         }
 
-        IndexResponse indexResponse = highLevelClient.index(indexRequest);
+        IndexResponse indexResponse = highLevelClient.index(indexRequest, RequestOptions.DEFAULT);
         processStatusCode(indexResponse.status());
     }
 
@@ -105,7 +107,7 @@ public class IndexRestClient extends KitodoRestClient {
         BulkRequest bulkRequest = prepareBulkRequest(type, documentsToIndex);
 
         try {
-            BulkResponse bulkResponse = highLevelClient.bulk(bulkRequest);
+            BulkResponse bulkResponse = highLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
             if (bulkResponse.hasFailures()) {
                 throw new CustomResponseException(bulkResponse.buildFailureMessage());
             }
@@ -127,7 +129,7 @@ public class IndexRestClient extends KitodoRestClient {
         BulkRequest bulkRequest = prepareBulkRequest(type, documentsToIndex);
 
         ResponseListener responseListener = new ResponseListener(type, documentsToIndex.size());
-        highLevelClient.bulkAsync(bulkRequest, responseListener);
+        highLevelClient.bulkAsync(bulkRequest, RequestOptions.DEFAULT, responseListener);
 
         synchronized (lock) {
             while (Objects.isNull(responseListener.getBulkResponse())) {
@@ -142,7 +144,7 @@ public class IndexRestClient extends KitodoRestClient {
     }
 
     /**
-     * Delete document from the index.
+     * Delete document from type specific index.
      *
      * @param type
      *            for which request is performed
@@ -153,13 +155,14 @@ public class IndexRestClient extends KitodoRestClient {
      *            object is right after that available for display
      */
     void deleteDocument(String type, Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
-        DeleteRequest deleteRequest = new DeleteRequest(this.index, type, String.valueOf(id));
+        DeleteRequest deleteRequest = new DeleteRequest(this.indexBase + "_" + type);
+        deleteRequest.id(String.valueOf(id));
         if (forceRefresh) {
             deleteRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         }
 
         try {
-            highLevelClient.delete(deleteRequest);
+            highLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
         } catch (ResponseException e) {
             handleResponseException(e);
         }  catch (IOException e) {
@@ -170,18 +173,20 @@ public class IndexRestClient extends KitodoRestClient {
     /**
      * Enable sorting by text field.
      *
-     * @param type
-     *            as String
      * @param field
      *            as String
+     * @param mappingType
+     *            as String
      */
-    public void enableSortingByTextField(String type, String field) throws IOException, CustomResponseException {
+    public void enableSortingByTextField(String field, String mappingType) throws IOException, CustomResponseException {
         String query = "{\n \"properties\": {\n\"" + field + "\": {\n" + "      \"type\": \"text\",\n"
                 + "      \"fielddata\": true,\n" + "      \"fields\": {\n" + "        \"raw\": {\n"
                 + "          \"type\":  \"text\",\n" + "          \"index\": false}\n" + "    }\n" + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = client.performRequest(HttpMethod.PUT,
-            "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types", Collections.emptyMap(), entity);
+        Request request = new Request(HttpMethod.PUT,
+                "/" + this.getIndexBase() + "_" + mappingType + "/_mappings");
+        request.setEntity(entity);
+        Response indexResponse = client.performRequest(request);
         processStatusCode(indexResponse.getStatusLine());
     }
 
@@ -189,7 +194,8 @@ public class IndexRestClient extends KitodoRestClient {
         BulkRequest bulkRequest = new BulkRequest();
 
         for (Map.Entry<Integer, Map<String, Object>> entry : documentsToIndex.entrySet()) {
-            IndexRequest indexRequest = new IndexRequest(this.index, type, String.valueOf(entry.getKey()));
+            IndexRequest indexRequest = new IndexRequest(this.indexBase + "_" + type);
+            indexRequest.id(String.valueOf(entry.getKey()));
             bulkRequest.add(indexRequest.source(entry.getValue()));
         }
 

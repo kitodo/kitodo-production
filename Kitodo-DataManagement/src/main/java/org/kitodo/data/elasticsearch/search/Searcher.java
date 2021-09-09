@@ -34,7 +34,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 
 /**
- * Implementation of Elastic Search Searcher for Kitodo - Data Management
+ * Implementation of ElasticSearch Searcher for Kitodo - Data Management
  * Module.
  */
 public class Searcher extends Index {
@@ -50,13 +50,13 @@ public class Searcher extends Index {
     }
 
     /**
-     * Constructor for searcher with type names not equal to table names.
+     * Constructor for searcher with tableName names not equal to table names.
      *
-     * @param type
+     * @param tableName
      *            as String
      */
-    public Searcher(String type) {
-        super(type);
+    public Searcher(String tableName) {
+        super(tableName);
     }
 
     /**
@@ -212,7 +212,7 @@ public class Searcher extends Index {
 
     private SearchRestClient initiateRestClient() {
         SearchRestClient restClient = SearchRestClient.getInstance();
-        restClient.setIndex(index);
+        restClient.setIndexBase(index);
         return restClient;
     }
 }

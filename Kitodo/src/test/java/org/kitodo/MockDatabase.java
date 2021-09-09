@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -28,10 +29,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -79,6 +80,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
+import org.kitodo.data.elasticsearch.KitodoRestClient;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
@@ -120,10 +122,11 @@ public class MockDatabase {
 
     public static void startNode() throws Exception {
         startNodeWithoutMapping();
-        indexRestClient.createIndex(readMapping());
+        for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
+            indexRestClient.createIndex(readMapping(mappingType), mappingType);
+        }
     }
 
-    @SuppressWarnings("unchecked")
     public static void startNodeWithoutMapping() throws Exception {
         String nodeName = Helper.generateRandomString(6);
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
@@ -131,20 +134,20 @@ public class MockDatabase {
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         indexRestClient = initializeIndexRestClient();
 
-        Map settingsMap = prepareNodeSettings(port, nodeName);
-        Settings settings = Settings.builder().put(settingsMap).build();
+        Settings settings = prepareNodeSettings(port, nodeName);
 
         removeOldDataDirectories("target/" + nodeName);
 
         if (node != null) {
             stopNode();
         }
-        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
+        Supplier<String> nodeNameSupplier = () -> nodeName;
+        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class), nodeNameSupplier);
         node.start();
     }
 
     public static void stopNode() throws Exception {
-        indexRestClient.deleteIndex();
+        indexRestClient.deleteAllIndexes();
         node.close();
         node = null;
     }
@@ -222,21 +225,23 @@ public class MockDatabase {
     }
 
     private static class ExtendedNode extends Node {
-        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
+        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins,
+                     Supplier<String> nodeNameSupplier) {
+            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, Collections.emptyMap(),
+                    Paths.get("target"), nodeNameSupplier), classpathPlugins, false);
         }
     }
 
     private static IndexRestClient initializeIndexRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(testIndexName);
+        restClient.setIndexBase(testIndexName);
         return restClient;
     }
 
-    private static String readMapping() {
+    private static String readMapping(String mappingType) {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
-        try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
+        try (InputStream inputStream = classloader.getResourceAsStream("elasticsearch_mappings/" + mappingType + ".json")) {
             if (Objects.nonNull(inputStream)) {
                 String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
@@ -259,23 +264,16 @@ public class MockDatabase {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static Map prepareNodeSettings(String httpPort, String nodeName) {
-        Map settingsMap = new HashMap();
-        settingsMap.put("node.name", nodeName);
-        // create all data directories under Maven build directory
-        settingsMap.put("path.conf", TARGET);
-        settingsMap.put("path.data", TARGET);
-        settingsMap.put("path.logs", TARGET);
-        settingsMap.put("path.home", TARGET);
-        // set ports used by Elastic Search to something different than default
-        settingsMap.put("http.type", "netty4");
-        settingsMap.put("http.port", httpPort);
-        settingsMap.put("transport.tcp.port", HTTP_TRANSPORT_PORT);
-        settingsMap.put("transport.type", "netty4");
-        // disable automatic index creation
-        settingsMap.put("action.auto_create_index", "false");
-        return settingsMap;
+    private static Settings prepareNodeSettings(String httpPort, String nodeName) {
+        return Settings.builder().put("node.name", nodeName)
+                .put("path.data", TARGET)
+                .put("path.logs", TARGET)
+                .put("path.home", TARGET)
+                .put("http.type", "netty4")
+                .put("http.port", httpPort)
+                .put("transport.tcp.port", HTTP_TRANSPORT_PORT)
+                .put("transport.type", "netty4")
+                .put("action.auto_create_index", "false").build();
     }
 
     public static void insertAuthorities() throws DAOException {

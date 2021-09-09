@@ -22,8 +22,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.metrics.sum.Sum;
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.elasticsearch.search.aggregations.metrics.Sum;
+import org.elasticsearch.search.aggregations.metrics.ValueCount;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -42,8 +42,9 @@ public class SearcherIT {
     private static Node node;
     private static IndexRestClient indexRestClient;
     private static String testIndexName;
-    private static QueryBuilder query = QueryBuilders.matchAllQuery();
-    private static Searcher searcher = new Searcher("testsearch");
+    private static final String testSearch = "testsearch";
+    private static final QueryBuilder query = QueryBuilders.matchAllQuery();
+    private static final Searcher searcher = new Searcher(testSearch);
     private static final String TITLE = "title";
     private static final String BATCH_ONE = "Batch1";
     private static final String WRONG_AMOUNT = "Incorrect result - amount doesn't match to given number!";
@@ -61,17 +62,17 @@ public class SearcherIT {
         node = MockEntity.prepareNode();
         node.start();
 
-        indexRestClient.createIndex();
+        indexRestClient.createIndex(null, testSearch);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(1), 1, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(2), 2, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(3), 3, false);
         indexRestClient.addDocument(searcher.getType(), MockEntity.createEntities().get(4), 4, false);
-        indexRestClient.enableSortingByTextField("testsearch", TITLE);
+        indexRestClient.enableSortingByTextField(TITLE, testSearch);
     }
 
     @AfterClass
     public static void cleanIndex() throws Exception {
-        indexRestClient.deleteIndex();
+        indexRestClient.deleteIndex(testSearch);
         node.close();
     }
 
@@ -192,7 +193,7 @@ public class SearcherIT {
 
     private static IndexRestClient initializeIndexRestClient() {
         IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndex(testIndexName);
+        restClient.setIndexBase(testIndexName);
         return restClient;
     }
 
