@@ -979,7 +979,7 @@ public class ImportService {
         StructuralElementViewInterface docTypeView = rulesetManagementInterface
                 .getStructuralElementView(docType, acquisitionStage, priorityList);
         String processTitle = docTypeView.getProcessTitle().orElse("");
-        ProcessService.generateProcessTitle("", processDetails,
+        ProcessService.generateProcessTitleAndGetAtstsl("", processDetails,
                 processTitle, tempProcess.getProcess());
     }
 
