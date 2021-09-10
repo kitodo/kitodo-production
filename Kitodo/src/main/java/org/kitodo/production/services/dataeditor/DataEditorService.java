@@ -192,7 +192,7 @@ public class DataEditorService {
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e);
         }
-        return addableMetadata;
+        return addableMetadata.stream().sorted(Comparator.comparing(SelectItem::getLabel)).collect(Collectors.toList());
     }
 
     /**
