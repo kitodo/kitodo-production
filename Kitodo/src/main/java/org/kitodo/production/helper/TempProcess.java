@@ -114,14 +114,14 @@ public class TempProcess {
      * This function is currently only used for the import of prestructured processes.
      */
     public void verifyDocType() {
-        if (Objects.nonNull(this.getWorkpiece().getRootElement().getMetadata())) {
-            Optional<Metadata> docTypeMetadata = this.getWorkpiece().getRootElement().getMetadata()
+        if (Objects.nonNull(this.getWorkpiece().getLogicalStructure().getMetadata())) {
+            Optional<Metadata> docTypeMetadata = this.getWorkpiece().getLogicalStructure().getMetadata()
                     .stream().filter(m -> m.getKey().equals(DOC_TYPE)).findFirst();
             if (docTypeMetadata.isPresent() && docTypeMetadata.get() instanceof MetadataEntry) {
                 String docType = ((MetadataEntry)docTypeMetadata.get()).getValue();
                 if (StringUtils.isNotBlank(docType)
-                        && !this.getWorkpiece().getRootElement().getType().equals(docType)) {
-                    this.getWorkpiece().getRootElement().setType(docType);
+                        && !this.getWorkpiece().getLogicalStructure().getType().equals(docType)) {
+                    this.getWorkpiece().getLogicalStructure().setType(docType);
                 }
             }
         }
