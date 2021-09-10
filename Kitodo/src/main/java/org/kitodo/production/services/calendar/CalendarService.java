@@ -17,16 +17,14 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -107,8 +105,8 @@ public class CalendarService {
         StructuralElementViewInterface issueView = ruleset.getStructuralElementView(issueType, acquisitionStage, priorityList);
 
         // From view to output, get all addable metadata
-        List<MetadataViewInterface> allowedMetadata = new ArrayList<>(issueView.getAllowedMetadata());
-        return allowedMetadata;
+        return new ArrayList<>(issueView.getAllowedMetadata())
+                .stream().sorted(Comparator.comparing(MetadataViewInterface::getLabel)).collect(Collectors.toList());
     }
 
     /**
