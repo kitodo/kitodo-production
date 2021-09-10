@@ -2778,4 +2778,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         return FileService.hasImages(process, generatorSource);
     }
+
+    /**
+     * find processes by inChoiceListShown attribute.
+     * @param inChoiceListShown the needed value of the attribute
+     * @param related if the process is related
+     * @return a list of found processes
+     */
+    public List<ProcessDTO> findByInChoiceListShown(boolean inChoiceListShown, boolean related) throws DataException {
+        BoolQueryBuilder inChoiceListShownQuery = new BoolQueryBuilder();
+        MatchQueryBuilder matchQuery = matchQuery(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), true);
+        inChoiceListShownQuery.must(matchQuery);
+        return ServiceManager.getProcessService().findByQuery(matchQuery, related);
+    }
 }

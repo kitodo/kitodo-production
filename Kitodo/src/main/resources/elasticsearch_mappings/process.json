@@ -50,6 +50,9 @@
       "hasChildren": {
         "type": "boolean"
       },
+      "inChoiceListShown": {
+        "type": "boolean"
+      },
       "baseType": {
         "type": "text",
         "fields": {

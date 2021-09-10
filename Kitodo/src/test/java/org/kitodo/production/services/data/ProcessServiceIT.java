@@ -123,6 +123,12 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindByInChoiceListShown() throws DataException, DAOException {
+        List<ProcessDTO> byInChoiceListShown = ServiceManager.getProcessService().findByInChoiceListShown(true, true);
+        Assert.assertEquals("wrong amount of processes found", 1, byInChoiceListShown.size());
+    }
+
+    @Test
     public void shouldSaveProcess() throws Exception {
         Process parent = new Process();
         parent.setTitle("Parent");
