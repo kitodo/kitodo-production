@@ -228,8 +228,6 @@ public class ProjectForm extends BaseForm {
         ServiceManager.getProjectService().evict(this.project);
         if (isTitleValid()) {
             try {
-                // call this to make saving and deleting permanent
-                this.commitFolders();
                 addFirstUserToNewProject();
 
                 ServiceManager.getProjectService().saveToDatabase(this.project);
@@ -250,6 +248,9 @@ public class ProjectForm extends BaseForm {
                 this.deletedTemples = new ArrayList<>();
 
                 ServiceManager.getProjectService().save(this.project, true);
+
+                // call this to make saving and deleting permanent
+                this.commitFolders();
 
                 return projectsPage;
             } catch (DAOException | DataException e) {
