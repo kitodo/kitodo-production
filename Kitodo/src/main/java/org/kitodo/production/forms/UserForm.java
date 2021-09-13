@@ -639,12 +639,14 @@ public class UserForm extends BaseForm {
             Helper.setErrorMessage("passwordsDontMatchOld");
         }
         try {
-            if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
-                ServiceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
-            }
             Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
             if (passwordViolations.isEmpty()) {
-                userService.changeUserPassword(userObject, this.passwordToEncrypt);
+                if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()
+                        && Objects.nonNull(userObject.getLdapGroup())) {
+                    ServiceManager.getLdapServerService().changeUserPassword(userObject, passwordToEncrypt);
+                } else {
+                    userService.changeUserPassword(userObject, this.passwordToEncrypt);
+                }
                 Helper.setMessage("passwordChanged");
                 PrimeFaces.current().executeScript("PF('resetPasswordDialog').hide();");
             } else {
