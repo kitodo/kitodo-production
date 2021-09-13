@@ -42,7 +42,6 @@ public class ProcessDataTab {
     private List<SelectItem> allDocTypes;
     private final CreateProcessForm createProcessForm;
     private String docType;
-    private String atstsl = "";
     private String tiffHeaderImageDescription = "";
     private String tiffHeaderDocumentName = "";
     private int guessedImages = 0;
@@ -223,12 +222,7 @@ public class ProcessDataTab {
                 if (Objects.nonNull(parentProcess)) {
 
                     // get title of workpiece property "Haupttitle" from chosen title record process
-                    for (Property property : parentProcess.getWorkpieces()) {
-                        if ("Haupttitel".equals(property.getTitle())) {
-                            currentTitle = property.getValue();
-                            break;
-                        }
-                    }
+                    currentTitle = parentProcess.getWorkpieces().stream().filter(property -> "Haupttitel".equals(property.getTitle())).findFirst().map(Property::getValue).orElse(currentTitle);
 
                 } else {
                     int processesSize = createProcessForm.getProcesses().size();
@@ -238,27 +232,24 @@ public class ProcessDataTab {
 
                         // get title of ancestors where TitleDocMain exists when several processes were imported
                         for (TempProcess tempProcess : ancestors) {
-
                             ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess);
-                            if (Objects.nonNull(processFieldedMetadata)) {
-                                AtomicReference<String> tempTitle = new AtomicReference<>();
-                                processFieldedMetadata.getChildMetadata().parallelStream().filter(metadata -> TitleGenerator.TITLE_DOC_MAIN.equals(metadata.getKey())).findFirst().ifPresent(metadata -> {
-                                    if (metadata instanceof MetadataEntry) {
-                                        tempTitle.set(((MetadataEntry) metadata).getValue());
-                                    }
-                                });
-
-                                if (Objects.nonNull(tempTitle.get()) && !tempTitle.get().isEmpty()) {
-                                    currentTitle = tempTitle.get();
-                                    break;
+                            AtomicReference<String> tempTitle = new AtomicReference<>();
+                            processFieldedMetadata.getChildMetadata().parallelStream().filter(metadata -> TitleGenerator.TITLE_DOC_MAIN.equals(metadata.getKey())).findFirst().ifPresent(metadata -> {
+                                if (metadata instanceof MetadataEntry) {
+                                    tempTitle.set(((MetadataEntry) metadata).getValue());
                                 }
+                            });
+
+                            if (Objects.nonNull(tempTitle.get()) && !tempTitle.get().isEmpty()) {
+                                currentTitle = tempTitle.get();
+                                break;
                             }
                         }
                     }
                 }
             }
 
-            atstsl = ProcessService.generateProcessTitleAndGetAtstsl(atstsl, processDetails, processTitle, process, currentTitle);
+            String atstsl = ProcessService.generateProcessTitleAndGetAtstsl(processDetails, processTitle, process, currentTitle);
             // document name is generally equal to process title
             tiffHeaderDocumentName = process.getTitle();
             tiffHeaderImageDescription = ProcessService.generateTiffHeader(processDetails, atstsl,
@@ -276,7 +267,7 @@ public class ProcessDataTab {
      *          whose metadata should be queried
      */
     private ProcessFieldedMetadata initializeTempProcessDetails(TempProcess tempProcess) {
-        ProcessFieldedMetadata metadata = ImportService.initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(), createProcessForm.getRulesetManagement(),
+        var metadata = ImportService.initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(), createProcessForm.getRulesetManagement(),
                 createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
         metadata.setMetadata(ImportService.importMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
         return metadata;

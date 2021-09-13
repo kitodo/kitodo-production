@@ -2303,17 +2303,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Generate and set the title to process and gets the atstsl
      * @return String atstsl
      */
-    public static String generateProcessTitleAndGetAtstsl(String atstsl, List<ProcessDetail> processDetails, String titleDefinition, Process process) throws ProcessGenerationException {
-        return generateProcessTitleAndGetAtstsl(atstsl, processDetails, titleDefinition, process, TitleGenerator.getCurrentValue(TitleGenerator.TITLE_DOC_MAIN, processDetails));
+    public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition, Process process) throws ProcessGenerationException {
+        return generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process, TitleGenerator.getCurrentValue(TitleGenerator.TITLE_DOC_MAIN, processDetails));
     }
 
     /**
      * Generate and set the title to process using current title parameter  and gets the atstsl
+     * @param title of the work to generate atstsl
      * @return String atstsl
      */
-    public static String generateProcessTitleAndGetAtstsl(String atstsl, List<ProcessDetail> processDetails, String titleDefinition, Process process, String currentTitle) throws ProcessGenerationException {
-        TitleGenerator titleGenerator = new TitleGenerator(atstsl, processDetails);
-        String newTitle = titleGenerator.generateTitle(titleDefinition, null, (Objects.nonNull(currentTitle) ? currentTitle : ""));
+    public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition, Process process, String title) throws ProcessGenerationException {
+        TitleGenerator titleGenerator = new TitleGenerator(null, processDetails);
+        String newTitle = titleGenerator.generateTitle(titleDefinition, null, (Objects.nonNull(title) ? title : ""));
         process.setTitle(newTitle);
         // atstsl is created in title generator and next used in tiff header generator
         return titleGenerator.getAtstsl();
