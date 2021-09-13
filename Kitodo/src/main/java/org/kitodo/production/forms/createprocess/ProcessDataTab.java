@@ -198,7 +198,7 @@ public class ProcessDataTab {
     }
 
     /**
-     * Generate process title and tiff header
+     * Generate process title and tiff header.
      */
     public void generateProcessTitleAndTiffHeader() {
         List<ProcessDetail> processDetails = createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
