@@ -50,7 +50,6 @@ public class ProcessDataTab {
         this.createProcessForm = createProcessForm;
     }
 
-
     /**
      * Set docType.
      *
@@ -199,7 +198,7 @@ public class ProcessDataTab {
     }
 
     /**
-     * Generate process titles and other details.
+     * Generate process title and tiff header
      */
     public void generateProcessTitleAndTiffHeader() {
         List<ProcessDetail> processDetails = createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
@@ -222,34 +221,17 @@ public class ProcessDataTab {
                 if (Objects.nonNull(parentProcess)) {
 
                     // get title of workpiece property "Haupttitle" from chosen title record process
-                    currentTitle = parentProcess.getWorkpieces().stream().filter(property -> "Haupttitel".equals(property.getTitle())).findFirst().map(Property::getValue).orElse(currentTitle);
+                    currentTitle = parentProcess.getWorkpieces().stream()
+                            .filter(property -> "Haupttitel".equals(property.getTitle())).findFirst()
+                            .map(Property::getValue).orElse(currentTitle);
 
                 } else {
-                    int processesSize = createProcessForm.getProcesses().size();
-
-                    if( processesSize > 1 ) {
-                        List<TempProcess> ancestors = createProcessForm.getProcesses().subList(1, processesSize);
-
-                        // get title of ancestors where TitleDocMain exists when several processes were imported
-                        for (TempProcess tempProcess : ancestors) {
-                            ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess);
-                            AtomicReference<String> tempTitle = new AtomicReference<>();
-                            processFieldedMetadata.getChildMetadata().parallelStream().filter(metadata -> TitleGenerator.TITLE_DOC_MAIN.equals(metadata.getKey())).findFirst().ifPresent(metadata -> {
-                                if (metadata instanceof MetadataEntry) {
-                                    tempTitle.set(((MetadataEntry) metadata).getValue());
-                                }
-                            });
-
-                            if (Objects.nonNull(tempTitle.get()) && !tempTitle.get().isEmpty()) {
-                                currentTitle = tempTitle.get();
-                                break;
-                            }
-                        }
-                    }
+                    currentTitle = getTitleFromAncestors();
                 }
             }
 
-            String atstsl = ProcessService.generateProcessTitleAndGetAtstsl(processDetails, processTitle, process, currentTitle);
+            String atstsl = ProcessService.generateProcessTitleAndGetAtstsl(processDetails, processTitle, process,
+                currentTitle);
             // document name is generally equal to process title
             tiffHeaderDocumentName = process.getTitle();
             tiffHeaderImageDescription = ProcessService.generateTiffHeader(processDetails, atstsl,
@@ -261,14 +243,44 @@ public class ProcessDataTab {
             "editForm:processFromTemplateTabView:processMetadata");
     }
 
+    private String getTitleFromAncestors() {
+        int processesSize = createProcessForm.getProcesses().size();
+
+        if (processesSize <= 1) {
+            return null;
+        }
+
+        List<TempProcess> ancestors = createProcessForm.getProcesses().subList(1, processesSize);
+
+        // get title of ancestors where TitleDocMain exists when several processes were imported
+        for (TempProcess tempProcess : ancestors) {
+            ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess);
+            AtomicReference<String> tempTitle = new AtomicReference<>();
+            processFieldedMetadata.getChildMetadata().parallelStream()
+                    .filter(metadata -> TitleGenerator.TITLE_DOC_MAIN.equals(metadata.getKey())).findFirst()
+                    .ifPresent(metadata -> {
+                        if (metadata instanceof MetadataEntry) {
+                            tempTitle.set(((MetadataEntry) metadata).getValue());
+                        }
+                    });
+
+            if (Objects.nonNull(tempTitle.get()) && !tempTitle.get().isEmpty()) {
+                return tempTitle.get();
+            }
+        }
+        return null;
+    }
+
     /**
      * initialize process details table.
+     * 
      * @param tempProcess
-     *          whose metadata should be queried
+     *            whose metadata should be queried
      */
     private ProcessFieldedMetadata initializeTempProcessDetails(TempProcess tempProcess) {
-        var metadata = ImportService.initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(), createProcessForm.getRulesetManagement(),
-                createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
+        var metadata = ImportService.initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
+            createProcessForm.getRulesetManagement(), createProcessForm.getAcquisitionStage(),
+            createProcessForm.getPriorityList());
         metadata.setMetadata(ImportService.importMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
         return metadata;
     }
