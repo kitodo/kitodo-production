@@ -158,12 +158,12 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             throws NamingException, NoSuchAlgorithmException, IOException {
 
         if (Objects.isNull(user.getLdapGroup())) {
-            Helper.setMessage(Helper.getTranslation("noLdapGroupAssignedToUser"));
+            Helper.setErrorMessage(Helper.getTranslation("noLdapGroupAssignedToUser"));
             return;
         }
 
         if (Objects.isNull(user.getLdapGroup().getLdapServer())) {
-            Helper.setMessage(Helper.getTranslation("noLdapServerAssignedToLdapGroup"));
+            Helper.setErrorMessage(Helper.getTranslation("noLdapServerAssignedToLdapGroup"));
             return;
         }
 
