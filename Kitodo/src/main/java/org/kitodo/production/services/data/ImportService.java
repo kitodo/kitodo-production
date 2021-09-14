@@ -1193,8 +1193,9 @@ public class ImportService {
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException
                 | NoSuchMetadataFieldException | DataException | CommandException e) {
+            logger.error(e);
             throw new ImportException(
-                    Helper.getTranslation("errorImporting", Arrays.asList(Helper.getTranslation("process"), ppn)));
+                    Helper.getTranslation("errorImporting", Arrays.asList(ppn, e.getLocalizedMessage())));
         }
         return tempProcess.getProcess();
     }
