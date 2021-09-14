@@ -174,8 +174,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
-    private static final String METADATA_GROUP_SEARCH_KEY = ProcessTypeField.METADATA
-            + ".mdWrap.xmlData.kitodo.metadataGroup.metadata";
+    private static final String METADATA_GROUP_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadataGroup.metadata";
     private static final String METADATA_FILE_NAME = "meta.xml";
     private static final String NEW_LINE_ENTITY = "\n";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
@@ -184,7 +183,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT = new HashMap<>();
     private static final List<String> BG_COLORS = Arrays
             .asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
-    private static final String TITLE_DOC_MAIN = "TitleDocMain";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -214,8 +212,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Emptys the cache generated from ruleset, so changes in Ruleset are recognized
-     * in new session.
+     * Emptys the cache generated from ruleset, so changes in Ruleset are recognized in new session.
      */
     public static void emptyCache() {
         RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.clear();
@@ -223,13 +220,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Checks if an imported Process should be created with Tasks and removes them
-     * if not, depending on the configuration of the doctype.
-     * 
-     * @param process
-     *            the process to check.
-     * @param docType
-     *            the doctype to check in the ruleset.
+     * Checks if an imported Process should be created with Tasks and removes them if not,
+     * depending on the configuration of the doctype.
+     * @param process the process to check.
+     * @param docType the doctype to check in the ruleset.
      */
     public static void checkTasks(Process process, String docType) throws IOException {
         // remove tasks from process, if doctype is configured not to use a workflow
@@ -334,51 +328,36 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Load processes with given parameters.
-     * 
-     * @param first
-     *            index of first process to load
-     * @param pageSize
-     *            number of processes to load
-     * @param sortField
-     *            name of field by which processes are sorted
-     * @param sortOrder
-     *            SortOrder by which processes are sorted - either ascending or
-     *            descending
-     * @param filters
-     *            filter map
-     * @param showClosedProcesses
-     *            boolean controlling whether to load closed processes or not
-     * @param showInactiveProjects
-     *            boolean controlling whether to load processes of closed projects
-     *            or not
+     * @param first index of first process to load
+     * @param pageSize number of processes to load
+     * @param sortField name of field by which processes are sorted
+     * @param sortOrder SortOrder by which processes are sorted - either ascending or descending
+     * @param filters filter map
+     * @param showClosedProcesses boolean controlling whether to load closed processes or not
+     * @param showInactiveProjects boolean controlling whether to load processes of closed projects or not
      * @return List of loaded processes
-     * @throws DataException
-     *             if processes cannot be loaded from search index
+     * @throws DataException if processes cannot be loaded from search index
      */
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
-            org.primefaces.model.SortOrder sortOrder, Map filters, boolean showClosedProcesses,
-            boolean showInactiveProjects) throws DataException {
+                                     org.primefaces.model.SortOrder sortOrder, Map filters,
+                                     boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
         String filter = ServiceManager.getFilterService().parseFilterString(filters);
         return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter),
-            getSortBuilder(sortField, sortOrder), first, pageSize, false);
+                getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
     /**
      * Gets the query for the current processfilter.
-     * 
-     * @param showClosedProcesses
-     *            if closed processes are shown
-     * @param showInactiveProjects
-     *            if inactive projects are shown
-     * @param filter
-     *            the filter to build the query for
+     * @param showClosedProcesses if closed processes are shown
+     * @param showInactiveProjects if inactive projects are shown
+     * @param filter the filter to build the query for
      * @return the query for the filter.
      */
-    public BoolQueryBuilder getQueryForFilter(boolean showClosedProcesses, boolean showInactiveProjects,
-            String filter) {
-        return new SearchResultGeneration(filter, showClosedProcesses, showInactiveProjects)
-                .getQueryForFilter(ObjectType.PROCESS);
+    public BoolQueryBuilder getQueryForFilter(boolean showClosedProcesses, boolean showInactiveProjects, String filter) {
+        return new SearchResultGeneration(filter, showClosedProcesses,
+                showInactiveProjects).getQueryForFilter(ObjectType.PROCESS);
     }
+
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
@@ -392,7 +371,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @SuppressWarnings("unchecked")
     private BoolQueryBuilder createUserProcessesQuery(Map filters, boolean showClosedProcesses,
-            boolean showInactiveProjects) throws DataException {
+                                                      boolean showInactiveProjects)
+            throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
@@ -459,8 +439,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks from
-     * index, if other call saveOrRemoveTaskInIndex() method.
+     * Check IndexAction flag in for process object. If DELETE remove all tasks
+     * from index, if other call saveOrRemoveTaskInIndex() method.
      *
      * @param process
      *            object
@@ -477,8 +457,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Compare index and database, according to comparisons results save or remove
-     * tasks.
+     * Compare index and database, according to comparisons results save or
+     * remove tasks.
      *
      * @param process
      *            object
@@ -610,9 +590,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         NestedQueryBuilder nestedQueryForMetadataGroupContent = nestedQuery(METADATA_GROUP_SEARCH_KEY,
             matchQuery(METADATA_GROUP_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
         MultiMatchQueryBuilder multiMatchQueryForProcessFields = multiMatchQuery(searchQuery,
-            ProcessTypeField.TITLE.getKey(), ProcessTypeField.PROJECT_TITLE.getKey(),
-            ProcessTypeField.COMMENTS.getKey(), ProcessTypeField.WIKI_FIELD.getKey(),
-            ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
+                ProcessTypeField.TITLE.getKey(),
+                ProcessTypeField.PROJECT_TITLE.getKey(),
+                ProcessTypeField.COMMENTS.getKey(),
+                ProcessTypeField.WIKI_FIELD.getKey(),
+                ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
 
         if (searchQuery.matches("^\\d*$")) {
             multiMatchQueryForProcessFields.fields().put(ProcessTypeField.ID.getKey(), 1.0f);
@@ -629,7 +611,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             QueryBuilder wildcardQueryForProjectTitle = createSimpleWildcardQuery(
                 ProcessTypeField.PROJECT_TITLE.getKey(), searchQuery);
             QueryBuilder wildcardQueryForComments = createSimpleWildcardQuery(
-                ProcessTypeField.COMMENTS_MESSAGE.getKey(), searchQuery);
+                    ProcessTypeField.COMMENTS_MESSAGE.getKey(), searchQuery);
             boolQuery.should(wildcardQueryForProcessTitle);
             boolQuery.should(wildcardQueryForProjectTitle);
             boolQuery.should(wildcardQueryForComments);
@@ -676,10 +658,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Find processes by template id.
      *
      * @param templateId
-     *            id of template for search
+     *          id of template for search
      * @return list of JSON objects with processes for specific template id
-     * @throws DataException
-     *             if documents cannot be retrieved
+     * @throws DataException if documents cannot be retrieved
      */
     public List<Map<String, Object>> findByTemplate(int templateId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.TEMPLATE_ID.getKey(), templateId, true);
@@ -710,12 +691,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Searches for linkable processes based on user input. A process can be linked
-     * if it has the same rule set, belongs to the same client, and the topmost
-     * element of the logical outline below the selected parent element is an
-     * allowed child. For the latter, the data file must be read at the moment. This
-     * will be aborted after a timeout so that the user gets an answer (which may be
-     * incomplete) in finite time.
+     * Searches for linkable processes based on user input. A process can be
+     * linked if it has the same rule set, belongs to the same client, and the
+     * topmost element of the logical outline below the selected parent element
+     * is an allowed child. For the latter, the data file must be read at the
+     * moment. This will be aborted after a timeout so that the user gets an
+     * answer (which may be incomplete) in finite time.
      *
      * @param searchInput
      *            user input
@@ -746,12 +727,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Searches for linkable processes based on user input. A process can be linked
-     * if it has the same rule set, belongs to the same client, and the topmost
-     * element of the logical outline below the selected parent element is an
-     * allowed child. For the latter, the data file must be read at the moment. This
-     * will be aborted after a timeout so that the user gets an answer (which may be
-     * incomplete) in finite time.
+     * Searches for linkable processes based on user input. A process can be
+     * linked if it has the same rule set, belongs to the same client, and the
+     * topmost element of the logical outline below the selected parent element
+     * is an allowed child. For the latter, the data file must be read at the
+     * moment. This will be aborted after a timeout so that the user gets an
+     * answer (which may be incomplete) in finite time.
      *
      * @param searchInput
      *            user input
@@ -792,11 +773,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Creates the query fpr properties with title and value.
-     * 
-     * @param title
-     *            the property title
-     * @param value
-     *            the property value
+     * @param title the property title
+     * @param value the property value
      * @return a query for searching for properties.
      */
     public QueryBuilder createPropertyQuery(String title, String value) {
@@ -1082,8 +1060,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         try {
             return new URI(workPathUri.getScheme(), workPathUri.getUserInfo(), workPathUri.getHost(),
                     workPathUri.getPort(),
-                    workDirectoryPath.endsWith("/") ? workDirectoryPath.concat(METADATA_FILE_NAME)
-                            : workDirectoryPath + '/' + METADATA_FILE_NAME,
+                workDirectoryPath.endsWith("/") ? workDirectoryPath.concat(METADATA_FILE_NAME)
+                        : workDirectoryPath + '/' + METADATA_FILE_NAME,
                     workPathUri.getQuery(), null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
@@ -1091,8 +1069,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Get process data directory. Don't save it to the database, if it is for
-     * indexingAll.
+     * Get process data directory.
+     * Don't save it to the database, if it is for indexingAll.
      *
      * @param process
      *            object
@@ -1116,8 +1094,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Get process data directory. Don't save it to the database, if it is for
-     * indexingAll.
+     * Get process data directory.
+     * Don't save it to the database, if it is for indexingAll.
      *
      * @param processDTO
      *            processDTO to get the dataDirectory from
@@ -1170,8 +1148,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as
-     * readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -1225,36 +1203,36 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     private List<TaskDTO> getOpenTasks(ProcessDTO process) {
-        return process.getTasks().stream().filter(t -> TaskStatus.OPEN.equals(t.getProcessingStatus()))
-                .collect(Collectors.toList());
+        return process.getTasks().stream()
+                .filter(t -> TaskStatus.OPEN.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
     private List<TaskDTO> getTasksInWork(ProcessDTO process) {
-        return process.getTasks().stream().filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus()))
-                .collect(Collectors.toList());
+        return process.getTasks().stream()
+                .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
     private List<TaskDTO> getCompletedTasks(ProcessDTO process) {
-        return process.getTasks().stream().filter(t -> TaskStatus.DONE.equals(t.getProcessingStatus()))
-                .collect(Collectors.toList());
+        return process.getTasks().stream()
+                .filter(t -> TaskStatus.DONE.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
     /**
-     * Create and return String used as progress tooltip for a given process.
-     * Tooltip contains OPEN tasks and tasks INWORK.
+     * Create and return String used as progress tooltip for a given process. Tooltip contains OPEN tasks and tasks
+     * INWORK.
      *
      * @param processDTO
-     *            process for which the tooltop is created
+     *          process for which the tooltop is created
      * @return String containing the progress tooltip for the given process
      */
     public String createProgressTooltip(ProcessDTO processDTO) {
-        String openTasks = getOpenTasks(processDTO).stream().map(t -> " - " + Helper.getTranslation(t.getTitle()))
-                .collect(Collectors.joining(NEW_LINE_ENTITY));
+        String openTasks = getOpenTasks(processDTO).stream()
+                .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!openTasks.isEmpty()) {
             openTasks = Helper.getTranslation(TaskStatus.OPEN.getTitle()) + ":" + NEW_LINE_ENTITY + openTasks;
         }
-        String tasksInWork = getTasksInWork(processDTO).stream().map(t -> " - " + Helper.getTranslation(t.getTitle()))
-                .collect(Collectors.joining(NEW_LINE_ENTITY));
+        String tasksInWork = getTasksInWork(processDTO).stream()
+                .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!tasksInWork.isEmpty()) {
             tasksInWork = Helper.getTranslation(TaskStatus.INWORK.getTitle()) + ":" + NEW_LINE_ENTITY + tasksInWork;
         }
@@ -1586,7 +1564,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             DocketInterface module = initialiseDocketModule();
-            File file = module.generateMultipleDockets(getDocketData(processes), xsltFile);
+            File file = module.generateMultipleDockets(getDocketData(processes),
+                xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
             Files.deleteIfExists(file.toPath());
@@ -1752,11 +1731,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * type of the workpiece of the process.
      *
      * @param processId
-     *            id of the process whose root type is to be determined
+     *          id of the process whose root type is to be determined
      * @return the type of root element of the logical structure of the workpiece
      * @throws DataException
-     *             if the type cannot be found in the index (e.g. because the
-     *             process cannot be found in the index)
+     *          if the type cannot be found in the index (e.g. because the process
+     *          cannot be found in the index)
      */
     public String getBaseType(int processId) throws DataException {
         ProcessDTO processDTO = findById(processId, true);
@@ -1804,9 +1783,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Sanitizes a possibly dirty reference URI and extracts from it the operation
-     * ID of the referenced process. In case of error, a speaking exception is
-     * thrown.
+     * Sanitizes a possibly dirty reference URI and extracts from it the
+     * operation ID of the referenced process. In case of error, a speaking
+     * exception is thrown.
      *
      * @param uri
      *            URI of the reference to the process number
@@ -1814,8 +1793,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @throws SecurityException
      *             if the URI names a forbidden protocol or column
      * @throws IllegalArgumentException
-     *             if the URI tries to reference a foreign database or if the query
-     *             has a wrong format
+     *             if the URI tries to reference a foreign database or if the
+     *             query has a wrong format
      * @throws ClassCastException
      *             if the URI references a wrong class / table
      */
@@ -1995,11 +1974,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             return false;
         }
 
-        // get the topstruct element of the digital document depending on anchor
-        // property
+        //get the topstruct element of the digital document depending on anchor property
         LegacyDocStructHelperInterface topElement = dd.getLogicalDocStruct();
 
-        // if the top element does not have any image related, set them all
+        //if the top element does not have any image related, set them all
         if (topElement.getAllToReferences("logical_physical").isEmpty()) {
             if (Objects.nonNull(dd.getPhysicalDocStruct()) && dd.getPhysicalDocStruct().getAllChildren().isEmpty()) {
                 Helper.setMessage(process.getTitle()
@@ -2240,17 +2218,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Updates the linked child processes to the level specified in the root
-     * element. Processes linked in the logical structure are linked in the
-     * database. For processes that are not linked in the logical structure, the
-     * link in the database is removed.
+     * element. Processes linked in the logical structure are linked in the database.
+     * For processes that are not linked in the logical structure, the link in the
+     * database is removed.
      *
      * @param process
      *            parent process
      * @param logicalStructure
      *            the current state of the logical structure
      * @throws DAOException
-     *             if a process is referenced with a URI whose ID does not appear in
-     *             the database
+     *             if a process is referenced with a URI whose ID does not
+     *             appear in the database
      * @throws DataException
      *             if the process cannot be saved
      */
@@ -2274,7 +2252,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
     }
 
-    private void addNewLinks(Process process, LogicalDivision logicalStructure) throws DAOException, DataException {
+    private void addNewLinks(Process process, LogicalDivision logicalStructure)
+            throws DAOException, DataException {
         HashSet<Process> childrenToAdd = getProcessesLinkedInLogicalDivision(logicalStructure);
         childrenToAdd.removeAll(process.getChildren());
         for (Process childToAdd : childrenToAdd) {
@@ -2287,7 +2266,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
     }
 
-    private HashSet<Process> getProcessesLinkedInLogicalDivision(LogicalDivision logicalDivision) throws DAOException {
+    private HashSet<Process> getProcessesLinkedInLogicalDivision(
+            LogicalDivision logicalDivision) throws DAOException {
         HashSet<Process> processesLinkedInLogicalDivision = new HashSet<>();
         if (Objects.nonNull(logicalDivision.getLink())) {
             int processId = processIdFromUri(logicalDivision.getLink().getUri());
@@ -2301,25 +2281,25 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Generate and set the title to process and gets the atstsl.
-     * 
+     *
      * @return String atstsl
      */
     public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
-            Process process) throws ProcessGenerationException {
+                                                          Process process) throws ProcessGenerationException {
         return generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
-            TitleGenerator.getCurrentValue(TitleGenerator.TITLE_DOC_MAIN, processDetails));
+                TitleGenerator.getCurrentValue(TitleGenerator.TITLE_DOC_MAIN, processDetails));
     }
 
     /**
      * Generate and set the title to process using current title parameter and gets
      * the atstsl.
-     * 
+     *
      * @param title
      *            of the work to generate atstsl
      * @return String atstsl
      */
     public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
-            Process process, String title) throws ProcessGenerationException {
+                                                          Process process, String title) throws ProcessGenerationException {
         TitleGenerator titleGenerator = new TitleGenerator(null, processDetails);
         String newTitle = titleGenerator.generateTitle(titleDefinition, null, (Objects.nonNull(title) ? title : ""));
         process.setTitle(newTitle);
@@ -2330,20 +2310,19 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Calculate tiff header.
      */
-    public static String generateTiffHeader(List<ProcessDetail> processDetails, String atstsl, String tiffDefinition,
-            String docType) throws ProcessGenerationException {
+    public static String generateTiffHeader(List<ProcessDetail> processDetails, String atstsl,
+                                            String tiffDefinition, String docType) throws ProcessGenerationException {
         TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(atstsl, processDetails);
         return tiffHeaderGenerator.generateTiffHeader(tiffDefinition, docType);
     }
 
     /**
-     * Set given Process "parentProcess" as parent of given Process "childProcess"
-     * and Process "childProcess" as child of given Process "parentProcess".
-     * 
+     * Set given Process "parentProcess" as parent of given Process "childProcess" and Process "childProcess" as child
+     * of given Process "parentProcess".
      * @param parentProcess
-     *            parentProcess of given childProcess
+     *          parentProcess of given childProcess
      * @param childProcess
-     *            childProcess of given parentProcess
+     *          childProcess of given parentProcess
      */
     public static void setParentRelations(Process parentProcess, Process childProcess) {
         childProcess.setParent(parentProcess);
@@ -2352,9 +2331,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Get all parent processes of given Process recursively.
-     * 
-     * @param process
-     *            the Process to get the parent process for
+     * @param process the Process to get the parent process for
      * @return List of parent Processes
      */
     public static List<Process> getAllParentProcesses(Process process) {
@@ -2368,12 +2345,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Get the number of direct children of the given process.
-     * 
-     * @param processId
-     *            id of the process
+     * @param processId id of the process
      * @return number of direct children as int
-     * @throws DAOException
-     *             when query to database fails
+     * @throws DAOException when query to database fails
      */
     public int getNumberOfChildren(int processId) throws DAOException {
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
@@ -2387,8 +2361,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Delete given process.
      *
-     * @param processToDelete
-     *            process to delete
+     * @param processToDelete process to delete
      */
     public static void deleteProcess(Process processToDelete) throws DataException, IOException {
         deleteMetadataDirectory(processToDelete);
@@ -2427,15 +2400,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("errorDirectoryDeleting", new Object[] {Helper.getTranslation("metadata") }, logger,
-                e);
+                    e);
         }
     }
 
     /**
      * Delete symlinks from user home directories.
      *
-     * @param task
-     *            Task for which symlinks are removed
+     * @param task Task for which symlinks are removed
      */
     public static void deleteSymlinksFromUserHomes(Task task) {
         WebDav webDav = new WebDav();
@@ -2472,10 +2444,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Link a list of given processes to user home directory.
      *
-     * @param processes
-     *            List of processes
-     * @throws DAOException
-     *             Thrown on database like error
+     * @param processes List of processes
+     * @throws DAOException Thrown on database like error
      */
     public static void downloadToHome(List<Process> processes) throws DAOException {
         WebDav webDav = new WebDav();
@@ -2498,9 +2468,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         Process process = ServiceManager.getProcessService().getById(processId);
         if (ServiceManager.getProcessService().isImageFolderInUse(process)) {
             Helper.setMessage(
-                Helper.getTranslation("directory ") + " " + process.getTitle() + " " + Helper.getTranslation("isInUse"),
-                ServiceManager.getUserService()
-                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(process)));
+                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
+                            + Helper.getTranslation("isInUse"),
+                    ServiceManager.getUserService()
+                            .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(process)));
             webDav.downloadToHome(process, true);
         } else {
             webDav.downloadToHome(process, false);
@@ -2508,17 +2479,16 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Check and return whether the process with the ID 'processId' has any
-     * correction comments or not.
+     * Check and return whether the process with the ID 'processId' has any correction comments or not.
      *
      * @param processID
-     *            ID of process to check
+     *          ID of process to check
      * @return CorrectionComment status of process
      */
     public static CorrectionComments hasCorrectionComment(int processID) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processID);
-        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process).stream()
-                .filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
         if (correctionComments.size() < 1) {
             return NO_CORRECTION_COMMENTS;
         } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
@@ -2529,21 +2499,19 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Create and return String used as tooltip for a given process. Tooltip
-     * contains authors, timestamps and messages of correction comments associated
-     * with tasks of the given process.
+     * Create and return String used as tooltip for a given process. Tooltip contains authors, timestamps and messages
+     * of correction comments associated with tasks of the given process.
      *
      * @param processDTO
-     *            process for which the tooltip is created
+     *          process for which the tooltip is created
      * @return tooltip containing correction messages
      *
-     * @throws DAOException
-     *             thrown when process cannot be loaded from database
+     * @throws DAOException thrown when process cannot be loaded from database
      */
     public String createCorrectionMessagesTooltip(ProcessDTO processDTO) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process).stream()
-                .filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
         return createCommentTooltip(correctionComments);
     }
 
@@ -2569,12 +2537,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Return UserName of user that handled the last task of the given process
-     * (either the newest task INWORK or the newest DONE task, if no task is
-     * INWORK). Return an empty String if no task is INWORK or DONE.
+     * Return UserName of user that handled the last task of the given process (either the newest task INWORK or the
+     * newest DONE task, if no task is INWORK). Return an empty String if no task is INWORK or DONE.
      *
-     * @param processDTO
-     *            Process
+     * @param processDTO Process
      * @return name of processing user
      */
     public String getUserHandlingLastTask(ProcessDTO processDTO) {
@@ -2589,8 +2555,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Return processing begin of last processed task of given process.
      *
-     * @param processDTO
-     *            Process
+     * @param processDTO Process
      * @return processing begin of last processed task
      */
     public String getLastProcessingStart(ProcessDTO processDTO) {
@@ -2605,8 +2570,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Return processing end of last processed task of given process.
      *
-     * @param processDTO
-     *            Process
+     * @param processDTO Process
      * @return processing end of last processed task
      */
     public String getLastProcessingEnd(ProcessDTO processDTO) {
@@ -2619,19 +2583,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Check and return if child process for given ProcessDTO processDTO can be
-     * created via calendar or not.
+     * Check and return if child process for given ProcessDTO processDTO can be created via calendar or not.
      *
-     * @param processDTO
-     *            ProcessDTO for which child processes may be created via calendar
-     * @return whether child processes for the given ProcessDTO can be created via
-     *         the calendar or not
-     * @throws DAOException
-     *             if process could not be loaded from database
-     * @throws IOException
-     *             if ruleset file could not be read
+     * @param processDTO ProcessDTO for which child processes may be created via calendar
+     * @return whether child processes for the given ProcessDTO can be created via the calendar or not
+     * @throws DAOException if process could not be loaded from database
+     * @throws IOException if ruleset file could not be read
      */
-    public static boolean canCreateProcessWithCalendar(ProcessDTO processDTO) throws DAOException, IOException {
+    public static boolean canCreateProcessWithCalendar(ProcessDTO processDTO)
+            throws DAOException, IOException {
         Collection<String> functionalDivisions;
         if (Objects.isNull(processDTO.getRuleset())) {
             return false;
@@ -2649,19 +2609,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Check and return if child process for given ProcessDTO processDTO can be
-     * created or not.
+     * Check and return if child process for given ProcessDTO processDTO can be created or not.
      *
-     * @param processDTO
-     *            ProcessDTO for which child processes may be created
-     * @return whether child processes for the given ProcessDTO can be created via
-     *         the calendar or not
-     * @throws DAOException
-     *             if process could not be loaded from database
-     * @throws IOException
-     *             if ruleset file could not be read
+     * @param processDTO ProcessDTO for which child processes may be created
+     * @return whether child processes for the given ProcessDTO can be created via the calendar or not
+     * @throws DAOException if process could not be loaded from database
+     * @throws IOException if ruleset file could not be read
      */
-    public static boolean canCreateChildProcess(ProcessDTO processDTO) throws DAOException, IOException {
+    public static boolean canCreateChildProcess(ProcessDTO processDTO) throws DAOException,
+            IOException {
         Collection<String> functionalDivisions;
         if (Objects.isNull(processDTO.getRuleset())) {
             return false;
@@ -2691,8 +2647,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Create and return PieChartModel for given process values.
      *
-     * @param processValues
-     *            Map containging process values
+     * @param processValues Map containging process values
      * @return PieChartModel
      */
     public PieChartModel getPieChardModel(Map<String, Integer> processValues) {
@@ -2719,15 +2674,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Create and return HorizontalBarChartModel for given processes.
      *
-     * @param processes
-     *            List of processes
+     * @param processes List of processes
      * @return HorizontalBarChartModel
      */
     public HorizontalBarChartModel getBarChartModel(List<Process> processes) {
-        LinkedHashMap<String, LinkedHashMap<String, Integer>> durationOfTasks = new LinkedHashMap<>();
+        LinkedHashMap<String, LinkedHashMap<String,Integer>> durationOfTasks = new LinkedHashMap<>();
         for (Process selectedProcess : processes) {
-            LinkedHashMap<String, Integer> taskValues = new LinkedHashMap<>();
-            for (Task task : selectedProcess.getTasks()) {
+            LinkedHashMap<String,Integer> taskValues = new LinkedHashMap<>();
+            for (Task task  : selectedProcess.getTasks()) {
                 long durationInDays = ServiceManager.getTaskService().getDurationInDays(task);
                 taskValues.put(task.getTitle(), Math.toIntExact(durationInDays));
             }
@@ -2784,8 +2738,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Aggregate and return statistical data about task status of given processes.
      *
-     * @param processes
-     *            List of processes for which statistical data is aggregated.
+     * @param processes List of processes for which statistical data is aggregated.
      * @return statistical data about tasks status of given processes
      */
     public Map<String, Integer> getProcessTaskStates(List<Process> processes) {
@@ -2806,41 +2759,35 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Get all tasks of given process which should be visible to the user.
-     * 
-     * @param processDTO
-     *            process as DTO object
-     * @param user
-     *            user to filter the tasks for
+     * @param processDTO process as DTO object
+     * @param user user to filter the tasks for
      * @return List of filtered tasks as DTO objects
      */
     public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO, User user) {
-        Set<Integer> userRoles = user.getRoles().stream().map(Role::getId).collect(Collectors.toSet());
+        Set<Integer> userRoles = user.getRoles().stream()
+                .map(Role::getId)
+                .collect(Collectors.toSet());
         return processDTO.getTasks().stream()
-                .filter(task -> TaskStatus.OPEN.equals(task.getProcessingStatus())
-                        || TaskStatus.INWORK.equals(task.getProcessingStatus()))
-                .filter(task -> !task.getRoleIds().stream().filter(userRoles::contains).collect(Collectors.toSet())
-                        .isEmpty())
+                .filter(task -> TaskStatus.OPEN.equals(task.getProcessingStatus()) || TaskStatus.INWORK.equals(task.getProcessingStatus()))
+                .filter(task -> !task.getRoleIds().stream()
+                        .filter(userRoles::contains)
+                        .collect(Collectors.toSet()).isEmpty())
                 .collect(Collectors.toList());
     }
 
     /**
-     * Checks and returns whether the process with the given ID 'processId' can be
-     * exported or not.
-     * 
-     * @param processId
-     *            process ID
+     * Checks and returns whether the process with the given ID 'processId' can be exported or not.
+     * @param processId process ID
      * @return whether process can be exported or not
      */
     public static boolean canBeExported(int processId) throws IOException, DAOException {
         Process process = ServiceManager.getProcessService().getById(processId);
-        // superordinate processes normally do not contain images but should always be
-        // exportable
+        // superordinate processes normally do not contain images but should always be exportable
         if (!process.getChildren().isEmpty()) {
             return true;
         }
         Folder generatorSource = process.getProject().getGeneratorSource();
-        // processes without a generator source should be exportable because they may
-        // contain multimedia files
+        // processes without a generator source should be exportable because they may contain multimedia files
         // that are not used as generator sources
         if (Objects.isNull(generatorSource)) {
             return true;
