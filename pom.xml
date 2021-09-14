@@ -70,7 +70,8 @@
         <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <spring.security.version>4.2.13.RELEASE</spring.security.version>
-        <flyway-maven-plugin.version>5.1.4</flyway-maven-plugin.version>
+        <flyway-maven-plugin.version>7.15.0</flyway-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>2.4.4</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
@@ -196,7 +197,7 @@
                     <plugin>
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs-maven-plugin</artifactId>
-                        <version>3.1.12.2</version>
+                        <version>${spotbugs-maven-plugin.version}</version>
                         <configuration>
                             <xmlOutput>true</xmlOutput>
                             <xmlOutputDirectory>target/spotbugsreports</xmlOutputDirectory>
@@ -225,11 +226,13 @@
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>${flyway-maven-plugin.version}</version>
                         <configuration>
-                            <!-- local configuration file -->
-                            <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>
-                                ${basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
-                            </configFile>
+                            <configFiles>
+                                <!-- local configuration file -->
+                                <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
+                                <configFile>
+                                    ${basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+                                </configFile>
+                            </configFiles>
                         </configuration>
                         <dependencies>
                             <dependency>
