@@ -69,7 +69,7 @@ public class KitodoServiceLoader<T> {
      * Already loaded jars are remembered by their file path, and thus, not
      * loaded multiple times during runtime.
      */
-    private static final Set<String> loadedJars = new HashSet<String>();
+    private static final Set<String> loadedJars = new HashSet<>();
 
     private static final String POM_PROPERTIES_FILE = "pom.properties";
     private static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -94,10 +94,11 @@ public class KitodoServiceLoader<T> {
     public KitodoServiceLoader(Class<T> clazz) {
         String modulesDirectory = KitodoConfig.getKitodoModulesDirectory();
         this.clazz = clazz;
-        if (new File(modulesDirectory).exists()) {
+        File kitodoModules = new File(modulesDirectory).getAbsoluteFile();
+        if (kitodoModules.exists()) {
             this.modulePath = modulesDirectory;
         } else {
-            logger.error("Specified module folder does not exist: {}", modulesDirectory);
+            logger.error("Specified module folder does not exist: {}", kitodoModules);
         }
     }
 
@@ -143,19 +144,14 @@ public class KitodoServiceLoader<T> {
     private void loadBeans() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
-
             for (Path f : stream) {
                 try (JarFile jarFile = new JarFile(f.toString())) {
-
                     if (hasFrontendFiles(jarFile)) {
-
                         Enumeration<JarEntry> entries = jarFile.entries();
-
                         URL[] urls = {new URL("jar:file:" + f.toString() + "!/") };
                         try (URLClassLoader cl = URLClassLoader.newInstance(urls)) {
                             while (entries.hasMoreElements()) {
                                 JarEntry je = entries.nextElement();
-
                                 /*
                                  * IMPORTANT: Naming convention: the name of the
                                  * java class has to be in upper camel case or
@@ -177,12 +173,10 @@ public class KitodoServiceLoader<T> {
                                 String className = je.getName().substring(0, je.getName().length() - 6);
                                 className = className.replace('/', '.');
                                 Class<?> aClass = cl.loadClass(className);
-
                                 String beanName = className.substring(className.lastIndexOf('.') + 1).trim();
 
                                 FacesContext facesContext = FacesContext.getCurrentInstance();
                                 HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
-
                                 Object newInstance = aClass.getDeclaredConstructor().newInstance();
                                 session.getServletContext().setAttribute(beanName, newInstance);
                             }
@@ -298,7 +292,7 @@ public class KitodoServiceLoader<T> {
         try (JarFile jar = new JarFile(jarPath)) {
             Enumeration<JarEntry> jarEntries = jar.entries();
             while (jarEntries.hasMoreElements()) {
-                JarEntry currentJarEntry = (JarEntry) jarEntries.nextElement();
+                JarEntry currentJarEntry = jarEntries.nextElement();
 
                 if (currentJarEntry.getName().contains(RESOURCES_FOLDER)
                         || currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
@@ -337,7 +331,7 @@ public class KitodoServiceLoader<T> {
     private boolean hasFrontendFiles(JarFile jarFile) {
         Enumeration<JarEntry> enums = jarFile.entries();
         while (enums.hasMoreElements()) {
-            JarEntry jarEntry = (JarEntry) enums.nextElement();
+            JarEntry jarEntry = enums.nextElement();
             if (jarEntry.getName().contains(RESOURCES_FOLDER) && jarEntry.isDirectory()) {
                 return true;
             }
@@ -393,7 +387,7 @@ public class KitodoServiceLoader<T> {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
 
             // collect urls of new jars present in the module directory
-            Set<URL> jarsToBeAdded = new HashSet<URL>();
+            Set<URL> jarsToBeAdded = new HashSet<>();
             for (Path f : stream) {
 
                 File loc = new File(f.toString());
