@@ -22,17 +22,13 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -70,12 +66,19 @@ public class SearchTab {
      *
      * @return list of SelectItem objects
      */
-    public List<Process> getProcessesForChoiceList() throws DataException, DAOException {
+    public List<Process> getProcessesForChoiceList() {
         List<Process> processes = new ArrayList<>();
-        List<ProcessDTO> byInChoiceListShown = ServiceManager.getProcessService().findByInChoiceListShown(true, true);
-        for (ProcessDTO processDTO : byInChoiceListShown) {
-            processes.add(ServiceManager.getProcessService().getById(processDTO.getId()));
+        List<ProcessDTO> byInChoiceListShown;
+        try {
+            byInChoiceListShown = ServiceManager.getProcessService().findByInChoiceListShown(true, true);
+            for (ProcessDTO processDTO : byInChoiceListShown) {
+                processes.add(ServiceManager.getProcessService().getById(processDTO.getId()));
+            }
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular()},
+                    logger, e);
         }
+
         return processes;
     }
 
