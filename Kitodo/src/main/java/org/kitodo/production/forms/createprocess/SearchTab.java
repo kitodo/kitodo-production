@@ -11,12 +11,13 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -24,9 +25,10 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -66,15 +68,17 @@ public class SearchTab {
      */
     public List<Process> getProcessesForChoiceList() {
         List<Process> processes = new ArrayList<>();
-        User currentUser = ServiceManager.getUserService().getCurrentUser();
-        for (Project project : currentUser.getProjects()) {
-            try {
-                processes.addAll(ServiceManager.getProjectService().getById(project.getId()).getProcesses());
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e);
+        List<ProcessDTO> byInChoiceListShown;
+        try {
+            byInChoiceListShown = ServiceManager.getProcessService().findByInChoiceListShown(true, true);
+            for (ProcessDTO processDTO : byInChoiceListShown) {
+                processes.add(ServiceManager.getProcessService().getById(processDTO.getId()));
             }
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular()},
+                    logger, e);
         }
-        processes = processes.stream().filter(Process::getInChoiceListShown).collect(Collectors.toList());
+
         return processes;
     }
 
