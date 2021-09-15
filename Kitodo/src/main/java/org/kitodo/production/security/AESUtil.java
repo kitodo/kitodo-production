@@ -4,43 +4,54 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AESUtil {
 
+    private static final int SALT_LENGTH = 16;
+
     private static final int IV_LENGTH = 16;
 
-    public static SecretKey getSecretKey( byte[] secret ) {
+    public static SecretKey getSecretKey( String secret ) throws InvalidKeySpecException, NoSuchAlgorithmException {
         if(Objects.isNull(secret)) {
-            secret = "".getBytes();
+            secret = "";
         }
-        return new SecretKeySpec(secret,"AES");
-    }
 
-    private static IvParameterSpec generateIv() {
-        byte[] iv = new byte[IV_LENGTH];
-        new SecureRandom().nextBytes(iv);
-        return new IvParameterSpec(iv);
+        // generate salt
+        byte[] salt = new byte[SALT_LENGTH];
+        new SecureRandom().nextBytes(salt);
+
+        KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, 65536, 256); // AES-256
+        SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] key = f.generateSecret(spec).getEncoded();
+        return new SecretKeySpec(key,"AES");
     }
 
     public static String encrypt(String algorithm, String input, SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, InvalidKeyException,
             BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance(algorithm);
-        IvParameterSpec iv = generateIv();
-        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+
+        // generate iv
+        byte[] iv = new byte[IV_LENGTH];
+        new SecureRandom().nextBytes(iv);
+
+        cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
         byte[] cipherText = cipher.doFinal(input.getBytes());
 
         // attach iv to the end
         byte[] cipherCombined = new byte[cipherText.length + IV_LENGTH];
         System.arraycopy(cipherText,0, cipherCombined, 0, cipherText.length);
-        System.arraycopy(iv.getIV(),0, cipherCombined,  cipherText.length, iv.getIV().length);
+        System.arraycopy(iv,0, cipherCombined,  cipherText.length, iv.length);
 
         return Base64.getEncoder()
                 .encodeToString(cipherCombined);
