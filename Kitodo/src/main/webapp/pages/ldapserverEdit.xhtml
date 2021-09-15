@@ -112,7 +112,7 @@
 
                         <div>
                             <p:outputLabel for="keyStorePassword" value="keyStorePassword"/>
-                            <p:inputText id="keyStorePassword"
+                            <p:password id="keyStorePassword"
                                                      styleClass="input"
                                                      disabled="#{isViewMode}"
                                                      value="#{LdapServerForm.ldapServer.keystorePassword}"
@@ -131,7 +131,7 @@
                         </div>
                         <div>
                             <p:outputLabel for="managerPassword" value="Manager password"/>
-                            <p:inputText id="managerPassword"
+                            <p:password id="managerPassword"
                                          class="input"
                                          value="#{LdapServerForm.ldapServer.managerPassword}"
                                          disabled="#{isViewMode}"
