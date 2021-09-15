@@ -10,7 +10,6 @@
  */
 
 var availableUserRoles = [];
-var saveDiagramFunctionCall;
 var language = "de";
 
 $(window).on("load", function () {
@@ -25,9 +24,9 @@ $(window).on("load", function () {
 		if(!language) {
 			language = "de";
 		}
-		
+
 		var userRoles = $("#editForm\\:workflowTabView\\:roleId_input").children();
-		
+
 		userRoles.each(function( index ) {
 			var role = { name: $(this).text(), value: $(this).val() };
 			availableUserRoles.push(role);
@@ -36,25 +35,25 @@ $(window).on("load", function () {
 });
 
 function getLocalizedStringForKey(key) {
-	
+
 	var availableLanguages = ["de", "en"];
-	
+
 	var localizedString;
-		
-	switch (availableLanguages.indexOf(language)) {	
+
+	switch (availableLanguages.indexOf(language)) {
 		default: {
 				localizedString = de_DE[key];
-			break; 
+			break;
 		}
 		case 1: {
 			localizedString = en_EN[key];
 			break;
 		}
 	}
-	
+
 	if(!localizedString) {
 		localizedString = key;
 	}
-	
+
 	return localizedString;
 }
