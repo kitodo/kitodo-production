@@ -134,9 +134,9 @@
                             <p:outputLabel for="managerPassword" value="Manager password"/>
                             <p:password id="managerPassword"
                                         class="input"
-                                        value="#{LdapServerForm.ldapServer.managerPassword}"
-                                        redisplay="true"
+                                        value="#{LdapServerForm.decryptedManagerPassword}"
                                         disabled="#{isViewMode}"
+                                        redisplay="true"
                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>

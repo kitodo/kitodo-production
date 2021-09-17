@@ -15,59 +15,84 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.lang.StringUtils;
+
 public class AESUtil {
+
+    /*
+    * Identifier for is encryption check and secret key generation. DO NOT CHANGE! If changed are made, encrypted data cannot be restored
+    */
+    private static final String SALT_PREFIX = "KITODO";
 
     private static final int SALT_LENGTH = 16;
 
     private static final int IV_LENGTH = 16;
 
-    public static SecretKey getSecretKey( String secret ) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        if(Objects.isNull(secret)) {
-            secret = "";
-        }
+    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
 
-        // generate salt
-        byte[] salt = new byte[SALT_LENGTH];
-        new SecureRandom().nextBytes(salt);
+    private static SecretKey getSecretKey(String secret, byte[] salt)
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
+        if (StringUtils.isBlank(secret) || Objects.isNull(salt)) {
+            return null;
+        }
 
         KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, 65536, 256); // AES-256
         SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] key = f.generateSecret(spec).getEncoded();
-        return new SecretKeySpec(key,"AES");
+        return new SecretKeySpec(key, "AES");
     }
 
-    public static String encrypt(String algorithm, String input, SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance(algorithm);
+    public static String encrypt(String input, String secret)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+            InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+
+        // generate salt
+        byte[] salt = new byte[SALT_LENGTH];
+        new SecureRandom().nextBytes(salt);
+        System.arraycopy(SALT_PREFIX.getBytes(), 0, salt, 0, SALT_PREFIX.getBytes().length);
 
         // generate iv
         byte[] iv = new byte[IV_LENGTH];
         new SecureRandom().nextBytes(iv);
 
-        cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(secret, salt), new IvParameterSpec(iv));
         byte[] cipherText = cipher.doFinal(input.getBytes());
 
-        // attach iv to the end
-        byte[] cipherCombined = new byte[cipherText.length + IV_LENGTH];
-        System.arraycopy(cipherText,0, cipherCombined, 0, cipherText.length);
-        System.arraycopy(iv,0, cipherCombined,  cipherText.length, iv.length);
+        // prefix cipher text with salt and attach iv to the end
+        byte[] cipherCombined = new byte[SALT_LENGTH + cipherText.length + IV_LENGTH];
 
-        return Base64.getEncoder()
-                .encodeToString(cipherCombined);
+        System.arraycopy(salt, 0, cipherCombined, 0, SALT_LENGTH);
+        System.arraycopy(cipherText, 0, cipherCombined, SALT_LENGTH, cipherText.length);
+        System.arraycopy(iv, 0, cipherCombined, SALT_LENGTH + cipherText.length, iv.length);
+
+        return Base64.getEncoder().encodeToString(cipherCombined);
     }
 
-    public static String decrypt(String algorithm, String base64CipherCombined, SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException {
+    public static boolean isEnrypted(String value) {
+        try {
+            byte[] cipherCombined = Base64.getDecoder().decode(value);
+            byte[] saltPrefix = Arrays.copyOfRange(cipherCombined, 0, SALT_PREFIX.getBytes().length);
+            // check if cipher combined has salt prefix
+            return Objects.nonNull(cipherCombined) && Arrays.equals(saltPrefix, SALT_PREFIX.getBytes());
+        } catch (IllegalArgumentException e) {
+            // not valid base64 string so
+        }
+        return false;
+    }
+
+    public static String decrypt(String base64CipherCombined, String secret)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+            InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
         byte[] cipherCombined = Base64.getDecoder().decode(base64CipherCombined);
 
         // get cipherText and iv from cipherCombined
-        byte[] cipherText = Arrays.copyOfRange(cipherCombined, 0, cipherCombined.length - IV_LENGTH);
+        byte[] salt = Arrays.copyOfRange(cipherCombined, 0, SALT_LENGTH);
+        byte[] cipherText = Arrays.copyOfRange(cipherCombined, SALT_LENGTH, cipherCombined.length - IV_LENGTH);
         byte[] iv = Arrays.copyOfRange(cipherCombined, cipherCombined.length - IV_LENGTH, cipherCombined.length);
 
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(secret, salt), new IvParameterSpec(iv));
         byte[] plainText = cipher.doFinal(cipherText);
         return new String(plainText);
     }

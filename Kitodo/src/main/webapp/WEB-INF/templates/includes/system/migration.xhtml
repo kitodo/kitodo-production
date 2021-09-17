@@ -37,6 +37,13 @@
                          styleClass="primary"
                          action="#{MigrationForm.showPossibleBatches()}"
                          immediate="true"/>
+        <p:commandButton value="#{msgs.migrateLdapManagerPasswords}"
+                         id="migrateLdapManagerPasswords"
+                         update="systemTabView:migrationForm"
+                         style="margin: 10px;"
+                         styleClass="primary"
+                         action="#{MigrationForm.showLdapManagerPasswordsMigration()}"
+                         immediate="true"/>
         <h:panelGroup rendered="#{MigrationForm.projectListRendered}">
             <div style="margin: 0 10px;"><h:outputText value="#{msgs.projectsForMigration}:"/></div>
             <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}" style="margin: 10px;">
@@ -102,6 +109,16 @@
             <p:commandButton id="cancelNewspaperMigration" value="#{msgs.cancel}"
                 action="#{MigrationForm.hideNewspaperMigration}"
                 update="systemTabView:migrationForm"/>
+        </h:panelGroup>
+
+        <h:panelGroup id="ldapManagerPasswordsMigration" rendered="#{MigrationForm.ldapManagerPasswordsMigrationRendered}">
+            <div/>
+            <p:commandButton id="startLdapManagerPasswordMigration" value="#{msgs.ok}"
+                             action="#{MigrationForm.startLdapManagerPasswordsMigration}"
+                             update="systemTabView:migrationForm" style="margin: 0 10px;" />
+            <p:commandButton id="cancelLdapManagerPasswordMigration" value="#{msgs.cancel}"
+                             action="#{MigrationForm.hideLdapManagerPasswordsMigrationRendered}"
+                             update="systemTabView:migrationForm"/>
         </h:panelGroup>
 
     </h:form>

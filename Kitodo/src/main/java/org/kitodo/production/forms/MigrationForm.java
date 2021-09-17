@@ -13,28 +13,19 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Batch;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -46,6 +37,7 @@ import org.kitodo.production.helper.tasks.MigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
+import org.kitodo.production.security.AESUtil;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
 import org.kitodo.production.workflow.model.Converter;
@@ -69,12 +61,13 @@ public class MigrationForm extends BaseForm {
     private boolean metadataRendered;
     private boolean workflowRendered;
     private boolean newspaperMigrationRendered = false;
+    private boolean ldapManagerPasswordsMigrationRendered = false;
     private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
     private List<Batch> newspaperBatchesItems;
 
     /**
-     * Migrates the meta.xml for all processes in the database (if it's in the
-     * old format).
+     * Migrates the meta.xml for all processes in the database (if it's in the old
+     * format).
      *
      */
     public void migrateMetadata() {
@@ -105,8 +98,8 @@ public class MigrationForm extends BaseForm {
     }
 
     private void loadProjects() throws DAOException {
-        allProjects = ServiceManager.getProjectService().getAll()
-                .stream().sorted(Comparator.comparing(Project::getTitle)).collect(Collectors.toList());
+        allProjects = ServiceManager.getProjectService().getAll().stream()
+                .sorted(Comparator.comparing(Project::getTitle)).collect(Collectors.toList());
     }
 
     /**
@@ -165,8 +158,7 @@ public class MigrationForm extends BaseForm {
         for (String tasks : aggregatedProcesses.keySet()) {
             List<Task> aggregatedTasks = aggregatedProcesses.get(tasks).get(0).getTasks();
             aggregatedTasks.sort(Comparator.comparingInt(Task::getOrdering));
-            if (checkForTitle(tasks, processTasks) && migrationService
-                    .tasksAreEqual(aggregatedTasks, processTasks)) {
+            if (checkForTitle(tasks, processTasks) && migrationService.tasksAreEqual(aggregatedTasks, processTasks)) {
                 aggregatedProcesses.get(tasks).add(process);
                 return;
             }
@@ -246,8 +238,8 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Get aggregatedTasks. Sorts them in descending order by count,
-     * alphabetically for the same count.
+     * Get aggregatedTasks. Sorts them in descending order by count, alphabetically
+     * for the same count.
      *
      * @return sorted keyset of aggregatedProcesses
      */
@@ -333,8 +325,8 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * When the navigation to the migration form is coming from a workflow
-     * creation the URL contains a WorkflowId.
+     * When the navigation to the migration form is coming from a workflow creation
+     * the URL contains a WorkflowId.
      *
      * @param workflowId
      *            the id of the created Workflow
@@ -384,8 +376,8 @@ public class MigrationForm extends BaseForm {
      * Uses the existing template to add processes to.
      *
      * @param template
-     *            The template to which's matching template the processes should
-     *            be added
+     *            The template to which's matching template the processes should be
+     *            added
      * @param existingTemplate
      *            the template to add the processes to
      */
@@ -412,22 +404,22 @@ public class MigrationForm extends BaseForm {
                 Converter converter = new Converter(template.getWorkflow().getTitle());
                 converter.convertWorkflowToTemplate(template);
             } catch (IOException | DAOException | WorkflowException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()},
-                        logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
 
             List<Process> processesToAddToTemplate = templatesToCreate.get(template);
             try {
                 ServiceManager.getTemplateService().save(template);
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TEMPLATE.getTranslationSingular()}, logger,
-                        e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                    logger, e);
             }
             try {
                 migrationService.addProcessesToTemplate(template, processesToAddToTemplate);
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()}, logger,
-                        e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
             templatesToCreate.remove(template);
         }
@@ -435,6 +427,7 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Gets all workflows, possible to use in migration.
+     * 
      * @return A list of workflows.
      */
     public List<Workflow> getAllWorkflows() {
@@ -453,7 +446,8 @@ public class MigrationForm extends BaseForm {
     /**
      * Set workflowToUse.
      *
-     * @param workflowToUse as org.kitodo.data.database.beans.Workflow
+     * @param workflowToUse
+     *            as org.kitodo.data.database.beans.Workflow
      */
     public void setWorkflowToUse(Workflow workflowToUse) {
         this.workflowToUse = workflowToUse;
@@ -465,6 +459,13 @@ public class MigrationForm extends BaseForm {
     public void showPossibleBatches() {
         newspaperMigrationRendered = true;
         projectListRendered = false;
+    }
+
+    /**
+     * Action performed when the migrateLdapManagerPasswords button is clicked.
+     */
+    public void showLdapManagerPasswordsMigration() {
+        ldapManagerPasswordsMigrationRendered = true;
     }
 
     /**
@@ -534,4 +535,65 @@ public class MigrationForm extends BaseForm {
     public void hideNewspaperMigration() {
         newspaperMigrationRendered = false;
     }
+
+    /**
+     * Returns whether the ldapManagerPasswordsMigration panel group is rendered.
+     *
+     * @return whether the ldapManagerPasswordsMigration panel group is rendered
+     */
+    public boolean isLdapManagerPasswordsMigrationRendered() {
+        return ldapManagerPasswordsMigrationRendered;
+    }
+
+    /**
+     * Action performed when the startLdapManagerPasswordsMigration button is
+     * clicked.
+     */
+    public void startLdapManagerPasswordsMigration() {
+
+        String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
+
+        if (StringUtils.isBlank(securitySecret)) {
+            Helper.setErrorMessage("The security.secret parameter was not configured in kitodo_config.properties file.");
+            return;
+        }
+
+        List<LdapServer> ldapServers = getLdapServers();
+        ldapServers.parallelStream().forEach(ldapServer -> {
+            String managerPassword = ldapServer.getManagerPassword();
+            if (StringUtils.isNotBlank(managerPassword) && !AESUtil.isEnrypted(managerPassword)) {
+                try {
+                    ldapServer.setManagerPassword(AESUtil.encrypt(managerPassword, securitySecret));
+                    ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
+                } catch (Exception e) {
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                }
+            }
+        });
+
+        Helper.setMessage("All uncrypted LDAP Manager passwords were successfully encrypted.");
+    }
+
+    /**
+     * Action performed when the cancelLdapManagerPasswordMigration button is
+     * clicked.
+     */
+    public void hideLdapManagerPasswordsMigrationRendered() {
+        ldapManagerPasswordsMigrationRendered = false;
+    }
+
+    /**
+     * Gets all ldap servers.
+     *
+     * @return list of LdapServer objects.
+     */
+    public List<LdapServer> getLdapServers() {
+        try {
+            return ServiceManager.getLdapServerService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapServers") }, logger, e);
+            return new ArrayList<>();
+        }
+    }
+
 }
