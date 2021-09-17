@@ -13,7 +13,15 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,8 +32,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -561,7 +574,7 @@ public class MigrationForm extends BaseForm {
         List<LdapServer> ldapServers = getLdapServers();
         ldapServers.parallelStream().forEach(ldapServer -> {
             String managerPassword = ldapServer.getManagerPassword();
-            if (StringUtils.isNotBlank(managerPassword) && !AESUtil.isEnrypted(managerPassword)) {
+            if (StringUtils.isNotBlank(managerPassword) && !AESUtil.isEncrypted(managerPassword)) {
                 try {
                     ldapServer.setManagerPassword(AESUtil.encrypt(managerPassword, securitySecret));
                     ServiceManager.getLdapServerService().saveToDatabase(ldapServer);

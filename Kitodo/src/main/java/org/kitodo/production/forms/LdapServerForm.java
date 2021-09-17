@@ -132,12 +132,12 @@ public class LdapServerForm extends BaseForm {
     }
 
     /**
-     * Gets decrypted manager password
+     * Gets decrypted manager password.
      *
      * @return The decrypted manager password
      */
     public String getDecryptedManagerPassword() {
-        if(AESUtil.isEnrypted( ldapServer.getManagerPassword() )) {
+        if (AESUtil.isEncrypted(ldapServer.getManagerPassword())) {
             String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
 
             if (StringUtils.isNotBlank(securitySecret)) {
@@ -147,6 +147,7 @@ public class LdapServerForm extends BaseForm {
                     e.printStackTrace();
                 }
             }
+
         }
         return ldapServer.getManagerPassword();
     }

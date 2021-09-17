@@ -2,10 +2,9 @@ package org.kitodo.production.security;
 
 import static org.junit.Assert.*;
 
+import com.itextpdf.xmp.impl.Base64;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.itextpdf.xmp.impl.Base64;
 
 
 public class AESUtilTest {
@@ -45,13 +44,13 @@ public class AESUtilTest {
     public void checkIsEncrypted() throws Exception {
         String base64CipherCombined = AESUtil.encrypt(input, secretInConfig);
 
-        assertTrue(AESUtil.isEnrypted(base64CipherCombined));
+        assertTrue(AESUtil.isEncrypted(base64CipherCombined));
 
         String potentialBase64CipherCombined = "Lorem Ipsum";
 
-        assertFalse(AESUtil.isEnrypted(potentialBase64CipherCombined));
+        assertFalse(AESUtil.isEncrypted(potentialBase64CipherCombined));
 
-        assertFalse(AESUtil.isEnrypted(Base64.encode(potentialBase64CipherCombined)));
+        assertFalse(AESUtil.isEncrypted(Base64.encode(potentialBase64CipherCombined)));
     }
 
 }
