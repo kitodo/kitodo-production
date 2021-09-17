@@ -74,13 +74,13 @@ public class MigrationForm extends BaseForm {
     private boolean metadataRendered;
     private boolean workflowRendered;
     private boolean newspaperMigrationRendered = false;
-    private boolean ldapManagerPasswordsMigrationRendered = false;
     private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
     private List<Batch> newspaperBatchesItems;
+    private boolean ldapManagerPasswordsMigrationRendered = false;
 
     /**
-     * Migrates the meta.xml for all processes in the database (if it's in the old
-     * format).
+     * Migrates the meta.xml for all processes in the database (if it's in the
+     * old format).
      *
      */
     public void migrateMetadata() {
@@ -111,8 +111,8 @@ public class MigrationForm extends BaseForm {
     }
 
     private void loadProjects() throws DAOException {
-        allProjects = ServiceManager.getProjectService().getAll().stream()
-                .sorted(Comparator.comparing(Project::getTitle)).collect(Collectors.toList());
+        allProjects = ServiceManager.getProjectService().getAll()
+                .stream().sorted(Comparator.comparing(Project::getTitle)).collect(Collectors.toList());
     }
 
     /**
@@ -134,7 +134,7 @@ public class MigrationForm extends BaseForm {
                 if (currentSystemSecond != lastSystemSecond) {
                     lastSystemSecond = currentSystemSecond;
                     logger.trace("Analyzing process {}/{} ({}% done)", currentProcess, numberOfProcesses,
-                        100 * currentProcess / numberOfProcesses);
+                            100 * currentProcess / numberOfProcesses);
                 }
             }
             if (Objects.isNull(process.getTemplate())) {
@@ -171,13 +171,14 @@ public class MigrationForm extends BaseForm {
         for (String tasks : aggregatedProcesses.keySet()) {
             List<Task> aggregatedTasks = aggregatedProcesses.get(tasks).get(0).getTasks();
             aggregatedTasks.sort(Comparator.comparingInt(Task::getOrdering));
-            if (checkForTitle(tasks, processTasks) && migrationService.tasksAreEqual(aggregatedTasks, processTasks)) {
+            if (checkForTitle(tasks, processTasks) && migrationService
+                    .tasksAreEqual(aggregatedTasks, processTasks)) {
                 aggregatedProcesses.get(tasks).add(process);
                 return;
             }
         }
         aggregatedProcesses.put(migrationService.createTaskString(processTasks),
-            new ArrayList<>(Collections.singletonList(process)));
+                new ArrayList<>(Collections.singletonList(process)));
     }
 
     private boolean checkForTitle(String aggregatedTasks, List<Task> processTasks) {
@@ -251,8 +252,8 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Get aggregatedTasks. Sorts them in descending order by count, alphabetically
-     * for the same count.
+     * Get aggregatedTasks. Sorts them in descending order by count,
+     * alphabetically for the same count.
      *
      * @return sorted keyset of aggregatedProcesses
      */
@@ -330,7 +331,7 @@ public class MigrationForm extends BaseForm {
             ServiceManager.getWorkflowService().save(workflowToUse);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger,
-                e);
+                    e);
             return this.stayOnCurrentPage;
         }
 
@@ -338,8 +339,8 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * When the navigation to the migration form is coming from a workflow creation
-     * the URL contains a WorkflowId.
+     * When the navigation to the migration form is coming from a workflow
+     * creation the URL contains a WorkflowId.
      *
      * @param workflowId
      *            the id of the created Workflow
@@ -352,14 +353,14 @@ public class MigrationForm extends BaseForm {
                 createTemplates();
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
-                    logger, e);
+                        logger, e);
             }
         }
     }
 
     private void createTemplates() throws DAOException {
         templatesToCreate = migrationService.createTemplatesForProcesses(aggregatedProcesses.get(currentTasks),
-            workflowToUse);
+                workflowToUse);
         matchingTemplates.clear();
         matchingTemplates = migrationService.getMatchingTemplates(templatesToCreate.keySet());
         PrimeFaces.current().executeScript("PF('createTemplatePopup').show();");
@@ -389,8 +390,8 @@ public class MigrationForm extends BaseForm {
      * Uses the existing template to add processes to.
      *
      * @param template
-     *            The template to which's matching template the processes should be
-     *            added
+     *            The template to which's matching template the processes should
+     *            be added
      * @param existingTemplate
      *            the template to add the processes to
      */
@@ -400,7 +401,7 @@ public class MigrationForm extends BaseForm {
             migrationService.addProcessesToTemplate(existingTemplate, processesToAddToTemplate);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
+                    e);
         }
         templatesToCreate.remove(template);
     }
@@ -417,22 +418,22 @@ public class MigrationForm extends BaseForm {
                 Converter converter = new Converter(template.getWorkflow().getTitle());
                 converter.convertWorkflowToTemplate(template);
             } catch (IOException | DAOException | WorkflowException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()},
+                        logger, e);
             }
 
             List<Process> processesToAddToTemplate = templatesToCreate.get(template);
             try {
                 ServiceManager.getTemplateService().save(template);
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
-                    logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TEMPLATE.getTranslationSingular()}, logger,
+                        e);
             }
             try {
                 migrationService.addProcessesToTemplate(template, processesToAddToTemplate);
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()}, logger,
+                        e);
             }
             templatesToCreate.remove(template);
         }
@@ -440,7 +441,6 @@ public class MigrationForm extends BaseForm {
 
     /**
      * Gets all workflows, possible to use in migration.
-     * 
      * @return A list of workflows.
      */
     public List<Workflow> getAllWorkflows() {
@@ -459,8 +459,7 @@ public class MigrationForm extends BaseForm {
     /**
      * Set workflowToUse.
      *
-     * @param workflowToUse
-     *            as org.kitodo.data.database.beans.Workflow
+     * @param workflowToUse as org.kitodo.data.database.beans.Workflow
      */
     public void setWorkflowToUse(Workflow workflowToUse) {
         this.workflowToUse = workflowToUse;
@@ -472,13 +471,6 @@ public class MigrationForm extends BaseForm {
     public void showPossibleBatches() {
         newspaperMigrationRendered = true;
         projectListRendered = false;
-    }
-
-    /**
-     * Action performed when the migrateLdapManagerPasswords button is clicked.
-     */
-    public void showLdapManagerPasswordsMigration() {
-        ldapManagerPasswordsMigrationRendered = true;
     }
 
     /**
@@ -550,6 +542,13 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
+     * Action performed when the migrateLdapManagerPasswords button is clicked.
+     */
+    public void showLdapManagerPasswordsMigration() {
+        ldapManagerPasswordsMigrationRendered = true;
+    }
+
+    /**
      * Returns whether the ldapManagerPasswordsMigration panel group is rendered.
      *
      * @return whether the ldapManagerPasswordsMigration panel group is rendered
@@ -608,5 +607,4 @@ public class MigrationForm extends BaseForm {
             return new ArrayList<>();
         }
     }
-
 }

@@ -92,7 +92,7 @@ public class AESUtil {
     }
 
     /**
-     * Checks of value is encrypted.
+     * Checks if value is encrypted.
      *
      * <p>
      * Function checks if value starts with defined salt prefix after base64
