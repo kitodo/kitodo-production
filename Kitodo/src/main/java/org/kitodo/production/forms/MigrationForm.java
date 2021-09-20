@@ -134,7 +134,7 @@ public class MigrationForm extends BaseForm {
                 if (currentSystemSecond != lastSystemSecond) {
                     lastSystemSecond = currentSystemSecond;
                     logger.trace("Analyzing process {}/{} ({}% done)", currentProcess, numberOfProcesses,
-                            100 * currentProcess / numberOfProcesses);
+                        100 * currentProcess / numberOfProcesses);
                 }
             }
             if (Objects.isNull(process.getTemplate())) {
@@ -178,7 +178,7 @@ public class MigrationForm extends BaseForm {
             }
         }
         aggregatedProcesses.put(migrationService.createTaskString(processTasks),
-                new ArrayList<>(Collections.singletonList(process)));
+            new ArrayList<>(Collections.singletonList(process)));
     }
 
     private boolean checkForTitle(String aggregatedTasks, List<Task> processTasks) {
@@ -331,7 +331,7 @@ public class MigrationForm extends BaseForm {
             ServiceManager.getWorkflowService().save(workflowToUse);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger,
-                    e);
+                e);
             return this.stayOnCurrentPage;
         }
 
@@ -353,14 +353,14 @@ public class MigrationForm extends BaseForm {
                 createTemplates();
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
-                        logger, e);
+                    logger, e);
             }
         }
     }
 
     private void createTemplates() throws DAOException {
         templatesToCreate = migrationService.createTemplatesForProcesses(aggregatedProcesses.get(currentTasks),
-                workflowToUse);
+            workflowToUse);
         matchingTemplates.clear();
         matchingTemplates = migrationService.getMatchingTemplates(templatesToCreate.keySet());
         PrimeFaces.current().executeScript("PF('createTemplatePopup').show();");
@@ -401,7 +401,7 @@ public class MigrationForm extends BaseForm {
             migrationService.addProcessesToTemplate(existingTemplate, processesToAddToTemplate);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+                e);
         }
         templatesToCreate.remove(template);
     }
