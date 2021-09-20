@@ -390,7 +390,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.uploadMedia}"
                             action="#{DataEditorForm.uploadFileDialog.prepare}"
-                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia()}"
+                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.uploadFileDialog.isFolderConfigurationComplete()}"
                             icon="fa fa-download fa-sm"
                             styleClass="plain"
                             update = "uploadFileDialog"
@@ -418,7 +418,7 @@
                             update="dialogEditDocStrucTypeDialog"/>
                 <p:menuitem value="#{msgs.uploadMedia}"
                             action="#{DataEditorForm.uploadFileDialog.prepare}"
-                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia()}"
+                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.uploadFileDialog.isFolderConfigurationComplete()}"
                             icon="fa fa-download fa-sm"
                             styleClass="plain"
                             update = "uploadFileDialog"
