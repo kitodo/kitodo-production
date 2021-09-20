@@ -183,7 +183,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private static final String DESKTOP_LINK = "/pages/desktop.jsf";
 
-    private List<MediaUnit> unsavedDeletedMedia = new ArrayList<>();
+    private List<PhysicalDivision> unsavedDeletedMedia = new ArrayList<>();
 
     private List<PhysicalDivision> unsavedUploadedMedia = new ArrayList<>();
 
@@ -361,8 +361,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void deleteUnsavedDeletedMedia() {
         URI uri = Paths.get(ConfigCore.getKitodoDataDirectory(),
                 ServiceManager.getProcessService().getProcessDataDirectory(this.process).getPath()).toUri();
-        for (MediaUnit mediaUnit : this.unsavedDeletedMedia) {
-            for (URI fileURI : mediaUnit.getMediaFiles().values()) {
+        for (PhysicalDivision physicalDivision : this.unsavedDeletedMedia) {
+            for (URI fileURI : physicalDivision.getMediaFiles().values()) {
                 try {
                     ServiceManager.getFileService().delete(uri.resolve(fileURI));
                 } catch (IOException e) {
@@ -377,7 +377,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      *
      * @return value of unsavedDeletedMedia
      */
-    public List<MediaUnit> getUnsavedDeletedMedia() {
+    public List<PhysicalDivision> getUnsavedDeletedMedia() {
         return unsavedDeletedMedia;
     }
 

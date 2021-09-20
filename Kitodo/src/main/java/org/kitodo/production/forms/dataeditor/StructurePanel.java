@@ -212,8 +212,8 @@ public class StructurePanel implements Serializable {
             }
         }
         int i = 1;
-        for (MediaUnit mediaUnit : dataEditor.getWorkpiece().getAllMediaUnitChildrenFilteredByTypePageAndSorted()) {
-            mediaUnit.setOrder(i);
+        for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+            physicalDivision.setOrder(i);
             i++;
         }
         show();
