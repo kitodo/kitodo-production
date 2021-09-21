@@ -47,6 +47,7 @@ import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -184,6 +185,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private List<PhysicalDivision> unsavedUploadedMedia = new ArrayList<>();
 
+    private boolean folderConfigurationComplete = false;
+
     /**
      * Public constructor.
      */
@@ -232,17 +235,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
-
-            if (templateTaskId > 0) {
-                dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(), templateTaskId);
-                if (Objects.isNull(dataEditorSetting)) {
-                    dataEditorSetting = new DataEditorSetting();
-                    dataEditorSetting.setUserId(user.getId());
-                    dataEditorSetting.setTaskId(templateTaskId);
-                }
-            } else {
-                dataEditorSetting = null;
-            }
+            this.checkProjectFolderConfiguration();
+            this.loadDataEditorSettings();
 
             User blockedUser = MetadataLock.getLockUser(process.getId());
             if (Objects.nonNull(blockedUser) && !blockedUser.equals(this.user)) {
@@ -267,6 +261,34 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             return referringView;
         }
         return "/pages/metadataEditor?faces-redirect=true";
+    }
+
+    private void checkProjectFolderConfiguration() {
+        if (Objects.nonNull(this.process)) {
+            Project project = this.process.getProject();
+            if (Objects.nonNull(project)) {
+                this.folderConfigurationComplete = Objects.nonNull(project.getGeneratorSource())
+                        && Objects.nonNull(project.getMediaView()) && Objects.nonNull(project.getPreview());
+            } else {
+                this.folderConfigurationComplete = false;
+            }
+        } else {
+            this.folderConfigurationComplete = false;
+        }
+    }
+
+    private void loadDataEditorSettings() {
+        if (templateTaskId > 0) {
+            dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(),
+                    templateTaskId);
+            if (Objects.isNull(dataEditorSetting)) {
+                dataEditorSetting = new DataEditorSetting();
+                dataEditorSetting.setUserId(user.getId());
+                dataEditorSetting.setTaskId(templateTaskId);
+            }
+        } else {
+            dataEditorSetting = null;
+        }
     }
 
     /**
@@ -889,5 +911,14 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public UploadFileDialog getUploadFileDialog() {
         return uploadFileDialog;
+    }
+
+    /**
+     * Get folderConfigurationComplete.
+     *
+     * @return value of folderConfigurationComplete
+     */
+    public boolean isFolderConfigurationComplete() {
+        return folderConfigurationComplete;
     }
 }

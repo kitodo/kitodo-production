@@ -443,18 +443,4 @@ public class UploadFileDialog {
             uploadFileUri = null;
         }
     }
-
-    /**
-     * Check and return whether folder configuration of current process' project is
-     * complete, e.g. allows upload and conversion of media files. This means folders for thumbnails,
-     * detail views and generator source have to be configured in the project configuration.
-     *
-     * @return whether project folder configuration is complete or not
-     */
-    public boolean isFolderConfigurationComplete() {
-        return Objects.nonNull(dataEditor.getProcess().getProject().getGeneratorSource())
-                && Objects.nonNull(dataEditor.getProcess().getProject().getMediaView())
-                && Objects.nonNull(dataEditor.getProcess().getProject().getPreview());
-    }
-
 }
