@@ -257,28 +257,6 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
-    public void shouldAddDataWithValueNewSyntax() throws Exception {
-        Process process = ServiceManager.getProcessService().getById(2);
-        String metadataKey = "LegalNoteAndTermsOfUse";
-        HashMap<String, String> metadataSearchMap = new HashMap<>();
-        metadataSearchMap.put(metadataKey, "PDM1.0");
-
-        final List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
-        Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
-
-        String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0";
-        List<Process> processes = new ArrayList<>();
-        processes.add(process);
-        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
-        kitodoScript.execute(processes, script);
-        Thread.sleep(2000);
-        final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
-                .findByMetadata(metadataSearchMap);
-        Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size() );
-
-    }
-
-    @Test
     public void shouldCopyMultipleDataToChildren() throws Exception {
         MockDatabase.insertProcessesForHierarchyTests();
         backupHierarchieFiles();
