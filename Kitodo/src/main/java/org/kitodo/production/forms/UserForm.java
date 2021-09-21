@@ -718,4 +718,18 @@ public class UserForm extends BaseForm {
         super.filter = filter;
         this.lazyDTOModel.setFilterString(filter);
     }
+
+    /**
+     * Check and return whether LDAP group and LDAP server are configured for current user
+     * and if LDAP server is read only.
+     *
+     * @return whether LDAP server is configured and read only
+     */
+    public boolean isLdapServerReadOnly() {
+        try {
+            return this.userObject.getLdapGroup().getLdapServer().isReadOnly();
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
 }
