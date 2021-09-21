@@ -1236,6 +1236,17 @@ h3#headerText {
     display: inline-block;
 }
 
+.client-projects {
+    border: 1px solid var(--blue);
+    border-radius: 3px;
+    max-height: 100px;
+    overflow-y: scroll;
+}
+
+.client-projects thead {
+    display: none;
+}
+
 /*----------------------------------------------------------------------
 Statistics
 ----------------------------------------------------------------------*/
@@ -3144,10 +3155,6 @@ kbd {
     border-radius: var(--default-border-radius);
     margin: 0 var(--default-half-size);
     padding: 0 var(--default-half-size);
-}
-
-#removeFromProjectsForm\:clientProjects thead {
-    display: none;
 }
 
 /*----------------------------------------------------------------------

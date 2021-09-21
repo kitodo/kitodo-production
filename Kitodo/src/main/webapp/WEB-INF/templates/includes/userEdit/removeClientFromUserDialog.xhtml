@@ -31,8 +31,7 @@
             <div class="select-note ui-messages-info">#{msgs.removeClientProjectsFromUserConfirmMessage}</div>
             <div class="select-selector">
                 <p>
-                    <p:dataTable id="clientProjects"
-                                 style="max-height: 100px; overflow-y: scroll; border: 1px solid var(--blue); border-radius: 3px;"
+                    <p:dataTable styleClass="client-projects"
                                  value="#{UserForm.clientProjects}"
                                  var="project">
                         <p:column id="projectTitle">
