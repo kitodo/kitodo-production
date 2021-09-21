@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
@@ -81,19 +82,18 @@ public abstract class EditDataScript {
      */
     public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection,
             Process process, LegacyMetsModsDigitalDocumentHelper metadataFile) {
-        if (metadataScript.getValues().isEmpty() && Objects.nonNull(metadataScript.getRoot())) {
-            if (metadataScript.getRoot().startsWith("@")) {
+        if (metadataScript.getValues().isEmpty() && Objects.nonNull(metadataScript.getMetadataRoot())
+                || Objects.nonNull(metadataScript.getVariable())) {
+            if (StringUtils.isNotBlank(metadataScript.getMetadataRoot())) {
                 for (Metadata metadata : metadataCollection) {
-                    if (metadata.getKey().equals(metadataScript.getRootName())) {
+                    if (metadata.getKey().equals(metadataScript.getMetadataRoot())) {
                         metadataScript.getValues().add(((MetadataEntry) metadata).getValue());
                     }
                 }
-            } else if (metadataScript.getRoot().startsWith("$")) {
-                LegacyPrefsHelper legacyPrefsHelper = ServiceManager.getRulesetService()
-                        .getPreferences(process.getRuleset());
+            } else if (StringUtils.isNotBlank(metadataScript.getVariable())) {
                 VariableReplacer replacer = new VariableReplacer(metadataFile.getWorkpiece(), process, null);
 
-                String replaced = replacer.replace(metadataScript.getRootName());
+                String replaced = replacer.replace(metadataScript.getVariable());
                 metadataScript.getValues().add(replaced);
             }
         }

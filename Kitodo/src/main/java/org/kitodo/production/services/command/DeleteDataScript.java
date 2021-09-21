@@ -38,7 +38,7 @@ public class DeleteDataScript extends EditDataScript {
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
         List<Metadata> metadataCollectionCopy = new ArrayList<>(metadataCollection);
         for (Metadata metadata : metadataCollectionCopy) {
-            if (metadata.getKey().equals(metadataScript.getGoal())) {
+            if (metadata.getKey().equals(metadataScript.getMetadataKey())) {
                 if (metadataScript.getValues().isEmpty()) {
                     metadataCollection.remove(metadata);
                 } else {

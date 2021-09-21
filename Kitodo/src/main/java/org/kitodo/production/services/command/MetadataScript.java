@@ -11,15 +11,22 @@
 
 package org.kitodo.production.services.command;
 
+import org.apache.commons.lang.text.StrTokenizer;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import javax.faces.component.UIComponent;
 
 public class MetadataScript {
 
-    private String goal;
-    private String root;
+    private Map<String, String> parameters;
+    private String metadataKey;
+    private String metadataRoot;
     private String typeTarget;
+    private String variable;
     private List<String> values = new ArrayList<>();
 
     /**
@@ -27,45 +34,41 @@ public class MetadataScript {
      * @param command the given command.
      */
     public MetadataScript(String command) {
-        String metadataCommand = command;
-        String typeCommand = "";
-        if (command.contains("+")) {
-            String[] commandParts = command.split("\\+");
-            metadataCommand = commandParts[0];
-            typeCommand = commandParts[1];
-        }
-        if (metadataCommand.contains("=")) {
-            String[] metadataParts = metadataCommand.split("=");
-            goal = metadataParts[0];
-            String rootOrValue = metadataParts[1];
-            if (rootOrValue.startsWith("@") || rootOrValue.startsWith("$")) {
-                root = rootOrValue;
-            } else {
-                values.add(rootOrValue);
+        this.parameters = new HashMap<>();
+        StrTokenizer tokenizer = new StrTokenizer(command, ' ', '\"');
+        while (tokenizer.hasNext()) {
+            String tok = tokenizer.nextToken();
+            if (Objects.nonNull(tok) && tok.contains(":")) {
+                String key = tok.substring(0, tok.indexOf(':'));
+                String value = tok.substring(tok.indexOf(':') + 1);
+                parameters.put(key, value);
             }
         }
-        else {
-            goal = command;
+
+        metadataKey = parameters.get("key");
+        if (Objects.nonNull(parameters.get("value"))) {
+            values.add(parameters.get("value"));
         }
-        if (typeCommand.contains("=")) {
-            typeTarget = typeCommand.split("=")[1];
-        }
+        metadataRoot = parameters.get("root");
+        typeTarget = parameters.get("type");
+        variable = parameters.get("variable");
+
     }
 
     /**
      * Get goal.
      * @return goal.
      */
-    public String getGoal() {
-        return goal;
+    public String getMetadataKey() {
+        return metadataKey;
     }
 
     /**
      * Get root.
      * @return root.
      */
-    public String getRoot() {
-        return root;
+    public String getMetadataRoot() {
+        return metadataRoot;
     }
 
     /**
@@ -77,18 +80,18 @@ public class MetadataScript {
     }
 
     /**
-     * Get name of root metadata.
-     * @return the name of the root metadata.
-     */
-    public String getRootName() {
-        return Objects.isNull(root) ? null : root.substring(1);
-    }
-
-    /**
      * Get typeTarget.
      * @return typeTarget
      */
     public String getTypeTarget() {
         return typeTarget;
+    }
+
+    public String getVariable() {
+        return variable;
+    }
+
+    public void setVariable(String variable) {
+        this.variable = variable;
     }
 }
