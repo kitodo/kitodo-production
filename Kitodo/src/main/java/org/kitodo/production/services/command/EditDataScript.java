@@ -30,7 +30,6 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public abstract class EditDataScript {
@@ -74,7 +73,7 @@ public abstract class EditDataScript {
     }
 
     /**
-     * Generates the script value when a metadata root is given.
+     * Generates the script value when a metadata source is given.
      * @param metadataScript the script to set the value
      * @param metadataCollection the metadata collection to extract the value from
      * @param process the process to replace variables
@@ -82,11 +81,11 @@ public abstract class EditDataScript {
      */
     public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection,
             Process process, LegacyMetsModsDigitalDocumentHelper metadataFile) {
-        if (metadataScript.getValues().isEmpty() && Objects.nonNull(metadataScript.getMetadataRoot())
+        if (metadataScript.getValues().isEmpty() && Objects.nonNull(metadataScript.getValueSource())
                 || Objects.nonNull(metadataScript.getVariable())) {
-            if (StringUtils.isNotBlank(metadataScript.getMetadataRoot())) {
+            if (StringUtils.isNotBlank(metadataScript.getValueSource())) {
                 for (Metadata metadata : metadataCollection) {
-                    if (metadata.getKey().equals(metadataScript.getMetadataRoot())) {
+                    if (metadata.getKey().equals(metadataScript.getValueSource())) {
                         metadataScript.getValues().add(((MetadataEntry) metadata).getValue());
                     }
                 }

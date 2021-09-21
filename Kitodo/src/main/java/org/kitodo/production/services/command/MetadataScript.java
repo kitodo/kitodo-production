@@ -18,13 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.faces.component.UIComponent;
 
 public class MetadataScript {
 
     private Map<String, String> parameters;
     private String metadataKey;
-    private String metadataRoot;
+    private String valueSource;
     private String typeTarget;
     private String variable;
     private List<String> values = new ArrayList<>();
@@ -49,7 +48,7 @@ public class MetadataScript {
         if (Objects.nonNull(parameters.get("value"))) {
             values.add(parameters.get("value"));
         }
-        metadataRoot = parameters.get("root");
+        valueSource = parameters.get("source");
         typeTarget = parameters.get("type");
         variable = parameters.get("variable");
 
@@ -64,11 +63,11 @@ public class MetadataScript {
     }
 
     /**
-     * Get root.
-     * @return root.
+     * Get source of value.
+     * @return source.
      */
-    public String getMetadataRoot() {
-        return metadataRoot;
+    public String getValueSource() {
+        return valueSource;
     }
 
     /**
