@@ -123,7 +123,6 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
             if (StringUtils.isBlank(securitySecret)) {
                 logger.error("The security.secret parameter was not configured in kitodo_config.properties file.");
-                return null;
             }
 
             try {
@@ -132,7 +131,6 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                     | InvalidKeyException | BadPaddingException | IllegalBlockSizeException
                     | InvalidKeySpecException e) {
                 logger.error(e.getLocalizedMessage(), e);
-                return null;
             }
         }
         env.put(Context.SECURITY_CREDENTIALS, managerPassword);

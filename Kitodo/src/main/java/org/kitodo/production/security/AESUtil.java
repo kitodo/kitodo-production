@@ -32,8 +32,13 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.production.helper.Helper;
 
 public class AESUtil {
+
+    private static final Logger logger = LogManager.getLogger(AESUtil.class);
 
     /*
      * DO NOT CHANGE! Identifier for is encryption check and secret key generation.
@@ -110,7 +115,7 @@ public class AESUtil {
             // check if cipher combined has salt prefix
             return Arrays.equals(saltPrefix, SALT_PREFIX.getBytes());
         } catch (IllegalArgumentException e) {
-            // not valid base64 string so
+            logger.debug("Value to encrypt is not a valid base64 string.");
         }
         return false;
     }
@@ -148,10 +153,6 @@ public class AESUtil {
 
     private static SecretKey getSecretKey(String secret, byte[] salt)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
-        if (StringUtils.isBlank(secret) || Objects.isNull(salt)) {
-            return null;
-        }
-
         KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, 65536, 256); // AES-256
         SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] key = f.generateSecret(spec).getEncoded();
