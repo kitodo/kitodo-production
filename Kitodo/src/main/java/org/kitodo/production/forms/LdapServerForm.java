@@ -11,11 +11,18 @@
 
 package org.kitodo.production.forms;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
@@ -81,7 +88,8 @@ public class LdapServerForm extends BaseForm {
 
             ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
             return usersPage;
-        } catch ( Exception e ) {
+        } catch (DAOException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
+                | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -143,8 +151,10 @@ public class LdapServerForm extends BaseForm {
             if (StringUtils.isNotBlank(securitySecret)) {
                 try {
                     ldapServer.setManagerPassword(AESUtil.decrypt(ldapServer.getManagerPassword(), securitySecret));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
+                        | InvalidKeyException | BadPaddingException | IllegalBlockSizeException
+                        | InvalidKeySpecException e) {
+                    Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER }, logger, e);
                 }
             }
 
