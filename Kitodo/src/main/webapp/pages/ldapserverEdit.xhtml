@@ -113,10 +113,11 @@
                         <div>
                             <p:outputLabel for="keyStorePassword" value="keyStorePassword"/>
                             <p:password id="keyStorePassword"
-                                                     styleClass="input"
-                                                     disabled="#{isViewMode}"
-                                                     value="#{LdapServerForm.ldapServer.keystorePassword}"
-                                                     onchange="toggleSave()"/>
+                                        styleClass="input"
+                                        disabled="#{isViewMode}"
+                                        value="#{LdapServerForm.ldapServer.keystorePassword}"
+                                        redisplay="true"
+                                        onchange="toggleSave()"/>
                         </div>
 
                     </p:row>
@@ -132,10 +133,11 @@
                         <div>
                             <p:outputLabel for="managerPassword" value="Manager password"/>
                             <p:password id="managerPassword"
-                                         class="input"
-                                         value="#{LdapServerForm.ldapServer.managerPassword}"
-                                         disabled="#{isViewMode}"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
+                                        class="input"
+                                        value="#{LdapServerForm.ldapServer.managerPassword}"
+                                        redisplay="true"
+                                        disabled="#{isViewMode}"
+                                        required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="passwordEncryption" value="Encryption"/>
