@@ -18,19 +18,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.security.spec.InvalidKeySpecException;
+import java.util.*;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -38,14 +31,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.ModificationItem;
-import javax.naming.directory.SearchResult;
+import javax.naming.directory.*;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
@@ -142,7 +128,9 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
             try {
                 managerPassword = AESUtil.decrypt(managerPassword, securitySecret);
-            } catch (Exception e) {
+            } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
+                    | InvalidKeyException | BadPaddingException | IllegalBlockSizeException
+                    | InvalidKeySpecException e) {
                 logger.error(e.getLocalizedMessage(), e);
                 return null;
             }
