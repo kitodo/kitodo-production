@@ -264,14 +264,12 @@ public class KitodoScriptServiceIT {
     public void shouldAddDataWithType() throws Exception {
         Process process = ServiceManager.getProcessService().getById(2);
         String metadataKey = "LegalNoteAndTermsOfUse";
-        HashMap<String, String> metadataSearchMap = new HashMap<>();
-        metadataSearchMap.put(metadataKey, "PDM1.0");
 
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
         Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
-        Assert.assertEquals("should not contain metadata beforehand", 0, metadataOfChapter.size() );
+        Assert.assertEquals("should not contain metadata beforehand", 1, metadataOfChapter.size() );
 
         String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0" + " type:Chapter";
         List<Process> processes = new ArrayList<>();
@@ -283,8 +281,80 @@ public class KitodoScriptServiceIT {
                 .readMetadataFile(process);
         workpiece = metadataFile.getWorkpiece();
         metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
-        Assert.assertEquals("metadata should have been added", 1, metadataOfChapter.size() );
+        Assert.assertEquals("metadata should have been added", 2, metadataOfChapter.size() );
 
+    }
+
+    @Test
+    public void shouldDeleteDataWithType() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TitleDocMain";
+
+        LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        Workpiece workpiece = metadataFile.getWorkpiece();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("should contain metadata beforehand", 1, metadataOfChapter.size() );
+
+        String script = "action:deleteData " + "key:" + metadataKey + " type:Chapter";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        workpiece = metadataFile.getWorkpiece();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("metadata should have been deleted", 0, metadataOfChapter.size() );
+    }
+
+    @Test
+    public void shouldNotDeleteDataWithTypeAndWrongValue() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TitleDocMain";
+
+        LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        Workpiece workpiece = metadataFile.getWorkpiece();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("should contain metadata beforehand", 1, metadataOfChapter.size() );
+
+        String script = "action:deleteData " + "key:" + metadataKey + " value:test" + " type:Chapter";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        workpiece = metadataFile.getWorkpiece();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("metadata should not have been deleted", 1, metadataOfChapter.size() );
+    }
+
+    @Test
+    public void shouldNotDeleteDataWithWrongType() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TitleDocMainShort";
+
+        LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        Workpiece workpiece = metadataFile.getWorkpiece();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("should contain metadata beforehand", 1, metadataOfChapter.size() );
+
+        String script = "action:deleteData " + "key:" + metadataKey + " type:Chapter";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        workpiece = metadataFile.getWorkpiece();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("metadata should not have been deleted", 1, metadataOfChapter.size() );
     }
 
     @Test

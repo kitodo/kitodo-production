@@ -35,10 +35,19 @@
             </mets:xmlData>
         </mets:mdWrap>
     </mets:dmdSec>
+    <mets:dmdSec ID="DMDLOG_0001">
+        <mets:mdWrap MDTYPE="MODS">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
+                    <kitodo:metadata name="TitleDocMain">Chapter</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
     <mets:dmdSec ID="DMDPHYS_0000"/>
     <mets:structMap TYPE="LOGICAL">
         <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph">
-            <mets:div DMDID="DMDLOG_0001" ID="LOG_0000" TYPE="Chapter"/>
+            <mets:div DMDID="DMDLOG_0001" ID="LOG_0001" TYPE="Chapter"/>
         </mets:div>
     </mets:structMap>
     <mets:structMap TYPE="PHYSICAL">
