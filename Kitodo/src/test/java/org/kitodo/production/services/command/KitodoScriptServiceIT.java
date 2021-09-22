@@ -538,6 +538,27 @@ public class KitodoScriptServiceIT {
         Assert.assertEquals("should not contain metadata", 0, processByMetadata.size() );
 
     }
+    @Test
+    public void shouldDeleteAllDataWithSameKey() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "TSL_ATS";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "ProcTwo");
+
+        List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
+
+        String script = "action:deleteData " + "key:" + metadataKey;
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
+        kitodoScript.execute(processes, script);
+
+        Thread.sleep(2000);
+        processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        Assert.assertEquals("should not contain metadata", 0, processByMetadata.size() );
+
+    }
 
     @Test
     public void shouldDeleteDataWithSource() throws Exception {
