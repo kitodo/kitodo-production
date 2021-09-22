@@ -132,8 +132,11 @@
     <p:panelGrid columns="1">
         <p:row>
             <ui:fragment rendered="#{ProcessForm.process.template.workflow ne null and not empty ProcessForm.process.tasks}">
-                <h:link outcome="workflowEdit.jsf?id=#{ProcessForm.process.template.workflow.id}">
-                    <o:graphicImage  value="#{ProcessForm.tasksDiagram}" dataURI="true" />
+                <h4><p:outputLabel value="#{msgs.workflow}: #{ProcessForm.process.template.workflow.title}"/></h4>
+                <h:link outcome="workflowEdit.jsf?id=#{ProcessForm.process.template.workflow.id}"
+                        title="#{ProcessForm.process.template.workflow.title}">
+                    <o:graphicImage value="#{ProcessForm.tasksDiagram}"
+                                    dataURI="true" />
                 </h:link>
             </ui:fragment>
         </p:row>

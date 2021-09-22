@@ -66,5 +66,16 @@
 
     </p:dataTable>
 
-    <o:graphicImage rendered="#{TemplateForm.template.workflow ne null}" value="#{TemplateForm.tasksDiagram}" dataURI="true" />
+    <p:panelGrid columns="1">
+        <p:row>
+            <ui:fragment rendered="#{TemplateForm.template.workflow ne null and not empty TemplateForm.template.tasks}">
+                <h3><p:outputLabel value="#{msgs.workflow}: #{TemplateForm.template.workflow.title}"/></h3>
+                <h:link outcome="workflowEdit.jsf?id=#{TemplateForm.template.workflow.id}"
+                        title="#{TemplateForm.template.workflow.title}">
+                    <o:graphicImage value="#{TemplateForm.tasksDiagram}"
+                                    dataURI="true" />
+                </h:link>
+            </ui:fragment>
+        </p:row>
+    </p:panelGrid>
 </ui:composition>
