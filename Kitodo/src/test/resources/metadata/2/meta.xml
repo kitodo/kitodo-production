@@ -37,7 +37,9 @@
     </mets:dmdSec>
     <mets:dmdSec ID="DMDPHYS_0000"/>
     <mets:structMap TYPE="LOGICAL">
-        <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph"/>
+        <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph">
+            <mets:div DMDID="DMDLOG_0001" ID="LOG_0000" TYPE="Chapter"/>
+        </mets:div>
     </mets:structMap>
     <mets:structMap TYPE="PHYSICAL">
         <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence"/>

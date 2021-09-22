@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +34,8 @@ import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.TreeDeleter;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
@@ -44,6 +47,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.services.ServiceManager;
@@ -253,6 +257,33 @@ public class KitodoScriptServiceIT {
         final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
                 .findByMetadata(metadataSearchMap);
         Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size() );
+
+    }
+
+    @Test
+    public void shouldAddDataWithType() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(2);
+        String metadataKey = "LegalNoteAndTermsOfUse";
+        HashMap<String, String> metadataSearchMap = new HashMap<>();
+        metadataSearchMap.put(metadataKey, "PDM1.0");
+
+        LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        Workpiece workpiece = metadataFile.getWorkpiece();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("should not contain metadata beforehand", 0, metadataOfChapter.size() );
+
+        String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0" + " type:Chapter";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+        KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
+        kitodoScript.execute(processes, script);
+        Thread.sleep(2000);
+        metadataFile = ServiceManager.getProcessService()
+                .readMetadataFile(process);
+        workpiece = metadataFile.getWorkpiece();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Assert.assertEquals("metadata should have been added", 1, metadataOfChapter.size() );
 
     }
 
