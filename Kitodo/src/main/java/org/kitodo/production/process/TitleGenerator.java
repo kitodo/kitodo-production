@@ -23,13 +23,18 @@ import org.kitodo.production.services.data.ImportService;
 
 public class TitleGenerator extends Generator {
 
+    /**
+     * Metadata identifier for title doc main
+     */
     public static final String TITLE_DOC_MAIN = "TitleDocMain";
 
     /**
      * Constructor for TitleGenerator.
      *
-     * @param atstsl                     field used for title generation
-     * @param processDetailsList fields used for title generation
+     * @param atstsl
+     *            field used for title generation
+     * @param processDetailsList
+     *            fields used for title generation
      */
     public TitleGenerator(String atstsl, List<ProcessDetail> processDetailsList) {
         super(atstsl, processDetailsList);
@@ -38,23 +43,28 @@ public class TitleGenerator extends Generator {
     /**
      * Generate title for process.
      *
-     * @param titleDefinition definition for title to generation
-     * @param genericFields   Map of Strings
+     * @param titleDefinition
+     *            definition for title to generation
+     * @param genericFields
+     *            Map of Strings
      * @return String
      */
     public String generateTitle(String titleDefinition, Map<String, String> genericFields)
             throws ProcessGenerationException {
-        return generateTitle(titleDefinition, genericFields, getCurrentValue(TITLE_DOC_MAIN, processDetailsList));
+        return generateTitle(titleDefinition, genericFields, getValueOfMetadataID(TITLE_DOC_MAIN, processDetailsList));
     }
 
     /**
      * Generate title for process.
      *
-     * @param titleDefinition definition for title to generation
-     * @param genericFields   Map of Strings
+     * @param titleDefinition
+     *            definition for title to generation
+     * @param genericFields
+     *            Map of Strings
      * @return String
      */
-    public String generateTitle(String titleDefinition, Map<String, String> genericFields, String title) throws ProcessGenerationException {
+    public String generateTitle(String titleDefinition, Map<String, String> genericFields, String title)
+            throws ProcessGenerationException {
         String currentAuthors = ImportService.getListOfCreators(this.processDetailsList);
         StringBuilder newTitle = new StringBuilder();
 
@@ -86,15 +96,15 @@ public class TitleGenerator extends Generator {
     }
 
     /**
-     * Forms the author title key, or the title key (4/2/2/1) if no author is
-     * given. The author title key is a librarian sort criteria, composed out of
-     * the first four letters of the first author’s last name, followed by the
-     * first four letters of the title of the works. The title key (4/2/2/1) a
-     * librarian sort criteria composed of the title of the works, taking the
-     * first four letters of the first word, each the first two letters of the
-     * second and third word, and the first letter of the fourth word of the
-     * title. Note that this implementation removes non-word characters (any
-     * characters except A-Z, such as letters with diacritics).
+     * Forms the author title key, or the title key (4/2/2/1) if no author is given.
+     * The author title key is a librarian sort criteria, composed out of the first
+     * four letters of the first author’s last name, followed by the first four
+     * letters of the title of the works. The title key (4/2/2/1) a librarian sort
+     * criteria composed of the title of the works, taking the first four letters of
+     * the first word, each the first two letters of the second and third word, and
+     * the first letter of the fourth word of the title. Note that this
+     * implementation removes non-word characters (any characters except A-Z, such
+     * as letters with diacritics).
      *
      * <p>
      * <u>Examples:</u><br>
@@ -105,8 +115,7 @@ public class TitleGenerator extends Generator {
      * @param title
      *            the title of the work
      * @param author
-     *            the last name of the (first) author, may be {@code null} or
-     *            empty
+     *            the last name of the (first) author, may be {@code null} or empty
      * @return the author title key, or the title key (4/2/2/1)
      */
     public static String createAtstsl(String title, String author) {
@@ -139,22 +148,23 @@ public class TitleGenerator extends Generator {
         return result.toString().replaceAll("[\\W]", ""); // delete umlauts etc.
     }
 
-    public static String getCurrentValue(String metadataTag, List<ProcessDetail> processDetailsList) {
-        //int counter = 0;
+    /**
+     * Get the value of metadata identifier from process details list.
+     *
+     * @param metadataID
+     *            The metadata identifier
+     * @param processDetailsList
+     *            The process detail list that contains the potential value
+     * @return The value of metadata identifier or null
+     */
+    public static String getValueOfMetadataID(String metadataID, List<ProcessDetail> processDetailsList) {
         for (ProcessDetail row : processDetailsList) {
-            // TODO: check how to set "autogenerated" flag for metadata in ruleset!
-            /* if (row.isAutogenerated() && metadataValue.isEmpty()) {
-                    row.setValue(String.valueOf(System.currentTimeMillis() + counter));
-                ProcessMetadataTab.setAdditionalDetailsRow(row,
-                        String.valueOf(System.currentTimeMillis() + counter));
-                counter++;
-            }*/
             String metadata = row.getMetadataID();
-            if (Objects.nonNull(metadata) && metadata.equals(metadataTag)) {
+            if (Objects.nonNull(metadata) && metadata.equals(metadataID)) {
                 return ImportService.getProcessDetailValue(row);
             }
         }
-        return "";
+        return null;
     }
 
     private String evaluateAdditionalDetailsRows(String currentTitle, String currentAuthors, String token)
@@ -163,7 +173,8 @@ public class TitleGenerator extends Generator {
         for (ProcessDetail row : this.processDetailsList) {
             String rowMetadataID = row.getMetadataID();
             String rowValue = ImportService.getProcessDetailValue(row);
-            // if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
+            // if it is the ATS or TSL field, then use the calculated atstsl if it does not
+            // already exist
             if ("TSL_ATS".equals(rowMetadataID)) {
                 if (StringUtils.isBlank(rowValue)) {
                     this.atstsl = createAtstsl(currentTitle, currentAuthors);
