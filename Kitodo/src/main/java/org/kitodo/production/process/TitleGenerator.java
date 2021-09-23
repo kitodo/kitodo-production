@@ -31,10 +31,8 @@ public class TitleGenerator extends Generator {
     /**
      * Constructor for TitleGenerator.
      *
-     * @param atstsl
-     *            field used for title generation
-     * @param processDetailsList
-     *            fields used for title generation
+     * @param atstsl                     field used for title generation
+     * @param processDetailsList fields used for title generation
      */
     public TitleGenerator(String atstsl, List<ProcessDetail> processDetailsList) {
         super(atstsl, processDetailsList);
@@ -43,10 +41,8 @@ public class TitleGenerator extends Generator {
     /**
      * Generate title for process.
      *
-     * @param titleDefinition
-     *            definition for title to generation
-     * @param genericFields
-     *            Map of Strings
+     * @param titleDefinition definition for title to generation
+     * @param genericFields   Map of Strings
      * @return String
      */
     public String generateTitle(String titleDefinition, Map<String, String> genericFields)
@@ -96,15 +92,15 @@ public class TitleGenerator extends Generator {
     }
 
     /**
-     * Forms the author title key, or the title key (4/2/2/1) if no author is given.
-     * The author title key is a librarian sort criteria, composed out of the first
-     * four letters of the first author’s last name, followed by the first four
-     * letters of the title of the works. The title key (4/2/2/1) a librarian sort
-     * criteria composed of the title of the works, taking the first four letters of
-     * the first word, each the first two letters of the second and third word, and
-     * the first letter of the fourth word of the title. Note that this
-     * implementation removes non-word characters (any characters except A-Z, such
-     * as letters with diacritics).
+     * Forms the author title key, or the title key (4/2/2/1) if no author is
+     * given. The author title key is a librarian sort criteria, composed out of
+     * the first four letters of the first author’s last name, followed by the
+     * first four letters of the title of the works. The title key (4/2/2/1) a
+     * librarian sort criteria composed of the title of the works, taking the
+     * first four letters of the first word, each the first two letters of the
+     * second and third word, and the first letter of the fourth word of the
+     * title. Note that this implementation removes non-word characters (any
+     * characters except A-Z, such as letters with diacritics).
      *
      * <p>
      * <u>Examples:</u><br>
@@ -115,7 +111,8 @@ public class TitleGenerator extends Generator {
      * @param title
      *            the title of the work
      * @param author
-     *            the last name of the (first) author, may be {@code null} or empty
+     *            the last name of the (first) author, may be {@code null} or
+     *            empty
      * @return the author title key, or the title key (4/2/2/1)
      */
     public static String createAtstsl(String title, String author) {
@@ -173,8 +170,7 @@ public class TitleGenerator extends Generator {
         for (ProcessDetail row : this.processDetailsList) {
             String rowMetadataID = row.getMetadataID();
             String rowValue = ImportService.getProcessDetailValue(row);
-            // if it is the ATS or TSL field, then use the calculated atstsl if it does not
-            // already exist
+            // if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
             if ("TSL_ATS".equals(rowMetadataID)) {
                 if (StringUtils.isBlank(rowValue)) {
                     this.atstsl = createAtstsl(currentTitle, currentAuthors);
