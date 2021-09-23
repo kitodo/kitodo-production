@@ -56,8 +56,7 @@ public class ProcessDataTab {
     /**
      * Set docType.
      *
-     * @param docType
-     *            as java.lang.String
+     * @param docType as java.lang.String
      */
     public void setDocType(String docType) {
         if (Objects.isNull(allDocTypes) || allDocTypes.isEmpty()) {
@@ -67,7 +66,7 @@ public class ProcessDataTab {
             this.docType = docType;
         } else {
             this.docType = (String) allDocTypes.get(0).getValue();
-            Helper.setErrorMessage("docTypeNotFound", new Object[] {docType });
+            Helper.setErrorMessage("docTypeNotFound", new Object[] {docType});
         }
         if (!this.createProcessForm.getProcesses().isEmpty()) {
             this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure().setType(this.docType);
@@ -75,8 +74,7 @@ public class ProcessDataTab {
                 this.createProcessForm.getProcessMetadataTab().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
                 ProcessFieldedMetadata metadata = this.createProcessForm.getProcessMetadataTab()
-                        .initializeProcessDetails(
-                            this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure());
+                        .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure());
                 this.createProcessForm.getProcessMetadataTab().setProcessDetails(metadata);
             }
         }
@@ -112,8 +110,7 @@ public class ProcessDataTab {
     /**
      * Set useTemplate.
      *
-     * @param usingTemplates
-     *            as boolean
+     * @param usingTemplates as boolean
      */
     public void setUsingTemplates(boolean usingTemplates) {
         ServiceManager.getImportService().setUsingTemplates(usingTemplates);
@@ -131,8 +128,7 @@ public class ProcessDataTab {
     /**
      * Set tiffHeaderImageDescription.
      *
-     * @param tiffHeaderImageDescription
-     *            as java.lang.String
+     * @param tiffHeaderImageDescription as java.lang.String
      */
     public void setTiffHeaderImageDescription(String tiffHeaderImageDescription) {
         this.tiffHeaderImageDescription = tiffHeaderImageDescription;
@@ -150,8 +146,7 @@ public class ProcessDataTab {
     /**
      * Set tiffHeaderDocumentName.
      *
-     * @param tiffHeaderDocumentName
-     *            as java.lang.String
+     * @param tiffHeaderDocumentName as java.lang.String
      */
     public void setTiffHeaderDocumentName(String tiffHeaderDocumentName) {
         this.tiffHeaderDocumentName = tiffHeaderDocumentName;
@@ -169,8 +164,7 @@ public class ProcessDataTab {
     /**
      * Set guessedImages.
      *
-     * @param guessedImages
-     *            as int
+     * @param guessedImages as int
      */
     public void setGuessedImages(int guessedImages) {
         this.guessedImages = guessedImages;
@@ -188,8 +182,7 @@ public class ProcessDataTab {
     /**
      * Set allDocTypes.
      *
-     * @param allDocTypes
-     *            as java.util.List
+     * @param allDocTypes as java.util.List
      */
     void setAllDocTypes(List<SelectItem> allDocTypes) {
         this.allDocTypes = allDocTypes;
@@ -207,9 +200,8 @@ public class ProcessDataTab {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
         Process process = this.createProcessForm.getMainProcess();
         try {
-            StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement()
-                    .getStructuralElementView(docType, createProcessForm.getAcquisitionStage(),
-                        createProcessForm.getPriorityList());
+            StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement().getStructuralElementView(
+                    docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
             String processTitle = docTypeView.getProcessTitle().orElse("");
             if (processTitle.isEmpty()) {
                 Helper.setErrorMessage("newProcess.titleGeneration.creationRuleNotFound",
