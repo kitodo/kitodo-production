@@ -24,7 +24,7 @@ import org.kitodo.production.services.data.ImportService;
 public class TitleGenerator extends Generator {
 
     /**
-     * Metadata identifier for title doc main
+     * Metadata identifier for title doc main.
      */
     public static final String TITLE_DOC_MAIN = "TitleDocMain";
 

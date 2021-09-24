@@ -2434,7 +2434,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Get the note list from metadata file by the xpath
+     * Get the note list from metadata file by the xpath.
      * 
      * @param process
      *            The process for which the metadata file is searched for
