@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.faces.model.SelectItem;
 
@@ -27,7 +26,6 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
@@ -37,6 +35,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.omnifaces.util.Ajax;
+import org.w3c.dom.NodeList;
 
 public class ProcessDataTab {
 
@@ -212,14 +211,8 @@ public class ProcessDataTab {
 
             if (StringUtils.isBlank(currentTitle)) {
                 Process parentProcess = createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess();
-
                 if (Objects.nonNull(parentProcess)) {
-
-                    // get title of workpiece property "Haupttitle" from chosen title record process
-                    currentTitle = parentProcess.getWorkpieces().stream()
-                            .filter(property -> "Haupttitel".equals(property.getTitle())).findFirst()
-                            .map(Property::getValue).orElse(currentTitle);
-
+                    currentTitle = getTitleFromMetaXML(parentProcess);
                 } else {
                     currentTitle = getTitleFromAncestors();
                 }
@@ -239,6 +232,19 @@ public class ProcessDataTab {
             "editForm:processFromTemplateTabView:processMetadata");
     }
 
+    private String getTitleFromMetaXML(Process process) {
+        String xpath = "//kitodo:metadata[@name='" + TitleGenerator.TITLE_DOC_MAIN + "']";
+        try {
+            NodeList nodeList = ServiceManager.getProcessService().getNodeListFromMetadataFile(process, xpath);
+            if (nodeList.getLength() > 0) {
+                return nodeList.item(0).getTextContent();
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
     private String getTitleFromAncestors() {
         int processesSize = createProcessForm.getProcesses().size();
 
@@ -247,7 +253,6 @@ public class ProcessDataTab {
         }
 
         List<TempProcess> ancestors = createProcessForm.getProcesses().subList(1, processesSize);
-        AtomicReference<String> tempTitle = new AtomicReference<>();
 
         // get title of ancestors where TitleDocMain exists when several processes were
         // imported
@@ -259,7 +264,7 @@ public class ProcessDataTab {
                 return ((MetadataEntry) metadataOptional.get()).getValue();
             }
         }
-        return tempTitle.get();
+        return null;
     }
 
     /**

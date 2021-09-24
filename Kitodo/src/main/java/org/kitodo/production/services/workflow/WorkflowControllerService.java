@@ -13,7 +13,6 @@ package org.kitodo.production.services.workflow;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -23,14 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,10 +53,6 @@ import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.thread.TaskScriptThread;
-import org.kitodo.production.workflow.KitodoNamespaceContext;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class WorkflowControllerService {
 
@@ -685,20 +672,7 @@ public class WorkflowControllerService {
     }
 
     private boolean runXPathCondition(Process process, String xpath) throws IOException {
-        try (InputStream fileInputStream = ServiceManager.getFileService().readMetadataFile(process)) {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            builderFactory.setNamespaceAware(true);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document xmlDocument = builder.parse(fileInputStream);
-
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            xPath.setNamespaceContext(new KitodoNamespaceContext());
-            NodeList nodeList = (NodeList) xPath.compile(xpath).evaluate(xmlDocument, XPathConstants.NODESET);
-            return nodeList.getLength() > 0;
-        } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
-            logger.error(e.getMessage(), e);
-            throw new IOException(e);
-        }
+        return ServiceManager.getProcessService().getNodeListFromMetadataFile(process, xpath).getLength() > 0;
     }
 
     private void verifyTask(Task task) {
