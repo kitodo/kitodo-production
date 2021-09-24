@@ -1068,7 +1068,7 @@ public class MockDatabase {
     private static List<Task> getTasks() {
         Task firstTask = new Task();
         firstTask.setTitle("Finished");
-        firstTask.setCorrection(false);
+        firstTask.setRepeatOnCorrection(false);
         firstTask.setOrdering(1);
         firstTask.setEditType(TaskEditType.ADMIN);
         LocalDate localDate = LocalDate.of(2016, 8, 20);
@@ -1094,7 +1094,7 @@ public class MockDatabase {
         Task thirdTask = new Task();
         thirdTask.setTitle("Progress");
         thirdTask.setOrdering(3);
-        thirdTask.setCorrection(true);
+        thirdTask.setRepeatOnCorrection(true);
         thirdTask.setEditType(TaskEditType.MANUAL_SINGLE);
         thirdTask.setTypeImagesWrite(true);
         localDate = LocalDate.of(2017, 1, 25);
@@ -1104,14 +1104,14 @@ public class MockDatabase {
         Task fourthTask = new Task();
         fourthTask.setTitle("Open");
         fourthTask.setOrdering(4);
-        fourthTask.setCorrection(true);
+        fourthTask.setRepeatOnCorrection(true);
         fourthTask.setEditType(TaskEditType.MANUAL_SINGLE);
         fourthTask.setProcessingStatus(TaskStatus.OPEN);
 
         Task fifthTask = new Task();
         fifthTask.setTitle("Locked");
         fifthTask.setOrdering(5);
-        fifthTask.setCorrection(true);
+        fifthTask.setRepeatOnCorrection(true);
         fifthTask.setEditType(TaskEditType.MANUAL_SINGLE);
         fifthTask.setTypeImagesWrite(true);
         fifthTask.setProcessingStatus(TaskStatus.LOCKED);

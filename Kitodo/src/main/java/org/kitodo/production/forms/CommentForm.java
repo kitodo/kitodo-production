@@ -222,7 +222,7 @@ public class CommentForm extends BaseForm {
     public String solveProblem(Comment comment) {
         try {
             this.workflowControllerService.solveProblem(comment);
-        } catch (DataException e) {
+        } catch (DataException | DAOException | IOException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
         refreshProcess(this.currentTask.getProcess());
@@ -313,6 +313,16 @@ public class CommentForm extends BaseForm {
     }
 
     /**
+     * Check and return whether 'correction' flag is set to true for any task of the current process,
+     * e.g. if process is currently in a correction workflow.
+     *
+     * @return whether process is in correction workflow or not
+     */
+    public boolean isCorrectionWorkflow() {
+        return TaskService.isCorrectionWorkflow(this.process);
+    }
+
+    /**
      * Create and return a tooltip for the correction message switch.
      *
      * @return tooltip for correction message switch
@@ -363,6 +373,29 @@ public class CommentForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
             return 0;
+        }
+    }
+
+    /**
+     * Check and return whether the current process has any unresolved problems.
+     *
+     * @return whether the current process has any unresolved problems
+     */
+    public boolean hasUnsolvedProblem() {
+        return getAllComments().stream().anyMatch(c -> c.getType().equals(CommentType.ERROR) && !c.isCorrected());
+    }
+
+    /**
+     * Create and return link text for 'Close task' link on task details page.
+     *
+     * @return link text for 'Close task' link on task details page
+     */
+    public String getTaskCloseLinkText() {
+        if (isCorrectionWorkflow()) {
+            return Helper.getTranslation("closeTask") + " (" + Helper.getTranslation("correctionWorkflow")
+                    + ")";
+        } else {
+            return Helper.getTranslation("closeTask");
         }
     }
 }
