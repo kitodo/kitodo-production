@@ -1184,6 +1184,11 @@ public class FileService {
     private void addNewMediaToWorkpiece(List<String> canonicals, Map<String, Map<Subfolder, URI>> mediaToAdd,
             Workpiece workpiece) {
 
+        LogicalDivision actualLogicalRoot = workpiece.getLogicalStructure();
+        while (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() == 1) {
+            actualLogicalRoot = actualLogicalRoot.getChildren().get(0);
+        }
+
         for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
             int insertionPoint = 0;
             for (String canonical : canonicals) {
@@ -1197,8 +1202,8 @@ public class FileService {
             workpiece.getPhysicalStructure().getChildren().add(insertionPoint, physicalDivision);
             View view = new View();
             view.setPhysicalDivision(physicalDivision);
-            workpiece.getLogicalStructure().getViews().add(view);
-            view.getPhysicalDivision().getLogicalDivisions().add(workpiece.getLogicalStructure());
+            actualLogicalRoot.getViews().add(view);
+            view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
             canonicals.add(insertionPoint, entry.getKey());
         }
     }
