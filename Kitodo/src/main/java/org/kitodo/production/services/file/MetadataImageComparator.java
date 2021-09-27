@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.metadata.comparator;
+package org.kitodo.production.services.file;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -17,12 +17,14 @@ import java.util.Comparator;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.NotImplementedException;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.file.FileService;
 
 public class MetadataImageComparator implements Comparator<Object> {
 
-    private FileService fileService = ServiceManager.getFileService();
+    private final FileService fileService;
+
+    MetadataImageComparator(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @Override
     public int compare(Object firstObject, Object secondObject) {

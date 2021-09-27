@@ -59,7 +59,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
-import org.kitodo.production.metadata.comparator.MetadataImageComparator;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
@@ -69,6 +68,8 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class FileService {
 
     private static final Logger logger = LogManager.getLogger(FileService.class);
+
+    public final MetadataImageComparator METADATA_IMAGE_COMPARATOR = new MetadataImageComparator(this);
 
     /**
      * Attachment to filename for the overall anchor file in Production v. 2.
@@ -1078,7 +1079,7 @@ public class FileService {
         for (Folder folder : folders) {
             subfolders.put(folder.getFileGroup(), new Subfolder(process, folder));
         }
-        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(new MetadataImageComparator());
+        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(METADATA_IMAGE_COMPARATOR);
         for (Subfolder subfolder : subfolders.values()) {
             for (Entry<String, URI> element : subfolder.listContents(false).entrySet()) {
                 mediaToAdd.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
@@ -1186,7 +1187,7 @@ public class FileService {
         for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
             int insertionPoint = 0;
             for (String canonical : canonicals) {
-                if (new MetadataImageComparator().compare(entry.getKey(), canonical) > 0) {
+                if (METADATA_IMAGE_COMPARATOR.compare(entry.getKey(), canonical) > 0) {
                     insertionPoint++;
                 } else {
                     break;

@@ -39,7 +39,6 @@ import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.VariableReplacer;
-import org.kitodo.production.metadata.comparator.MetadataImageComparator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -352,7 +351,7 @@ public class Subfolder {
                     : relativeURIs.map(uri -> URI.create(uri.toString().replaceFirst("^[^/]+/", "")));
             Function<URI, String> keyMapper = createKeyMapperForPattern(query.getRight());
             return resultURIs.collect(Collectors.toMap(keyMapper, Function.identity(), (previous, latest) -> latest,
-                () -> new TreeMap<>(new MetadataImageComparator())));
+                () -> new TreeMap<>(fileService.METADATA_IMAGE_COMPARATOR)));
         }
     }
 
