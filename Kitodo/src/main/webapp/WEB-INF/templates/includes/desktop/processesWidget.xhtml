@@ -83,7 +83,7 @@
                                action="#{DesktopForm.exportMets(process.id)}"
                                styleClass="action"
                                title="#{msgs.exportMets}"
-                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}" >
+                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                 </p:commandLink>
                 <h:panelGroup styleClass="action"
