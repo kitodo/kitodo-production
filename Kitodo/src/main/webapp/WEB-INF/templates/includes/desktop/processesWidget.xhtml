@@ -79,13 +79,13 @@
                     <!-- TODO: add separate message in case it already exists and alert -->
                 </p:commandLink>
 
-                <h:commandLink id="exportMets"
+                <p:commandLink id="exportMets"
                                action="#{DesktopForm.exportMets(process.id)}"
                                styleClass="action"
                                title="#{msgs.exportMets}"
-                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
+                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}" >
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
-                </h:commandLink>
+                </p:commandLink>
                 <h:panelGroup styleClass="action"
                               title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
                     <p:commandLink id="deleteProcess"
