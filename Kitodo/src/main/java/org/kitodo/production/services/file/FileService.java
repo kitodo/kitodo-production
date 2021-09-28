@@ -69,7 +69,7 @@ public class FileService {
 
     private static final Logger logger = LogManager.getLogger(FileService.class);
 
-    public final MetadataImageComparator metadataImageComparator = new MetadataImageComparator(this);
+    private final MetadataImageComparator metadataImageComparator = new MetadataImageComparator(this);
 
     /**
      * Attachment to filename for the overall anchor file in Production v. 2.
@@ -80,7 +80,7 @@ public class FileService {
      */
     private static final String APPENDIX_YEAR = "_year";
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-    private final FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+    private final FileManagementInterface fileManagementModule = new KitodoServiceLoader<>(
             FileManagementInterface.class).loadModule();
 
     /**
@@ -1346,5 +1346,14 @@ public class FileService {
             return !sourceFolder.listContents().isEmpty();
         }
         return false;
+    }
+
+    /**
+     * Returns the comparator for metadata images.
+     *
+     * @return comparator for metadata images
+     */
+    public MetadataImageComparator getMetadataImageComparator() {
+        return metadataImageComparator;
     }
 }
