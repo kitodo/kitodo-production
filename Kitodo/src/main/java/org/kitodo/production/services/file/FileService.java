@@ -69,7 +69,7 @@ public class FileService {
 
     private static final Logger logger = LogManager.getLogger(FileService.class);
 
-    public final MetadataImageComparator METADATA_IMAGE_COMPARATOR = new MetadataImageComparator(this);
+    public final MetadataImageComparator metadataImageComparator = new MetadataImageComparator(this);
 
     /**
      * Attachment to filename for the overall anchor file in Production v. 2.
@@ -1079,7 +1079,7 @@ public class FileService {
         for (Folder folder : folders) {
             subfolders.put(folder.getFileGroup(), new Subfolder(process, folder));
         }
-        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(METADATA_IMAGE_COMPARATOR);
+        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(metadataImageComparator);
         for (Subfolder subfolder : subfolders.values()) {
             for (Entry<String, URI> element : subfolder.listContents(false).entrySet()) {
                 mediaToAdd.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
@@ -1187,7 +1187,7 @@ public class FileService {
         for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
             int insertionPoint = 0;
             for (String canonical : canonicals) {
-                if (METADATA_IMAGE_COMPARATOR.compare(entry.getKey(), canonical) > 0) {
+                if (metadataImageComparator.compare(entry.getKey(), canonical) > 0) {
                     insertionPoint++;
                 } else {
                     break;

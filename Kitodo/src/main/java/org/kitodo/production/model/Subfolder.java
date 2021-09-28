@@ -351,7 +351,7 @@ public class Subfolder {
                     : relativeURIs.map(uri -> URI.create(uri.toString().replaceFirst("^[^/]+/", "")));
             Function<URI, String> keyMapper = createKeyMapperForPattern(query.getRight());
             return resultURIs.collect(Collectors.toMap(keyMapper, Function.identity(), (previous, latest) -> latest,
-                () -> new TreeMap<>(fileService.METADATA_IMAGE_COMPARATOR)));
+                () -> new TreeMap<>(fileService.metadataImageComparator)));
         }
     }
 
