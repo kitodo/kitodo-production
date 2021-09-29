@@ -1188,6 +1188,11 @@ public class FileService {
         while (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() == 1) {
             actualLogicalRoot = actualLogicalRoot.getChildren().get(0);
         }
+        // If the newspaper has multiple issues in the process, then everything
+        // stays as it was
+        if (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() != 1) {
+            actualLogicalRoot = workpiece.getLogicalStructure();
+        }
 
         for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
             int insertionPoint = 0;
