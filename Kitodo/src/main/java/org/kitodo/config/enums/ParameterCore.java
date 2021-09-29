@@ -314,6 +314,11 @@ public enum ParameterCore implements ParameterInterface {
     METS_EDITOR_DISPLAY_FILE_MANIPULATION(new Parameter<UndefinedParameter>("metsEditor.displayFileManipulation")),
 
     /**
+     * Maximum number of media that can be uploaded at the same time in mets editor.
+     */
+    METS_EDITOR_MAX_UPLOADED_MEDIA(new Parameter<UndefinedParameter>("metsEditor.maxUploadedMedia")),
+
+    /**
      * Comma-separated list of Strings which may be enclosed in double quotes.
      * Separators available for double page pagination modes.
      */

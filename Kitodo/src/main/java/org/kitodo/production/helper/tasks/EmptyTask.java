@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -278,7 +277,7 @@ public class EmptyTask extends Thread {
      * .PREPARE_FOR_RESTART— and is able to restart after cloning and replacing
      * it.</dd>
      * <dt>{@code STOPPING}</dt>
-     * <dd>The thread has received a request to interrupt but didn’t stop
+     * <dd>The thread has received a request to interrupt but did not stop
      * yet.</dd>
      * <dt>{@code WORKING}</dt>
      * <dd>The thread is in operation.</dd>
@@ -286,7 +285,7 @@ public class EmptyTask extends Thread {
      *
      * @return the task state
      */
-    TaskState getTaskState() {
+    public TaskState getTaskState() {
         switch (getState()) {
             case NEW:
                 return TaskState.NEW;

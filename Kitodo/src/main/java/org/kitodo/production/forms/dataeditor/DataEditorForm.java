@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -43,8 +44,10 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -96,6 +99,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     private final EditPagesDialog editPagesDialog;
 
+    private final UploadFileDialog uploadFileDialog ;
     /**
      * Backing bean for the gallery panel.
      */
@@ -179,6 +183,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private static final String DESKTOP_LINK = "/pages/desktop.jsf";
 
+    private List<PhysicalDivision> unsavedUploadedMedia = new ArrayList<>();
+
+    private boolean folderConfigurationComplete = false;
+
     /**
      * Public constructor.
      */
@@ -192,6 +200,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.addPhysicalDivisionDialog = new AddPhysicalDivisionDialog(this);
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
+        this.uploadFileDialog = new UploadFileDialog(this);
         acquisitionStage = "edit";
     }
 
@@ -226,17 +235,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
-
-            if (templateTaskId > 0) {
-                dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(), templateTaskId);
-                if (Objects.isNull(dataEditorSetting)) {
-                    dataEditorSetting = new DataEditorSetting();
-                    dataEditorSetting.setUserId(user.getId());
-                    dataEditorSetting.setTaskId(templateTaskId);
-                }
-            } else {
-                dataEditorSetting = null;
-            }
+            this.checkProjectFolderConfiguration();
+            this.loadDataEditorSettings();
 
             User blockedUser = MetadataLock.getLockUser(process.getId());
             if (Objects.nonNull(blockedUser) && !blockedUser.equals(this.user)) {
@@ -253,6 +253,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 return referringView;
             }
             selectedMedia = new LinkedList<>();
+            unsavedUploadedMedia = new ArrayList<>();
             init();
             MetadataLock.setLocked(process.getId(), user);
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
@@ -260,6 +261,34 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             return referringView;
         }
         return "/pages/metadataEditor?faces-redirect=true";
+    }
+
+    private void checkProjectFolderConfiguration() {
+        if (Objects.nonNull(this.process)) {
+            Project project = this.process.getProject();
+            if (Objects.nonNull(project)) {
+                this.folderConfigurationComplete = Objects.nonNull(project.getGeneratorSource())
+                        && Objects.nonNull(project.getMediaView()) && Objects.nonNull(project.getPreview());
+            } else {
+                this.folderConfigurationComplete = false;
+            }
+        } else {
+            this.folderConfigurationComplete = false;
+        }
+    }
+
+    private void loadDataEditorSettings() {
+        if (templateTaskId > 0) {
+            dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(),
+                    templateTaskId);
+            if (Objects.isNull(dataEditorSetting)) {
+                dataEditorSetting = new DataEditorSetting();
+                dataEditorSetting.setUserId(user.getId());
+                dataEditorSetting.setTaskId(templateTaskId);
+            }
+        } else {
+            dataEditorSetting = null;
+        }
     }
 
     /**
@@ -308,6 +337,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return the referring view, to return there
      */
     public String close() {
+        deleteNotSavedUploadedMedia();
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
@@ -324,6 +354,21 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } else {
             return referringView + "?faces-redirect=true";
         }
+    }
+
+    private void deleteNotSavedUploadedMedia() {
+        URI uri = Paths.get(ConfigCore.getKitodoDataDirectory(),
+                ServiceManager.getProcessService().getProcessDataDirectory(this.process).getPath()).toUri();
+        for (PhysicalDivision mediaUnit : this.unsavedUploadedMedia) {
+            for (URI fileURI : mediaUnit.getMediaFiles().values()) {
+                try {
+                    ServiceManager.getFileService().delete(uri.resolve(fileURI));
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        }
+        this.unsavedUploadedMedia.clear();
     }
 
     /**
@@ -377,6 +422,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
                 ServiceManager.getProcessService().saveToIndex(process,false);
+                unsavedUploadedMedia.clear();
                 if (close) {
                     return close();
                 } else {
@@ -435,6 +481,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     @Override
     public String getAcquisitionStage() {
         return acquisitionStage;
+    }
+
+    /**
+     * Get unsavedUploadedMedia.
+     *
+     * @return value of unsavedUploadedMedia
+     */
+    public List<PhysicalDivision> getUnsavedUploadedMedia() {
+        return unsavedUploadedMedia;
     }
 
     /**
@@ -847,5 +902,23 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", user.getId(),
                 templateTaskId);
         }
+    }
+
+    /**
+     * Get uploadFileDialog.
+     *
+     * @return value of uploadFileDialog
+     */
+    public UploadFileDialog getUploadFileDialog() {
+        return uploadFileDialog;
+    }
+
+    /**
+     * Get folderConfigurationComplete.
+     *
+     * @return value of folderConfigurationComplete
+     */
+    public boolean isFolderConfigurationComplete() {
+        return folderConfigurationComplete;
     }
 }
