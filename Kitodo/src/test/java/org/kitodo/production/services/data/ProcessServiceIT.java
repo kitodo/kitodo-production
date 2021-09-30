@@ -623,6 +623,6 @@ public class ProcessServiceIT {
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
         long logicalMetadata = MetsService.countLogicalMetadata(workpiece);
-        Assert.assertEquals("Wrong amount of metadata found!", 4, logicalMetadata);
+        Assert.assertEquals("Wrong amount of metadata found!", 6, logicalMetadata);
     }
 }
