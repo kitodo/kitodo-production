@@ -358,6 +358,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             return referringView + "?faces-redirect=true";
         }
     }
+
     private void deleteUnsavedDeletedMedia() {
         URI uri = Paths.get(ConfigCore.getKitodoDataDirectory(),
                 ServiceManager.getProcessService().getProcessDataDirectory(this.process).getPath()).toUri();

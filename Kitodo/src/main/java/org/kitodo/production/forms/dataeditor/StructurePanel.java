@@ -217,6 +217,7 @@ public class StructurePanel implements Serializable {
             i++;
         }
         show();
+        dataEditor.getMetadataPanel().clear();
         dataEditor.getSelectedMedia().clear();
         dataEditor.getGalleryPanel().updateMedia();
         dataEditor.getGalleryPanel().updateStripes();
