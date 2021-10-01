@@ -20,6 +20,8 @@
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MARC</metadataFormat>
+        <!-- Use the following element to activate prestructured import, e.g. delegate creating the METS structure to configured XSLT mapping file -->
+        <!-- <prestructured>true</prestructured> -->
         <fileUpload>false</fileUpload>
         <parentElement trimMode="parenthesis"/>
         <exemplarField xpath=".//*[local-name()='datafield'][@tag='954']"
