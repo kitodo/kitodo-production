@@ -189,8 +189,7 @@ public class TaskServiceIT {
     @Test
     public void shouldGetCorrectionStep() throws Exception {
         Task task = taskService.getById(8);
-        boolean result = task.isCorrection();
-        assertTrue("Task is not correction task!", result);
+        assertTrue("Task is not correction task!", task.isRepeatOnCorrection());
     }
 
     @Test
