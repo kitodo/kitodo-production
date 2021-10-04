@@ -73,9 +73,18 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
         List<Rule> rules = new ArrayList<>();
 
         rules.add(new LengthRule(PasswordConfig.getLengthMin(), PasswordConfig.getLengthMax()));
-        rules.add(new CharacterRule(EnglishCharacterData.Digit,PasswordConfig.getNumberOfDigitCharacters()));
-        rules.add(new CharacterRule(EnglishCharacterData.Special,PasswordConfig.getNumberOfSpecialCharacters()));
-        rules.add(new CharacterRule(EnglishCharacterData.UpperCase,PasswordConfig.getNumberOfUppercaseCharacters()));
+        int numberOfDigitCharacters = PasswordConfig.getNumberOfDigitCharacters();
+        if (numberOfDigitCharacters > 0) {
+            rules.add(new CharacterRule(EnglishCharacterData.Digit, numberOfDigitCharacters));
+        }
+        int numberOfSpecialCharacters = PasswordConfig.getNumberOfSpecialCharacters();
+        if (numberOfSpecialCharacters > 0) {
+            rules.add(new CharacterRule(EnglishCharacterData.Special, numberOfSpecialCharacters));
+        }
+        int numberOfUppercaseCharacters = PasswordConfig.getNumberOfUppercaseCharacters();
+        if (numberOfUppercaseCharacters > 0) {
+            rules.add(new CharacterRule(EnglishCharacterData.UpperCase, numberOfUppercaseCharacters));
+        }
         rules.add(new DictionaryRule(new WordListDictionary(new ArrayWordList(PasswordConfig.getNotAllowedWords()))));
 
         if (!PasswordConfig.isWhitespaceAllowed()) {
