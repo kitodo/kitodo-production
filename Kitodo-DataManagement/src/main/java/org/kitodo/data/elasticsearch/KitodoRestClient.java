@@ -13,6 +13,7 @@ package org.kitodo.data.elasticsearch;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.HttpMethod;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
@@ -232,6 +234,16 @@ public abstract class KitodoRestClient implements RestClientInterface {
      */
     public String getIndexBase() {
         return indexBase;
+    }
+
+    /**
+     * Update refresh interval of search indices to 1 ms.
+     *
+     * @throws IOException when index cannot be reached
+     */
+    public void setRefreshInterval() throws IOException {
+        this.highLevelClient.indices().putSettings(Requests.updateSettingsRequest()
+                .settings(Collections.singletonMap("refresh_interval", "1ms")), RequestOptions.DEFAULT);
     }
 
     /**
