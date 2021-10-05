@@ -125,6 +125,7 @@ public class MockDatabase {
         for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
             indexRestClient.createIndex(readMapping(mappingType), mappingType);
         }
+        indexRestClient.setRefreshInterval();
     }
 
     public static void startNodeWithoutMapping() throws Exception {
