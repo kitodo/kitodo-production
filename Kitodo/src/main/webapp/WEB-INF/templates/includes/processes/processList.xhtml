@@ -21,11 +21,11 @@
         <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO"-->
         <p:dataTable id="processesTable"
                      widgetVar="processesTable"
-                     styleClass="default-layout"
+                     styleClass="default-layout allSelectable"
                      var="process"
                      value="#{ProcessForm.lazyDTOModel}"
                      first="#{ProcessForm.firstRow}"
-                     selection="#{ProcessForm.selectedProcesses}"
+                     selection="#{ProcessForm.selectedProcessesOrProcessDTOs}"
                      lazy="true"
                      paginator="true"
                      resizableColumns="true"
@@ -37,12 +37,14 @@
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                      paginatorPosition="bottom">
 
+
             <p:ajax event="page"
                     listener="#{ProcessForm.onPageChange}"/>
             <p:ajax event="rowToggle"
                     oncomplete="registerRowToggleEvents();" />
 
             <p:column styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
+
             <p:column styleClass="hierarchy-info">
                 <p:rowToggler rendered="#{process.getParentID() ne 0 or process.hasChildren() or ProcessForm.getCurrentTasksForUser(process).size() gt 0}"/>
                 <h:outputText rendered="#{process.getParentID() ne 0 and not process.hasChildren()}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
@@ -218,6 +220,14 @@
             </p:rowExpansion>
 
         </p:dataTable>
+
+        <p:overlayPanel widgetVar="allSelectableOverlayPanel" dismissable="true" styleClass="allSelectableOverlayPanel" >
+            <ul>
+                <li><p:commandLink value="#{msgs.selectAllRowsOnPage}" onclick="PF('processesTable').unselectAllRows();PF('processesTable').selectAllRowsOnPage();PF('allSelectableOverlayPanel').hide();"/></li>
+                <li><p:commandLink value="#{msgs.selectAllRows}" onclick="PF('processesTable').selectAllRows();PF('allSelectableOverlayPanel').hide();"/></li>
+            </ul>
+        </p:overlayPanel>
+
         <div id="dropDownMenus">
             <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary"
                              icon="fa fa-sort" iconPos="right" process="@this"/>

@@ -45,7 +45,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
 
-public class ProcessListBaseView extends BaseForm {
+public class ProcessListBaseView<T> extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(ProcessListBaseView.class);
     private ChartMode chartMode;
@@ -56,7 +56,7 @@ public class ProcessListBaseView extends BaseForm {
     private int numberOfGlobalImages;
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
-    List<Process> selectedProcesses = new ArrayList<>();
+    List<T> selectedProcessesOrProcessDTOs = new ArrayList<>();
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
@@ -76,7 +76,19 @@ public class ProcessListBaseView extends BaseForm {
      * @return value of selectedProcesses
      */
     public List<Process> getSelectedProcesses() {
-        return selectedProcesses;
+        if (selectedProcessesOrProcessDTOs.size() > 0) {
+            if (selectedProcessesOrProcessDTOs.get(0) instanceof ProcessDTO) {
+                try {
+                    selectedProcessesOrProcessDTOs = (List<T>) ServiceManager.getProcessService()
+                            .convertDtosToBeans((List<ProcessDTO>) selectedProcessesOrProcessDTOs);
+                } catch (DAOException e) {
+                    Helper.setErrorMessage(ERROR_LOADING_MANY,
+                        new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
+                }
+            }
+            return (List<Process>) selectedProcessesOrProcessDTOs;
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -93,7 +105,7 @@ public class ProcessListBaseView extends BaseForm {
      */
     public void showDurationOfTasks() {
         chartMode = ChartMode.BAR;
-        stackedBarModel = ServiceManager.getProcessService().getBarChartModel(selectedProcesses);
+        stackedBarModel = ServiceManager.getProcessService().getBarChartModel(getSelectedProcesses());
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
         PrimeFaces.current().ajax().update("statisticsDialog");
     }
@@ -103,7 +115,7 @@ public class ProcessListBaseView extends BaseForm {
      */
     public void showStateOfVolume() {
         chartMode = ChartMode.PIE;
-        statisticResult = ServiceManager.getProcessService().getProcessTaskStates(selectedProcesses);
+        statisticResult = ServiceManager.getProcessService().getProcessTaskStates(getSelectedProcesses());
         pieModel = ServiceManager.getProcessService().getPieChardModel(statisticResult);
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
         PrimeFaces.current().ajax().update("statisticsDialog");
@@ -117,7 +129,7 @@ public class ProcessListBaseView extends BaseForm {
         processMetadataStatistics = new ArrayList<>();
         resetGlobalStatisticValues();
         Workpiece workpiece;
-        for (Process selectedProcess : selectedProcesses) {
+        for (Process selectedProcess : getSelectedProcesses()) {
             try {
                 URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(selectedProcess);
                 workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
@@ -282,7 +294,7 @@ public class ProcessListBaseView extends BaseForm {
      * Export DMS for selected processes.
      */
     public void exportDMSForSelection() {
-        exportDMSForProcesses(this.selectedProcesses);
+        exportDMSForProcesses(getSelectedProcesses());
     }
 
     /**
@@ -329,6 +341,7 @@ public class ProcessListBaseView extends BaseForm {
         ExportDms export = new ExportDms();
         for (Process processToExport : processes) {
             try {
+
                 export.startExport(processToExport);
                 Helper.setMessage(EXPORT_FINISHED);
             } catch (DataException e) {
@@ -503,6 +516,14 @@ public class ProcessListBaseView extends BaseForm {
             Helper.setErrorMessage(e);
             return false;
         }
+    }
+
+    public List<T> getSelectedProcessesOrProcessDTOs() {
+        return selectedProcessesOrProcessDTOs;
+    }
+
+    public void setSelectedProcessesOrProcessDTOs(List<T> selectedProcessesOrProcessDTOs) {
+        this.selectedProcessesOrProcessDTOs = selectedProcessesOrProcessDTOs;
     }
 
 }
