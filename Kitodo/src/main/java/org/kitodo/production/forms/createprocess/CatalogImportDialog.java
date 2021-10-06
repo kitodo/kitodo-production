@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.StringUtils;
@@ -182,7 +183,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 showRecord();
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException
-                    | DAOException | ConfigException e) {
+                    | DAOException | ConfigException | TransformerException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }

@@ -104,13 +104,21 @@ public abstract class MetadataImportDialog {
      */
     void fillCreateProcessForm(LinkedList<TempProcess> processes) {
         this.createProcessForm.setProcesses(processes);
-        if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
+        if (!processes.isEmpty() && Objects.nonNull(processes.getFirst())) {
             TempProcess firstProcess = processes.getFirst();
-            this.createProcessForm.getProcessDataTab()
-                    .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
-            Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
-                    MdSec.DMD_SEC);
-            createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+            if (Objects.nonNull(firstProcess.getWorkpiece())
+                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure())
+                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure().getType())) {
+                firstProcess.verifyDocType();
+                this.createProcessForm.getProcessDataTab()
+                        .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
+            }
+            if (Objects.nonNull(firstProcess.getMetadataNodes())
+                    && firstProcess.getMetadataNodes().getLength() > 0) {
+                Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
+                        MdSec.DMD_SEC);
+                createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+            }
         }
     }
 }

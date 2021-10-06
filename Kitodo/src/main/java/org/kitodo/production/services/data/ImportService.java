@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -400,10 +401,8 @@ public class ImportService {
      * @param projectID the project to use
      * @return a temporary process
      */
-    public TempProcess createTempProcessFromDocument(Document document, int templateID, int projectID)
-            throws ProcessGenerationException {
-        String docType = getRecordDocType(document);
-        NodeList metadataNodes = extractMetadataNodeList(document);
+    public TempProcess createTempProcessFromDocument(String opac, Document document, int templateID, int projectID)
+            throws ProcessGenerationException, IOException, TransformerException {
 
         Process process = null;
         // "processGenerator" needs to be initialized when function is called for the first time
@@ -414,16 +413,24 @@ public class ImportService {
             process = processGenerator.getGeneratedProcess();
         }
 
-        return new TempProcess(process, metadataNodes, docType);
+        if (OPACConfig.isPrestructuredImport(opac)) {
+            // logical structure is created by import XSLT file!
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(document);
+            return new TempProcess(process, workpiece);
+        } else {
+            String docType = getRecordDocType(document);
+            NodeList metadataNodes = extractMetadataNodeList(document);
+            return new TempProcess(process, metadataNodes, docType);
+        }
     }
 
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
                                                  int projectID, int templateID, boolean isParentInRecord)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
-            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException {
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, TransformerException {
 
         Document internalDocument = importDocument(opac, recordId, allProcesses.isEmpty(), isParentInRecord);
-        TempProcess tempProcess = createTempProcessFromDocument(internalDocument, templateID, projectID);
+        TempProcess tempProcess = createTempProcessFromDocument(opac, internalDocument, templateID, projectID);
 
         // Workaround for classifying MultiVolumeWorks with insufficient information
         if (!allProcesses.isEmpty()) {
@@ -474,7 +481,8 @@ public class ImportService {
     public LinkedList<TempProcess> importProcessHierarchy(String recordId, String opac, int projectId, int templateId,
                                                           int importDepth, Collection<String> parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
-            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException,
+            TransformerException {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
@@ -523,7 +531,7 @@ public class ImportService {
                     this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
                     break;
                 }
-            } catch (SAXParseException | DAOException e) {
+            } catch (SAXParseException | DAOException | TransformerException e) {
                 // this happens for example if a document is part of a "Virtueller Bestand" in
                 // Kalliope for which a
                 // proper "record" is not returned from its SRU interface
@@ -597,7 +605,7 @@ public class ImportService {
     public LinkedList<TempProcess> getChildProcesses(String opac, String elementID, int projectId, int templateId,
                                                      int rows)
             throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
-            NoRecordFoundException, IOException, ProcessGenerationException {
+            NoRecordFoundException, IOException, ProcessGenerationException, TransformerException {
         loadOpacConfiguration(opac);
         importModule = initializeImportModule();
         List<DataRecord> childRecords = searchChildRecords(opac, elementID, rows);
@@ -608,7 +616,7 @@ public class ImportService {
             for (DataRecord childRecord : childRecords) {
                 DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
                 Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
-                childProcesses.add(createTempProcessFromDocument(childDocument, templateId, projectId));
+                childProcesses.add(createTempProcessFromDocument(opac, childDocument, templateId, projectId));
             }
             // TODO: sort child processes (by what? catalog ID? Signature?)
             return childProcesses;
@@ -1191,8 +1199,8 @@ public class ImportService {
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
-                | URISyntaxException | SAXException | InvalidMetadataValueException
-                | NoSuchMetadataFieldException | DataException | CommandException e) {
+                | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
+                | DataException | CommandException | TransformerException e) {
             logger.error(e);
             throw new ImportException(
                     Helper.getTranslation("errorImporting", Arrays.asList(ppn, e.getLocalizedMessage())));

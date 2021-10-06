@@ -11,6 +11,12 @@
 
 package org.kitodo.production.helper;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.w3c.dom.NodeList;
@@ -19,6 +25,8 @@ import org.w3c.dom.NodeList;
  * This class is used during import.
  */
 public class TempProcess {
+
+    private static final String DOC_TYPE = "docType";
 
     private Workpiece workpiece;
 
@@ -96,5 +104,26 @@ public class TempProcess {
      */
     public NodeList getMetadataNodes() {
         return metadataNodes;
+    }
+
+    /**
+     * Verify the doc type of the process. This Method checks whether the process has a metadata
+     * of type "docType" and if its value equals the type of the logical root element. If not, the
+     * logical root is set to the value of the "docType" metadata.
+     *
+     * This function is currently only used for the import of prestructured processes.
+     */
+    public void verifyDocType() {
+        if (Objects.nonNull(this.getWorkpiece().getLogicalStructure().getMetadata())) {
+            Optional<Metadata> docTypeMetadata = this.getWorkpiece().getLogicalStructure().getMetadata()
+                    .stream().filter(m -> m.getKey().equals(DOC_TYPE)).findFirst();
+            if (docTypeMetadata.isPresent() && docTypeMetadata.get() instanceof MetadataEntry) {
+                String docType = ((MetadataEntry)docTypeMetadata.get()).getValue();
+                if (StringUtils.isNotBlank(docType)
+                        && !this.getWorkpiece().getLogicalStructure().getType().equals(docType)) {
+                    this.getWorkpiece().getLogicalStructure().setType(docType);
+                }
+            }
+        }
     }
 }
