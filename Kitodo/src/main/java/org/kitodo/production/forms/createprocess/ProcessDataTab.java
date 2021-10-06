@@ -242,14 +242,14 @@ public class ProcessDataTab {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
-        return null;
+        return StringUtils.EMPTY;
     }
 
     private String getTitleFromAncestors() {
         int processesSize = createProcessForm.getProcesses().size();
 
         if (processesSize <= 1) {
-            return null;
+            return StringUtils.EMPTY;
         }
 
         List<TempProcess> ancestors = createProcessForm.getProcesses().subList(1, processesSize);
@@ -264,7 +264,7 @@ public class ProcessDataTab {
                 return ((MetadataEntry) metadataOptional.get()).getValue();
             }
         }
-        return null;
+        return StringUtils.EMPTY;
     }
 
     /**

@@ -161,7 +161,7 @@ public class TitleGenerator extends Generator {
                 return ImportService.getProcessDetailValue(row);
             }
         }
-        return null;
+        return StringUtils.EMPTY;
     }
 
     private String evaluateAdditionalDetailsRows(String currentTitle, String currentAuthors, String token)

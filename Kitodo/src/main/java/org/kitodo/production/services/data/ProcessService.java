@@ -169,6 +169,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
@@ -2290,14 +2291,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Generate and set the title to process and gets the atstsl.
-     *
-     * @return String atstsl
+     * Generate and set the title to process.
      */
-    public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
-                                                          Process process) throws ProcessGenerationException {
-        return generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
-                TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails));
+    public static void generateProcessTitle(List<ProcessDetail> processDetails, String titleDefinition, Process process)
+            throws ProcessGenerationException {
+        generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
+            TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails));
     }
 
     /**
@@ -2311,7 +2310,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
                                                           Process process, String title) throws ProcessGenerationException {
         TitleGenerator titleGenerator = new TitleGenerator(null, processDetails);
-        String newTitle = titleGenerator.generateTitle(titleDefinition, null, (Objects.nonNull(title) ? title : ""));
+        String newTitle = titleGenerator.generateTitle(titleDefinition, null, title);
         process.setTitle(newTitle);
         // atstsl is created in title generator and next used in tiff header generator
         return titleGenerator.getAtstsl();
@@ -2434,7 +2433,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Get the note list from metadata file by the xpath.
+     * Get the node list from metadata file by the xpath.
      * 
      * @param process
      *            The process for which the metadata file is searched for
