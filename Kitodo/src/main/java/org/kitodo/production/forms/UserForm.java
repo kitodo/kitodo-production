@@ -726,9 +726,11 @@ public class UserForm extends BaseForm {
      * @return whether LDAP server is configured and read only
      */
     public boolean isLdapServerReadOnly() {
-        try {
+        if (Objects.nonNull(this.userObject)
+                && Objects.nonNull(this.userObject.getLdapGroup())
+                && Objects.nonNull(this.userObject.getLdapGroup().getLdapServer())) {
             return this.userObject.getLdapGroup().getLdapServer().isReadOnly();
-        } catch (NullPointerException e) {
+        } else {
             return false;
         }
     }
