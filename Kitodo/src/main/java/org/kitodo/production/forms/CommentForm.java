@@ -382,7 +382,8 @@ public class CommentForm extends BaseForm {
      * @return whether the current process has any unresolved problems
      */
     public boolean hasUnsolvedProblem() {
-        return getAllComments().stream().anyMatch(c -> c.getType().equals(CommentType.ERROR) && !c.isCorrected());
+        return getAllComments().stream()
+                .anyMatch(comment -> comment.getType().equals(CommentType.ERROR) && !comment.isCorrected());
     }
 
     /**
