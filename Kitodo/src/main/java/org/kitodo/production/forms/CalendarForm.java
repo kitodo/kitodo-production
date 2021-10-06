@@ -22,10 +22,12 @@ import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -35,6 +37,7 @@ import java.util.regex.Pattern;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.naming.ConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -42,11 +45,17 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProject;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
@@ -58,8 +67,11 @@ import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
+import org.kitodo.production.process.NewspaperProcessesGenerator;
+import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.calendar.CalendarService;
+import org.kitodo.production.services.data.RulesetService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -661,11 +673,61 @@ public class CalendarForm implements Serializable {
      */
     public String createProcesses() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(parentId);
+        if (duplicateTitlesCreated(process)) {
+            Helper.setErrorMessage("duplicateProcessTitles");
+            return null;
+        }
+
+
         TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskManagerPage()) {
             return TASK_MANAGER_REFERER;
         }
         return DEFAULT_REFERER;
+    }
+
+    private boolean duplicateTitlesCreated(Process process) throws IOException, ProcessGenerationException, DoctypeMissingException {
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(ServiceManager.getProcessService().getMetadataFileUri(process));
+        String newspaperType = workpiece.getLogicalStructure().getType();
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
+        String acquisitionStage = "";
+        StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, acquisitionStage, Locale.LanguageRange.parse("en"));
+        String yearDivisionType = newspaperView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
+        StructuralElementViewInterface yearDivisionView = ruleset.getStructuralElementView(yearDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
+
+        String monthDivisionType = yearDivisionView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
+        StructuralElementViewInterface monthDivisionView = ruleset.getStructuralElementView(monthDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
+
+        String dayDivisionType = monthDivisionView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
+        StructuralElementViewInterface dayDivisionView = ruleset.getStructuralElementView(dayDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
+
+        String issueDivisionType = dayDivisionView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
+        StructuralElementViewInterface issueDivisionView = ruleset.getStructuralElementView(issueDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
+
+        List<List<IndividualIssue>> processes = course.getProcesses();
+        for (List<IndividualIssue> individualProcess : processes) {
+            for (IndividualIssue individualIssue : individualProcess) {
+                String title = makeTitle(workpiece, process, issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"), Collections.emptyMap());
+            }
+        }
+        return true;
+    }
+
+    private String makeTitle(Workpiece workpiece, Process process, String definition, Map<String, String> genericFields)
+            throws ProcessGenerationException, IOException, DoctypeMissingException {
+        String title;
+        boolean prefixWithProcessTitle = definition.startsWith("+");
+        if (prefixWithProcessTitle) {
+            definition = definition.substring(1);
+        }
+        ConfigProject configProject = new ConfigProject(process.getProject().getTitle());
+        TitleGenerator titleGenerator = NewspaperProcessesGenerator.initializeTitleGenerator(configProject, workpiece,
+            Collections.emptyList());
+        title = titleGenerator.generateTitle(definition, genericFields);
+        if (prefixWithProcessTitle) {
+            title = process.getTitle().concat(title);
+        }
+        return title;
     }
 
     public String formatString(String messageKey, String... replacements) {

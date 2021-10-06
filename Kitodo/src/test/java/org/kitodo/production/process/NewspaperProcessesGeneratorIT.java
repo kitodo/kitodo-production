@@ -209,6 +209,11 @@ public class NewspaperProcessesGeneratorIT {
         cleanUp();
     }
 
+    @Test
+    private void shouldNotGenerateDuplicateProcessTitle() {
+
+    }
+
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {
         // all days must be inside their month
         for (LogicalDivision monthLogicalDivision : seasonYearWorkpiece.getLogicalStructure()

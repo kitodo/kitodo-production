@@ -56,6 +56,7 @@ import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
@@ -400,7 +401,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *            allowed Metadata views
      * @return the initialized title generator
      */
-    private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
+    public static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
             Collection<MetadataViewInterface> allowedMetadata)
             throws DoctypeMissingException {
 
@@ -793,5 +794,22 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         if (logger.isTraceEnabled()) {
             logger.trace("Finish took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+    }
+
+    public boolean isDuplicatedTitles() throws ProcessGenerationException {
+        List<List<IndividualIssue>> processes = course.getProcesses();
+        List<String> issueTitles = new ArrayList<>();
+        for (List<IndividualIssue> individualProcess : processes) {
+            for (IndividualIssue individualIssue : individualProcess) {
+                Map<String, String> genericFields = individualIssue.getGenericFields();
+                String title = makeTitle(issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"),
+                    genericFields);
+                if (issueTitles.contains(title)) {
+                    return true;
+                }
+                issueTitles.add(title);
+            }
+        }
+        return false;
     }
 }
