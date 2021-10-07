@@ -49,25 +49,15 @@
                 </p:selectOneMenu>
             </div>
 
-            <div>
-                <!-- Preferences -->
+            <h:panelGroup layout="block"
+                          title="#{msgs['newProcess.rulesetSelection.deactivated']}">
                 <p:outputLabel for="ruleset"
                                value="#{msgs.ruleset}"/>
-                <h:panelGroup>
-                    <p:selectOneMenu id="ruleset"
-                                     value="#{CreateProcessForm.mainProcess.ruleset}"
-                                     converter="#{rulesetConverter}"
-                                     required="true">
-                        <f:selectItems value="#{ProcessForm.rulesets}"
-                                       var="ruleset"
-                                       itemValue="#{ruleset}"
-                                       itemLabel="#{ruleset.title}"/>
-                        <p:ajax event="change"
-                                listener="#{CreateProcessForm.updateRulesetAndDocType(CreateProcessForm.mainProcess.ruleset)}"
-                                update="editForm:processFromTemplateTabView:docType,editForm:processFromTemplateTabView:metadataTable"/>
-                    </p:selectOneMenu>
-                </h:panelGroup>
-            </div>
+                <p:inputText id="ruleset"
+                             styleClass="input"
+                             disabled="#{true}"
+                             value="#{CreateProcessForm.mainProcess.ruleset.title}"/>
+            </h:panelGroup>
 
             <div>
                 <p:outputLabel for="usingTemplates"
