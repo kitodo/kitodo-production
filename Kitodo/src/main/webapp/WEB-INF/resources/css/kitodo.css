@@ -1294,7 +1294,7 @@ Import form
     color: var(--medium-gray);
 }
 
-.task-filter-panel .ui-selectcheckboxmenu-items-wrapper {
+.task-filter-panel.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items-wrapper {
     overflow-y: hidden;
 }
 
