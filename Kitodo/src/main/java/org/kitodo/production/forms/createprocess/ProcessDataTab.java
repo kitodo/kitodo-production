@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,12 +31,12 @@ import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.omnifaces.util.Ajax;
-import org.w3c.dom.NodeList;
 
 public class ProcessDataTab {
 
@@ -212,7 +213,7 @@ public class ProcessDataTab {
             if (StringUtils.isBlank(currentTitle)) {
                 Process parentProcess = createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess();
                 if (Objects.nonNull(parentProcess)) {
-                    currentTitle = getTitleFromMetaXML(parentProcess);
+                    currentTitle = getTitleFromLogicalStructure(parentProcess);
                 } else {
                     currentTitle = getTitleFromAncestors();
                 }
@@ -232,13 +233,11 @@ public class ProcessDataTab {
             "editForm:processFromTemplateTabView:processMetadata");
     }
 
-    private String getTitleFromMetaXML(Process process) {
-        String xpath = "//kitodo:metadata[@name='" + TitleGenerator.TITLE_DOC_MAIN + "']";
+    private String getTitleFromLogicalStructure(Process process) {
         try {
-            NodeList nodeList = ServiceManager.getProcessService().getNodeListFromMetadataFile(process, xpath);
-            if (nodeList.getLength() > 0) {
-                return nodeList.item(0).getTextContent();
-            }
+            LegacyMetsModsDigitalDocumentHelper metsModsDigitalDocumentHelper = ServiceManager.getProcessService()
+                    .readMetadataFile(process);
+            return getTitleFromMetadata(metsModsDigitalDocumentHelper.getWorkpiece().getLogicalStructure().getMetadata());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -258,11 +257,19 @@ public class ProcessDataTab {
         // imported
         for (TempProcess tempProcess : ancestors) {
             ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess);
-            Optional<Metadata> metadataOptional = processFieldedMetadata.getChildMetadata().parallelStream()
-                    .filter(metadata -> TitleGenerator.TITLE_DOC_MAIN.equals(metadata.getKey())).findFirst();
-            if (metadataOptional.isPresent() && metadataOptional.get() instanceof MetadataEntry) {
-                return ((MetadataEntry) metadataOptional.get()).getValue();
+            String title = getTitleFromMetadata(processFieldedMetadata.getChildMetadata());
+            if (StringUtils.isNotBlank(title)) {
+                return title;
             }
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private String getTitleFromMetadata(Collection<Metadata> metadata) {
+        Optional<Metadata> metadataOptional = metadata.parallelStream()
+                .filter(metadataItem -> TitleGenerator.TITLE_DOC_MAIN.equals(metadataItem.getKey())).findFirst();
+        if (metadataOptional.isPresent() && metadataOptional.get() instanceof MetadataEntry) {
+            return ((MetadataEntry) metadataOptional.get()).getValue();
         }
         return StringUtils.EMPTY;
     }
