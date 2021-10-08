@@ -35,7 +35,7 @@ public class IndexAllThread extends Thread {
         for (ObjectType objectType : ObjectType.getIndexableObjectTypes()) {
             try {
                 indexingService.startIndexing(objectType, context);
-            } catch (DataException | CustomResponseException e) {
+            } catch (DataException | CustomResponseException | RuntimeException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), IndexingService.getLogger(), e);
                 Thread.currentThread().interrupt();
             }
