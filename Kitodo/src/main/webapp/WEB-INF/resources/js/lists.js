@@ -29,6 +29,7 @@ function registerRowToggleEvents(event) {
 }
 
 $( document ).on( "click", ".allSelectable .ui-chkbox-all .ui-chkbox-box", function() {
+    /*global PF*/
     if( $(this).hasClass( "ui-state-active" ) ) {
         PF('allSelectableOverlayPanel').show();
     } else {
