@@ -30,9 +30,10 @@ function registerRowToggleEvents(event) {
 
 $( document ).on( "click", ".allSelectable .ui-chkbox-all .ui-chkbox-box", function() {
     /*global PF*/
+    /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
     if( $(this).hasClass( "ui-state-active" ) ) {
-        PF('allSelectableOverlayPanel').show();
+        new PF('allSelectableOverlayPanel').show();
     } else {
-        PF('processesTable').unselectAllRows();
+        new PF('processesTable').unselectAllRows();
     }
 });
