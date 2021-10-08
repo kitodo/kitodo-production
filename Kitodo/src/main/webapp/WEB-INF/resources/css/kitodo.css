@@ -1117,7 +1117,7 @@ h3#headerText {
 }
 
 .allSelectableOverlayPanel ul li:first-child {
-    margin-top: 0px;
+    margin-top: 0;
 }
 
 #processesTabView\:processesForm\:processesTable .ui-row-toggler {
