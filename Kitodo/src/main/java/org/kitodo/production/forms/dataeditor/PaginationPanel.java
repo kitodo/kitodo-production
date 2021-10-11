@@ -43,7 +43,6 @@ public class PaginationPanel {
 
     private final DataEditorForm dataEditor;
     private boolean fictitiousCheckboxChecked = false;
-    private int newPagesCountValue = 0;
     private List<SelectItem> paginationSelectionItems;
     private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
     private String paginationStartValue = "1";
@@ -87,24 +86,6 @@ public class PaginationPanel {
         show();
     }
 
-    /**
-     * This method is invoked if the generate dummy images button is clicked.
-     */
-    public void generateDummyImagesButtonClick() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
-        int order = physicalDivisions.isEmpty() ? 1 : physicalDivisions.get(physicalDivisions.size() - 1).getOrder() + 1;
-        boolean withAutomaticPagination = ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION);
-        Paginator orderlabel = new Paginator(metsEditorDefaultPagination(order));
-        for (int i = 1; i <= newPagesCountValue; i++) {
-            PhysicalDivision physicalDivision = new PhysicalDivision();
-            physicalDivision.setOrder(order++);
-            if (withAutomaticPagination) {
-                physicalDivision.setOrderlabel(orderlabel.next());
-            }
-            physicalDivisions.add(physicalDivision);
-        }
-    }
-
     private static String metsEditorDefaultPagination(int first) {
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
             case "arabic":
@@ -116,25 +97,6 @@ public class PaginationPanel {
             default:
                 return "";
         }
-    }
-
-    /**
-     * Returns the value of the newPagesCount input box.
-     *
-     * @return the value of the newPagesCount
-     */
-    public int getNewPagesCountValue() {
-        return newPagesCountValue;
-    }
-
-    /**
-     * Sets the value of the newPagesCount input box.
-     *
-     * @param newPagesCountValue
-     *            value to set
-     */
-    public void setNewPagesCountValue(int newPagesCountValue) {
-        this.newPagesCountValue = newPagesCountValue;
     }
 
     /**
