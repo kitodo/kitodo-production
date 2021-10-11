@@ -281,7 +281,7 @@ public class ProcessDataTab {
      *            whose metadata should be queried
      */
     private ProcessFieldedMetadata initializeTempProcessDetails(TempProcess tempProcess) {
-        var metadata = ImportService.initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
+        ProcessFieldedMetadata metadata = ImportService.initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
             createProcessForm.getRulesetManagement(), createProcessForm.getAcquisitionStage(),
             createProcessForm.getPriorityList());
         metadata.setMetadata(ImportService.importMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
