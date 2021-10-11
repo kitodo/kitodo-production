@@ -239,8 +239,9 @@
                                  styleClass="primary right"
                                  icon="fa fa-check fa-lg"
                                  iconPos="right"
+                                 oncomplete="$('.ui-selectlistbox-list').load(' .ui-selectlistbox-list > *')"
                                  onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 update="notifications,paginationForm:paginationSelection,@(.ui-tree),imagePreviewForm:thumbnailWrapper,metadataAccordion:logicalMetadataWrapperPanel"
+                                 update="notifications,@(.ui-tree),imagePreviewForm:thumbnailWrapper,metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"
