@@ -21,7 +21,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.process.NewspaperProcessesGenerator;
 

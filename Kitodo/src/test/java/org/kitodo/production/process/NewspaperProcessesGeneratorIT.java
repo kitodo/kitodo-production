@@ -222,7 +222,7 @@ public class NewspaperProcessesGeneratorIT {
 
         ProcessDTO byId = ServiceManager.getProcessService().findById(11);
         Assert.assertNull("Process should not have been created", byId.getTitle());
-        
+
     }
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {

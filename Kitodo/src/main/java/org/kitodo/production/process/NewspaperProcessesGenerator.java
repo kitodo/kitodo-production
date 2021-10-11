@@ -406,7 +406,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *            allowed Metadata views
      * @return the initialized title generator
      */
-    public static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
+    private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
             Collection<MetadataViewInterface> allowedMetadata)
             throws DoctypeMissingException {
 
@@ -801,7 +801,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    public boolean isDuplicatedTitles() throws ProcessGenerationException, DataException {
+    private boolean isDuplicatedTitles() throws ProcessGenerationException, DataException {
         List<List<IndividualIssue>> processes = course.getProcesses();
         List<String> issueTitles = new ArrayList<>();
         for (List<IndividualIssue> individualProcess : processes) {
@@ -810,7 +810,6 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                 String title = makeTitle(issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"),
                     genericFields);
                 if (!ServiceManager.getProcessService().findByTitle(title).isEmpty() || issueTitles.contains(title)) {
-                    System.out.println(title);
                     return true;
                 }
                 issueTitles.add(title);

@@ -22,12 +22,10 @@ import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -37,7 +35,6 @@ import java.util.regex.Pattern;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.naming.ConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -45,17 +42,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.DoctypeMissingException;
-import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
@@ -67,11 +58,8 @@ import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
-import org.kitodo.production.process.NewspaperProcessesGenerator;
-import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.calendar.CalendarService;
-import org.kitodo.production.services.data.RulesetService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -673,7 +661,6 @@ public class CalendarForm implements Serializable {
      */
     public String createProcesses() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(parentId);
-
         TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskManagerPage()) {
             return TASK_MANAGER_REFERER;
