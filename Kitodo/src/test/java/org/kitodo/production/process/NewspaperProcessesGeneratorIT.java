@@ -48,6 +48,9 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.services.ServiceManager;
@@ -210,8 +213,16 @@ public class NewspaperProcessesGeneratorIT {
     }
 
     @Test
-    private void shouldNotGenerateDuplicateProcessTitle() {
+    public void shouldNotGenerateDuplicateProcessTitle() throws DAOException, DataException {
+        Process completeEdition = ServiceManager.getProcessService().getById(10);
+        Course course = NewspaperCourse.getDuplicatedCourse();
+        course.splitInto(Granularity.DAYS);
+        GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
+        generatesNewspaperProcessesThread.run();
 
+        ProcessDTO byId = ServiceManager.getProcessService().findById(11);
+        Assert.assertNull("Process should not have been created", byId.getTitle());
+        
     }
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {

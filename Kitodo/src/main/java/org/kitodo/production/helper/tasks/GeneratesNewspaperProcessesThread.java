@@ -75,13 +75,11 @@ public class GeneratesNewspaperProcessesThread extends EmptyTask {
      */
     @Override
     public void run() {
-        if(generator.isDuplicatedTitles()) {
-            Helper.setErrorMessage("duplicatedTitles");
-            return;
-        }
         try {
             while (generator.getProgress() < generator.getNumberOfSteps()) {
-                generator.nextStep();
+                if(!generator.nextStep()) {
+                    return;
+                }
                 super.setProgress(generator.getProgress() / generator.getNumberOfSteps());
                 if (Thread.currentThread().isInterrupted()) {
                     return;

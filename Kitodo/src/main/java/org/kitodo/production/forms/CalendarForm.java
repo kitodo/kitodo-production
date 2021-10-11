@@ -673,61 +673,12 @@ public class CalendarForm implements Serializable {
      */
     public String createProcesses() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(parentId);
-        if (duplicateTitlesCreated(process)) {
-            Helper.setErrorMessage("duplicateProcessTitles");
-            return null;
-        }
-
 
         TaskManager.addTask(new GeneratesNewspaperProcessesThread(process, course));
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskManagerPage()) {
             return TASK_MANAGER_REFERER;
         }
         return DEFAULT_REFERER;
-    }
-
-    private boolean duplicateTitlesCreated(Process process) throws IOException, ProcessGenerationException, DoctypeMissingException {
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(ServiceManager.getProcessService().getMetadataFileUri(process));
-        String newspaperType = workpiece.getLogicalStructure().getType();
-        RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
-        String acquisitionStage = "";
-        StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, acquisitionStage, Locale.LanguageRange.parse("en"));
-        String yearDivisionType = newspaperView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
-        StructuralElementViewInterface yearDivisionView = ruleset.getStructuralElementView(yearDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
-
-        String monthDivisionType = yearDivisionView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
-        StructuralElementViewInterface monthDivisionView = ruleset.getStructuralElementView(monthDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
-
-        String dayDivisionType = monthDivisionView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
-        StructuralElementViewInterface dayDivisionView = ruleset.getStructuralElementView(dayDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
-
-        String issueDivisionType = dayDivisionView.getAllowedSubstructuralElements().entrySet().iterator().next().getKey();
-        StructuralElementViewInterface issueDivisionView = ruleset.getStructuralElementView(issueDivisionType, acquisitionStage, Locale.LanguageRange.parse("en"));
-
-        List<List<IndividualIssue>> processes = course.getProcesses();
-        for (List<IndividualIssue> individualProcess : processes) {
-            for (IndividualIssue individualIssue : individualProcess) {
-                String title = makeTitle(workpiece, process, issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"), Collections.emptyMap());
-            }
-        }
-        return true;
-    }
-
-    private String makeTitle(Workpiece workpiece, Process process, String definition, Map<String, String> genericFields)
-            throws ProcessGenerationException, IOException, DoctypeMissingException {
-        String title;
-        boolean prefixWithProcessTitle = definition.startsWith("+");
-        if (prefixWithProcessTitle) {
-            definition = definition.substring(1);
-        }
-        ConfigProject configProject = new ConfigProject(process.getProject().getTitle());
-        TitleGenerator titleGenerator = NewspaperProcessesGenerator.initializeTitleGenerator(configProject, workpiece,
-            Collections.emptyList());
-        title = titleGenerator.generateTitle(definition, genericFields);
-        if (prefixWithProcessTitle) {
-            title = process.getTitle().concat(title);
-        }
-        return title;
     }
 
     public String formatString(String messageKey, String... replacements) {
