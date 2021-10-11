@@ -2754,8 +2754,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
         HorizontalBarChartModel horizontalBarChartModel = new HorizontalBarChartModel();
         horizontalBarChartModel.setData(data);
+        horizontalBarChartModel.setOptions(getBarChartOptions());
+        return horizontalBarChartModel;
+    }
 
-        // Options
+    private BarChartOptions getBarChartOptions() {
         CartesianLinearAxes linearAxes = new CartesianLinearAxes();
         linearAxes.setStacked(true);
         BarChartOptions options = new BarChartOptions();
@@ -2764,9 +2767,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         tooltip.setMode("index");
         tooltip.setIntersect(false);
         options.setTooltip(tooltip);
-
-        horizontalBarChartModel.setOptions(options);
-        return horizontalBarChartModel;
+        return options;
     }
 
     /**
