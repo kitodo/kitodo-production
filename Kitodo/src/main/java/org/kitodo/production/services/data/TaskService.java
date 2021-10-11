@@ -901,7 +901,9 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @return tooltip for correction message switch
      */
     public static String getCorrectionMessageSwitchTooltip(Process process, Task task) {
-        if (Objects.nonNull(task) && task.getOrdering() == 1) {
+        if (isCorrectionWorkflow(process)) {
+            return Helper.getTranslation("dataEditor.comment.correctionWorkflowAlreadyActive");
+        } else if (Objects.nonNull(task) && task.getOrdering() == 1) {
             return Helper.getTranslation("dataEditor.comment.firstTaskInWorkflow");
         } else {
             List<Task> concurrentTasks = TaskService.getConcurrentTasksOpenOrInWork(process, task);
@@ -921,6 +923,16 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                 }
             }
         }
+    }
+
+    /**
+     * Check and return whether 'correction' flag is set to true for any task of the current process,
+     * e.g. if process is currently in a correction workflow.
+     *
+     * @return whether process is in correction workflow or not
+     */
+    public static boolean isCorrectionWorkflow(Process process) {
+        return process.getTasks().stream().anyMatch(Task::isCorrection);
     }
 
     /**

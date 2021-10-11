@@ -447,44 +447,36 @@ public class WorkflowControllerServiceIT {
         Task currentTask = taskService.getById(8);
         Task correctionTask = taskService.getById(6);
 
-        Comment problem = new Comment();
-        problem.setMessage("Fix it!");
-        problem.setAuthor(ServiceManager.getUserService().getById(1));
-        problem.setCurrentTask(currentTask);
-        problem.setCorrectionTask(correctionTask);
-        problem.setProcess(currentTask.getProcess());
-        problem.setType(CommentType.ERROR);
-        problem.setCorrected(Boolean.FALSE);
-        problem.setCreationDate(new Date());
+        Comment correctionComment = new Comment();
+        correctionComment.setMessage("Fix it!");
+        correctionComment.setAuthor(ServiceManager.getUserService().getById(1));
+        correctionComment.setCurrentTask(currentTask);
+        correctionComment.setCorrectionTask(correctionTask);
+        correctionComment.setProcess(currentTask.getProcess());
+        correctionComment.setType(CommentType.ERROR);
+        correctionComment.setCorrected(Boolean.FALSE);
+        correctionComment.setCreationDate(new Date());
 
-        ServiceManager.getCommentService().saveToDatabase(problem);
+        ServiceManager.getCommentService().saveToDatabase(correctionComment);
 
-        Comment solution = new Comment();
-        solution.setMessage("Fixed");
-        solution.setAuthor(ServiceManager.getUserService().getById(1));
-        solution.setCurrentTask(correctionTask);
-        solution.setCorrectionTask(correctionTask);
-        solution.setProcess(currentTask.getProcess());
-        solution.setType(CommentType.ERROR);
-        solution.setCreationDate(new Date());
-        solution.setCorrectionDate(new Date());
-        solution.setCorrected(Boolean.TRUE);
+        workflowService.reportProblem(correctionComment);
+        workflowService.solveProblem(correctionComment);
 
-        ServiceManager.getCommentService().saveToDatabase(solution);
-
-        workflowService.reportProblem(problem);
-        currentTask = taskService.getById(6);
-        workflowService.solveProblem(solution);
-
-        Process process = currentTask.getProcess();
+        Process process = ServiceManager.getProcessService().getById(currentTask.getProcess().getId());
         for (Task task : process.getTasks()) {
-            if (currentTask.getOrdering() < task.getOrdering() && task.getOrdering() < correctionTask.getOrdering()) {
-                assertEquals("Solve of problem was incorrect - tasks between were not set up to done!", TaskStatus.DONE,
+            if (correctionComment.getCorrectionTask().getOrdering() < task.getOrdering()
+                    && task.getOrdering() < correctionComment.getCurrentTask().getOrdering()) {
+                assertEquals("Solving reported problem was unsuccessful - tasks between '"
+                                + correctionTask.getTitle() + "' and '" + currentTask.getTitle()
+                                + "' were not set to processing status DONE!", TaskStatus.DONE,
                     task.getProcessingStatus());
             }
         }
 
-        assertEquals("Solve of problem was incorrect - tasks from which correction was send was not set up to open!",
-            TaskStatus.OPEN, correctionTask.getProcessingStatus());
+        assertEquals("Solving reported problem was unsuccessful - correction task '" + correctionTask.getTitle()
+                        + "' was not set to processing status DONE!", TaskStatus.DONE, correctionComment.getCorrectionTask().getProcessingStatus());
+
+        assertEquals("Solving reported problem was unsuccessful - current task '" + currentTask.getTitle()
+                + "' was not set to processing status 'OPEN'!", TaskStatus.OPEN, correctionComment.getCurrentTask().getProcessingStatus());
     }
 }

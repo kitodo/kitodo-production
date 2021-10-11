@@ -245,6 +245,7 @@ public class WorkflowControllerService {
      */
     public void close(Task task) throws DataException, IOException, DAOException {
         task.setProcessingStatus(TaskStatus.DONE);
+        task.setCorrection(false);
         task.setProcessingTime(new Date());
         User user = null;
         if (!task.isTypeAutomatic()) {
@@ -371,7 +372,7 @@ public class WorkflowControllerService {
         correctionTask.setCorrection(true);
         taskService.save(correctionTask);
 
-        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+        lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
         updateProcessSortHelperStatus(currentTask.getProcess());
     }
 
@@ -381,21 +382,12 @@ public class WorkflowControllerService {
      * @param comment
      *              as Comment object
      */
-    public void solveProblem(Comment comment) throws DataException {
-        Date date = new Date();
-        Task currentTask = comment.getCorrectionTask();
-        this.webDav.uploadFromHome(currentTask.getProcess());
-        currentTask.setProcessingStatus(TaskStatus.DONE);
-        currentTask.setProcessingEnd(date);
-        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(date);
-        taskService.replaceProcessingUser(currentTask, getCurrentUser());
-        taskService.save(currentTask);
-        Task correctionTask = comment.getCurrentTask();
-        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
-        openTaskForProcessing(correctionTask);
+    public void solveProblem(Comment comment) throws DataException, DAOException, IOException {
+        closeTaskByUser(comment.getCorrectionTask());
+        comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
+        comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
         comment.setCorrected(Boolean.TRUE);
-        comment.setCorrectionDate(date);
+        comment.setCorrectionDate(new Date());
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
         } catch (DAOException e) {
@@ -477,7 +469,7 @@ public class WorkflowControllerService {
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
+    private void lockTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
         List<Task> allTasksInBetween = taskService.getAllTasksInBetween(correctionTask.getOrdering(),
             currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
@@ -488,26 +480,6 @@ public class WorkflowControllerService {
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date)
-            throws DataException {
-        List<Task> allTasksInBetween = taskService.getAllTasksInBetween(currentTask.getOrdering(),
-            correctionTask.getOrdering(), currentTask.getProcess().getId());
-        for (Task taskInBetween : allTasksInBetween) {
-            taskInBetween.setProcessingStatus(TaskStatus.DONE);
-            taskInBetween.setProcessingEnd(date);
-            taskInBetween.setCorrection(false);
-            taskService.save(taskInBetween);
-        }
-    }
-
-    private void openTaskForProcessing(Task correctionTask) throws DataException {
-        correctionTask.setProcessingStatus(TaskStatus.OPEN);
-        correctionTask.setCorrection(true);
-        correctionTask.setProcessingEnd(null);
-        correctionTask.setProcessingTime(new Date());
-        taskService.save(correctionTask);
-    }
-
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
         List<Task> allHigherTasks = new ArrayList<>();
         for (Task tempTask : tasks) {
@@ -515,7 +487,7 @@ public class WorkflowControllerService {
                 allHigherTasks.add(tempTask);
             }
         }
-        Collections.sort(allHigherTasks, Comparator.comparing(Task::getOrdering));
+        allHigherTasks.sort(Comparator.comparing(Task::getOrdering));
         return allHigherTasks;
     }
 
@@ -631,7 +603,8 @@ public class WorkflowControllerService {
      * If no open parallel tasks are available, activate the next tasks.
      */
     private void activateTask(Task task) throws DataException, IOException, DAOException {
-        if (isWorkflowConditionFulfilled(task.getProcess(), task.getWorkflowCondition())) {
+        if ((!task.isCorrection() || task.isRepeatOnCorrection())
+                && isWorkflowConditionFulfilled(task.getProcess(), task.getWorkflowCondition())) {
             // activate the task if it is not fully automatic
             task.setProcessingStatus(TaskStatus.OPEN);
             task.setProcessingTime(new Date());
@@ -647,6 +620,7 @@ public class WorkflowControllerService {
             task.setProcessingEnd(new Date());
             task.setEditType(TaskEditType.AUTOMATIC);
 
+            task.setCorrection(false);
             taskService.save(task);
 
             activateTasksForClosedTask(task);
