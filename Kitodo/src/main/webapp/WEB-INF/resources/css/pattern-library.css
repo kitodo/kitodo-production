@@ -792,6 +792,38 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     overflow-y: scroll;
 }
 
+.ui-selectcheckboxmenu-label-container {
+    padding-right: var(--default-full-size);
+}
+
+.ui-selectcheckboxmenu-trigger::after {
+    content: '\f0dc';
+    display: inline-block;
+    font-family: 'FontAwesome';
+    font-weight: normal;
+    padding: 8px 10px;
+}
+
+.ui-selectcheckboxmenu-trigger .ui-icon {
+    display: none;
+}
+
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger {
+    background: var(--pure-white);
+    border: solid var(--default-border-width) var(--light-blue);
+    border-left: none;
+    box-sizing: border-box;
+    color: var(--light-blue);
+    width: auto;
+}
+
+.ui-selectcheckboxmenu:hover,
+.ui-selectcheckboxmenu:hover .ui-selectcheckboxmenu-trigger,
+.ui-selectcheckboxmenu.ui-state-focus .ui-selectcheckboxmenu-trigger {
+    border-color: var(--focused-blue);
+    color: var(--focused-blue);
+}
+
 .ui-inputfield.ui-state-disabled,
 .ui-inputfield.ui-state-disabled::placeholder,
 .ui-selectonemenu.ui-state-disabled {

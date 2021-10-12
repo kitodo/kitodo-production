@@ -16,6 +16,7 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -74,6 +75,16 @@ public class CurrentTaskForm extends BaseForm {
     private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
+    private List<String> taskFilters;
+    private List<String> selectedTaskFilters;
+
+    private List<TaskStatus> taskStatus;
+    private List<TaskStatus> selectedTaskStatus;
+
+    private static final String AUTOMATIC_TASKS_FILTER = "automaticTasks";
+    private static final String CORRECTION_TASKS_FILTER = "correctionTasks";
+    private static final String OTHER_USERS_TASKS_FILTER = "otherUsersTasks";
+
     @Inject
     private CustomListColumnInitializer initializer;
 
@@ -97,6 +108,22 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("task");
+
+        taskFilters = new LinkedList<>();
+        taskFilters.add(AUTOMATIC_TASKS_FILTER);
+        taskFilters.add(CORRECTION_TASKS_FILTER);
+        taskFilters.add(OTHER_USERS_TASKS_FILTER);
+
+        selectedTaskFilters = new LinkedList<>();
+        selectedTaskFilters.add(OTHER_USERS_TASKS_FILTER);
+
+        taskStatus = new LinkedList<>();
+        taskStatus.add(TaskStatus.OPEN);
+        taskStatus.add(TaskStatus.INWORK);
+
+        selectedTaskStatus = new LinkedList<>();
+        selectedTaskStatus.add(TaskStatus.OPEN);
+        selectedTaskStatus.add(TaskStatus.INWORK);
     }
 
     /**
@@ -415,21 +442,8 @@ public class CurrentTaskForm extends BaseForm {
         }
     }
 
-    public void setTaskStatusRestriction(TaskStatus taskStatus) {
+    public void setTaskStatusRestriction(List<TaskStatus> taskStatus) {
         ((LazyTaskDTOModel)this.lazyDTOModel).setTaskStatusRestriction(taskStatus);
-    }
-
-    public TaskStatus getTaskStatusRestriction() {
-        return ((LazyTaskDTOModel)this.lazyDTOModel).getTaskStatusRestriction();
-    }
-
-    /**
-     * Check if it should show only own tasks.
-     *
-     * @return boolean
-     */
-    public boolean isOnlyOwnTasks() {
-        return ((LazyTaskDTOModel)this.lazyDTOModel).isOnlyOwnTasks();
     }
 
     /**
@@ -443,12 +457,91 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Check if it should show also automatic tasks.
+     * Get task filters.
      *
-     * @return boolean
+     * @return task filters
      */
-    public boolean isShowAutomaticTasks() {
-        return ((LazyTaskDTOModel)this.lazyDTOModel).isShowAutomaticTasks();
+    public List<String> getTaskFilters() {
+        return this.taskFilters;
+    }
+
+    /**
+     * Set task filters.
+     *
+     * @param filters task filters
+     */
+    public void setTaskFilters(List<String> filters) {
+        this.taskFilters = filters;
+    }
+
+    /**
+     * Get selected task filters.
+     *
+     * @return selected task filters
+     */
+    public List<String> getSelectedTaskFilters() {
+        return this.selectedTaskFilters;
+    }
+
+    /**
+     * Set selected task filters.
+     *
+     * @param selectedFilters selected task filters
+     */
+    public void setSelectedTaskFilters(List<String> selectedFilters) {
+        this.selectedTaskFilters = selectedFilters;
+    }
+
+    /**
+     * Event listener for task filter changed event.
+     */
+    public void taskFiltersChanged() {
+        this.setShowAutomaticTasks(this.selectedTaskFilters.contains(AUTOMATIC_TASKS_FILTER));
+        this.setHideCorrectionTasks(!this.selectedTaskFilters.contains(CORRECTION_TASKS_FILTER));
+        this.setOnlyOwnTasks(!this.selectedTaskFilters.contains(OTHER_USERS_TASKS_FILTER));
+    }
+
+    /**
+     * Get task status.
+     *
+     * @return task status
+     */
+    public List<TaskStatus> getTaskStatus() {
+        return this.taskStatus;
+    }
+
+    /**
+     * Set task status.
+     *
+     * @param status task status
+     */
+    public void setTaskStatus(List<TaskStatus> status) {
+        this.taskStatus = status;
+    }
+
+    /**
+     * Get selected task status.
+     *
+     * @return selected task status
+     */
+    public List<TaskStatus> getSelectedTaskStatus() {
+        return this.selectedTaskStatus;
+    }
+
+    /**
+     * Set selected task status.
+     *
+     * @param selectedStatus selected task status
+     */
+    public void setSelectedTaskStatus(List<TaskStatus> selectedStatus) {
+        this.selectedTaskStatus = selectedStatus;
+    }
+
+    /**
+     * Event listener for task status changed event.
+     */
+    public void taskStatusChanged() {
+        this.setTaskStatusRestriction(this.selectedTaskStatus);
     }
 
     /**

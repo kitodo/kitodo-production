@@ -34,7 +34,7 @@ public class LazyTaskDTOModel extends LazyDTOModel {
     private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
-    private TaskStatus taskStatusRestriction = null;
+    private List<TaskStatus> taskStatusRestriction = new LinkedList<>();
 
     /**
      * Creates a LazyTaskDTOModel instance that allows fetching data from the data
@@ -46,6 +46,8 @@ public class LazyTaskDTOModel extends LazyDTOModel {
      */
     public LazyTaskDTOModel(TaskService taskService) {
         super(taskService);
+        this.taskStatusRestriction.add(TaskStatus.OPEN);
+        this.taskStatusRestriction.add(TaskStatus.INWORK);
     }
 
     @Override
@@ -81,15 +83,6 @@ public class LazyTaskDTOModel extends LazyDTOModel {
     }
 
     /**
-     * Get onlyOwnTasks.
-     *
-     * @return value of onlyOwnTasks
-     */
-    public boolean isOnlyOwnTasks() {
-        return onlyOwnTasks;
-    }
-
-    /**
      * Set onlyOwnTasks.
      *
      * @param onlyOwnTasks as boolean
@@ -99,30 +92,12 @@ public class LazyTaskDTOModel extends LazyDTOModel {
     }
 
     /**
-     * Get taskStatusRestriction.
-     *
-     * @return value of taskStatusRestriction
-     */
-    public TaskStatus getTaskStatusRestriction() {
-        return taskStatusRestriction;
-    }
-
-    /**
      * Set taskStatusRestriction.
      *
      * @param taskStatusRestriction as org.kitodo.data.database.enums.TaskStatus
      */
-    public void setTaskStatusRestriction(TaskStatus taskStatusRestriction) {
+    public void setTaskStatusRestriction(List<TaskStatus> taskStatusRestriction) {
         this.taskStatusRestriction = taskStatusRestriction;
-    }
-
-    /**
-     * Get showAutomaticTasks.
-     *
-     * @return value of showAutomaticTasks
-     */
-    public boolean isShowAutomaticTasks() {
-        return showAutomaticTasks;
     }
 
     /**

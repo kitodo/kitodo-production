@@ -39,12 +39,15 @@ public class TasksPage extends Page<TasksPage> {
 
     private WebElement takeTaskLink;
 
-    @FindBy(id = STATUS_FORM + ":statusButton")
+    @FindBy(id = STATUS_FORM + ":taskStatus")
     private WebElement statusButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = STATUS_FORM + ":restrictToOpenTasks")
-    private WebElement restrictToOpenTasks;
+    @FindBy(id = STATUS_FORM + ":taskStatus_panel")
+    private WebElement taskStatusMenuPanel;
+
+    @FindBy(css = ".task-filter-panel + .task-filter-panel li:last-child .ui-chkbox")
+    private WebElement inWorkStatusCheckbox;
 
     public TasksPage() {
         super("pages/tasks.jsf");
@@ -79,8 +82,8 @@ public class TasksPage extends Page<TasksPage> {
         statusButton.click();
         await(WAIT_FOR_FILTER_FORM_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS)
-                .until(() -> restrictToOpenTasks.isDisplayed());
-        restrictToOpenTasks.click();
+                .until(() -> taskStatusMenuPanel.isDisplayed());
+        inWorkStatusCheckbox.click();
 
         await("Wait for task list to be restricted to open tasks").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()

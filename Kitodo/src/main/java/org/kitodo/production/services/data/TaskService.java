@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -117,7 +116,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @return query to retrieve tasks for which the user eligible.
      */
     private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
-                                                 boolean showAutomaticTasks, TaskStatus taskStatusRestriction) {
+                                                 boolean showAutomaticTasks, List<TaskStatus> taskStatusRestrictions) {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
@@ -128,16 +127,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
         query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
 
-        if (TaskStatus.OPEN.equals(taskStatusRestriction)) {
-            query.must(getQueryForProcessingStatus(TaskStatus.OPEN.getValue()));
-        } else if (TaskStatus.INWORK.equals(taskStatusRestriction)) {
-            query.must(getQueryForProcessingStatus(TaskStatus.INWORK.getValue()));
-        } else {
-            Set<Integer> processingStatuses = new HashSet<>();
-            processingStatuses.add(TaskStatus.OPEN.getValue());
-            processingStatuses.add(TaskStatus.INWORK.getValue());
-            query.must(getQueryForProcessingStatuses(processingStatuses));
-        }
+        query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
+                .map(TaskStatus::getValue).collect(Collectors.toSet())));
 
         if (onlyOwnTasks) {
             query.must(getQueryForProcessingUser(user.getId()));
@@ -177,7 +168,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     public Long countResults(HashMap<String, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
-                             boolean showAutomaticTasks, TaskStatus taskStatus)
+                             boolean showAutomaticTasks, List<TaskStatus> taskStatus)
             throws DataException {
         return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters),
                 onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus));
@@ -196,7 +187,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false, null);
+        return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false,
+                Arrays.asList(TaskStatus.OPEN, TaskStatus.INWORK));
     }
 
     /**
@@ -209,13 +201,13 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @param onlyOwnTasks boolean controlling whether to load only tasks assigned to current user or not
      * @param hideCorrectionTasks boolean controlling whether to load correction tasks or not
      * @param showAutomaticTasks boolean controlling whether to load automatic tasks or not
-     * @param taskStatus TaskStatus by which tasks are filtered
+     * @param taskStatus list of TaskStatus by which tasks are filtered
      * @return List of loaded tasks
      * @throws DataException if tasks cannot be loaded from search index
      */
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
-                                  TaskStatus taskStatus)
+                                  List<TaskStatus> taskStatus)
             throws DataException {
         if ("process.creationDate".equals(sortField)) {
             sortField = "processForTask.creationDate";
