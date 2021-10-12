@@ -343,9 +343,24 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage("emptySourceFolder");
         } else {
             List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, contentFolders);
+            if (mode.equals(GenerationMode.ALL)) {
+                removeGeneratedContent(outputs);
+            }
             ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
             TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
             Helper.setMessage(messageKey);
+        }
+    }
+
+    private void removeGeneratedContent(List<Subfolder> contentFolders) {
+        for (Subfolder subfolder : contentFolders) {
+            for (URI uri : subfolder.listContents(true).values()) {
+                try {
+                    ServiceManager.getFileService().delete(uri);
+                } catch (IOException e) {
+                    Helper.setErrorMessage(e);
+                }
+            }
         }
     }
 
