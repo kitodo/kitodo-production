@@ -60,7 +60,7 @@ import org.kitodo.production.services.data.ProjectService;
 public class ProjectForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
     private Project project;
-    private List<Template> deletedTemples = new ArrayList<>();
+    private List<Template> deletedTemplates = new ArrayList<>();
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
 
@@ -142,12 +142,12 @@ public class ProjectForm extends BaseForm {
      * @param folderIds
      *            IDs of folders to delete
      */
-    private void deleteFolders(List<Integer> folderIds) {
-        if (Objects.nonNull(this.project)) {
+    private void removeFoldersFromProject(List<Integer> folderIds) {
+        if (Objects.nonNull(project)) {
             for (Integer id : folderIds) {
-                for (Folder f : this.project.getFolders()) {
+                for (Folder f : project.getFolders()) {
                     if (Objects.isNull(f.getId()) ? Objects.isNull(id) : f.getId().equals(id)) {
-                        this.project.getFolders().remove(f);
+                        project.getFolders().remove(f);
                         break;
                     }
                 }
@@ -161,14 +161,11 @@ public class ProjectForm extends BaseForm {
      */
     private void commitFolders() throws DAOException {
         // resetting the list of new folders
-        this.newFolders = new ArrayList<>();
+        newFolders = new ArrayList<>();
         // deleting the folders marked for deletion
-        deleteFolders(this.deletedFolders);
+        removeFoldersFromProject(deletedFolders);
         // resetting the list of folders marked for deletion
-        this.deletedFolders = new ArrayList<>();
-        for (Folder folder : project.getFolders()) {
-            ServiceManager.getFolderService().saveToDatabase(folder);
-        }
+        deletedFolders = new ArrayList<>();
     }
 
     /**
@@ -176,11 +173,11 @@ public class ProjectForm extends BaseForm {
      */
     public void cancel() {
         // flushing new folders
-        deleteFolders(this.newFolders);
+        removeFoldersFromProject(newFolders);
         // resetting the list of new folders
-        this.newFolders = new ArrayList<>();
+        newFolders = new ArrayList<>();
         // resetting the List of folders marked for deletion
-        this.deletedFolders = new ArrayList<>();
+        deletedFolders = new ArrayList<>();
     }
 
     /**
@@ -226,32 +223,16 @@ public class ProjectForm extends BaseForm {
      * @return page or null
      */
     public String save() {
-        ServiceManager.getProjectService().evict(this.project);
+        ServiceManager.getProjectService().evict(project);
         if (isTitleValid()) {
             try {
                 addFirstUserToNewProject();
 
-                ServiceManager.getProjectService().saveToDatabase(this.project);
-                if (this.copyTemplates) {
-                    for (Template template : this.baseProject.getTemplates()) {
-                        template.getProjects().add(this.project);
-                        this.project.getTemplates().add(template);
-                    }
-                    setCopyTemplates(false);
-                }
+                commitTemplates();
 
-                for (Template template : this.project.getTemplates()) {
-                    ServiceManager.getTemplateService().saveToDatabase(template);
-                }
-                for (Template template : this.deletedTemples) {
-                    ServiceManager.getTemplateService().saveToDatabase(template);
-                }
-                this.deletedTemples = new ArrayList<>();
+                commitFolders();
 
-                ServiceManager.getProjectService().save(this.project, true);
-
-                // call this to make saving and deleting permanent
-                this.commitFolders();
+                ServiceManager.getProjectService().save(project, true);
 
                 return projectsPage;
             } catch (DAOException | DataException e) {
@@ -262,6 +243,25 @@ public class ProjectForm extends BaseForm {
         } else {
             return this.stayOnCurrentPage;
         }
+    }
+
+    private void commitTemplates() throws DAOException {
+        if (copyTemplates) {
+            for (Template template : baseProject.getTemplates()) {
+                template.getProjects().add(project);
+                project.getTemplates().add(template);
+            }
+            setCopyTemplates(false);
+        }
+
+        for (Template template : project.getTemplates()) {
+            ServiceManager.getTemplateService().saveToDatabase(template);
+        }
+        for (Template template : deletedTemplates) {
+            ServiceManager.getTemplateService().saveToDatabase(template);
+        }
+
+        deletedTemplates = new ArrayList<>();
     }
 
     private boolean isTitleValid() {
@@ -330,6 +330,12 @@ public class ProjectForm extends BaseForm {
     public void saveFolder() {
         if (!this.project.getFolders().contains(this.myFolder)) {
             this.project.getFolders().add(this.myFolder);
+            try {
+                ServiceManager.getProjectService().saveToDatabase(this.project);
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
+                        logger, e);
+            }
         } else {
             List<Folder> folders = this.project.getFolders();
             for (Folder folder : folders) {
@@ -415,7 +421,7 @@ public class ProjectForm extends BaseForm {
                     if (template.getId().equals(templateId)) {
                         this.project.getTemplates().remove(template);
                         template.getProjects().remove(this.project);
-                        this.deletedTemples.add(template);
+                        this.deletedTemplates.add(template);
                         break;
                     }
                 }
