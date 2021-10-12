@@ -247,10 +247,10 @@ public class ProjectForm extends BaseForm {
                 }
                 this.deletedTemples = new ArrayList<>();
 
-                ServiceManager.getProjectService().save(this.project, true);
-
                 // call this to make saving and deleting permanent
-                this.commitFolders();
+                commitFolders();
+
+                ServiceManager.getProjectService().save(this.project, true);
 
                 return projectsPage;
             } catch (DAOException | DataException e) {
