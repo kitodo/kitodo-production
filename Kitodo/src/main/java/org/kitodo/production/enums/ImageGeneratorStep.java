@@ -36,6 +36,9 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
             imageGenerator.letTheSupervisorDo(
                 emptyTask -> emptyTask.setWorkDetail(Helper.getTranslation("listSourceFolder")));
             imageGenerator.determineSources();
+            if (imageGenerator.getMode().equals(GenerationMode.ALL)) {
+            	imageGenerator.removeGeneratedContent();
+            }
             imageGenerator.setState(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED);
             imageGenerator.setPosition(-1);
 
