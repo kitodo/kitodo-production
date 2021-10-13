@@ -18,14 +18,6 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -62,6 +54,13 @@ import java.util.stream.Collectors;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
@@ -149,6 +148,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
@@ -158,6 +158,17 @@ import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final FileService fileService = ServiceManager.getFileService();
@@ -2280,12 +2291,26 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Generate process title.
+     * Generate and set the title to process.
      */
-    public static String generateProcessTitle(String atstsl, List<ProcessDetail> processDetails, String titleDefinition,
-                                              Process process) throws ProcessGenerationException {
-        TitleGenerator titleGenerator = new TitleGenerator(atstsl, processDetails);
-        String newTitle = titleGenerator.generateTitle(titleDefinition, null);
+    public static void generateProcessTitle(List<ProcessDetail> processDetails, String titleDefinition, Process process)
+            throws ProcessGenerationException {
+        generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
+            TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails));
+    }
+
+    /**
+     * Generate and set the title to process using current title parameter and gets
+     * the atstsl.
+     *
+     * @param title
+     *            of the work to generate atstsl
+     * @return String atstsl
+     */
+    public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
+                                                          Process process, String title) throws ProcessGenerationException {
+        TitleGenerator titleGenerator = new TitleGenerator(null, processDetails);
+        String newTitle = titleGenerator.generateTitle(titleDefinition, null, title);
         process.setTitle(newTitle);
         // atstsl is created in title generator and next used in tiff header generator
         return titleGenerator.getAtstsl();
@@ -2404,6 +2429,31 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
+        }
+    }
+
+    /**
+     * Get the node list from metadata file by the xpath.
+     * 
+     * @param process
+     *            The process for which the metadata file is searched for
+     * @param xpath
+     *            The xpath to get to the node list
+     * @return The node list of process by the of xpath
+     */
+    public NodeList getNodeListFromMetadataFile(Process process, String xpath) throws IOException {
+        try (InputStream fileInputStream = ServiceManager.getFileService().readMetadataFile(process)) {
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            builderFactory.setNamespaceAware(true);
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            org.w3c.dom.Document xmlDocument = builder.parse(fileInputStream);
+
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new KitodoNamespaceContext());
+            return (NodeList) xPath.compile(xpath).evaluate(xmlDocument, XPathConstants.NODESET);
+        } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+            logger.error(e.getMessage(), e);
+            throw new IOException(e);
         }
     }
 
@@ -2704,8 +2754,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
         HorizontalBarChartModel horizontalBarChartModel = new HorizontalBarChartModel();
         horizontalBarChartModel.setData(data);
+        horizontalBarChartModel.setOptions(getBarChartOptions());
+        return horizontalBarChartModel;
+    }
 
-        // Options
+    private BarChartOptions getBarChartOptions() {
         CartesianLinearAxes linearAxes = new CartesianLinearAxes();
         linearAxes.setStacked(true);
         BarChartOptions options = new BarChartOptions();
@@ -2714,9 +2767,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         tooltip.setMode("index");
         tooltip.setIntersect(false);
         options.setTooltip(tooltip);
-
-        horizontalBarChartModel.setOptions(options);
-        return horizontalBarChartModel;
+        return options;
     }
 
     /**
