@@ -113,17 +113,16 @@ public class ImageGenerator implements Runnable {
         this.sourceFolder = sourceFolder;
         this.mode = mode;
         this.outputs = outputs;
-        // cleanup target folders if _all_ output is generated
-        if (mode.equals(GenerationMode.ALL)) {
-            removeGeneratedContent((List<Subfolder>) outputs);
-        }
         this.state = ImageGeneratorStep.LIST_SOURCE_FOLDER;
         this.sources = Collections.emptyList();
         this.contentToBeGenerated = new LinkedList<>();
     }
 
-    private void removeGeneratedContent(List<Subfolder> contentFolders) {
-        for (Subfolder subfolder : contentFolders) {
+    /**
+     * Cleanup target folders if <i>all</i> output is generated.
+     */
+    public void removeGeneratedContent() {
+        for (Subfolder subfolder : outputs) {
             for (URI uri : subfolder.listContents(true).values()) {
                 try {
                     ServiceManager.getFileService().delete(uri);
