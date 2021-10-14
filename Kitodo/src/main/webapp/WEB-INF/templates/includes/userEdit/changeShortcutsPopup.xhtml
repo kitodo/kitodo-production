@@ -29,14 +29,16 @@
                 <h:panelGroup layout="block"
                               styleClass="dialogFieldWrapper">
                     <h:form id="changeShortcutsForm">
-                        <ui:repeat value="#{UserForm.shortcuts}" var="item">
+                        <ui:repeat value="#{UserForm.shortcuts.entrySet()}" var="item">
                             <div>
                                 <p:outputLabel for="shortcutInput"
                                                value="#{msgs['shortcuts.dataEditor.'.concat(item.key)]}"/>
                                 <p:inputText id="shortcutInput"
                                              value="#{UserForm.shortcuts[item.key]}"
                                              onkeydown="toggleSave()"
-                                             styleClass="shortcut-input"/>
+                                             styleClass="shortcut-input">
+                                    <p:ajax event="blur"/>
+                                </p:inputText>
                             </div>
                         </ui:repeat>
                     </h:form>
