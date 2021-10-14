@@ -31,6 +31,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +49,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -116,6 +119,8 @@ public class StructurePanel implements Serializable {
      * Active tabs in StructurePanel's accordion.
      */
     private String activeTabs;
+
+    private String titleMetadata = "type";
 
     /**
      * Creates a new structure panel.
@@ -1622,4 +1627,33 @@ public class StructurePanel implements Serializable {
             }
         }
     }
+
+    /**
+     * Get title metadata.
+     * @return value of titleMetadata
+     */
+    public String getTitleMetadata() {
+        return titleMetadata;
+    }
+
+    /**
+     * Set title metadata.
+     * @param titleMetadata as java.lang.String
+     */
+    public void setTitleMetadata(String titleMetadata) {
+        this.titleMetadata = titleMetadata;
+    }
+
+    /**
+     * Get list of metadata keys that are used for displaying title information from the Kitodo configuration file.
+     * @return list of title metadata keys
+     */
+    public List<SelectItem> getTitleMetadataItems() {
+        return DataEditorService.getTitleKeys()
+                .stream()
+                .map(key -> new SelectItem(key,dataEditor.getRulesetManagement().getTranslationForKey(
+                        key,dataEditor.getPriorityList()).orElse(key)))
+                .collect(Collectors.toList());
+    }
+
 }

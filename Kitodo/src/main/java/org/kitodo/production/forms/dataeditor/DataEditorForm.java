@@ -824,7 +824,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String getStructureElementTitle(Object dataObject) {
         if (dataObject instanceof LogicalDivision) {
-            return DataEditorService.getTitleValue((LogicalDivision) dataObject);
+            return DataEditorService.getTitleValue((LogicalDivision) dataObject, structurePanel.getTitleMetadata());
         }
         return "";
     }
