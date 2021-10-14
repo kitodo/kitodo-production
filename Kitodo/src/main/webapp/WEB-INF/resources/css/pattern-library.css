@@ -1379,6 +1379,20 @@ Popup dialogs
     right: var(--default-double-size);
 }
 
+.ui-dialog .ui-datatable th:not(.actionsColumn),
+.ui-dialog .ui-datatable td:not(.actionsColumn) {
+    padding-right: var(--default-half-size);
+}
+
+.ui-dialog .ui-datatable th.actionsColumn {
+    float: none;
+}
+
+.ui-dialog .ui-datatable tr th.actionsColumn .action,
+.ui-dialog .ui-datatable tr td.actionsColumn .action {
+    margin-right: 0;
+}
+
 #loadingScreen {
     position: fixed;
     width: 100vw;
