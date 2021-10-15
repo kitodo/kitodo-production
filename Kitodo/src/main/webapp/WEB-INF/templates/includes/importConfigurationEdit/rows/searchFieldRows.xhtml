@@ -1,0 +1,126 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <p:row>
+            <div>
+                <p:outputLabel for="searchFieldTable" value="#{msgs['importConfig.searchFields']}"/>
+                <p:dataTable id="searchFieldTable"
+                             styleClass="input-with-button"
+                             style="display: inline-block;"
+                             value="#{importConfigurationEditView.importConfiguration.searchFields}"
+                             var="field">
+                    <p:column id="fieldLabel"
+                              headerText="Label">
+                        <h:outputText value="#{field.label}"
+                                      title="#{field.label}"/>
+                    </p:column>
+                    <p:column id="fieldValue"
+                              headerText="Value">
+                        <h:outputText value="#{field.value}"
+                                      title="#{field.value}"/>
+                    </p:column>
+                    <p:column id="fieldHidden"
+                              headerText="Hidden">
+                        <h:outputText title="#{field.hidden}">
+                            <ui:fragment rendered="#{field.hidden}">
+                                <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{not field.hidden}">
+                                <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
+                            </ui:fragment>
+                        </h:outputText>
+                    </p:column>
+                    <p:column id="actionColumn" styleClass="actionsColumn">
+                        <p:commandLink id="removeSearchField"
+                                       action="#{importConfigurationEditView.removeSearchField(field)}"
+                                       update="editForm:importConfigurationTabView:searchFieldTable
+                                                           editForm:importConfigurationTabView:defaultSearchField
+                                                           editForm:importConfigurationTabView:idSearchField"
+                                       oncomplete="toggleSave()">
+                            <i class="fa fa-trash-o fa-lg"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton id="searchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="searchFieldHelp"
+                           value="Define search fields available in this search interface"/>
+                <p:commandButton icon="fa fa-plus"
+                                 styleClass="secondary"
+                                 type="button"
+                                 onclick="PF('addSearchFieldDialog').show()">
+                    <p:resetInput target=":addSearchFieldForm"/>
+                </p:commandButton>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="idSearchField" value="#{msgs['importConfig.searchFields.idSearchField']}"/>
+                <p:selectOneMenu id="idSearchField"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.idSearchField}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.searchFields.selectIdSearchField']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:selectOneMenu>
+                <p:commandButton id="idSearchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="idSearchFieldHelp"
+                           value="URL parameter for unique identifiers. This parameter is used for importing individual records from the search interface."/>
+            </div>
+            <div>
+                <p:outputLabel for="defaultSearchField" value="#{msgs['importConfig.searchFields.defaultField']}"/>
+                <p:selectOneMenu id="defaultSearchField"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.defaultSearchField}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.searchFields.selectDefaultField']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="defaultSearchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="defaultSearchFieldHelp"
+                           value="Default search field for this import configuration; will be pre-selected when creating a new process from this configuration"/>
+            </div>
+            <div>
+                <p:outputLabel for="parentIdSearchField" value="#{msgs['importConfig.searchFields.parentIdField']}"/>
+                <p:selectOneMenu id="parentIdSearchField"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.parentIdSearchField}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.searchFields.selectParentIdField']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="parentIdSearchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="parentIdSearchFieldHelp"
+                           value="The parent ID search field is used to query for records whose parent record has the provided ID value (not supported by all interfaces)"/>
+            </div>
+        </p:row>
+    </f:view>
+</ui:composition>

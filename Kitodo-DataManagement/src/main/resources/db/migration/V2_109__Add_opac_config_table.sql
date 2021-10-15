@@ -1,0 +1,124 @@
+--
+-- (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+--
+-- This file is part of the Kitodo project.
+--
+-- It is licensed under GNU General Public License version 3 or later.
+--
+-- For the full copyright and license information, please read the
+-- GPL3-License.txt file that was distributed with this source code.
+--
+
+--
+-- Migration: Create table for import configurations.
+--
+-- 1. Add table "mapping_file"
+
+CREATE TABLE IF NOT EXISTS mapping_file (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title varchar(255) NOT NULL,
+    file varchar(255) NOT NULL,
+    input_metadata_format varchar(255) NOT NULL,
+    output_metadata_format varchar(255) NOT NULL,
+    PRIMARY KEY(id)
+    ) DEFAULT CHARACTER SET = utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+-- 2. Add table "import_configuration"
+
+CREATE TABLE IF NOT EXISTS import_configuration
+(
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title varchar(255) NOT NULL,
+    description varchar(255) NOT NULL,
+    configuration_type varchar(255) NOT NULL,
+    prestructured_import tinyint(1) DEFAULT NULL,
+    interface_type varchar(255) DEFAULT NULL,
+    return_format varchar(255) DEFAULT NULL,
+    metadata_format varchar(255) DEFAULT NULL,
+    default_import_depth INT(11) DEFAULT 2 NULL,
+    parent_element_xpath varchar(255) DEFAULT NULL,
+    parent_element_type varchar(255) DEFAULT NULL,
+    parent_element_trim_mode varchar(255) DEFAULT NULL,
+    default_searchfield_id INT(11),
+    identifier_searchfield_id INT(11),
+    parent_searchfield_id INT(11),
+    default_templateprocess_id INT(11),
+    parent_templateprocess_id INT(11),
+    parent_mappingfile_id INT(11),
+    scheme varchar(255) DEFAULT NULL,
+    host varchar(255) DEFAULT NULL,
+    port INT(11) DEFAULT NULL,
+    path varchar(255) DEFAULT NULL,
+    anonymous_access tinyint(1) DEFAULT NULL,
+    username varchar(255) DEFAULT NULL,
+    password varchar(255) DEFAULT NULL,
+    query_delimiter varchar(255) DEFAULT NULL,
+    item_field_xpath varchar(255) DEFAULT NULL,
+    item_field_owner_sub_path varchar(255) DEFAULT NULL,
+    item_field_owner_metadata varchar(255) DEFAULT NULL,
+    item_field_signature_sub_path varchar(255) DEFAULT NULL,
+    item_field_signature_metadata varchar(255) DEFAULT NULL,
+    id_prefix varchar(255) DEFAULT NULL,
+    sru_version varchar(255) DEFAULT NULL,
+    sru_record_schema varchar(255) DEFAULT NULL,
+    oai_metadata_prefix varchar(255) DEFAULT NULL,
+    PRIMARY KEY (id),
+    KEY FK_importconfiguration_process_id (default_templateprocess_id),
+    CONSTRAINT FK_importconfiguration_process_id
+        FOREIGN KEY (default_templateprocess_id) REFERENCES process (id),
+    KEY FK_parent_mappingfile_id (parent_mappingfile_id),
+    CONSTRAINT FK_parent_mappingfile_id
+        FOREIGN KEY (parent_mappingfile_id) REFERENCES mapping_file (id)
+) DEFAULT CHARACTER SET = utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+
+-- 3. Add table "search_fields"
+
+CREATE TABLE IF NOT EXISTS search_field
+(
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    import_configuration_id INT(11) NOT NULL,
+    field_label varchar(255) NOT NULL,
+    field_value varchar(255) NOT NULL,
+    hidden tinyint(1) DEFAULT NULL,
+    parent_element tinyint(1) DEFAULT NULL,
+    PRIMARY KEY(id),
+    KEY FK_search_field_import_configuration_id (import_configuration_id),
+    CONSTRAINT FK_search_field_import_configuration_id
+        FOREIGN KEY (import_configuration_id) REFERENCES import_configuration (id)
+) DEFAULT CHARACTER SET = utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+
+-- 4. Add table "importconfiguration_x_mappingfile"
+
+CREATE TABLE IF NOT EXISTS importconfiguration_x_mappingfile (
+    importconfiguration_id INT(11) NOT NULL,
+    mappingfile_id INT(11) NOT NULL,
+    PRIMARY KEY ( importconfiguration_id, mappingfile_id ),
+    KEY FK_importconfiguration_x_mappingfile_importconfiguration_id (importconfiguration_id),
+    KEY FK_importconfiguration_x_mappingfile_mappingfile_id (mappingfile_id),
+    CONSTRAINT FK_importconfiguration_x_mappingfile_importconfiguration_id FOREIGN KEY (importconfiguration_id) REFERENCES import_configuration(id),
+    CONSTRAINT FK_importconfiguration_x_mappingfile_mappingfile_id FOREIGN KEY (mappingfile_id) REFERENCES mapping_file(id)
+) DEFAULT CHARACTER SET = utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+-- 5. Add column 'default_import_configuration_id' to table 'project'
+
+ALTER TABLE project ADD default_import_configuration_id INT(11);
+
+-- 6. Add authorities to view and edit import configurations and mapping files
+
+INSERT IGNORE INTO authority (title) VALUES ('addImportConfiguration_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('editImportConfiguration_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('viewImportConfiguration_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('viewAllImportConfigurations_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('deleteImportConfiguration_clientAssignable');
+
+INSERT IGNORE INTO authority (title) VALUES ('addMappingFile_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('editMappingFile_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('viewMappingFile_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('viewAllMappingFiles_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('deleteMappingFile_clientAssignable');

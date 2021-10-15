@@ -55,6 +55,7 @@
                         process="@this"
                         value="#{msgs['newProcess.catalogueSearch.heading']}"
                         oncomplete="PF('catalogSearchDialog').show();"
+                        disabled="#{empty CreateProcessForm.catalogImportDialog.importConfigurations}"
                         icon="fa fa-book"
                         iconPos="right"
                         update="catalogSearchForm">
@@ -64,6 +65,7 @@
                         process="@this"
                         value="#{msgs['newProcess.fileUpload.heading']}"
                         oncomplete="PF('fileUploadDialog').show();"
+                        disabled="#{empty CreateProcessForm.fileUploadDialog.importConfigurations}"
                         icon="fa fa-upload"
                         iconPos="right"
                         update="fileUploadForm">
@@ -73,6 +75,7 @@
                         process="@this"
                         value="#{msgs.processTemplate}"
                         oncomplete="PF('searchEditDialog').show();"
+                        disabled="#{empty CreateProcessForm.searchDialog.processesForChoiceList}"
                         icon="fa fa-copy"
                         iconPos="right"
                         update="searchEditForm">

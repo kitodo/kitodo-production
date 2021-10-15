@@ -377,6 +377,9 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
                 processDataTab.prepare();
+                if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
+                    catalogImportDialog.getHitModel().setImportConfiguration(project.getDefaultImportConfiguration());
+                }
                 if (Objects.nonNull(parentId) && parentId != 0) {
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
                     Map<String, String> allowedSubstructuralElements = ServiceManager.getRulesetService()

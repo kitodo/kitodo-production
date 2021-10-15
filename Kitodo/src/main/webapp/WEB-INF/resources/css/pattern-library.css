@@ -531,6 +531,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+.ui-picklist-list-wrapper {
+    padding: var(--input-padding);
+}
+
 .ui-fileupload-files,
 .select-box {
     border: solid var(--default-border-width) var(--blue);
@@ -1170,6 +1174,12 @@ tr.ui-expanded-row-content:hover .ui-datatable tbody {
     border: solid var(--default-border-width) var(--medium-gray);
 }
 
+.ui-state-error ul.ui-picklist-list {
+    background: #fef1ec -moz-linear-gradient(top,rgba(255,255,255,0.8),rgba(255,255,255,0));
+    border: 1px solid #cd0a0a;
+    color: #cd0a0a;
+}
+
 .row-expansion-wrapper > table {
     margin-left: 32px;
 }
@@ -1365,7 +1375,7 @@ Popup dialogs
     height: 100%;
 }
 
-.ui-dialog:not(#calendarSettingsDialog):not(#calendarDayDialog):not(#resetPasswordDialog):not(#changePasswordDialog):not(#dialogAddDocStrucTypeDialog) div.dialogFieldWrapper {
+.ui-dialog:not(#calendarSettingsDialog):not(#calendarDayDialog):not(#resetPasswordDialog):not(#changePasswordDialog):not(#dialogAddDocStrucTypeDialog):not(#addSearchFieldDialog) div.dialogFieldWrapper {
     max-height: calc(100% - 100px);
     overflow-y: scroll;
 }

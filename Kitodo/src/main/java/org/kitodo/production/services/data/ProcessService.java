@@ -2892,16 +2892,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * find processes by inChoiceListShown attribute.
-     * @param inChoiceListShown the needed value of the attribute
-     * @param related if the process is related
-     * @return a list of found processes
+     * Get template processes.
+     * @return template processes
      */
-    public List<ProcessDTO> findByInChoiceListShown(boolean inChoiceListShown, boolean related) throws DataException {
+    public List<Process> getTemplateProcesses() throws DataException, DAOException {
+        List<Process> templateProcesses = new ArrayList<>();
         BoolQueryBuilder inChoiceListShownQuery = new BoolQueryBuilder();
         MatchQueryBuilder matchQuery = matchQuery(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), true);
         inChoiceListShownQuery.must(matchQuery);
-        return ServiceManager.getProcessService().findByQuery(matchQuery, related);
+        for (ProcessDTO processDTO : ServiceManager.getProcessService().findByQuery(matchQuery, true)) {
+            templateProcesses.add(getById(processDTO.getId()));
+        }
+        return templateProcesses;
     }
 
     /**

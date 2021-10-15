@@ -85,7 +85,8 @@ public class ImportServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
         }
-        Process importedProcess = importService.importProcess(RECORD_ID, 1, 1, "K10Plus", new HashMap<>());
+        Process importedProcess = importService.importProcess(RECORD_ID, 1, 1,
+                MockDatabase.getK10PlusImportConfiguration(), new HashMap<>());
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }

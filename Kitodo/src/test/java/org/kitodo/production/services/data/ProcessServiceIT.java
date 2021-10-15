@@ -124,7 +124,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByInChoiceListShown() throws DataException, DAOException {
-        List<ProcessDTO> byInChoiceListShown = ServiceManager.getProcessService().findByInChoiceListShown(true, true);
+        List<Process> byInChoiceListShown = ServiceManager.getProcessService().getTemplateProcesses();
         Assert.assertEquals("wrong amount of processes found", 1, byInChoiceListShown.size());
     }
 

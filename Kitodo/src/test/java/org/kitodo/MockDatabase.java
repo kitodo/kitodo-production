@@ -52,6 +52,10 @@ import org.elasticsearch.transport.Netty4Plugin;
 import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
+import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
+import org.kitodo.api.schemaconverter.FileFormat;
+import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
@@ -60,14 +64,17 @@ import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.ListColumn;
+import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -174,6 +181,8 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertWorkflows();
+        insertMappingFiles();
+        insertImportConfigurations();
         insertRemovableObjects();
     }
 
@@ -619,8 +628,7 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(seventhProcess);
     }
 
-    public static void removeProcessesForHierarchyTests() throws DAOException, DataException {
-
+    public static void removeProcessesForHierarchyTests() throws DataException {
         ServiceManager.getProcessService().remove(5);
         ServiceManager.getProcessService().remove(6);
         ServiceManager.getProcessService().remove(7);
@@ -1405,6 +1413,83 @@ public class MockDatabase {
         ServiceManager.getWorkflowService().save(thirdWorkflow);
     }
 
+    public static void insertMappingFiles() throws DAOException {
+        // add MODS to Kitodo mapping file
+        MappingFile mappingFileModsToKitodo = new MappingFile();
+        mappingFileModsToKitodo.setFile("mods2kitodo.xsl");
+        mappingFileModsToKitodo.setTitle("MODS to Kitodo mapping");
+        mappingFileModsToKitodo.setInputMetadataFormat(MetadataFormat.MODS.name());
+        mappingFileModsToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        ServiceManager.getMappingFileService().saveToDatabase(mappingFileModsToKitodo);
+
+        // add PICA to Kitodo mapping file
+        MappingFile mappingFilePicaToKitodo = new MappingFile();
+        mappingFilePicaToKitodo.setFile("pica2kitodo.xsl");
+        mappingFilePicaToKitodo.setTitle("PICA to Kitodo mapping");
+        mappingFilePicaToKitodo.setInputMetadataFormat(MetadataFormat.PICA.name());
+        mappingFilePicaToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        ServiceManager.getMappingFileService().saveToDatabase(mappingFilePicaToKitodo);
+    }
+
+    public static void insertImportConfigurations() throws DAOException {
+
+        // add Kalliope import configuration, including id search field
+        ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
+        kalliopeConfiguration.setTitle("Kalliope");
+        kalliopeConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        kalliopeConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
+        kalliopeConfiguration.setSruVersion("1.2");
+        kalliopeConfiguration.setSruRecordSchema("mods");
+        kalliopeConfiguration.setHost("localhost");
+        kalliopeConfiguration.setScheme("http");
+        kalliopeConfiguration.setPath("/sru");
+        kalliopeConfiguration.setPort(8888);
+        kalliopeConfiguration.setPrestructuredImport(false);
+        kalliopeConfiguration.setReturnFormat(FileFormat.XML.name());
+        kalliopeConfiguration.setMetadataFormat(MetadataFormat.MODS.name());
+        kalliopeConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
+                .getById(1)));
+
+        SearchField idSearchFieldKalliope = new SearchField();
+        idSearchFieldKalliope.setValue("ead.id");
+        idSearchFieldKalliope.setLabel("Identifier");
+        idSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
+
+        kalliopeConfiguration.setSearchFields(Collections.singletonList(idSearchFieldKalliope));
+        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+
+        kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
+        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+
+        // add K10Plus import configuration, including id search field
+        ImportConfiguration k10plusConfiguration = new ImportConfiguration();
+        k10plusConfiguration.setTitle("K10Plus");
+        k10plusConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        k10plusConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
+        k10plusConfiguration.setSruVersion("1.1");
+        k10plusConfiguration.setSruRecordSchema("picaxml");
+        k10plusConfiguration.setHost("localhost");
+        k10plusConfiguration.setScheme("http");
+        k10plusConfiguration.setPath("/sru");
+        k10plusConfiguration.setPort(8888);
+        k10plusConfiguration.setPrestructuredImport(false);
+        k10plusConfiguration.setReturnFormat(FileFormat.XML.name());
+        k10plusConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
+        k10plusConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
+                .getById(2)));
+
+        SearchField idSearchFieldK10Plus = new SearchField();
+        idSearchFieldK10Plus.setValue("pica.ppn");
+        idSearchFieldK10Plus.setLabel("PPN");
+        idSearchFieldK10Plus.setImportConfiguration(k10plusConfiguration);
+
+        k10plusConfiguration.setSearchFields(Collections.singletonList(idSearchFieldK10Plus));
+        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+
+        k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
+        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+    }
+
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
         Client client = ServiceManager.getClientService().getById(1);
 
@@ -1578,7 +1663,7 @@ public class MockDatabase {
 
         Set<String> tables = new HashSet<>();
         String query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES  where TABLE_SCHEMA='PUBLIC'";
-        List tableResult = session.createNativeQuery(query).getResultList();
+        List<?> tableResult = session.createNativeQuery(query).getResultList();
         for (Object table : tableResult) {
             tables.add((String) table);
         }
@@ -1589,7 +1674,7 @@ public class MockDatabase {
 
         Set<String> sequences = new HashSet<>();
         query = "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA='PUBLIC'";
-        List sequencesResult = session.createNativeQuery(query).getResultList();
+        List<?> sequencesResult = session.createNativeQuery(query).getResultList();
         for (Object test : sequencesResult) {
             sequences.add((String) test);
         }
@@ -1656,4 +1741,23 @@ public class MockDatabase {
         return removableObjectIDs;
     }
 
+    /**
+     * Return Kalliope ImportConfiguration.
+     *
+     * @return Kalliope ImportConfiguration
+     * @throws DAOException thrown if Kalliope ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getKalliopeImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(1);
+    }
+
+    /**
+     * Return K10Plus ImportConfiguration
+     *
+     * @return K10Plus ImportConfiguration
+     * @throws DAOException thrown if K10Plus ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getK10PlusImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(2);
+    }
 }

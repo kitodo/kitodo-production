@@ -1,0 +1,55 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <p:row>
+            <div>
+                <p:outputLabel for="fileFormat" value="#{msgs['importConfig.field.fileFormat']} *"/>
+                <p:selectOneMenu id="fileFormat"
+                                 styleClass="input-with-button"
+                                 required="#{not empty param['editForm:save']}"
+                                 value="#{importConfigurationEditView.importConfiguration.returnFormat}">
+                    <f:selectItems value="#{importConfigurationEditView.fileFormats}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"
+                            update="editForm:importConfigurationTabView"/>
+                </p:selectOneMenu>
+                <p:commandButton id="returnFormatHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="returnFormatHelp"
+                           value="File format returned by the OPAC search interface (currently only XML is supported)"/>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="metadataFormat" value="#{msgs['importConfig.field.metadataFormat']} *"/>
+                <p:selectOneMenu id="metadataFormat"
+                                 styleClass="input-with-button"
+                                 required="#{not empty param['editForm:save']}"
+                                 value="#{importConfigurationEditView.importConfiguration.metadataFormat}">
+                    <f:selectItems value="#{importConfigurationEditView.metadataFormats}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="metadataFormatHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="metadataFormatHelp"
+                           value="Metadata format returned by the OPAC search interface (e.g. MODS, MARC etc.)"/>
+            </div>
+        </p:row>
+    </f:view>
+</ui:composition>

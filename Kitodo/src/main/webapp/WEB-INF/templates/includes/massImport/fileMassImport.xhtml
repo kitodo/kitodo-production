@@ -1,0 +1,50 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <h:form id="fileMassImportForm">
+    <p:panelGrid layout="grid" columns="2" cellpadding="10">
+    <p:row>
+    <div>
+        <p:outputLabel for="catalogueSelect"
+                       value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+        <p:selectOneMenu id="catalogueSelect" required="true"
+                         value="#{MassImportForm.importConfigurationId}">
+            <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"
+                          itemDisabled="true"/>
+            <f:selectItems value="#{CreateProcessForm.catalogImportDialog.importConfigurations}"
+                           var="importconfig"
+                           itemLabel="#{importconfig.title}"
+                           itemValue="#{importconfig}"/>
+            <p:ajax update="fileMassImportForm"/>
+        </p:selectOneMenu>
+    </div>
+        <div>
+            <p:fileUpload value="#{MassImportForm.file}"
+                          rendered="#{MassImportForm.importConfigurationId ne null}"
+                          listener="#{MassImportForm.handleFileUpload}"
+                          allowTypes="/(\.|\/)(csv)$/"
+                          skinSimple="true"
+                          uploadLabel="#{msgs.massImport}"
+                          chooseIcon="fa fa-plus fa-lg"
+                          uploadIcon="fa fa-download fa-lg"
+                          cancelIcon="fa fa-times fa-lg"/>
+        </div>
+    </p:row>
+    </p:panelGrid>
+    </h:form>
+</ui:composition>

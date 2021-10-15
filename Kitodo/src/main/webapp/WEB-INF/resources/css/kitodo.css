@@ -739,8 +739,13 @@ section#content-section {
 }
 
 .input-with-button,
-.input-with-button > input {
+.input-with-button:not(.ui-spinner) > input,
+.ui-panelgrid-cell .ui-selectonemenu.input-with-button {
     width: calc(100% - 44px);
+}
+
+.ui-panelgrid-cell .ui-selectonemenu.input-with-button {
+    display: inline-block;
 }
 
 .input-with-button + .ui-button,
@@ -764,6 +769,19 @@ section#content-section {
     position: absolute;
     left: 0;
     padding: .7em;
+}
+
+.ui-widget-content .ui-button.help-button {
+    background: transparent;
+    color: var(--blue);
+}
+
+.ui-widget-content .ui-button.ui-state-hover.help-button {
+    background: transparent;
+}
+
+label.ui-outputlabel[for] {
+    display: block;
 }
 
 #filterMenu {
@@ -2887,7 +2905,7 @@ Column content
     width: 100%;
 }
 
-#thumbnailStripeScrollableContent::-webkit-scrollbar { 
+#thumbnailStripeScrollableContent::-webkit-scrollbar {
     /* hide scrollbar in WebKit */
     width: 0;
     height: 0;
@@ -3449,7 +3467,7 @@ footer {
     cursor: default;
 }
 
-.ui-separator {
+.horizontal-separator {
     border-top: solid var(--contrast-border-width) var(--medium-gray);
     margin: var(--default-half-size) 0;
     width: 100%;
@@ -3494,6 +3512,47 @@ footer {
 #tasksTabView\:actionForm\:timeoutWarning {
     color: var(--orange);
     font-weight: bold;
+}
+
+.ui-datatable.input-with-button,
+#editForm\:importConfigurationTabView\:url {
+    display: inline-block;
+}
+
+#editForm\:importConfigurationTabView\:url .ui-panelgrid-cell {
+    padding: 0;
+}
+
+#editForm\:importConfigurationTabView\:url .url-part {
+    display: inline-block;
+    margin-right: var(--default-half-size);
+}
+
+#editForm\:importConfigurationTabView\:url .ui-panelgrid-cell:not(:first-child):not(:nth-child(3)) {
+    padding-left: var(--default-half-size);
+    width: 33%;
+}
+
+#editForm\:importConfigurationTabView\:url .ui-panelgrid-cell:nth-child(3) {
+    padding-left: var(--default-half-size);
+    width: 104px;
+}
+
+#editForm\:importConfigurationTabView\:searchFieldTable .ui-datatable-tablewrapper {
+    border: solid var(--default-border-width) var(--blue);
+    border-radius: var(--default-border-radius);
+}
+
+#editForm\:importConfigurationTabView\:searchFieldTable thead {
+    border-top: none;
+}
+
+.help-button {
+    vertical-align: top;
+}
+
+.ui-tooltip {
+    max-width: 280px;
 }
 
 /*----------------------------------------------------------------------

@@ -29,19 +29,19 @@ public interface ExternalDataImportInterface {
     /**
      * Get the full record with the given ID from the catalog.
      *
-     * @param catalogId
-     *            The ID of the catalog that will be queried.
+     * @param dataImport
+     *            DataImport object encapsulating all information required to perform the import
      * @param identifier
      *            The ID of the record that will be imported.
      * @return The queried record as Record object.
      */
-    DataRecord getFullRecordById(String catalogId, String identifier) throws NoRecordFoundException;
+    DataRecord getFullRecordById(DataImport dataImport, String identifier) throws NoRecordFoundException;
 
     /**
      * Get a list of full records from the query constructed by the given search parameters.
      *
-     * @param catalogId
-     *            The ID of the catalog that will be queried.
+     * @param dataImport
+     *            DataImport object encapsulating all information required to perform the import
      * @param searchField
      *            search field that will be queried
      * @param searchValue
@@ -50,15 +50,15 @@ public interface ExternalDataImportInterface {
      *            number of records to be returned
      * @return list of DataRecords
      */
-    List<DataRecord> getMultipleFullRecordsFromQuery(String catalogId, String searchField, String searchValue, int rows);
+    List<DataRecord> getMultipleFullRecordsFromQuery(DataImport dataImport, String searchField, String searchValue, int rows);
 
     /**
      * Perform search in catalog with given ID 'catalogId' with given search fields
      * 'field' and term 'term'. The parameter rows controls how many records should
      * be returned.
      *
-     * @param catalogId
-     *            ID of the catalog that will be queried.
+     * @param dataImport
+     *            DataImport object encapsulating all information required to perform the import
      * @param field
      *            search field that will be queried
      * @param term
@@ -67,15 +67,15 @@ public interface ExternalDataImportInterface {
      *            number of records to be returned
      * @return Search result of performed query.
      */
-    SearchResult search(String catalogId, String field, String term, int rows);
+    SearchResult search(DataImport dataImport, String field, String term, int rows);
 
     /**
      * Perform search in catalog with given ID 'catalogId' with given search fields
      * 'field' and term 'term'. The parameter rows controls how many records should
      * be returned. The parameter 'start' controls the index of the first hit.
      *
-     * @param catalogId
-     *            ID of the catalog that will be queried.
+     * @param dataImport
+     *            DataImport object encapsulating all information required to perform the import
      * @param field
      *            search field that will be queried
      * @param term
@@ -86,7 +86,7 @@ public interface ExternalDataImportInterface {
      *            index of the first record to be returned
      * @return Search result of performed query.
      */
-    SearchResult search(String catalogId, String field, String term, int start, int rows);
+    SearchResult search(DataImport dataImport, String field, String term, int start, int rows);
 
     /**
      * Searches for Data in a given source by term and field.

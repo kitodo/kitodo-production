@@ -63,6 +63,12 @@
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs['importConfig.new']}" action="#{ImportConfigurationListView.newImportConfiguration()}" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddImportConfiguration()}"
+                            id="newOpacConfigurationButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs['mappingFile.new']}" action="#{MappingFileListView.newMappingFile()}" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddMappingFile()}"
+                            id="newMappingFileButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
     </ui:define>
@@ -71,7 +77,7 @@
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" prependId="false"
                    id="projectsTabView" widgetVar="projectsTabView" dynamic="true">
             <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
-            <p:tab title="#{msgs.projectList}" id="projectTab"
+            <p:tab title="#{msgs.projects}" id="projectTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
             </p:tab>
@@ -90,6 +96,14 @@
             <p:tab title="#{msgs.rulesets}" id="rulesetTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewRulesetList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs['importConfig.configurations']}" id="importConfigurationsTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewImportConfigurationList()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/importConfigurations.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs['mappingFile.files']}" id="mappingFilesTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>

@@ -87,6 +87,9 @@
             <p:tab title="#{msgs.templates}" id="templates">
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/templateList.xhtml"/>
             </p:tab>
+            <p:tab title="#{msgs['importConfig.configurations']}" id="importConfigurations">
+                <ui:include src="/WEB-INF/templates/includes/projectEdit/defaultImportConfiguration.xhtml"/>
+            </p:tab>
         </p:tabView>
     </ui:define>
 

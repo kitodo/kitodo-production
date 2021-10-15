@@ -22,6 +22,7 @@
               id="searchEditDialog"
               width="578"
               modal="true"
+              visible="#{not empty CreateProcessForm.project.defaultImportConfiguration and CreateProcessForm.project.defaultImportConfiguration.configurationType eq 'FILE_UPLOAD'}"
               resizable="false">
         <h3>#{msgs.processTemplate}</h3>
         <h:form id="searchEditForm">

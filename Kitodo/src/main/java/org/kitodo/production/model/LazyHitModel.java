@@ -19,13 +19,14 @@ import java.util.stream.Collectors;
 
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 public class LazyHitModel extends LazyDataModel<Object> {
 
-    private String selectedCatalog = "";
+    private ImportConfiguration importConfiguration;
     private String selectedField = "";
     private String searchTerm = "";
     private int importDepth = 2;
@@ -35,9 +36,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
     /**
      * Empty default constructor. Sets default catalog and search field, if configured.
      */
-    public LazyHitModel() {
-        this.setSelectedCatalog(ServiceManager.getImportService().getDefaultCatalog());
-    }
+    public LazyHitModel() {}
 
     @Override
     public Object getRowData(String rowKey) {
@@ -62,7 +61,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
     public List<Object> load(int first, int resultSize, String sortField, SortOrder sortOrder, Map filters) {
 
         searchResult = ServiceManager.getImportService().performSearch(
-                this.selectedField, this.searchTerm, this.selectedCatalog, first, resultSize);
+                this.selectedField, this.searchTerm, this.importConfiguration, first, resultSize);
 
         if (Objects.isNull(searchResult) || Objects.isNull(searchResult.getHits())) {
             return Collections.emptyList();
@@ -84,24 +83,24 @@ public class LazyHitModel extends LazyDataModel<Object> {
     }
 
     /**
-     * Getter for selectedCatalog.
+     * Getter for importConfiguration.
      *
-     * @return value of selectedCatalog
+     * @return value of importConfiguration
      */
-    public String getSelectedCatalog() {
-        return selectedCatalog;
+    public ImportConfiguration getImportConfiguration() {
+        return importConfiguration;
     }
 
     /**
-     * Setter for selectedCatalog. This also sets the catalogs default search field, if configured.
+     * Setter for importConfiguration. This also sets the catalogs default search field, if configured.
      *
-     * @param catalog as java.lang.String
+     * @param importConfiguration ImportConfiguration
      */
-    public void setSelectedCatalog(String catalog) {
-        this.selectedCatalog = catalog;
-        if (!catalog.isEmpty()) {
-            this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(catalog));
-            this.setImportDepth(ServiceManager.getImportService().getDefaultImportDepth(catalog));
+    public void setImportConfiguration(ImportConfiguration importConfiguration) {
+        this.importConfiguration = importConfiguration;
+        if (Objects.nonNull(this.importConfiguration)) {
+            this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(importConfiguration));
+            this.setImportDepth(ServiceManager.getImportService().getDefaultImportDepth(importConfiguration));
         }
     }
 
