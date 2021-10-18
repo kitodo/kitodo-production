@@ -138,7 +138,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
 
             if (StringUtils.isBlank(securitySecret)) {
-                logger.error("The security.secret parameter was not configured in kitodo_config.properties file.");
+                logger.error("The security.secret.ldapManagerPassword parameter was not configured in kitodo_config.properties file.");
             }
 
             try {
