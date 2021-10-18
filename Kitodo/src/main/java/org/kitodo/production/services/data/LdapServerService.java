@@ -135,7 +135,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
         String managerPassword = ldapServer.getManagerPassword();
         if (AESUtil.isEncrypted(managerPassword)) {
-            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
+            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
 
             if (StringUtils.isBlank(securitySecret)) {
                 logger.error("The security.secret.ldapManagerPassword parameter was not configured in kitodo_config.properties file.");

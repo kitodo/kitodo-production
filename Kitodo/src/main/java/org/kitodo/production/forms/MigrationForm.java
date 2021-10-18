@@ -42,7 +42,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -571,7 +570,7 @@ public class MigrationForm extends BaseForm {
      */
     public void startLdapManagerPasswordsMigration() {
 
-        String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
+        String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
 
         if (StringUtils.isBlank(securitySecret)) {
             Helper.setErrorMessage(

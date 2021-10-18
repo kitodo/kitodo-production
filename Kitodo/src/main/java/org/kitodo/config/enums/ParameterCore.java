@@ -613,7 +613,7 @@ public enum ParameterCore implements ParameterInterface {
      * Secret is used to encrypt or decrypt LDAP manager passwords which are stored in the database in encrypted form.
      * Once the secret value is set, it should not be changed since encrypted data can no longer be decrypted.
      */
-    SECURITY_SECRET(new Parameter<>("security.secret.ldapManagerPassword", ""));
+    SECURITY_SECRET_LDAPMANAGERPASSWORD(new Parameter<>("security.secret.ldapManagerPassword", ""));
 
 
     private final Parameter<?> parameter;

@@ -80,7 +80,7 @@ public class LdapServerForm extends BaseForm {
      */
     public String save() {
         try {
-            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
+            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
 
             if (StringUtils.isNotBlank(securitySecret)) {
                 ldapServer.setManagerPassword( AESUtil.encrypt(ldapServer.getManagerPassword(), securitySecret) );
@@ -146,7 +146,7 @@ public class LdapServerForm extends BaseForm {
      */
     public String getDecryptedManagerPassword() {
         if (AESUtil.isEncrypted(ldapServer.getManagerPassword())) {
-            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
+            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
 
             if (StringUtils.isNotBlank(securitySecret)) {
                 try {
