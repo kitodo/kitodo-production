@@ -574,7 +574,8 @@ public class MigrationForm extends BaseForm {
         String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET);
 
         if (StringUtils.isBlank(securitySecret)) {
-            Helper.setErrorMessage("The security.secret.ldapManagerPassword parameter was not configured in kitodo_config.properties file.");
+            Helper.setErrorMessage(
+                "The security.secret.ldapManagerPassword parameter was not configured in kitodo_config.properties file.");
             return;
         }
 
