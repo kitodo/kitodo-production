@@ -79,7 +79,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) {
         User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
-        if(!user.isActive()) {
+        if (!user.isActive()) {
             throw new DisabledException(SpringSecurityMessageSource.getAccessor().getMessage(
                     "AbstractUserDetailsAuthenticationProvider.disabled",
                     "User is disabled"));
