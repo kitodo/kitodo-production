@@ -26,13 +26,13 @@
 
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{TemplateForm.template.title eq '' and empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
+              value="#{TemplateForm.template.id eq null and empty TemplateForm.template.title and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
     <!--@elvariable id="isDuplicateMode" type="boolean"-->
     <ui:param name="isDuplicateMode"
-              value="#{TemplateForm.template.title eq '' and not empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
+              value="#{TemplateForm.template.id eq null and not empty TemplateForm.template.title and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{not TemplateForm.currentTemplateInUse and TemplateForm.template.title ne '' and not empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToEditTemplate()}"/>
+              value="#{TemplateForm.template.id ne null and not TemplateForm.currentTemplateInUse and SecurityAccessController.hasAuthorityToEditTemplate()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewTemplate()}"/>
