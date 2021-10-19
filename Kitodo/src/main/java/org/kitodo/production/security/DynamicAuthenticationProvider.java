@@ -20,8 +20,11 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.DisabledException;
@@ -81,8 +84,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
         if (!user.isActive()) {
             throw new DisabledException(SpringSecurityMessageSource.getAccessor().getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.disabled",
-                    "User is disabled"));
+                "AbstractUserDetailsAuthenticationProvider.disabled",
+                Helper.getString(LocaleContextHolder.getLocale(), "errorUserIsDisabled")));
         }
         LdapGroup ldapGroup = user.getLdapGroup();
         if (ldapAuthentication && Objects.nonNull(ldapGroup)) {
