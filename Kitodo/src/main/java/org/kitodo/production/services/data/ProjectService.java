@@ -367,6 +367,10 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
             user.getProjects().remove(project);
             ServiceManager.getUserService().saveToDatabase(user);
         }
+        for (Template template : project.getTemplates()) {
+            template.getProjects().remove(project);
+            ServiceManager.getTemplateService().saveToDatabase(template);
+        }
         ServiceManager.getProjectService().remove(project);
     }
 }
