@@ -52,6 +52,7 @@ import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
@@ -179,6 +180,9 @@ public class ProcessForm extends TemplateBaseForm {
          * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
          * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
          */
+        if (!ProcessValidator.isProcessTitleCorrect(this.newProcessTitle)) {
+            return this.stayOnCurrentPage;
+        }
         if (Objects.nonNull(this.process) && Objects.nonNull(this.process.getTitle())) {
             if (!this.process.getTitle().equals(this.newProcessTitle) && Objects.nonNull(this.newProcessTitle)
                     && !renameAfterProcessTitleChanged()) {
