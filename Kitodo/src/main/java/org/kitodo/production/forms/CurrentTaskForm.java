@@ -115,6 +115,7 @@ public class CurrentTaskForm extends BaseForm {
         taskFilters.add(OTHER_USERS_TASKS_FILTER);
 
         selectedTaskFilters = new LinkedList<>();
+        selectedTaskFilters.add(CORRECTION_TASKS_FILTER);
         selectedTaskFilters.add(OTHER_USERS_TASKS_FILTER);
 
         taskStatus = new LinkedList<>();
