@@ -197,29 +197,6 @@
                             </p:selectOneMenu>
                         </div>
                         <div>
-                            <p:outputLabel
-                                    value="#{msgs.insertNewImages}"
-                                    for="newPagesCount"/>
-                            <p:inputText id="newPagesCount"
-                                         disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                         value="#{DataEditorForm.paginationPanel.newPagesCountValue}"
-                                         styleClass="input-with-button"
-                                         style="width: calc(100% - 95px);"
-                                         label="#{msgs.paginationStartValue}">
-                                <p:ajax event="blur"/>
-                                <f:convertNumber integerOnly="true"/>
-                            </p:inputText>
-                            <p:commandButton id="generateDummyImagesButton"
-                                             value="#{msgs.insert}"
-                                             styleClass="secondary right"
-                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                             type="button"
-                                             style="margin: 0;"
-                                             action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick()}"
-                                             update="structureTreeForm,galleryWrapperPanel"
-                                             immediate="true"/>
-                        </div>
-                        <div>
                             <p:outputLabel for="fictitiousCheckbox"
                                            value="#{msgs.paginationFictitious}"/>
                             <p:selectBooleanCheckbox id="fictitiousCheckbox"

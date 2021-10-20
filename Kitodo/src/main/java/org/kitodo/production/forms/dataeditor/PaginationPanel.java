@@ -32,7 +32,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.helper.metadata.pagination.PaginatorMode;
 import org.kitodo.production.helper.metadata.pagination.PaginatorType;
-import org.kitodo.production.helper.metadata.pagination.RomanNumeral;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -43,7 +42,6 @@ public class PaginationPanel {
 
     private final DataEditorForm dataEditor;
     private boolean fictitiousCheckboxChecked = false;
-    private int newPagesCountValue = 0;
     private List<SelectItem> paginationSelectionItems;
     private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
     private String paginationStartValue = "1";
@@ -75,7 +73,7 @@ public class PaginationPanel {
         } catch (InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
-        Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
+        Paginator paginator = new Paginator(metsEditorDefaultPagination());
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         for (int i = 1; i < physicalDivisions.size(); i++) {
             PhysicalDivision physicalDivision = physicalDivisions.get(i - 1);
@@ -87,54 +85,17 @@ public class PaginationPanel {
         show();
     }
 
-    /**
-     * This method is invoked if the generate dummy images button is clicked.
-     */
-    public void generateDummyImagesButtonClick() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
-        int order = physicalDivisions.isEmpty() ? 1 : physicalDivisions.get(physicalDivisions.size() - 1).getOrder() + 1;
-        boolean withAutomaticPagination = ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION);
-        Paginator orderlabel = new Paginator(metsEditorDefaultPagination(order));
-        for (int i = 1; i <= newPagesCountValue; i++) {
-            PhysicalDivision physicalDivision = new PhysicalDivision();
-            physicalDivision.setOrder(order++);
-            if (withAutomaticPagination) {
-                physicalDivision.setOrderlabel(orderlabel.next());
-            }
-            physicalDivisions.add(physicalDivision);
-        }
-    }
-
-    private static String metsEditorDefaultPagination(int first) {
+    private static String metsEditorDefaultPagination() {
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
             case "arabic":
-                return Integer.toString(first);
+                return "1";
             case "roman":
-                return RomanNumeral.format(first, true);
+                return "I";
             case "uncounted":
                 return " - ";
             default:
                 return "";
         }
-    }
-
-    /**
-     * Returns the value of the newPagesCount input box.
-     *
-     * @return the value of the newPagesCount
-     */
-    public int getNewPagesCountValue() {
-        return newPagesCountValue;
-    }
-
-    /**
-     * Sets the value of the newPagesCount input box.
-     *
-     * @param newPagesCountValue
-     *            value to set
-     */
-    public void setNewPagesCountValue(int newPagesCountValue) {
-        this.newPagesCountValue = newPagesCountValue;
     }
 
     /**
