@@ -38,12 +38,15 @@
                              rows="#{LoginForm.loggedUser.tableSize}"
                              paginatorPosition="bottom">
                     <p:column headerText="#{msgs.role}">
-                        <h:outputText value="#{item.title}"/>
+                        <h:outputText value="#{item.title}"
+                                      title="#{item.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.client}">
-                        <h:outputText value="#{item.client.name}"/>
+                        <h:outputText value="#{item.client.name}"
+                                      title="#{item.client.name}"/>
                     </p:column>
                     <p:column headerText="#{msgs.actions}"
+                              width="40"
                               styleClass="actionsColumn">
                         <p:commandLink id="addRole"
                                        action="#{UserForm.addToRole}"
