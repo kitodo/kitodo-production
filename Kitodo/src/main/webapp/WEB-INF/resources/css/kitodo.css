@@ -2385,6 +2385,10 @@ Column content
     user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
 }
 
+#imagePreviewForm fieldset {
+    min-width: 0;
+}
+
 #imagePreviewForm\:structuredPagesField {
     position: relative;
 }
@@ -2551,6 +2555,7 @@ Column content
     color: var(--pure-white);
     display: block;
     font-weight: bold;
+    overflow: hidden;
     padding: 5px;
     text-overflow: ellipsis;
     white-space: nowrap;
