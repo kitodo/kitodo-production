@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
@@ -342,13 +343,13 @@ public class Helper implements Observer, Serializable {
     /**
      * Get String.
      *
-     * @param language
+     * @param locale
      *            Locale object
      * @param key
      *            String
      * @return String
      */
-    public static String getString(Locale language, String key) {
+    public static String getString(Locale locale, String key) {
         if ((Objects.isNull(commonMessages) || commonMessages.size() <= 1)
                 && (Objects.isNull(errorMessages) || errorMessages.size() <= 1)) {
             loadMessages();
@@ -357,11 +358,14 @@ public class Helper implements Observer, Serializable {
         List<Map<Locale, ResourceBundle>> messages = new ArrayList<>();
         messages.add(commonMessages);
         messages.add(errorMessages);
-
         for (Map<Locale, ResourceBundle> message : messages) {
-            if (message.containsKey(language)) {
-                String foundMessage = getTranslatedMessage(message, language, key);
-                if (!Objects.equals(foundMessage, "")) {
+            // support locale with and without country to load message
+            Optional<Locale> optionalLocale = message.keySet().stream()
+                    .filter(messageKeyLocale -> messageKeyLocale.getLanguage().equals(locale.getLanguage()))
+                    .findFirst();
+            if (optionalLocale.isPresent()) {
+                String foundMessage = getTranslatedMessage(message, optionalLocale.get(), key);
+                if (StringUtils.isNotBlank(foundMessage)) {
                     return foundMessage;
                 }
             }
@@ -369,8 +373,8 @@ public class Helper implements Observer, Serializable {
         return key;
     }
 
-    private static String getTranslatedMessage(Map<Locale, ResourceBundle> messages, Locale language, String key) {
-        ResourceBundle languageLocal = messages.get(language);
+    private static String getTranslatedMessage(Map<Locale, ResourceBundle> messages, Locale locale, String key) {
+        ResourceBundle languageLocal = messages.get(locale);
         if (languageLocal.containsKey(key)) {
             return languageLocal.getString(key);
         }
