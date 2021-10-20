@@ -216,8 +216,10 @@
                                  styleClass="primary right"
                                  icon="fa fa-check fa-lg"
                                  iconPos="right"
-                                 onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 update="notifications,paginationForm:paginationSelection,@(.ui-tree),imagePreviewForm:thumbnailWrapper,metadataAccordion:logicalMetadataWrapperPanel"
+                                 onclick="window.pagesScrollPosition = $('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop();
+                                          PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
+                                 oncomplete="$('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop(pagesScrollPosition);"
+                                 update="notifications, paginationForm:paginationSelection, @(.ui-tree), imagePreviewForm:thumbnailWrapper, metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"
