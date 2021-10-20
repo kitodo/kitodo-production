@@ -27,6 +27,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -81,6 +82,7 @@ public class Process extends BaseTemplateBean {
     private List<Process> children;
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("ordering")
     private List<Task> tasks;
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL)

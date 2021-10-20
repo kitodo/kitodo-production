@@ -17,7 +17,7 @@
         xmlns:o="http://omnifaces.org/ui"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable id="taskTable" var="item" value="#{ProcessForm.process.tasks}" sortBy="#{item.ordering}">
+    <p:dataTable id="taskTable" var="item" value="#{ProcessForm.process.tasks}">
 
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
