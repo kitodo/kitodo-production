@@ -64,7 +64,25 @@
                                                  onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:exportDms exportImages:false'"/>
                                 <p:commandButton value="copyData"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
-                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:copyData &lt;rule(s)&gt;'"/>
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:addData key:[KEY] source[SOURCEKEY]'"/>
+                                <p:commandButton value="addData"
+                                                 update="executeScriptSelectedForm:selectionScriptFieldTextArea"
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:addData key:[KEY] value:[VALUE]'"/>
+                                <p:commandButton value="deleteDataByKey"
+                                                 update="executeScriptSelectedForm:selectionScriptFieldTextArea"
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:deleteData key:[KEY]'"/>
+                                <p:commandButton value="deleteDataByKey/Value"
+                                                 update="executeScriptSelectedForm:selectionScriptFieldTextArea"
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:deleteData key:[KEY] value:[VALUE]'"/>
+                                <p:commandButton value="overwriteData"
+                                                 update="executeScriptSelectedForm:selectionScriptFieldTextArea"
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:overwriteData key:[KEY] value[VALUE]'"/>
+                                <p:commandButton value="addDataToChildren"
+                                                 update="executeScriptSelectedForm:selectionScriptFieldTextArea"
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:copyDataToChildren key:[KEY] value:[VALUE]'"/>
+                                <p:commandButton value="addDataToIssues"
+                                                 update="executeScriptSelectedForm:selectionScriptFieldTextArea"
+                                                 onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:addData key:[KEY] value:[VALUE] type:PeriodicalIssue'"/>
                                 <p:commandButton value="generateImages"
                                                  update="executeScriptSelectedForm:selectionScriptFieldTextArea"
                                                  onclick="document.getElementById('executeScriptSelectedForm:selectionScriptFieldTextArea').value='action:generateImages folders:all|jpgs/max,jpgs/thumbs,... images:missingOrDamaged|missing|all'"/>
