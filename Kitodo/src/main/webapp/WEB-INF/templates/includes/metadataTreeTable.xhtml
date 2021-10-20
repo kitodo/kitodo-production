@@ -27,6 +27,7 @@
     <!--@elvariable id="root" type="org.primefaces.model.TreeNode"-->
     <!--@elvariable id="buttonUpdate" type="java.lang.String"-->
     <!--@elvariable id="node" type="org.primefaces.model.TreeNode"-->
+    <p:remoteCommand name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected)" />
     <p:treeTable value="#{root}"
                  var="item"
                  nodeVar="node"
@@ -47,7 +48,7 @@
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:inputText>
                 </h:panelGroup>
 
@@ -60,7 +61,7 @@
                                      disabled="#{not item.editable or readOnly}"
                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:inputTextarea>
                 </h:panelGroup>
 
@@ -72,7 +73,7 @@
                                disabled="#{not item.editable or readOnly}"
                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:spinner>
                 </h:panelGroup>
 
@@ -85,7 +86,7 @@
                                 showOn="button"
                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                 disabled="#{not item.editable or readOnly}">
-                        <p:ajax event="dateSelect" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="dateSelect" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:calendar>
                 </h:panelGroup>
 
@@ -98,7 +99,7 @@
                                       disabled="#{not item.editable or readOnly}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:selectManyMenu>
                 </h:panelGroup>
 
@@ -116,7 +117,7 @@
                                       itemLabel="#{msgs.notSelected}"
                                       noSelectionOption="true"/>
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
 
@@ -130,7 +131,7 @@
                                       layout="grid"
                                       columns="1">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:selectOneRadio>
                 </h:panelGroup>
 
@@ -140,7 +141,7 @@
                     <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                              disabled="#{not item.editable or readOnly}"
                                              value="#{item.active}">
-                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata()' : ''}"/>
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:selectBooleanCheckbox>
                 </h:panelGroup>
 
