@@ -119,6 +119,21 @@ public class ImageGenerator implements Runnable {
     }
 
     /**
+     * Cleanup target folders if <i>all</i> output is generated.
+     */
+    public void removeGeneratedContent() {
+        for (Subfolder subfolder : outputs) {
+            for (URI uri : subfolder.listContents(true).values()) {
+                try {
+                    ServiceManager.getFileService().delete(uri);
+                } catch (IOException e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
+
+    /**
      * Appends the element to the list of elements to be generated.
      *
      * @param canonical
