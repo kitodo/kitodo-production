@@ -45,6 +45,7 @@ import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
@@ -258,7 +259,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     public Project duplicateProject(Project baseProject) {
         Project duplicatedProject = new Project();
 
-        // project title is intentionally not duplicated
+        duplicatedProject.setTitle(baseProject.getTitle() + "_" + Helper.generateRandomString(3));
         duplicatedProject.setClient(baseProject.getClient());
         duplicatedProject.setStartDate(baseProject.getStartDate());
         duplicatedProject.setEndDate(baseProject.getEndDate());

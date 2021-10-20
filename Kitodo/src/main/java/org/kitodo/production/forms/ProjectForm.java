@@ -210,6 +210,7 @@ public class ProjectForm extends BaseForm {
         try {
             this.baseProject = ServiceManager.getProjectService().getById(itemId);
             this.project = ServiceManager.getProjectService().duplicateProject(baseProject);
+            this.setSaveDisabled(false);
             return projectEditPath + "&referer=projects";
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,

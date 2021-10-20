@@ -160,7 +160,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
     public Template duplicateTemplate(Template baseTemplate) {
         Template duplicatedTemplate = new Template();
 
-        // Template _title_ should explicitly _not_ be duplicated!
+        duplicatedTemplate.setTitle(baseTemplate.getTitle() + "_" + Helper.generateRandomString(3));
         duplicatedTemplate.setCreationDate(new Date());
         duplicatedTemplate.setClient(baseTemplate.getClient());
         duplicatedTemplate.setDocket(baseTemplate.getDocket());

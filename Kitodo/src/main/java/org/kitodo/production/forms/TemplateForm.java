@@ -111,6 +111,7 @@ public class TemplateForm extends TemplateBaseForm {
             this.template = ServiceManager.getTemplateService().duplicateTemplate(baseTemplate);
             this.assignedProjects.clear();
             this.assignedProjects.addAll(template.getProjects());
+            this.setSaveDisabled(false);
             return templateEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },

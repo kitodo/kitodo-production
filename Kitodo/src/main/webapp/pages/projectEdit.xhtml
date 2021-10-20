@@ -33,11 +33,11 @@
         </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editProject} (#{ProjectForm.project.title})"
-                          rendered="#{not empty ProjectForm.project.title}"/>
+                          rendered="#{ProjectForm.project.id ne null}"/>
             <h:outputText value="#{msgs.newProject}"
-                          rendered="#{empty ProjectForm.project.title and empty ProjectForm.project.folders}"/>
+                          rendered="#{ProjectForm.project.id eq null and empty ProjectForm.project.title}"/>
             <h:outputText value="#{msgs.duplicateProject}"
-                          rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}"/>
+                          rendered="#{ProjectForm.project.id eq null and not empty ProjectForm.project.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
