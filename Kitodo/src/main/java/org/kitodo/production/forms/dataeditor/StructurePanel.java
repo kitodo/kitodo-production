@@ -197,7 +197,7 @@ public class StructurePanel implements Serializable {
                     Helper.setMessage(selectedPhysicalDivision.getKey().toString() + ": is removed fom all assigned structural elements");
                 }
                 for (LogicalDivision structuralElement : selectedPhysicalDivision.getKey().getLogicalDivisions()) {
-                    structuralElement.getViews().removeIf(v -> v.getPhysicalDivision().equals(selectedPhysicalDivision.getKey()));
+                    structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(selectedPhysicalDivision.getKey()));
                 }
                 selectedPhysicalDivision.getKey().getLogicalDivisions().clear();
                 LinkedList<PhysicalDivision> ancestors = MetadataEditor.getAncestorsOfPhysicalDivision(selectedPhysicalDivision.getKey(),
