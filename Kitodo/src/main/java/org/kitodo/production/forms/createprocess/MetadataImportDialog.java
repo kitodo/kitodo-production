@@ -67,7 +67,6 @@ public abstract class MetadataImportDialog {
             if (Objects.nonNull(parentTempProcess)) {
                 this.createProcessForm.getProcesses().add(parentTempProcess);
             }
-            this.createProcessForm.setEditActiveTabIndex(CreateProcessForm.ADDITIONAL_FIELDS_TAB_INDEX);
         }
     }
 
@@ -117,7 +116,7 @@ public abstract class MetadataImportDialog {
                     && firstProcess.getMetadataNodes().getLength() > 0) {
                 Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
                         MdSec.DMD_SEC);
-                createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+                createProcessForm.getProcessMetadata().getProcessDetails().setMetadata(metadata);
             }
         }
     }
