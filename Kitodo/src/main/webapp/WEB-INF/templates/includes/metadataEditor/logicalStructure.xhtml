@@ -79,9 +79,9 @@
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
                 <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.withoutType'] : logicalElementType}"
                               title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type' or logicalNode.dataObject['class'].simpleName eq 'View'}"/>
                 <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata ne 'type'}"/>
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata ne 'type' and logicalNode.dataObject['class'].simpleName ne 'View'}"/>
                 <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
                               rendered="#{logicalNode.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
