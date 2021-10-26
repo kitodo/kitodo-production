@@ -519,6 +519,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-selectcheckboxmenu-multiple-container.ui-inputfield,
 .ui-picklist-list-wrapper,
 .ui-selectoneradio,
+.ui-selectmanycheckbox,
 .ui-widget-content .ui-inputfield {
     border: solid var(--default-border-width) var(--blue);
     box-shadow: 0 0 0 transparent;
@@ -836,6 +837,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger,
 .ui-spinner.ui-state-disabled .ui-spinner-input,
 .ui-spinner.ui-state-disabled .ui-spinner-button::after,
+.ui-selectmanycheckbox.disabled,
 .ui-selectoneradio.disabled {
     color: var(--medium-gray);
     border-color: var(--medium-gray);
