@@ -23,7 +23,6 @@ import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -34,7 +33,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.VariableReplacer;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
@@ -61,13 +59,10 @@ public class SchemaService {
      *
      * @param workpiece
      *            class inside method is used
-     * @param prefs
-     *            preferences - Prefs object
      * @param process
      *            object
      */
-    public void tempConvert(Workpiece workpiece, LegacyPrefsHelper prefs,
-            Process process) throws IOException, DAOException, URISyntaxException {
+    public void tempConvert(Workpiece workpiece, Process process) throws IOException, DAOException, URISyntaxException {
         /*
          * wenn Filegroups definiert wurden, werden diese jetzt in die
          * Metsstruktur übernommen
@@ -77,7 +72,7 @@ public class SchemaService {
         VariableReplacer vp = new VariableReplacer(workpiece, process, null);
 
         addVirtualFileGroupsToMetsMods(workpiece.getPhysicalStructure(), process);
-        replaceFLocatForExport(workpiece, process, prefs.getRuleset());
+        replaceFLocatForExport(workpiece, process);
 
         // Replace rights and digiprov entries.
         set(workpiece, MdSec.RIGHTS_MD, "owner", vp.replace(process.getProject().getMetsRightsOwner()));
@@ -91,10 +86,10 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "purlUrl", vp.replace(process.getProject().getMetsPurl()));
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
-        convertChildrenLinksForExportRecursive(workpiece, workpiece.getLogicalStructure(), prefs);
+        convertChildrenLinksForExportRecursive(workpiece.getLogicalStructure());
         assignViewsFromChildrenRecursive(workpiece.getLogicalStructure());
         enumerateLogicalDivisions(workpiece.getLogicalStructure(), 0, 1, false);
-        addLinksToParents(process, prefs, workpiece);
+        addLinksToParents(process, workpiece);
     }
 
     /**
@@ -138,7 +133,7 @@ public class SchemaService {
         }
     }
 
-    private void replaceFLocatForExport(Workpiece workpiece, Process process, RulesetManagementInterface ruleset)
+    private void replaceFLocatForExport(Workpiece workpiece, Process process)
             throws URISyntaxException {
         List<Folder> folders = process.getProject().getFolders();
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
@@ -171,7 +166,7 @@ public class SchemaService {
             String use = mediaFileForMediaVariant.getKey().getUse();
             Optional<Folder> optionalFolderForUse = process.getProject().getFolders().parallelStream()
                     .filter(folder -> use.equals(folder.getFileGroup())).findAny();
-            if (!optionalFolderForUse.isPresent()
+            if (optionalFolderForUse.isEmpty()
                     || optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.NO)
                     || (optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.EXISTING)
                             && new Subfolder(process, optionalFolderForUse.get()).getURIIfExists(canonical)
@@ -220,16 +215,11 @@ public class SchemaService {
      * resolvable link. Checks whether the linked process has not yet been
      * exported, in which case the link from the parental list will be deleted.
      *
-     * @param workpiece
-     *            current workpiece
      * @param structure
      *            current structure
-     * @param prefs
-     *            legacy ruleset wrapper
      * @return whether the current structure shall be deleted
      */
-    private boolean convertChildrenLinksForExportRecursive(Workpiece workpiece, LogicalDivision structure,
-                                               LegacyPrefsHelper prefs) throws DAOException, IOException {
+    private boolean convertChildrenLinksForExportRecursive(LogicalDivision structure) throws DAOException, IOException {
 
         LinkedMetsResource link = structure.getLink();
         if (Objects.nonNull(link)) {
@@ -238,11 +228,11 @@ public class SchemaService {
             if (!process.isExported()) {
                 return true;
             }
-            setLinkForExport(structure, process, prefs, workpiece);
+            setLinkForExport(structure, process);
             copyLabelAndOrderlabel(process, structure);
         }
         for (Iterator<LogicalDivision> iterator = structure.getChildren().iterator(); iterator.hasNext();) {
-            if (convertChildrenLinksForExportRecursive(workpiece, iterator.next(), prefs)) {
+            if (convertChildrenLinksForExportRecursive(iterator.next())) {
                 iterator.remove();
             }
         }
@@ -261,31 +251,30 @@ public class SchemaService {
         return journalIssueCount;
     }
 
-    private void addLinksToParents(Process process, LegacyPrefsHelper prefs, Workpiece workpiece) throws IOException {
+    private void addLinksToParents(Process process, Workpiece workpiece) throws IOException {
         Process parentProcess = process.getParent();
         while (Objects.nonNull(parentProcess)) {
-            addParentLinkForExport(prefs, workpiece, parentProcess);
+            addParentLinkForExport(workpiece, parentProcess);
             parentProcess = parentProcess.getParent();
         }
     }
 
-    private void addParentLinkForExport(LegacyPrefsHelper prefs, Workpiece workpiece, Process parent)
-            throws IOException {
-
+    private void addParentLinkForExport(Workpiece workpiece, Process parent) throws IOException {
         LogicalDivision linkHolder = new LogicalDivision();
         linkHolder.setLink(new LinkedMetsResource());
-        setLinkForExport(linkHolder, parent, prefs, workpiece);
+        setLinkForExport(linkHolder, parent);
         linkHolder.getChildren().add(workpiece.getLogicalStructure());
         copyLabelAndOrderlabel(parent, linkHolder);
         workpiece.setLogicalStructure(linkHolder);
     }
 
-    private void setLinkForExport(LogicalDivision structure, Process process, LegacyPrefsHelper prefs,
-            Workpiece workpiece) {
+    private void setLinkForExport(LogicalDivision structure, Process process) throws IOException {
 
         LinkedMetsResource link = structure.getLink();
         link.setLoctype("URL");
         String uriWithVariables = process.getProject().getMetsPointerPath();
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(ServiceManager.getProcessService()
+                .getMetadataFileUri(process));
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
         String linkUri = variableReplacer.replace(uriWithVariables);
         link.setUri(URI.create(linkUri));
