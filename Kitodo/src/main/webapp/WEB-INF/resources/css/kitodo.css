@@ -1312,7 +1312,7 @@ Import form
     padding-right: var(--default-half-size);
 }
 
-#fileUploadForm {
+#fileUploadForm, #searchEditForm {
     padding: 0 var(--default-double-size);
 }
 

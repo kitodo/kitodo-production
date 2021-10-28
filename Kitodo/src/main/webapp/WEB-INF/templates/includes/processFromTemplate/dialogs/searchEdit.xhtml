@@ -1,0 +1,66 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog widgetVar="searchEditDialog"
+              id="searchEditDialog"
+              width="578"
+              modal="true"
+              resizable="false">
+        <h3>#{msgs.processTemplate}</h3>
+        <h:form id="searchEditForm">
+
+            <h:outputScript name="js/opacImport.js" target="body"/>
+            <p:panelGrid layout="grid" columns="2" cellpadding="10">
+                <!-- choose from existing processes  -->
+                <p:row rendered="#{CreateProcessForm.processDataTab.usingTemplates}">
+                    <div>
+                        <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
+                        <p:selectOneMenu id="processSelect" value="#{CreateProcessForm.searchDialog.originalProcess}"
+                                         converter="#{processConverter}">
+                            <f:selectItem  itemValue="#{null}" itemLabel="-- #{msgs.selectProcess} --" noSelectionOption="true"/>
+                            <f:selectItems value="#{CreateProcessForm.searchDialog.processesForChoiceList}"
+                                           var="process"
+                                           itemLabel="#{process.title}"
+                                           itemValue="#{process}"/>
+                            <p:ajax update="searchEditForm"/>
+                        </p:selectOneMenu>
+                    </div>
+                </p:row>
+            </p:panelGrid>
+            <h:panelGroup layout="block">
+                <p:commandButton id="copyProcessData"
+                                 styleClass="primary right"
+                                 disabled="#{CreateProcessForm.searchDialog.originalProcess eq null}"
+                                 action="#{CreateProcessForm.searchDialog.copyMetadata}"
+                                 oncomplete="PF('searchEditDialog').hide();"
+                                 value="#{msgs.apply}"
+                                 title="#{msgs.selectFromExistingProcesses}"
+                                 update="editForm"
+                                 icon="fa fa-download" iconPos="right"/>
+                <p:commandButton id="close"
+                                 value="#{msgs.close}"
+                                 styleClass="secondary right"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 onclick="PF('searchEditDialog').hide();"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>

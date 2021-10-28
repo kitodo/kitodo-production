@@ -70,6 +70,16 @@
                          styleClass="secondary">
             <p:resetInput target="fileUploadForm"/>
         </p:commandButton>
+        <p:commandButton id="searchEdit"
+                         process="@this"
+                         value="#{msgs.processTemplate}"
+                         oncomplete="PF('searchEditDialog').show();"
+                         icon="fa fa-download"
+                         iconPos="right"
+                         update="searchEditForm"
+                         styleClass="secondary">
+            <p:resetInput target="searchEditForm"/>
+        </p:commandButton>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
@@ -83,9 +93,6 @@
         <p:tabView id="processFromTemplateTabView" activeIndex="#{CreateProcessForm.editActiveTabIndex}">
             <p:tab id="processDataTab" title="#{msgs.processData}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dataEdit.xhtml" />
-            </p:tab>
-            <p:tab id="searchTab" title="#{msgs.processTemplate}">
-                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/searchEdit.xhtml" />
             </p:tab>
             <p:tab id="titleRecordLinkTab" title="#{msgs.titleRecordLink}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/titleRecordLink.xhtml" />
@@ -101,6 +108,7 @@
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/errorPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/manyChildrenWarning.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/progress.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/searchEdit.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

@@ -102,7 +102,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
 
     /**
      * Creates a new root metadata group representing the metadata table
-     * content in the processMetadataTab.
+     * content in the processMetadata.
      *
      * @param structure
      *            structure selected by the user
@@ -502,7 +502,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     /**
-     * Reads the contents of the processMetadataTab and stores the values in the
+     * Reads the contents of the processMetadata and stores the values in the
      * appropriate place. If the line is used to edit a field of the METS
      * structure, this field is set, otherwise the metadata will be stored in
      * the list. The hidden metadata is also written back there again.

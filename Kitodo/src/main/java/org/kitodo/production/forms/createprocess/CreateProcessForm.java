@@ -65,8 +65,8 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private final CatalogImportDialog catalogImportDialog = new CatalogImportDialog(this);
     private final FileUploadDialog fileUploadDialog = new FileUploadDialog(this);
+    private final SearchDialog searchDialog = new SearchDialog(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
-    private final SearchTab searchTab = new SearchTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
     private final ProcessMetadata processMetadata = new ProcessMetadata(this);
 
@@ -168,21 +168,21 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     }
 
     /**
-     * Get processMetadataTab.
+     * Get processMetadata.
      *
-     * @return value of processMetadataTab
+     * @return value of processMetadata
      */
     public ProcessMetadata getProcessMetadata() {
         return processMetadata;
     }
 
     /**
-     * Get searchTab.
+     * Get searchDialog.
      *
-     * @return value of searchTab
+     * @return value of searchDialog
      */
-    public SearchTab getSearchTab() {
-        return searchTab;
+    public SearchDialog getSearchDialog() {
+        return searchDialog;
     }
 
     /**
