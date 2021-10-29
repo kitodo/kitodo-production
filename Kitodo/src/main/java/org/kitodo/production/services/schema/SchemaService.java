@@ -273,8 +273,8 @@ public class SchemaService {
         LinkedMetsResource link = structure.getLink();
         link.setLoctype("URL");
         String uriWithVariables = process.getProject().getMetsPointerPath();
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(ServiceManager.getProcessService()
-                .getMetadataFileUri(process));
+        Workpiece workpiece = uriWithVariables.contains("$(meta.") ? ServiceManager.getMetsService()
+                .loadWorkpiece(ServiceManager.getProcessService().getMetadataFileUri(process)) : null;
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
         String linkUri = variableReplacer.replace(uriWithVariables);
         link.setUri(URI.create(linkUri));
