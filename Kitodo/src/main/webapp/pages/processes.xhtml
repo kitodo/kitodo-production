@@ -62,7 +62,7 @@
                         <p:ajax event="change"
                                 listener="#{ProcessForm.changeFilter(ProcessForm.filter)}"
                                 onstart="PF('processesTable').getPaginator().setPage(0);"
-                                update="processesTabView:processesForm:processesTable"/>
+                                update="processesTabView:processesForm:processesTable titleProcess"/>
                     </p:inputText>
                     <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                     <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
