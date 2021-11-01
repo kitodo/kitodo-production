@@ -21,6 +21,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+
 /**
  * Filter bean.
  */
@@ -28,9 +30,11 @@ import javax.persistence.Table;
 @Table(name = "filter")
 public class Filter extends BaseBean {
 
+    @GenericField
     @Column(name = "value", columnDefinition = "longtext")
     private String value;
 
+    @GenericField
     @Column(name = "creationDate")
     private Date creationDate;
 

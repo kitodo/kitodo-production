@@ -30,12 +30,14 @@ import javax.persistence.Table;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.persistence.TemplateDAO;
 
 @Entity
 @Table(name = "template")
 public class Template extends BaseTemplateBean {
 
+    @GenericField
     @Column(name = "active")
     private Boolean active = true;
 

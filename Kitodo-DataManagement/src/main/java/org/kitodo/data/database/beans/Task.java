@@ -30,6 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
@@ -40,9 +42,11 @@ import org.kitodo.data.database.persistence.TaskDAO;
 @Table(name = "task")
 public class Task extends BaseBean {
 
+    @FullTextField
     @Column(name = "title")
     private String title;
 
+    @GenericField
     @Column(name = "ordering")
     private Integer ordering;
 
@@ -50,12 +54,15 @@ public class Task extends BaseBean {
     @Convert(converter = TaskStatusConverter.class)
     private TaskStatus processingStatus = TaskStatus.LOCKED;
 
+    @GenericField
     @Column(name = "processingTime")
     private Date processingTime;
 
+    @GenericField
     @Column(name = "processingBegin")
     private Date processingBegin;
 
+    @GenericField
     @Column(name = "processingEnd")
     private Date processingEnd;
 
@@ -63,57 +70,75 @@ public class Task extends BaseBean {
     @Convert(converter = TaskEditTypeConverter.class)
     private TaskEditType editType = TaskEditType.UNNOWKN;
 
+    @GenericField
     @Column(name = "homeDirectory")
     private short homeDirectory;
 
+    @GenericField
     @Column(name = "concurrent")
     private boolean concurrent = false;
 
+    @GenericField
     @Column(name = "last")
     private boolean last = false;
 
+    @GenericField
     @Column(name = "correction")
     private boolean correction = false;
 
+    @GenericField
     @Column(name = "typeMetadata")
     private boolean typeMetadata = false;
 
+    @GenericField
     @Column(name = "typeAutomatic")
     private boolean typeAutomatic = false;
 
+    @GenericField
     @Column(name = "typeImagesRead")
     private boolean typeImagesRead = false;
 
+    @GenericField
     @Column(name = "typeImagesWrite")
     private boolean typeImagesWrite = false;
 
+    @GenericField
     @Column(name = "typeGenerateImages")
     private boolean typeGenerateImages = false;
 
+    @GenericField
     @Column(name = "typeValidateImages")
     private boolean typeValidateImages = false;
 
+    @GenericField
     @Column(name = "typeExportDms")
     private boolean typeExportDMS = false;
 
+    @GenericField
     @Column(name = "typeAcceptClose")
     private boolean typeAcceptClose = false;
 
+    @GenericField
     @Column(name = "scriptName")
     private String scriptName;
 
+    @GenericField
     @Column(name = "scriptPath")
     private String scriptPath;
 
+    @GenericField
     @Column(name = "typeCloseVerify")
     private boolean typeCloseVerify = false;
 
+    @GenericField
     @Column(name = "batchStep")
     private boolean batchStep = false;
 
+    @GenericField
     @Column(name = "repeatOnCorrection")
     private boolean repeatOnCorrection = false;
 
+    @GenericField
     @Column(name = "workflowId")
     private String workflowId;
 

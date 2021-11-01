@@ -39,43 +39,56 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
+
 @Table(name = "project")
 public class Project extends BaseBean implements Comparable<Project> {
 
+    @FullTextField
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
+    @FullTextField
     @Column(name = "dmsImportRootPath")
     private String dmsImportRootPath;
 
+    @FullTextField
     @Column(name = "metsRightsOwner")
     private String metsRightsOwner = "";
 
+    @FullTextField
     @Column(name = "metsRightsOwnerLogo")
     private String metsRightsOwnerLogo = "";
 
+    @FullTextField
     @Column(name = "metsRightsOwnerSite")
     private String metsRightsOwnerSite = "";
 
+    @FullTextField
     @Column(name = "metsRightsOwnerMail")
     private String metsRightsOwnerMail = "";
 
+    @FullTextField
     @Column(name = "metsDigiprovReference")
     private String metsDigiprovReference = "";
 
+    @FullTextField
     @Column(name = "metsDigiprovPresentation")
     private String metsDigiprovPresentation = "";
 
+    @FullTextField
     @Column(name = "metsPointerPath")
     private String metsPointerPath = "";
 
+    @FullTextField
     @Column(name = "metsPurl")
     private String metsPurl = "";
 
+    @FullTextField
     @Column(name = "metsContentId")
     private String metsContentIDs = "";
 

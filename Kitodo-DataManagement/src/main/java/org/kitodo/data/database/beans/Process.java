@@ -38,6 +38,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -48,24 +50,31 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 @Table(name = "process")
 public class Process extends BaseTemplateBean {
 
+    @GenericField
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;
 
+    @GenericField
     @Column(name = "sortHelperArticles")
     private Integer sortHelperArticles;
 
+    @GenericField
     @Column(name = "sortHelperMetadata")
     private Integer sortHelperMetadata;
 
+    @GenericField
     @Column(name = "sortHelperDocstructs")
     private Integer sortHelperDocstructs;
 
+    @FullTextField
     @Column(name = "wikiField", columnDefinition = "longtext")
     private String wikiField = "";
 
+    @GenericField
     @Column(name = "processBaseUri")
     private String processBaseUri;
 
+    @GenericField
     @Column(name = "ordering")
     private Integer ordering;
 

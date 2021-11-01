@@ -26,6 +26,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 
@@ -33,6 +34,7 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 @Table(name = "workflow")
 public class Workflow extends BaseBean {
 
+    @GenericField
     @Column(name = "title")
     private String title;
 
@@ -44,6 +46,7 @@ public class Workflow extends BaseBean {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_workflow_client_id"))
     private Client client;
 
+    @GenericField
     @Column(name = "separateStructure")
     private boolean separateStructure = false;
 

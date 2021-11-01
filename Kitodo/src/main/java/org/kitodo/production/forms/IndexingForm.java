@@ -25,8 +25,14 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 
+import org.hibernate.Session;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.production.enums.IndexStates;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
 
 @Named
@@ -132,7 +138,17 @@ public class IndexingForm {
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexing() {
-        throw new UnsupportedOperationException("currently not implemented");
+        indexingStartedTime = LocalDateTime.now();
+        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
+        // TODO: remove the following method call (and all subsequent code) when mass indexer works as planned!
+        ServiceManager.getIndexingService().startAllIndexing(pollingChannel);
+        try (Session session = HibernateUtil.getSession()) {
+            SearchSession searchSession = Search.session(session);
+            searchSession.massIndexer().dropAndCreateSchemaOnStart(true);
+            searchSession.massIndexer().startAndWait();
+        } catch (InterruptedException e) {
+            Helper.setErrorMessage(e);
+        }
     }
 
     /**

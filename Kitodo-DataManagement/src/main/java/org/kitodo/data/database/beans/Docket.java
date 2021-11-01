@@ -20,16 +20,21 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+
 @Entity
 @Table(name = "docket")
 public class Docket extends BaseBean {
 
+    @GenericField
     @Column(name = "title")
     private String title;
 
+    @GenericField
     @Column(name = "file")
     private String file;
 
+    @GenericField
     @Column(name = "active")
     private Boolean active = true;
 

@@ -27,6 +27,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
 
@@ -45,6 +46,7 @@ public class Batch extends BaseBean {
      * The batch title. Using titles for batches is optional, the field may be
      * {@code null}. If so, the ID will be shown to the user instead.
      */
+    @GenericField
     @Column(name = "title")
     private String title;
 
