@@ -31,9 +31,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 import org.kitodo.data.database.persistence.TemplateDAO;
 
 @Entity
+@Indexed(index = "kitodo-template")
 @Table(name = "template")
 public class Template extends BaseTemplateBean {
 

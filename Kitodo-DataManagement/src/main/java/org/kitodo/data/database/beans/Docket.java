@@ -21,8 +21,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 @Entity
+@Indexed(index = "kitodo-docket")
 @Table(name = "docket")
 public class Docket extends BaseBean {
 

@@ -22,15 +22,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.kitodo.data.database.enums.CommentType;
 
 @Entity
+@Indexed
 @Table(name = "comment")
 public class Comment extends BaseBean {
     /**
      * The field message holds the comment message.
      */
     @Column(name = "message", columnDefinition = "longtext")
+    @GenericField
     private String message;
 
     /**

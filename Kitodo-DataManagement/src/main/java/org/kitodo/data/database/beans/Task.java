@@ -32,6 +32,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
@@ -39,6 +41,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
 
 @Entity
+@Indexed(index = "kitodo-task")
 @Table(name = "task")
 public class Task extends BaseBean {
 

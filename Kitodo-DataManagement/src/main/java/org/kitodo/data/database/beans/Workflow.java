@@ -27,10 +27,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 
 @Entity
+@Indexed(index = "kitodo-workflow")
 @Table(name = "workflow")
 public class Workflow extends BaseBean {
 

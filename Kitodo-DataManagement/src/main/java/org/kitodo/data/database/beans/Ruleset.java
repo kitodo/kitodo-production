@@ -21,8 +21,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 @Entity
+@Indexed(index = "kitodo-ruleset")
 @Table(name = "ruleset")
 public class Ruleset extends BaseBean {
 
@@ -96,7 +98,7 @@ public class Ruleset extends BaseBean {
      * @return whether the elements should be in declared order
      */
     public boolean isOrderMetadataByRuleset() {
-        if (this.orderMetadataByRuleset == null) {
+         if (this.orderMetadataByRuleset == null) {
             this.orderMetadataByRuleset = false;
         }
         return this.orderMetadataByRuleset;

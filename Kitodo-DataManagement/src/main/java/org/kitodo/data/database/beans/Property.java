@@ -40,7 +40,6 @@ public class Property extends BaseBean implements Comparable<Property> {
     @Column(name = "value", columnDefinition = "longtext")
     private String value;
 
-    @GenericField
     @Column(name = "obligatory")
     private Boolean obligatory;
 
@@ -48,11 +47,9 @@ public class Property extends BaseBean implements Comparable<Property> {
     @Convert(converter = PropertyTypeConverter.class)
     private PropertyType dataType;
 
-    @GenericField
     @Column(name = "choice")
     private String choice;
 
-    @GenericField
     @Column(name = "creationDate")
     private Date creationDate;
 

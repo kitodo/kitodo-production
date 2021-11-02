@@ -22,11 +22,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 /**
  * Filter bean.
  */
 @Entity
+@Indexed(index = "kitodo-filter")
 @Table(name = "filter")
 public class Filter extends BaseBean {
 

@@ -28,6 +28,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
 
@@ -39,6 +41,7 @@ import org.kitodo.data.database.persistence.BatchDAO;
  * multi-journal binding unit.
  */
 @Entity
+@Indexed(index = "kitodo-batch")
 @Table(name = "batch")
 public class Batch extends BaseBean {
 
@@ -61,6 +64,7 @@ public class Batch extends BaseBean {
      * Holds the processes that belong to the batch.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @IndexedEmbedded(includePaths = {"title"})
     @JoinTable(name = "batch_x_process", joinColumns = {
         @JoinColumn(name = "batch_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")) })

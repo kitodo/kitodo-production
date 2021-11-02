@@ -141,7 +141,7 @@ public class IndexingForm {
         indexingStartedTime = LocalDateTime.now();
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
         // TODO: remove the following method call (and all subsequent code) when mass indexer works as planned!
-        ServiceManager.getIndexingService().startAllIndexing(pollingChannel);
+        //ServiceManager.getIndexingService().startAllIndexing(pollingChannel);
         try (Session session = HibernateUtil.getSession()) {
             SearchSession searchSession = Search.session(session);
             searchSession.massIndexer().dropAndCreateSchemaOnStart(true);

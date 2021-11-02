@@ -40,15 +40,17 @@ import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
-
+@Indexed(index = "kitodo-project")
 @Table(name = "project")
 public class Project extends BaseBean implements Comparable<Project> {
 
-    @FullTextField
+    @GenericField
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
@@ -93,18 +95,23 @@ public class Project extends BaseBean implements Comparable<Project> {
     private String metsContentIDs = "";
 
     @Column(name = "startDate")
+    @GenericField
     private Date startDate;
 
     @Column(name = "endDate")
+    @GenericField
     private Date endDate;
 
     @Column(name = "numberOfPages")
+    @GenericField
     private Integer numberOfPages;
 
     @Column(name = "numberOfVolumes")
+    @GenericField
     private Integer numberOfVolumes;
 
     @Column(name = "active")
+    @GenericField
     private Boolean active = true;
 
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
