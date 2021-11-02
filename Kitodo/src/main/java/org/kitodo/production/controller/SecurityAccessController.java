@@ -979,4 +979,13 @@ public class SecurityAccessController {
     public boolean hasAuthorityToViewDatabaseStatistics() {
         return securityAccessService.hasAuthorityToViewDatabaseStatistic();
     }
+
+    /**
+     * Check if the current user has the authority to run Kitodo scripts.
+     *
+     * @return true if the current user has the authority to run Kitodo scripts.
+     */
+    public boolean hasAuthorityToRunKitodoScripts() {
+        return securityAccessService.hasAuthorityToRunKitodoScripts();
+    }
 }

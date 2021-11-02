@@ -961,9 +961,18 @@ public class SecurityAccessService extends SecurityAccess {
     /**
      * Check if the current user has the authority to delete media in metadata editor.
      *
-     * @return true if the current user has the authority to to delete media in metadata editor
+     * @return true if the current user has the authority to delete media in metadata editor
      */
     public boolean hasAuthorityToDeleteMedia() {
         return hasAuthorityGlobalOrForClient("deleteMedia");
+    }
+
+    /**
+     * Check if the current user has the authority to run Kitodo scripts.
+     *
+     * @return true if the current user has the authority to run Kitodo scripts.
+     */
+    public boolean hasAuthorityToRunKitodoScripts() {
+        return hasAnyAuthorityForClient("runKitodoScript");
     }
 }
