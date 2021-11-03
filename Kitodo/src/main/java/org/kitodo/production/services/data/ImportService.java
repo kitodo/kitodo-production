@@ -1202,7 +1202,7 @@ public class ImportService {
                 | DataException | CommandException | TransformerException e) {
             logger.error(e);
             throw new ImportException(
-                    Helper.getTranslation("errorImporting", ppn, e.getLocalizedMessage());
+                    Helper.getTranslation("errorImporting", ppn, e.getLocalizedMessage()));
         }
         return tempProcess.getProcess();
     }
