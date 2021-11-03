@@ -63,7 +63,7 @@ public class SearchResultGeneration {
      * @return HSSFWorkbook
      */
     public HSSFWorkbook getResult() {
-            return getWorkbook();
+        return getWorkbook();
     }
 
     private List<ProcessDTO> getResultsWithFilter() {

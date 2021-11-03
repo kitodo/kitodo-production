@@ -11,7 +11,6 @@
 
 package org.kitodo.production.security.password;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -29,18 +28,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import javax.naming.NamingException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class SecurityPasswordEncoder implements PasswordEncoder {

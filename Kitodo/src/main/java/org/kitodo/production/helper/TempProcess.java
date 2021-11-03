@@ -111,6 +111,7 @@ public class TempProcess {
      * of type "docType" and if its value equals the type of the logical root element. If not, the
      * logical root is set to the value of the "docType" metadata.
      *
+     * <p>
      * This function is currently only used for the import of prestructured processes.
      */
     public void verifyDocType() {
