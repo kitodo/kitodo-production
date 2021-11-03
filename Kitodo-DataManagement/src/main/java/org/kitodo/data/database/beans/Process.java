@@ -38,10 +38,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -82,29 +84,29 @@ public class Process extends BaseTemplateBean {
     private Integer ordering;
 
     @ManyToOne
-    // FIXME: does not work, because Process->Docket mapping is not bi-directional!
-    //@IndexedEmbedded(includePaths = {"title"})
+    @IndexedEmbedded(includePaths = {"title", "id"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
     private Docket docket;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title"})
+    @IndexedEmbedded(includePaths = {"title", "active", "id", "client.id"})
     @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_process_project_id"))
     private Project project;
 
     @ManyToOne
-    // FIXME: does not work, because Process->Ruleset mapping is not bi-directional!
-    //@IndexedEmbedded(includePaths = {"title"})
+    @IndexedEmbedded(includePaths = {"title", "id"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_process_ruleset_id"))
     private Ruleset ruleset;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title"})
+    @IndexedEmbedded(includePaths = {"title", "id"})
     @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_process_template_id"))
     private Template template;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title"})
+    @IndexedEmbedded(includePaths = {"title", "id"})
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_process_parent_id"))
     private Process parent;
 
@@ -115,6 +117,7 @@ public class Process extends BaseTemplateBean {
     private boolean hasChildren = true;
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+    @IndexedEmbedded(includePaths = {"title", "id"})
     @OrderBy("ordering")
     private List<Task> tasks;
 
@@ -124,24 +127,24 @@ public class Process extends BaseTemplateBean {
     private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    // FIXME: results in "strict_dynamic_mapping_exception", "reason": "mapping set to strict, dynamic introduction of [properties] within [_doc] is not allowed"
-    //@IndexedEmbedded
+    @IndexedEmbedded(includePaths = {"id", "title", "value"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinTable(name = "process_x_property", joinColumns = {
         @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
     private List<Property> properties;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    // FIXME: results in "strict_dynamic_mapping_exception", "reason": "mapping set to strict, dynamic introduction of [properties] within [_doc] is not allowed"
-    //@IndexedEmbedded
+    @IndexedEmbedded(includePaths = {"id", "title", "value"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinTable(name = "template_x_property", joinColumns = {
         @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_x_property_process_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
     private List<Property> templates;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    // FIXME: results in "strict_dynamic_mapping_exception", "reason": "mapping set to strict, dynamic introduction of [properties] within [_doc] is not allowed"
-    //@IndexedEmbedded
+    @IndexedEmbedded(includePaths = {"id", "title", "value"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinTable(name = "workpiece_x_property", joinColumns = {
         @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_process_id")) },
             inverseJoinColumns = {
@@ -149,7 +152,7 @@ public class Process extends BaseTemplateBean {
     private List<Property> workpieces;
 
     @ManyToMany(mappedBy = "processes")
-    @IndexedEmbedded(includePaths = {"title"})
+    @IndexedEmbedded(includePaths = {"title", "id"})
     private List<Batch> batches = new ArrayList<>();
 
     @Column(name = "exported")

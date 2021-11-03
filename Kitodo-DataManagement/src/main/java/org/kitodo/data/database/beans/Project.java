@@ -39,9 +39,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
@@ -115,9 +118,11 @@ public class Project extends BaseBean implements Comparable<Project> {
     private Boolean active = true;
 
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
+    @IndexedEmbedded(includePaths = {"surname", "name", "id", "login"})
     private List<User> users;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @IndexedEmbedded(includePaths = {"id", "title"})
     private List<Process> processes;
 
     @Transient
@@ -125,6 +130,7 @@ public class Project extends BaseBean implements Comparable<Project> {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
+    @IndexedEmbedded(includePaths = {"id", "title"})
     private List<Template> templates;
 
     @ManyToOne
@@ -138,9 +144,12 @@ public class Project extends BaseBean implements Comparable<Project> {
     private ImportConfiguration defaultChildProcessImportConfiguration;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @IndexedEmbedded(includePaths = {"path", "urlStructure", "fileGroup", "mimeType"})
     private List<Folder> folders;
 
     @ManyToOne
+    @IndexedEmbedded(includePaths = {"id", "name"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
     private Client client;
 

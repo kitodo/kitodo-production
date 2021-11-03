@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.Hibernate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.persistence.BaseDAO;
 
 /**
@@ -34,6 +35,7 @@ public abstract class BaseBean implements Serializable {
 
     @Id
     @Column(name = "id")
+    @GenericField
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
