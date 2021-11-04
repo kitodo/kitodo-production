@@ -23,6 +23,7 @@ import javax.persistence.Table;
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 
 /**
  * Filter bean.
@@ -41,6 +42,7 @@ public class Filter extends BaseBean {
     private Date creationDate;
 
     @ManyToOne
+    @IndexedEmbedded(includePaths = {"id"})
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_filter_user_id"))
     private User user;
 

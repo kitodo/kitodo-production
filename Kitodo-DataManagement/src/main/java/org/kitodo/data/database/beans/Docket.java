@@ -20,8 +20,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 
 @Entity
 @Indexed(index = "kitodo-docket")
@@ -41,6 +44,8 @@ public class Docket extends BaseBean {
     private Boolean active = true;
 
     @ManyToOne
+    @IndexedEmbedded(includePaths = {"id", "name"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_docket_client_id"))
     private Client client;
 

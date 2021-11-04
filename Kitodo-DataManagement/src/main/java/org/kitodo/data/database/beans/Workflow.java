@@ -26,8 +26,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 
@@ -40,11 +43,14 @@ public class Workflow extends BaseBean {
     @Column(name = "title")
     private String title;
 
+    @GenericField
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private WorkflowStatus status = WorkflowStatus.DRAFT;
 
     @ManyToOne
+    @IndexedEmbedded(includePaths = {"id", "name"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_workflow_client_id"))
     private Client client;
 
