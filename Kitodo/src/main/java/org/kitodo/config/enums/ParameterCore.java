@@ -224,19 +224,6 @@ public enum ParameterCore implements ParameterInterface {
      */
     DIR_LOCAL_MESSAGES(new Parameter<>("directory.messages", "/usr/local/kitodo/messages/")),
 
-    /**
-     * Start-up language: If not set, Kitodo.Production will start up with the
-     * language best matching the user's Accept-Languages HTTP Request header. You
-     * can override this behavior by setting a default language here.
-     */
-    LANGUAGE_FORCE_DEFAULT(new Parameter<>("language.force-default", "de")),
-
-    /**
-     * If no Accept-Language Http Request header is present, use the following
-     * language.
-     */
-    LANGUAGE_DEFAULT(new Parameter<>("language.default", "de")),
-
     METADATA_LANGUAGE_LIST(new Parameter<>("metadataLanguage.list", "Deutsch-de")),
 
     /*

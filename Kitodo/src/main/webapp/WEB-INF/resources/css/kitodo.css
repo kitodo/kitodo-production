@@ -954,6 +954,32 @@ main i.fa {
     line-height: 16px;
 }
 
+#login-language-section ul {
+    list-style: none;
+    text-align: center;
+}
+
+#login-language-section ul li {
+    display:inline-block;
+}
+
+#login-language-section ul li:not(:first-child):before {
+    content: "|";
+    margin-right: 5px;
+}
+
+#login-language-section ul li a {
+    padding: 0;
+    color: var(--medium-gray);
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+#login-language-section ul li.active a,
+#login-language-section ul li a:hover {
+    color: var(--focused-blue);
+}
+
 .login-note {
     background: var(--medium-gray);
     margin: 32px -32px 0 -32px;
