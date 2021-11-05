@@ -97,7 +97,7 @@
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
                         <p:outputLabel value="#{stripe.label}#{DataEditorForm.getStructureElementTitle(stripe.structure)}"
-                                       styleClass="stripe #{DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
+                                       styleClass="stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
                                        rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
                         <p:outputPanel>
@@ -183,7 +183,7 @@
                     <!-- Unstructured media-->
                     <p:outputPanel>
                         <p:outputLabel value="#{msgs['dataEditor.unstructuredMedia']}"
-                                       styleClass="gallery-stripe-header stripe #{DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.get(0).getStructure()) ? 'selected' : ''}"
+                                       styleClass="gallery-stripe-header stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.get(0).getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="0"/>
                         <h:panelGroup id="unstructuredMedia"
                                       layout="block">
@@ -396,6 +396,20 @@
                             update = "uploadFileDialog"
                             disabled="#{readOnly}"
                             process="@this"/>
+                <p:menuitem value="#{msgs.removeElement}"
+                            rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia()}"
+                            icon="fa fa-trash fa-sm"
+                            styleClass="plain"
+                            disabled="#{readOnly}"
+                            onclick="$('#loadingScreen').show()"
+                            oncomplete="$('#loadingScreen').hide()"
+                            action="#{DataEditorForm.deletePhysicalDivision()}"
+                            process="@this"
+                            update="logicalTree
+                                physicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
                            widgetVar="stripeContextMenu"

@@ -103,7 +103,7 @@
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.removeElement}"
-                        rendered="#{DataEditorForm.structurePanel.selectedPhysicalNode.data.dataObject.type ne 'page'}"
+                        rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedPhysicalNode.rowKey ne '0'}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
