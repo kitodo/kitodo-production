@@ -13,6 +13,7 @@ package org.kitodo.production.helper.metadata.pagination;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Class to generate different sorts of paginations.
@@ -141,6 +142,9 @@ public class Paginator implements Iterator<String> {
             fragments.addLast(
                 new RomanNumeral(stringBuilder.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)));
         } else if (fragmentType.equals(PaginatorState.INCREMENT)) {
+            if (fragments.isEmpty() || Objects.isNull(fragments.peekLast())) {
+                fragments.addLast(new StaticText("", pageType));
+            }
             fragments.peekLast().setIncrement(HalfInteger.valueOf(stringBuilder.toString()));
         } else if (!fragmentType.equals(PaginatorState.EMPTY)) {
             fragments.addLast(new StaticText(stringBuilder.toString(), pageType));
