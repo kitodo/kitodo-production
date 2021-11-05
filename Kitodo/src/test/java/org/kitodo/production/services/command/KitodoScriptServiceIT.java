@@ -642,7 +642,7 @@ public class KitodoScriptServiceIT {
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
 
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
-        newMetadataSearchMap.put(metadataKey, "Proc");
+        newMetadataSearchMap.put(metadataKey, "ProcTwo");
 
         List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
