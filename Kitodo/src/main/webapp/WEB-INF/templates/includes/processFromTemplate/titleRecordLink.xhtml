@@ -15,7 +15,8 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
 
     <p:panelGrid id="titleRecordLinkTabContent"
                  layout="grid"
@@ -83,16 +84,8 @@
                         <h:outputLabel for="insertionPositionRadioButton"
                                        value="#{msgs.insertHere}"
                                        rendered="#{node.possibleInsertionPosition}"/>
-                        <h:outputText value="#{node.label}" id="treeNodeText"
+                        <h:outputText value="#{node.label} - #{of:joinCollection(node.tooltip, ', ')}" id="treeNodeText"
                                        rendered="#{not node.possibleInsertionPosition}"/>
-                        <p:tooltip id="treeNodeTooltip" for="treeNodeText"
-                                       position="right" showEffect="clip" hideEffect="explode"
-                                       rendered="#{not node.possibleInsertionPosition and not empty node.tooltip}"
-                        >
-                            <p:repeat var="line" value="#{node.tooltip}">
-                                <div><h:outputText value="#{line}"/></div>
-                            </p:repeat>
-                        </p:tooltip>
                     </p:treeNode>
                 </p:tree>
             </h:panelGroup>
