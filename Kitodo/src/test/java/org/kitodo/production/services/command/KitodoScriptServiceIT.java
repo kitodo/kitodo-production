@@ -642,7 +642,7 @@ public class KitodoScriptServiceIT {
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
 
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
-        newMetadataSearchMap.put(metadataKey, "Proc");
+        newMetadataSearchMap.put(metadataKey, "Second process");
 
         List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
@@ -651,7 +651,7 @@ public class KitodoScriptServiceIT {
         Assert.assertEquals("should contain new metadata value", 0, processByMetadata.size());
 
         Process process = ServiceManager.getProcessService().getById(2);
-        String script = "action:overwriteData " + "key:" + metadataKey + " source:TSL_ATS";
+        String script = "action:overwriteData " + "key:" + metadataKey + " source:TitleDocMain";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
