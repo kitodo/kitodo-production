@@ -1067,7 +1067,8 @@ public class StructurePanel implements Serializable {
                 preserveLogicalAndPhysical();
                 show();
                 expandNode(event.getDropNode());
-                this.dataEditor.getGalleryPanel().updateStripes();
+                dataEditor.getGalleryPanel().updateStripes();
+                dataEditor.getGalleryPanel().updateMedia();
                 return;
             } else {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(

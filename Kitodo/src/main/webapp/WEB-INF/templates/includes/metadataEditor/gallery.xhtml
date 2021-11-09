@@ -307,7 +307,7 @@
                               a:onmousedown="metadataEditor.handleMouseDown(event)"
                               a:onmouseup="metadataEditor.handleMouseUp(event)"
                               style="overflow-x: auto; height: 100%;">
-                    <div id="thumbnailStripe">
+                    <h:panelGroup layout="block" id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
                             <h:panelGroup id="thumbnailWrapper"
@@ -339,7 +339,7 @@
                             </h:panelGroup>
                         </div>
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
-                    </div>
+                    </h:panelGroup>
                     <h:panelGroup id="mapWrapper">
                         <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;">
                             <i class="fa fa-spinner fa-spin"/>
