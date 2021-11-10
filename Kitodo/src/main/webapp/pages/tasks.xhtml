@@ -16,11 +16,15 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:o="http://omnifaces.org/ui">
     <f:metadata>
         <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
         <f:viewParam name="keepPagination"/>
         <f:viewAction action="#{CurrentTaskForm.resetPaginator(keepPagination)}"/>
+        <!--@elvariable id="projecttitle" type="java.lang.String"-->
+        <f:viewParam name="projecttitle"/>
+        <o:viewAction action="#{CurrentTaskForm.setFilter('project:' += projecttitle)}" if="#{not empty projecttitle}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
