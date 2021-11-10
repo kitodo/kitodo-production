@@ -189,10 +189,11 @@ public class UserForm extends BaseForm {
 
         try {
             if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
-                if (Objects.nonNull(this.passwordToEncrypt)) {
-                    this.userObject.setPassword(passwordEncoder.encrypt(this.passwordToEncrypt));
+                // save the password only when user is created else changePasswordForCurrentUser is used
+                if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
+                    userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
                 }
-                userService.saveToDatabase(this.userObject);
+                userService.saveToDatabase(userObject);
 
                 if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                     loginForm.setLoggedUser(this.userObject);
@@ -511,11 +512,11 @@ public class UserForm extends BaseForm {
      *            ID of the user to load
      */
     public void load(int id) {
+        // reset when user is loaded
+        passwordToEncrypt = "";
         try {
             if (!Objects.equals(id, 0)) {
                 setUserObject(userService.getById(id));
-            } else {
-                this.passwordToEncrypt = "";
             }
             if (Objects.nonNull(userObject) && StringUtils.isNotBlank(userObject.getShortcuts())) {
                 shortcuts = mapShortcuts(new ObjectMapper().readValue(userObject.getShortcuts(),
