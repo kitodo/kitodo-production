@@ -2501,7 +2501,7 @@ Column content
     height: 100%;
 }
 
-#thumbnailStripe {
+#imagePreviewForm\:thumbnailStripe {
     display: inline-block;
     float: right;
     height: 100%;
