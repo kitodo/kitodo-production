@@ -28,6 +28,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.ManagedBean;
+import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
@@ -159,7 +161,7 @@ public class GalleryPanel {
         return medias;
     }
 
-    String getMediaViewMimeType() {
+    public String getMediaViewMimeType() {
         return mediaViewVariant.getMimeType();
     }
 
@@ -183,7 +185,7 @@ public class GalleryPanel {
         return DefaultStreamedContent.builder().build();
     }
 
-    String getPreviewMimeType() {
+    public String getPreviewMimeType() {
         return previewVariant.getMimeType();
     }
 

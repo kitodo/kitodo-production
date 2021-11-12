@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
@@ -178,6 +179,8 @@ public class GalleryMediaContent {
         try {
             InputStream previewData = ServiceManager.getFileService().read(uri);
             return DefaultStreamedContent.builder().stream(() -> previewData).contentType(mimeType).build();
+            return new DefaultStreamedContent(previewData, mimeType, Paths.get(uri.getPath()).getFileName().toString(),
+                    previewData.available());
         } catch (IOException e) {
             logger.catching(e);
             String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"

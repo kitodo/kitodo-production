@@ -12,6 +12,7 @@
 -->
 
 <ui:composition
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -206,19 +207,35 @@
                                             <p:outputPanel styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}"
                                                            a:data-stripe="0">
-                                                    <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                                                    <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                    rendered="#{media.showingInPreview}">
-                                                        <f:param name="mediaId"
-                                                                 value="#{media.id}"/>
-                                                        <f:param name="process"
-                                                                 value="#{DataEditorForm.process.id}"/>
-                                                        <f:param name="sessionId"
-                                                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                                    </p:graphicImage>
-                                                    <h:panelGroup class="thumbnail-overlay">
-                                                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                                    </h:panelGroup>
+
+                                                    <c:choose>
+                                                        <c:when test="#{DataEditorForm.galleryPanel.previewMimeType eq 'video/mp4'}">
+                                                            <p:media id="media" value="#{DataEditorForm.galleryPanel.previewData}" player="html-video" width="320" height="240" rendered="#{media.showingInPreview}" >
+                                                                <f:param name="mediaId"
+                                                                         value="#{media.id}"/>
+                                                                <f:param name="process"
+                                                                         value="#{DataEditorForm.process.id}"/>
+                                                                <f:param name="sessionId"
+                                                                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                                                            </p:media>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <!-- only render those pages that are not assigned to a stripe (structure) here! -->
+                                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                                            rendered="#{media.showingInPreview}">
+                                                                <f:param name="mediaId"
+                                                                         value="#{media.id}"/>
+                                                                <f:param name="process"
+                                                                         value="#{DataEditorForm.process.id}"/>
+                                                                <f:param name="sessionId"
+                                                                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                                                            </p:graphicImage>
+                                                            <h:panelGroup class="thumbnail-overlay">
+                                                                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                                            </h:panelGroup>
+                                                        </c:otherwise>
+                                                    </c:choose>
+
                                             </p:outputPanel>
                                         </h:panelGroup>
                                     </p:panel>
