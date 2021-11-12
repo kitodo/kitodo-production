@@ -30,6 +30,9 @@
             <base-name>org.kitodo.production.helper.messages.Message</base-name>
             <var>msgs</var>
         </resource-bundle>
+        <resource-handler>
+            org.kitodo.production.handler.KitodoResourceHandler
+        </resource-handler>
     </application>
     <factory>
         <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
