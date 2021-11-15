@@ -176,15 +176,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to list view
      */
     public String save() {
-        /*
-         * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
-         * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
-         */
-        if (!ProcessValidator.isProcessTitleCorrect(this.newProcessTitle)) {
-            return this.stayOnCurrentPage;
-        }
-        if (Objects.nonNull(this.process) && Objects.nonNull(this.process.getTitle())) {
-            if (!this.process.getTitle().equals(this.newProcessTitle) && Objects.nonNull(this.newProcessTitle)
+        if (Objects.nonNull(process) && Objects.nonNull(newProcessTitle)) {
+            if (!process.getTitle().equals(newProcessTitle)
                     && !renameAfterProcessTitleChanged()) {
                 return this.stayOnCurrentPage;
             }
@@ -271,7 +264,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
-        if (!this.newProcessTitle.matches(validateRegEx)) {
+        if (!ProcessValidator.isProcessTitleCorrect(newProcessTitle)) {
             Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
             return false;
         } else {
