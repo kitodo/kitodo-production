@@ -379,6 +379,7 @@ public class KitodoScriptServiceIT {
                 .findByMetadata(metadataSearchMap);
         Assert.assertEquals("does not contain metadata", 3, processByMetadataAfter.size() );
         restoreHierarchieFiles();
+        MockDatabase.removeProcessesForHierarchyTests();
     }
 
     private void restoreHierarchieFiles() throws IOException, DataException, DAOException {
@@ -592,7 +593,7 @@ public class KitodoScriptServiceIT {
         List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
-        String script = "action:deleteData" + "key:" + metadataKey + " value:SecondMetaLong";
+        String script = "action:deleteData" + " key:" + metadataKey + " value:SecondMetaLong";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();

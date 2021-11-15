@@ -619,6 +619,15 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(seventhProcess);
     }
 
+    public static void removeProcessesForHierarchyTests() throws DAOException, DataException {
+
+        ServiceManager.getProcessService().remove(5);
+        ServiceManager.getProcessService().remove(6);
+        ServiceManager.getProcessService().remove(7);
+        ServiceManager.getProcessService().remove(4);
+    }
+
+
     public static void insertProcessForCalendarHierarchyTests() throws DAOException, DataException {
         Ruleset fivthRuleset = new Ruleset();
         fivthRuleset.setTitle("Newspaper");
