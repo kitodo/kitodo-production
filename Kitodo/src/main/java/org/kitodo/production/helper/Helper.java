@@ -12,7 +12,6 @@
 package org.kitodo.production.helper;
 
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.security.SecureRandom;
 import java.text.DateFormat;
@@ -26,8 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -44,10 +41,7 @@ import org.kitodo.production.helper.messages.Error;
 import org.kitodo.production.helper.messages.Message;
 import org.kitodo.production.interfaces.activemq.WebServiceResult;
 
-/**
- * Extends Helper from Kitodo Data Management module.
- */
-public class Helper implements Observer, Serializable {
+public class Helper {
 
     private static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
@@ -440,62 +434,42 @@ public class Helper implements Observer, Serializable {
      *
      * @param title
      *            String
+     * @param insertions
+     *            Strings
      * @return translated String
      */
-    public static String getTranslation(String title) {
-        // running instance of ResourceBundle doesn't respond on user language
-        // changes, workaround by instantiating it every time
+    public static String getTranslation(String title, String... insertions) {
+        String pattern = getString(desiredLanguage(), title);
+        String message = MessageFormat.format(pattern, (Object[]) insertions);
+        return appenUnusedInsertions(message, insertions);
+    }
 
+    /**
+     * Appends insertions that were not used. There are reasons why insertions
+     * are not used: if the key is not found in the messages, or if a curly
+     * bracket with the corresponding number is missing therein. Since this
+     * function is used in error messages, which could be difficult to
+     * reproduce, a loss of the additional information should be avoided.
+     */
+    private static String appenUnusedInsertions(String message, String... insertions) {
+        for (int i = 0; i < insertions.length; i++) {
+            String separator = ": ";
+            if (!message.contains(insertions[i])) {
+                message += separator + insertions[i];
+                separator = ", ";
+            }
+        }
+        return message;
+    }
+
+    private static Locale desiredLanguage() {
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
             if (Objects.nonNull(desiredLanguage)) {
-                return getString(desiredLanguage, title);
+                return desiredLanguage;
             }
         }
-        return getString(Locale.ENGLISH, title);
-    }
-
-    public static String getTranslation(String inParameter, String inDefaultIfNull) {
-        String result = getTranslation(inParameter);
-        return Objects.nonNull(result) && !result.equals(inParameter) ? result : inDefaultIfNull;
-    }
-
-    /**
-     * Get translation.
-     *
-     * @param title
-     *            String
-     * @param parameters
-     *            list of Strings
-     * @return translated String
-     */
-    public static String getTranslation(String title, List<String> parameters) {
-        return MessageFormat.format(getTranslation(title), parameters.toArray());
-    }
-
-    /**
-     * for easy access of the implemented Interface Observer.
-     *
-     * @return Observer -> can be added to an Observable
-     */
-    public Observer createObserver() {
-        return this;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-     */
-    @Override
-    public void update(Observable o, Object arg) {
-        if (!(arg instanceof String)) {
-            Helper.setErrorMessage("User notification failed by object: '" + arg.toString()
-                    + "' which isn't an expected String Object. This error is caused by an implementation of "
-                    + "the Observer Interface in Helper");
-        } else {
-            Helper.setErrorMessage((String) arg);
-        }
+        return Locale.ENGLISH;
     }
 
     /**

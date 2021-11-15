@@ -356,7 +356,7 @@ public class UploadFileDialog {
             dataEditor.getUnsavedUploadedMedia().add(physicalDivision);
             selectedMedia.add(new ImmutablePair<>(physicalDivision, parent));
             PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
-                    + Helper.getTranslation("mediaUploaded", Collections.singletonList(event.getFile().getFileName()))
+                    + Helper.getTranslation("mediaUploaded", event.getFile().getFileName())
                     + "','severity':'info'});");
         }
     }

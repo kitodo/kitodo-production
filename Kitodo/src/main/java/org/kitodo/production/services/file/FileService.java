@@ -119,7 +119,7 @@ public class FileService {
             List<String> commandParameter = Collections.singletonList(path);
             File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
             if (!script.exists()) {
-                throw new CommandException(Helper.getTranslation("fileNotFound", Collections.singletonList(script.getName())));
+                throw new CommandException(Helper.getTranslation("fileNotFound", script.getName()));
             }
             CommandResult commandResult = commandService.runCommand(script, commandParameter);
             if (!commandResult.isSuccessful()) {
@@ -722,7 +722,7 @@ public class FileService {
     public URI getMetadataFilePath(Process process, boolean mustExist, boolean forIndexingAll) throws IOException {
         URI metadataFilePath = getProcessSubTypeURI(process, ProcessSubType.META_XML, null, forIndexingAll);
         if (mustExist && !fileExist(metadataFilePath)) {
-            throw new IOException(Helper.getTranslation("metadataFileNotFound", Collections.singletonList(metadataFilePath.getPath())));
+            throw new IOException(Helper.getTranslation("metadataFileNotFound", metadataFilePath.getPath()));
         }
         return metadataFilePath;
     }
@@ -739,7 +739,7 @@ public class FileService {
     public URI getMetadataFilePath(ProcessDTO processDTO, boolean mustExist) throws IOException {
         URI metadataFilePath = getProcessSubTypeURI(processDTO, ProcessSubType.META_XML, null);
         if (mustExist && !fileExist(metadataFilePath)) {
-            throw new IOException(Helper.getTranslation("metadataFileNotFound", Collections.singletonList(metadataFilePath.getPath())));
+            throw new IOException(Helper.getTranslation("metadataFileNotFound", metadataFilePath.getPath()));
         }
         return metadataFilePath;
     }

@@ -19,7 +19,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -1203,7 +1202,7 @@ public class ImportService {
                 | DataException | CommandException | TransformerException e) {
             logger.error(e);
             throw new ImportException(
-                    Helper.getTranslation("errorImporting", Arrays.asList(ppn, e.getLocalizedMessage())));
+                    Helper.getTranslation("errorImporting", ppn, e.getLocalizedMessage()));
         }
         return tempProcess.getProcess();
     }

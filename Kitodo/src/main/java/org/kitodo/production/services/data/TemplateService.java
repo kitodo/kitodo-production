@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -274,7 +273,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
         for (Task task : tasks) {
             if (ServiceManager.getTaskService().getRolesSize(task) == 0) {
                 throw new ProcessGenerationException(
-                        Helper.getTranslation("noUserInStep", Collections.singletonList(task.getTitle())));
+                        Helper.getTranslation("noUserInStep", task.getTitle()));
             }
         }
     }
@@ -416,7 +415,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
-            Map<String, String> filterMap = (Map<String, String>) filters;
+            Map<String, String> filterMap = filters;
             query.must(readFilters(filterMap));
         }
         query.must(getQueryForSelectedClient());

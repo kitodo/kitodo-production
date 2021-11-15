@@ -11,7 +11,6 @@
 
 package org.kitodo.production.converter;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import javax.faces.convert.ConverterException;
@@ -30,7 +29,7 @@ public abstract class BeanConverter {
 
     /**
      * Get as object for bean convert.
-     * 
+     *
      * @param searchDatabaseService
      *            service used for query the object
      * @param value
@@ -54,7 +53,7 @@ public abstract class BeanConverter {
 
     /**
      * Get as string for bean convert.
-     * 
+     *
      * @param value
      *            bean to be converted
      * @param translationKey
@@ -75,7 +74,7 @@ public abstract class BeanConverter {
             return (String) value;
         } else {
             throw new ConverterException(Helper.getTranslation("errorConvert",
-                Arrays.asList(value.getClass().getCanonicalName(), translationKey)));
+                value.getClass().getCanonicalName(), translationKey));
         }
     }
 }

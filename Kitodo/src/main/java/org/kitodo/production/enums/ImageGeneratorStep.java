@@ -12,7 +12,6 @@
 package org.kitodo.production.enums;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -57,7 +56,7 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
             String canonical = source.getKey();
             if (!imageGenerator.getMode().equals(GenerationMode.ALL)) {
                 imageGenerator.letTheSupervisorDo(emptyTask -> emptyTask.setWorkDetail(
-                    Helper.getTranslation("determineWhichImagesNeedToBeGenerated", Collections.singletonList(canonical))));
+                    Helper.getTranslation("determineWhichImagesNeedToBeGenerated", canonical)));
             }
 
             List<Subfolder> subfoldersWhoseContentsAreToBeGenerated = imageGenerator
@@ -81,7 +80,7 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
         public void accept(ImageGenerator imageGenerator) {
             ContentToBeGenerated instructuon = imageGenerator.getFromContentToBeGeneratedByPosition();
             imageGenerator.letTheSupervisorDo(emptyTask -> emptyTask.setWorkDetail(
-                Helper.getTranslation("generateImages", Collections.singletonList(instructuon.getCanonical()))));
+                Helper.getTranslation("generateImages", instructuon.getCanonical())));
             LogManager.getLogger(ImageGeneratorStep.class).info("Generating ".concat(instructuon.toString()));
             imageGenerator.createDerivatives(instructuon);
             if (imageGenerator.getPosition() == imageGenerator.getContentToBeGenerated().size() - 1) {

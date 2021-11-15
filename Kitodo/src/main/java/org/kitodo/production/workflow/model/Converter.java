@@ -14,7 +14,6 @@ package org.kitodo.production.workflow.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -131,12 +130,12 @@ public class Converter {
                     task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
                 } catch (DAOException e) {
                     throw new WorkflowException(Helper.getTranslation("workflowExceptionRoleNotFound",
-                            Collections.singletonList(task.getTitle())));
+                        task.getTitle()));
                 }
             }
         } catch (NullPointerException e) {
             throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
-                    Collections.singletonList(task.getTitle())));
+                task.getTitle()));
         }
 
         if (workflowTask instanceof ScriptTask) {

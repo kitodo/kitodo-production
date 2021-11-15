@@ -11,7 +11,6 @@
 
 package org.kitodo.production.helper.batch;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -118,9 +117,7 @@ public class BatchProcessHelper extends BatchHelper {
                 ServiceManager.getProcessService().save(process);
                 Helper.setMessage("propertiesSaved");
             } catch (DataException e) {
-                List<String> param = new ArrayList<>();
-                param.add(process.getTitle());
-                String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
+                String value = Helper.getTranslation("propertiesForProcessNotSaved", process.getTitle());
                 Helper.setErrorMessage(value, logger, e);
             }
         }

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1015,8 +1014,8 @@ public class StructurePanel implements Serializable {
                      && dropNode.getDataObject() instanceof LogicalDivision) {
                 movePageNode(event, dropNode, dragNode);
             } else {
-                Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(
-                        dragNode.getLabel(), dropNode.getLabel())));
+                Helper.setErrorMessage(
+                    Helper.getTranslation("dataEditor.dragnDropError", dragNode.getLabel(), dropNode.getLabel()));
                 show();
             }
         } catch (Exception exception) {
@@ -1071,12 +1070,12 @@ public class StructurePanel implements Serializable {
                 dataEditor.getGalleryPanel().updateMedia();
                 return;
             } else {
-                Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(
-                        dragNode.getLabel(), dropNode.getLabel())));
+                Helper.setErrorMessage(
+                    Helper.getTranslation("dataEditor.dragnDropError", dragNode.getLabel(), dropNode.getLabel()));
             }
         } else {
-            Helper.setErrorMessage(Helper.getTranslation("dataEditor.dragnDropError", Arrays.asList(
-                    dragNode.getLabel(), dropNode.getLabel())));
+            Helper.setErrorMessage(
+                Helper.getTranslation("dataEditor.dragnDropError", dragNode.getLabel(), dropNode.getLabel()));
         }
         show();
     }
@@ -1273,15 +1272,15 @@ public class StructurePanel implements Serializable {
                     this.dataEditor.getGalleryPanel().updateStripes();
                 } else {
                     Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
-                            Collections.singletonList(dragNode.getLabel())));
+                        dragNode.getLabel()));
                 }
             } else {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.noParentsError",
-                        Collections.singletonList(dragNode.getLabel())));
+                    dragNode.getLabel()));
             }
         } else {
             Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
-                    Arrays.asList(dragNode.getLabel(), dropNode.getLabel())));
+                dragNode.getLabel(), dropNode.getLabel()));
         }
         show();
     }
@@ -1299,19 +1298,19 @@ public class StructurePanel implements Serializable {
             dragParents = MetadataEditor.getAncestorsOfPhysicalDivision(dragUnit, dataEditor.getWorkpiece().getPhysicalStructure());
             if (dragParents.isEmpty()) {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.noParentsError",
-                        Collections.singletonList(dragNode.getLabel())));
+                    dragNode.getLabel()));
             } else {
                 PhysicalDivision parentUnit = dragParents.get(dragParents.size() - 1);
                 if (parentUnit.getChildren().contains(dragUnit)) {
                     preservePhysical();
                 } else {
                     Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
-                            Collections.singletonList(dragUnit.getType())));
+                        dragUnit.getType()));
                 }
             }
         } else {
             Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
-                    Arrays.asList(dragNode.getLabel(), dropNode.getLabel())));
+                dragNode.getLabel(), dropNode.getLabel()));
         }
         show();
     }

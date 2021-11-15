@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -208,7 +207,7 @@ public class MetadataValidationService {
             String processTitle = process.getTitle();
             boolean matches = Pattern.compile(parameterOrDefaultValue).matcher(processTitle).find();
             if (!matches) {
-                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Collections.singletonList(workpieceId)));
+                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, workpieceId));
                 error = true;
             }
         }
