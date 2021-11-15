@@ -857,7 +857,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         List<String> distinctValues = new ArrayList<>();
         try {
             TermsAggregationBuilder termsAggregation = AggregationBuilders.terms(field).field(field)
-                    .order(BucketOrder.aggregation("_term", sort));
+                    .order(BucketOrder.aggregation("_key", sort));
             if (size > 0) {
                 termsAggregation.size(Math.toIntExact(size));
             }
