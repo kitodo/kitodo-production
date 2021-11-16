@@ -103,6 +103,9 @@ public class GalleryPanel {
 
     private String cachingUUID = "";
 
+    private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator
+            .comparing(pair -> pair.getLeft().getPhysicalDivision().getOrder());
+
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
@@ -227,8 +230,7 @@ public class GalleryPanel {
             }
         }
 
-        viewsToBeMoved = viewsToBeMoved.stream().sorted(Comparator.comparing(p -> p.getLeft().getPhysicalDivision()
-                .getOrder())).collect(Collectors.toList());
+        viewsToBeMoved.sort(IMAGE_ORDER_COMPARATOR);
 
         int toMediaIndex = getMediaIndex(event);
         try {
