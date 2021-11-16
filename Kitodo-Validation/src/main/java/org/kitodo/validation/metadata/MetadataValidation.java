@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentHashMap.KeySetView;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -171,7 +173,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 metadataLanguage);
         results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(metadata,
                 divisionView, elementString.concat(": "), translations));
-        results.add(checkForDetailsInTheMetadataRecursive(metadata,
+        results.add(checkForDetailsInTheMetadata(metadata,
                 divisionView, elementString.concat(": "), translations));
         return results;
     }
@@ -318,12 +320,20 @@ public class MetadataValidation implements MetadataValidationInterface {
      *            it is checked
      * @return the validation result
      */
-    private static ValidationResult checkForDetailsInTheMetadataRecursive(
+    private static ValidationResult checkForDetailsInTheMetadata(
             Collection<Metadata> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations) {
+
+        return checkForDetailsInTheMetadataRecursive(containedMetadata, containingMetadataView, location, translations, new LinkedList<>());
+    }
+    
+    private static ValidationResult checkForDetailsInTheMetadataRecursive(
+            Collection<Metadata> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
+            String location, Map<String, String> translations, LinkedList<Map<MetadataEntry, Boolean>> surroundingMetadata) {
         boolean error = false;
         Collection<String> messages = new HashSet<>();
-
+        surroundingMetadata.addLast(containedMetadata.parallelStream().filter(MetadataEntry.class::isInstance)
+                .map(MetadataEntry.class::cast).collect(Collectors.toMap(Function.identity(), all -> Boolean.FALSE)));
         List<MetadataViewWithValuesInterface> metadataViewsWithValues = containingMetadataView
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
         for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
@@ -336,7 +346,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 if (metadata instanceof MetadataEntry
                         && metadataView instanceof SimpleMetadataViewInterface) {
                     String value = ((MetadataEntry) metadata).getValue();
-                    if (!((SimpleMetadataViewInterface) metadataView).isValid(value)) {
+                    if (!((SimpleMetadataViewInterface) metadataView).isValid(value, surroundingMetadata)) {
                         messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_INVALID), value,
                             location.concat(metadataView.getLabel())));
                         error = true;
@@ -346,7 +356,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                     ValidationResult validationResult = checkForDetailsInTheMetadataRecursive(
                         ((MetadataGroup) metadata).getGroup(),
                         (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
-                        translations);
+                        translations, surroundingMetadata);
                     if (validationResult.getState().equals(State.ERROR)) {
                         error = true;
                     }
@@ -357,6 +367,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 }
             }
         }
+        surroundingMetadata.removeLast();
 
         return new ValidationResult(error ? State.ERROR : State.SUCCESS, messages);
     }
