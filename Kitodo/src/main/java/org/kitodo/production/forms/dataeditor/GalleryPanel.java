@@ -113,6 +113,7 @@ public class GalleryPanel {
     String getAcquisitionStage() {
         return dataEditor.getAcquisitionStage();
     }
+
     /**
      * Get galleryViewMode.
      *
