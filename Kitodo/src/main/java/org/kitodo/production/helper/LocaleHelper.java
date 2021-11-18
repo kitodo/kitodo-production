@@ -45,9 +45,9 @@ public class LocaleHelper {
     /**
      * Get the current locale. If user is authenticated the locale is generated
      * based on the selected user language. If there is not an authenticated user,
-     * Locale is generated based on the facet context of prime face. For this
+     * Locale is generated based on the faces context of prime face. For this
      * purpose, it is checked whether a cookie is available, the browser or the
-     * application locale is set. Otherwise, if there is no facet context the locale
+     * application locale is set. Otherwise, if there is no faces context the locale
      * of spring is used and thus the system default too. Update locale in spring
      * locale context holder.
      *
@@ -62,7 +62,7 @@ public class LocaleHelper {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (Objects.nonNull(facesContext)) {
-            locale = getLocaleOfFacetContext(facesContext);
+            locale = getLocaleOfFacesContext(facesContext);
             if (Objects.nonNull(locale)) {
                 LocaleContextHolder.setLocale(locale); // set faces context locale as spring locale
             }
@@ -103,7 +103,7 @@ public class LocaleHelper {
                 || Locale.GERMAN.getLanguage().equals(locale.getLanguage());
     }
 
-    private static Locale getLocaleOfFacetContext(FacesContext facesContext) {
+    private static Locale getLocaleOfFacesContext(FacesContext facesContext) {
         Locale locale;
         if (facesContext.getExternalContext().getRequestCookieMap().containsKey(COOKIE_LANG_NAME)) {
             // locale from cookie

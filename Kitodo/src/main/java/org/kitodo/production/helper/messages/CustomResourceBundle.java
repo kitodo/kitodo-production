@@ -23,19 +23,11 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-
-import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.LocaleHelper;
-import org.kitodo.production.security.SecurityUserDetails;
-import org.kitodo.production.services.ServiceManager;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 abstract class CustomResourceBundle extends ResourceBundle {
 
