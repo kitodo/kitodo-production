@@ -448,7 +448,7 @@
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>primefaces-extensions</artifactId>
-            <version>${primefaces.version}</version>
+            <version>${primefaces.extensions.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.gson</groupId>

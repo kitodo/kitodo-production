@@ -167,7 +167,7 @@ public class GalleryMediaContent {
          * file is generated.
          */
         if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-            return new DefaultStreamedContent();
+            return DefaultStreamedContent.builder().build();
         }
 
         /*
@@ -177,14 +177,15 @@ public class GalleryMediaContent {
          */
         try {
             InputStream previewData = ServiceManager.getFileService().read(uri);
-            return new DefaultStreamedContent(previewData, mimeType);
+            return DefaultStreamedContent.builder().stream(() -> previewData).contentType(mimeType).build();
         } catch (IOException e) {
             logger.catching(e);
             String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"
                     + e.getClass().getSimpleName() + ": " + e.getMessage() + "</p>" + System.lineSeparator() + "</html>"
                     + System.lineSeparator();
             ByteArrayInputStream errorPage = new ByteArrayInputStream(errorpage.getBytes(StandardCharsets.UTF_8));
-            return new DefaultStreamedContent(errorPage, "text/html", "errorpage.html", "UTF-8");
+            return DefaultStreamedContent.builder().stream(() -> errorPage).contentType("text/html")
+                    .name("errorpage.html").contentEncoding("UTF-8").build();
         }
     }
 

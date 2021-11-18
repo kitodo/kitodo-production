@@ -17,7 +17,6 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,7 +56,7 @@ import org.kitodo.production.thread.TaskImageGeneratorThread;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 public class UploadFileDialog {
     private static final Logger logger = LogManager.getLogger(UploadFileDialog.class);
@@ -349,7 +348,7 @@ public class UploadFileDialog {
             physicalDivision.getMediaFiles().put(mediaVariant, uploadFileUri);
             //upload file in sourceFolder
             try (OutputStream outputStream = ServiceManager.getFileService().write(uploadFileUri)) {
-                IOUtils.copy(event.getFile().getInputstream(), outputStream);
+                IOUtils.copy(event.getFile().getInputStream(), outputStream);
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }

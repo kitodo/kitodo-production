@@ -63,7 +63,7 @@ import org.kitodo.production.services.calendar.CalendarService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -382,8 +382,8 @@ public class CalendarForm implements Serializable {
             }
 
             byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
-            return new DefaultStreamedContent(new ByteArrayInputStream(data), "application/xml", "newspaper.xml");
-            //FacesUtils.sendDownload(data, "course.xml");
+            return DefaultStreamedContent.builder().stream(() -> new ByteArrayInputStream(data))
+                    .contentType("application/xml").name("newspaper.xml").build();
         } catch (TransformerException e) {
             Helper.setErrorMessage("granularity.download.error", "errorTransformerException", logger, e);
         } catch (IOException e) {
@@ -637,7 +637,7 @@ public class CalendarForm implements Serializable {
                 Helper.setMessage(UPLOAD_ERROR, "calendar.upload.isEmpty");
                 return;
             }
-            Document xml = XMLUtils.load(uploadedFile.getInputstream());
+            Document xml = XMLUtils.load(uploadedFile.getInputStream());
             course = new Course(xml);
             Helper.removeManagedBean("GranularityForm");
             navigate(course.get(0));

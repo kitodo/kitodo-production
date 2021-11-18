@@ -37,6 +37,7 @@ import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -93,8 +94,8 @@ public class LazyDTOModel extends LazyDataModel<Object> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object>
-            filters) {
+    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
+            Map<String, FilterMeta> filters) {
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();

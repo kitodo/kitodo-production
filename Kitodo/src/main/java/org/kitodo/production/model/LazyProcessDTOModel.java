@@ -26,6 +26,7 @@ import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.ProcessService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyProcessDTOModel extends LazyDTOModel {
@@ -85,8 +86,8 @@ public class LazyProcessDTOModel extends LazyDTOModel {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object>
-            filters) {
+    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
+            Map<String, FilterMeta> filters) {
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();

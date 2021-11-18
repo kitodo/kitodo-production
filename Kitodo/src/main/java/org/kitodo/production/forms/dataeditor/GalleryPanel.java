@@ -113,7 +113,6 @@ public class GalleryPanel {
     String getAcquisitionStage() {
         return dataEditor.getAcquisitionStage();
     }
-
     /**
      * Get galleryViewMode.
      *
@@ -180,7 +179,7 @@ public class GalleryPanel {
             }
             logger.debug("Cannot serve image request, mediaId = {}", id);
         }
-        return new DefaultStreamedContent();
+        return DefaultStreamedContent.builder().build();
     }
 
     String getPreviewMimeType() {
