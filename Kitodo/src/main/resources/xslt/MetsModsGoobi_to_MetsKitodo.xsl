@@ -253,7 +253,7 @@
         </kitodo:metadata>
     </xsl:template>
 
-    <!-- Transorm toplevel [@name='TitleDocMain']" to mets:div[@LABEL] -->
+    <!-- Transform toplevel [@name='TitleDocMain']" to mets:div[@LABEL] -->
         <xsl:template match="mets:structMap[@TYPE='LOGICAL']/mets:div[@DMDID='DMDLOG_0000']/@TYPE" mode="pass2">
         <xsl:variable name="TitleDocMain" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0000']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMain']"/>
         <xsl:variable name="TitleDocMainShort" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0000']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMainShort']"/>
@@ -268,7 +268,7 @@
             </xsl:copy>
     </xsl:template>
 
-    <!-- Transorm year-level [@name='TitleDocMain']" to mets:div[@LABEL] -->
+    <!-- Transform year-level [@name='TitleDocMain']" to mets:div[@LABEL] -->
     <xsl:template match="mets:structMap[@TYPE='LOGICAL']/mets:div/mets:div[@TYPE='NewspaperYear']/@TYPE" mode="pass2">
         <xsl:variable name="TitleDocMainShort" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0003']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMainShort']"/>
         <xsl:variable name="TitleDocMainShort2" select="/mets:mets/mets:dmdSec[@ID='DMDLOG_0001']/mets:mdWrap/mets:xmlData/kitodo:kitodo/goobi:metadata[@name='TitleDocMainShort']"/>

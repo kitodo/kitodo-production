@@ -445,7 +445,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     /**
      * Submits a filter query by typing some text into the input field and submitting the filter form.
      *
-     * <p>This method doesn't block until the filter is sucessfully applied.</p>
+     * <p>This method doesn't block until the filter is successfully applied.</p>
      *
      * @param filterQuery the query
      */

@@ -48,7 +48,7 @@ goobi_config.properties for configuration.
 
 ### Service processor skeleton sample
 
-	package org.goobi.mq.processores;
+	package org.goobi.mq.processors;
 
 	import org.goobi.mq.*;
 	import de.sub.goobi.config.ConfigCore;
