@@ -2681,7 +2681,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Create and return PieChartModel for given process values.
      *
-     * @param processValues Map containging process values
+     * @param processValues Map containing process values
      * @return PieChartModel
      */
     public PieChartModel getPieChardModel(Map<String, Integer> processValues) {

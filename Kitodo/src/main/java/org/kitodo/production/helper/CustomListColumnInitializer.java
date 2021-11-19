@@ -69,7 +69,7 @@ public class CustomListColumnInitializer {
     /**
      * Get names of process properties configured in kitodo_config.properties as custom columns for the process list
      *
-     * @return array of process propterties
+     * @return array of process properties
      */
     public String[] getProcessProperties() {
         return processProperties;

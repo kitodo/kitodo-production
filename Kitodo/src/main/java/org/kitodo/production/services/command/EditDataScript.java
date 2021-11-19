@@ -130,7 +130,7 @@ public abstract class EditDataScript {
 
     /**
      * Gets the metadataCollection where the metadata should be edited.
-     * May be specifyed by type in the script.
+     * May be specified by type in the script.
      * @param metadataScript the metadataScript
      * @param workpiece the workpiece to get the collection from.
      * @return the metadataCollection.
