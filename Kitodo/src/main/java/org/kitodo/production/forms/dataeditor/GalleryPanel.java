@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -101,6 +102,9 @@ public class GalleryPanel {
     private Subfolder previewFolder;
 
     private String cachingUUID = "";
+
+    private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator
+            .comparing(pair -> pair.getLeft().getPhysicalDivision().getOrder());
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -225,6 +229,8 @@ public class GalleryPanel {
                 }
             }
         }
+
+        viewsToBeMoved.sort(IMAGE_ORDER_COMPARATOR);
 
         int toMediaIndex = getMediaIndex(event);
         try {
