@@ -23,12 +23,11 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.helper.LocaleHelper;
 
 abstract class CustomResourceBundle extends ResourceBundle {
 
@@ -72,7 +71,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
     }
 
     ResourceBundle getBaseResources(String bundleName) {
-        return ResourceBundle.getBundle(bundleName, getCurrentLocale());
+        return ResourceBundle.getBundle(bundleName, LocaleHelper.getCurrentLocale());
     }
 
     Object getValueFromExtensionBundles(String key, String bundleName) {
@@ -90,7 +89,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
                 final URL resourceURL = file.toURI().toURL();
                 URLClassLoader urlLoader = AccessController.doPrivileged(
                     (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
-                return ResourceBundle.getBundle(bundleName, getCurrentLocale(), urlLoader);
+                return ResourceBundle.getBundle(bundleName, LocaleHelper.getCurrentLocale(), urlLoader);
             } catch (MalformedURLException | MissingResourceException e) {
                 logger.info(e.getMessage(), e);
             }
@@ -98,12 +97,4 @@ abstract class CustomResourceBundle extends ResourceBundle {
         return null;
     }
 
-    private Locale getCurrentLocale() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (Objects.nonNull(facesContext)) {
-            return facesContext.getViewRoot().getLocale();
-        } else {
-            return new Locale(ConfigCore.getParameterOrDefaultValue(ParameterCore.LANGUAGE_DEFAULT));
-        }
-    }
 }

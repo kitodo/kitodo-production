@@ -30,13 +30,12 @@ import javax.inject.Named;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LegalTexts;
+import org.kitodo.production.helper.LocaleHelper;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -68,25 +67,11 @@ public class LanguageForm implements Serializable {
      *
      */
     private void setSessionLocaleFieldId() {
-        String key = "";
-        if (Objects.isNull(ServiceManager.getUserService().getAuthenticatedUser())) {
-            key = ConfigCore.getParameterOrDefaultValue(ParameterCore.LANGUAGE_DEFAULT);
-        } else {
-            Integer id = ServiceManager.getUserService().getAuthenticatedUser().getId();
-            try {
-                User user = ServiceManager.getUserService().getById(id);
-                key = user.getLanguage();
-            } catch (DAOException e) {
-                Helper.setErrorMessage("errorLoadingOne", new Object[] {ObjectType.USER.getTranslationSingular(), id }, logger, e);
-            }
-        }
-        Locale locale = new Locale.Builder().setLanguageTag(key).build();
-        if (LocaleUtils.isAvailableLocale(locale)) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            if (Objects.nonNull(context.getViewRoot())) {
-                context.getViewRoot().setLocale(locale);
-                context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
-            }
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (Objects.nonNull(context.getViewRoot())) {
+            Locale locale = LocaleHelper.getCurrentLocale();
+            context.getViewRoot().setLocale(locale);
+            context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
         }
     }
 
@@ -161,12 +146,10 @@ public class LanguageForm implements Serializable {
      *            “‹language›_‹country›”, e.g. “en” or “en_GB” are valid values.
      */
     public void switchLanguage(String langCodeCombined) throws IOException {
-        String[] languageCode = langCodeCombined.split("_");
-        Locale locale;
-        if (languageCode.length == 2) {
-            locale = new Locale(languageCode[0], languageCode[1]);
-        } else {
-            locale = new Locale(languageCode[0]);
+        Locale locale = LocaleUtils.toLocale(langCodeCombined);
+        if ( !LocaleHelper.isSupportedLocale(locale) ) {
+            Helper.setErrorMessage("Locale is not supported.");
+            return;
         }
         try {
             User user = ServiceManager.getUserService().getById(ServiceManager.getUserService().getAuthenticatedUser().getId());
@@ -200,22 +183,10 @@ public class LanguageForm implements Serializable {
                     frame.setLocale(locale);
                 }
                 return locale;
-            } else {
-                return frame.getLocale();
-            }
-        } else {
-            /*
-             * When no locale is given (no Accept-Language Http Request header
-             * is present) return default language
-             */
-            String key = ConfigCore.getParameterOrDefaultValue(ParameterCore.LANGUAGE_DEFAULT);
-            Locale locale = new Locale.Builder().setLanguageTag(key).build();
-            if (LocaleUtils.isAvailableLocale(locale)) {
-                return locale;
-            } else {
-                throw new IllegalArgumentException("Locale code is not valid");
             }
         }
+
+        return LocaleHelper.getCurrentLocale();
     }
 
     /**
