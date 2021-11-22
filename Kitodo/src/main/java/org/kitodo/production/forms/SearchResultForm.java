@@ -54,20 +54,6 @@ public class SearchResultForm extends ProcessListBaseView {
     private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
 
     /**
-     * Set selectedProcesses.
-     *
-     * @param selectedProcesses as java.util.List of {@link org.kitodo.production.dto.ProcessDTO}
-     */
-    public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
-        try {
-            this.selectedProcesses = ServiceManager.getProcessService().convertDtosToBeans(selectedProcesses);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
-                    logger, e);
-        }
-    }
-
-    /**
      * Searches for processes with the entered searchQuery.
      *
      * @return The searchResultPage
@@ -324,4 +310,5 @@ public class SearchResultForm extends ProcessListBaseView {
     public void setCurrentProjectFilter(Integer currentProjectFilter) {
         this.currentProjectFilter = currentProjectFilter;
     }
+
 }

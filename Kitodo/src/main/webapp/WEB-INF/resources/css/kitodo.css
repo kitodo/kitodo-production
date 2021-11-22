@@ -1129,6 +1129,23 @@ h3#headerText {
     vertical-align: middle;
 }
 
+.allSelectableOverlayPanel {
+    top: 36px;
+    left: 16px;
+}
+
+.allSelectableOverlayPanel ul {
+    list-style: none;
+}
+
+.allSelectableOverlayPanel ul li {
+    margin-top: 5px;
+}
+
+.allSelectableOverlayPanel ul li:first-child {
+    margin-top: 0;
+}
+
 #processesTabView\:processesForm\:processesTable .ui-row-toggler {
     margin-right: 8px;
 }

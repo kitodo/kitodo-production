@@ -9,6 +9,10 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+/*global PF, PrimeFaces*/
+/*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
+/*eslint wrap-iife: ["error", "any"]*/
+
 function registerRowToggleEvents(event) {
     // add listener to expanded rows
     $(".ui-expanded-row").hover(function() {
@@ -27,3 +31,32 @@ function registerRowToggleEvents(event) {
         }
     );
 }
+
+PrimeFaces.widget.DataTable.prototype.updateData = (function () {
+    let cachedFunction = PrimeFaces.widget.DataTable.prototype.updateData;
+    return function () {
+        let reselectAll = (typeof this.selection !== "undefined" && this.selection[0] === '@all');
+        let result = cachedFunction.apply(this, arguments);
+        if (reselectAll) {
+            this.selectAllRows();
+        }
+        return result;
+    };
+})();
+
+$(document).on("click", ".allSelectable .ui-chkbox-all .ui-chkbox-box", function () {
+    let tableId = $(this).closest(".allSelectable").attr('id').split(":").at(-1);
+    let table = new PF(tableId);
+    if ($(this).hasClass("ui-state-active")) {
+        new PF('allSelectableOverlayPanel').show();
+    }
+    table.unselectAllRows();
+});
+
+$(document).on("click", ".allSelectable .ui-chkbox .ui-chkbox-box", function () {
+    let tableId = $(this).closest(".allSelectable").attr('id').split(":").at(-1);
+    let table = new PF(tableId);
+    if (typeof table.selection !== "undefined" && table.selection[0] === '@all') {
+        table.unselectAllRows();
+    }
+});

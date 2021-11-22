@@ -126,15 +126,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Set selectedProcesses.
-     *
-     * @param selectedProcesses as java.util.List of {@link org.kitodo.data.database.beans.Process}
-     */
-    public void setSelectedProcesses(List<Process> selectedProcesses) {
-        this.selectedProcesses = selectedProcesses;
-    }
-
-    /**
      * Return list of process properties configured as custom list columns in kitodo
      * configuration.
      *
@@ -483,7 +474,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void downloadToHomeForSelection() {
         try {
-            ProcessService.downloadToHome(this.selectedProcesses);
+            ProcessService.downloadToHome(getSelectedProcesses());
             // TODO: fix message
             Helper.setMessage("createdInUserHomeAll");
         } catch (DAOException e) {
@@ -507,7 +498,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Set up processing status selection.
      */
     public void setTaskStatusUpForSelection() {
-        workflowControllerService.setTaskStatusUpForProcesses(this.selectedProcesses);
+        workflowControllerService.setTaskStatusUpForProcesses(getSelectedProcesses());
     }
 
     /**
@@ -521,7 +512,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Set down processing status selection.
      */
     public void setTaskStatusDownForSelection() {
-        workflowControllerService.setTaskStatusDownForProcesses(this.selectedProcesses);
+        workflowControllerService.setTaskStatusDownForProcesses(getSelectedProcesses());
     }
 
     /**
@@ -645,7 +636,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Execute Kitodo script for selected processes.
      */
     public void executeKitodoScriptSelection() {
-        executeKitodoScriptForProcesses(this.selectedProcesses, this.kitodoScriptSelection);
+        executeKitodoScriptForProcesses(getSelectedProcesses(), this.kitodoScriptSelection);
     }
 
     private void executeKitodoScriptForProcesses(List<Process> processes, String kitodoScript) {
@@ -1024,7 +1015,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private String filterList() {
-        this.selectedProcesses.clear();
+        this.selectedProcessesOrProcessDTOs.clear();
         return processesPage;
     }
 
@@ -1172,4 +1163,5 @@ public class ProcessForm extends TemplateBaseForm {
             return "";
         }
     }
+
 }
