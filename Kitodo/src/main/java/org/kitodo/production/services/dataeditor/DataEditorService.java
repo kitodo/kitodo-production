@@ -97,32 +97,31 @@ public class DataEditorService {
      * Retrieve and return title value from given IncludedStructuralElement.
      *
      * @param element IncludedStructuralElement for which the title value is returned.
+     * @param metadataTitleKey as a String that its value will be displayed.
      * @return title value of given element
      */
-    public static String getTitleValue(LogicalDivision element) {
-        for (final String titleKey : getTitleKeys()) {
-            String[] metadataPath = titleKey.split("@");
-            int lastIndex = metadataPath.length - 1;
-            Collection<Metadata> metadata = element.getMetadata();
-            for (int i = 0; i < lastIndex; i++) {
-                final String metadataKey = metadataPath[i];
-                metadata = metadata.stream()
-                        .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataKey))
-                        .filter(MetadataGroup.class::isInstance).map(MetadataGroup.class::cast)
-                        .flatMap(metadataGroup -> metadataGroup.getGroup().stream())
-                        .collect(Collectors.toList());
-            }
-            Optional<String> metadataTitle = metadata.stream()
-                    .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
-                    .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
-                    .map(MetadataEntry::getValue)
-                    .filter(value -> !value.isEmpty())
-                    .findFirst();
-            if (metadataTitle.isPresent()) {
-                return " - ".concat(metadataTitle.get());
-            }
+    public static String getTitleValue(LogicalDivision element, String metadataTitleKey) {
+        String[] metadataPath = metadataTitleKey.split("@");
+        int lastIndex = metadataPath.length - 1;
+        Collection<Metadata> metadata = element.getMetadata();
+        for (int i = 0; i < lastIndex; i++) {
+            final String metadataKey = metadataPath[i];
+            metadata = metadata.stream()
+                    .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataKey))
+                    .filter(MetadataGroup.class::isInstance).map(MetadataGroup.class::cast)
+                    .flatMap(metadataGroup -> metadataGroup.getGroup().stream())
+                    .collect(Collectors.toList());
         }
-        return "";
+        Optional<String> metadataTitle = metadata.stream()
+                .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
+                .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
+                .map(MetadataEntry::getValue)
+                .filter(value -> !value.isEmpty())
+                .findFirst();
+        if (metadataTitle.isPresent()) {
+            return metadataTitle.get();
+        }
+        return " - ";
     }
 
     /**
