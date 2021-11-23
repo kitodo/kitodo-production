@@ -14,14 +14,18 @@ package org.kitodo.dataeditor.ruleset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
@@ -282,7 +286,7 @@ public class Rule {
      *            the other rule
      * @return merged rule
      */
-    private RestrictivePermit merge(RestrictivePermit one, RestrictivePermit another) {
+    private static RestrictivePermit merge(RestrictivePermit one, RestrictivePermit another) {
         RestrictivePermit merged = new RestrictivePermit();
 
         // we assume that both rules to merge are rules on the same entity
@@ -298,13 +302,17 @@ public class Rule {
                     ? Unspecified.FORBIDDEN
                     : Unspecified.UNRESTRICTED);
 
-        // for sub-rules, apply recursively
+        mergeConditions(one.getConditions(), another.getConditions(), merged.getConditions());
+        mergePermits(one.getPermits(), another.getPermits(), merged.getPermits());
+        return merged;
+    }
+
+    private static void mergePermits(List<RestrictivePermit> one, List<RestrictivePermit> another, List<RestrictivePermit> mergedPermits) {
         HashMap<RestrictivePermit, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
-        for (RestrictivePermit anotherPermit : another.getPermits()) {
+        for (RestrictivePermit anotherPermit : another) {
             anotherPermits.put(anotherPermit, anotherPermit);
         }
-        List<RestrictivePermit> mergedPermits = new LinkedList<>();
-        for (RestrictivePermit onePermit : one.getPermits()) {
+        for (RestrictivePermit onePermit : one) {
             if (anotherPermits.containsKey(onePermit)) {
                 mergedPermits.add(merge(onePermit, anotherPermits.get(onePermit)));
                 anotherPermits.remove(onePermit);
@@ -313,9 +321,6 @@ public class Rule {
             }
         }
         mergedPermits.addAll(anotherPermits.values());
-        merged.setPermits(mergedPermits);
-
-        return merged;
     }
 
     /**
@@ -349,7 +354,7 @@ public class Rule {
      * @param merged
      *            merged rule
      */
-    private void mergeQuantities(RestrictivePermit one, RestrictivePermit another, RestrictivePermit merged) {
+    private static void mergeQuantities(RestrictivePermit one, RestrictivePermit another, RestrictivePermit merged) {
         if (one.getMinOccurs() == null) {
             merged.setMinOccurs(another.getMinOccurs());
         } else {
@@ -369,5 +374,46 @@ public class Rule {
                 merged.setMaxOccurs(Math.min(one.getMaxOccurs(), another.getMaxOccurs()));
             }
         }
+    }
+
+    private static void mergeConditions(List<Condition> one, List<Condition> another, List<Condition> merged) {
+        // if both have no conditions, there are no conditions
+        boolean oneHasNoConditions = one.isEmpty();
+        boolean anotherHasNoConditions = another.isEmpty();
+        if (oneHasNoConditions && anotherHasNoConditions) {
+            return;
+        }
+
+        // if just one side has conditions, apply them
+        if (!oneHasNoConditions && anotherHasNoConditions) {
+            merged.addAll(one);
+            return;
+        }
+        if (oneHasNoConditions && !anotherHasNoConditions) {
+            merged.addAll(another);
+            return;
+        }
+
+        // if both have conditions, they must both apply
+        Map<Pair<String, String>, Condition> anotherMap = another.stream().collect(
+            Collectors.toMap(condition -> Pair.of(condition.getKey(), condition.getEquals()), Function.identity()));
+        for (Condition oneCondition : one) {
+            Condition anotherCondition = anotherMap.get(Pair.of(oneCondition.getKey(), oneCondition.getEquals()));
+            if (Objects.nonNull(anotherCondition)) {
+                merged.add(mergeCondition(oneCondition, anotherCondition));
+            }
+        }
+    }
+
+    private static Condition mergeCondition(Condition one, Condition another) {
+        Condition result = new Condition();
+
+        // we assume that both conditions are on the same entity
+        result.setKey(one.getKey());
+        result.setEquals(one.getEquals());
+
+        mergeConditions(one.getConditions(), another.getConditions(), result.getConditions());
+        mergePermits(one.getPermits(), another.getPermits(), result.getPermits());
+        return result;
     }
 }

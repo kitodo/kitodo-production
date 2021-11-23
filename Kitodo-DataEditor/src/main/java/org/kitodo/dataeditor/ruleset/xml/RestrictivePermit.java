@@ -152,6 +152,14 @@ public class RestrictivePermit implements ConditionsMapInterface {
     }
 
     /**
+     * Returns the (modifiable) conditions list. Used in rule merges.
+     * @return the conditions list
+     */
+    public List<Condition> getConditions() {
+        return conditions;
+    }
+
+    /**
      * Returns the value that is allowed.
      *
      * @return the possible value
@@ -272,4 +280,7 @@ public class RestrictivePermit implements ConditionsMapInterface {
         }
         return true;
     }
+
+
+    
 }

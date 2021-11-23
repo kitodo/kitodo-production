@@ -58,8 +58,16 @@ public class Condition implements ConditionsMapInterface {
         return key;
     }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public String getEquals() {
         return equals;
+    }
+
+    public void setEquals(String equals) {
+        this.equals = equals;
     }
 
     public List<RestrictivePermit> getPermits() {
@@ -77,5 +85,13 @@ public class Condition implements ConditionsMapInterface {
             conditionsMap = new ConditionsMap(conditions);
         }
         return conditionsMap.keySet();
+    }
+
+    /**
+     * Returns the (modifiable) conditions list. Used in rule merges.
+     * @return the conditions list
+     */
+    public List<Condition> getConditions() {
+        return conditions;
     }
 }
