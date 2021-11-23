@@ -19,21 +19,21 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
     <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
+
         <!--@elvariable id="readOnly" type="boolean"-->
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
-
         <!--@elvariable id="editImages" type="boolean"-->
         <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
 
         <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
-            <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
 
             <p:remoteCommand name="select"
                              action="#{DataEditorForm.galleryPanel.select}"
                              update="@(.stripe)
                                      @(.thumbnail)
                                      galleryHeadingWrapper
-                                     imagePreviewForm:mediaViewData
+                                     imagePreviewForm:mediaDetailContainer
+                                     @(.mediaPreviewItem)
                                      logicalTree
                                      physicalTree
                                      paginationForm:paginationWrapperPanel
@@ -74,7 +74,7 @@
                 <p:column>
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
-                                     icon="fa fa-image"
+                                     icon="fa fa-file"
                                      oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView()"
                                      title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
@@ -120,21 +120,7 @@
                                         <p:outputPanel styleClass="thumbnail-container"
                                                        a:data-order="#{media.order}"
                                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
-                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                            rendered="#{media.showingInPreview}">
-                                                <f:param name="mediaId"
-                                                         value="#{media.id}" />
-                                                <f:param name="process"
-                                                         value="#{DataEditorForm.process.id}"/>
-                                                <f:param name="sessionId"
-                                                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                            </p:graphicImage>
-                                            <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                                                          rendered="#{media.assignedSeveralTimes}"
-                                                          styleClass="assigned-several-times"/>
-                                            <h:panelGroup class="thumbnail-overlay">
-                                                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                            </h:panelGroup>
+                                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
                                         </p:outputPanel>
                                     </p:outputPanel>
                                 </p:panel>
@@ -207,37 +193,7 @@
                                             <p:outputPanel styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}"
                                                            a:data-stripe="0">
-
-                                                    <c:choose>
-                                                        <c:when test="#{DataEditorForm.galleryPanel.previewMimeType eq 'video/mp4'}">
-                                                            <p:media id="media" value="#{DataEditorForm.galleryPanel.previewData}" player="html-video" width="320" height="240" rendered="#{media.showingInPreview}" >
-                                                                <f:param name="mediaId"
-                                                                         value="#{media.id}"/>
-                                                                <f:param name="process"
-                                                                         value="#{DataEditorForm.process.id}"/>
-                                                                <f:param name="sessionId"
-                                                                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                                                <f:param name="krsc"
-                                                                         value="true"/>
-                                                            </p:media>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                            rendered="#{media.showingInPreview}">
-                                                                <f:param name="mediaId"
-                                                                         value="#{media.id}"/>
-                                                                <f:param name="process"
-                                                                         value="#{DataEditorForm.process.id}"/>
-                                                                <f:param name="sessionId"
-                                                                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                                            </p:graphicImage>
-                                                            <h:panelGroup class="thumbnail-overlay">
-                                                                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                                            </h:panelGroup>
-                                                        </c:otherwise>
-                                                    </c:choose>
-
+                                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
                                             </p:outputPanel>
                                         </h:panelGroup>
                                     </p:panel>
@@ -299,18 +255,7 @@
                         <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
                             <p:panel a:data-order="#{media.order}">
                                 <h:panelGroup layout="block" styleClass="thumbnail-container">
-                                        <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                        rendered="#{media.showingInPreview}">
-                                            <f:param name="id"
-                                                     value="#{media.id}"/>
-                                            <f:param name="process"
-                                                     value="#{DataEditorForm.process.id}"/>
-                                            <f:param name="sessionId"
-                                                     value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                        </p:graphicImage>
-                                    <h:panelGroup styleClass="thumbnail-overlay">
-                                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                    </h:panelGroup>
+                                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
                                 </h:panelGroup>
                             </p:panel>
                         </p:outputPanel>
@@ -326,6 +271,7 @@
                               a:onmousedown="metadataEditor.handleMouseDown(event)"
                               a:onmouseup="metadataEditor.handleMouseUp(event)"
                               style="overflow-x: auto; height: 100%;">
+
                     <h:panelGroup layout="block" id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
@@ -339,18 +285,9 @@
                                             <p:outputPanel layout="block"
                                                            styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}">
-                                                <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                              rendered="#{media.showingInPreview}">
-                                                    <f:param name="mediaId"
-                                                             value="#{media.id}" />
-                                                    <f:param name="process"
-                                                             value="#{DataEditorForm.process.id}"/>
-                                                    <f:param name="sessionId"
-                                                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                                </p:graphicImage></h:outputText>
-                                                <h:panelGroup layout="block" styleClass="thumbnail-overlay">
-                                                    #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                                                </h:panelGroup>
+                                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
+                                                    <ui:param name="uiParamVideoControls" value="false" />
+                                                </ui:include>
                                             </p:outputPanel>
                                         </h:panelGroup>
                                     </p:outputPanel>
@@ -359,11 +296,11 @@
                         </div>
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </h:panelGroup>
-                    <h:panelGroup id="mapWrapper">
-                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;">
-                            <i class="fa fa-spinner fa-spin"/>
-                        </div>
+
+                    <h:panelGroup id="mediaDetailContainer" layout="block" >
+                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail.xhtml" />
                     </h:panelGroup>
+
                 </h:panelGroup>
             </ui:fragment>
             <p:button id="contextMenuHiddenTrigger"

@@ -34,7 +34,8 @@
                     update="@(.thumbnail)
                             @(.stripe)
                             galleryHeadingWrapper
-                            imagePreviewForm:mediaViewData
+                            imagePreviewForm:mediaDetailContainer
+                            @(.mediaPreviewItem)
                             logicalTree
                             metadataAccordion:physicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
@@ -44,7 +45,8 @@
                     update="@(.stripe)
                                 @(.thumbnail)
                                 galleryHeadingWrapper
-                                imagePreviewForm:mediaViewData
+                                imagePreviewForm:mediaDetailContainer
+                                @(.mediaPreviewItem)
                                 contextMenuPhysicalTree
                                 logicalTree
                                 metadataAccordion:physicalMetadataWrapperPanel"/>

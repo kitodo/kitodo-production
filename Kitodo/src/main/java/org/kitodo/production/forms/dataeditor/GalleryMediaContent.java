@@ -33,6 +33,8 @@ import org.primefaces.model.StreamedContent;
  * A single media content in the media gallery.
  */
 public class GalleryMediaContent {
+
+    
     private static final Logger logger = LogManager.getLogger(GalleryMediaContent.class);
     /**
      * Gallery panel in which the medium is displayed.
@@ -202,6 +204,13 @@ public class GalleryMediaContent {
      * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
      */
     public boolean isAssignedSeveralTimes() {
+        if (Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision())) {
+            return view.getPhysicalDivision().getLogicalDivisions().size() > 1;
+        }
+        return false;
+    }
+
+    public boolean isMediaType() {
         if (Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision())) {
             return view.getPhysicalDivision().getLogicalDivisions().size() > 1;
         }

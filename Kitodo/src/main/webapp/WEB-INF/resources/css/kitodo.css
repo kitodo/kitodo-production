@@ -2682,6 +2682,13 @@ Column content
     width: 100px;
 }
 
+#imagePreviewForm\:mediaDetailContainer {
+    width: calc(100% - 101px);
+    height: 100%;
+    display: inline-block;
+    float: left;
+}
+
 #thumbnailStripeScrollableContent {
     box-sizing: content-box;
     height: calc(100% - 136px);
@@ -2702,6 +2709,11 @@ Column content
 
 #imagePreviewForm\:thumbnailWrapper .thumbnail-parent {
     display: inline-block;
+}
+
+#imagePreviewForm\:thumbnailWrapper video {
+    width: 100%;
+    height: auto;
 }
 
 #thumbnailStripeScrollableContent a {
@@ -2756,7 +2768,7 @@ Column content
     width: 100%;
 }
 
-.thumbnail + .thumbnail-container img {
+.thumbnail + .thumbnail-container .mediaListItem {
     background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
     box-sizing: border-box;
@@ -2766,16 +2778,21 @@ Column content
     width: 100%;
 }
 
-.thumbnail.selected + .thumbnail-container img {
+.thumbnail + .thumbnail-container video.mediaListItem {
+    height: 240px;
+    width: 320px;
+}
+
+.thumbnail.selected + .thumbnail-container .mediaListItem {
     border-color: var(--green);
     border-style: dashed;
 }
 
-.thumbnail.discontinuous.selected + .thumbnail-container img {
+.thumbnail.discontinuous.selected + .thumbnail-container .mediaListItem {
     border-color: grey;
 }
 
-.thumbnail.selected.last-selection + .thumbnail-container img {
+.thumbnail.selected.last-selection + .thumbnail-container .mediaListItem {
     border-style: solid;
 }
 

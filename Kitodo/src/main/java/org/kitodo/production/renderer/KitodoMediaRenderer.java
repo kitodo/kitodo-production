@@ -12,6 +12,7 @@
 package org.kitodo.production.renderer;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
@@ -42,7 +43,6 @@ public class KitodoMediaRenderer extends MediaRenderer {
 
         Object value = media.getValue();
         if (value instanceof StreamedContent) {
-
             if (PLAYER_HTML_VIDEO.equals(media.getPlayer())) {
                 buildVideoTag(context, media, writer, src);
                 return;
@@ -87,7 +87,12 @@ public class KitodoMediaRenderer extends MediaRenderer {
         if (media.getStyleClass() != null) {
             writer.writeAttribute("class", media.getStyleClass(), null);
         }
-        writer.writeAttribute("controls", "", null);
+
+        Optional uiParameter = media.getChildren().stream().filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
+        if(uiParameter.isPresent() && !Boolean.FALSE.toString().equals(((UIParameter) uiParameter.get()).getValue())) {
+            writer.writeAttribute("controls", "", null);
+        }
+
         renderPassThruAttributes(context, media, HTML.MEDIA_ATTRS);
         writer.startElement("source", media);
         writer.writeAttribute("src", src, null);
