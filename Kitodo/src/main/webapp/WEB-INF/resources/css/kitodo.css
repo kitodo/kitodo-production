@@ -669,6 +669,7 @@ section#content-section {
 
 .content-header .ui-panel-content > form,
 .content-header .ui-panel-content > button,
+.ui-menubutton,
 .ui-selectbooleanbutton {
     float: right;
     margin-left: var(--default-full-size);
@@ -3132,6 +3133,11 @@ footer {
 .so-folder-use {
     margin: 0 15px 1.3em 15px;
     width: calc(100% - 64px);
+}
+
+.basicDataTitle {
+    font-weight: bold;
+    padding: var(--default-half-size) var(--default-full-size);
 }
 
 #tasksTabView\:actionForm {

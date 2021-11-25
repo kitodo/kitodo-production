@@ -50,36 +50,39 @@
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
                          update="notifications, sticky-notifications"
                          styleClass="secondary"/>
-        <p:commandButton id="opacSearch"
-                         process="@this"
-                         value="#{msgs['newProcess.catalogueSearch.heading']}"
-                         oncomplete="PF('catalogSearchDialog').show();"
-                         icon="fa fa-book"
-                         iconPos="right"
-                         update="catalogSearchForm"
-                         styleClass="secondary">
-            <p:resetInput target="catalogSearchForm"/>
-        </p:commandButton>
-        <p:commandButton id="fileUpload"
-                         process="@this"
-                         value="#{msgs['newProcess.fileUpload.heading']}"
-                         oncomplete="PF('fileUploadDialog').show();"
-                         icon="fa fa-upload"
-                         iconPos="right"
-                         update="fileUploadForm"
-                         styleClass="secondary">
-            <p:resetInput target="fileUploadForm"/>
-        </p:commandButton>
-        <p:commandButton id="searchEdit"
-                         process="@this"
-                         value="#{msgs.processTemplate}"
-                         oncomplete="PF('searchEditDialog').show();"
-                         icon="fa fa-download"
-                         iconPos="right"
-                         update="searchEditForm"
-                         styleClass="secondary">
-            <p:resetInput target="searchEditForm"/>
-        </p:commandButton>
+        <p:menuButton id="dataTransfer"
+                      value="#{msgs.dataTransfer}"
+                      icon="fa fa-book"
+                      iconPos="right"
+                      styleClass="ui-state-default secondary right">
+            <p:menuitem id="opacSearch"
+                        process="@this"
+                        value="#{msgs['newProcess.catalogueSearch.heading']}"
+                        oncomplete="PF('catalogSearchDialog').show();"
+                        icon="fa fa-book"
+                        iconPos="right"
+                        update="catalogSearchForm">
+                <p:resetInput target="catalogSearchForm"/>
+            </p:menuitem>
+            <p:menuitem id="fileUpload"
+                        process="@this"
+                        value="#{msgs['newProcess.fileUpload.heading']}"
+                        oncomplete="PF('fileUploadDialog').show();"
+                        icon="fa fa-upload"
+                        iconPos="right"
+                        update="fileUploadForm">
+                <p:resetInput target="fileUploadForm"/>
+            </p:menuitem>
+            <p:menuitem id="searchEdit"
+                        process="@this"
+                        value="#{msgs.processTemplate}"
+                        oncomplete="PF('searchEditDialog').show();"
+                        icon="fa fa-copy"
+                        iconPos="right"
+                        update="searchEditForm">
+                <p:resetInput target="searchEditForm"/>
+            </p:menuitem>
+        </p:menuButton>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
