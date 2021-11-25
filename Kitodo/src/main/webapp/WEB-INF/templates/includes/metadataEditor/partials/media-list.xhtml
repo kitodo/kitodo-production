@@ -12,45 +12,70 @@
 -->
 
 <ui:composition
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <c:choose>
-        <c:when test="#{DataEditorForm.galleryPanel.previewMimeType eq 'video/mp4'}">
-            <p:media styleClass="mediaListItem" id="media" cache="true" value="#{DataEditorForm.galleryPanel.previewData}" player="html-video"
-                     width="320" height="240" rendered="#{media.showingInPreview}">
-                <f:param name="mediaId"
-                         value="#{media.id}"/>
-                <f:param name="process"
-                         value="#{DataEditorForm.process.id}"/>
-                <f:param name="sessionId"
-                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                <f:param name="controls" value="#{uiParamVideoControls}"/>
-                <f:param name="krsc"
-                         value="true"/>
-            </p:media>
-        </c:when>
-        <c:otherwise>
-            <h:outputText>
-                <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
-                                rendered="#{media.showingInPreview}">
-                    <f:param name="mediaId"
-                             value="#{media.id}"/>
-                    <f:param name="process"
-                             value="#{DataEditorForm.process.id}"/>
-                    <f:param name="sessionId"
-                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                </p:graphicImage>
-            </h:outputText>
-            <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                          rendered="#{media.assignedSeveralTimes}"
-                          styleClass="assigned-several-times"/>
-            <h:panelGroup class="thumbnail-overlay">
-                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-            </h:panelGroup>
-        </c:otherwise>
-    </c:choose>
+
+    <p:outputPanel styleClass="thumbnail-parent">
+
+        <c:choose>
+            <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
+                <c:set var="thumbnailStyleClass"
+                       value="#{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="thumbnailStyleClass"
+                       value="#{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
+            </c:otherwise>
+        </c:choose>
+
+        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{thumbnailStyleClass}"/>
+        <p:outputPanel styleClass="thumbnail-container"
+                       a:data-order="#{media.order}"
+                       a:data-stripe="#{uiParamStripeIndex}">
+
+            <c:choose>
+                <c:when test="#{DataEditorForm.galleryPanel.previewMimeType eq 'video/mp4'}">
+                    <p:media styleClass="mediaListItem" id="media" cache="true"
+                             value="#{DataEditorForm.galleryPanel.previewData}" player="html-video"
+                             width="320" height="240" rendered="#{media.showingInPreview}">
+                        <f:param name="mediaId"
+                                 value="#{media.id}"/>
+                        <f:param name="process"
+                                 value="#{DataEditorForm.process.id}"/>
+                        <f:param name="sessionId"
+                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                        <f:param name="controls" value="#{uiParamVideoControls}"/>
+                        <f:param name="krsc"
+                                 value="true"/>
+                    </p:media>
+                </c:when>
+                <c:otherwise>
+                    <h:outputText>
+                        <!-- only render those pages that are not assigned to a stripe (structure) here! -->
+                        <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
+                                        rendered="#{media.showingInPreview}">
+                            <f:param name="mediaId"
+                                     value="#{media.id}"/>
+                            <f:param name="process"
+                                     value="#{DataEditorForm.process.id}"/>
+                            <f:param name="sessionId"
+                                     value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                        </p:graphicImage>
+                    </h:outputText>
+                    <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                                  rendered="#{media.assignedSeveralTimes}"
+                                  styleClass="assigned-several-times"/>
+                    <h:panelGroup class="thumbnail-overlay">
+                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                    </h:panelGroup>
+                </c:otherwise>
+            </c:choose>
+
+        </p:outputPanel>
+    </p:outputPanel>
+
 </ui:composition>

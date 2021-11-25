@@ -115,14 +115,11 @@
                                          rendered="#{editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel">
-                                    <p:outputPanel styleClass="thumbnail-parent">
-                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
-                                        <p:outputPanel styleClass="thumbnail-container"
-                                                       a:data-order="#{media.order}"
-                                                       a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
-                                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
-                                        </p:outputPanel>
-                                    </p:outputPanel>
+
+                                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml" >
+                                        <ui:param name="uiParamStripeIndex" value="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}" />
+                                    </ui:include>
+
                                 </p:panel>
                                 <ui:fragment rendered="#{editImages}">
                                     <p:draggable id="structuredPagesDraggable"
@@ -188,14 +185,9 @@
                                              rendered="#{editImages}"
                                              styleClass="page-drop-area"/>
                                     <p:panel id="unstructuredMediaPanel">
-                                        <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
-                                            <p:outputPanel styleClass="thumbnail-container"
-                                                           a:data-order="#{media.order}"
-                                                           a:data-stripe="0">
-                                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
-                                            </p:outputPanel>
-                                        </h:panelGroup>
+                                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml" >
+                                            <ui:param name="uiParamStripeIndex" value="0" />
+                                        </ui:include>
                                     </p:panel>
                                     <ui:fragment rendered="#{editImages}">
                                         <p:draggable id="unstructuredMediaDraggable"
@@ -252,13 +244,7 @@
                      a:ondragstart="metadataEditor.handleDragStart(event)">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
-                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
-                            <p:panel a:data-order="#{media.order}">
-                                <h:panelGroup layout="block" styleClass="thumbnail-container">
-                                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
-                                </h:panelGroup>
-                            </p:panel>
-                        </p:outputPanel>
+                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml" />
                     </ui:repeat>
                 </div>
             </ui:fragment>
@@ -279,18 +265,9 @@
                                           layout="block">
                                 <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                            var="media">
-                                    <p:outputPanel>
-                                        <h:panelGroup layout="block" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"/>
-                                            <p:outputPanel layout="block"
-                                                           styleClass="thumbnail-container"
-                                                           a:data-order="#{media.order}">
-                                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
-                                                    <ui:param name="uiParamVideoControls" value="false" />
-                                                </ui:include>
-                                            </p:outputPanel>
-                                        </h:panelGroup>
-                                    </p:outputPanel>
+                                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml" >
+                                        <ui:param name="uiParamVideoControls" value="false" />
+                                    </ui:include>
                                 </ui:repeat>
                             </h:panelGroup>
                         </div>
