@@ -14,15 +14,14 @@ package org.kitodo.dataeditor.ruleset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -273,6 +272,24 @@ public class Rule {
     }
 
     /**
+     * Combines two rules. The function happens in separate, this is just
+     * wrapping.
+     *
+     * @param other
+     *            the other rule
+     */
+    void merge(Rule other) {
+        if (optionalRestrictivePermit.isPresent()) {
+            if (other.optionalRestrictivePermit.isPresent()) {
+                optionalRestrictivePermit = Optional
+                        .of(merge(optionalRestrictivePermit.get(), other.optionalRestrictivePermit.get()));
+            }
+        } else {
+            optionalRestrictivePermit = other.optionalRestrictivePermit;
+        }
+    }
+
+    /**
      * Combines two rules into each other. The first rule, if in doubt, is more
      * specific to the order of elements, otherwise it’s the same as around.
      * This is so if rule is nesting, and additional rule is found for key, then
@@ -305,40 +322,6 @@ public class Rule {
         mergeConditions(one.getConditions(), another.getConditions(), merged.getConditions());
         mergePermits(one.getPermits(), another.getPermits(), merged.getPermits());
         return merged;
-    }
-
-    private static void mergePermits(List<RestrictivePermit> one, List<RestrictivePermit> another, List<RestrictivePermit> mergedPermits) {
-        HashMap<RestrictivePermit, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
-        for (RestrictivePermit anotherPermit : another) {
-            anotherPermits.put(anotherPermit, anotherPermit);
-        }
-        for (RestrictivePermit onePermit : one) {
-            if (anotherPermits.containsKey(onePermit)) {
-                mergedPermits.add(merge(onePermit, anotherPermits.get(onePermit)));
-                anotherPermits.remove(onePermit);
-            } else {
-                mergedPermits.add(onePermit);
-            }
-        }
-        mergedPermits.addAll(anotherPermits.values());
-    }
-
-    /**
-     * Combines two rules. The function happens in separate, this is just
-     * wrapping.
-     *
-     * @param other
-     *            the other rule
-     */
-    void merge(Rule other) {
-        if (optionalRestrictivePermit.isPresent()) {
-            if (other.optionalRestrictivePermit.isPresent()) {
-                optionalRestrictivePermit = Optional
-                        .of(merge(optionalRestrictivePermit.get(), other.optionalRestrictivePermit.get()));
-            }
-        } else {
-            optionalRestrictivePermit = other.optionalRestrictivePermit;
-        }
     }
 
     /**
@@ -415,5 +398,21 @@ public class Rule {
         mergeConditions(one.getConditions(), another.getConditions(), result.getConditions());
         mergePermits(one.getPermits(), another.getPermits(), result.getPermits());
         return result;
+    }
+
+    private static void mergePermits(List<RestrictivePermit> one, List<RestrictivePermit> another, List<RestrictivePermit> mergedPermits) {
+        HashMap<RestrictivePermit, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
+        for (RestrictivePermit anotherPermit : another) {
+            anotherPermits.put(anotherPermit, anotherPermit);
+        }
+        for (RestrictivePermit onePermit : one) {
+            if (anotherPermits.containsKey(onePermit)) {
+                mergedPermits.add(merge(onePermit, anotherPermits.get(onePermit)));
+                anotherPermits.remove(onePermit);
+            } else {
+                mergedPermits.add(onePermit);
+            }
+        }
+        mergedPermits.addAll(anotherPermits.values());
     }
 }
