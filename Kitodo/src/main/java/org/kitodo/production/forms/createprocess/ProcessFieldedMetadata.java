@@ -197,7 +197,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 if (metadataView.isComplex()) {
                     createMetadataGroupPanel((ComplexMetadataViewInterface) metadataView, values);
                 } else {
-                    if(!createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values)) {
+                    if (!createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values)) {
                         /*
                          * If a conditional metadata was set automatically,
                          * start over. This is necessary to update dependent
@@ -372,11 +372,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @return true, if the current tree building process must be restarted,
      *         because the metadata was changed
      */
-    private boolean addAutoPresetForConditionalMetadata(SimpleMetadataViewInterface view, Map<String, String> options, Collection<Metadata> metadataForInput) {
+    private boolean addAutoPresetForConditionalMetadata(SimpleMetadataViewInterface view, Map<String, String> options,
+            Collection<Metadata> metadataForInput) {
+
         if (metadataForInput.isEmpty()) {
             MetadataEntry autoPreset = new MetadataEntry();
             autoPreset.setKey(view.getId());
-            if(Objects.isNull(container)) {
+            if (Objects.isNull(container)) {
                 autoPreset.setDomain(DOMAIN_TO_MDSEC.get(view.getDomain().orElse(Domain.DESCRIPTION)));
             }
             autoPreset.setValue(options.entrySet().iterator().next().getKey());

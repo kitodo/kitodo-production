@@ -141,7 +141,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
                  * changed a field it depends on. In that case we can safely
                  * skip saving the value.
                  */
-                if(dependent) {
+                if (dependent) {
                     logger.debug("{} \"{}\" moved out of scope, forgetting.", key, selectedItem);
                     continue;
                 }

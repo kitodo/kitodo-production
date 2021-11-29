@@ -206,11 +206,11 @@ public class MetadataPanel implements Serializable {
      */
     public void update() {
         Division<?> logicalDivision = logicalMetadataTable.getDivision();
-        if(Objects.nonNull(logicalDivision)) {
+        if (Objects.nonNull(logicalDivision)) {
             logicalMetadataTable = createProcessFieldedMetadata(logicalDivision);
         }
         Division<?> physicalDivision = physicalMetadataTable.getDivision();
-        if(Objects.nonNull(physicalDivision)) {
+        if (Objects.nonNull(physicalDivision)) {
             physicalMetadataTable = createProcessFieldedMetadata(physicalDivision);
         }
     }
