@@ -2188,11 +2188,6 @@ Column content
 
 .ui-tree .ui-treenode.linked {
     background: transparent;
-    cursor: not-allowed;
-}
-
-.ui-tree .ui-treenode.linked span {
-    pointer-events: none;
 }
 
 .ui-tree .ui-treenode.undefined .ui-treenode-label span {
