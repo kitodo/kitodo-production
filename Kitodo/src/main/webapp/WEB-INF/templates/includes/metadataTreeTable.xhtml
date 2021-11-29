@@ -27,7 +27,10 @@
     <!--@elvariable id="root" type="org.primefaces.model.TreeNode"-->
     <!--@elvariable id="Form" type="DataEditorForm" or "CreateProcessForm"-->
     <!--@elvariable id="node" type="org.primefaces.model.TreeNode"-->
-    <p:remoteCommand name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected) metadataTable" />
+
+    <p:remoteCommand name="updateTitleMetadata"
+                     actionListener="#{DataEditorForm.metadataPanel.update}"
+                     update="@(.ui-tree, .stripe.selected) metadataTable" />
 
     <p:treeTable value="#{root}"
                  var="item"

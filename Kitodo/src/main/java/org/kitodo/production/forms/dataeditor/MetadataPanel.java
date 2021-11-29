@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.dataeditor.DataEditorService;
@@ -197,6 +199,20 @@ public class MetadataPanel implements Serializable {
     void preservePhysical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         physicalMetadataTable.preserve();
         this.dataEditorForm.checkForChanges();
+    }
+
+    /**
+     * Update metadata.
+     */
+    public void update() {
+        Division<?> logicalDivision = logicalMetadataTable.getDivision();
+        if(Objects.nonNull(logicalDivision)) {
+            logicalMetadataTable = createProcessFieldedMetadata(logicalDivision);
+        }
+        Division<?> physicalDivision = physicalMetadataTable.getDivision();
+        if(Objects.nonNull(physicalDivision)) {
+            physicalMetadataTable = createProcessFieldedMetadata(physicalDivision);
+        }
     }
 
     /**

@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.UnmodifiableList;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
@@ -196,7 +197,16 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 if (metadataView.isComplex()) {
                     createMetadataGroupPanel((ComplexMetadataViewInterface) metadataView, values);
                 } else {
-                    createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values);
+                    if(!createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values)) {
+                        /*
+                         * If a conditional metadata was set automatically,
+                         * start over. This is necessary to update dependent
+                         * fields above or below.
+                         */
+                        logger.debug("Metadata was changed. Restarting.");
+                        createMetadataTable();
+                        break;
+                    }
                 }
             } else {
                 hiddenMetadata = values;
@@ -295,8 +305,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            ruleset
      * @param values
      *            the value(s) to be displayed
+     * @return whether the input field could be generated. If an automatic
+     *         preset has been added to the metadata, false is returned. In that
+     *         case, the rule set must be invoked again to update the options
+     *         for dependent fields.
      */
-    public void createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
+    public boolean createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
                                                  Collection<Metadata> values) {
 
         ProcessDetail data;
@@ -307,7 +321,14 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 case MULTIPLE_SELECTION:
                 case MULTI_LINE_SINGLE_SELECTION:
                 case ONE_LINE_SINGLE_SELECTION:
-                    data = new ProcessSelectMetadata(this, simpleMetadataView, simpleValues(values));
+                    List<Map<MetadataEntry, Boolean>> leadingFields = getListForLeadingMetadataFields();
+                    Map<String, String> options = simpleMetadataView.getSelectItems(leadingFields);
+                    boolean dependent = leadingFields.parallelStream().flatMap(map -> map.entrySet().parallelStream())
+                            .anyMatch(entry -> Boolean.TRUE.equals(entry.getValue()));
+                    if (dependent && !options.isEmpty() && addAutoPresetForConditionalMetadata(simpleMetadataView, options, values)) {
+                        return false;
+                    }
+                    data = new ProcessSelectMetadata(this, simpleMetadataView, simpleValues(values), dependent);
                     break;
                 case BOOLEAN:
                     data = new ProcessBooleanMetadata(this, simpleMetadataView, oneValue(values, MetadataEntry.class));
@@ -325,11 +346,46 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
             new DefaultTreeNode(data, treeNode).setExpanded(true);
         } catch (IllegalStateException e) {
+            logger.catching(Level.WARN, e);
             ProcessFieldedMetadata metadata = new ProcessFieldedMetadata(this, oneValue(values, MetadataGroup.class));
             metadata.treeNode = new DefaultTreeNode(metadata, treeNode);
             metadata.createUndefinedMetadataTable();
             metadata.treeNode.setExpanded(true);
         }
+        return true;
+    }
+
+    /**
+     * A value must be set for conditional metadata, as there is no no-selection
+     * option. In this case, the first possible value is already displayed as
+     * selected, even if it is not yet reflected in the metadata before saving.
+     * In this case, no options are offered in selection fields that depend on
+     * this field, because their options are based on the metadata. Therefore,
+     * in this case, the metadata must be set explicitly. Then, a termination
+     * must take place and the rule set must be invoked again in order to
+     * correctly populate the dependent fields with options.
+     * 
+     * @param view
+     *            view that gives the access the select items
+     * @param metadataForInput
+     *            list of metadata, to which a preset will be added if necessary
+     * @return true, if the current tree building process must be restarted,
+     *         because the metadata was changed
+     */
+    private boolean addAutoPresetForConditionalMetadata(SimpleMetadataViewInterface view, Map<String, String> options, Collection<Metadata> metadataForInput) {
+        if (metadataForInput.isEmpty()) {
+            MetadataEntry autoPreset = new MetadataEntry();
+            autoPreset.setKey(view.getId());
+            if(Objects.isNull(container)) {
+                autoPreset.setDomain(DOMAIN_TO_MDSEC.get(view.getDomain().orElse(Domain.DESCRIPTION)));
+            }
+            autoPreset.setValue(options.entrySet().iterator().next().getKey());
+            metadata.add(autoPreset);
+
+            logger.debug("Added metadata {} to {}", autoPreset, metadataKey);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -434,6 +490,14 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the division.
+     * @return the division
+     */
+    public Division<?> getDivision() {
+        return division;
     }
 
     @Override
