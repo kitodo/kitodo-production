@@ -299,7 +299,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
         try {
             createProcessHierarchy();
-            checkForAutomaticTask();
+            runAutomaticTasks();
             if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
                 PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
                         + Helper.getTranslation("processSaving") + "','detail':'"
@@ -321,15 +321,13 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         return this.stayOnCurrentPage;
     }
 
-    private void checkForAutomaticTask() {
+    private void runAutomaticTasks() {
         Task currentTask = ServiceManager.getProcessService().getCurrentTask(getMainProcess());
-        if (Objects.nonNull(currentTask)) {
-            if (currentTask.isTypeAutomatic()) {
-                currentTask.setProcessingStatus(TaskStatus.INWORK);
-                currentTask.setProcessingBegin(new Date());
-                TaskScriptThread thread = new TaskScriptThread(currentTask);
-                TaskManager.addTask(thread);
-            }   
+        if (Objects.nonNull(currentTask) && currentTask.isTypeAutomatic()) {
+            currentTask.setProcessingStatus(TaskStatus.INWORK);
+            currentTask.setProcessingBegin(new Date());
+            TaskScriptThread thread = new TaskScriptThread(currentTask);
+            TaskManager.addTask(thread);       
         }
     }
     
