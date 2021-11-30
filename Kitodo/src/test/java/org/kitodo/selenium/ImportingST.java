@@ -55,11 +55,11 @@ public class ImportingST extends BaseTestSelenium {
         projectsPage.createNewProcess();
         Select catalogSelectMenu = new Select(importPage.getCatalogMenu());
         assertEquals("Wrong default catalog selected", K10PLUS,
-                catalogSelectMenu.getFirstSelectedOption().getText());
+                catalogSelectMenu.getFirstSelectedOption().getAttribute("value"));
 
         importPage.selectGBV();
         Select searchFieldSelectMenu = new Select(importPage.getSearchFieldMenu());
         assertEquals("Wrong default search field selected", PPN,
-                searchFieldSelectMenu.getFirstSelectedOption().getText());
+                searchFieldSelectMenu.getFirstSelectedOption().getAttribute("value"));
     }
 }
