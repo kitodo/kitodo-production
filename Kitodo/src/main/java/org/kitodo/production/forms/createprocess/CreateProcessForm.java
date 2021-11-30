@@ -50,8 +50,8 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
@@ -299,6 +299,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
         try {
             createProcessHierarchy();
+            checkForAutomaticTask();
             if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
                 PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
                         + Helper.getTranslation("processSaving") + "','detail':'"
@@ -320,6 +321,18 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         return this.stayOnCurrentPage;
     }
 
+    private void checkForAutomaticTask() {
+        Task currentTask = ServiceManager.getProcessService().getCurrentTask(getMainProcess());
+        if (Objects.nonNull(currentTask)) {
+            if (currentTask.isTypeAutomatic()) {
+                currentTask.setProcessingStatus(TaskStatus.INWORK);
+                currentTask.setProcessingBegin(new Date());
+                TaskScriptThread thread = new TaskScriptThread(currentTask);
+                TaskManager.addTask(thread);
+            }   
+        }
+    }
+    
     /**
      * Create new Process and reload current view to add another Process.
      *
@@ -441,15 +454,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             }
         }
         ServiceManager.getProcessService().save(getMainProcess(), true);
-        Task currentTask = ServiceManager.getProcessService().getCurrentTask(getMainProcess());
-        if (Objects.nonNull(currentTask)) {
-            if (currentTask.isTypeAutomatic()) {
-                currentTask.setProcessingStatus(TaskStatus.INWORK);
-                currentTask.setProcessingBegin(new Date());
-                TaskScriptThread thread = new TaskScriptThread(currentTask);
-                TaskManager.addTask(thread);
-            }   
-        }
     }
 
     /**
