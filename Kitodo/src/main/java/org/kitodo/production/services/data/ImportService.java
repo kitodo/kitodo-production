@@ -88,8 +88,10 @@ import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.w3c.dom.Document;
@@ -1065,6 +1067,7 @@ public class ImportService {
             Process childProcess = tempProcess.getProcess();
             ServiceManager.getProcessService().save(childProcess, true);
             ProcessService.setParentRelations(mainProcess, childProcess);
+            runAutomaticTasks(childProcess);
         }
     }
 
@@ -1141,6 +1144,21 @@ public class ImportService {
     }
 
     /**
+     * Run pending automatic tasks for a given Process 'process'.
+     *
+     * @param process Process whose pending automatic tasks should be executed
+     */
+    public static void runAutomaticTasks(Process process) {
+        Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+        if (Objects.nonNull(currentTask) && currentTask.isTypeAutomatic()) {
+            currentTask.setProcessingStatus(TaskStatus.INWORK);
+            currentTask.setProcessingBegin(new Date());
+            TaskScriptThread thread = new TaskScriptThread(currentTask);
+            TaskManager.addTask(thread);       
+        }
+    } 
+
+    /**
      * Process given TempProcess 'tempProcess' by creating the metadata, doc type and properties for the process and
      * updating the process' tasks.
      *
@@ -1196,6 +1214,7 @@ public class ImportService {
                     .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
+            runAutomaticTasks(tempProcess.getProcess());
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException

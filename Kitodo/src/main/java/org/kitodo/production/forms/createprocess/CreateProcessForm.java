@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -36,9 +35,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
@@ -51,7 +48,6 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
-import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
@@ -59,7 +55,6 @@ import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.thread.TaskScriptThread;
 import org.primefaces.PrimeFaces;
 
 @Named("CreateProcessForm")
@@ -299,7 +294,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         }
         try {
             createProcessHierarchy();
-            runAutomaticTasks();
+            ImportService.runAutomaticTasks(getMainProcess());
             if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
                 PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
                         + Helper.getTranslation("processSaving") + "','detail':'"
@@ -321,16 +316,6 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         return this.stayOnCurrentPage;
     }
 
-    private void runAutomaticTasks() {
-        Task currentTask = ServiceManager.getProcessService().getCurrentTask(getMainProcess());
-        if (Objects.nonNull(currentTask) && currentTask.isTypeAutomatic()) {
-            currentTask.setProcessingStatus(TaskStatus.INWORK);
-            currentTask.setProcessingBegin(new Date());
-            TaskScriptThread thread = new TaskScriptThread(currentTask);
-            TaskManager.addTask(thread);       
-        }
-    }
-    
     /**
      * Create new Process and reload current view to add another Process.
      *
