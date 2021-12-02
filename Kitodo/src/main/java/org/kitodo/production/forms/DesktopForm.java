@@ -230,6 +230,27 @@ public class DesktopForm extends BaseForm {
     }
 
     /**
+     * Empty task cache.
+     */
+    public void emptyTaskCache() {
+        taskList.clear();
+    }
+
+    /**
+     * Empty process cache.
+     */
+    public void emptyProcessCache() {
+        processList.clear();
+    }
+
+    /**
+     * Empty project cache.
+     */
+    public void emptyProjectCache() {
+        projectList.clear();
+    }
+
+    /**
      * Retrieve correction comments of given process and return them as a tooltip String.
      *
      * @param processDTO
