@@ -365,7 +365,7 @@ public class ImportService {
         return "";
     }
 
-    private String getParentID(Document document) throws XPathExpressionException {
+    public String getParentID(Document document) throws XPathExpressionException {
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
         NodeList nodeList = (NodeList) parentIDXpath.compile(parentXpath)
@@ -545,7 +545,7 @@ public class ImportService {
         }
     }
 
-    private TempProcess checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
+    public TempProcess checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
             ProcessGenerationException {
         HashMap<String, String> parentIDMetadata = new HashMap<>();
         parentIDMetadata.put(identifierMetadata, parentID);
@@ -910,7 +910,11 @@ public class ImportService {
         return parentTempProcess;
     }
 
-    private Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
+    public TempProcess setParentTempProcess(TempProcess parentTempProcess) {
+        return this.parentTempProcess = parentTempProcess;
+    }
+
+    public Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
             throws ProcessGenerationException, DAOException {
         Process parentProcess = null;
         try {
