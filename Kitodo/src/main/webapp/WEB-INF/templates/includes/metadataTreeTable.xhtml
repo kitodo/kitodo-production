@@ -170,6 +170,7 @@
                                  oncomplete="$('#loadingScreen').hide()"
                                  action="#{item.delete}"
                                  rendered="#{not empty buttonUpdate and not readOnly}"
+                                 disabled="#{(item.getOccurrences() le 1) and (item.isRequired() || DataEditorForm.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID()))}"
                 />
 
                 <!-- button to duplicate -->

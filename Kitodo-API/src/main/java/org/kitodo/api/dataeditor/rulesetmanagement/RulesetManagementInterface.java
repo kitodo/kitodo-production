@@ -133,4 +133,14 @@ public interface RulesetManagementInterface {
      *             if the reading fails
      */
     void load(File rulesetFile) throws IOException;
+
+    /**
+     * Returns the “always showing” value or otherwise the default value if the
+     * attribute is not set.
+     *
+     * @param keyId metadata key
+     *
+     * @return the “always showing” value or its default value
+     */
+    boolean isAlwaysShowingForKey(String keyId);
 }

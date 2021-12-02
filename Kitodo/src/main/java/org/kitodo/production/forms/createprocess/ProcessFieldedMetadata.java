@@ -595,4 +595,21 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public Collection<String> getAdditionallySelectedFields() {
         return additionallySelectedFields;
     }
+
+    /**
+     * Get occurrences of a metadata in the treeNode.
+     * @param metadataKey as String
+     * @return occurrences
+     */
+    public int getOccurrences(String metadataKey) {
+        int occ = 0;
+        Iterator<TreeNode> treeNodesIterator = treeNode.getChildren().iterator();
+        while (treeNodesIterator.hasNext()) {
+            TreeNode treeNode = treeNodesIterator.next();
+            if (((ProcessDetail) treeNode.getData()).getMetadataID().equals(metadataKey)) {
+                occ ++;
+            }
+        }
+        return occ;
+    }
 }

@@ -72,4 +72,9 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     public void load(File rulesetFile) throws IOException {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean isAlwaysShowingForKey(String keyId) {
+        throw new UnsupportedOperationException();
+    }
 }
