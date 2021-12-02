@@ -13,7 +13,7 @@ package org.kitodo.data.database.enums;
 
 /**
  * Enum for edit type of task steps each one has an integer value, and a title.
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 17.05.2009
  */
@@ -22,7 +22,7 @@ public enum TaskEditType {
      * Default type is unknown for all steps, which still don't have a specific
      * type.
      */
-    UNNOWKN(0, "unbekannt"),
+    UNNOWKN(0, "unknown"),
 
     /**
      * Manual single workflow for regular workflow handling.
