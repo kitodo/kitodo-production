@@ -49,7 +49,9 @@
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.processes}</h3>
                             <h:form id="reloadProcessesForm">
-                                <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
+                                <p:commandButton icon="fa fa-repeat fa-lg"
+                                                 styleClass="plain"
+                                                 actionListener="#{DesktopForm.emptyProcessCache()}">
                                         <p:ajax update="processTable" oncomplete="setScrollbarLayout()"/>
                                 </p:commandButton>
                             </h:form>
@@ -68,7 +70,9 @@
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.projects}</h3>
                             <h:form id="reloadProjectsForm">
-                                <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
+                                <p:commandButton icon="fa fa-repeat fa-lg"
+                                                 styleClass="plain"
+                                                 actionListener="#{DesktopForm.emptyProjectCache()}">
                                     <p:ajax update="projectTable" oncomplete="setScrollbarLayout()"/>
                                 </p:commandButton>
                             </h:form>
@@ -86,7 +90,9 @@
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.databaseStatistic}</h3>
                             <h:form id="reloadDatabaseStatisticsForm">
-                                <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
+                                <p:commandButton icon="fa fa-repeat fa-lg"
+                                                 styleClass="plain"
+                                                 actionListener="#{DesktopForm.emptyTaskCache()}">
                                     <p:ajax update="statisticsTable" oncomplete="setScrollbarLayout()"/>
                                 </p:commandButton>
                             </h:form>
