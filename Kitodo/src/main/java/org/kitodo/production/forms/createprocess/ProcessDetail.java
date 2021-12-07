@@ -158,4 +158,12 @@ public abstract class ProcessDetail implements Serializable {
      * @return if the field is valid
      */
     public abstract boolean isValid();
+
+    /**
+     * Get occurrences of this metadata in container.
+     * @return occurrences
+     */
+    public int getOccurrences() {
+        return container.getOccurrences(this.getMetadataID());
+    }
 }

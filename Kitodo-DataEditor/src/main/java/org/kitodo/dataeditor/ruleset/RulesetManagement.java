@@ -38,6 +38,7 @@ import org.kitodo.dataeditor.ruleset.xml.Division;
 import org.kitodo.dataeditor.ruleset.xml.Key;
 import org.kitodo.dataeditor.ruleset.xml.Namespace;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
+import org.kitodo.dataeditor.ruleset.xml.Setting;
 
 /**
  * This class provides the functionality of the rule set.
@@ -299,4 +300,16 @@ public class RulesetManagement implements RulesetManagementInterface {
             }
         }
     }
+
+    @Override
+    public boolean isAlwaysShowingForKey(String keyId) {
+        Optional<Setting> optionalSetting = ruleset.getSettings().parallelStream()
+                .filter(setting -> setting.getKey().equals(keyId)).findAny();
+        if (optionalSetting.isPresent()) {
+            return optionalSetting.get().isAlwaysShowing();
+        }
+        return false;
+    }
+
+
 }
