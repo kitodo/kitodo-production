@@ -133,6 +133,7 @@
         <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
             <ui:param name="root" value="#{CreateProcessForm.processMetadata.logicalMetadataTree}"/>
             <ui:param name="readOnly" value="#{false}"/>
+            <ui:param name="Form" value="#{CreateProcessForm}"/>
         </ui:include>
     </p:panelGrid>
 </ui:composition>

@@ -33,7 +33,7 @@ public class AddMetadataDialog {
      */
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         dataEditor.getMetadataPanel().setSelectedMetadataTreeNode(treeNode);
-        addableMetadata = DataEditorService.getAddableMetadataForGroup(dataEditor, treeNode);
+        addableMetadata = DataEditorService.getAddableMetadataForGroup(dataEditor.getProcess().getRuleset(), treeNode);
     }
 
     /**

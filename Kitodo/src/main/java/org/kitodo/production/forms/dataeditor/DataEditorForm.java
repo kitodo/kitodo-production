@@ -61,6 +61,7 @@ import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
 @SessionScoped
@@ -958,5 +959,22 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
             logger.info(e.getMessage());
         }
+    }
+
+    /**
+     * Check and return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can
+     * be added to it or not.
+     *
+     * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
+     */
+    public boolean metadataAddableToGroup(TreeNode metadataNode) {
+        return metadataPanel.metadataAddableToGroup(metadataNode);
+    }
+
+    /**
+     * Prepare addable metadata for metadata group.
+     */
+    public void prepareAddableMetadataForGroup(TreeNode treeNode) {
+        addMetadataDialog.prepareAddableMetadataForGroup(treeNode);
     }
 }

@@ -55,7 +55,9 @@ import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.TreeNode;
 
 @Named("CreateProcessForm")
 @ViewScoped
@@ -592,5 +594,46 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public String getReferringView() {
         return this.referringView;
+    }
+
+    /**
+     * Check and return whether the given ProcessDetail 'processDetail' is contained in the current list of addable
+     * metadata types in the addDocStrucTypeDialog.
+     *
+     * @param processDetail ProcessDetail to be added
+     * @return whether the given ProcessDetail can be added or not
+     */
+    public boolean canBeAdded(ProcessDetail processDetail) throws InvalidMetadataValueException {
+        List<SelectItem> addableMetadata = addMetadataDialog.getAddableMetadata();
+        if (Objects.nonNull(addableMetadata)) {
+            return addableMetadata.stream()
+                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(processDetail.getMetadataID());
+        }
+        else {
+            return true;
+        }
+    }
+
+    /**
+     * Check and return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can
+     * be added to it or not.
+     *
+     * @param metadataNode TreeNode for which the check is performed
+     * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
+     */
+    public boolean metadataAddableToGroup(TreeNode metadataNode) {
+        if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
+            return !(DataEditorService.getAddableMetadataForGroup(getMainProcess().getRuleset(), metadataNode).isEmpty());
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Prepare addable metadata for metadata group.
+     * @param treeNode metadataGroup treeNode
+     */
+    public void prepareAddableMetadataForGroup(TreeNode treeNode) {
+        addMetadataDialog.prepareAddableMetadataForGroup(getMainProcess().getRuleset(), treeNode);
     }
 }

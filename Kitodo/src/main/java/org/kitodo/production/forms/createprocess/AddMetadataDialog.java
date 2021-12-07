@@ -15,8 +15,10 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.services.dataeditor.DataEditorService;
+import org.primefaces.model.TreeNode;
 
 public class AddMetadataDialog {
 
@@ -68,5 +70,13 @@ public class AddMetadataDialog {
                         createProcessForm.getPriorityList()),
                 DataEditorService.getExistingMetadataRows(createProcessForm.getProcessMetadata().getLogicalMetadataTree().getChildren()),
                 createProcessForm.getProcessMetadata().getProcessDetails().getAdditionallySelectedFields(), createProcessForm.getMainProcess().getRuleset());
+    }
+
+    /**
+     * Prepare addable metadata for metadata group.
+     */
+    public void prepareAddableMetadataForGroup(Ruleset ruleset, TreeNode treeNode) {
+        createProcessForm.getProcessMetadata().setSelectedMetadataTreeNode(treeNode);
+        addableMetadata = DataEditorService.getAddableMetadataForGroup(ruleset, treeNode);
     }
 }

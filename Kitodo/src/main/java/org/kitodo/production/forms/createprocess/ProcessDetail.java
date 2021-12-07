@@ -72,7 +72,6 @@ public abstract class ProcessDetail implements Serializable {
      */
     public void copy() throws IOException {
         container.copy(this);
-        refreshPage();
     }
 
     /**
@@ -80,15 +79,6 @@ public abstract class ProcessDetail implements Serializable {
      */
     public void delete() throws IOException {
         container.remove(this);
-        refreshPage();
-    }
-
-    private void refreshPage() throws IOException {
-        FacesContext currentInstance = FacesContext.getCurrentInstance();
-        if (Objects.nonNull(currentInstance)) {
-            ExternalContext externalContext = currentInstance.getExternalContext();
-            externalContext.redirect(((HttpServletRequest) externalContext.getRequest()).getRequestURI());
-        }
     }
 
     public abstract String getMetadataID();

@@ -128,11 +128,11 @@ public class DataEditorService {
     /**
      * Determine and return which metadata can be added to a specific MetadataGroup.
      *
-     * @param dataEditor DataEditorForm instance used to determine addable metadata types
+     * @param ruleset ruleset of the process
      * @param metadataNode TreeNode containing MetadataGroup to check
      * @return List of select items representing addable metadata types
      */
-    public static List<SelectItem> getAddableMetadataForGroup(DataEditorForm dataEditor, TreeNode metadataNode) {
+    public static List<SelectItem> getAddableMetadataForGroup(Ruleset ruleset, TreeNode metadataNode) {
         ProcessFieldedMetadata fieldedMetadata = ((ProcessFieldedMetadata) metadataNode.getData());
         ComplexMetadataViewInterface metadataView = fieldedMetadata.getMetadataView();
         List<SelectItem> addableMetadata = new ArrayList<>();
@@ -144,7 +144,7 @@ public class DataEditorService {
                                     ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
                                     : "dataTable"));
         }
-        return sortMetadataList(addableMetadata, dataEditor.getProcess().getRuleset());
+        return sortMetadataList(addableMetadata, ruleset);
     }
 
     /**
