@@ -19,7 +19,7 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:outputPanel styleClass="thumbnail-parent">
+    <p:outputPanel styleClass="thumbnail-parent" a:data-mime-type="#{media.mimeType}" >
 
         <c:choose>
             <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">

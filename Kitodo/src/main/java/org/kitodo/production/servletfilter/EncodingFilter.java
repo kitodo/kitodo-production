@@ -60,11 +60,11 @@ public class EncodingFilter implements Filter {
 
         // Respect the client-specified character encoding
         if (Objects.isNull(request.getCharacterEncoding())) {
-       //     request.setCharacterEncoding(encoding);
+            request.setCharacterEncoding(encoding);
         }
 
-     //   response.setContentType("text/html; charset=" + encoding);
-     //   response.setCharacterEncoding(encoding);
+        response.setContentType("text/html; charset=" + encoding);
+        response.setCharacterEncoding(encoding);
 
         chain.doFilter(request, response);
     }

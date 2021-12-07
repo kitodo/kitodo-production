@@ -89,7 +89,7 @@ public class KitodoMediaRenderer extends MediaRenderer {
         }
 
         Optional uiParameter = media.getChildren().stream().filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
-        if(uiParameter.isPresent() && !Boolean.FALSE.toString().equals(((UIParameter) uiParameter.get()).getValue())) {
+        if (uiParameter.isPresent() && !Boolean.FALSE.toString().equals(((UIParameter) uiParameter.get()).getValue())) {
             writer.writeAttribute("controls", "", null);
         }
 

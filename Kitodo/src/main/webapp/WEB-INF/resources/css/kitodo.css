@@ -2757,9 +2757,12 @@ Column content
 
 .thumbnail-parent {
     display: block;
+    position: relative;
+}
+
+.thumbnail-parent:not([data-mime-type^="video"])  {
     height: 104px;
     width: 75px;
-    position: relative;
 }
 
 .thumbnail {

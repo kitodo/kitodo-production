@@ -56,6 +56,7 @@ public class GalleryMediaContent {
      */
     private final URI mediaViewUri;
     private final View view;
+    private final String mimeType;
 
     /**
      * Creates a new gallery media content.
@@ -66,6 +67,8 @@ public class GalleryMediaContent {
      * @param canonical
      *            the canonical part of the file name, used as the identifier
      *            for the media content
+     * @param mimeType
+     *            the mime type.
      * @param previewUri
      *            URI to content for media preview. Can be {@code null}, then a
      *            placeholder is used.
@@ -73,10 +76,11 @@ public class GalleryMediaContent {
      *            URI to the content for the media view. Can be {@code null},
      *            then no media view is offered.
      */
-    GalleryMediaContent(GalleryPanel panel, View view, String canonical, URI previewUri, URI mediaViewUri) {
+    GalleryMediaContent(GalleryPanel panel, View view, String canonical, String mimeType, URI previewUri, URI mediaViewUri) {
         this.panel = panel;
         this.view = view;
         this.id = canonical;
+        this.mimeType = mimeType;
         this.previewUri = previewUri;
         this.mediaViewUri = mediaViewUri;
     }
@@ -210,10 +214,12 @@ public class GalleryMediaContent {
         return false;
     }
 
-    public boolean isMediaType() {
-        if (Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision())) {
-            return view.getPhysicalDivision().getLogicalDivisions().size() > 1;
-        }
-        return false;
+    /**
+     * Get the mime type.
+     *
+     * @return the mime type.
+     */
+    public String getMimeType() {
+        return mimeType;
     }
 }

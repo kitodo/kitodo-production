@@ -215,11 +215,7 @@ function updateMap(imageDimensions, imagePath) {
 
 function addListener(element) {
     element.on("load", function () {
-        if (kitodo.map) {
-            updateMap([element.width(), element.height()], element[0].src);
-        } else {
-            initializeMap([element.width(), element.height()], element[0].src);
-        }
+        initializeMap([element.width(), element.height()], element[0].src);
     });
 }
 

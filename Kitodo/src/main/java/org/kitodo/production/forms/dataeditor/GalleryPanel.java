@@ -492,7 +492,8 @@ public class GalleryPanel {
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
         String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
-        return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri);
+        return new GalleryMediaContent(this, view, canonical, previewFolder.getFolder().getMimeType(),
+                resourcePreviewUri, resourceMediaViewUri);
     }
 
     /**
