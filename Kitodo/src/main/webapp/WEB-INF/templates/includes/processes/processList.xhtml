@@ -243,6 +243,7 @@
                                 update="processesTabView:processesForm:processesTable,titleProcess"
                                 icon="fa fa-arrow-circle-o-down"/>
                     <p:menuitem id="executeScriptSelection"
+                                rendered="#{SecurityAccessController.hasAuthorityToRunKitodoScripts()}"
                                 value="#{msgs.executeKitodoScript}"
                                 onclick="PF('executeScriptSelectedDialog').show();"
                                 icon="fa fa-cogs"/>
