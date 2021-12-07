@@ -76,7 +76,9 @@ public class GeneratesNewspaperProcessesThread extends EmptyTask {
     public void run() {
         try {
             while (generator.getProgress() < generator.getNumberOfSteps()) {
-                generator.nextStep();
+                if (!generator.nextStep()) {
+                    return;
+                }
                 super.setProgress(generator.getProgress() / generator.getNumberOfSteps());
                 if (Thread.currentThread().isInterrupted()) {
                     return;

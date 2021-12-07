@@ -56,6 +56,7 @@ import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
@@ -286,17 +287,22 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if there is a "CurrentNo" item in the projects configuration,
      *             but its value cannot be evaluated to an integer
      */
-    public void nextStep() throws ConfigurationException, DAOException, DataException, IOException,
+    public boolean nextStep() throws ConfigurationException, DAOException, DataException, IOException,
             ProcessGenerationException, DoctypeMissingException, CommandException {
 
         if (currentStep == 0) {
             initialize();
+            if (isDuplicatedTitles()) {
+                Helper.setErrorMessage("duplicatedTitles");
+                return false;
+            }
         } else if (currentStep - NUMBER_OF_INIT_STEPS < processesToCreate.size()) {
             createProcess(currentStep - NUMBER_OF_INIT_STEPS);
         } else {
             finish();
         }
         currentStep++;
+        return true;
     }
 
     /**
@@ -793,5 +799,22 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         if (logger.isTraceEnabled()) {
             logger.trace("Finish took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+    }
+
+    private boolean isDuplicatedTitles() throws ProcessGenerationException, DataException {
+        List<List<IndividualIssue>> processes = course.getProcesses();
+        List<String> issueTitles = new ArrayList<>();
+        for (List<IndividualIssue> individualProcess : processes) {
+            for (IndividualIssue individualIssue : individualProcess) {
+                Map<String, String> genericFields = individualIssue.getGenericFields();
+                String title = makeTitle(issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"),
+                    genericFields);
+                if (!ServiceManager.getProcessService().findByTitle(title).isEmpty() || issueTitles.contains(title)) {
+                    return true;
+                }
+                issueTitles.add(title);
+            }
+        }
+        return false;
     }
 }

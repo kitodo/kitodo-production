@@ -20,6 +20,7 @@ import org.kitodo.production.model.bibliography.course.Issue;
 
 public class NewspaperCourse {
     private static Course course;
+    private static Course duplicatedCourse;
 
     /**
      * Returns a course of appearance.
@@ -33,10 +34,28 @@ public class NewspaperCourse {
         return course;
     }
 
+    /**
+     * Returns a course of appearance with duplicated Entries.
+     *
+     * @return a course of appearance
+     */
+    public static Course getDuplicatedCourse() {
+        if (Objects.isNull(duplicatedCourse)) {
+            duplicatedCourse = createDuplicatedCourse();
+        }
+        return duplicatedCourse;
+    }
+
     private static Course createCourse() {
         Course course = new Course();
         addFirstBlock(course);
         addSecondBlock(course);
+        return course;
+    }
+
+    private static Course createDuplicatedCourse() {
+        Course course = new Course();
+        addFirstBlockDuplicate(course);
         return course;
     }
 
@@ -53,6 +72,25 @@ public class NewspaperCourse {
         issue.addAddition(LocalDate.of(1703, 8, 31));
         issue.addAddition(LocalDate.of(1703, 9, 6));
         block.addIssue(issue);
+        course.add(block);
+    }
+
+    private static void addFirstBlockDuplicate(Course course) {
+        Block block = new Block(course);
+        block.setPublicationPeriod(LocalDate.of(1703, 8, 8), LocalDate.of(1703, 9, 30));
+        Issue issue = new Issue(course);
+        issue.setMonday(true);
+        issue.addAddition(LocalDate.of(1703, 8, 8));
+        issue.addExclusion(LocalDate.of(1703, 8, 9));
+        issue.addExclusion(LocalDate.of(1703, 8, 16));
+        issue.addAddition(LocalDate.of(1703, 8, 17));
+        issue.addExclusion(LocalDate.of(1703, 8, 30));
+        issue.addAddition(LocalDate.of(1703, 8, 31));
+        issue.addAddition(LocalDate.of(1703, 9, 6));
+        block.addIssue(issue);
+        Issue secondIssue = new Issue(course);
+        secondIssue.setMonday(true);
+        block.addIssue(secondIssue);
         course.add(block);
     }
 
