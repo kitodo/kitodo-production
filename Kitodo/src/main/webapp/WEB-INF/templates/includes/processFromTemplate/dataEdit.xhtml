@@ -111,6 +111,25 @@
     </div>
 
     <p:panelGrid id="processMetadata" layout="grid" columns="1">
+        <p:panelGrid style="margin-top:10px;"
+                     styleClass="ui-noborder full-width"
+                     rendered="#{not readOnly}">
+            <p:row>
+                <h:panelGroup id="addMetadataButtonWrapper"
+                              title="#{CreateProcessForm.processMetadata.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
+                    <p:commandButton id="addMetadataButton"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     update="addMetadataForm"
+                                     disabled="#{not CreateProcessForm.processMetadata.metadataAddableToStructureElement()}"
+                                     action="#{CreateProcessForm.addMetadataDialog.prepareAddableMetadataForStructure()}"
+                                     oncomplete="PF('addMetadataDialog').show();">
+                        <f:setPropertyActionListener target="#{CreateProcessForm.processMetadata.selectedMetadataTreeNode}" value="#{null}"/>
+                    </p:commandButton>
+                </h:panelGroup>
+            </p:row>
+        </p:panelGrid>
+
         <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
             <ui:param name="root" value="#{CreateProcessForm.processMetadata.logicalMetadataTree}"/>
             <ui:param name="readOnly" value="#{false}"/>

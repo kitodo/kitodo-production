@@ -40,6 +40,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
@@ -143,10 +144,7 @@ public class DataEditorService {
                                     ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
                                     : "dataTable"));
         }
-        if (!addableMetadata.isEmpty() && !dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
-            addableMetadata.sort(Comparator.comparing(SelectItem::getLabel));
-        }
-        return addableMetadata;
+        return sortMetadataList(addableMetadata, dataEditor.getProcess().getRuleset());
     }
 
     /**
@@ -179,19 +177,12 @@ public class DataEditorService {
             Collection<String> additionalFields = isLogicalStructure ? dataEditor.getMetadataPanel()
                     .getLogicalMetadataTable().getAdditionallySelectedFields() : dataEditor.getMetadataPanel()
                     .getPhysicalMetadataTable().getAdditionallySelectedFields();
-            Collection<MetadataViewInterface> viewInterfaces = structureView
-                    .getAddableMetadata(existingMetadata, additionalFields);
-            for (MetadataViewInterface keyView : viewInterfaces) {
-                addableMetadata.add(
-                        new SelectItem(keyView.getId(), keyView.getLabel(),
-                                keyView instanceof SimpleMetadataViewInterface
-                                        ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
-                                        : "dataTable"));
-            }
+            addableMetadata = getAddableMetadataForStructureElement(structureView, existingMetadata,
+                    additionalFields, dataEditor.getProcess().getRuleset());
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e);
         }
-        return addableMetadata.stream().sorted(Comparator.comparing(SelectItem::getLabel)).collect(Collectors.toList());
+        return addableMetadata;
     }
 
     /**
@@ -203,6 +194,30 @@ public class DataEditorService {
     public static List<SelectItem> getAddableMetadataForStructureElement(DataEditorForm dataEditor) {
         return getAddableMetadataForStructureElement(dataEditor,
                 true, dataEditor.getMetadataPanel().getLogicalMetadataRows().getChildren(), null, true);
+    }
+
+    /**
+     * Determine and return which metadata can be added to the currently selected IncludedStructuralElement.
+     * @param structureView StructureElementViewInterface corresponding to structure element currently selected
+     * @param existingMetadata existing Metadata of the structureView
+     * @param additionalFields additionally added Metadata of the structureView
+     * @param ruleset ruleset
+     * @return List of select items representing addable metadata types
+     */
+    public static List<SelectItem> getAddableMetadataForStructureElement(StructuralElementViewInterface structureView,
+                                                                         Collection<Metadata> existingMetadata,
+                                                                         Collection<String> additionalFields, Ruleset ruleset) {
+        List<SelectItem> addableMetadata = new ArrayList<>();
+        Collection<MetadataViewInterface> viewInterfaces = structureView
+                .getAddableMetadata(existingMetadata, additionalFields);
+        for (MetadataViewInterface keyView : viewInterfaces) {
+            addableMetadata.add(
+                    new SelectItem(keyView.getId(), keyView.getLabel(),
+                            keyView instanceof SimpleMetadataViewInterface
+                                    ? ((SimpleMetadataViewInterface) keyView).getInputType().toString()
+                                    : "dataTable"));
+        }
+        return sortMetadataList(addableMetadata, ruleset);
     }
 
     /**
@@ -248,8 +263,12 @@ public class DataEditorService {
         throw new IllegalStateException();
     }
 
-    private static Collection<Metadata> getExistingMetadataRows(List<TreeNode> metadataTreeNodes)
-            throws InvalidMetadataValueException {
+    /**
+     * Get existing Metadata in metadataTreeNodes.
+     * @param metadataTreeNodes as a List of TreeNode
+     * @return the existing metadata
+     */
+    public static Collection<Metadata> getExistingMetadataRows(List<TreeNode> metadataTreeNodes) throws InvalidMetadataValueException {
         Collection<Metadata> existingMetadataRows = new ArrayList<>();
 
         for (TreeNode metadataNode : metadataTreeNodes) {
@@ -262,5 +281,18 @@ public class DataEditorService {
             }
         }
         return existingMetadataRows;
+    }
+
+    /**
+     * Sort a metadata list alphabetically if the 'orderMetadataByRuleset' parameter of the ruleset not set as true.
+     * @param itemList as a List of SelectItem
+     * @param ruleset as a Ruleset
+     * @return itemList
+     */
+    public static List<SelectItem> sortMetadataList(List<SelectItem> itemList, Ruleset ruleset) {
+        if (!(itemList.isEmpty() || ruleset.isOrderMetadataByRuleset())) {
+            itemList.sort(Comparator.comparing(SelectItem::getLabel));
+        }
+        return itemList;
     }
 }

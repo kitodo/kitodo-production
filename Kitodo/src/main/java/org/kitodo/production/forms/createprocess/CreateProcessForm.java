@@ -69,6 +69,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
     private final ProcessMetadata processMetadata = new ProcessMetadata(this);
+    private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
 
     private RulesetManagementInterface rulesetManagement;
     private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
@@ -192,6 +193,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public TitleRecordLinkTab getTitleRecordLinkTab() {
         return titleRecordLinkTab;
+    }
+
+    /**
+     * Get addMetadataDialog.
+     * @return addMetadataDialog
+     */
+    public AddMetadataDialog getAddMetadataDialog() {
+        return addMetadataDialog;
     }
 
     /**

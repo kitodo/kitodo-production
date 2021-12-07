@@ -1,0 +1,72 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+package org.kitodo.production.forms.createprocess;
+
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.production.services.dataeditor.DataEditorService;
+
+public class AddMetadataDialog {
+
+    private final CreateProcessForm createProcessForm;
+    private String selectedMetadata = "";
+    private List<SelectItem> addableMetadata;
+
+    AddMetadataDialog(CreateProcessForm createProcessForm) {
+        this.createProcessForm = createProcessForm;
+    }
+
+    /**
+     * Get selectedMetadata.
+     *
+     * @return value of selectedMetadata
+     */
+    public String getSelectedMetadata() {
+        return selectedMetadata;
+    }
+
+    /**
+     * Set selectedMetadata.
+     *
+     * @param selectedMetadata as java.lang.String
+     */
+    public void setSelectedMetadata(String selectedMetadata) {
+        this.selectedMetadata = selectedMetadata;
+        this.createProcessForm.getProcessMetadata().setAddMetadataKeySelectedItem(selectedMetadata);
+    }
+
+    /**
+     * Get addableMetadata.
+     *
+     * @return value of addableMetadata
+     */
+    public List<SelectItem> getAddableMetadata() {
+        return addableMetadata;
+    }
+
+    /**
+     * Prepare addable metadata for logical structure element.
+     * @throws InvalidMetadataValueException invalidMetadataValueException
+     */
+    public void prepareAddableMetadataForStructure() throws InvalidMetadataValueException {
+        addableMetadata = DataEditorService.getAddableMetadataForStructureElement(
+                createProcessForm.getRulesetManagement().getStructuralElementView(
+                        createProcessForm.getProcessDataTab().getDocType(),
+                        createProcessForm.getAcquisitionStage(),
+                        createProcessForm.getPriorityList()),
+                DataEditorService.getExistingMetadataRows(createProcessForm.getProcessMetadata().getLogicalMetadataTree().getChildren()),
+                createProcessForm.getProcessMetadata().getProcessDetails().getAdditionallySelectedFields(), createProcessForm.getMainProcess().getRuleset());
+    }
+}

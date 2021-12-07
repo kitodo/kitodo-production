@@ -396,12 +396,6 @@ public class AddDocStrucTypeDialog {
         }
     }
 
-    private void sortMetadataList(List<SelectItem> itemList) {
-        if (!itemList.isEmpty() && !dataEditor.getProcess().getRuleset().isOrderMetadataByRuleset()) {
-            itemList.sort(Comparator.comparing(SelectItem::getLabel));
-        }
-    }
-
     /**
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
@@ -467,7 +461,7 @@ public class AddDocStrucTypeDialog {
         for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
             docStructAddTypeSelectionItemsForChildren.add(new SelectItem(entry.getKey(), entry.getValue()));
         }
-        sortMetadataList(docStructAddTypeSelectionItemsForChildren);
+        DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForChildren, dataEditor.getProcess().getRuleset());
     }
 
     private void prepareDocStructAddTypeSelectionItemsForParent() {
@@ -484,7 +478,7 @@ public class AddDocStrucTypeDialog {
                     docStructAddTypeSelectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
-            sortMetadataList(docStructAddTypeSelectionItemsForParent);
+            DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForParent, dataEditor.getProcess().getRuleset());
         }
     }
 
@@ -496,7 +490,7 @@ public class AddDocStrucTypeDialog {
             for (Entry<String, String> entry : parentDivisionView.getAllowedSubstructuralElements().entrySet()) {
                 docStructAddTypeSelectionItemsForSiblings.add(new SelectItem(entry.getKey(), entry.getValue()));
             }
-            sortMetadataList(docStructAddTypeSelectionItemsForSiblings);
+            DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForSiblings, dataEditor.getProcess().getRuleset());
         }
     }
 
@@ -529,10 +523,9 @@ public class AddDocStrucTypeDialog {
      * @param metadataNodes list of TreeNodes containing the metadata that is already assigned to the structure element
      */
     public void prepareAddableMetadataForStructure(boolean currentElement, List<TreeNode> metadataNodes) {
-        addableMetadata = DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, currentElement,
+        DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, currentElement,
                 metadataNodes, docStructAddTypeSelectionSelectedItem, true);
         setSelectedMetadata("");
-        sortMetadataList(this.addableMetadata);
     }
 
     /**

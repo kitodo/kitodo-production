@@ -1269,8 +1269,27 @@ Import form
 
 #editForm\:processFromTemplateTabView\:metadataTable textarea,
 #editForm\:processFromTemplateTabView\:metadataTable input,
+#editForm\:processFromTemplateTabView\:metadataTable div.ui-selectonemenu,
 #editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu {
-    width: 100%;
+    background: inherit;
+    box-sizing: border-box;
+    margin-right: var(--default-half-size);
+    max-width: calc(50% - 93px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 50%;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-button:not(:last-child):not(.ui-spinner-button) {
+    border-radius: var(--default-border-radius);
+    margin-right: var(--default-half-size);
+}
+
+#editForm\:processFromTemplateTabView\:addMetadataButtonWrapper {
+    border-radius: var(--default-border-radius);
+    box-shadow: var(--second-level-shadow);
+    margin-left: 90%;
+    position: absolute;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel {
