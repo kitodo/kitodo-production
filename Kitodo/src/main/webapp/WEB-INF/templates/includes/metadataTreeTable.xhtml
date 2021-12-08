@@ -27,7 +27,6 @@
     <!--@elvariable id="root" type="org.primefaces.model.TreeNode"-->
     <!--@elvariable id="Form" type="DataEditorForm" or "CreateProcessForm"-->
     <!--@elvariable id="node" type="org.primefaces.model.TreeNode"-->
-    <p:remoteCommand name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected)" />
     <p:treeTable value="#{root}"
                  var="item"
                  nodeVar="node"
@@ -149,36 +148,37 @@
                 <!-- button to add metadata to group -->
                 <h:panelGroup title="#{Form.metadataAddableToGroup(node) ? msgs['dataEditor.addMetadata.toGroup'] : msgs['dataEditor.addMetadata.noMetadataAddableToGroup']}"
                               rendered="#{item.input eq 'dataTable' and not readOnly}"
-                              styleClass="ui-button">
+                              styleClass="metadata-button">
                     <p:commandButton id="addMetadataToGroup"
                                      action="#{Form.prepareAddableMetadataForGroup(node)}"
                                      disabled="#{not Form.metadataAddableToGroup(node)}"
                                      icon="fa fa-plus"
                                      styleClass="secondary"
-                                     update="addMetadataForm"
+                                     immediate="true"
+                                     update="addMetadataDialog"
                                      oncomplete="PF('addMetadataDialog').show()"/>
                 </h:panelGroup>
 
                 <!-- button to delete -->
-                <p:commandButton id="deleteMetadata"
-                                 update="metadataTable"
-                                 icon="fa fa-trash"
-                                 immediate="true"
-                                 tabindex="-1"
-                                 title="#{(item.getOccurrences() le 1) and (item.isRequired() || Form.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID())) ?  msgs.metadataDeleteNotAllowed : msgs.metadataDelete}"
-                                 styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                 onclick="$('#loadingScreen').show()"
-                                 oncomplete="$('#loadingScreen').hide()"
-                                 action="#{item.delete}"
-                                 rendered="#{not readOnly}"
-                                 disabled="#{(item.getOccurrences() le 1) and (item.isRequired() || Form.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID()))}"
-                />
+                <h:panelGroup styleClass="metadata-button" title="#{(item.getOccurrences() le 1) and (item.isRequired() || Form.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID())) ?  msgs.metadataDeleteNotAllowed : msgs.metadataDelete}">
+                    <p:commandButton id="deleteMetadata"
+                                     update="metadataTable"
+                                     icon="fa fa-trash"
+                                     tabindex="-1"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     onclick="$('#loadingScreen').show()"
+                                     oncomplete="$('#loadingScreen').hide()"
+                                     action="#{item.delete}"
+                                     rendered="#{not readOnly}"
+                                     disabled="#{(item.getOccurrences() le 1) and (item.isRequired() || Form.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID()))}"
+                    />
+                </h:panelGroup>
+
                 <!-- button to duplicate -->
                 <h:panelGroup title="#{Form.canBeAdded(item) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
                     <p:commandButton id="duplicateMetadata"
                                      update="metadataTable"
                                      icon="fa fa-clone"
-                                     immediate="true"
                                      tabindex="-1"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{not Form.canBeAdded(item)}"
@@ -191,4 +191,5 @@
             </span>
         </p:column>
     </p:treeTable>
+    <p:remoteCommand  name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected)"  />
 </ui:composition>

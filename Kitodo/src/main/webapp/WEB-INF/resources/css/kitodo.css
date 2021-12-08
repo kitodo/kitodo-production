@@ -1270,9 +1270,12 @@ Import form
 #editForm\:processFromTemplateTabView\:metadataTable textarea,
 #editForm\:processFromTemplateTabView\:metadataTable input,
 #editForm\:processFromTemplateTabView\:metadataTable div.ui-selectonemenu,
+#editForm\:processFromTemplateTabView\:metadataTable span.ui-spinner,
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectoneradio,
 #editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu {
     background: inherit;
     box-sizing: border-box;
+    display: inline-block;
     margin-right: var(--default-half-size);
     max-width: calc(50% - 93px);
     overflow: hidden;
@@ -1280,7 +1283,12 @@ Import form
     width: 50%;
 }
 
-#editForm\:processFromTemplateTabView\:metadataTable .ui-button:not(:last-child):not(.ui-spinner-button) {
+#editForm\:processFromTemplateTabView\:metadataTable .ui-spinner-input {
+    max-width: none;
+    width: 100%;
+}
+
+.metadata-button {
     border-radius: var(--default-border-radius);
     margin-right: var(--default-half-size);
 }
@@ -1289,7 +1297,6 @@ Import form
     border-radius: var(--default-border-radius);
     box-shadow: var(--second-level-shadow);
     margin-left: 90%;
-    position: absolute;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel {
@@ -3200,7 +3207,14 @@ footer {
 
 .basicDataTitle {
     font-weight: bold;
-    padding: var(--default-half-size) var(--default-full-size);
+    padding: .75em 3em;
+}
+
+.metadataTitle {
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
+    font-weight: bold;
+    padding: .75em 1.5em;
+    margin-bottom: unset !important;
 }
 
 #tasksTabView\:actionForm {
