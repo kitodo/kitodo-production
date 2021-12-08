@@ -23,7 +23,6 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
@@ -174,7 +173,7 @@ public class LanguageForm implements Serializable {
         setSessionLocaleFieldId();
         FacesContext context = FacesContext.getCurrentInstance();
         if (Objects.nonNull(context) && Objects.nonNull(context.getViewRoot())) {
-            Map session = context.getExternalContext().getSessionMap();
+            Map<String, Object> session = context.getExternalContext().getSessionMap();
             if (session.containsKey(SESSION_LOCALE_FIELD_ID)) {
                 Locale locale = (Locale) session.get(SESSION_LOCALE_FIELD_ID);
                 if (context.getViewRoot().getLocale() != locale) {
