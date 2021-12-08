@@ -59,7 +59,7 @@
                             outcome="workflowEdit"
                             styleClass="action"
                             title="#{msgs['view']}"
-                            rendered="#{(item.status ne 'draft') and ((SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow()))}">
+                            rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow())}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -68,7 +68,7 @@
                             outcome="workflowEdit"
                             styleClass="action"
                             title="#{msgs['edit']}"
-                            rendered="#{item.status eq 'draft' and SecurityAccessController.hasAuthorityToEditWorkflow()}">
+                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>

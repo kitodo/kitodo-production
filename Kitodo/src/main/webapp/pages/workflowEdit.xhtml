@@ -32,7 +32,7 @@
               value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title ne null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{WorkflowForm.workflow.id ne null and WorkflowForm.workflow.status eq 'DRAFT' and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
+              value="#{WorkflowForm.workflow.id ne null and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewWorkflow()}"/>
