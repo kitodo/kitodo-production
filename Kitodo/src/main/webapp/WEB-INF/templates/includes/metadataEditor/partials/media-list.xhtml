@@ -20,7 +20,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <p:outputPanel styleClass="thumbnail-parent" a:data-mime-type="#{media.mimeType}" >
-
         <c:choose>
             <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
                 <c:set var="thumbnailStyleClass"
@@ -31,14 +30,12 @@
                        value="#{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
             </c:otherwise>
         </c:choose>
-
         <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{thumbnailStyleClass}"/>
         <p:outputPanel styleClass="thumbnail-container"
                        a:data-order="#{media.order}"
                        a:data-stripe="#{uiParamStripeIndex}">
 
-            <c:choose>
-                <c:when test="#{DataEditorForm.galleryPanel.previewMimeType eq 'video/mp4'}">
+            <ui:fragment rendered="#{media.mimeType eq 'video/mp4'}">
                     <p:media styleClass="mediaListItem" id="media" cache="true"
                              value="#{DataEditorForm.galleryPanel.previewData}" player="html-video"
                              width="320" height="240" rendered="#{media.showingInPreview}">
@@ -52,28 +49,28 @@
                         <f:param name="krsc"
                                  value="true"/>
                     </p:media>
-                </c:when>
-                <c:otherwise>
-                    <h:outputText>
-                        <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                        <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
-                                        rendered="#{media.showingInPreview}">
-                            <f:param name="mediaId"
-                                     value="#{media.id}"/>
-                            <f:param name="process"
-                                     value="#{DataEditorForm.process.id}"/>
-                            <f:param name="sessionId"
-                                     value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                        </p:graphicImage>
-                    </h:outputText>
-                    <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                                  rendered="#{media.assignedSeveralTimes}"
-                                  styleClass="assigned-several-times"/>
-                    <h:panelGroup class="thumbnail-overlay">
-                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
-                    </h:panelGroup>
-                </c:otherwise>
-            </c:choose>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{media.mimeType ne 'video/mp4'}">
+                <h:outputText>
+                    <!-- only render those pages that are not assigned to a stripe (structure) here! -->
+                    <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
+                                    rendered="#{media.showingInPreview}">
+                        <f:param name="mediaId"
+                                 value="#{media.id}"/>
+                        <f:param name="process"
+                                 value="#{DataEditorForm.process.id}"/>
+                        <f:param name="sessionId"
+                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    </p:graphicImage>
+                </h:outputText>
+                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                              rendered="#{media.assignedSeveralTimes}"
+                              styleClass="assigned-several-times"/>
+                <h:panelGroup class="thumbnail-overlay">
+                    #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                </h:panelGroup>
+            </ui:fragment>
 
         </p:outputPanel>
     </p:outputPanel>

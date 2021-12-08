@@ -12,13 +12,11 @@
 -->
 
 <ui:composition
-        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <c:choose>
-        <c:when test="#{DataEditorForm.galleryPanel.previewMimeType eq 'video/mp4'}">
+    <ui:fragment rendered="#{media.mimeType eq 'video/mp4'}">
             <ui:param name="selectedGalleryMediaContent" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}" />
             <p:media styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.previewData}" player="html-video"
                      width="500px" height="auto" rendered="#{selectedGalleryMediaContent != null}">
@@ -32,13 +30,13 @@
                 <f:param name="krsc"
                          value="true"/>
             </p:media>
-        </c:when>
-        <c:otherwise>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{media.mimeType ne 'video/mp4'}">
             <p:graphicImage id="mediaPreviewGraphicImage" styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
             <div id="map" class="map" style="width: 100%; height: 100%;">
                 <i class="fa fa-spinner fa-spin"/>
             </div>
-        </c:otherwise>
-    </c:choose>
+    </ui:fragment>
 
 </ui:composition>
