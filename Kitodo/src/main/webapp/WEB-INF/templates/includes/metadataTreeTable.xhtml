@@ -32,6 +32,10 @@
                      actionListener="#{DataEditorForm.metadataPanel.update}"
                      update="@(.ui-tree, .stripe.selected) metadataTable" />
 
+    <p:remoteCommand name="updateProcessMetadata"
+                     actionListener="#{CreateProcessForm.processMetadata.update}"
+                     update="metadataTable" />
+
     <p:treeTable value="#{root}"
                  var="item"
                  nodeVar="node"
@@ -53,7 +57,11 @@
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
+<<<<<<< HEAD
                         <p:ajax event="blur" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:inputText>
                 </h:panelGroup>
 
@@ -66,7 +74,11 @@
                                      disabled="#{not item.editable or readOnly}"
                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
+<<<<<<< HEAD
                         <p:ajax event="blur" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:inputTextarea>
                 </h:panelGroup>
 
@@ -78,7 +90,11 @@
                                disabled="#{not item.editable or readOnly}"
                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
+<<<<<<< HEAD
                         <p:ajax event="blur" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:spinner>
                 </h:panelGroup>
 
@@ -91,7 +107,11 @@
                                 showOn="button"
                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                 disabled="#{not item.editable or readOnly}">
+<<<<<<< HEAD
                         <p:ajax event="dateSelect" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax event="dateSelect" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:calendar>
                 </h:panelGroup>
 
@@ -104,7 +124,11 @@
                                       disabled="#{not item.editable or readOnly}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
+<<<<<<< HEAD
                         <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:selectManyMenu>
                 </h:panelGroup>
 
@@ -122,7 +146,11 @@
                                       itemLabel="#{msgs.notSelected}"
                                       noSelectionOption="true"/>
                         <f:selectItems value="#{item.items}"/>
+<<<<<<< HEAD
                         <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:selectOneMenu>
                 </h:panelGroup>
 
@@ -136,7 +164,11 @@
                                       layout="grid"
                                       columns="1">
                         <f:selectItems value="#{item.items}"/>
+<<<<<<< HEAD
                         <p:ajax oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:selectOneRadio>
                 </h:panelGroup>
 
@@ -146,7 +178,11 @@
                     <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                              disabled="#{not item.editable or readOnly}"
                                              value="#{item.active}">
+<<<<<<< HEAD
                         <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
+=======
+                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : 'updateProcessMetadata();'}"/>
+>>>>>>> fd9632418 (Update address picker in process creation, too)
                     </p:selectBooleanCheckbox>
                 </h:panelGroup>
 

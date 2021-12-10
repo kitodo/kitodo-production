@@ -124,6 +124,7 @@ public class ProcessMetadata {
         }
     }
 
+<<<<<<< HEAD
     /**
      * Check and return whether any further metadata can be added to the currently selected structure element or not.
      *
@@ -148,6 +149,13 @@ public class ProcessMetadata {
             }
         } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
+=======
+    public void update() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        LogicalDivision logicalDivision = (LogicalDivision) processDetails.getDivision();
+        if (Objects.nonNull(logicalDivision)) {
+            processDetails.preserve();
+            processDetails = initializeProcessDetails(logicalDivision);
+>>>>>>> fd9632418 (Update address picker in process creation, too)
         }
     }
 }
