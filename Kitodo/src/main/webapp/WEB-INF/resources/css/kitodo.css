@@ -1309,6 +1309,10 @@ Import form
     width: calc(100% - var(--default-double-size));
 }
 
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield {
+    width: calc(50% - var(--default-double-size) - 93px);
+}
+
 #progressDialog {
     overflow-y: hidden;
     padding: var(--default-full-size);
