@@ -88,4 +88,9 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
     public boolean isRequired() {
         return Objects.nonNull(settings) && settings.getMinOccurs() > 0;
     }
+
+    @Override
+    public int getMinOcc() {
+        return settings.getMinOccurs();
+    }
 }

@@ -56,6 +56,7 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
@@ -65,7 +66,7 @@ import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
 @SessionScoped
-public class DataEditorForm implements RulesetSetupInterface, Serializable {
+public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupInterface, Serializable {
 
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
 
@@ -854,6 +855,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         else {
             return true;
         }
+    }
+
+    @Override
+    public boolean canBeDeleted(ProcessDetail processDetail) {
+        return processDetail.getMinOcc() > 0 && (processDetail.getOccurrences() > processDetail.getMinOcc())
+                || (!processDetail.isRequired() && !this.ruleset.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 
     /**

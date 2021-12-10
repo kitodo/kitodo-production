@@ -160,7 +160,7 @@
                 </h:panelGroup>
 
                 <!-- button to delete -->
-                <h:panelGroup styleClass="metadata-button" title="#{(item.getOccurrences() le 1) and (item.isRequired() || Form.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID())) ?  msgs.metadataDeleteNotAllowed : msgs.metadataDelete}">
+                <h:panelGroup styleClass="metadata-button" title="#{Form.canBeDeleted(item) ? msgs.metadataDelete :  msgs.metadataDeleteNotAllowed}">
                     <p:commandButton id="deleteMetadata"
                                      update="metadataTable"
                                      icon="fa fa-trash"
@@ -170,7 +170,7 @@
                                      oncomplete="$('#loadingScreen').hide()"
                                      action="#{item.delete}"
                                      rendered="#{not readOnly}"
-                                     disabled="#{(item.getOccurrences() le 1) and (item.isRequired() || Form.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID()))}"
+                                     disabled="#{!Form.canBeDeleted(item)}"
                     />
                 </h:panelGroup>
 

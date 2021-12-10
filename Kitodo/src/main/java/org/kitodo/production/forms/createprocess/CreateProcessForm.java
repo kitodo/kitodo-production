@@ -48,6 +48,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
@@ -61,7 +62,7 @@ import org.primefaces.model.TreeNode;
 
 @Named("CreateProcessForm")
 @ViewScoped
-public class CreateProcessForm extends BaseForm implements RulesetSetupInterface {
+public class CreateProcessForm extends BaseForm implements MetadataTreeTableInterface, RulesetSetupInterface {
 
     private static final Logger logger = LogManager.getLogger(CreateProcessForm.class);
 
@@ -603,7 +604,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      * @param processDetail ProcessDetail to be added
      * @return whether the given ProcessDetail can be added or not
      */
-    public boolean canBeAdded(ProcessDetail processDetail) throws InvalidMetadataValueException {
+    public boolean canBeAdded(ProcessDetail processDetail) {
         List<SelectItem> addableMetadata = addMetadataDialog.getAddableMetadata();
         if (Objects.nonNull(addableMetadata)) {
             return addableMetadata.stream()
@@ -612,6 +613,12 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         else {
             return true;
         }
+    }
+
+    @Override
+    public boolean canBeDeleted(ProcessDetail processDetail) {
+        return processDetail.getMinOcc() > 0 && (processDetail.getOccurrences() > processDetail.getMinOcc())
+                || (!processDetail.isRequired() && !this.rulesetManagement.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 
     /**

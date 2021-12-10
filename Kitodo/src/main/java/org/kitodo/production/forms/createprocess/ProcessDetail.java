@@ -18,10 +18,6 @@ import java.util.EnumMap;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
@@ -156,4 +152,5 @@ public abstract class ProcessDetail implements Serializable {
     public int getOccurrences() {
         return container.getOccurrences(this.getMetadataID());
     }
+    public abstract int getMinOcc();
 }
