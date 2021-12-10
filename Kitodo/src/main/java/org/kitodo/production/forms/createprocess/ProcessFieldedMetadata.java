@@ -437,13 +437,18 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     @Override
     public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+        return getMetadata(true);
+    }
+
+    @Override
+    public Collection<Metadata> getMetadata(boolean skipEmpty) {
         assert division == null;
         MetadataGroup result = new MetadataGroup();
         result.setKey(metadataKey);
         result.setDomain(DOMAIN_TO_MDSEC.get(metadataView.getDomain().orElse(Domain.DESCRIPTION)));
         try {
             this.preserve();
-        } catch (NoSuchMetadataFieldException e) {
+        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
             throw new IllegalStateException("never happening exception");
         }
         result.setGroup(metadata instanceof List ? metadata : new ArrayList<>(metadata));
@@ -553,12 +558,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @param toDelete
      *            process detail to delete
      */
-    public void remove(ProcessDetail toDelete) {
+    public void remove(ProcessDetail toDelete) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         Iterator<TreeNode> treeNodesIterator = treeNode.getChildren().iterator();
         while (treeNodesIterator.hasNext()) {
             TreeNode treeNode = treeNodesIterator.next();
             if (treeNode.getData().equals(toDelete)) {
                 treeNodesIterator.remove();
+                preserve();
                 break;
             }
         }
@@ -611,5 +617,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
         }
         return occ;
+    }
+
+    @Override
+    public int getMinOcc() {
+        return metadataView.getMinOccurs();
     }
 }

@@ -66,14 +66,15 @@ public abstract class ProcessDetail implements Serializable {
     /**
      * This method is triggered when the user clicks the copy metadata button.
      */
-    public void copy() throws IOException {
+    public void copy() throws IOException, InvalidMetadataValueException, NoSuchMetadataFieldException {
         container.copy(this);
+        container.preserve();
     }
 
     /**
      * This method is triggered when the user clicks the delete metadata button.
      */
-    public void delete() throws IOException {
+    public void delete() throws IOException, InvalidMetadataValueException, NoSuchMetadataFieldException {
         container.remove(this);
     }
 
@@ -108,6 +109,8 @@ public abstract class ProcessDetail implements Serializable {
      *             if the metadata form contains syntactically wrong input
      */
     public abstract Collection<Metadata> getMetadata() throws InvalidMetadataValueException;
+    
+    public abstract Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException;
 
     /**
      * If the metadata entry addresses a property of the structure, returns a
@@ -152,5 +155,10 @@ public abstract class ProcessDetail implements Serializable {
     public int getOccurrences() {
         return container.getOccurrences(this.getMetadataID());
     }
+
+    public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        container.preserve();
+    }
+
     public abstract int getMinOcc();
 }

@@ -72,15 +72,20 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
 
     @Override
     public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+        return getMetadata(true);
+    }
+
+    @Override
+    public Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException {
         if (!isValid()) {
             throw new InvalidMetadataValueException(label, settings.convertBoolean(active).orElse(""));
         }
         Optional<String> value = settings.convertBoolean(active);
-        if (value.isPresent()) {
+        if (!skipEmpty || value.isPresent()) {
             MetadataEntry entry = new MetadataEntry();
             entry.setKey(settings.getId());
             entry.setDomain(DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION)));
-            entry.setValue(value.get());
+            entry.setValue(value.isPresent() ? value.get() : "");
             return Collections.singletonList(entry);
         } else {
             return Collections.emptyList();

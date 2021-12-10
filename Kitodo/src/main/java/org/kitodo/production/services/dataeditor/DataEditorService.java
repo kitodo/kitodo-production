@@ -274,7 +274,7 @@ public class DataEditorService {
         for (TreeNode metadataNode : metadataTreeNodes) {
             if (metadataNode.getData() instanceof ProcessDetail) {
                 try {
-                    existingMetadataRows.addAll(((ProcessDetail) metadataNode.getData()).getMetadata());
+                    existingMetadataRows.addAll(((ProcessDetail) metadataNode.getData()).getMetadata(false));
                 } catch (NullPointerException e) {
                     logger.error(e);
                 }

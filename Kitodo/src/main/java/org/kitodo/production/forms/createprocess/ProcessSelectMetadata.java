@@ -113,6 +113,11 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
 
     @Override
     public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+        return getMetadata(true);
+    }
+
+    @Override
+    public Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException {
         int items = selectedItems.size();
         Collection<Metadata> metadata = new HashSet<>((int) Math.ceil(items / .75));
         String key = settings.getId();
@@ -120,6 +125,9 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
         for (String selectedItem : selectedItems) {
             if (!settings.isValid(selectedItem)) {
                 throw new InvalidMetadataValueException(label, selectedItem);
+            }
+            if (skipEmpty && selectedItem.isEmpty()) {
+                continue;
             }
             MetadataEntry entry = new MetadataEntry();
             entry.setKey(key);
