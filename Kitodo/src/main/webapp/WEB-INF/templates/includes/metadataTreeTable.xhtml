@@ -131,7 +131,7 @@
                                       layout="grid"
                                       columns="1">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:selectOneRadio>
                 </h:panelGroup>
 
