@@ -65,10 +65,10 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
 
     private final CatalogImportDialog catalogImportDialog = new CatalogImportDialog(this);
     private final FileUploadDialog fileUploadDialog = new FileUploadDialog(this);
+    private final SearchDialog searchDialog = new SearchDialog(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
-    private final ProcessMetadataTab processMetadataTab = new ProcessMetadataTab(this);
-    private final SearchTab searchTab = new SearchTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
+    private final ProcessMetadata processMetadata = new ProcessMetadata(this);
 
     private RulesetManagementInterface rulesetManagement;
     private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
@@ -82,8 +82,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private String referringView = "";
     private int progress;
 
-    static final int ADDITIONAL_FIELDS_TAB_INDEX = 1;
-    static final int TITLE_RECORD_LINK_TAB_INDEX = 3;
+    static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
 
     /**
      * Returns the ruleset management to access the ruleset.
@@ -169,21 +168,21 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     }
 
     /**
-     * Get processMetadataTab.
+     * Get processMetadata.
      *
-     * @return value of processMetadataTab
+     * @return value of processMetadata
      */
-    public ProcessMetadataTab getProcessMetadataTab() {
-        return processMetadataTab;
+    public ProcessMetadata getProcessMetadata() {
+        return processMetadata;
     }
 
     /**
-     * Get searchTab.
+     * Get searchDialog.
      *
-     * @return value of searchTab
+     * @return value of searchDialog
      */
-    public SearchTab getSearchTab() {
-        return searchTab;
+    public SearchDialog getSearchDialog() {
+        return searchDialog;
     }
 
     /**
@@ -485,14 +484,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
                 ProcessService.setParentRelations(this.processes.get(index + 1).getProcess(), process);
             }
             if (index == 0) {
-                List<ProcessDetail> processDetails = processMetadataTab.getProcessDetailsElements();
+                List<ProcessDetail> processDetails = processMetadata.getProcessDetailsElements();
                 process.setSortHelperImages(processDataTab.getGuessedImages());
                 // FIXME: this always triggers 'processTitleAlreadyInUse' now, because the process has already been saved
                 //  with this title in ImportService.processProcessChildren (line 884)!
                 if (!ProcessValidator.isContentValid(process.getTitle(), processDetails, true)) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid process content!");
                 }
-                processMetadataTab.preserve();
+                processMetadata.preserve();
                 ImportService.addProperties(process, template, processDetails, processDataTab.getDocType(),
                         processDataTab.getTiffHeaderImageDescription());
                 ImportService.updateTasks(process);
@@ -516,7 +515,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
         // save ancestor processes meta.xml files
         for (TempProcess tempProcess : this.processes) {
             if (this.processes.indexOf(tempProcess) == 0) {
-                processMetadataTab.preserve();
+                processMetadata.preserve();
             }
             saveTempProcessMetadata(tempProcess);
         }
@@ -567,7 +566,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
             processGenerator.generateProcess(template.getId(), project.getId());
             this.processes = new LinkedList<>(Collections.singletonList(
                     new TempProcess(processGenerator.getGeneratedProcess(), new Workpiece())));
-            this.processMetadataTab.initializeProcessDetails(getProcesses().get(0).getWorkpiece().getLogicalStructure());
+            this.processMetadata.initializeProcessDetails(getProcesses().get(0).getWorkpiece().getLogicalStructure());
         } catch (ProcessGenerationException e) {
             logger.error(e.getLocalizedMessage());
         }

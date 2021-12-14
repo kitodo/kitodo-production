@@ -140,13 +140,11 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
-        switchToTabByIndex(1);
         titleInput.sendKeys("TestProcess");
         titleSortInput.sendKeys("TestProcess");
         ppnAnalogInput.sendKeys("12345");
         ppnDigitalInput.sendKeys("12345");
 
-        switchToTabByIndex(0);
         guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
@@ -173,19 +171,17 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
-        switchToTabByIndex(1);
         titleInput.sendKeys("TestProcessChild");
         titleSortInput.sendKeys("TestProcessChild");
         ppnAnalogInput.sendKeys("123456");
         ppnDigitalInput.sendKeys("123456");
 
-        switchToTabByIndex(0);
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
         final String generatedTitle = processTitleInput.getAttribute("value");
 
-        switchToTabByIndex(3);
+        switchToTabByIndex(1);
         searchForParentInput.sendKeys(parentProcessTitle);
         searchParentButton.click();
         await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
@@ -213,18 +209,16 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
-        switchToTabByIndex(1);
         titleInput.sendKeys("TestProcessChildNotPossible");
         titleSortInput.sendKeys("TestProcessChildNotPossible");
         ppnAnalogInput.sendKeys("1234567");
         ppnDigitalInput.sendKeys("1234567");
 
-        switchToTabByIndex(0);
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
 
-        switchToTabByIndex(3);
+        switchToTabByIndex(1);
         searchForParentInput.sendKeys("Second");
         searchParentButton.click();
         await("Wait for search").pollDelay(500, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
@@ -255,7 +249,6 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         titleSortInput.sendKeys("Test");
         ppnAnalogInput.sendKeys("12345");
 
-        switchToTabByIndex(1);
         guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)

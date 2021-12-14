@@ -21,14 +21,14 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.services.data.ImportService;
 import org.primefaces.model.TreeNode;
 
-public class ProcessMetadataTab {
-    private static final Logger logger = LogManager.getLogger(ProcessMetadataTab.class);
+public class ProcessMetadata {
+    private static final Logger logger = LogManager.getLogger(ProcessMetadata.class);
 
     private final CreateProcessForm createProcessForm;
 
     private ProcessFieldedMetadata processDetails = ProcessFieldedMetadata.EMPTY;
 
-    public ProcessMetadataTab(CreateProcessForm createProcessForm) {
+    public ProcessMetadata(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 

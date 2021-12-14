@@ -71,11 +71,11 @@ public class ProcessDataTab {
         if (!this.createProcessForm.getProcesses().isEmpty()) {
             this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure().setType(this.docType);
             if (this.docType.isEmpty()) {
-                this.createProcessForm.getProcessMetadataTab().setProcessDetails(ProcessFieldedMetadata.EMPTY);
+                this.createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
-                ProcessFieldedMetadata metadata = this.createProcessForm.getProcessMetadataTab()
+                ProcessFieldedMetadata metadata = this.createProcessForm.getProcessMetadata()
                         .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure());
-                this.createProcessForm.getProcessMetadataTab().setProcessDetails(metadata);
+                this.createProcessForm.getProcessMetadata().setProcessDetails(metadata);
             }
         }
     }
@@ -197,7 +197,7 @@ public class ProcessDataTab {
      * Generate process titles and other details.
      */
     public void generateProcessTitleAndTiffHeader() {
-        List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements();
+        List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadata().getProcessDetailsElements();
         Process process = this.createProcessForm.getMainProcess();
         try {
             StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement().getStructuralElementView(

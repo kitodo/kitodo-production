@@ -192,6 +192,7 @@ input.ui-state-error {
 
 .ui-button.secondary,
 .ui-widget-content .ui-button.secondary,
+.ui-menubutton.secondary > button,
 .ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label {
     background: var(--pure-white);
     border: solid var(--default-border-width) var(--light-blue);
@@ -199,11 +200,13 @@ input.ui-state-error {
 }
 
 .ui-button.secondary .ui-icon,
+ui-menubutton.secondary .ui-icon,
 .ui-widget-content .ui-button.secondary .ui-icon {
     color: var(--light-blue);
 }
 
 .ui-button.secondary.ui-state-hover,
+.ui-menubutton.secondary > button.ui-state-hover,
 .ui-widget-content .ui-button.secondary.ui-state-hover {
     background: var(--pure-white);
     border: solid var(--default-border-width) var(--focused-blue);

@@ -11,8 +11,6 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,14 +30,14 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
-public class SearchTab {
+public class SearchDialog {
 
-    private static final Logger logger = LogManager.getLogger(SearchTab.class);
+    private static final Logger logger = LogManager.getLogger(SearchDialog.class);
 
     private final CreateProcessForm createProcessForm;
     private Process originalProcess;
 
-    SearchTab(CreateProcessForm createProcessForm) {
+    SearchDialog(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 
@@ -96,8 +94,7 @@ public class SearchTab {
             if (Objects.nonNull(originalProcess.getParent())) {
                 this.createProcessForm.getTitleRecordLinkTab().setParentAsTitleRecord(originalProcess.getParent());
             }
-            this.createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(root.getMetadata());
-            this.createProcessForm.setEditActiveTabIndex(CreateProcessForm.ADDITIONAL_FIELDS_TAB_INDEX);
+            this.createProcessForm.getProcessMetadata().getProcessDetails().setMetadata(root.getMetadata());
         } catch (IOException e) {
             Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {"template-metadata" }, logger, e);
         }

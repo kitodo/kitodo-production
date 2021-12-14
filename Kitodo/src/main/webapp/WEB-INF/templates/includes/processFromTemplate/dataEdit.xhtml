@@ -18,6 +18,9 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
+    <div class="basicDataTitle">
+        <h:outputText value="#{msgs.basicData}"/>
+    </div>
     <p:panelGrid id="processDataEditGrid" layout="grid" columns="2">
         <p:row>
             <div>
@@ -102,5 +105,15 @@
             </div>
         </p:row>
 
+    </p:panelGrid>
+    <div class="ot-folder-use">
+        <h:outputText value="#{msgs.metadata}"/>
+    </div>
+
+    <p:panelGrid id="processMetadata" layout="grid" columns="1">
+        <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
+            <ui:param name="root" value="#{CreateProcessForm.processMetadata.logicalMetadataTree}"/>
+            <ui:param name="readOnly" value="#{false}"/>
+        </ui:include>
     </p:panelGrid>
 </ui:composition>

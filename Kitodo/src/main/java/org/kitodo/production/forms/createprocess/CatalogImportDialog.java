@@ -250,7 +250,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     public void setSelectedExemplarRecord(ExemplarRecord selectedExemplarRecord) {
         try {
             ImportService.setSelectedExemplarRecord(selectedExemplarRecord, this.hitModel.getSelectedCatalog(),
-                    this.createProcessForm.getProcessMetadataTab().getProcessDetailsElements());
+                    this.createProcessForm.getProcessMetadata().getProcessDetailsElements());
             String summary = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedDetail",
                 selectedExemplarRecord.getOwner(), selectedExemplarRecord.getSignature());
