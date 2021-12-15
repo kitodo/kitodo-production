@@ -77,11 +77,10 @@ public class FileUploadDialog extends MetadataImportDialog {
             String parentID = importService.getParentID(internalDocument, this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                     FunctionalMetadata.HIGHERLEVEL_IDENTIFIER).toArray()[0].toString());
             if (Objects.nonNull(parentID)) {
-                TempProcess parentTempProcess = importService.checkForParent(parentID,
+                importService.checkForParent(parentID,
                     createProcessForm.getTemplate().getRuleset().getId(), createProcessForm.getProject().getId());
-                importService.setParentTempProcess(parentTempProcess);
-                if (Objects.isNull(parentTempProcess)) {
-                    parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
+                if (Objects.isNull(importService.getParentTempProcess())) {
+                    TempProcess parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
                     if (Objects.nonNull(parentTempProcess)) {
                         processes.add(parentTempProcess);
                     }
@@ -89,7 +88,9 @@ public class FileUploadDialog extends MetadataImportDialog {
             }
             fillCreateProcessForm(processes);
             showRecord();
-        } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException | TransformerException | DAOException e) {
+        } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
+                | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException
+                | TransformerException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }

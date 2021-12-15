@@ -365,6 +365,11 @@ public class ImportService {
         return "";
     }
 
+    /**
+     * Get the parent ID from the document.
+     * @param document
+     * @return
+     */
     public String getParentID(Document document) throws XPathExpressionException {
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
@@ -541,11 +546,18 @@ public class ImportService {
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
         if (Objects.nonNull(parentID) && level == importDepth) {
-            this.parentTempProcess = checkForParent(parentID, template.getRuleset().getId(), projectId);
+            checkForParent(parentID, template.getRuleset().getId(), projectId);
         }
     }
 
-    public TempProcess checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
+    /**
+     * Check if there already is a parent process in Database.
+     * @param parentID
+     * @param rulesetID
+     * @param projectID
+     * @return The Process from the database as a TempProcess
+     */
+    public void checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
             ProcessGenerationException {
         HashMap<String, String> parentIDMetadata = new HashMap<>();
         parentIDMetadata.put(identifierMetadata, parentID);
@@ -554,9 +566,9 @@ public class ImportService {
             logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
             Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
-            return new TempProcess(parentProcess, parentWorkpiece);
+            this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
         }
-        return null;
+        this.parentTempProcess = null;
     }
 
     private List<DataRecord> searchChildRecords(String opac, String parentId, int numberOfRows) {
@@ -910,11 +922,7 @@ public class ImportService {
         return parentTempProcess;
     }
 
-    public TempProcess setParentTempProcess(TempProcess parentTempProcess) {
-        return this.parentTempProcess = parentTempProcess;
-    }
-
-    public Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
+    private Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
             throws ProcessGenerationException, DAOException {
         Process parentProcess = null;
         try {
