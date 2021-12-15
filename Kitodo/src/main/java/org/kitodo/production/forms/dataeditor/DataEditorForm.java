@@ -823,10 +823,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return 'title' value of the LogicalDivision contained in the given StructureTreeNode 'treeNode'
      */
     public String getStructureElementTitle(Object dataObject) {
+        String structureElementTitle = "";
         if (dataObject instanceof LogicalDivision) {
-            return DataEditorService.getTitleValue((LogicalDivision) dataObject, structurePanel.getTitleMetadata());
+            String metadataTitleKey = structurePanel.getTitleMetadata();
+            if (structurePanel.getTitleMetadata().startsWith("type-")) {
+                metadataTitleKey = metadataTitleKey.replaceFirst("type-", "");
+                structureElementTitle = " - ";
+            }
+            return structureElementTitle.concat(DataEditorService.getTitleValue((LogicalDivision) dataObject, metadataTitleKey));
         }
-        return "";
+        return structureElementTitle;
     }
 
     /**

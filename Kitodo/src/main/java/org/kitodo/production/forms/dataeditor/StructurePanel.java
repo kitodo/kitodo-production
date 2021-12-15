@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -144,6 +145,7 @@ public class StructurePanel implements Serializable {
         structure = null;
         subfoldersCache = new HashMap<>();
         severalAssignments = new LinkedList<>();
+        titleMetadata = "type";
     }
 
     void deleteSelectedStructure() {
@@ -1648,11 +1650,19 @@ public class StructurePanel implements Serializable {
      * @return list of title metadata keys
      */
     public List<SelectItem> getTitleMetadataItems() {
-        return DataEditorService.getTitleKeys()
+        List<SelectItem> titleKeys = DataEditorService.getTitleKeys()
                 .stream()
-                .map(key -> new SelectItem(key,dataEditor.getRulesetManagement().getTranslationForKey(
-                        key,dataEditor.getPriorityList()).orElse(key)))
+                .map(key -> Arrays.asList(
+                        new SelectItem(key, dataEditor.getRulesetManagement().getTranslationForKey(
+                                key, dataEditor.getPriorityList()).orElse(key)),
+                        new SelectItem("type-" + key,
+                                Helper.getTranslation("typ") + "-" + dataEditor.getRulesetManagement().getTranslationForKey(
+                                        key, dataEditor.getPriorityList()).orElse(key))))
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
+        titleKeys.add(new SelectItem("type", Helper.getTranslation("typ")));
+        titleKeys.sort(Comparator.comparing(SelectItem::getLabel));
+        return titleKeys;
     }
 
 }
