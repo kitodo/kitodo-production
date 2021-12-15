@@ -12,6 +12,10 @@
 package org.kitodo.production.forms;
 
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,12 +28,19 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -46,6 +57,7 @@ import org.kitodo.production.helper.tasks.MigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
+import org.kitodo.production.security.AESUtil;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
 import org.kitodo.production.workflow.model.Converter;
@@ -71,6 +83,7 @@ public class MigrationForm extends BaseForm {
     private boolean newspaperMigrationRendered = false;
     private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
     private List<Batch> newspaperBatchesItems;
+    private boolean ldapManagerPasswordsMigrationRendered = false;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -533,5 +546,75 @@ public class MigrationForm extends BaseForm {
      */
     public void hideNewspaperMigration() {
         newspaperMigrationRendered = false;
+    }
+
+    /**
+     * Action performed when the migrateLdapManagerPasswords button is clicked.
+     */
+    public void showLdapManagerPasswordsMigration() {
+        ldapManagerPasswordsMigrationRendered = true;
+    }
+
+    /**
+     * Returns whether the ldapManagerPasswordsMigration panel group is rendered.
+     *
+     * @return whether the ldapManagerPasswordsMigration panel group is rendered
+     */
+    public boolean isLdapManagerPasswordsMigrationRendered() {
+        return ldapManagerPasswordsMigrationRendered;
+    }
+
+    /**
+     * Action performed when the startLdapManagerPasswordsMigration button is
+     * clicked.
+     */
+    public void startLdapManagerPasswordsMigration() {
+
+        String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
+
+        if (StringUtils.isBlank(securitySecret)) {
+            Helper.setErrorMessage(
+                "The security.secret.ldapManagerPassword parameter was not configured in kitodo_config.properties file.");
+            return;
+        }
+
+        List<LdapServer> ldapServers = getLdapServers();
+        ldapServers.parallelStream().forEach(ldapServer -> {
+            String managerPassword = ldapServer.getManagerPassword();
+            if (StringUtils.isNotBlank(managerPassword) && !AESUtil.isEncrypted(managerPassword)) {
+                try {
+                    ldapServer.setManagerPassword(AESUtil.encrypt(managerPassword, securitySecret));
+                    ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
+                } catch (DAOException | NoSuchPaddingException | NoSuchAlgorithmException
+                        | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
+                        | IllegalBlockSizeException | InvalidKeySpecException e) {
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                }
+            }
+        });
+
+        Helper.setMessage("All uncrypted LDAP Manager passwords were successfully encrypted.");
+    }
+
+    /**
+     * Action performed when the cancelLdapManagerPasswordMigration button is
+     * clicked.
+     */
+    public void hideLdapManagerPasswordsMigrationRendered() {
+        ldapManagerPasswordsMigrationRendered = false;
+    }
+
+    /**
+     * Gets all ldap servers.
+     *
+     * @return list of LdapServer objects.
+     */
+    public List<LdapServer> getLdapServers() {
+        try {
+            return ServiceManager.getLdapServerService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapServers") }, logger, e);
+            return new ArrayList<>();
+        }
     }
 }

@@ -602,9 +602,19 @@ public enum ParameterCore implements ParameterInterface {
     /*
      * Elasticsearch properties
      */
-
     ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500)),
-    ELASTICSEARCH_INDEXLIMIT(new Parameter<>("elasticsearch.indexLimit", 5000));
+    ELASTICSEARCH_INDEXLIMIT(new Parameter<>("elasticsearch.indexLimit", 5000)),
+
+    /*
+     * Security properties
+     */
+
+    /*
+     * Secret is used to encrypt or decrypt LDAP manager passwords which are stored in the database in encrypted form.
+     * Once the secret value is set, it should not be changed since encrypted data can no longer be decrypted.
+     */
+    SECURITY_SECRET_LDAPMANAGERPASSWORD(new Parameter<>("security.secret.ldapManagerPassword", ""));
+
 
     private final Parameter<?> parameter;
 
