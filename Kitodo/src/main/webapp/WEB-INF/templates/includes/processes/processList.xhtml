@@ -46,10 +46,10 @@
             <p:column styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
 
             <p:column styleClass="hierarchy-info">
-                <p:rowToggler rendered="#{process.getParentID() ne 0 or process.hasChildren() or ProcessForm.getCurrentTasksForUser(process).size() gt 0}"/>
-                <h:outputText rendered="#{process.getParentID() ne 0 and not process.hasChildren()}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
-                <h:outputText rendered="#{process.getParentID() eq 0 and process.hasChildren()}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
-                <h:outputText rendered="#{process.getParentID() ne 0 and process.hasChildren()}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
+                <p:rowToggler rendered="#{process.getParentID() ne 0 or process.parenthood or ProcessForm.getCurrentTasksForUser(process).size() gt 0}"/>
+                <h:outputText rendered="#{process.getParentID() ne 0 and not process.parenthood}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
+                <h:outputText rendered="#{process.getParentID() eq 0 and process.parenthood}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
+                <h:outputText rendered="#{process.getParentID() ne 0 and process.parenthood}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
             </p:column>
             <p:column id="idColumn"
                       width="50"
@@ -176,11 +176,11 @@
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalChildren}:"/>
                             <h:panelGroup>
-                                <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())} " rendered="#{process.hasChildren()}"/>
+                                <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())} " rendered="#{process.parenthood}"/>
                                 <p:commandLink value="#{msgs.show}"
                                                action="#{ProcessForm.changeFilter('parentprocessid:'.concat(process.getId()))}"
-                                               rendered="#{process.hasChildren()}"/>
-                                <h:outputText value=" #{msgs.none}" rendered="#{not process.hasChildren()}"/>
+                                               rendered="#{process.parenthood}"/>
+                                <h:outputText value=" #{msgs.none}" rendered="#{not process.parenthood}"/>
                             </h:panelGroup>
                         </p:panelGrid>
                     </p:panelGrid>

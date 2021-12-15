@@ -32,7 +32,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     private String processBaseUri;
     private String batchID;
     private Integer parentID;
-    private boolean hasChildren;
+    private boolean parenthood;
     private Integer sortHelperArticles;
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
@@ -270,21 +270,23 @@ public class ProcessDTO extends BaseTemplateDTO {
     }
 
     /**
-     * Get hasChildren.
+     * Returns whether the process is a parent.
      *
-     * @return value of hasChildren
+     * @return whether the process is a parent
      */
-    public boolean hasChildren() {
-        return hasChildren;
+    public boolean isParenthood() {
+        return parenthood;
     }
 
     /**
-     * Set hasChildren.
+     * Set whether the process is a parent. A Parenthood exists when the process
+     * has children.
      *
-     * @param hasChildren as boolean
+     * @param parenthood
+     *            whether the process is a parent
      */
-    public void setHasChildren(boolean hasChildren) {
-        this.hasChildren = hasChildren;
+    public void setParenthood(boolean parenthood) {
+        this.parenthood = parenthood;
     }
 
     /**
