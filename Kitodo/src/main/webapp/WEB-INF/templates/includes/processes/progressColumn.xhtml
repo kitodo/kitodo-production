@@ -19,7 +19,7 @@
     <h:panelGroup
             class="process-progress"
             title="#{ProcessForm.getCurrentTaskTitles(process)}"
-            rendered="#{not empty process.tasks}"
+            rendered="#{not empty process.tasks or process.hasChildren()}"
             style="
                 background-image: linear-gradient(
                     to right,
