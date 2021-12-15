@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,15 +47,20 @@ import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
-    private boolean exportWithImages = true;
-    private final FileService fileService = ServiceManager.getFileService();
+    private static final String COMPLETED = "100000000000";
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
+
+    private final FileService fileService = ServiceManager.getFileService();
+    private final ProcessService processService = ServiceManager.getProcessService();
+
+    private boolean exportWithImages = true;
 
     public ExportDms() {
     }
@@ -87,11 +93,16 @@ public class ExportDms extends ExportMets {
      */
     @Override
     public boolean startExport(Process process) throws DataException {
+        if (!exportCompletedChildren(process.getChildren())) {
+            return false;
+        }
+
         boolean wasNotAlreadyExported = !process.isExported();
         if (wasNotAlreadyExported) {
             process.setExported(true);
-            ServiceManager.getProcessService().save(process);
+            processService.save(process);
         }
+
         boolean exportSuccessful = startExport(process, (URI) null);
         if (exportSuccessful) {
             if (Objects.nonNull(process.getParent())) {
@@ -99,9 +110,20 @@ public class ExportDms extends ExportMets {
             }
         } else if (wasNotAlreadyExported) {
             process.setExported(false);
-            ServiceManager.getProcessService().save(process);
+            processService.save(process);
         }
         return exportSuccessful;
+    }
+
+    private boolean exportCompletedChildren(List<Process> children) throws DataException {
+        for (Process child:children) {
+            if (processService.getProgress(child.getTasks(), null).equals(COMPLETED) && !child.isExported()) {
+                if (!startExport(child)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -140,7 +162,7 @@ public class ExportDms extends ExportMets {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process,
-                ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
+                processService.readMetadataFile(process).getDigitalDocument());
         } catch (IOException | DAOException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
@@ -350,7 +372,7 @@ public class ExportDms extends ExportMets {
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException {
         // determine the source folder
-        URI tifOrdner = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(),
+        URI tifOrdner = processService.getImagesTifDirectory(true, process.getId(),
             process.getTitle(), process.getProcessBaseUri());
 
         // copy the source folder to the destination folder
