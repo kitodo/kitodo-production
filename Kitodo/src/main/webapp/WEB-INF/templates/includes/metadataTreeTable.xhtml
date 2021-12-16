@@ -154,7 +154,6 @@
                                      disabled="#{not Form.metadataAddableToGroup(node)}"
                                      icon="fa fa-plus"
                                      styleClass="secondary"
-                                     immediate="true"
                                      update="addMetadataDialog"
                                      oncomplete="PF('addMetadataDialog').show()"/>
                 </h:panelGroup>
@@ -175,13 +174,13 @@
                 </h:panelGroup>
 
                 <!-- button to duplicate -->
-                <h:panelGroup title="#{Form.canBeAdded(item) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
+                <h:panelGroup title="#{Form.canBeAdded(node) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
                     <p:commandButton id="duplicateMetadata"
                                      update="metadataTable"
                                      icon="fa fa-clone"
                                      tabindex="-1"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                     disabled="#{not Form.canBeAdded(item)}"
+                                     disabled="#{not Form.canBeAdded(node)}"
                                      onclick="$('#loadingScreen').show()"
                                      oncomplete="$('#loadingScreen').hide()"
                                      action="#{item.copy}"

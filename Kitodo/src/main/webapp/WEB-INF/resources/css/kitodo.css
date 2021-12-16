@@ -1296,7 +1296,7 @@ Import form
 #editForm\:processFromTemplateTabView\:addMetadataButtonWrapper {
     border-radius: var(--default-border-radius);
     box-shadow: var(--second-level-shadow);
-    margin-left: 90%;
+    margin-left: 60%;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel {
@@ -3218,7 +3218,6 @@ footer {
     border-top: solid var(--contrast-border-width) var(--medium-gray);
     font-weight: bold;
     padding: .75em 1.5em;
-    margin-bottom: unset !important;
 }
 
 #tasksTabView\:actionForm {

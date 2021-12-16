@@ -11,6 +11,7 @@
 
 package org.kitodo.production.interfaces;
 
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.primefaces.model.TreeNode;
 
@@ -18,7 +19,7 @@ public interface MetadataTreeTableInterface {
 
     boolean canBeDeleted(ProcessDetail processDetail);
 
-    boolean canBeAdded(ProcessDetail processDetail);
+    boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException;
 
     boolean metadataAddableToGroup(TreeNode metadataNode);
 

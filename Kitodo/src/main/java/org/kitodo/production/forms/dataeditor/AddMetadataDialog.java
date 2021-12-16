@@ -43,6 +43,7 @@ public class AddMetadataDialog {
      */
     public void prepareAddableMetadataForStructure(List<TreeNode> metadataNodes) {
         // parameter "structureType" not required because "currentItem" is always true!
+        dataEditor.getMetadataPanel().setSelectedMetadataTreeNode(null);
         addableMetadata = DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, true, metadataNodes, null, true);
     }
 

@@ -71,6 +71,13 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         }
     }
 
+    /**
+     * Returns the metadata from this row.
+     * @param skipEmpty boolean
+     * @return the metadata from this row
+     * @throws InvalidMetadataValueException
+     *             if the metadata form contains syntactically wrong input
+     */
     public Collection<Metadata> getMetadata(boolean skipEmpty) {
         value = value.trim();
         if (skipEmpty && value.isEmpty()) {

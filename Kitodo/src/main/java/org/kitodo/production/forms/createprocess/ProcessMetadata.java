@@ -140,8 +140,10 @@ public class ProcessMetadata {
     public void addMetadataEntry() {
         try {
             if (Objects.nonNull(selectedMetadataTreeNode) && Objects.nonNull(selectedMetadataTreeNode.getData())) {
+                ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getAdditionallySelectedFields().clear();
                 ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).addAdditionallySelectedField(addMetadataKeySelectedItem);
             } else {
+                getProcessDetails().getAdditionallySelectedFields().clear();
                 getProcessDetails().addAdditionallySelectedField(addMetadataKeySelectedItem);
             }
         } catch (NoSuchMetadataFieldException e) {

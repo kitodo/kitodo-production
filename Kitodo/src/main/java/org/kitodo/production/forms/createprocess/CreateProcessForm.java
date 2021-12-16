@@ -601,23 +601,29 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Check and return whether the given ProcessDetail 'processDetail' is contained in the current list of addable
      * metadata types in the addDocStrucTypeDialog.
      *
-     * @param processDetail ProcessDetail to be added
+     * @param treeNode treeNode to be added
      * @return whether the given ProcessDetail can be added or not
      */
-    public boolean canBeAdded(ProcessDetail processDetail) {
-        List<SelectItem> addableMetadata = addMetadataDialog.getAddableMetadata();
-        if (Objects.nonNull(addableMetadata)) {
-            return addableMetadata.stream()
-                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(processDetail.getMetadataID());
+    public boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException {
+        if (Objects.isNull(treeNode.getParent().getParent())) {
+            if (Objects.nonNull(processMetadata.getSelectedMetadataTreeNode()) || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+                this.addMetadataDialog.prepareAddableMetadataForStructure();
+            }
+        } else if (!Objects.equals(processMetadata.getSelectedMetadataTreeNode(), treeNode.getParent())
+                || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+            prepareAddableMetadataForGroup(treeNode.getParent());
         }
-        else {
-            return true;
+        if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
+            return addMetadataDialog.getAddableMetadata().stream()
+                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
+        } else {
+            return false;
         }
     }
 
     @Override
     public boolean canBeDeleted(ProcessDetail processDetail) {
-        return processDetail.getMinOcc() > 0 && (processDetail.getOccurrences() > processDetail.getMinOcc())
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
                 || (!processDetail.isRequired() && !this.rulesetManagement.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 

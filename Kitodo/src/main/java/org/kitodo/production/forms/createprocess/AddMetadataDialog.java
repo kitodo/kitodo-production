@@ -69,7 +69,8 @@ public class AddMetadataDialog {
                         createProcessForm.getAcquisitionStage(),
                         createProcessForm.getPriorityList()),
                 DataEditorService.getExistingMetadataRows(createProcessForm.getProcessMetadata().getLogicalMetadataTree().getChildren()),
-                createProcessForm.getProcessMetadata().getProcessDetails().getAdditionallySelectedFields(), createProcessForm.getMainProcess().getRuleset());
+                createProcessForm.getProcessMetadata().getProcessDetails().getAdditionallySelectedFields(),
+                createProcessForm.getMainProcess().getRuleset());
     }
 
     /**

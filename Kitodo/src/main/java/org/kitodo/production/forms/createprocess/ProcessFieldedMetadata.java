@@ -441,14 +441,14 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     @Override
-    public Collection<Metadata> getMetadata(boolean skipEmpty) {
+    public Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException {
         assert division == null;
         MetadataGroup result = new MetadataGroup();
         result.setKey(metadataKey);
         result.setDomain(DOMAIN_TO_MDSEC.get(metadataView.getDomain().orElse(Domain.DESCRIPTION)));
         try {
             this.preserve();
-        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
+        } catch (NoSuchMetadataFieldException e) {
             throw new IllegalStateException("never happening exception");
         }
         result.setGroup(metadata instanceof List ? metadata : new ArrayList<>(metadata));
