@@ -33,6 +33,7 @@
         <maxAllowedViolations>15</maxAllowedViolations>
         <selenium.version>3.141.59</selenium.version>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
+        <jsf.projectStage>Production</jsf.projectStage>
     </properties>
 
     <dependencies>
@@ -537,8 +538,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.3</version>
+                <version>${maven-war-plugin.version}</version>
                 <configuration>
+                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -815,6 +817,12 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>development</id>
+            <properties>
+                <jsf.projectStage>Development</jsf.projectStage>
+            </properties>
         </profile>
     </profiles>
 </project>
