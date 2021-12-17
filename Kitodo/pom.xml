@@ -820,6 +820,9 @@
         </profile>
         <profile>
             <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <jsf.projectStage>Development</jsf.projectStage>
             </properties>
