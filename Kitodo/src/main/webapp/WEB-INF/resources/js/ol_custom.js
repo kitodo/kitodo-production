@@ -82,6 +82,16 @@ kitodo.RotateRightControl = function(options = {}) {
     });
 };
 
+function resetNorth() {
+    if (kitodo.map) {
+        let view = kitodo.map.getView();
+        view.animate({
+            rotation: 0,
+            duration: 0
+        });
+    }
+}
+
 /**
  * @param {Object=} options Custom control options for Kitodo in OpenLayers
  * @extends {ol.control.Rotate}
@@ -152,16 +162,6 @@ function showCanvas() {
     if (map) {
         map.style.opacity = 1;
         loadingIcon.style.opacity = 0;
-    }
-}
-
-function resetNorth() {
-    if (kitodo.map) {
-        let view = kitodo.map.getView();
-        view.animate({
-            rotation: 0,
-            duration: 0
-        });
     }
 }
 
