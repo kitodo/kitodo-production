@@ -158,6 +158,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         this(template.container, null, template.metadataView, template.label, template.metadataKey,
                 new ArrayList<>(template.metadata));
         copy = true;
+        hiddenMetadata = template.hiddenMetadata;
+        treeNode = new DefaultTreeNode(this, template.getTreeNode().getParent());
+        createMetadataTable();
+        treeNode.setExpanded(true);
     }
 
     /**
@@ -401,15 +405,15 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             TreeNode child = children.get(index);
             Object childData = child.getData();
             if (Objects.equals(childData, processDetail)) {
-                Object copyData = null;
+                TreeNode copy = null;
                 if (childData instanceof ProcessSimpleMetadata) {
-                    copyData = ((ProcessSimpleMetadata) childData).getClone();
+                    ProcessSimpleMetadata copyData = ((ProcessSimpleMetadata) childData).getClone();
+                    copy = new DefaultTreeNode(copyData, treeNode);
+                    copy.setExpanded(child.isExpanded());
                 } else if (childData instanceof ProcessFieldedMetadata) {
-                    copyData = new ProcessFieldedMetadata((ProcessFieldedMetadata) childData);
+                    ProcessFieldedMetadata copyData = new ProcessFieldedMetadata((ProcessFieldedMetadata) childData);
+                    copy = copyData.treeNode;
                 }
-                TreeNode copy = new DefaultTreeNode(copyData);
-                copy.setParent(treeNode);
-                copy.setExpanded(child.isExpanded());
                 treeNode.getChildren().add(index + 1, copy);
             } else if (searchRecursiveAndCopy(child, processDetail)) {
                 return true;
