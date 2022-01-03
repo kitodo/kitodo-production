@@ -138,5 +138,7 @@
             <ui:param name="readOnly" value="#{false}"/>
             <ui:param name="Form" value="#{CreateProcessForm}"/>
         </ui:include>
+        <p:remoteCommand name="preserveMetadata"
+                         actionListener="#{CreateProcessForm.processMetadata.preserve}"/>
     </p:panelGrid>
 </ui:composition>
