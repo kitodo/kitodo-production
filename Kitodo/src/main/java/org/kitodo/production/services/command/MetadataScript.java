@@ -21,19 +21,18 @@ import org.apache.commons.lang.text.StrTokenizer;
 
 public class MetadataScript {
 
-    private Map<String, String> parameters;
-    private String metadataKey;
-    private String valueSource;
-    private String typeTarget;
-    private String variable;
-    private List<String> values = new ArrayList<>();
+    private final String metadataKey;
+    private final String valueSource;
+    private final String typeTarget;
+    private final String variable;
+    private final List<String> values = new ArrayList<>();
 
     /**
      * Creates a MetadataScript with given command.
      * @param command the given command.
      */
     public MetadataScript(String command) {
-        this.parameters = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         StrTokenizer tokenizer = new StrTokenizer(command, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
@@ -90,7 +89,4 @@ public class MetadataScript {
         return variable;
     }
 
-    public void setVariable(String variable) {
-        this.variable = variable;
-    }
 }
