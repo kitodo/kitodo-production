@@ -76,7 +76,6 @@ public class FileUploadDialog extends MetadataImportDialog {
 
             String parentID = importService.getParentID(internalDocument, this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                     FunctionalMetadata.HIGHERLEVEL_IDENTIFIER).toArray()[0].toString());
-            if (Objects.nonNull(parentID)) {
                 importService.checkForParent(parentID,
                     createProcessForm.getTemplate().getRuleset().getId(), createProcessForm.getProject().getId());
                 if (Objects.isNull(importService.getParentTempProcess())) {
@@ -85,7 +84,6 @@ public class FileUploadDialog extends MetadataImportDialog {
                         processes.add(parentTempProcess);
                     }
                 }
-            }
             fillCreateProcessForm(processes);
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException

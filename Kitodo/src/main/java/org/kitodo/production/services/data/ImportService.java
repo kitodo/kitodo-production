@@ -552,13 +552,14 @@ public class ImportService {
 
     /**
      * Check if there already is a parent process in Database.
-     * @param parentID
-     * @param rulesetID
-     * @param projectID
      * @return The Process from the database as a TempProcess
      */
     public void checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
             ProcessGenerationException {
+        if (Objects.isNull(parentID)) {
+            this.parentTempProcess = null;
+            return;
+        }
         HashMap<String, String> parentIDMetadata = new HashMap<>();
         parentIDMetadata.put(identifierMetadata, parentID);
         Process parentProcess = loadParentProcess(parentIDMetadata, rulesetID, projectID);
@@ -567,6 +568,7 @@ public class ImportService {
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
             Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
             this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
+            return;
         }
         this.parentTempProcess = null;
     }
