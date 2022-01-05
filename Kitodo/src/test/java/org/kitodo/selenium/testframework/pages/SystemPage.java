@@ -155,7 +155,7 @@ public class SystemPage extends Page<SystemPage> {
         switchToTabByIndex(TabIndex.INDEXING.getIndex(), systemTabView);
         List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
         WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
-        return lastRow.findElement(By.className("ui-progressbar-label")).getText();
+        return lastRow.findElement(By.className("ui-progressbar-label")).getAttribute("innerHTML");
     }
 
     public void startWorkflowMigration() throws Exception {

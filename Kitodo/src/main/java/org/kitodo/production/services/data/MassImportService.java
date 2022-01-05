@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.services.ServiceManager;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 public class MassImportService {
 
@@ -59,7 +59,7 @@ public class MassImportService {
             throws IOException, ImportException {
         CSVReader reader;
         List<String> ppns = new ArrayList<>();
-        reader = new CSVReader(new InputStreamReader(file.getInputstream()));
+        reader = new CSVReader(new InputStreamReader(file.getInputStream()));
         String[] line;
         while ((line = reader.readNext()) != null) {
             ppns.add(line[0]);

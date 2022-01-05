@@ -180,7 +180,7 @@ public class GalleryPanel {
             }
             logger.debug("Cannot serve image request, mediaId = {}", id);
         }
-        return new DefaultStreamedContent();
+        return DefaultStreamedContent.builder().build();
     }
 
     String getPreviewMimeType() {

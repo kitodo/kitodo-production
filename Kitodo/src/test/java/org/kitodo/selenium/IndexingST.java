@@ -52,7 +52,7 @@ public class IndexingST extends BaseTestSelenium {
         with().conditionEvaluationListener(
             condition -> System.out.printf("%s (elapsed time %dms, remaining time %dms)\n", condition.getDescription(),
                 condition.getElapsedTimeInMS(), condition.getRemainingTimeInMS())).await("Wait for reindexing")
-                .pollDelay(3, TimeUnit.SECONDS).atMost(70, TimeUnit.SECONDS).pollInterval(Durations.ONE_SECOND)
+                .pollDelay(5, TimeUnit.SECONDS).atMost(120, TimeUnit.SECONDS).pollInterval(Durations.FIVE_SECONDS)
                 .ignoreExceptions()
                 .until(() -> isIndexingFinished.test(Pages.getSystemPage().getIndexingProgress()));
     }

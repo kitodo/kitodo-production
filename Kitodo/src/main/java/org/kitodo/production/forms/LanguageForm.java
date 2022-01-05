@@ -23,7 +23,6 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
@@ -68,7 +67,7 @@ public class LanguageForm implements Serializable {
      */
     private void setSessionLocaleFieldId() {
         FacesContext context = FacesContext.getCurrentInstance();
-        if (Objects.nonNull(context.getViewRoot())) {
+        if (Objects.nonNull(context) && Objects.nonNull(context.getViewRoot())) {
             Locale locale = LocaleHelper.getCurrentLocale();
             context.getViewRoot().setLocale(locale);
             context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
@@ -172,15 +171,13 @@ public class LanguageForm implements Serializable {
      */
     public Locale getLocale() {
         setSessionLocaleFieldId();
-        FacesContext fac = FacesContext.getCurrentInstance();
-        UIViewRoot frame = fac.getViewRoot();
-        if (!Objects.equals(frame, null)) {
-            @SuppressWarnings("rawtypes")
-            Map session = fac.getExternalContext().getSessionMap();
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (Objects.nonNull(context) && Objects.nonNull(context.getViewRoot())) {
+            Map<String, Object> session = context.getExternalContext().getSessionMap();
             if (session.containsKey(SESSION_LOCALE_FIELD_ID)) {
                 Locale locale = (Locale) session.get(SESSION_LOCALE_FIELD_ID);
-                if (frame.getLocale() != locale) {
-                    frame.setLocale(locale);
+                if (context.getViewRoot().getLocale() != locale) {
+                    context.getViewRoot().setLocale(locale);
                 }
                 return locale;
             }

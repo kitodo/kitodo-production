@@ -41,7 +41,7 @@ import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -65,7 +65,7 @@ public class FileUploadDialog extends MetadataImportDialog {
         ImportService importService = ServiceManager.getImportService();
         try {
             Document internalDocument = importService.convertDataRecordToInternal(
-                createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
+                createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputStream(), Charset.defaultCharset())),
                 selectedCatalog, false);
             TempProcess tempProcess = importService.createTempProcessFromDocument(selectedCatalog, internalDocument,
                 createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
@@ -97,7 +97,7 @@ public class FileUploadDialog extends MetadataImportDialog {
             String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString());
             if (Objects.nonNull(parentID) && OPACConfig.isParentInRecord(selectedCatalog)) {
                 Document internalParentDocument = importService.convertDataRecordToInternal(
-                        createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
+                        createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputStream(), Charset.defaultCharset())),
                         selectedCatalog, true);
                 return importService.createTempProcessFromDocument(selectedCatalog, internalParentDocument,
                         createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
