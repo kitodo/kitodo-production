@@ -36,7 +36,7 @@ public class AddDataScript extends EditDataScript {
 
         for (String value : metadataScript.getValues()) {
             MetadataEntry metadataEntry = new MetadataEntry();
-            metadataEntry.setKey(metadataScript.getGoal());
+            metadataEntry.setKey(metadataScript.getMetadataKey());
             metadataEntry.setValue(value);
             metadataEntry.setDomain(MdSec.DMD_SEC);
             metadataCollection.add(metadataEntry);

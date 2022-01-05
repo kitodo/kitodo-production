@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
@@ -29,7 +30,6 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public abstract class EditDataScript {
@@ -73,7 +73,7 @@ public abstract class EditDataScript {
     }
 
     /**
-     * Generates the script value when a metadata root is given.
+     * Generates the script value when a metadata source is given.
      * @param metadataScript the script to set the value
      * @param metadataCollection the metadata collection to extract the value from
      * @param process the process to replace variables
@@ -81,19 +81,18 @@ public abstract class EditDataScript {
      */
     public void generateValueForMetadataScript(MetadataScript metadataScript, Collection<Metadata> metadataCollection,
             Process process, LegacyMetsModsDigitalDocumentHelper metadataFile) {
-        if (metadataScript.getValues().isEmpty() && Objects.nonNull(metadataScript.getRoot())) {
-            if (metadataScript.getRoot().startsWith("@")) {
+        if (metadataScript.getValues().isEmpty() && Objects.nonNull(metadataScript.getValueSource())
+                || Objects.nonNull(metadataScript.getVariable())) {
+            if (StringUtils.isNotBlank(metadataScript.getValueSource())) {
                 for (Metadata metadata : metadataCollection) {
-                    if (metadata.getKey().equals(metadataScript.getRootName())) {
+                    if (metadata.getKey().equals(metadataScript.getValueSource())) {
                         metadataScript.getValues().add(((MetadataEntry) metadata).getValue());
                     }
                 }
-            } else if (metadataScript.getRoot().startsWith("$")) {
-                LegacyPrefsHelper legacyPrefsHelper = ServiceManager.getRulesetService()
-                        .getPreferences(process.getRuleset());
+            } else if (StringUtils.isNotBlank(metadataScript.getVariable())) {
                 VariableReplacer replacer = new VariableReplacer(metadataFile.getWorkpiece(), process, null);
 
-                String replaced = replacer.replace(metadataScript.getRootName());
+                String replaced = replacer.replace(metadataScript.getVariable());
                 metadataScript.getValues().add(replaced);
             }
         }
