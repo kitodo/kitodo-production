@@ -367,7 +367,6 @@ public class ImportService {
 
     /**
      * Get the parent ID from the document.
-     * @param document
      * @return
      */
     public String getParentID(Document document) throws XPathExpressionException {
@@ -552,7 +551,6 @@ public class ImportService {
 
     /**
      * Check if there already is a parent process in Database.
-     * @return The Process from the database as a TempProcess
      */
     public void checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
             ProcessGenerationException {
