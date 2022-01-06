@@ -54,6 +54,7 @@ import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.MetsDocumentID;
 import org.kitodo.dataformat.metskitodo.MetsType.StructLink;
 import org.kitodo.dataformat.metskitodo.StructLinkType.SmLink;
 import org.kitodo.dataformat.metskitodo.StructMapType;
+import org.kitodo.utils.JAXBContextCache;
 
 /**
  * The administrative structure of the product of an element that passes through
@@ -194,7 +195,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     @Override
     public Workpiece read(InputStream in) throws IOException {
         try {
-            JAXBContext jc = JAXBContext.newInstance(Mets.class);
+            JAXBContext jc = JAXBContextCache.getInstance().get(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Mets mets = (Mets) unmarshaller.unmarshal(in);
             return new MetsXmlElementAccess(mets).workpiece;
@@ -219,7 +220,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     @Override
     public void save(Workpiece workpiece, OutputStream out) throws IOException {
         try {
-            JAXBContext context = JAXBContext.newInstance(Mets.class);
+            JAXBContext context = JAXBContextCache.getInstance().get(Mets.class);
             Marshaller marshal = context.createMarshaller();
             marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshal.marshal(new MetsXmlElementAccess(workpiece).toMets(), out);

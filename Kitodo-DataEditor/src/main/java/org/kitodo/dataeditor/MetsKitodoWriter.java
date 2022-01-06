@@ -23,6 +23,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.utils.JAXBContextCache;
 
 /**
  * This class provides methods for writing Mets objects to xml files.
@@ -37,7 +38,7 @@ public class MetsKitodoWriter {
      * The Constructor which instantiates the JAXB context of MetsKitodo format.
      */
     public MetsKitodoWriter() throws JAXBException {
-        jaxbMetsContext = JAXBContext.newInstance(Mets.class);
+        jaxbMetsContext = JAXBContextCache.getInstance().get(Mets.class);
         jaxbMetsMarshaller = jaxbMetsContext.createMarshaller();
     }
 
