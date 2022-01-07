@@ -18,6 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+/**
+ * Cache for JAXBContexts. Class contains cache map of already created
+ * JAXBContext of object classes.
+ */
 public class JAXBContextCache {
 
     private static JAXBContextCache instance;
@@ -30,20 +34,35 @@ public class JAXBContextCache {
         jaxbContextCache = new ConcurrentHashMap<>();
     }
 
-    public static JAXBContextCache getInstance() {
+    /**
+     * The synchronized function singleton() must be used to obtain singleton access
+     * to the JAXBContextCache instance.
+     *
+     * @return the singleton JAXBContextCache instance
+     */
+    public static synchronized JAXBContextCache getInstance() {
         if (Objects.isNull(instance)) {
             instance = new JAXBContextCache();
         }
         return instance;
     }
 
-    public JAXBContext get(Class<?> classToBeBound) throws JAXBException {
-        if (jaxbContextCache.containsKey(classToBeBound)) {
-            return jaxbContextCache.get(classToBeBound);
+    /**
+     * Get the JAXBContext by class from cache.
+     *
+     * @param clazz
+     *            The class to be bound.
+     * @return The JAXBContext object.
+     * @throws JAXBException
+     *             Exception when creating new instance of JAXBContext
+     */
+    public JAXBContext get(Class<?> clazz) throws JAXBException {
+        if (jaxbContextCache.containsKey(clazz)) {
+            return jaxbContextCache.get(clazz);
         }
 
-        JAXBContext jaxbContext = JAXBContext.newInstance(classToBeBound);
-        jaxbContextCache.put(classToBeBound, jaxbContext);
+        JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        jaxbContextCache.put(clazz, jaxbContext);
         return jaxbContext;
     }
 }
