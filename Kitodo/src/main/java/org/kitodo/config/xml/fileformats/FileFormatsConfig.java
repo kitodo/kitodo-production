@@ -44,7 +44,7 @@ public class FileFormatsConfig {
 
     private static List<FileFormat> fileFormats;
 
-	private static long lastModified;
+    private static long lastModified;
 
     @XmlElement(required = true)
     protected List<FileFormat> fileFormat;
