@@ -42,6 +42,10 @@ public class FileFormatsConfig {
     private static final File CONFIG_FILE = new File(
             Paths.get(KitodoConfig.getKitodoConfigDirectory(), "kitodo_fileFormats.xml").toString());
 
+    private static List<FileFormat> fileFormats;
+
+	private static long lastModified;
+
     @XmlElement(required = true)
     protected List<FileFormat> fileFormat;
 
@@ -54,9 +58,13 @@ public class FileFormatsConfig {
      *             incorrect
      */
     public static List<FileFormat> getFileFormats() throws JAXBException {
-        Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
-        FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
-        return read.fileFormat;
+		if (lastModified == 0 || lastModified != CONFIG_FILE.lastModified()) {
+			Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
+			FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
+			fileFormats = read.fileFormat;
+			lastModified = CONFIG_FILE.lastModified();
+		}
+		return fileFormats;
     }
 
     /**
