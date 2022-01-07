@@ -40,12 +40,20 @@ public class JAXBContextCache {
      *
      * @return the singleton JAXBContextCache instance
      */
-    public static synchronized JAXBContextCache getInstance() {
-        if (Objects.isNull(instance)) {
-            instance = new JAXBContextCache();
+    public static JAXBContextCache getInstance() {
+        JAXBContextCache localReference = instance;
+        if (Objects.isNull(localReference)) {
+            synchronized (JAXBContextCache.class) {
+                localReference = instance;
+                if (Objects.isNull(localReference)) {
+                    localReference = new JAXBContextCache();
+                    instance = localReference;
+                }
+            }
         }
-        return instance;
+        return localReference;
     }
+
 
     /**
      * Get the JAXBContext by class from cache.
