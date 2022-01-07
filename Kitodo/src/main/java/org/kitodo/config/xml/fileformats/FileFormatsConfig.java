@@ -58,13 +58,13 @@ public class FileFormatsConfig {
      *             incorrect
      */
     public static List<FileFormat> getFileFormats() throws JAXBException {
-		if (lastModified == 0 || lastModified != CONFIG_FILE.lastModified()) {
-			Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
-			FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
-			fileFormats = read.fileFormat;
-			lastModified = CONFIG_FILE.lastModified();
-		}
-		return fileFormats;
+        if (lastModified == 0 || lastModified != CONFIG_FILE.lastModified()) {
+            Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
+            FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
+            fileFormats = read.fileFormat;
+            lastModified = CONFIG_FILE.lastModified();
+        }
+        return fileFormats;
     }
 
     /**
