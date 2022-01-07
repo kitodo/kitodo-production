@@ -125,7 +125,6 @@
                                      update="addMetadataDialog"
                                      immediate="true"
                                      disabled="#{not CreateProcessForm.processMetadata.metadataAddableToStructureElement()}"
-                                     actionListener="#{CreateProcessForm.processMetadata.setSelectedMetadataTreeNode(null)}"
                                      action="#{CreateProcessForm.addMetadataDialog.prepareAddableMetadataForStructure()}"
                                      oncomplete="PF('addMetadataDialog').show();">
                     </p:commandButton>

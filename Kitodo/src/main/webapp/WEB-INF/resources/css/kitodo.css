@@ -1313,6 +1313,24 @@ Import form
     width: calc(50% - var(--default-double-size) - 93px);
 }
 
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield.hasDatepicker {
+    width: calc(50% - 4 * var(--default-half-size) - 93px - 39px);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-inputfield.hasDatepicker {
+    width: calc(50% - var(--default-half-size) - 93px - 39px);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu + span,
+#editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu + span + span {
+    vertical-align: top;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-button.ui-datepicker-trigger {
+    margin-right: var(--default-half-size);
+    margin-left: 0;
+}
+
 #progressDialog {
     overflow-y: hidden;
     padding: var(--default-full-size);

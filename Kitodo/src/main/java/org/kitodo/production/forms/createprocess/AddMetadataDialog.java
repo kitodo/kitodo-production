@@ -63,6 +63,7 @@ public class AddMetadataDialog {
      * @throws InvalidMetadataValueException invalidMetadataValueException
      */
     public void prepareAddableMetadataForStructure() throws InvalidMetadataValueException {
+        createProcessForm.getProcessMetadata().setSelectedMetadataTreeNode(null);
         addableMetadata = DataEditorService.getAddableMetadataForStructureElement(
                 createProcessForm.getRulesetManagement().getStructuralElementView(
                         createProcessForm.getProcessDataTab().getDocType(),

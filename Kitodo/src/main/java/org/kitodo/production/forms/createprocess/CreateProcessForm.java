@@ -616,9 +616,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
             return addMetadataDialog.getAddableMetadata().stream()
                     .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
