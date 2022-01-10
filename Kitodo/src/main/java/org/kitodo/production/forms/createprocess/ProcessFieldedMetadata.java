@@ -451,7 +451,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *             if some value is invalid
      */
     @Override
-    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadataWithFilledValues() throws InvalidMetadataValueException {
         return getMetadata(true);
     }
 
@@ -551,7 +551,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 if (Objects.nonNull(metsFieldValue)) {
                     metsFieldValue.getKey().accept(division, metsFieldValue.getValue());
                 } else {
-                    metadata.addAll(row.getMetadata());
+                    metadata.addAll(row.getMetadataWithFilledValues());
                 }
             }
             if (Objects.nonNull(hiddenMetadata)) {

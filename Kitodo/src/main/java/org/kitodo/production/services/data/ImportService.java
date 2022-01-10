@@ -1109,7 +1109,7 @@ public class ImportService {
     private static void addMetadataProperties(List<ProcessDetail> processDetailList, Process process) {
         try {
             for (ProcessDetail processDetail : processDetailList) {
-                Collection<Metadata> processMetadata = processDetail.getMetadata();
+                Collection<Metadata> processMetadata = processDetail.getMetadataWithFilledValues();
                 if (!processMetadata.isEmpty() && processMetadata.toArray()[0] instanceof Metadata) {
                     String metadataValue = ImportService.getProcessDetailValue(processDetail);
                     Metadata metadata = (Metadata) processMetadata.toArray()[0];

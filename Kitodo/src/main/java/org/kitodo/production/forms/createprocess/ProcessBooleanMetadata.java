@@ -71,7 +71,7 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
     }
 
     @Override
-    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadataWithFilledValues() throws InvalidMetadataValueException {
         return getMetadata(true);
     }
 
@@ -87,9 +87,8 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
             entry.setDomain(DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION)));
             entry.setValue(value.isPresent() ? value.get() : "");
             return Collections.singletonList(entry);
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
     }
 
     @Override

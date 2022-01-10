@@ -1314,11 +1314,11 @@ Import form
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield.hasDatepicker {
-    width: calc(50% - 4 * var(--default-half-size) - 93px - 39px);
+    width: calc(50% - 172px);
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-inputfield.hasDatepicker {
-    width: calc(50% - var(--default-half-size) - 93px - 39px);
+    width: calc(50% - 140px);
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu + span,

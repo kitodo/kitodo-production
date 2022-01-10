@@ -112,7 +112,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     @Override
-    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadataWithFilledValues() throws InvalidMetadataValueException {
         return getMetadata(true);
     }
 

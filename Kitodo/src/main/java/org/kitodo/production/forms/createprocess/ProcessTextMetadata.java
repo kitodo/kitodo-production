@@ -94,7 +94,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     }
 
     @Override
-    public Collection<Metadata> getMetadata() {
+    public Collection<Metadata> getMetadataWithFilledValues() {
         return getMetadata(true);
     }
 

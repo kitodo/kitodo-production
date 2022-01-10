@@ -135,7 +135,7 @@ public class ProcessMetadata {
     }
 
     /**
-     * Adds an empty table line with the given type.
+     * Adds an empty table line with 'addMetadataKeySelectedItem' type.
      */
     public void addMetadataEntry() {
         try {

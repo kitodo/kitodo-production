@@ -606,7 +606,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException {
         if (Objects.isNull(treeNode.getParent().getParent())) {
-            if (Objects.nonNull(processMetadata.getSelectedMetadataTreeNode()) || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+            if (Objects.nonNull(processMetadata.getSelectedMetadataTreeNode())
+                    || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
                 this.addMetadataDialog.prepareAddableMetadataForStructure();
             }
         } else if (!Objects.equals(processMetadata.getSelectedMetadataTreeNode(), treeNode.getParent())
@@ -614,8 +615,11 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             prepareAddableMetadataForGroup(treeNode.getParent());
         }
         if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
-            return addMetadataDialog.getAddableMetadata().stream()
-                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
+            return addMetadataDialog.getAddableMetadata()
+                    .stream()
+                    .map(SelectItem::getValue)
+                    .collect(Collectors.toList())
+                    .contains(((ProcessDetail) treeNode.getData()).getMetadataID());
         }
         return false;
     }
@@ -636,9 +640,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
         if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
             return !(DataEditorService.getAddableMetadataForGroup(getMainProcess().getRuleset(), metadataNode).isEmpty());
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**

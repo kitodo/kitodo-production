@@ -99,7 +99,6 @@ public abstract class ProcessDetail implements Serializable {
         return label;
     }
 
-
     /**
      * Returns the metadata from this row, as far as it has to be stored in the
      * collection obtainable from {@link LogicalDivision#getMetadata()}.
@@ -108,8 +107,15 @@ public abstract class ProcessDetail implements Serializable {
      * @throws InvalidMetadataValueException
      *             if the metadata form contains syntactically wrong input
      */
-    public abstract Collection<Metadata> getMetadata() throws InvalidMetadataValueException;
-    
+    public abstract Collection<Metadata> getMetadataWithFilledValues() throws InvalidMetadataValueException;
+
+    /**
+     * Returns the metadata from this row.
+     * @param skipEmpty boolean to filter metadata with empty value or not.
+     * @return the metadata from this row
+     * @throws InvalidMetadataValueException
+     *             if the metadata form contains syntactically wrong input
+     */
     public abstract Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException;
 
     /**

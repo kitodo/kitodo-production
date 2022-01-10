@@ -859,9 +859,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
             return addMetadataDialog.getAddableMetadata().stream()
                     .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
