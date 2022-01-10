@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.kitodo.api.Metadata;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.file.UploadedFile;
@@ -49,13 +51,14 @@ public class MassImportService {
 
     /**
      * Import from csvFile.
-     *  @param selectedCatalog
+     * @param selectedCatalog
      *            the catalog to import from.
      * @param file the file to parse.
      * @param projectId the project id.
      * @param templateId the template id.
+     * @param metadata metadata edited via frontend to add to the imported metadata.
      */
-    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId)
+    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId, Collection<Metadata> metadata)
             throws IOException, ImportException {
         CSVReader reader;
         List<String> ppns = new ArrayList<>();
@@ -64,28 +67,29 @@ public class MassImportService {
         while ((line = reader.readNext()) != null) {
             ppns.add(line[0]);
         }
-        importPPNs(selectedCatalog, ppns, projectId, templateId);
+        importPPNs(selectedCatalog, ppns, projectId, templateId, metadata);
     }
 
     /**
      * Import Processes from given commaseparated text.
-     *  @param selectedCatalog
+     * @param selectedCatalog
      *            the catalog to import from
      * @param ppnString the ppn string from textfield.
      * @param projectId the project id.
      * @param templateId the template id.
+     * @param metadata metadata edited via frontend to add to the imported metadata.
      */
-    public void importFromText(String selectedCatalog, String ppnString, int projectId, int templateId)
+    public void importFromText(String selectedCatalog, String ppnString, int projectId, int templateId, Collection<Metadata> metadata)
             throws ImportException {
         List<String> ppns = Arrays.asList(ppnString.replaceAll("\\s","").split(","));
-        importPPNs(selectedCatalog, ppns, projectId, templateId);
+        importPPNs(selectedCatalog, ppns, projectId, templateId, metadata);
     }
 
-    private void importPPNs(String selectedCatalog, List<String> ppns, int projectId, int templateId)
+    private void importPPNs(String selectedCatalog, List<String> ppns, int projectId, int templateId, Collection<Metadata> metadata)
             throws ImportException {
         ImportService importService = ServiceManager.getImportService();
         for (String ppn : ppns) {
-            importService.importProcess(ppn, projectId, templateId, selectedCatalog);
+            importService.importProcess(ppn, projectId, templateId, selectedCatalog, metadata);
         }
     }
 }

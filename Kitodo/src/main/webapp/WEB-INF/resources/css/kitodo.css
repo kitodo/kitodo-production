@@ -1258,12 +1258,14 @@ Statistics
 Import form
 ----------------------------------------------------------------------*/
 
-#editForm\:processFromTemplateTabView\:metadataTable td {
+#editForm\:processFromTemplateTabView\:metadataTable td,
+#editForm\:metadataTable td {
     line-height: initial;
     padding: 0;
 }
 
-#editForm\:processFromTemplateTabView\:metadataTable textarea {
+#editForm\:processFromTemplateTabView\:metadataTable textarea,
+#editForm\:metadataTable textarea {
     line-height: var(--input-height);
 }
 
@@ -1288,7 +1290,8 @@ Import form
     height: auto;
 }
 
-#editForm\:processFromTemplateTabView\:metadataTable .ui-spinner-input {
+#editForm\:processFromTemplateTabView\:metadataTable .ui-spinner-input,
+#editForm\:metadataTable .ui-spinner-input {
     max-width: none;
     width: 100%;
 }
@@ -1304,12 +1307,15 @@ Import form
     margin-left: 60%;
 }
 
-#editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel {
+#editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel,
+#editForm\:metadataTable .ui-outputlabel {
     display: block;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) .ui-inputfield,
-#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) label {
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) label,
+#editForm\:metadataTable tr.ui-widget-content:not([data-prk='root']) .ui-inputfield,
+#editForm\:metadataTable tr.ui-widget-content:not([data-prk='root']) label{
     margin-left: var(--default-double-size);
     width: calc(100% - var(--default-double-size));
 }
@@ -1331,6 +1337,28 @@ Import form
     margin-left: 0;
 }
 
+#editForm\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield {
+    width: calc(100% - var(--default-double-size) - 93px);
+}
+
+#editForm\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield.hasDatepicker {
+    width: calc(100% - 5 * var(--default-half-size) - 132px);
+}
+
+#editForm\:metadataTable tr.ui-widget-content span > .ui-inputfield.hasDatepicker {
+    width: calc(100% - var(--default-half-size) - 132px);
+}
+
+#editForm\:metadataTable tr.ui-widget-content span > .ui-button.ui-datepicker-trigger {
+    margin-left: 0;
+    margin-right: var(--default-half-size);
+}
+
+#editForm\:ppnMassImport {
+    height: 150px;
+    max-height: 150px;
+}
+
 #progressDialog {
     overflow-y: hidden;
     padding: var(--default-full-size);
@@ -1341,26 +1369,14 @@ Import form
     margin-bottom: var(--default-double-size);
 }
 
-#fileMassImportForm .ui-panelgrid-cell,
-#textMassImportForm .ui-panelgrid-cell {
-    padding-left: var(--default-full-size);
+#progressDialog {
+    overflow-y: hidden;
+    padding: var(--default-full-size);
 }
 
-#fileMassImportForm .ui-fileupload-buttonbar {
-    padding: 0;
-}
-
-#fileMassImportForm .ui-fileupload-buttonbar .ui-button {
-    margin-right: var(--default-full-size);
-}
-
-#fileMassImportForm .ui-fileupload-choose .ui-button-text {
-    padding-top: 10px;
-}
-
-#textMassImportForm\:importFromText {
-    margin-left: var(--default-full-size);
-    vertical-align: top;
+#progressHeader {
+    display: inline-block;
+    margin-bottom: var(--default-double-size);
 }
 
 #catalogSearchForm {
@@ -2442,9 +2458,16 @@ Column content
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectonemenu,
 #metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectonemenu,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio,
-#metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectoneradio {
+#metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectoneradio,
+#editForm\:metadataTable textarea,
+#editForm\:metadataTable input,
+#editForm\:metadataTable div.ui-selectonemenu,
+#editForm\:metadataTable span.ui-spinner,
+#editForm\:metadataTable .ui-selectoneradio,
+#editForm\:metadataTable div.ui-selectmanymenu {
     background: inherit;
     box-sizing: border-box;
+    display: inline-flex;
     margin-right: var(--default-half-size);
     max-width: calc(100% - 93px);
     overflow: hidden;

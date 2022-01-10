@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/baseListView.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -24,26 +24,135 @@
         <f:viewParam name="projectId"/>
         <f:viewAction action="#{MassImportForm.prepareMassImport(templateId, projectId)}"/>
     </f:metadata>
+    <ui:define name="contentHeader">
+        <h3 id="headerText">
+            <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.template.title}')"/>
+        </h3>
+        <p:commandButton id="importButton"
+                         value="#{msgs.massImport}"
+                         action="#{MassImportForm.massImport}"
+                         disabled="#{MassImportForm.importMode.equals('file') and MassImportForm.file eq null or MassImportForm.importMode.equals('text') and MassImportForm.ppnString eq null}"
+                         icon="fa fa-download fa-lg" iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                         update="notifications, sticky-notifications"/>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+    </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}"
+        <p:tabView activeIndex="#{MassImportForm.activeTabIndex}"
                    prependId="false"
-                   id="projectsTabView"
-                   widgetVar="projectsTabView">
-            <p:ajax event="tabChange" listener="#{MassImportForm.onTabChange}"/>
-            <p:tab title="#{msgs.fileMassImport}"
-                   id="fileMassImportTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                <ui:include src="/WEB-INF/templates/includes/massImport/fileMassImport.xhtml"/>
+                   id="massImportTabView"
+                   widgetVar="massImportTabView">
+            <p:tab title="#{msgs.massImport}">
+                <p:panelGrid layout="grid" columns="2">
+                    <p:row>
+                        <div>
+                            <p:selectOneRadio id="importMode" value="#{MassImportForm.importMode}">
+                                <f:selectItem itemLabel="#{msgs.fileMassImport}" itemValue="file"/>
+                                <f:selectItem itemLabel="#{msgs.textMassImport}" itemValue="text"/>
+                                <p:ajax event="change" update="@form"/>
+                            </p:selectOneRadio>
+                        </div>
+                        <div>
+                            <p:outputLabel for="catalogueSelect"
+                                           value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+                            <p:selectOneMenu id="catalogueSelect" required="true"
+                                             value="#{MassImportForm.selectedCatalog}">
+                                <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --"
+                                              noSelectionOption="true"
+                                              itemDisabled="true"/>
+                                <f:selectItems value="#{MassImportForm.catalogs}" var="catalog"
+                                               itemLabel="#{catalog}"
+                                               itemValue="#{catalog}"/>
+                                <p:ajax update="@form"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
+                            <!-- DocType -->
+                            <p:outputLabel value="DocType"/>
+                            <p:selectOneMenu id="docType" value="#{MassImportForm.docType}" rendered="true">
+                                <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectPlease} --"
+                                              noSelectionOption="true"
+                                              itemDisabled="true"/>
+                                <f:selectItems value="#{MassImportForm.allDoctypes}"
+                                               var="step"
+                                               itemLabel="#{step.localizedLabel}"
+                                               itemValue="#{step.title}"/>
+                                <p:ajax update="@form"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <h:panelGroup
+                                rendered="#{MassImportForm.importMode.equals('file') and MassImportForm.selectedCatalog ne null}">
+                            <div>
+                                <p:fileUpload value="#{MassImportForm.file}"
+                                              fileUploadListener="#{MassImportForm.handleFileUpload}"
+                                              allowTypes="/(\.|\/)(csv)$/"
+                                              skinSimple="true"
+                                              fileLimit="1"
+                                              update="@form"
+                                              uploadLabel="#{msgs.uploadFile}"
+                                              chooseIcon="fa fa-plus fa-lg"
+                                              uploadIcon="fa fa-download fa-lg"
+                                              cancelIcon="fa fa-times fa-lg"/>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup
+                                rendered="#{MassImportForm.importMode.equals('text') and MassImportForm.selectedCatalog ne null}">
+                            <p:outputLabel for="ppnMassImport" value="#{MassImportForm.getIdentifierParameterLabel()}"/>
+                            <div>
+                                <p:inputTextarea id="ppnMassImport"
+                                                 styleClass="input"
+                                                 value="#{MassImportForm.ppnString}">
+                                    <p:ajax event="blur" update="@form"/>
+                                </p:inputTextarea>
+                            </div>
+                        </h:panelGroup>
+                    </p:row>
+                    <p:row>
+                        <p:panelGrid layout="grid" columns="2">
+                            <p:row>
+                                <div>
+                                    <h4><p:outputLabel value="#{msgs.metadata}"/></h4>
+                                </div>
+                            </p:row>
+                            <p:row>
+                                <h:panelGroup id="addMetadataButtonWrapper"
+                                              title="#{MassImportForm.additionalMetadata.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
+                                    <p:commandButton id="addMetadataButton"
+                                                     value="#{msgs['dataEditor.addMetadata.newMetadata']}"
+                                                     icon="fa fa-plus"
+                                                     styleClass="secondary"
+                                                     update="addMetadataDialog"
+                                                     disabled="#{MassImportForm.additionalMetadata.logicalMetadataTree.children.size() eq 0 or not MassImportForm.additionalMetadata.metadataAddableToStructureElement()}"
+                                                     actionListener="#{MassImportForm.additionalMetadata.setSelectedMetadataTreeNode(null)}"
+                                                     action="#{MassImportForm.addMetadataDialog.prepareAddableMetadataForStructure()}"
+                                                     oncomplete="PF('addMetadataDialog').show();"/>
+                                </h:panelGroup>
+                            </p:row>
+                        </p:panelGrid>
+                        <div>
+                            <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
+                                <ui:param name="root" value="#{MassImportForm.additionalMetadata.logicalMetadataTree}"/>
+                                <ui:param name="readOnly" value="#{false}"/>
+                                <ui:param name="Form" value="#{MassImportForm.additionalMetadata}"/>
+                            </ui:include>
+                            <p:remoteCommand name="preserveMetadata"
+                                             actionListener="#{MassImportForm.additionalMetadata.preserve}"/>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
             </p:tab>
-            <p:tab title="#{msgs.textMassImport}"
-                   id="textMassImportTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                <ui:include src="/WEB-INF/templates/includes/massImport/textMassImport.xhtml"/>
-            </p:tab>
-
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
+    </ui:define>
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/addMetadata.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

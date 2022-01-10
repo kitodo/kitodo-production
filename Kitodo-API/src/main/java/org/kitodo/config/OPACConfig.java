@@ -229,6 +229,16 @@ public class OPACConfig {
     }
 
     /**
+     * Load the "identifierParameter" 's label of the catalog used to retrieve specific
+     * individual records from that catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return String containing identifier label
+     */
+    public static String getIdentifierParameterLabel(String catalogName) {
+        return getCatalog(catalogName).getString("identifierParameter[@label]");
+    }
+
+    /**
      * Load the identifier prefix that needs to be prepended to IDs in order retrieving
      * individual records by ID from the specified catalog.
      * @param catalogName String identifying the catalog by its title

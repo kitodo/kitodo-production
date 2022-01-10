@@ -34,7 +34,7 @@
             <param name="scheme" value="http" />
             <param name="path" value="/gvk" />
         </config>
-        <identifierParameter value="pica.ppn" />
+        <identifierParameter value="pica.ppn" label="PPN"/>
         <urlParameters>
             <param name="version" value="1.2" />
             <param name="operation" value="searchRetrieve" />
@@ -64,7 +64,7 @@
             <param name="scheme" value="https" />
             <param name="path" value="/gvk" />
         </config>
-        <identifierParameter value="pica.ppn" />
+        <identifierParameter value="pica.ppn" label="PPN"/>
         <urlParameters>
             <param name="version" value="1.2" />
             <param name="operation" value="searchRetrieve" />
@@ -96,7 +96,7 @@
             <param name="scheme" value="https" />
             <param name="path" value="/gvk" />
         </config>
-        <identifierParameter value="pica.ppn" />
+        <identifierParameter value="pica.ppn" label="PPN"/>
         <urlParameters>
             <param name="version" value="1.1" />
             <param name="operation" value="searchRetrieve" />
@@ -128,7 +128,7 @@
             <param name="scheme" value="http" />
             <param name="path" value="/sru" />
         </config>
-        <identifierParameter value="ead.id" />
+        <identifierParameter value="ead.id" label="Identifier"/>
         <identifierMetadata value="CatalogIDDigital" />
         <urlParameters>
             <param name="version" value="1.2" />
@@ -157,7 +157,7 @@
             <param name="scheme" value="https" />
             <param name="path" value="/sru/zdb" />
         </config>
-        <identifierParameter value="idn" />
+        <identifierParameter value="idn" label="Interner DNB-Idenitfier"/>
         <urlParameters>
             <param name="version" value="1.1" />
             <param name="operation" value="searchRetrieve" />

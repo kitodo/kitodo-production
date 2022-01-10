@@ -1190,9 +1190,11 @@ public class ImportService {
      * @param projectId the projectId
      * @param templateId the templateId
      * @param selectedCatalog the selected catalog to import from
+     * @param metadata additionally added metadata.
      * @return the importedProcess
      */
-    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws ImportException {
+    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog, Collection<Metadata> metadata)
+            throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         TempProcess tempProcess;
         Template template;
@@ -1211,6 +1213,9 @@ public class ImportService {
             OutputStream out = ServiceManager.getFileService()
                     .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
+            if (!metadata.isEmpty()) {
+                tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(metadata);
+            }
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
@@ -1236,5 +1241,15 @@ public class ImportService {
         String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
         rulesetManagement.load(new File(rulesetPath));
         return rulesetManagement.getFunctionalKeys(FunctionalMetadata.DOC_TYPE);
+    }
+
+    /**
+     * Get the "identifierParameter" 's label of the catalog used to retrieve specific
+     * individual records from that catalog.
+     * @param selectedCatalog String identifying the catalog by its title
+     * @return String containing identifier label
+     */
+    public String getIdentifierParameterLabel(String selectedCatalog ) {
+        return OPACConfig.getIdentifierParameterLabel(selectedCatalog);
     }
 }
