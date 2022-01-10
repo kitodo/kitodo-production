@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
@@ -39,6 +38,7 @@ import org.kitodo.dataeditor.ruleset.xml.Key;
 import org.kitodo.dataeditor.ruleset.xml.Namespace;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Setting;
+import org.kitodo.utils.JAXBContextCache;
 
 /**
  * This class provides the functionality of the rule set.
@@ -281,7 +281,7 @@ public class RulesetManagement implements RulesetManagementInterface {
     @SuppressWarnings("unchecked")
     private <T> T read(Class<T> objectClass, File inputFile) throws IOException {
         try {
-            Unmarshaller reader = JAXBContext.newInstance(objectClass).createUnmarshaller();
+            Unmarshaller reader = JAXBContextCache.getInstance().get(objectClass).createUnmarshaller();
             return (T) reader.unmarshal(inputFile);
         } catch (JAXBException e) {
             /*

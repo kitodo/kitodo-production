@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.kitodo.config.KitodoConfig;
+import org.kitodo.utils.JAXBContextCache;
 
 /**
  * A {@code kitodo_fileFormats.xml} config file. This class corresponds to the
@@ -54,7 +54,7 @@ public class FileFormatsConfig {
      *             incorrect
      */
     public static List<FileFormat> getFileFormats() throws JAXBException {
-        Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
+        Unmarshaller fileFormatsConfig = JAXBContextCache.getInstance().get(FileFormatsConfig.class).createUnmarshaller();
         FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
         return read.fileFormat;
     }

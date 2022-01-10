@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.JAXBContextCache;
 import org.xml.sax.InputSource;
 
 /**
@@ -51,7 +52,7 @@ class MetsKitodoReader {
      * @return The Mets object in mets-kitodo format.
      */
     static Mets readStringToMets(String xmlString) throws JAXBException {
-        JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
+        JAXBContext jaxbMetsContext = JAXBContextCache.getInstance().get(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
         try (StringReader stringReader = new StringReader(xmlString)) {
             return (Mets) jaxbUnmarshaller.unmarshal(new InputSource(stringReader));
@@ -69,7 +70,7 @@ class MetsKitodoReader {
         FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
                 FileManagementInterface.class).loadModule();
         if (fileManagementModule.fileExist(xmlFile)) {
-            JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
+            JAXBContext jaxbMetsContext = JAXBContextCache.getInstance().get(Mets.class);
             Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
             try (InputStream inputStream = fileManagementModule.read(xmlFile)) {
                 return (Mets) jaxbUnmarshaller.unmarshal(inputStream);
