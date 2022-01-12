@@ -61,7 +61,12 @@ public enum FunctionalMetadata {
     /**
      * The title. It is used to form the author-title key or the title key.
      */
-    TITLE("title");
+    TITLE("title"),
+
+    /**
+     * Document type metadata use for document classification during process import.
+     */
+    DOC_TYPE("docType");
 
     /**
      * With the logger, text can be written to a log file or to the console.

@@ -46,6 +46,7 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -63,6 +64,7 @@ import org.kitodo.config.ConfigProject;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.TaskEditType;
@@ -349,7 +351,8 @@ public class ImportService {
      *       as Document
      * @return docType as String
      */
-    private String getRecordDocType(Document record) {
+    private String getRecordDocType(Document record, Ruleset ruleset) throws IOException {
+        List<String> doctypes = getDocTypeMetadata(ruleset);
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO_STRING);
         if (kitodoNodes.getLength() > 0) {
@@ -357,7 +360,7 @@ public class ImportService {
             for (int i = 0; i < importedMetadata.getLength(); i++) {
                 Node metadataNode = importedMetadata.item(i);
                 Element metadataElement = (Element) metadataNode;
-                if ("docType".equals(metadataElement.getAttribute("name"))) {
+                if (!doctypes.isEmpty() && doctypes.get(0).equals(metadataElement.getAttribute("name"))) {
                     return metadataElement.getTextContent();
                 }
             }
@@ -420,10 +423,12 @@ public class ImportService {
             // logical structure is created by import XSLT file!
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(document);
             return new TempProcess(process, workpiece);
-        } else {
-            String docType = getRecordDocType(document);
+        } else if (Objects.nonNull(process) && Objects.nonNull(process.getRuleset())){
+            String docType = getRecordDocType(document, process.getRuleset());
             NodeList metadataNodes = extractMetadataNodeList(document);
             return new TempProcess(process, metadataNodes, docType);
+        } else {
+            throw new ProcessGenerationException("Ruleset missing!");
         }
     }
 
@@ -1217,5 +1222,20 @@ public class ImportService {
                     Helper.getTranslation("errorImporting", ppn, e.getLocalizedMessage()));
         }
         return tempProcess.getProcess();
+    }
+
+    /**
+     * Load doc type metadata keys from provided ruleset.
+     * @param ruleset Ruleset from which doc type metadata keys are loaded and returned
+     * @return list of Strings containing the IDs of the doc type metadata defined in the provided ruleset.
+     * @throws IOException thrown if ruleset file cannot be loaded
+     */
+    private List<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
+        RulesetManagementInterface rulesetManagementInterface
+                = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
+        String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
+        rulesetManagementInterface.load(new File(rulesetPath));
+        return new ArrayList<>(rulesetManagementInterface.getFunctionalKeys(FunctionalMetadata.DOC_TYPE));
     }
 }
